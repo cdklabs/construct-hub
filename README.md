@@ -1,17 +1,15 @@
-## My Project
+# Construct Hub
 
-TODO: Fill this README out!
+This project maintains a [AWS Cloud Development Kit][aws-cdk] construct library
+that can be used to deploy instances of the Construct Hub in any AWS Account.
 
-Be sure to:
-
-* Change the title in this README
-* Edit your repository description on GitHub
+[aws-cdk]: https://github.com/aws/aws-cdk
 
 ## Security
 
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more
+information.
 
 ## License
 
 This project is licensed under the Apache-2.0 License.
-
