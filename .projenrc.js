@@ -15,7 +15,7 @@ const project = new AwsCdkConstructLibrary({
   mergify: false,
 
   author: 'Amazon Web Services, Inc.',
-  authorAddress: 'aws-cdk@amazon.com',
+  authorAddress: 'aws-cdk-team@amazon.com',
   authorOrganization: true,
 
   cdkVersion: '1.100.0',
