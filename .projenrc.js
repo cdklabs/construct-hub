@@ -13,25 +13,16 @@ const project = new AwsCdkConstructLibrary({
   homepage: 'https://github.com/cdklabs',
   defaultReleaseBranch: 'main',
   mergify: false,
+  dependabot: false,
 
   author: 'Amazon Web Services, Inc.',
   authorAddress: 'aws-cdk-team@amazon.com',
   authorOrganization: true,
 
-  cdkVersion: '1.100.0',
-  cdkDependencies: [
-    '@aws-cdk/core',
-    '@aws-cdk/cx-api',
-    '@aws-cdk/aws-certificatemanager',
-    '@aws-cdk/aws-cloudfront',
-    '@aws-cdk/aws-cloudwatch',
-    '@aws-cdk/aws-lambda',
-    '@aws-cdk/aws-route53',
-    '@aws-cdk/aws-route53-targets',
-    '@aws-cdk/aws-s3',
-    '@aws-cdk/aws-sns',
-  ],
-  devDeps: ['yaml'],
+  cdkVersion: '2.0.0-alpha.13',
+  cdkDependencies: ['aws-cdk-lib'],
+
+  devDeps: ['constructs@^10.0.5', 'yaml'],
 
   pullRequestTemplateContents: [
     '',
@@ -44,5 +35,21 @@ const project = new AwsCdkConstructLibrary({
   npmRegistryUrl: 'https://npm.pkg.github.com/',
   npmTokenSecret: 'GITHUB_TOKEN',
 });
+
+const yarnUpgrade = project.github.addWorkflow('yarn-upgrade');
+yarnUpgrade.on({
+  // Run every wednesday at 13:37 UTC
+  schedule: [{ cron: '37 13 * * 3' }],
+  // Can be manually triggered
+  workflow_dispatch: {},
+});
+yarnUpgrade.addJobs({
+  upgrade: {
+    'name': 'Yarn Upgrade',
+    'runs-on': 'ubuntu-latest',
+    'steps': [],
+  },
+});
+
 
 project.synth();
