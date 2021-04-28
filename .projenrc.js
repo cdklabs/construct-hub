@@ -36,20 +36,4 @@ const project = new AwsCdkConstructLibrary({
   npmTokenSecret: 'GITHUB_TOKEN',
 });
 
-const yarnUpgrade = project.github.addWorkflow('yarn-upgrade');
-yarnUpgrade.on({
-  // Run every wednesday at 13:37 UTC
-  schedule: [{ cron: '37 13 * * 3' }],
-  // Can be manually triggered
-  workflow_dispatch: {},
-});
-yarnUpgrade.addJobs({
-  upgrade: {
-    'name': 'Yarn Upgrade',
-    'runs-on': 'ubuntu-latest',
-    'steps': [],
-  },
-});
-
-
 project.synth();
