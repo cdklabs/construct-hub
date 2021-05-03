@@ -47,4 +47,23 @@ const project = new AwsCdkConstructLibrary({
   projenUpgradeSecret: 'CDK_AUTOMATION_GITHUB_TOKEN',
 });
 
+function addDevApp() {
+  // add "dev:xxx" tasks for interacting with the dev stack
+  const devapp = project.testdir + '/devapp';
+  const commands = ['bootstrap', 'synth', 'diff', 'deploy'];
+  for (const cmd of commands) {
+    project.addTask(`dev:${cmd}`, {
+      description: `cdk ${cmd}`,
+      cwd: devapp,
+      exec: `npx cdk ${cmd}`,
+    });
+  }
+
+  project.gitignore.addPatterns(`${devapp}/cdk.out`);
+  project.addDevDeps('ts-node');
+  project.addDevDeps(`aws-cdk@${project.cdkVersion}`);
+}
+
+addDevApp();
+
 project.synth();
