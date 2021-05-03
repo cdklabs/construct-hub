@@ -34,7 +34,7 @@ const project = new AwsCdkConstructLibrary({
   releaseToNpm: true,
   npmRegistryUrl: 'https://npm.pkg.github.com/',
   npmTokenSecret: 'GITHUB_TOKEN',
-  
+
   projenUpgradeSecret: 'CDK_AUTOMATION_GITHUB_TOKEN',
 });
 
