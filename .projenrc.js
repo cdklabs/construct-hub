@@ -26,11 +26,20 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-cloudwatch',
     '@aws-cdk/aws-certificatemanager',
     '@aws-cdk/aws-route53',
+    '@aws-cdk/aws-lambda-nodejs',
+    '@aws-cdk/aws-lambda',
     '@aws-cdk/aws-sns',
   ],
 
   devDeps: [
     'yaml',
+  ],
+
+  deps: ['cdk-watchful'],
+
+  peerDeps: [
+    // for some reason, JSII does not allow specifying this as a normal dep, even though we don't have public APIs that use any types from it
+    'cdk-watchful',
   ],
 
   pullRequestTemplateContents: [

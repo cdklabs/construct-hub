@@ -2,6 +2,8 @@ import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
 import * as route53 from '@aws-cdk/aws-route53';
 import * as sns from '@aws-cdk/aws-sns';
 import { Construct } from '@aws-cdk/core';
+import { Dummy } from './dummy';
+import { Monitoring } from './monitoring';
 
 export interface ConstructHubProps {
   /**
@@ -82,5 +84,12 @@ export interface ContactURLs {
 export class ConstructHub extends Construct {
   public constructor(scope: Construct, id: string, _props: ConstructHubProps) {
     super(scope, id);
+
+    // add some dummy resources so that we have _something_ to monitor.
+    new Dummy(this, 'Dummy');
+
+    new Monitoring(this, 'Monitoring', {
+      watchScope: this,
+    });
   }
 }
