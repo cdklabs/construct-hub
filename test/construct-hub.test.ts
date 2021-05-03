@@ -1,20 +1,22 @@
 import '@aws-cdk/assert/jest';
 
-import { App, Stack, aws_route53, cx_api } from 'aws-cdk-lib';
+import * as route53 from '@aws-cdk/aws-route53';
+import { App, Stack } from '@aws-cdk/core';
+import * as cxapi from '@aws-cdk/cx-api';
 import { stringify as yaml } from 'yaml';
 
-import { ConstructHub } from '../src/construct-hub';
+import { ConstructHub } from '../src';
 
 expect.addSnapshotSerializer({
-  test: (val) => val instanceof cx_api.CloudFormationStackArtifact,
-  serialize: (val: cx_api.CloudFormationStackArtifact) => yaml(val.template),
+  test: (val) => val instanceof cxapi.CloudFormationStackArtifact,
+  serialize: (val: cxapi.CloudFormationStackArtifact) => yaml(val.template),
 });
 
 test('minimal configuration', () => {
   // Given
   const app = new App();
   const stack = new Stack(app, 'Stack');
-  const hostedZone = new aws_route53.PublicHostedZone(stack, 'HostedZone', { zoneName: 'hub.constructs.test' });
+  const hostedZone = new route53.PublicHostedZone(stack, 'HostedZone', { zoneName: 'hub.constructs.test' });
 
   // When
   new ConstructHub(stack, 'ConstructHub', { hostedZone });
