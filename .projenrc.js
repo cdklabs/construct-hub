@@ -19,10 +19,19 @@ const project = new AwsCdkConstructLibrary({
   authorAddress: 'aws-cdk-team@amazon.com',
   authorOrganization: true,
 
-  cdkVersion: '2.0.0-alpha.13',
-  cdkDependencies: ['aws-cdk-lib'],
+  cdkVersion: '1.101.0',
+  cdkDependencies: [
+    '@aws-cdk/core',
+    '@aws-cdk/cx-api',
+    '@aws-cdk/aws-cloudwatch',
+    '@aws-cdk/aws-certificatemanager',
+    '@aws-cdk/aws-route53',
+    '@aws-cdk/aws-sns',
+  ],
 
-  devDeps: ['constructs@^10.0.5', 'yaml'],
+  devDeps: [
+    'yaml',
+  ],
 
   pullRequestTemplateContents: [
     '',

@@ -1,11 +1,13 @@
-import { aws_certificatemanager, aws_route53, aws_sns } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
+import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
+import * as route53 from '@aws-cdk/aws-route53';
+import * as sns from '@aws-cdk/aws-sns';
+import { Construct } from '@aws-cdk/core';
 
 export interface ConstructHubProps {
   /**
    * The root domain name where this instance of Construct Hub will be served.
    */
-  readonly hostedZone: aws_route53.IHostedZone;
+  readonly hostedZone: route53.IHostedZone;
 
   /**
    * The certificate to use for serving the Construct Hub over a custom domain.
@@ -13,7 +15,7 @@ export interface ConstructHubProps {
    * @default - a DNS-Validated certificate will be provisioned using the
    *            provided `hostedZone`.
    */
-  readonly tlsCertificate?: aws_certificatemanager.ICertificate;
+  readonly tlsCertificate?: certificatemanager.ICertificate;
 
   /**
    * An optional path prefix to use for serving the Construct Hub.
@@ -42,7 +44,7 @@ export interface ConstructHubProps {
    *
    * @default - none
    */
-  readonly updatesTopic?: aws_sns.ITopic;
+  readonly updatesTopic?: sns.ITopic;
 
   /**
    * The name of the CloudWatch Dashboard created to observe this application.
