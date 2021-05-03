@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`golden snapshot 1`] = `
+Resources:
+  HostedZoneDB99F866:
+    Type: AWS::Route53::HostedZone
+    Properties:
+      Name: hub.constructs.test.
+  ConstructHubMonitoringWatchfulDashboardB8493D55:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardBody: '{"widgets":[]}'
+      DashboardName: construct-catalog
+Outputs:
+  ConstructHubMonitoringWatchfulWatchfulDashboard75D318D0:
+    Value:
+      Fn::Join:
+        - ""
+        - - https://console.aws.amazon.com/cloudwatch/home?region=
+          - Ref: AWS::Region
+          - "#dashboards:name="
+          - Ref: ConstructHubMonitoringWatchfulDashboardB8493D55
+
+`;
