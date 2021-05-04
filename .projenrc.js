@@ -44,7 +44,7 @@ const project = new AwsCdkConstructLibrary({
     'cdk-watchful',
   ],
 
-  minNodeVersion: '14.0.0',
+  minNodeVersion: '12.0.0',
 
   pullRequestTemplateContents: [
     '',
