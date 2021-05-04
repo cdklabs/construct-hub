@@ -35,6 +35,7 @@ const project = new AwsCdkConstructLibrary({
 
   devDeps: [
     'yaml',
+    'esbuild',
   ],
 
   deps: ['cdk-watchful'],
