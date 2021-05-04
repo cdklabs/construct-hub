@@ -1,4 +1,6 @@
-const { AwsCdkConstructLibrary } = require('projen');
+const { readdirSync, statSync, existsSync } = require('fs');
+const { join } = require('path');
+const { AwsCdkConstructLibrary, SourceCode, FileBase } = require('projen');
 
 const project = new AwsCdkConstructLibrary({
   jsiiFqn: 'projen.AwsCdkConstructLibrary',
@@ -26,12 +28,24 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-cloudwatch',
     '@aws-cdk/aws-certificatemanager',
     '@aws-cdk/aws-route53',
+    '@aws-cdk/aws-lambda-nodejs',
+    '@aws-cdk/aws-lambda',
     '@aws-cdk/aws-sns',
   ],
 
   devDeps: [
     'yaml',
+    'esbuild',
   ],
+
+  deps: ['cdk-watchful'],
+
+  peerDeps: [
+    // for some reason, JSII does not allow specifying this as a normal dep, even though we don't have public APIs that use any types from it
+    'cdk-watchful',
+  ],
+
+  minNodeVersion: '12.0.0',
 
   pullRequestTemplateContents: [
     '',

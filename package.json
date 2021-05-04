@@ -37,10 +37,11 @@
   "devDependencies": {
     "@aws-cdk/assert": "^1.101.0",
     "@types/jest": "^26.0.23",
-    "@types/node": "^10.17.0",
+    "@types/node": "^12.0.0",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "aws-cdk": "^1.101.0",
+    "esbuild": "^0.11.18",
     "eslint": "^7.25.0",
     "eslint-import-resolver-node": "^0.3.4",
     "eslint-import-resolver-typescript": "^2.4.0",
@@ -62,19 +63,25 @@
   "peerDependencies": {
     "@aws-cdk/aws-certificatemanager": "^1.101.0",
     "@aws-cdk/aws-cloudwatch": "^1.101.0",
+    "@aws-cdk/aws-lambda": "^1.101.0",
+    "@aws-cdk/aws-lambda-nodejs": "^1.101.0",
     "@aws-cdk/aws-route53": "^1.101.0",
     "@aws-cdk/aws-sns": "^1.101.0",
     "@aws-cdk/core": "^1.101.0",
     "@aws-cdk/cx-api": "^1.101.0",
+    "cdk-watchful": "^0.5.133",
     "constructs": "^3.2.27"
   },
   "dependencies": {
     "@aws-cdk/aws-certificatemanager": "^1.101.0",
     "@aws-cdk/aws-cloudwatch": "^1.101.0",
+    "@aws-cdk/aws-lambda": "^1.101.0",
+    "@aws-cdk/aws-lambda-nodejs": "^1.101.0",
     "@aws-cdk/aws-route53": "^1.101.0",
     "@aws-cdk/aws-sns": "^1.101.0",
     "@aws-cdk/core": "^1.101.0",
-    "@aws-cdk/cx-api": "^1.101.0"
+    "@aws-cdk/cx-api": "^1.101.0",
+    "cdk-watchful": "^0.5.133"
   },
   "bundledDependencies": [],
   "keywords": [
@@ -84,6 +91,9 @@
     "construct-hub",
     "constructs"
   ],
+  "engines": {
+    "node": ">= 12.0.0"
+  },
   "main": "lib/index.js",
   "license": "Apache-2.0",
   "homepage": "https://github.com/cdklabs",
