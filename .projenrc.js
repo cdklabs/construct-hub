@@ -65,6 +65,7 @@ const project = new AwsCdkConstructLibrary({
     javaPackage: 'software.amazon.constructhub',
     mavenArtifactId: 'software.amazon.constructhub',
     mavenGroupId: 'construct-hub',
+    mavenEndpoint: 'https://aws.oss.sonatype.org',
   },
   //publishToNuget: {
   //  dotNetNamespace: 'Construct.Hub',
