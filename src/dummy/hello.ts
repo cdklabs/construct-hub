@@ -2,7 +2,7 @@
 import * as lambda from '@aws-cdk/aws-lambda';
 import { Construct } from 'constructs';
 
-export interface HelloProps extends Omit<lambda.FunctionProps, 'code' | 'handler' | 'runtime'> {
+export interface HelloProps extends lambda.FunctionOptions {
 }
 
 export class Hello extends lambda.Function {
