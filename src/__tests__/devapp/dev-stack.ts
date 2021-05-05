@@ -1,6 +1,6 @@
 import * as route53 from '@aws-cdk/aws-route53';
 import { Construct, Stack } from '@aws-cdk/core';
-import { ConstructHub } from '../../src';
+import { ConstructHub } from '../..';
 
 export class DevStack extends Stack {
   constructor(scope: Construct, id: string) {

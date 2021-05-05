@@ -32,7 +32,7 @@ __Extends__: [Construct](#aws-cdk-core-construct)
 new ConstructHub(scope: Construct, id: string, _props: ConstructHubProps)
 ```
 
-* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
+* **scope** (<code>[Construct](#constructs-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
 * **_props** (<code>[ConstructHubProps](#construct-hub-constructhubprops)</code>)  *No description*
   * **hostedZone** (<code>[IHostedZone](#aws-cdk-aws-route53-ihostedzone)</code>)  The root domain name where this instance of Construct Hub will be served. 
