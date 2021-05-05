@@ -31,7 +31,7 @@
   },
   "author": {
     "name": "Amazon Web Services, Inc.",
-    "email": "aws-cdk-team@amazon.com",
+    "email": "construct-ecosystem-team@amazon.com",
     "organization": true
   },
   "devDependencies": {
@@ -53,7 +53,7 @@
     "jsii-docgen": "^1.8.70",
     "jsii-pacmak": "^1.29.0",
     "json-schema": "^0.3.0",
-    "projen": "^0.17.75",
+    "projen": "^0.17.78",
     "standard-version": "^9",
     "ts-jest": "^26.5.5",
     "ts-node": "^9.1.1",
@@ -97,9 +97,6 @@
   "main": "lib/index.js",
   "license": "Apache-2.0",
   "homepage": "https://github.com/cdklabs",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
-  },
   "version": "0.0.0",
   "jest": {
     "testMatch": [
@@ -144,7 +141,17 @@
   "stability": "experimental",
   "jsii": {
     "outdir": "dist",
-    "targets": {},
+    "targets": {
+      "java": {
+        "maven": {}
+      },
+      "python": {
+        "distName": "construct-hub",
+        "module": "construct_hub"
+      },
+      "dotnet": {},
+      "go": {}
+    },
     "tsc": {
       "outDir": "lib",
       "rootDir": "src"
