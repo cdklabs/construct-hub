@@ -29,12 +29,12 @@ __Extends__: [Construct](#aws-cdk-core-construct)
 
 
 ```ts
-new ConstructHub(scope: Construct, id: string, _props: ConstructHubProps)
+new ConstructHub(scope: Construct, id: string, props: ConstructHubProps)
 ```
 
 * **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
-* **_props** (<code>[ConstructHubProps](#construct-hub-constructhubprops)</code>)  *No description*
+* **props** (<code>[ConstructHubProps](#construct-hub-constructhubprops)</code>)  *No description*
   * **hostedZone** (<code>[IHostedZone](#aws-cdk-aws-route53-ihostedzone)</code>)  The root domain name where this instance of Construct Hub will be served. 
   * **contactUrls** (<code>[ContactURLs](#construct-hub-contacturls)</code>)  Contact URLs to be used for contacting this Construct Hub operators. __*Default*__: none
   * **dashboardName** (<code>string</code>)  The name of the CloudWatch Dashboard created to observe this application. __*Default*__: the path to this construct is used as the dashboard name.

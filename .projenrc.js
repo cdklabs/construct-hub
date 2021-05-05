@@ -25,11 +25,15 @@ const project = new AwsCdkConstructLibrary({
   cdkDependencies: [
     '@aws-cdk/core',
     '@aws-cdk/cx-api',
+    '@aws-cdk/aws-cloudfront',
+    '@aws-cdk/aws-cloudfront-origins',
     '@aws-cdk/aws-cloudwatch',
     '@aws-cdk/aws-certificatemanager',
     '@aws-cdk/aws-route53',
     '@aws-cdk/aws-lambda-nodejs',
     '@aws-cdk/aws-lambda',
+    '@aws-cdk/aws-s3',
+    '@aws-cdk/aws-s3-deployment',
     '@aws-cdk/aws-sns',
   ],
 
