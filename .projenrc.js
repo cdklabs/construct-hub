@@ -122,7 +122,7 @@ function newLambdaHandler(entrypoint) {
   ts.line('import * as lambda from \'@aws-cdk/aws-lambda\';');
   ts.line('import { Construct } from \'constructs\';');
   ts.line();
-  ts.open(`export interface ${propsName} extends Omit<lambda.FunctionProps, 'code' | 'handler' | 'runtime'> {`);
+  ts.open(`export interface ${propsName} extends lambda.FunctionOptions {`);
   ts.close('}');
   ts.line();
   ts.open(`export class ${className} extends lambda.Function {`);
