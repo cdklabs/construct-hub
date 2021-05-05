@@ -110,37 +110,3 @@ jobs:
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
-  release_nuget:
-    name: Release to Nuget
-    needs: release
-    runs-on: ubuntu-latest
-    container:
-      image: jsii/superchain
-    steps:
-      - name: Download build artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: dist
-          path: dist
-      - name: Release
-        run: npx -p jsii-release@latest jsii-release-nuget
-        env:
-          NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
-  release_golang:
-    name: Release to Go
-    needs: release
-    runs-on: ubuntu-latest
-    container:
-      image: jsii/superchain
-    steps:
-      - name: Download build artifacts
-        uses: actions/download-artifact@v2
-        with:
-          name: dist
-          path: dist
-      - name: Release
-        run: npx -p jsii-release@latest jsii-release-golang
-        env:
-          GITHUB_TOKEN: ${{ secrets.GO_GITHUB_TOKEN }}
-          GIT_USER_NAME: GitHub Actions
-          GIT_USER_EMAIL: github-actions@github.com

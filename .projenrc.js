@@ -56,9 +56,18 @@ const project = new AwsCdkConstructLibrary({
 
   releaseToNpm: true,
 
-  publishToGo: {},
-  publishToMaven: {},
-  publishToNuget: {},
+  //publishToGo: {
+  //  moduleName: 'github.com/cdklabs/construct-hub-go',
+  //},
+  publishToMaven: {
+    javaPackage: 'software.amazon.constructhub',
+    mavenArtifactId: 'software.amazon.constructhub',
+    mavenGroupId: 'construct-hub',
+  },
+  //publishToNuget: {
+  //  dotNetNamespace: 'Construct.Hub',
+  //  packageId: 'Construct.Hub',
+  //},
   publishToPypi: {
     distName: 'construct-hub',
     module: 'construct_hub',
