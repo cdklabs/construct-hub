@@ -19,7 +19,9 @@ const project = new AwsCdkConstructLibrary({
   authorAddress: 'construct-ecosystem-team@amazon.com',
   authorOrganization: true,
 
-  cdkVersion: '1.101.0',
+  cdkVersion: '1.100.0',
+  //cdkVersionPinning: true,
+
   cdkDependencies: [
     '@aws-cdk/core',
     '@aws-cdk/cx-api',
@@ -36,11 +38,11 @@ const project = new AwsCdkConstructLibrary({
     'esbuild',
   ],
 
-  deps: ['cdk-watchful'],
+  deps: ['cdk-watchful@^0.5.129'],
 
   peerDeps: [
     // for some reason, JSII does not allow specifying this as a normal dep, even though we don't have public APIs that use any types from it
-    'cdk-watchful',
+    'cdk-watchful@^0.5.129',
   ],
 
   minNodeVersion: '12.0.0',
@@ -72,6 +74,9 @@ const project = new AwsCdkConstructLibrary({
     distName: 'construct-hub',
     module: 'construct_hub',
   },
+
+  // run tests from .js -- otherwise lambda bundlers get confused
+  testdir: 'src/__tests__',
 });
 
 function addDevApp() {
