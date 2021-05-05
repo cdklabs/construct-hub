@@ -1,3 +1,4 @@
+import { join } from 'path';
 import { Runtime } from '@aws-cdk/aws-lambda';
 import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs';
 import { Construct } from '@aws-cdk/core';
@@ -8,6 +9,7 @@ export class Dummy extends Construct {
 
     new NodejsFunction(this, 'handler', {
       runtime: Runtime.NODEJS_14_X,
+      entry: join(__dirname, 'handler.js'),
     });
   }
 }
