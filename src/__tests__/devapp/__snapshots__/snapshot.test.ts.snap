@@ -6,7 +6,7 @@ Resources:
     Type: AWS::Route53::HostedZone
     Properties:
       Name: hub.constructs.test.
-  ConstructHubDummyNodejsFunctionServiceRoleB4158547:
+  ConstructHubDummyhandlerServiceRoleBDB01E7B:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -22,12 +22,12 @@ Resources:
             - - "arn:"
               - Ref: AWS::Partition
               - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-  ConstructHubDummyNodejsFunctionB2E12BA9:
+  ConstructHubDummyhandlerC748A7D7:
     Type: AWS::Lambda::Function
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters26649ac14cce5e4012f2a821733e9664ee20f372ac69050d45b16ca809c47cf8S3Bucket6E14E877
+          Ref: AssetParameters03fdeb9f30a5a5678ff396efd5662cc9d7cca98a7b6abeeb4ff2e89efd458e8bS3Bucket1FD38A65
         S3Key:
           Fn::Join:
             - ""
@@ -35,15 +35,15 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters26649ac14cce5e4012f2a821733e9664ee20f372ac69050d45b16ca809c47cf8S3VersionKey74AE340D
+                      - Ref: AssetParameters03fdeb9f30a5a5678ff396efd5662cc9d7cca98a7b6abeeb4ff2e89efd458e8bS3VersionKey40E24722
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters26649ac14cce5e4012f2a821733e9664ee20f372ac69050d45b16ca809c47cf8S3VersionKey74AE340D
+                      - Ref: AssetParameters03fdeb9f30a5a5678ff396efd5662cc9d7cca98a7b6abeeb4ff2e89efd458e8bS3VersionKey40E24722
       Role:
         Fn::GetAtt:
-          - ConstructHubDummyNodejsFunctionServiceRoleB4158547
+          - ConstructHubDummyhandlerServiceRoleBDB01E7B
           - Arn
       Environment:
         Variables:
@@ -51,7 +51,7 @@ Resources:
       Handler: index.handler
       Runtime: nodejs14.x
     DependsOn:
-      - ConstructHubDummyNodejsFunctionServiceRoleB4158547
+      - ConstructHubDummyhandlerServiceRoleBDB01E7B
   ConstructHubMonitoringWatchfulDashboardB8493D55:
     Type: AWS::CloudWatch::Dashboard
     Properties:
@@ -59,41 +59,41 @@ Resources:
         Fn::Join:
           - ""
           - - '{"widgets":[{"type":"text","width":24,"height":2,"x":0,"y":0,"properties":{"markdown":"#
-              dev/ConstructHub/Dummy/NodejsFunction\\n\\n[button:AWS Lambda
+              dev/ConstructHub/Dummy/handler\\n\\n[button:AWS Lambda
               Console](https://console.aws.amazon.com/lambda/home?region='
             - Ref: AWS::Region
             - "#/functions/"
-            - Ref: ConstructHubDummyNodejsFunctionB2E12BA9
+            - Ref: ConstructHubDummyhandlerC748A7D7
             - ?tab=graph) [button:CloudWatch
               Logs](https://console.aws.amazon.com/cloudwatch/home?region=
             - Ref: AWS::Region
             - "#logEventViewer:group=/aws/lambda/"
-            - Ref: ConstructHubDummyNodejsFunctionB2E12BA9
+            - Ref: ConstructHubDummyhandlerC748A7D7
             - )"}},{"type":"metric","width":6,"height":6,"x":0,"y":2,"properties":{"view":"timeSeries","title":"Invocations/5min","region":"
             - Ref: AWS::Region
             - '","metrics":[["AWS/Lambda","Invocations","FunctionName","'
-            - Ref: ConstructHubDummyNodejsFunctionB2E12BA9
+            - Ref: ConstructHubDummyhandlerC748A7D7
             - '",{"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":2,"properties":{"view":"timeSeries","title":"Errors/5min","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/Lambda","Errors","FunctionName","'
-            - Ref: ConstructHubDummyNodejsFunctionB2E12BA9
+            - Ref: ConstructHubDummyhandlerC748A7D7
             - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Errors
               > 0 for 3 datapoints within 15
               minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":2,"properties":{"view":"timeSeries","title":"Throttles/5min","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/Lambda","Throttles","FunctionName","'
-            - Ref: ConstructHubDummyNodejsFunctionB2E12BA9
+            - Ref: ConstructHubDummyhandlerC748A7D7
             - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Throttles
               > 0 for 3 datapoints within 15
               minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":2,"properties":{"view":"timeSeries","title":"Duration/5min","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/Lambda","Duration","FunctionName","'
-            - Ref: ConstructHubDummyNodejsFunctionB2E12BA9
+            - Ref: ConstructHubDummyhandlerC748A7D7
             - '",{"label":"p99","stat":"p99"}]],"annotations":{"horizontal":[{"label":"p99
               > 2000 for 3 datapoints within 15
               minutes","value":2000,"yAxis":"left"}]},"yAxis":{}}}]}'
       DashboardName: construct-hub
-  ConstructHubMonitoringWatchfuldevConstructHubDummyNodejsFunction2118A5FAErrorsAlarm919653A8:
+  ConstructHubMonitoringWatchfuldevConstructHubDummyhandler4B9E4732ErrorsAlarm776465ED:
     Type: AWS::CloudWatch::Alarm
     Properties:
       ComparisonOperator: GreaterThanThreshold
@@ -102,13 +102,13 @@ Resources:
       Dimensions:
         - Name: FunctionName
           Value:
-            Ref: ConstructHubDummyNodejsFunctionB2E12BA9
+            Ref: ConstructHubDummyhandlerC748A7D7
       MetricName: Errors
       Namespace: AWS/Lambda
       Period: 300
       Statistic: Sum
       Threshold: 0
-  ConstructHubMonitoringWatchfuldevConstructHubDummyNodejsFunction2118A5FAThrottlesAlarm78E3C2E6:
+  ConstructHubMonitoringWatchfuldevConstructHubDummyhandler4B9E4732ThrottlesAlarm95541894:
     Type: AWS::CloudWatch::Alarm
     Properties:
       ComparisonOperator: GreaterThanThreshold
@@ -117,13 +117,13 @@ Resources:
       Dimensions:
         - Name: FunctionName
           Value:
-            Ref: ConstructHubDummyNodejsFunctionB2E12BA9
+            Ref: ConstructHubDummyhandlerC748A7D7
       MetricName: Throttles
       Namespace: AWS/Lambda
       Period: 300
       Statistic: Sum
       Threshold: 0
-  ConstructHubMonitoringWatchfuldevConstructHubDummyNodejsFunction2118A5FADurationAlarm520D63F1:
+  ConstructHubMonitoringWatchfuldevConstructHubDummyhandler4B9E4732DurationAlarm28C95C66:
     Type: AWS::CloudWatch::Alarm
     Properties:
       ComparisonOperator: GreaterThanThreshold
@@ -137,7 +137,7 @@ Resources:
               Dimensions:
                 - Name: FunctionName
                   Value:
-                    Ref: ConstructHubDummyNodejsFunctionB2E12BA9
+                    Ref: ConstructHubDummyhandlerC748A7D7
               MetricName: Duration
               Namespace: AWS/Lambda
             Period: 300
@@ -154,17 +154,17 @@ Outputs:
           - "#dashboards:name="
           - Ref: ConstructHubMonitoringWatchfulDashboardB8493D55
 Parameters:
-  AssetParameters26649ac14cce5e4012f2a821733e9664ee20f372ac69050d45b16ca809c47cf8S3Bucket6E14E877:
+  AssetParameters03fdeb9f30a5a5678ff396efd5662cc9d7cca98a7b6abeeb4ff2e89efd458e8bS3Bucket1FD38A65:
     Type: String
     Description: S3 bucket for asset
-      "26649ac14cce5e4012f2a821733e9664ee20f372ac69050d45b16ca809c47cf8"
-  AssetParameters26649ac14cce5e4012f2a821733e9664ee20f372ac69050d45b16ca809c47cf8S3VersionKey74AE340D:
+      "03fdeb9f30a5a5678ff396efd5662cc9d7cca98a7b6abeeb4ff2e89efd458e8b"
+  AssetParameters03fdeb9f30a5a5678ff396efd5662cc9d7cca98a7b6abeeb4ff2e89efd458e8bS3VersionKey40E24722:
     Type: String
     Description: S3 key for asset version
-      "26649ac14cce5e4012f2a821733e9664ee20f372ac69050d45b16ca809c47cf8"
-  AssetParameters26649ac14cce5e4012f2a821733e9664ee20f372ac69050d45b16ca809c47cf8ArtifactHash7D7D5A79:
+      "03fdeb9f30a5a5678ff396efd5662cc9d7cca98a7b6abeeb4ff2e89efd458e8b"
+  AssetParameters03fdeb9f30a5a5678ff396efd5662cc9d7cca98a7b6abeeb4ff2e89efd458e8bArtifactHash41998B01:
     Type: String
     Description: Artifact hash for asset
-      "26649ac14cce5e4012f2a821733e9664ee20f372ac69050d45b16ca809c47cf8"
+      "03fdeb9f30a5a5678ff396efd5662cc9d7cca98a7b6abeeb4ff2e89efd458e8b"
 
 `;

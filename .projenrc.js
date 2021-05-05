@@ -61,6 +61,9 @@ const project = new AwsCdkConstructLibrary({
   npmTokenSecret: 'GITHUB_TOKEN',
 
   projenUpgradeSecret: 'CDK_AUTOMATION_GITHUB_TOKEN',
+
+  // run tests from .js -- otherwise lambda bundlers get confused
+  testdir: 'src/__tests__',
 });
 
 function addDevApp() {
