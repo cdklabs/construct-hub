@@ -67,6 +67,12 @@
         },
         {
           "spawn": "docgen"
+        },
+        {
+          "spawn": "bundle:foo"
+        },
+        {
+          "spawn": "bundle:hello"
         }
       ]
     },
@@ -240,6 +246,24 @@
         }
       ],
       "cwd": "src/__tests__/devapp"
+    },
+    "bundle:foo": {
+      "name": "bundle:foo",
+      "description": "Create an AWS Lambda bundle from src/dummy/foo.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/dummy/foo.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/dummy/foo.bundle/index.js\" --external:aws-sdk"
+        }
+      ]
+    },
+    "bundle:hello": {
+      "name": "bundle:hello",
+      "description": "Create an AWS Lambda bundle from src/dummy/hello.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/dummy/hello.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/dummy/hello.bundle/index.js\" --external:aws-sdk"
+        }
+      ]
     }
   },
   "env": {
