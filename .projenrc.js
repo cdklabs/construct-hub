@@ -1,6 +1,4 @@
-const { readdirSync, statSync, existsSync } = require('fs');
-const { join } = require('path');
-const { AwsCdkConstructLibrary, SourceCode, FileBase } = require('projen');
+const { AwsCdkConstructLibrary } = require('projen');
 
 const project = new AwsCdkConstructLibrary({
   jsiiFqn: 'projen.AwsCdkConstructLibrary',
@@ -18,7 +16,7 @@ const project = new AwsCdkConstructLibrary({
   dependabot: false,
 
   author: 'Amazon Web Services, Inc.',
-  authorAddress: 'aws-cdk-team@amazon.com',
+  authorAddress: 'construct-ecosystem-team@amazon.com',
   authorOrganization: true,
 
   cdkVersion: '1.100.0',
@@ -56,11 +54,27 @@ const project = new AwsCdkConstructLibrary({
     '*By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license*',
   ],
 
-  releaseToNpm: true,
-  npmRegistryUrl: 'https://npm.pkg.github.com/',
-  npmTokenSecret: 'GITHUB_TOKEN',
-
   projenUpgradeSecret: 'CDK_AUTOMATION_GITHUB_TOKEN',
+
+  releaseToNpm: true,
+
+  //publishToGo: {
+  //  moduleName: 'github.com/cdklabs/construct-hub-go',
+  //},
+  publishToMaven: {
+    javaPackage: 'software.amazon.constructhub',
+    mavenArtifactId: 'software.amazon.constructhub',
+    mavenGroupId: 'construct-hub',
+    mavenEndpoint: 'https://aws.oss.sonatype.org',
+  },
+  //publishToNuget: {
+  //  dotNetNamespace: 'Construct.Hub',
+  //  packageId: 'Construct.Hub',
+  //},
+  publishToPypi: {
+    distName: 'construct-hub',
+    module: 'construct_hub',
+  },
 
   // run tests from .js -- otherwise lambda bundlers get confused
   testdir: 'src/__tests__',
