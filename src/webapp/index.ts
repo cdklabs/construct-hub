@@ -43,7 +43,7 @@ export class WebApp extends Construct {
       defaultBehavior: { origin: new origins.S3Origin(this.bucket) },
     });
 
-    const webappDir = path.join(__dirname, '..', '..', 'node_modules', 'construct-hub-webapp', 'build');
+    const webappDir = path.join(require.resolve('construct-hub-webapp'), 'build');
     new s3deploy.BucketDeployment(this, 'DeployWebsite', {
       sources: [s3deploy.Source.asset(webappDir)],
       destinationBucket: this.bucket,
