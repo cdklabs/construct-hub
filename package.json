@@ -22,7 +22,6 @@
     "eslint": "npx projen eslint",
     "compat": "npx projen compat",
     "docgen": "npx projen docgen",
-    "dev:bootstrap": "npx projen dev:bootstrap",
     "dev:synth": "npx projen dev:synth",
     "dev:diff": "npx projen dev:diff",
     "dev:deploy": "npx projen dev:deploy",
@@ -59,15 +58,18 @@
     "pascal-case": "^3.1.2",
     "projen": "^0.17.78",
     "standard-version": "^9",
-    "ts-node": "^9.1.1",
     "typescript": "^4.2.4",
     "yaml": "^1.10.2"
   },
   "peerDependencies": {
     "@aws-cdk/aws-certificatemanager": "^1.100.0",
+    "@aws-cdk/aws-cloudfront": "^1.100.0",
+    "@aws-cdk/aws-cloudfront-origins": "^1.100.0",
     "@aws-cdk/aws-cloudwatch": "^1.100.0",
     "@aws-cdk/aws-lambda": "^1.100.0",
     "@aws-cdk/aws-route53": "^1.100.0",
+    "@aws-cdk/aws-s3": "^1.100.0",
+    "@aws-cdk/aws-s3-deployment": "^1.100.0",
     "@aws-cdk/aws-sns": "^1.100.0",
     "@aws-cdk/core": "^1.100.0",
     "@aws-cdk/cx-api": "^1.100.0",
@@ -76,15 +78,22 @@
   },
   "dependencies": {
     "@aws-cdk/aws-certificatemanager": "^1.100.0",
+    "@aws-cdk/aws-cloudfront": "^1.100.0",
+    "@aws-cdk/aws-cloudfront-origins": "^1.100.0",
     "@aws-cdk/aws-cloudwatch": "^1.100.0",
     "@aws-cdk/aws-lambda": "^1.100.0",
     "@aws-cdk/aws-route53": "^1.100.0",
+    "@aws-cdk/aws-s3": "^1.100.0",
+    "@aws-cdk/aws-s3-deployment": "^1.100.0",
     "@aws-cdk/aws-sns": "^1.100.0",
     "@aws-cdk/core": "^1.100.0",
     "@aws-cdk/cx-api": "^1.100.0",
-    "cdk-watchful": "^0.5.129"
+    "cdk-watchful": "^0.5.129",
+    "construct-hub-webapp": "^0.1.4"
   },
-  "bundledDependencies": [],
+  "bundledDependencies": [
+    "construct-hub-webapp"
+  ],
   "keywords": [
     "aws",
     "aws-cdk",

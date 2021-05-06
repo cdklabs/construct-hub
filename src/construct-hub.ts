@@ -5,27 +5,13 @@ import { Construct as CoreConstruct } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { Dummy } from './dummy';
 import { Monitoring } from './monitoring';
+import { WebApp } from './webapp';
 
 export interface ConstructHubProps {
   /**
-   * The root domain name where this instance of Construct Hub will be served.
+   * Connect the hub to a domain (requires a hosted zone and a certificate).
    */
-  readonly hostedZone: route53.IHostedZone;
-
-  /**
-   * The certificate to use for serving the Construct Hub over a custom domain.
-   *
-   * @default - a DNS-Validated certificate will be provisioned using the
-   *            provided `hostedZone`.
-   */
-  readonly tlsCertificate?: certificatemanager.ICertificate;
-
-  /**
-   * An optional path prefix to use for serving the Construct Hub.
-   *
-   * @default - none.
-   */
-  readonly pathPrefix?: string;
+  readonly domain?: WebAppDomain;
 
   /**
    * Contact URLs to be used for contacting this Construct Hub operators.
@@ -57,6 +43,21 @@ export interface ConstructHubProps {
   readonly dashboardName?: string;
 }
 
+export interface WebAppDomain {
+  /**
+   * The root domain name where this instance of Construct Hub will be served.
+   */
+  readonly zone: route53.IHostedZone;
+
+  /**
+    * The certificate to use for serving the Construct Hub over a custom domain.
+    *
+    * @default - a DNS-Validated certificate will be provisioned using the
+    *            provided `hostedZone`.
+    */
+  readonly cert: certificatemanager.ICertificate;
+}
+
 export interface ContactURLs {
   /**
    * The URL to the issue tracker or documentation for reporting security
@@ -83,11 +84,15 @@ export interface ContactURLs {
 }
 
 export class ConstructHub extends CoreConstruct {
-  public constructor(scope: Construct, id: string, _props: ConstructHubProps) {
+  public constructor(scope: Construct, id: string, props: ConstructHubProps = {}) {
     super(scope, id);
 
     // add some dummy resources so that we have _something_ to monitor.
     new Dummy(this, 'Dummy');
+
+    new WebApp(this, 'WebApp', {
+      domain: props.domain,
+    });
 
     new Monitoring(this, 'Monitoring', {
       watchScope: this,

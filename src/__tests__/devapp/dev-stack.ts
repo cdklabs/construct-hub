@@ -1,4 +1,3 @@
-import * as route53 from '@aws-cdk/aws-route53';
 import { Construct, Stack } from '@aws-cdk/core';
 import { ConstructHub } from '../..';
 
@@ -11,12 +10,6 @@ export class DevStack extends Stack {
       },
     });
 
-    const zone = new route53.HostedZone(this, 'HostedZone', {
-      zoneName: 'hub.constructs.test',
-    });
-
-    new ConstructHub(this, 'ConstructHub', {
-      hostedZone: zone,
-    });
+    new ConstructHub(this, 'ConstructHub');
   }
 }
