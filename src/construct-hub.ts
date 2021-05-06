@@ -4,8 +4,8 @@ import * as sns from '@aws-cdk/aws-sns';
 import { Construct as CoreConstruct } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { Dummy } from './dummy';
-import { WebApp } from './webapp';
 import { Monitoring } from './monitoring';
+import { WebApp } from './webapp';
 
 export interface ConstructHubProps {
   /**

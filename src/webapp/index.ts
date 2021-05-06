@@ -36,14 +36,16 @@ export class WebApp extends Construct {
     super(scope, id);
     this.bucket = new s3.Bucket(this, 'WebsiteBucket', {
       websiteIndexDocument: 'index.html',
-      publicReadAccess: false
+      publicReadAccess: false,
     });
 
     this.distribution = new cloudfront.Distribution(this, 'Distribution', {
       defaultBehavior: { origin: new origins.S3Origin(this.bucket) },
     });
 
-    const webappDir = path.join(require.resolve('construct-hub-webapp'), 'build');
+    // since `construct-hub-web` does not have an index file, we need to resolve
+    // a specific file inside the module.
+    const webappDir = path.dirname(require.resolve('construct-hub-webapp/build/index.html'));
     new s3deploy.BucketDeployment(this, 'DeployWebsite', {
       sources: [s3deploy.Source.asset(webappDir)],
       destinationBucket: this.bucket,

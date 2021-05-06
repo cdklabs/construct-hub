@@ -1,6 +1,6 @@
 const { readdirSync, statSync, existsSync } = require('fs');
 const { join } = require('path');
-const { AwsCdkConstructLibrary, SourceCode, FileBase } = require('projen');
+const { AwsCdkConstructLibrary, SourceCode, FileBase, JsonFile } = require('projen');
 
 const project = new AwsCdkConstructLibrary({
   jsiiFqn: 'projen.AwsCdkConstructLibrary',
@@ -51,6 +51,10 @@ const project = new AwsCdkConstructLibrary({
     'cdk-watchful@^0.5.129',
   ],
 
+  bundledDeps: [
+    'construct-hub-webapp',
+  ],
+
   minNodeVersion: '12.0.0',
 
   pullRequestTemplateContents: [
@@ -72,8 +76,8 @@ const project = new AwsCdkConstructLibrary({
 
 function addDevApp() {
   // add "dev:xxx" tasks for interacting with the dev stack
-  const devapp = project.testdir + '/devapp';
-  const commands = ['bootstrap', 'synth', 'diff', 'deploy'];
+  const devapp = 'lib/__tests__/devapp';
+  const commands = ['synth', 'diff', 'deploy'];
   for (const cmd of commands) {
     project.addTask(`dev:${cmd}`, {
       description: `cdk ${cmd}`,
@@ -83,8 +87,27 @@ function addDevApp() {
   }
 
   project.gitignore.addPatterns(`${devapp}/cdk.out`);
-  project.addDevDeps('ts-node');
   project.addDevDeps(`aws-cdk@${project.cdkVersion}`);
+
+  new JsonFile(project, `${devapp}/cdk.json`, {
+    obj: {
+      app: 'node main.js',
+      context: {
+        '@aws-cdk/core:newStyleStackSynthesis': true,
+        '@aws-cdk/aws-apigateway:usagePlanKeyOrderInsensitiveId': true,
+        '@aws-cdk/core:enableStackNameDuplicates': 'true',
+        'aws-cdk:enableDiffNoFail': 'true',
+        '@aws-cdk/core:stackRelativeExports': 'true',
+        '@aws-cdk/aws-ecr-assets:dockerIgnoreSupport': true,
+        '@aws-cdk/aws-secretsmanager:parseOwnedSecretName': true,
+        '@aws-cdk/aws-kms:defaultKeyPolicies': true,
+        '@aws-cdk/aws-s3:grantWriteWithoutAcl': true,
+        '@aws-cdk/aws-ecs-patterns:removeDefaultDesiredCount': true,
+        '@aws-cdk/aws-rds:lowercaseDbIdentifier': true,
+        '@aws-cdk/aws-efs:defaultEncryptionAtRest': true,
+      },
+    },
+  });
 }
 
 addDevApp();

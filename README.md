@@ -11,10 +11,15 @@ The `test/devapp` directory includes an AWS CDK app designed for deploying the
 construct hub into a development account. This app is also used as a golden
 snapshot, so every time the construct changes, you'll see its snapshot updated.
 
+To bootstrap your developer account, use the following command:
+
+```shell
+CDK_NEW_BOOTSTRAP=1 npx cdk bootstrap aws://ACCOUNT/REGION
+```
+
 Use the following tasks to work with the dev app. It will always work with the
 currently configured CLI account/region:
 
-* `yarn dev:bootstrap` - bootstrap the environment
 * `yarn dev:synth` - synthesize into `test/devapp/cdk.out`
 * `yarn dev:deploy` - deploy to the current environment
 * `yarn dev:diff` - diff against the current environment
