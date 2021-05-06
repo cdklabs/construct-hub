@@ -1,15 +1,12 @@
-import { join } from 'path';
-import { Runtime } from '@aws-cdk/aws-lambda';
-import { NodejsFunction } from '@aws-cdk/aws-lambda-nodejs';
 import { Construct } from '@aws-cdk/core';
+import { Foo } from './foo';
+import { Hello } from './hello';
 
 export class Dummy extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    new NodejsFunction(this, 'handler', {
-      runtime: Runtime.NODEJS_14_X,
-      entry: join(__dirname, 'handler.js'),
-    });
+    new Hello(this, 'Hello');
+    new Foo(this, 'Foo');
   }
 }
