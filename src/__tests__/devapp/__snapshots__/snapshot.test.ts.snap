@@ -2,10 +2,6 @@
 
 exports[`golden snapshot 1`] = `
 Resources:
-  HostedZoneDB99F866:
-    Type: AWS::Route53::HostedZone
-    Properties:
-      Name: hub.constructs.test.
   ConstructHubDummyhandlerServiceRoleBDB01E7B:
     Type: AWS::IAM::Role
     Properties:
@@ -54,11 +50,35 @@ Resources:
       - ConstructHubDummyhandlerServiceRoleBDB01E7B
   ConstructHubWebAppWebsiteBucket4B2B9DB2:
     Type: AWS::S3::Bucket
-    Properties:
-      WebsiteConfiguration:
-        IndexDocument: index.html
     UpdateReplacePolicy: Retain
     DeletionPolicy: Retain
+  ConstructHubWebAppWebsiteBucketPolicy17174C06:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
+      PolicyDocument:
+        Statement:
+          - Action: s3:GetObject
+            Effect: Allow
+            Principal:
+              CanonicalUser:
+                Fn::GetAtt:
+                  - ConstructHubWebAppDistributionOrigin1S3Origin694AF937
+                  - S3CanonicalUserId
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubWebAppWebsiteBucket4B2B9DB2
+                      - Arn
+                  - /*
+        Version: 2012-10-17
+  ConstructHubWebAppDistributionOrigin1S3Origin694AF937:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: Identity for devConstructHubWebAppDistributionOrigin1FBBA04AE
   ConstructHubWebAppDistribution1F181DC9:
     Type: AWS::CloudFront::Distribution
     Properties:
@@ -68,23 +88,22 @@ Resources:
           Compress: true
           TargetOriginId: devConstructHubWebAppDistributionOrigin1FBBA04AE
           ViewerProtocolPolicy: allow-all
+        DefaultRootObject: index.html
         Enabled: true
         HttpVersion: http2
         IPV6Enabled: true
         Origins:
-          - CustomOriginConfig:
-              OriginProtocolPolicy: http-only
-              OriginSSLProtocols:
-                - TLSv1.2
-            DomainName:
-              Fn::Select:
-                - 2
-                - Fn::Split:
-                    - /
-                    - Fn::GetAtt:
-                        - ConstructHubWebAppWebsiteBucket4B2B9DB2
-                        - WebsiteURL
+          - DomainName:
+              Fn::GetAtt:
+                - ConstructHubWebAppWebsiteBucket4B2B9DB2
+                - RegionalDomainName
             Id: devConstructHubWebAppDistributionOrigin1FBBA04AE
+            S3OriginConfig:
+              OriginAccessIdentity:
+                Fn::Join:
+                  - ""
+                  - - origin-access-identity/cloudfront/
+                    - Ref: ConstructHubWebAppDistributionOrigin1S3Origin694AF937
   ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1:
     Type: AWS::Lambda::LayerVersion
     Properties:
@@ -325,6 +344,13 @@ Resources:
       - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF
       - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265
 Outputs:
+  ConstructHubWebAppDomainNAmeF5298649:
+    Value:
+      Fn::GetAtt:
+        - ConstructHubWebAppDistribution1F181DC9
+        - DomainName
+    Export:
+      Name: ConstructHubDomainName
   ConstructHubMonitoringWatchfulWatchfulDashboard75D318D0:
     Value:
       Fn::Join:
