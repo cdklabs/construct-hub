@@ -126,9 +126,9 @@ function newLambdaHandler(entrypoint) {
 
   const base = basename(entrypoint, '.lambda.ts');
   const dir = join(dirname(entrypoint), base);
-  const entry = `src/${entrypoint}`;
-  const infra = `src/${dir}.ts`;
-  const outdir = `lib/${dir}.bundle`;
+  const entry = `${project.srcdir}/${entrypoint}`;
+  const infra = `${project.srcdir}/${dir}.ts`;
+  const outdir = `${project.libdir}/${dir}.bundle`;
   const outfile = `${outdir}/index.js`;
   const className = pascalCase(basename(dir));
   const propsName = `${className}Props`;
