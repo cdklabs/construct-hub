@@ -50,10 +50,6 @@ const project = new AwsCdkConstructLibrary({
     'cdk-watchful@^0.5.129',
   ],
 
-  bundledDeps: [
-    'construct-hub-webapp',
-  ],
-
   minNodeVersion: '12.0.0',
 
   pullRequestTemplateContents: [
@@ -206,6 +202,14 @@ function discoverLambdas() {
     newLambdaHandler(entry);
   }
 }
+
+// extract the "build/" directory from "construct-hub-webapp" into "./website"
+// and bundle it with this library. this way, we are only taking a
+// dev-dependency on the webapp instead of a normal/bundled dependency.
+project.addDevDeps('construct-hub-webapp');
+project.compileTask.prependExec('mv node_modules/construct-hub-webapp/build ./website');
+project.npmignore.addPatterns('!/website'); // <-- include in tarball
+project.gitignore.addPatterns('/website'); // <-- don't commit
 
 addDevApp();
 discoverLambdas();

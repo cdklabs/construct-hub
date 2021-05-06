@@ -31,7 +31,7 @@ export class WebApp extends Construct {
 
     // since `construct-hub-web` does not have an index file, we need to resolve
     // a specific file inside the module.
-    const webappDir = path.dirname(require.resolve('construct-hub-webapp/build/index.html'));
+    const webappDir = path.join(__dirname, '..', '..', 'website');
     new s3deploy.BucketDeployment(this, 'DeployWebsite', {
       sources: [s3deploy.Source.asset(webappDir)],
       destinationBucket: this.bucket,

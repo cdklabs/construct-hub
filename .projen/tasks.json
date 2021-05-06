@@ -63,6 +63,9 @@
       "description": "Only compile",
       "steps": [
         {
+          "exec": "mv node_modules/construct-hub-webapp/build ./website"
+        },
+        {
           "exec": "jsii --silence-warnings=reserved-word --no-fix-peer-dependencies"
         },
         {
