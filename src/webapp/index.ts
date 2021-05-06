@@ -1,11 +1,10 @@
 import * as path from 'path';
-import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
 import * as cloudfront from '@aws-cdk/aws-cloudfront';
 import * as origins from '@aws-cdk/aws-cloudfront-origins';
-import * as route53 from '@aws-cdk/aws-route53';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
 import { CfnOutput, Construct } from '@aws-cdk/core';
+import { WebAppDomain } from '../construct-hub';
 
 export interface WebAppProps {
   /**
@@ -13,21 +12,6 @@ export interface WebAppProps {
    * @default - uses the default CloudFront domain.
    */
   readonly domain?: WebAppDomain;
-}
-
-export interface WebAppDomain {
-  /**
-   * The root domain name where this instance of Construct Hub will be served.
-   */
-  readonly zone: route53.IHostedZone;
-
-  /**
-    * The certificate to use for serving the Construct Hub over a custom domain.
-    *
-    * @default - a DNS-Validated certificate will be provisioned using the
-    *            provided `hostedZone`.
-    */
-  readonly cert: certificatemanager.ICertificate;
 }
 
 export class WebApp extends Construct {

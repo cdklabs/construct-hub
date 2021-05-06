@@ -1,9 +1,11 @@
+import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
+import * as route53 from '@aws-cdk/aws-route53';
 import * as sns from '@aws-cdk/aws-sns';
 import { Construct as CoreConstruct } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { Dummy } from './dummy';
 import { Monitoring } from './monitoring';
-import { WebAppDomain, WebApp } from './webapp';
+import { WebApp } from './webapp';
 
 export interface ConstructHubProps {
   /**
@@ -41,6 +43,20 @@ export interface ConstructHubProps {
   readonly dashboardName?: string;
 }
 
+export interface WebAppDomain {
+  /**
+   * The root domain name where this instance of Construct Hub will be served.
+   */
+  readonly zone: route53.IHostedZone;
+
+  /**
+    * The certificate to use for serving the Construct Hub over a custom domain.
+    *
+    * @default - a DNS-Validated certificate will be provisioned using the
+    *            provided `hostedZone`.
+    */
+  readonly cert: certificatemanager.ICertificate;
+}
 
 export interface ContactURLs {
   /**
