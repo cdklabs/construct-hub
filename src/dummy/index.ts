@@ -7,9 +7,9 @@ export class Dummy extends Construct {
   constructor(scope: Construct, id: string) {
     super(scope, id);
 
-    new NodejsFunction(this, 'NodejsFunction', {
-      entry: join(__dirname, 'handler.ts'),
+    new NodejsFunction(this, 'handler', {
       runtime: Runtime.NODEJS_14_X,
+      entry: join(__dirname, 'handler.js'),
     });
   }
 }

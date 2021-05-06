@@ -35,12 +35,12 @@
     "organization": true
   },
   "devDependencies": {
-    "@aws-cdk/assert": "^1.101.0",
+    "@aws-cdk/assert": "^1.100.0",
     "@types/jest": "^26.0.23",
     "@types/node": "^12.0.0",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
-    "aws-cdk": "^1.101.0",
+    "aws-cdk": "^1.100.0",
     "esbuild": "^0.11.18",
     "eslint": "^7.25.0",
     "eslint-import-resolver-node": "^0.3.4",
@@ -53,43 +53,42 @@
     "jsii-docgen": "^1.8.70",
     "jsii-pacmak": "^1.29.0",
     "json-schema": "^0.3.0",
-    "projen": "^0.17.75",
+    "projen": "^0.17.78",
     "standard-version": "^9",
-    "ts-jest": "^26.5.5",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.4",
     "yaml": "^1.10.2"
   },
   "peerDependencies": {
-    "@aws-cdk/aws-certificatemanager": "^1.101.0",
-    "@aws-cdk/aws-cloudfront": "^1.101.0",
-    "@aws-cdk/aws-cloudfront-origins": "^1.101.0",
-    "@aws-cdk/aws-cloudwatch": "^1.101.0",
-    "@aws-cdk/aws-lambda": "^1.101.0",
-    "@aws-cdk/aws-lambda-nodejs": "^1.101.0",
-    "@aws-cdk/aws-route53": "^1.101.0",
-    "@aws-cdk/aws-s3": "^1.101.0",
-    "@aws-cdk/aws-s3-deployment": "^1.101.0",
-    "@aws-cdk/aws-sns": "^1.101.0",
-    "@aws-cdk/core": "^1.101.0",
-    "@aws-cdk/cx-api": "^1.101.0",
-    "cdk-watchful": "^0.5.133",
+    "@aws-cdk/aws-certificatemanager": "^1.100.0",
+    "@aws-cdk/aws-cloudfront": "^1.100.0",
+    "@aws-cdk/aws-cloudfront-origins": "^1.100.0",
+    "@aws-cdk/aws-cloudwatch": "^1.100.0",
+    "@aws-cdk/aws-lambda": "^1.100.0",
+    "@aws-cdk/aws-lambda-nodejs": "^1.100.0",
+    "@aws-cdk/aws-route53": "^1.100.0",
+    "@aws-cdk/aws-s3": "^1.100.0",
+    "@aws-cdk/aws-s3-deployment": "^1.100.0",
+    "@aws-cdk/aws-sns": "^1.100.0",
+    "@aws-cdk/core": "^1.100.0",
+    "@aws-cdk/cx-api": "^1.100.0",
+    "cdk-watchful": "^0.5.129",
     "constructs": "^3.2.27"
   },
   "dependencies": {
-    "@aws-cdk/aws-certificatemanager": "^1.101.0",
-    "@aws-cdk/aws-cloudfront": "^1.101.0",
-    "@aws-cdk/aws-cloudfront-origins": "^1.101.0",
-    "@aws-cdk/aws-cloudwatch": "^1.101.0",
-    "@aws-cdk/aws-lambda": "^1.101.0",
-    "@aws-cdk/aws-lambda-nodejs": "^1.101.0",
-    "@aws-cdk/aws-route53": "^1.101.0",
-    "@aws-cdk/aws-s3": "^1.101.0",
-    "@aws-cdk/aws-s3-deployment": "^1.101.0",
-    "@aws-cdk/aws-sns": "^1.101.0",
-    "@aws-cdk/core": "^1.101.0",
-    "@aws-cdk/cx-api": "^1.101.0",
-    "cdk-watchful": "^0.5.133"
+    "@aws-cdk/aws-certificatemanager": "^1.100.0",
+    "@aws-cdk/aws-cloudfront": "^1.100.0",
+    "@aws-cdk/aws-cloudfront-origins": "^1.100.0",
+    "@aws-cdk/aws-cloudwatch": "^1.100.0",
+    "@aws-cdk/aws-lambda": "^1.100.0",
+    "@aws-cdk/aws-lambda-nodejs": "^1.100.0",
+    "@aws-cdk/aws-route53": "^1.100.0",
+    "@aws-cdk/aws-s3": "^1.100.0",
+    "@aws-cdk/aws-s3-deployment": "^1.100.0",
+    "@aws-cdk/aws-sns": "^1.100.0",
+    "@aws-cdk/core": "^1.100.0",
+    "@aws-cdk/cx-api": "^1.100.0",
+    "cdk-watchful": "^0.5.129"
   },
   "bundledDependencies": [],
   "keywords": [
@@ -111,8 +110,7 @@
   "version": "0.0.0",
   "jest": {
     "testMatch": [
-      "**/__tests__/**/*.ts?(x)",
-      "**/?(*.)+(spec|test).ts?(x)"
+      "**/lib/__tests__/**/?(*.)+(spec|test).js?(x)"
     ],
     "clearMocks": true,
     "collectCoverage": true,
@@ -130,7 +128,8 @@
       "/node_modules/"
     ],
     "watchPathIgnorePatterns": [
-      "/node_modules/"
+      "/node_modules/",
+      "/src/"
     ],
     "reporters": [
       "default",
@@ -141,12 +140,7 @@
         }
       ]
     ],
-    "preset": "ts-jest",
-    "globals": {
-      "ts-jest": {
-        "tsconfig": "tsconfig.jest.json"
-      }
-    }
+    "snapshotResolver": "./.projen/jest-snapshot-resolver.js"
   },
   "types": "lib/index.d.ts",
   "stability": "experimental",

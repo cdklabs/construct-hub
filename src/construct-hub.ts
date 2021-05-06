@@ -1,7 +1,8 @@
 import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
 import * as route53 from '@aws-cdk/aws-route53';
 import * as sns from '@aws-cdk/aws-sns';
-import { Construct } from '@aws-cdk/core';
+import { Construct as CoreConstruct } from '@aws-cdk/core';
+import { Construct } from 'constructs';
 import { Dummy } from './dummy';
 import { WebApp } from './webapp';
 import { Monitoring } from './monitoring';
@@ -82,7 +83,7 @@ export interface ContactURLs {
   readonly other?: string;
 }
 
-export class ConstructHub extends Construct {
+export class ConstructHub extends CoreConstruct {
   public constructor(scope: Construct, id: string, props: ConstructHubProps) {
     super(scope, id);
 
