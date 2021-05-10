@@ -1,6 +1,8 @@
 import * as path from 'path';
 import * as cloudfront from '@aws-cdk/aws-cloudfront';
 import * as origins from '@aws-cdk/aws-cloudfront-origins';
+import * as r53 from '@aws-cdk/aws-route53';
+import * as r53targets from '@aws-cdk/aws-route53-targets';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
 import { CfnOutput, Construct } from '@aws-cdk/core';
@@ -28,6 +30,23 @@ export class WebApp extends Construct {
       certificate: props.domain ? props.domain.cert : undefined,
       defaultRootObject: 'index.html',
     });
+
+    // if we use a domain, and A records with a CloudFront alias
+    if (props.domain) {
+      // IPv4
+      new r53.ARecord(this, 'ARecord', {
+        zone: props.domain.zone,
+        target: r53.RecordTarget.fromAlias(new r53targets.CloudFrontTarget(this.distribution)),
+        comment: 'Created by the AWS CDK',
+      });
+
+      // IPv6
+      new r53.AaaaRecord(this, 'AaaaRecord', {
+        zone: props.domain.zone,
+        target: r53.RecordTarget.fromAlias(new r53targets.CloudFrontTarget(this.distribution)),
+        comment: 'Created by the AWS CDK',
+      });
+    }
 
     // since `construct-hub-web` does not have an index file, we need to resolve
     // a specific file inside the module.
