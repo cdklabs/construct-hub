@@ -23,12 +23,16 @@ export class WebApp extends Construct {
     super(scope, id);
 
     this.bucket = new s3.Bucket(this, 'WebsiteBucket');
-
     this.distribution = new cloudfront.Distribution(this, 'Distribution', {
       defaultBehavior: { origin: new origins.S3Origin(this.bucket) },
       domainNames: props.domain ? [props.domain.zone.zoneName] : undefined,
       certificate: props.domain ? props.domain.cert : undefined,
       defaultRootObject: 'index.html',
+      errorResponses: [404, 403].map(httpStatus => ( {
+        httpStatus,
+        responseHttpStatus: 200,
+        responsePagePath: '/index.html',
+      })),
     });
 
     // if we use a domain, and A records with a CloudFront alias
