@@ -4,8 +4,6 @@ const { pascalCase } = require('pascal-case');
 const { AwsCdkConstructLibrary, SourceCode, FileBase, JsonFile } = require('projen');
 
 const project = new AwsCdkConstructLibrary({
-  jsiiFqn: 'projen.AwsCdkConstructLibrary',
-
   name: 'construct-hub',
   description: 'A construct library that model Construct Hub instances.',
   keywords: ['aws', 'aws-cdk', 'constructs', 'construct-hub'],
