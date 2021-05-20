@@ -123,6 +123,12 @@ Resources:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
+        CacheBehaviors:
+          - CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+            Compress: true
+            PathPattern: /packages/*
+            TargetOriginId: devConstructHubWebAppDistributionOrigin2A726FD66
+            ViewerProtocolPolicy: allow-all
         CustomErrorResponses:
           - ErrorCode: 404
             ResponseCode: 200
@@ -151,6 +157,12 @@ Resources:
                   - ""
                   - - origin-access-identity/cloudfront/
                     - Ref: ConstructHubWebAppDistributionOrigin1S3Origin694AF937
+          - CustomOriginConfig:
+              OriginProtocolPolicy: https-only
+              OriginSSLProtocols:
+                - TLSv1.2
+            DomainName: awscdk.io
+            Id: devConstructHubWebAppDistributionOrigin2A726FD66
   ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1:
     Type: AWS::Lambda::LayerVersion
     Properties:
