@@ -165,6 +165,7 @@ function newLambdaHandler(entrypoint) {
 
   const ts = new SourceCode(project, infra);
   ts.line(`// ${FileBase.PROJEN_MARKER}`);
+  ts.line('import * as path from \'path\';');
   ts.line('import * as lambda from \'@aws-cdk/aws-lambda\';');
   ts.line('import { Construct } from \'constructs\';');
   ts.line();
@@ -176,7 +177,7 @@ function newLambdaHandler(entrypoint) {
   ts.open('super(scope, id, {');
   ts.line('runtime: lambda.Runtime.NODEJS_14_X,');
   ts.line('handler: \'index.handler\',');
-  ts.line(`code: lambda.Code.fromAsset(__dirname + '/${basename(outdir)}'),`);
+  ts.line(`code: lambda.Code.fromAsset(path.resolve(__dirname, '/${basename(outdir)}')),`);
   ts.line('...props,');
   ts.close('});');
   ts.close('}');
