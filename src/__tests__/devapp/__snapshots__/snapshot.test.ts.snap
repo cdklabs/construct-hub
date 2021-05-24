@@ -2,6 +2,8 @@
 
 exports[`golden snapshot 1`] = `
 Resources:
+  TopicBFC7AF6E:
+    Type: AWS::SNS::Topic
   ConstructHubMonitoringWatchfulDashboardB8493D55:
     Type: AWS::CloudWatch::Dashboard
     Properties:
@@ -82,9 +84,7 @@ Resources:
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 3
       AlarmActions:
-        - arn:aws:cloudwatch::cwa-internal:ticket:3:AWS:SDKs and Tools:Public
-          Construct Hub:Construct
-          Ecosystem:c8e489ae94fdf28e056e540c78ef030740a48e9778
+        - Ref: TopicBFC7AF6E
       AlarmDescription: Over 0 errors per minute
       Dimensions:
         - Name: FunctionName
@@ -101,9 +101,7 @@ Resources:
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 3
       AlarmActions:
-        - arn:aws:cloudwatch::cwa-internal:ticket:3:AWS:SDKs and Tools:Public
-          Construct Hub:Construct
-          Ecosystem:c8e489ae94fdf28e056e540c78ef030740a48e9778
+        - Ref: TopicBFC7AF6E
       AlarmDescription: Over 0 throttles per minute
       Dimensions:
         - Name: FunctionName
@@ -120,9 +118,7 @@ Resources:
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 3
       AlarmActions:
-        - arn:aws:cloudwatch::cwa-internal:ticket:3:AWS:SDKs and Tools:Public
-          Construct Hub:Construct
-          Ecosystem:c8e489ae94fdf28e056e540c78ef030740a48e9778
+        - Ref: TopicBFC7AF6E
       AlarmDescription: p99 latency >= 2s (80%)
       Metrics:
         - Id: m1
@@ -145,9 +141,7 @@ Resources:
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 3
       AlarmActions:
-        - arn:aws:cloudwatch::cwa-internal:ticket:3:AWS:SDKs and Tools:Public
-          Construct Hub:Construct
-          Ecosystem:c8e489ae94fdf28e056e540c78ef030740a48e9778
+        - Ref: TopicBFC7AF6E
       AlarmDescription: Over 0 errors per minute
       Dimensions:
         - Name: FunctionName
@@ -164,9 +158,7 @@ Resources:
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 3
       AlarmActions:
-        - arn:aws:cloudwatch::cwa-internal:ticket:3:AWS:SDKs and Tools:Public
-          Construct Hub:Construct
-          Ecosystem:c8e489ae94fdf28e056e540c78ef030740a48e9778
+        - Ref: TopicBFC7AF6E
       AlarmDescription: Over 0 throttles per minute
       Dimensions:
         - Name: FunctionName
@@ -183,9 +175,7 @@ Resources:
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 3
       AlarmActions:
-        - arn:aws:cloudwatch::cwa-internal:ticket:3:AWS:SDKs and Tools:Public
-          Construct Hub:Construct
-          Ecosystem:c8e489ae94fdf28e056e540c78ef030740a48e9778
+        - Ref: TopicBFC7AF6E
       AlarmDescription: p99 latency >= 2s (80%)
       Metrics:
         - Id: m1
@@ -292,9 +282,7 @@ Resources:
       ComparisonOperator: GreaterThanOrEqualToThreshold
       EvaluationPeriods: 1
       AlarmActions:
-        - arn:aws:cloudwatch::cwa-internal:ticket:2.5:AWS:SDKs and Tools:Public
-          Construct Hub:Construct
-          Ecosystem:c8e489ae94fdf28e056e540c78ef030740a48e9778
+        - Ref: TopicBFC7AF6E
       AlarmDescription:
         Fn::Join:
           - ""
