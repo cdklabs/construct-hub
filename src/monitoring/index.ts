@@ -18,9 +18,10 @@ export interface MonitoringProps {
  * Construct hub monitoring.
  *
  * This construct uses cdk-watchful to automatically generate a dashboard and a
- * set of standard alarms for all CDK resources in the construct hub.
- * Additionally, components may use the APIs of this module to add additional
- * canaries or alarms as needed.
+ * set of standard alarms for common resources.
+ * 
+ * Components should use the APIs of this module to add watchful monitors,
+ * and add canaries and alarms as needed.
  */
 export class Monitoring extends Construct {
   private alarmActions: MonitoringAlarmActions;
