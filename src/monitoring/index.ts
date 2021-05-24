@@ -46,7 +46,8 @@ export class Monitoring extends Construct {
 
     this.watchful = new Watchful(this, 'Watchful', {
       dashboardName: props.dashboardName ?? 'construct-hub',
-      alarmActionArns: this.alarmActions.normalSeverity ? [this.alarmActions.normalSeverity] : [], // alarms that come from watchful are all considered normal severity
+      //TODO: uncomment when we are able to use cdk-watchful 0.5.145 or above
+      // alarmActionArns: this.alarmActions.normalSeverity ? [this.alarmActions.normalSeverity] : [], // alarms that come from watchful are all considered normal severity
     });
   }
 

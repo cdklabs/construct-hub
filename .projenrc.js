@@ -47,12 +47,12 @@ const project = new AwsCdkConstructLibrary({
   ],
 
   deps: [
-    'cdk-watchful@^0.5.146',
+    'cdk-watchful@0.5.141',
   ],
 
   peerDeps: [
     // for some reason, JSII does not allow specifying this as a normal dep, even though we don't have public APIs that use any types from it
-    'cdk-watchful@^0.5.146',
+    'cdk-watchful@0.5.141',
   ],
 
   minNodeVersion: '12.0.0',
