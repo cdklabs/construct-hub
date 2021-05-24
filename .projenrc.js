@@ -206,7 +206,7 @@ function newLambdaHandler(entrypoint) {
  */
 function discoverLambdas() {
   // allow .lambda code to import dev-deps (since they are only needed during bundling)
-  project.eslint?.allowDevDeps('src/**/*.lambda.ts');
+  project.eslint.allowDevDeps('src/**/*.lambda.ts');
   project.addDevDeps('glob');
   for (const entry of glob.sync('src/**/*.lambda.ts')) {
     newLambdaHandler(entry);
