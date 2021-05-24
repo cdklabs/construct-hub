@@ -6,7 +6,7 @@ import * as r53targets from '@aws-cdk/aws-route53-targets';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
 import { CfnOutput, Construct } from '@aws-cdk/core';
-import { WebAppDomain } from '../construct-hub';
+import { Domain } from '../api';
 import { Monitoring } from '../monitoring';
 
 export interface WebAppProps {
@@ -14,7 +14,7 @@ export interface WebAppProps {
    * Connect to a domain.
    * @default - uses the default CloudFront domain.
    */
-  readonly domain?: WebAppDomain;
+  readonly domain?: Domain;
 
   /**
    * Monitoring system.

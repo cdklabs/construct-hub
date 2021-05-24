@@ -1,7 +1,7 @@
 import * as cw from '@aws-cdk/aws-cloudwatch';
 import { Construct } from '@aws-cdk/core';
 import { Watchful } from 'cdk-watchful';
-import { MonitoringAlarmActions } from '../construct-hub';
+import { AlarmActions } from '../api';
 import { WebCanary } from './web-canary';
 
 /**
@@ -11,7 +11,13 @@ export interface MonitoringProps {
   /**
    * ARNs of alarm actions to take for various severities.
    */
-  readonly alarmActions: MonitoringAlarmActions;
+  readonly alarmActions: AlarmActions;
+
+  /**
+   * The name of the CloudWatch dashboard for this app.
+   * @default "construct-hub"
+   */
+  readonly dashboardName?: string;
 }
 
 /**
@@ -24,7 +30,7 @@ export interface MonitoringProps {
  * and add canaries and alarms as needed.
  */
 export class Monitoring extends Construct {
-  private alarmActions: MonitoringAlarmActions;
+  private alarmActions: AlarmActions;
 
   /**
    * Allows adding automatic monitoring to standard resources. Note that
@@ -39,7 +45,7 @@ export class Monitoring extends Construct {
     this.alarmActions = props.alarmActions;
 
     this.watchful = new Watchful(this, 'Watchful', {
-      dashboardName: 'construct-hub',
+      dashboardName: props.dashboardName ?? 'construct-hub',
       alarmActionArns: this.alarmActions.normalSeverity ? [this.alarmActions.normalSeverity] : [], // alarms that come from watchful are all considered normal severity
     });
   }
