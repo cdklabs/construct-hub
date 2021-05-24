@@ -177,7 +177,7 @@ function newLambdaHandler(entrypoint) {
   ts.open('super(scope, id, {');
   ts.line('runtime: lambda.Runtime.NODEJS_14_X,');
   ts.line('handler: \'index.handler\',');
-  ts.line(`code: lambda.Code.fromAsset(path.resolve(__dirname, '/${basename(outdir)}')),`);
+  ts.line(`code: lambda.Code.fromAsset(path.join(__dirname, '/${basename(outdir)}')),`);
   ts.line('...props,');
   ts.close('});');
   ts.close('}');

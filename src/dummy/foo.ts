@@ -11,7 +11,7 @@ export class Foo extends lambda.Function {
     super(scope, id, {
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
-      code: lambda.Code.fromAsset(path.resolve(__dirname, '/foo.bundle')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '/foo.bundle')),
       ...props,
     });
   }

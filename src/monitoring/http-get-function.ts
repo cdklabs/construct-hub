@@ -11,7 +11,7 @@ export class HttpGetFunction extends lambda.Function {
     super(scope, id, {
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
-      code: lambda.Code.fromAsset(path.resolve(__dirname, '/http-get-function.bundle')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '/http-get-function.bundle')),
       ...props,
     });
   }
