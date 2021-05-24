@@ -79,6 +79,9 @@
         },
         {
           "spawn": "bundle:hello"
+        },
+        {
+          "spawn": "bundle:http-get-function"
         }
       ]
     },
@@ -234,6 +237,21 @@
         }
       ]
     },
+    "bundle": {
+      "name": "bundle",
+      "description": "Bundle all lambda functions",
+      "steps": [
+        {
+          "spawn": "bundle:foo"
+        },
+        {
+          "spawn": "bundle:hello"
+        },
+        {
+          "spawn": "bundle:http-get-function"
+        }
+      ]
+    },
     "dev:synth": {
       "name": "dev:synth",
       "description": "cdk synth",
@@ -279,6 +297,15 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/dummy/hello.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/dummy/hello.bundle/index.js\" --external:aws-sdk"
+        }
+      ]
+    },
+    "bundle:http-get-function": {
+      "name": "bundle:http-get-function",
+      "description": "Create an AWS Lambda bundle from src/monitoring/http-get-function.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/monitoring/http-get-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitoring/http-get-function.bundle/index.js\" --external:aws-sdk"
         }
       ]
     }

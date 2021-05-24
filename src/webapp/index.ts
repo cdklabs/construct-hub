@@ -6,14 +6,20 @@ import * as r53targets from '@aws-cdk/aws-route53-targets';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
 import { CfnOutput, Construct } from '@aws-cdk/core';
-import { WebAppDomain } from '../construct-hub';
+import { Domain } from '../api';
+import { Monitoring } from '../monitoring';
 
 export interface WebAppProps {
   /**
    * Connect to a domain.
    * @default - uses the default CloudFront domain.
    */
-  readonly domain?: WebAppDomain;
+  readonly domain?: Domain;
+
+  /**
+   * Monitoring system.
+   */
+  readonly monitoring: Monitoring;
 }
 
 export class WebApp extends Construct {
@@ -56,8 +62,7 @@ export class WebApp extends Construct {
       });
     }
 
-    // since `construct-hub-web` does not have an index file, we need to resolve
-    // a specific file inside the module.
+    // "website" contains the static react app
     const webappDir = path.join(__dirname, '..', '..', 'website');
     new s3deploy.BucketDeployment(this, 'DeployWebsite', {
       sources: [s3deploy.Source.asset(webappDir)],
@@ -65,9 +70,12 @@ export class WebApp extends Construct {
       distribution: this.distribution,
     });
 
-    new CfnOutput(this, 'DomainNAme', {
+    new CfnOutput(this, 'DomainName', {
       value: this.distribution.domainName,
       exportName: 'ConstructHubDomainName',
     });
+
+    // add a canary that pings our home page and alarms if it returns errors.
+    props.monitoring.addWebCanary('HomePage', `https://${this.distribution.domainName}`);
   }
 }

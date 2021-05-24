@@ -1,3 +1,4 @@
+import * as sns from '@aws-cdk/aws-sns';
 import { Construct, Stack } from '@aws-cdk/core';
 import { ConstructHub } from '../..';
 
@@ -10,6 +11,13 @@ export class DevStack extends Stack {
       },
     });
 
-    new ConstructHub(this, 'ConstructHub');
+    const topic = new sns.Topic(this, 'Topic');
+
+    new ConstructHub(this, 'ConstructHub', {
+      alarmActions: {
+        normalSeverity: topic.topicArn,
+        highSeverity: topic.topicArn,
+      },
+    });
   }
 }

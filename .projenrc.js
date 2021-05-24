@@ -28,6 +28,9 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-cloudfront',
     '@aws-cdk/aws-cloudfront-origins',
     '@aws-cdk/aws-cloudwatch',
+    '@aws-cdk/aws-cloudwatch-actions',
+    '@aws-cdk/aws-events',
+    '@aws-cdk/aws-events-targets',
     '@aws-cdk/aws-certificatemanager',
     '@aws-cdk/aws-route53',
     '@aws-cdk/aws-route53-targets',
@@ -40,13 +43,16 @@ const project = new AwsCdkConstructLibrary({
   devDeps: [
     'yaml',
     'esbuild',
+    'got',
   ],
 
-  deps: ['cdk-watchful@^0.5.129'],
+  deps: [
+    'cdk-watchful@^0.5.146',
+  ],
 
   peerDeps: [
     // for some reason, JSII does not allow specifying this as a normal dep, even though we don't have public APIs that use any types from it
-    'cdk-watchful@^0.5.129',
+    'cdk-watchful@^0.5.146',
   ],
 
   minNodeVersion: '12.0.0',
@@ -120,6 +126,8 @@ function addDevApp() {
   });
 }
 
+const bundleTask = project.addTask('bundle', { description: 'Bundle all lambda functions' });
+
 /**
  * Generates a construct for a pre-bundled AWS Lambda function:
  *
@@ -157,6 +165,7 @@ function newLambdaHandler(entrypoint) {
 
   const ts = new SourceCode(project, infra);
   ts.line(`// ${FileBase.PROJEN_MARKER}`);
+  ts.line('import * as path from \'path\';');
   ts.line('import * as lambda from \'@aws-cdk/aws-lambda\';');
   ts.line('import { Construct } from \'constructs\';');
   ts.line();
@@ -168,7 +177,7 @@ function newLambdaHandler(entrypoint) {
   ts.open('super(scope, id, {');
   ts.line('runtime: lambda.Runtime.NODEJS_14_X,');
   ts.line('handler: \'index.handler\',');
-  ts.line(`code: lambda.Code.fromAsset(__dirname + '/${basename(outdir)}'),`);
+  ts.line(`code: lambda.Code.fromAsset(path.join(__dirname, '/${basename(outdir)}')),`);
   ts.line('...props,');
   ts.close('});');
   ts.close('}');
@@ -188,6 +197,7 @@ function newLambdaHandler(entrypoint) {
   });
 
   project.compileTask.spawn(bundle);
+  bundleTask.spawn(bundle);
   console.error(`${base}: construct "${className}" under "${infra}"`);
   console.error(`${base}: bundle task "${bundle.name}"`);
 }
@@ -196,6 +206,8 @@ function newLambdaHandler(entrypoint) {
  * Auto-discovers all lambda functions.
  */
 function discoverLambdas() {
+  // allow .lambda code to import dev-deps (since they are only needed during bundling)
+  project.eslint.allowDevDeps('src/**/*.lambda.ts');
   project.addDevDeps('glob');
   for (const entry of glob.sync('src/**/*.lambda.ts')) {
     newLambdaHandler(entry);

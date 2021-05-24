@@ -3,15 +3,15 @@ import * as path from 'path';
 import * as lambda from '@aws-cdk/aws-lambda';
 import { Construct } from 'constructs';
 
-export interface HelloProps extends lambda.FunctionOptions {
+export interface HttpGetFunctionProps extends lambda.FunctionOptions {
 }
 
-export class Hello extends lambda.Function {
-  constructor(scope: Construct, id: string, props: HelloProps = {}) {
+export class HttpGetFunction extends lambda.Function {
+  constructor(scope: Construct, id: string, props: HttpGetFunctionProps = {}) {
     super(scope, id, {
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '/hello.bundle')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '/http-get-function.bundle')),
       ...props,
     });
   }
