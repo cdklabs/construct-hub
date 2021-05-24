@@ -13,6 +13,7 @@ Name|Description
 ----|-----------
 [ConstructHubProps](#construct-hub-constructhubprops)|*No description*
 [ContactURLs](#construct-hub-contacturls)|*No description*
+[MonitoringAlarmActions](#construct-hub-monitoringalarmactions)|CloudWatch alarm actions to perform.
 [WebAppDomain](#construct-hub-webappdomain)|*No description*
 
 
@@ -30,12 +31,13 @@ __Extends__: [Construct](#aws-cdk-core-construct)
 
 
 ```ts
-new ConstructHub(scope: Construct, id: string, props?: ConstructHubProps)
+new ConstructHub(scope: Construct, id: string, props: ConstructHubProps)
 ```
 
 * **scope** (<code>[Construct](#constructs-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[ConstructHubProps](#construct-hub-constructhubprops)</code>)  *No description*
+  * **alarmActions** (<code>[MonitoringAlarmActions](#construct-hub-monitoringalarmactions)</code>)  Actions to perform when alarms are set. 
   * **contactUrls** (<code>[ContactURLs](#construct-hub-contacturls)</code>)  Contact URLs to be used for contacting this Construct Hub operators. __*Default*__: none
   * **dashboardName** (<code>string</code>)  The name of the CloudWatch Dashboard created to observe this application. __*Default*__: the path to this construct is used as the dashboard name.
   * **domain** (<code>[WebAppDomain](#construct-hub-webappdomain)</code>)  Connect the hub to a domain (requires a hosted zone and a certificate). __*Optional*__
@@ -54,6 +56,7 @@ new ConstructHub(scope: Construct, id: string, props?: ConstructHubProps)
 
 Name | Type | Description 
 -----|------|-------------
+**alarmActions**🔹 | <code>[MonitoringAlarmActions](#construct-hub-monitoringalarmactions)</code> | Actions to perform when alarms are set.
 **contactUrls**?🔹 | <code>[ContactURLs](#construct-hub-contacturls)</code> | Contact URLs to be used for contacting this Construct Hub operators.<br/>__*Default*__: none
 **dashboardName**?🔹 | <code>string</code> | The name of the CloudWatch Dashboard created to observe this application.<br/>__*Default*__: the path to this construct is used as the dashboard name.
 **domain**?🔹 | <code>[WebAppDomain](#construct-hub-webappdomain)</code> | Connect the hub to a domain (requires a hosted zone and a certificate).<br/>__*Optional*__
@@ -74,6 +77,20 @@ Name | Type | Description
 **other**?🔹 | <code>string</code> | The URL to the issue tracker or documentation for reporting other issues.<br/>__*Default*__: none
 **securityIssue**?🔹 | <code>string</code> | The URL to the issue tracker or documentation for reporting security issues.<br/>__*Default*__: none
 **unlistPackage**?🔹 | <code>string</code> | The URL to the issue tracker or documentation for requesting a package be un-listed from this Construct Hub instance.<br/>__*Default*__: none
+
+
+
+## struct MonitoringAlarmActions 🔹 <a id="construct-hub-monitoringalarmactions"></a>
+
+
+CloudWatch alarm actions to perform.
+
+
+
+Name | Type | Description 
+-----|------|-------------
+**highSeverity**🔹 | <code>string</code> | The ARN of the CloudWatch alarm action to take for alarms of high-severity alarms.
+**normalSeverity**?🔹 | <code>string</code> | The ARN of the CloudWatch alarm action to take for alarms of normal severity.<br/>__*Default*__: no actions are taken in response to alarms of normal severity
 
 
 

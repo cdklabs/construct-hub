@@ -4,10 +4,16 @@ import { PublicHostedZone } from '@aws-cdk/aws-route53';
 import { App, Stack } from '@aws-cdk/core';
 import { ConstructHub } from '../construct-hub';
 
+const dummyAlarmAction = {
+  highSeverity: 'arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE',
+};
+
 test('minimal usage', () => {
   const app = new App();
   const stack = new Stack(app, 'Test');
-  new ConstructHub(stack, 'ConstructHub');
+  new ConstructHub(stack, 'ConstructHub', {
+    alarmActions: dummyAlarmAction,
+  });
   expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
 
@@ -26,6 +32,7 @@ test('with domain', () => {
     domain: {
       zone, cert,
     },
+    alarmActions: dummyAlarmAction,
   });
 
   expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();

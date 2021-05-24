@@ -41,6 +41,11 @@ export interface ConstructHubProps {
    * @default - the path to this construct is used as the dashboard name.
    */
   readonly dashboardName?: string;
+
+  /**
+   * Actions to perform when alarms are set.
+   */
+  readonly alarmActions: MonitoringAlarmActions;
 }
 
 export interface WebAppDomain {
@@ -84,18 +89,46 @@ export interface ContactURLs {
 }
 
 export class ConstructHub extends CoreConstruct {
-  public constructor(scope: Construct, id: string, props: ConstructHubProps = {}) {
+  public constructor(scope: Construct, id: string, props: ConstructHubProps) {
     super(scope, id);
 
+    const monitoring = new Monitoring(this, 'Monitoring', {
+      alarmActions: props.alarmActions,
+    });
+
     // add some dummy resources so that we have _something_ to monitor.
-    new Dummy(this, 'Dummy');
+    new Dummy(this, 'Dummy', {
+      monitoring: monitoring,
+    });
 
     new WebApp(this, 'WebApp', {
       domain: props.domain,
-    });
-
-    new Monitoring(this, 'Monitoring', {
-      watchScope: this,
+      monitoring: monitoring,
     });
   }
+}
+
+/**
+ * CloudWatch alarm actions to perform.
+ */
+export interface MonitoringAlarmActions {
+  /**
+   * The ARN of the CloudWatch alarm action to take for alarms of high-severity
+   * alarms.
+   *
+   * This must be an ARN that can be used with CloudWatch alarms.
+   * @see https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-actions
+   */
+  readonly highSeverity: string;
+
+  /**
+   * The ARN of the CloudWatch alarm action to take for alarms of normal
+   * severity.
+   *
+   * This must be an ARN that can be used with CloudWatch alarms.
+   * @see https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-actions
+   *
+   * @default - no actions are taken in response to alarms of normal severity
+   */
+  readonly normalSeverity?: string;
 }
