@@ -101,12 +101,14 @@ test('web canaries can ping URLs and raise high severity alarms', () => {
   expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
     ComparisonOperator: 'GreaterThanOrEqualToThreshold',
     EvaluationPeriods: 1,
-    AlarmActions: ['arn:aws:sns:us-east-1:123456789012:high'],
+    AlarmActions: [
+      'arn:aws:sns:us-east-1:123456789012:high',
+    ],
     AlarmDescription: '80% error rate for https://ping1 (Ping1)',
     Metrics: [
       {
         Id: 'm1',
-        Label: 'Ping1',
+        Label: 'https://ping1 Errors',
         MetricStat: {
           Metric: {
             Dimensions: [
