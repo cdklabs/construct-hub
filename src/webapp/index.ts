@@ -76,6 +76,6 @@ export class WebApp extends Construct {
     });
 
     // add a canary that pings our home page and alarms if it returns errors.
-    props.monitoring.addWebCanary('HomePage', `https://${this.distribution.domainName}`);
+    props.monitoring.addWebCanary('Home Page', `https://${this.distribution.domainName}`);
   }
 }

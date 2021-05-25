@@ -37,7 +37,7 @@ new ConstructHub(scope: Construct, id: string, props: ConstructHubProps)
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[ConstructHubProps](#construct-hub-constructhubprops)</code>)  *No description*
   * **alarmActions** (<code>[AlarmActions](#construct-hub-alarmactions)</code>)  Actions to perform when alarms are set. 
-  * **dashboardName** (<code>string</code>)  The name of the CloudWatch Dashboard created to observe this application. __*Default*__: the path to this construct is used as the dashboard name.
+  * **dashboardName** (<code>string</code>)  The name of the CloudWatch Dashboard created to observe this application. __*Default*__: "construct-hub"
   * **domain** (<code>[Domain](#construct-hub-domain)</code>)  Connect the hub to a domain (requires a hosted zone and a certificate). __*Optional*__
 
 
@@ -67,7 +67,7 @@ Props for `ConstructHub`.
 Name | Type | Description 
 -----|------|-------------
 **alarmActions**🔹 | <code>[AlarmActions](#construct-hub-alarmactions)</code> | Actions to perform when alarms are set.
-**dashboardName**?🔹 | <code>string</code> | The name of the CloudWatch Dashboard created to observe this application.<br/>__*Default*__: the path to this construct is used as the dashboard name.
+**dashboardName**?🔹 | <code>string</code> | The name of the CloudWatch Dashboard created to observe this application.<br/>__*Default*__: "construct-hub"
 **domain**?🔹 | <code>[Domain](#construct-hub-domain)</code> | Connect the hub to a domain (requires a hosted zone and a certificate).<br/>__*Optional*__
 
 

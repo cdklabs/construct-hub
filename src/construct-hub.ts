@@ -17,7 +17,9 @@ export interface ConstructHubProps {
   /**
    * The name of the CloudWatch Dashboard created to observe this application.
    *
-   * @default - the path to this construct is used as the dashboard name.
+   * Must only contain alphanumerics, dash (-) and underscore (_).
+   *
+   * @default "construct-hub"
    */
   readonly dashboardName?: string;
 
@@ -36,7 +38,7 @@ export class ConstructHub extends CoreConstruct {
 
     const monitoring = new Monitoring(this, 'Monitoring', {
       alarmActions: props.alarmActions,
-      dashboardName: props.dashboardName,
+      dashboardName: props.dashboardName ?? 'construct-hub',
     });
 
     // add some dummy resources so that we have _something_ to monitor.

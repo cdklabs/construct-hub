@@ -277,6 +277,38 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
+    "ConstructHubMonitoringDashboard78E057C8": Object {
+      "Properties": Object {
+        "DashboardBody": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"widgets\\":[{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":0,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"https://",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubWebAppDistribution1F181DC9",
+                  "DomainName",
+                ],
+              },
+              "\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}}]}",
+            ],
+          ],
+        },
+        "DashboardName": "construct-hub-high-severity",
+      },
+      "Type": "AWS::CloudWatch::Dashboard",
+    },
     "ConstructHubMonitoringWatchfulDashboardB8493D55": Object {
       "Properties": Object {
         "DashboardBody": Object {
@@ -1609,6 +1641,38 @@ Object {
         ],
       },
       "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubMonitoringDashboard78E057C8": Object {
+      "Properties": Object {
+        "DashboardBody": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"widgets\\":[{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":0,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"https://",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubWebAppDistribution1F181DC9",
+                  "DomainName",
+                ],
+              },
+              "\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}}]}",
+            ],
+          ],
+        },
+        "DashboardName": "construct-hub-high-severity",
+      },
+      "Type": "AWS::CloudWatch::Dashboard",
     },
     "ConstructHubMonitoringWatchfulDashboardB8493D55": Object {
       "Properties": Object {

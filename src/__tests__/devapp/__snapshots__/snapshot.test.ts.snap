@@ -180,6 +180,24 @@ Resources:
             Stat: p99
           ReturnData: true
       Threshold: 2000
+  ConstructHubMonitoringDashboard78E057C8:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardBody:
+        Fn::Join:
+          - ""
+          - - '{"widgets":[{"type":"metric","width":24,"height":6,"x":0,"y":0,"properties":{"view":"timeSeries","title":"https://'
+            - Fn::GetAtt:
+                - ConstructHubWebAppDistribution1F181DC9
+                - DomainName
+            - '","region":"'
+            - Ref: AWS::Region
+            - '","annotations":{"alarms":["'
+            - Fn::GetAtt:
+                - ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002
+                - Arn
+            - '"]},"yAxis":{}}}]}'
+      DashboardName: construct-hub-high-severity
   ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionServiceRole9AAAD93C:
     Type: AWS::IAM::Role
     Properties:
