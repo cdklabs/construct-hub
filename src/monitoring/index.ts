@@ -15,9 +15,10 @@ export interface MonitoringProps {
 
   /**
    * The name of the CloudWatch dashboard for this app.
-   * @default "construct-hub"
+   *
+   * Must only contain alphanumerics, dash (-) and underscore (_).
    */
-  readonly dashboardName?: string;
+  readonly dashboardName: string;
 }
 
 /**
@@ -39,15 +40,21 @@ export class Monitoring extends Construct {
    */
   public readonly watchful: Watchful;
 
+  private readonly highSeverityDashboard: cw.Dashboard;
+
   constructor(scope: Construct, id: string, props: MonitoringProps) {
     super(scope, id);
 
     this.alarmActions = props.alarmActions;
 
     this.watchful = new Watchful(this, 'Watchful', {
-      dashboardName: props.dashboardName ?? 'construct-hub',
+      dashboardName: props.dashboardName,
       //TODO: uncomment when we are able to use cdk-watchful 0.5.145 or above
       // alarmActionArns: this.alarmActions.normalSeverity ? [this.alarmActions.normalSeverity] : [], // alarms that come from watchful are all considered normal severity
+    });
+
+    this.highSeverityDashboard = new cw.Dashboard(this, 'Dashboard', {
+      dashboardName: `${props.dashboardName}-high-severity`,
     });
   }
 
@@ -55,10 +62,16 @@ export class Monitoring extends Construct {
    * Adds a high-severity alarm. If this alarm goes off, the action specified in `highSeverityAlarmActionArn`
    * @param alarm
    */
-  public addHighSeverityAlarm(alarm: cw.Alarm) {
+  public addHighSeverityAlarm(title: string, alarm: cw.Alarm) {
     alarm.addAlarmAction({
       bind: () => ({ alarmActionArn: this.alarmActions.highSeverity }),
     });
+
+    this.highSeverityDashboard.addWidgets(new cw.AlarmWidget({
+      alarm,
+      title,
+      width: 24,
+    }));
   }
 
   /**
@@ -71,11 +84,11 @@ export class Monitoring extends Construct {
    * @param url The URL to ping
    */
   public addWebCanary(name: string, url: string) {
-    const canary = new WebCanary(this, `WebCanary${name}`, {
+    const canary = new WebCanary(this, `WebCanary${name.replace(/[^A-Z0-9]/ig, '')}`, {
       url,
       displayName: name,
     });
 
-    this.addHighSeverityAlarm(canary.alarm);
+    this.addHighSeverityAlarm(`${name} Canary`, canary.alarm);
   }
 }

@@ -49,7 +49,7 @@ export class WebCanary extends Construct {
     const errors = ping.metricErrors({
       period: Duration.minutes(5),
       statistic: 'sum',
-      label: display,
+      label: `${url} Errors`,
     });
 
     // alarm if 4 or more pings have failed within a period of 5 minutes (80% failure rate)

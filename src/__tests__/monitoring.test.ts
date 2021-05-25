@@ -15,7 +15,10 @@ test('minimal', () => {
   const stack = new Stack();
 
   // WHEN
-  new Monitoring(stack, 'Monitoring', { alarmActions: actions });
+  new Monitoring(stack, 'Monitoring', {
+    alarmActions: actions,
+    dashboardName: 'construct-hub',
+  });
 
   // a dashboard is automatically created
   expect(stack).toHaveResource('AWS::CloudWatch::Dashboard');
@@ -29,7 +32,10 @@ test('watchful can be used for setting up automatic monitoring', () => {
     code: lambda.Code.fromInline('foo'),
     handler: 'index.handler',
   });
-  const monitoring = new Monitoring(stack, 'Monitoring', { alarmActions: actions });
+  const monitoring = new Monitoring(stack, 'Monitoring', {
+    alarmActions: actions,
+    dashboardName: 'construct-hub',
+  });
 
   // WHEN
   monitoring.watchful.watchLambdaFunction('My Function', fn);
@@ -48,22 +54,45 @@ test('high severity alarms trigger the correct action', () => {
   // GIVEN
   const stack = new Stack();
   const topic = new sns.Topic(stack, 'Topic');
-  const monitoring = new Monitoring(stack, 'Monitoring', { alarmActions: actions });
+  const monitoring = new Monitoring(stack, 'Monitoring', {
+    alarmActions: actions,
+    dashboardName: 'construct-hub',
+  });
+  const alarm = topic.metricNumberOfNotificationsFailed().createAlarm(stack, 'Alarm', { threshold: 1, evaluationPeriods: 1 });
 
   // WHEN
-  monitoring.addHighSeverityAlarm(topic.metricNumberOfNotificationsFailed().createAlarm(stack, 'Alarm', { threshold: 1, evaluationPeriods: 1 }));
+  monitoring.addHighSeverityAlarm('My Alarm', alarm);
 
   // a dashboard is automatically created
   expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
     AlarmActions: ['arn:aws:sns:us-east-1:123456789012:high'],
     Dimensions: [{ Name: 'TopicName', Value: { 'Fn::GetAtt': ['TopicBFC7AF6E', 'TopicName'] } }],
   });
+
+  expect(stack).toHaveResource('AWS::CloudWatch::Dashboard', {
+    DashboardBody: {
+      'Fn::Join': [
+        '',
+        [
+          '{"widgets":[{"type":"metric","width":24,"height":6,"x":0,"y":0,"properties":{"view":"timeSeries","title":"My Alarm","region":"',
+          { Ref: 'AWS::Region' },
+          '","annotations":{"alarms":["',
+          { 'Fn::GetAtt': ['Alarm7103F465', 'Arn'] },
+          '"]},"yAxis":{}}}]}',
+        ],
+      ],
+    },
+    DashboardName: 'construct-hub-high-severity',
+  });
 });
 
 test('web canaries can ping URLs and raise high severity alarms', () => {
   // GIVEN
   const stack = new Stack();
-  const monitoring = new Monitoring(stack, 'Monitoring', { alarmActions: actions });
+  const monitoring = new Monitoring(stack, 'Monitoring', {
+    alarmActions: actions,
+    dashboardName: 'construct-hub',
+  });
 
   // WHEN
   monitoring.addWebCanary('Ping1', 'https://ping1');
@@ -72,12 +101,14 @@ test('web canaries can ping URLs and raise high severity alarms', () => {
   expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
     ComparisonOperator: 'GreaterThanOrEqualToThreshold',
     EvaluationPeriods: 1,
-    AlarmActions: ['arn:aws:sns:us-east-1:123456789012:high'],
+    AlarmActions: [
+      'arn:aws:sns:us-east-1:123456789012:high',
+    ],
     AlarmDescription: '80% error rate for https://ping1 (Ping1)',
     Metrics: [
       {
         Id: 'm1',
-        Label: 'Ping1',
+        Label: 'https://ping1 Errors',
         MetricStat: {
           Metric: {
             Dimensions: [

@@ -180,6 +180,21 @@ Resources:
             Stat: p99
           ReturnData: true
       Threshold: 2000
+  ConstructHubMonitoringDashboard78E057C8:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardBody:
+        Fn::Join:
+          - ""
+          - - '{"widgets":[{"type":"metric","width":24,"height":6,"x":0,"y":0,"properties":{"view":"timeSeries","title":"Home
+              Page Canary","region":"'
+            - Ref: AWS::Region
+            - '","annotations":{"alarms":["'
+            - Fn::GetAtt:
+                - ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002
+                - Arn
+            - '"]},"yAxis":{}}}]}'
+      DashboardName: construct-hub-high-severity
   ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionServiceRole9AAAD93C:
     Type: AWS::IAM::Role
     Properties:
@@ -226,7 +241,7 @@ Resources:
             - Fn::GetAtt:
                 - ConstructHubWebAppDistribution1F181DC9
                 - DomainName
-            - ": HomePage"
+            - ": Home Page"
       Environment:
         Variables:
           URL:
@@ -278,10 +293,17 @@ Resources:
             - Fn::GetAtt:
                 - ConstructHubWebAppDistribution1F181DC9
                 - DomainName
-            - " (HomePage)"
+            - " (Home Page)"
       Metrics:
         - Id: m1
-          Label: HomePage
+          Label:
+            Fn::Join:
+              - ""
+              - - https://
+                - Fn::GetAtt:
+                    - ConstructHubWebAppDistribution1F181DC9
+                    - DomainName
+                - " Errors"
           MetricStat:
             Metric:
               Dimensions:
