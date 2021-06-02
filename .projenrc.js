@@ -37,6 +37,7 @@ const project = new AwsCdkConstructLibrary({
     '@aws-cdk/aws-lambda',
     '@aws-cdk/aws-s3',
     '@aws-cdk/aws-s3-deployment',
+    '@aws-cdk/aws-synthetics',
     '@aws-cdk/aws-sns',
   ],
 

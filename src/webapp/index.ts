@@ -5,7 +5,8 @@ import * as r53 from '@aws-cdk/aws-route53';
 import * as r53targets from '@aws-cdk/aws-route53-targets';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
-import { CfnOutput, Construct } from '@aws-cdk/core';
+import * as synthetics from '@aws-cdk/aws-synthetics';
+import { CfnOutput, Construct, Duration } from '@aws-cdk/core';
 import { Domain } from '../api';
 import { Monitoring } from '../monitoring';
 
@@ -73,6 +74,15 @@ export class WebApp extends Construct {
     new CfnOutput(this, 'DomainName', {
       value: this.distribution.domainName,
       exportName: 'ConstructHubDomainName',
+    });
+
+    new synthetics.Canary(this, 'WebCanary', {
+      runtime: synthetics.Runtime.SYNTHETICS_NODEJS_PUPPETEER_3_1,
+      schedule: synthetics.Schedule.rate(Duration.minutes(5)),
+      test: synthetics.Test.custom({
+        code: synthetics.Code.fromAsset(path.join(__dirname, '..', 'monitoring', 'validate-headers.js')),
+        handler: 'index.handler',
+      }),
     });
 
     // add a canary that pings our home page and alarms if it returns errors.
