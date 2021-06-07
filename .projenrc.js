@@ -23,27 +23,33 @@ const project = new AwsCdkConstructLibrary({
   cdkVersion: '1.100.0',
 
   cdkDependencies: [
+    '@aws-cdk/aws-certificatemanager',
+    '@aws-cdk/aws-cloudfront-origins',
+    '@aws-cdk/aws-cloudfront',
+    '@aws-cdk/aws-cloudwatch-actions',
+    '@aws-cdk/aws-cloudwatch',
+    '@aws-cdk/aws-events-targets',
+    '@aws-cdk/aws-events',
+    '@aws-cdk/aws-lambda-event-sources',
+    '@aws-cdk/aws-lambda',
+    '@aws-cdk/aws-logs',
+    '@aws-cdk/aws-route53-targets',
+    '@aws-cdk/aws-route53',
+    '@aws-cdk/aws-s3-deployment',
+    '@aws-cdk/aws-s3',
+    '@aws-cdk/aws-s3',
+    '@aws-cdk/aws-sns',
     '@aws-cdk/core',
     '@aws-cdk/cx-api',
-    '@aws-cdk/aws-cloudfront',
-    '@aws-cdk/aws-cloudfront-origins',
-    '@aws-cdk/aws-cloudwatch',
-    '@aws-cdk/aws-cloudwatch-actions',
-    '@aws-cdk/aws-events',
-    '@aws-cdk/aws-events-targets',
-    '@aws-cdk/aws-certificatemanager',
-    '@aws-cdk/aws-route53',
-    '@aws-cdk/aws-route53-targets',
-    '@aws-cdk/aws-lambda',
-    '@aws-cdk/aws-s3',
-    '@aws-cdk/aws-s3-deployment',
-    '@aws-cdk/aws-sns',
   ],
 
   devDeps: [
-    'yaml',
+    '@types/aws-lambda',
+    'aws-sdk',
     'esbuild',
     'got',
+    'jsii-rosetta@./vendor/jsii-rosetta.tgz', // TODO: stop using vendored-in version
+    'yaml',
   ],
 
   deps: [
@@ -55,7 +61,7 @@ const project = new AwsCdkConstructLibrary({
     'cdk-watchful@0.5.140',
   ],
 
-  minNodeVersion: '12.0.0',
+  minNodeVersion: '12.4.0',
 
   pullRequestTemplateContents: [
     '',
@@ -92,7 +98,13 @@ const project = new AwsCdkConstructLibrary({
 
   // run tests from .js -- otherwise lambda bundlers get confused
   testdir: 'src/__tests__',
+
+  // Exclude handler images from TypeScript compier path
+  excludeTypescript: ['resources/**'],
 });
+
+// Required while we vendor-in jsii-rosetta to a pre-release version
+project.addFields({ resolutions: { '@jsii/spec': './vendor/jsii-spec.tgz' } });
 
 function addDevApp() {
   // add "dev:xxx" tasks for interacting with the dev stack
