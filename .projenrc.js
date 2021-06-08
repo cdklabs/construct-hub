@@ -1,9 +1,29 @@
 const { basename, join, dirname, relative } = require('path');
 const glob = require('glob');
 const { pascalCase } = require('pascal-case');
-const { AwsCdkConstructLibrary, SourceCode, FileBase, JsonFile } = require('projen');
+const { SourceCode, FileBase, JsonFile, JsiiProject } = require('projen');
 
-const project = new AwsCdkConstructLibrary({
+const cdkDeps = [
+  '@aws-cdk/core',
+  '@aws-cdk/cx-api',
+  '@aws-cdk/aws-cloudfront',
+  '@aws-cdk/aws-cloudfront-origins',
+  '@aws-cdk/aws-cloudwatch',
+  '@aws-cdk/aws-cloudwatch-actions',
+  '@aws-cdk/aws-events',
+  '@aws-cdk/aws-events-targets',
+  '@aws-cdk/aws-certificatemanager',
+  '@aws-cdk/aws-route53',
+  '@aws-cdk/aws-route53-targets',
+  '@aws-cdk/aws-lambda',
+  '@aws-cdk/aws-s3',
+  '@aws-cdk/aws-s3-deployment',
+  '@aws-cdk/aws-sns',
+  'constructs',
+  'cdk-watchful',
+];
+
+const project = new JsiiProject({
   name: 'construct-hub',
   description: 'A construct library that model Construct Hub instances.',
   keywords: ['aws', 'aws-cdk', 'constructs', 'construct-hub'],
@@ -20,40 +40,20 @@ const project = new AwsCdkConstructLibrary({
   authorAddress: 'construct-ecosystem-team@amazon.com',
   authorOrganization: true,
 
-  cdkVersion: '1.100.0',
-
-  cdkDependencies: [
-    '@aws-cdk/core',
-    '@aws-cdk/cx-api',
-    '@aws-cdk/aws-cloudfront',
-    '@aws-cdk/aws-cloudfront-origins',
-    '@aws-cdk/aws-cloudwatch',
-    '@aws-cdk/aws-cloudwatch-actions',
-    '@aws-cdk/aws-events',
-    '@aws-cdk/aws-events-targets',
-    '@aws-cdk/aws-certificatemanager',
-    '@aws-cdk/aws-route53',
-    '@aws-cdk/aws-route53-targets',
-    '@aws-cdk/aws-lambda',
-    '@aws-cdk/aws-s3',
-    '@aws-cdk/aws-s3-deployment',
-    '@aws-cdk/aws-sns',
-  ],
+  peerDependencyOptions: {
+    pinnedDevDependency: false,
+  },
 
   devDeps: [
     'yaml',
     'esbuild',
     'got',
+    'aws-cdk',
+    '@aws-cdk/assert',
   ],
 
-  deps: [
-    'cdk-watchful@0.5.140',
-  ],
-
-  peerDeps: [
-    // for some reason, JSII does not allow specifying this as a normal dep, even though we don't have public APIs that use any types from it
-    'cdk-watchful@0.5.140',
-  ],
+  deps: cdkDeps,
+  peerDeps: cdkDeps,
 
   minNodeVersion: '12.0.0',
 
@@ -107,7 +107,6 @@ function addDevApp() {
   }
 
   project.gitignore.addPatterns(`${devapp}/cdk.out`);
-  project.addDevDeps(`aws-cdk@${project.cdkVersion}`);
 
   new JsonFile(project, `${devapp}/cdk.json`, {
     obj: {
