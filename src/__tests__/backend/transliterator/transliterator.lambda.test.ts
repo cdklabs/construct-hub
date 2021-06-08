@@ -1,5 +1,5 @@
 import type * as child_process from 'child_process';
-import { randomBytes, randomInt } from 'crypto';
+import { randomBytes } from 'crypto';
 import { EventEmitter } from 'events';
 import { promises as fs } from 'fs';
 import * as path from 'path';
@@ -11,7 +11,7 @@ import * as AWSMock from 'aws-sdk-mock';
 import { TargetLanguage } from 'jsii-rosetta';
 import type { transliterateAssembly } from 'jsii-rosetta/lib/commands/transliterate';
 
-import { handler } from '../../../back-end/transliterator/transliterator.lambda';
+import { handler } from '../../../backend/transliterator/transliterator.lambda';
 
 jest.mock('child_process');
 jest.mock('jsii-rosetta/lib/commands/transliterate');
@@ -142,7 +142,7 @@ class MockChildProcess extends EventEmitter implements child_process.ChildProces
   public readonly killed = false;
   public readonly signalCode = null;
 
-  public readonly pid = randomInt(1, 65535);
+  public readonly pid = -1; // Obviously fake
 
   public constructor(public readonly spawnfile: string, public readonly spawnargs: string[], promise: Promise<unknown>) {
     super();

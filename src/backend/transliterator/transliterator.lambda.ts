@@ -1,6 +1,5 @@
 import { spawn } from 'child_process';
 import * as console from 'console';
-import { promises as fs } from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import * as process from 'process';
@@ -8,6 +7,7 @@ import * as process from 'process';
 // eslint-disable-next-line import/no-unresolved
 import type { Context, S3Event } from 'aws-lambda';
 import { S3 } from 'aws-sdk';
+import * as fs from 'fs-extra';
 import { TargetLanguage } from 'jsii-rosetta';
 import { transliterateAssembly } from 'jsii-rosetta/lib/commands/transliterate';
 
@@ -51,6 +51,8 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
       const tarball = path.join(workdir, `${packageName.replace('@', '').replace('/', '-')}-${packageVersion}.tgz`);
       await fs.writeFile(tarball, object.Body!);
       await new Promise<void>((ok, ko) => {
+        // --ignore-scripts disables lifecycle hooks, in order to prevent execution of arbitrary code
+        // --no-bin-links ensures npm does not insert anything in $PATH
         const npmInstall = spawn('npm', ['install', '--ignore-scripts', '--no-bin-links', '--no-save', tarball], {
           cwd: workdir,
           env: {
@@ -75,6 +77,8 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
         [TargetLanguage.PYTHON], // TODO: allow configuring this
       );
 
+      // Payload object key => packages/[<@scope>/]<name>/v<version>/package.tgz
+      // Output object key  => packages/[<@scope>/]<name>/v<version>/assembly-python.json
       const key = record.s3.object.key.replace(/\/[^/]+$/, '/assembly-python.json');
       const response = await client.putObject({
         Bucket: record.s3.bucket.name,
@@ -94,7 +98,7 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
         versionId: response.VersionId,
       });
     } finally {
-      await fs.rmdir(workdir, { recursive: true });
+      await fs.remove(workdir);
     }
   }
   return created;

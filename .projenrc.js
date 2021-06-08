@@ -45,11 +45,13 @@ const project = new AwsCdkConstructLibrary({
 
   devDeps: [
     '@types/aws-lambda',
+    '@types/fs-extra',
     'aws-sdk',
     'aws-sdk-mock',
     'esbuild',
+    'fs-extra',
     'got',
-    'jsii-rosetta@./vendor/jsii-rosetta.tgz', // TODO: stop using vendored-in version
+    'jsii-rosetta',
     'yaml',
   ],
 
@@ -62,7 +64,7 @@ const project = new AwsCdkConstructLibrary({
     'cdk-watchful@0.5.140',
   ],
 
-  minNodeVersion: '12.4.0',
+  minNodeVersion: '12.0.0',
 
   pullRequestTemplateContents: [
     '',
@@ -105,6 +107,7 @@ const project = new AwsCdkConstructLibrary({
 });
 
 // Required while we vendor-in jsii-rosetta to a pre-release version
+project.addDevDeps('jsii-rosetta@./vendor/jsii-rosetta.tgz');
 project.addFields({ resolutions: { '@jsii/spec': './vendor/jsii-spec.tgz' } });
 
 function addDevApp() {

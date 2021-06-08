@@ -2,7 +2,7 @@ import * as s3 from '@aws-cdk/aws-s3';
 import { Construct as CoreConstruct } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { AlarmActions, Domain } from './api';
-import { Transliterator } from './back-end';
+import { Transliterator } from './backend';
 import { Monitoring } from './monitoring';
 import { WebApp } from './webapp';
 
