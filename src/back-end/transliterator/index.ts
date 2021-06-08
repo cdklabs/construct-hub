@@ -3,7 +3,7 @@ import { RetentionDays } from '@aws-cdk/aws-logs';
 import { Bucket, EventType } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 
-import { Handler } from './handler';
+import { Transliterator as Handler } from './transliterator';
 
 export interface TransliteratorProps {
   readonly sourceBucket: Bucket;

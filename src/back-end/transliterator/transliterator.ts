@@ -3,15 +3,15 @@ import * as path from 'path';
 import * as lambda from '@aws-cdk/aws-lambda';
 import { Construct } from 'constructs';
 
-export interface HandlerProps extends lambda.FunctionOptions {
+export interface TransliteratorProps extends lambda.FunctionOptions {
 }
 
-export class Handler extends lambda.Function {
-  constructor(scope: Construct, id: string, props: HandlerProps = {}) {
+export class Transliterator extends lambda.Function {
+  constructor(scope: Construct, id: string, props: TransliteratorProps = {}) {
     super(scope, id, {
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '/handler.bundle')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '/transliterator.bundle')),
       ...props,
     });
   }

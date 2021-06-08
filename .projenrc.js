@@ -46,6 +46,7 @@ const project = new AwsCdkConstructLibrary({
   devDeps: [
     '@types/aws-lambda',
     'aws-sdk',
+    'aws-sdk-mock',
     'esbuild',
     'got',
     'jsii-rosetta@./vendor/jsii-rosetta.tgz', // TODO: stop using vendored-in version
