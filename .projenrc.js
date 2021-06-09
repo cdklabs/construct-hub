@@ -4,23 +4,25 @@ const { pascalCase } = require('pascal-case');
 const { SourceCode, FileBase, JsonFile, JsiiProject } = require('projen');
 
 const cdkDeps = [
+  '@aws-cdk/aws-certificatemanager',
+  '@aws-cdk/aws-cloudfront-origins',
+  '@aws-cdk/aws-cloudfront',
+  '@aws-cdk/aws-cloudwatch-actions',
+  '@aws-cdk/aws-cloudwatch',
+  '@aws-cdk/aws-events-targets',
+  '@aws-cdk/aws-events',
+  '@aws-cdk/aws-lambda-event-sources',
+  '@aws-cdk/aws-lambda',
+  '@aws-cdk/aws-logs',
+  '@aws-cdk/aws-route53-targets',
+  '@aws-cdk/aws-route53',
+  '@aws-cdk/aws-s3-deployment',
+  '@aws-cdk/aws-s3',
+  '@aws-cdk/aws-sns',
   '@aws-cdk/core',
   '@aws-cdk/cx-api',
-  '@aws-cdk/aws-cloudfront',
-  '@aws-cdk/aws-cloudfront-origins',
-  '@aws-cdk/aws-cloudwatch',
-  '@aws-cdk/aws-cloudwatch-actions',
-  '@aws-cdk/aws-events',
-  '@aws-cdk/aws-events-targets',
-  '@aws-cdk/aws-certificatemanager',
-  '@aws-cdk/aws-route53',
-  '@aws-cdk/aws-route53-targets',
-  '@aws-cdk/aws-lambda',
-  '@aws-cdk/aws-s3',
-  '@aws-cdk/aws-s3-deployment',
-  '@aws-cdk/aws-sns',
-  'constructs',
   'cdk-watchful',
+  'constructs',
 ];
 
 const project = new JsiiProject({
@@ -40,16 +42,20 @@ const project = new JsiiProject({
   authorAddress: 'construct-ecosystem-team@amazon.com',
   authorOrganization: true,
 
-  peerDependencyOptions: {
-    pinnedDevDependency: false,
-  },
+  cdkVersion: '1.100.0',
 
   devDeps: [
-    'yaml',
-    'esbuild',
-    'got',
-    'aws-cdk',
     '@aws-cdk/assert',
+    '@types/aws-lambda',
+    '@types/fs-extra',
+    'aws-cdk',
+    'aws-sdk-mock',
+    'aws-sdk',
+    'esbuild',
+    'fs-extra',
+    'got',
+    'jsii-rosetta',
+    'yaml',
   ],
 
   deps: cdkDeps,
@@ -92,7 +98,14 @@ const project = new JsiiProject({
 
   // run tests from .js -- otherwise lambda bundlers get confused
   testdir: 'src/__tests__',
+
+  // Exclude handler images from TypeScript compier path
+  excludeTypescript: ['resources/**'],
 });
+
+// Required while we vendor-in jsii-rosetta to a pre-release version
+project.addDevDeps('jsii-rosetta@./vendor/jsii-rosetta.tgz');
+project.addFields({ resolutions: { '@jsii/spec': './vendor/jsii-spec.tgz' } });
 
 function addDevApp() {
   // add "dev:xxx" tasks for interacting with the dev stack
