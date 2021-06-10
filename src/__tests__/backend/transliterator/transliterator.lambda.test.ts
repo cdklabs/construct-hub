@@ -70,7 +70,7 @@ test('scoped package', async () => {
   AWSMock.mock('S3', 'getObject', (request: AWS.S3.GetObjectRequest, callback: Response<AWS.S3.GetObjectOutput>) => {
     try {
       expect(request.Bucket).toBe(payload.Records[0].s3.bucket.name);
-      expect(request.Key).toBe(payload.Records[0].s3.object.key);
+      expect(request.Key).toBe(payload.Records[0].s3.object.key.split('/').map((comp) => decodeURIComponent(comp)).join('/'));
       expect(request.VersionId).toBe(payload.Records[0].s3.object.versionId);
     } catch (e) {
       callback(e);
