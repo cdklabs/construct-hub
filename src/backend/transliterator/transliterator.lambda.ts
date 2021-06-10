@@ -27,7 +27,7 @@ const PACKAGE_KEY_REGEX = /^packages\/((?:@[^/]+\/)?[^/]+)\/v([^/]+)\/package.tg
  * @returns nothing
  */
 export async function handler(event: S3Event, context: Context): Promise<readonly S3Object[]> {
-  console.error(JSON.stringify(event, null, 2));
+  console.log(JSON.stringify(event, null, 2));
 
   const created = new Array<S3Object>();
 
@@ -47,9 +47,13 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
       : clients.set(record.awsRegion, new S3({ region: record.awsRegion }))
     ).get(record.awsRegion)!;
 
+    console.log(`Source Bucket:  ${record.s3.bucket.name}`);
+    console.log(`Source Key:     ${inputKey}`);
+    console.log(`Source Version: ${record.s3.object.versionId}`);
+
     const object = await client.getObject({
       Bucket: record.s3.bucket.name,
-      Key: decodeURI(record.s3.object.key),
+      Key: inputKey,
       VersionId: record.s3.object.versionId,
     }).promise();
 
