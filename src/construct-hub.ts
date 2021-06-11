@@ -1,8 +1,9 @@
 import * as s3 from '@aws-cdk/aws-s3';
-import { Construct as CoreConstruct } from '@aws-cdk/core';
+import { StorageClass } from '@aws-cdk/aws-s3';
+import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { AlarmActions, Domain } from './api';
-import { Transliterator } from './backend';
+import { CatalogBuilder, Transliterator } from './backend';
 import { Monitoring } from './monitoring';
 import { WebApp } from './webapp';
 
@@ -44,12 +45,19 @@ export class ConstructHub extends CoreConstruct {
 
     const packageData = new s3.Bucket(this, 'PackageData', {
       encryption: s3.BucketEncryption.S3_MANAGED,
+      lifecycleRules: [
+        // Abort multi-part uploads after 1 day
+        { abortIncompleteMultipartUploadAfter: Duration.days(1) },
+        // Transition non-current object versions to IA after 1 month
+        { noncurrentVersionTransitions: [{ storageClass: StorageClass.INFREQUENT_ACCESS, transitionAfter: Duration.days(31) }] },
+        // Permanently delete non-current object versions after 3 months
+        { noncurrentVersionExpiration: Duration.days(90) },
+      ],
       versioned: true,
     });
 
-    new Transliterator(this, 'Transliterator', {
-      sourceBucket: packageData,
-    });
+    new CatalogBuilder(this, 'CatalogBuilder', { bucket: packageData });
+    new Transliterator(this, 'Transliterator', { bucket: packageData });
 
     new WebApp(this, 'WebApp', {
       domain: props.domain,
