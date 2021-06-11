@@ -8,15 +8,29 @@ import { AWSError, S3 } from 'aws-sdk';
 import { SemVer } from 'semver';
 import { extract } from 'tar-stream';
 
-const s3 = new S3();
+let s3: S3 | undefined;
 
-const BUCKET_NAME = requireEnv('BUCKET_NAME');
-const CATALOG_OBJECT_KEY = 'catalog.json';
+export const CATALOG_OBJECT_KEY = 'catalog.json';
 
 const KEY_FORMAT_REGEX = /^packages\/((?:@[^/]+\/)?[^/]+)\/v([^/]+)\/.*$/;
 // Capture groups:                   ┗━━━━━━━━1━━━━━━━━━┛   ┗━━2━━┛
 
+/**
+ * Regenerates the `catalog.json` object in the configured S3 bucket.
+ *
+ * @param event configuration for the rebuild job. In particular, the `rebuild`
+ *              property can be set to `true` in order to trigger a full (i.e:
+ *              non-incremental) rebuild of the object.
+ * @param context the lambda context in which this execution runs.
+ *
+ * @returns the information about the updated S3 object.
+ */
 export async function handler(event: { readonly rebuild?: boolean }, context: Context) {
+  if (s3 == null) {
+    s3 = new S3();
+  }
+  const BUCKET_NAME = requireEnv('BUCKET_NAME');
+
   const packages = new Map<string, Map<number, PackageInfo>>();
 
   if (!event.rebuild) {
@@ -40,7 +54,8 @@ export async function handler(event: { readonly rebuild?: boolean }, context: Co
   }
 
   console.log('Listing existing objects...');
-  for await (const object of relevantObjects()) {
+  for await (const object of relevantObjects(BUCKET_NAME)) {
+    // Ensure we don't already have a more recent version tracked for this package-major.
     const [, packageName, versionStr] = object.Key!.match(KEY_FORMAT_REGEX)!;
     const version = new SemVer(versionStr);
     const found = packages.get(packageName)?.get(version.major);
@@ -51,6 +66,7 @@ export async function handler(event: { readonly rebuild?: boolean }, context: Co
       console.log(`Registering ${packageName}@${version}`);
     }
 
+    // Donwload the tarball to inspect the `package.json` data therein.
     const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: object.Key! }).promise();
     const manifest = await new Promise<Buffer>((ok, ko) => {
       gunzip(Buffer.from(data.Body!), (err, tar) => {
@@ -82,6 +98,7 @@ export async function handler(event: { readonly rebuild?: boolean }, context: Co
           });
       });
     });
+    // Add the PackageInfo into the working set
     const metadata = JSON.parse(manifest.toString('utf-8'));
     const major = new SemVer(metadata.version).major;
     if (!packages.has(metadata.name)) {
@@ -101,6 +118,7 @@ export async function handler(event: { readonly rebuild?: boolean }, context: Co
     });
   }
 
+  // Build the final data package...
   console.log('Consolidating catalog...');
   const catalog = { packages: new Array<PackageInfo>(), updated: new Date().toISOString() };
   for (const majors of packages.values()) {
@@ -110,7 +128,7 @@ export async function handler(event: { readonly rebuild?: boolean }, context: Co
   }
 
   console.log(`Registered ${catalog.packages.length} package major versions`);
-
+  // Upload the result to S3 and exit.
   return s3.putObject({
     Bucket: BUCKET_NAME,
     Key: CATALOG_OBJECT_KEY,
@@ -126,10 +144,15 @@ export async function handler(event: { readonly rebuild?: boolean }, context: Co
   }).promise();
 }
 
-async function* relevantObjects() {
-  const request: S3.ListObjectsV2Request = { Bucket: BUCKET_NAME, Prefix: 'packages/' };
+/**
+ * A generator that asynchronously traverses the set of "interesting" objects
+ * found by listing the configured S3 bucket. Those objects correspond to all
+ * npm package tarballs present under the `packages/` prefix in the bucket.
+ */
+async function* relevantObjects(bucket: string) {
+  const request: S3.ListObjectsV2Request = { Bucket: bucket, Prefix: 'packages/' };
   do {
-    const result = await s3.listObjectsV2(request).promise();
+    const result = await s3!.listObjectsV2(request).promise();
     for (const object of result.Contents ?? []) {
       if (!object.Key?.endsWith('/package.tgz')) {
         continue;
@@ -140,6 +163,16 @@ async function* relevantObjects() {
   } while (request.ContinuationToken != null);
 }
 
+/**
+ * Reads the specified value from the environment of this process, and ensures a
+ * value was provided.
+ *
+ * @param name the name of the environment variable to read.
+ *
+ * @returns the value of the environment variable, as-is.
+ *
+ * @throws if the environment variable had no value.
+ */
 function requireEnv(name: string): string {
   const result = env[name];
   if (!result) {
@@ -206,4 +239,12 @@ interface PackageInfo {
    * The description of the package.
    */
   readonly description?: string;
+}
+
+/**
+ * Visible for testing. This function ensures a new S3 client is used for the
+ * next invocation.
+ */
+export function reset() {
+  s3 = undefined;
 }
