@@ -101,6 +101,11 @@ const project = new JsiiProject({
 
   // Exclude handler images from TypeScript compier path
   excludeTypescript: ['resources/**'],
+  autoApproveOptions: {
+    allowedUsernames: ['aws-cdk-automation'],
+    secret: 'GITHUB_TOKEN',
+  },
+  autoApproveUpgrades: true,
 });
 
 // Required while we vendor-in jsii-rosetta to a pre-release version
