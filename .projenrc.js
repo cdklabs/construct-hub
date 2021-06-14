@@ -25,6 +25,9 @@ const cdkDeps = [
   'constructs',
 ];
 
+const cdkAssert = '@aws-cdk/assert';
+const cdkCli = 'aws-cdk';
+
 const project = new JsiiProject({
   name: 'construct-hub',
   description: 'A construct library that model Construct Hub instances.',
@@ -42,12 +45,12 @@ const project = new JsiiProject({
   authorOrganization: true,
 
   devDeps: [
-    '@aws-cdk/assert',
+    cdkAssert,
     '@types/aws-lambda',
     '@types/fs-extra',
     '@types/semver',
     '@types/tar-stream',
-    'aws-cdk',
+    cdkCli,
     'aws-sdk-mock',
     'aws-sdk',
     'esbuild',
@@ -108,7 +111,7 @@ const project = new JsiiProject({
   },
   autoApproveUpgrades: true,
   depsUpgrade: DependenciesUpgradeMechanism.githubWorkflow({
-    exclude: cdkDeps,
+    exclude: [...cdkDeps, cdkAssert, cdkCli],
     ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve'],
