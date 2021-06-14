@@ -44,6 +44,7 @@ export class WebApp extends Construct {
 
     const jsiiObjOrigin = new origins.HttpOrigin('awscdk.io');
     this.distribution.addBehavior('/packages/*', jsiiObjOrigin);
+    this.distribution.addBehavior('/index/packages.json', jsiiObjOrigin);
 
     // if we use a domain, and A records with a CloudFront alias
     if (props.domain) {

@@ -4,23 +4,23 @@ const { pascalCase } = require('pascal-case');
 const { SourceCode, FileBase, JsonFile, JsiiProject } = require('projen');
 
 const cdkDeps = [
-  '@aws-cdk/aws-certificatemanager',
-  '@aws-cdk/aws-cloudfront-origins',
-  '@aws-cdk/aws-cloudfront',
-  '@aws-cdk/aws-cloudwatch-actions',
-  '@aws-cdk/aws-cloudwatch',
-  '@aws-cdk/aws-events-targets',
-  '@aws-cdk/aws-events',
-  '@aws-cdk/aws-lambda-event-sources',
-  '@aws-cdk/aws-lambda',
-  '@aws-cdk/aws-logs',
-  '@aws-cdk/aws-route53-targets',
-  '@aws-cdk/aws-route53',
-  '@aws-cdk/aws-s3-deployment',
-  '@aws-cdk/aws-s3',
-  '@aws-cdk/aws-sns',
-  '@aws-cdk/core',
-  '@aws-cdk/cx-api',
+  '@aws-cdk/aws-certificatemanager@1.108.0',
+  '@aws-cdk/aws-cloudfront-origins@1.108.0',
+  '@aws-cdk/aws-cloudfront@1.108.0',
+  '@aws-cdk/aws-cloudwatch-actions@1.108.0',
+  '@aws-cdk/aws-cloudwatch@1.108.0',
+  '@aws-cdk/aws-events-targets@1.108.0',
+  '@aws-cdk/aws-events@1.108.0',
+  '@aws-cdk/aws-lambda-event-sources@1.108.0',
+  '@aws-cdk/aws-lambda@1.108.0',
+  '@aws-cdk/aws-logs@1.108.0',
+  '@aws-cdk/aws-route53-targets@1.108.0',
+  '@aws-cdk/aws-route53@1.108.0',
+  '@aws-cdk/aws-s3-deployment@1.108.0',
+  '@aws-cdk/aws-s3@1.108.0',
+  '@aws-cdk/aws-sns@1.108.0',
+  '@aws-cdk/core@1.108.0',
+  '@aws-cdk/cx-api@1.108.0',
   'cdk-watchful',
   'constructs',
 ];
@@ -45,12 +45,12 @@ const project = new JsiiProject({
   cdkVersion: '1.100.0',
 
   devDeps: [
-    '@aws-cdk/assert',
+    '@aws-cdk/assert@1.108.0',
     '@types/aws-lambda',
     '@types/fs-extra',
     '@types/semver',
     '@types/tar-stream',
-    'aws-cdk',
+    'aws-cdk@1.108.0',
     'aws-sdk-mock',
     'aws-sdk',
     'esbuild',
@@ -105,6 +105,11 @@ const project = new JsiiProject({
 
   // Exclude handler images from TypeScript compier path
   excludeTypescript: ['resources/**'],
+  autoApproveOptions: {
+    allowedUsernames: ['aws-cdk-automation'],
+    secret: 'GITHUB_TOKEN',
+  },
+  autoApproveUpgrades: true,
 });
 
 // Required while we vendor-in jsii-rosetta to a pre-release version
