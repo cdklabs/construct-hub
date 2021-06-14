@@ -155,13 +155,13 @@
       },
       "steps": [
         {
-          "exec": "npm-check-updates --upgrade --target=minor"
+          "exec": "npm-check-updates --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-events-targets,@aws-cdk/aws-events,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-sns,@aws-cdk/core,@aws-cdk/cx-api,cdk-watchful,constructs'"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade"
+          "exec": "yarn upgrade @aws-cdk/assert @types/aws-lambda @types/fs-extra @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk aws-sdk aws-sdk-mock construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak jsii-rosetta json-schema npm-check-updates pascal-case projen standard-version typescript yaml"
         },
         {
           "exec": "npx projen"
