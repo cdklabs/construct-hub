@@ -1,26 +1,26 @@
 const { basename, join, dirname, relative } = require('path');
 const glob = require('glob');
 const { pascalCase } = require('pascal-case');
-const { SourceCode, FileBase, JsonFile, JsiiProject } = require('projen');
+const { SourceCode, FileBase, JsonFile, JsiiProject, DependenciesUpgradeMechanism } = require('projen');
 
 const cdkDeps = [
-  '@aws-cdk/aws-certificatemanager@1.108.0',
-  '@aws-cdk/aws-cloudfront-origins@1.108.0',
-  '@aws-cdk/aws-cloudfront@1.108.0',
-  '@aws-cdk/aws-cloudwatch-actions@1.108.0',
-  '@aws-cdk/aws-cloudwatch@1.108.0',
-  '@aws-cdk/aws-events-targets@1.108.0',
-  '@aws-cdk/aws-events@1.108.0',
-  '@aws-cdk/aws-lambda-event-sources@1.108.0',
-  '@aws-cdk/aws-lambda@1.108.0',
-  '@aws-cdk/aws-logs@1.108.0',
-  '@aws-cdk/aws-route53-targets@1.108.0',
-  '@aws-cdk/aws-route53@1.108.0',
-  '@aws-cdk/aws-s3-deployment@1.108.0',
-  '@aws-cdk/aws-s3@1.108.0',
-  '@aws-cdk/aws-sns@1.108.0',
-  '@aws-cdk/core@1.108.0',
-  '@aws-cdk/cx-api@1.108.0',
+  '@aws-cdk/aws-certificatemanager',
+  '@aws-cdk/aws-cloudfront-origins',
+  '@aws-cdk/aws-cloudfront',
+  '@aws-cdk/aws-cloudwatch-actions',
+  '@aws-cdk/aws-cloudwatch',
+  '@aws-cdk/aws-events-targets',
+  '@aws-cdk/aws-events',
+  '@aws-cdk/aws-lambda-event-sources',
+  '@aws-cdk/aws-lambda',
+  '@aws-cdk/aws-logs',
+  '@aws-cdk/aws-route53-targets',
+  '@aws-cdk/aws-route53',
+  '@aws-cdk/aws-s3-deployment',
+  '@aws-cdk/aws-s3',
+  '@aws-cdk/aws-sns',
+  '@aws-cdk/core',
+  '@aws-cdk/cx-api',
   'cdk-watchful',
   'constructs',
 ];
@@ -36,19 +36,16 @@ const project = new JsiiProject({
   homepage: 'https://github.com/cdklabs',
   defaultReleaseBranch: 'main',
   mergify: false,
-  dependabot: false,
 
   author: 'Amazon Web Services, Inc.',
   authorAddress: 'construct-ecosystem-team@amazon.com',
   authorOrganization: true,
 
-  cdkVersion: '1.100.0',
-
   devDeps: [
-    '@aws-cdk/assert@1.108.0',
+    '@aws-cdk/assert',
     '@types/aws-lambda',
     '@types/fs-extra',
-    'aws-cdk@1.108.0',
+    'aws-cdk',
     'aws-sdk-mock',
     'aws-sdk',
     'esbuild',
@@ -106,6 +103,17 @@ const project = new JsiiProject({
     secret: 'GITHUB_TOKEN',
   },
   autoApproveUpgrades: true,
+  depsUpgrade: DependenciesUpgradeMechanism.githubWorkflow({
+    exclude: cdkDeps,
+    ignoreProjen: false,
+    workflowOptions: {
+      labels: ['auto-approve'],
+      secret: 'CDK_AUTOMATION_GITHUB_TOKEN',
+      container: {
+        image: 'jsii/superchain',
+      },
+    },
+  }),
 });
 
 // Required while we vendor-in jsii-rosetta to a pre-release version
