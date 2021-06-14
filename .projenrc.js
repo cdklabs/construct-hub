@@ -11,6 +11,7 @@ const cdkDeps = [
   '@aws-cdk/aws-cloudwatch',
   '@aws-cdk/aws-events-targets',
   '@aws-cdk/aws-events',
+  '@aws-cdk/aws-iam',
   '@aws-cdk/aws-lambda-event-sources',
   '@aws-cdk/aws-lambda',
   '@aws-cdk/aws-logs',
@@ -18,6 +19,7 @@ const cdkDeps = [
   '@aws-cdk/aws-route53',
   '@aws-cdk/aws-s3-deployment',
   '@aws-cdk/aws-s3',
+  '@aws-cdk/aws-sqs',
   '@aws-cdk/aws-sns',
   '@aws-cdk/core',
   '@aws-cdk/cx-api',
@@ -46,6 +48,7 @@ const project = new JsiiProject({
 
   devDeps: [
     cdkAssert,
+    '@jsii/spec',
     '@types/aws-lambda',
     '@types/fs-extra',
     '@types/semver',

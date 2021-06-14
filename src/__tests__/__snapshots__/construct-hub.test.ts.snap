@@ -33,6 +33,18 @@ Object {
     },
   },
   "Parameters": Object {
+    "AssetParameters52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0ArtifactHashFDB1C2B8": Object {
+      "Description": "Artifact hash for asset \\"52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0\\"",
+      "Type": "String",
+    },
+    "AssetParameters52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0S3Bucket98376B6F": Object {
+      "Description": "S3 bucket for asset \\"52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0\\"",
+      "Type": "String",
+    },
+    "AssetParameters52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0S3VersionKey33337099": Object {
+      "Description": "S3 key for asset version \\"52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0\\"",
+      "Type": "String",
+    },
     "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24ArtifactHashBA91B77F": Object {
       "Description": "Artifact hash for asset \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
       "Type": "String",
@@ -57,6 +69,18 @@ Object {
       "Description": "S3 key for asset version \\"866c466f9e9aaf86d825bb22132965b3f5d3418371a1ca6027f40a2863d892d4\\"",
       "Type": "String",
     },
+    "AssetParametersac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7ArtifactHashC15CEDBA": Object {
+      "Description": "Artifact hash for asset \\"ac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7\\"",
+      "Type": "String",
+    },
+    "AssetParametersac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7S3BucketBFB05787": Object {
+      "Description": "S3 bucket for asset \\"ac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7\\"",
+      "Type": "String",
+    },
+    "AssetParametersac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7S3VersionKey4270971F": Object {
+      "Description": "S3 key for asset version \\"ac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7\\"",
+      "Type": "String",
+    },
     "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfArtifactHash85F58E48": Object {
       "Description": "Artifact hash for asset \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
       "Type": "String",
@@ -67,18 +91,6 @@ Object {
     },
     "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70": Object {
       "Description": "S3 key for asset version \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
-      "Type": "String",
-    },
-    "AssetParametersc9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524ArtifactHashABFB44E7": Object {
-      "Description": "Artifact hash for asset \\"c9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524\\"",
-      "Type": "String",
-    },
-    "AssetParametersc9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524S3Bucket265D5217": Object {
-      "Description": "S3 bucket for asset \\"c9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524\\"",
-      "Type": "String",
-    },
-    "AssetParametersc9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524S3VersionKeyA48E92EB": Object {
-      "Description": "S3 key for asset version \\"c9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524\\"",
       "Type": "String",
     },
     "AssetParametersda254f731d96f448a42b847d5e631a6a426b230b48eab5b0862307875334e305ArtifactHashE87E66EE": Object {
@@ -435,6 +447,223 @@ Object {
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubIngestion407909CE": Object {
+      "DependsOn": Array [
+        "ConstructHubIngestionServiceRoleDefaultPolicyC0D2B6F2",
+        "ConstructHubIngestionServiceRole6380BAB6",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0S3Bucket98376B6F",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0S3VersionKey33337099",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0S3VersionKey33337099",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "DeadLetterConfig": Object {
+          "TargetArn": Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubIngestionDeadLetterQueueFC1025F8",
+              "Arn",
+            ],
+          },
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "BUCKET_NAME": Object {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 10240,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubIngestionServiceRole6380BAB6",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubIngestionDeadLetterQueueFC1025F8": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "MessageRetentionPeriod": 1209600,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubIngestionEventInvokeConfig47AAD616": Object {
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "ConstructHubIngestion407909CE",
+        },
+        "MaximumRetryAttempts": 2,
+        "Qualifier": "$LATEST",
+      },
+      "Type": "AWS::Lambda::EventInvokeConfig",
+    },
+    "ConstructHubIngestionQueue1AD94CA3": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "VisibilityTimeout": 900,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubIngestionServiceRole6380BAB6": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubIngestionServiceRoleDefaultPolicyC0D2B6F2": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionDeadLetterQueueFC1025F8",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionQueue1AD94CA3",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubIngestionServiceRoleDefaultPolicyC0D2B6F2",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubIngestionServiceRole6380BAB6",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubIngestionSqsEventSourceTestConstructHubIngestionQueue165B81E2C095FF2A": Object {
+      "Properties": Object {
+        "BatchSize": 1,
+        "EventSourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubIngestionQueue1AD94CA3",
+            "Arn",
+          ],
+        },
+        "FunctionName": Object {
+          "Ref": "ConstructHubIngestion407909CE",
+        },
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
     },
     "ConstructHubMonitoringDashboard78E057C8": Object {
       "Properties": Object {
@@ -1056,7 +1285,7 @@ Object {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParametersc9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524S3Bucket265D5217",
+            "Ref": "AssetParametersac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7S3BucketBFB05787",
           },
         ],
         "SourceObjectKeys": Array [
@@ -1071,7 +1300,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersc9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524S3VersionKeyA48E92EB",
+                          "Ref": "AssetParametersac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7S3VersionKey4270971F",
                         },
                       ],
                     },
@@ -1084,7 +1313,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersc9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524S3VersionKeyA48E92EB",
+                          "Ref": "AssetParametersac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7S3VersionKey4270971F",
                         },
                       ],
                     },
@@ -1343,7 +1572,7 @@ Object {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersc9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524S3Bucket265D5217",
+                        "Ref": "AssetParametersac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7S3BucketBFB05787",
                       },
                     ],
                   ],
@@ -1358,7 +1587,7 @@ Object {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersc9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524S3Bucket265D5217",
+                        "Ref": "AssetParametersac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7S3BucketBFB05787",
                       },
                       "/*",
                     ],
@@ -1576,6 +1805,18 @@ Object {
     },
   },
   "Parameters": Object {
+    "AssetParameters52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0ArtifactHashFDB1C2B8": Object {
+      "Description": "Artifact hash for asset \\"52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0\\"",
+      "Type": "String",
+    },
+    "AssetParameters52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0S3Bucket98376B6F": Object {
+      "Description": "S3 bucket for asset \\"52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0\\"",
+      "Type": "String",
+    },
+    "AssetParameters52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0S3VersionKey33337099": Object {
+      "Description": "S3 key for asset version \\"52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0\\"",
+      "Type": "String",
+    },
     "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24ArtifactHashBA91B77F": Object {
       "Description": "Artifact hash for asset \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
       "Type": "String",
@@ -1612,6 +1853,18 @@ Object {
       "Description": "S3 key for asset version \\"866c466f9e9aaf86d825bb22132965b3f5d3418371a1ca6027f40a2863d892d4\\"",
       "Type": "String",
     },
+    "AssetParametersac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7ArtifactHashC15CEDBA": Object {
+      "Description": "Artifact hash for asset \\"ac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7\\"",
+      "Type": "String",
+    },
+    "AssetParametersac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7S3BucketBFB05787": Object {
+      "Description": "S3 bucket for asset \\"ac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7\\"",
+      "Type": "String",
+    },
+    "AssetParametersac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7S3VersionKey4270971F": Object {
+      "Description": "S3 key for asset version \\"ac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7\\"",
+      "Type": "String",
+    },
     "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfArtifactHash85F58E48": Object {
       "Description": "Artifact hash for asset \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
       "Type": "String",
@@ -1622,18 +1875,6 @@ Object {
     },
     "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70": Object {
       "Description": "S3 key for asset version \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
-      "Type": "String",
-    },
-    "AssetParametersc9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524ArtifactHashABFB44E7": Object {
-      "Description": "Artifact hash for asset \\"c9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524\\"",
-      "Type": "String",
-    },
-    "AssetParametersc9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524S3Bucket265D5217": Object {
-      "Description": "S3 bucket for asset \\"c9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524\\"",
-      "Type": "String",
-    },
-    "AssetParametersc9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524S3VersionKeyA48E92EB": Object {
-      "Description": "S3 key for asset version \\"c9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524\\"",
       "Type": "String",
     },
     "AssetParametersda254f731d96f448a42b847d5e631a6a426b230b48eab5b0862307875334e305ArtifactHashE87E66EE": Object {
@@ -2139,6 +2380,223 @@ Object {
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubIngestion407909CE": Object {
+      "DependsOn": Array [
+        "ConstructHubIngestionServiceRoleDefaultPolicyC0D2B6F2",
+        "ConstructHubIngestionServiceRole6380BAB6",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0S3Bucket98376B6F",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0S3VersionKey33337099",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0S3VersionKey33337099",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "DeadLetterConfig": Object {
+          "TargetArn": Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubIngestionDeadLetterQueueFC1025F8",
+              "Arn",
+            ],
+          },
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "BUCKET_NAME": Object {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 10240,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubIngestionServiceRole6380BAB6",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubIngestionDeadLetterQueueFC1025F8": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "MessageRetentionPeriod": 1209600,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubIngestionEventInvokeConfig47AAD616": Object {
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "ConstructHubIngestion407909CE",
+        },
+        "MaximumRetryAttempts": 2,
+        "Qualifier": "$LATEST",
+      },
+      "Type": "AWS::Lambda::EventInvokeConfig",
+    },
+    "ConstructHubIngestionQueue1AD94CA3": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "VisibilityTimeout": 900,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubIngestionServiceRole6380BAB6": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubIngestionServiceRoleDefaultPolicyC0D2B6F2": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionDeadLetterQueueFC1025F8",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionQueue1AD94CA3",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubIngestionServiceRoleDefaultPolicyC0D2B6F2",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubIngestionServiceRole6380BAB6",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubIngestionSqsEventSourceTestConstructHubIngestionQueue165B81E2C095FF2A": Object {
+      "Properties": Object {
+        "BatchSize": 1,
+        "EventSourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubIngestionQueue1AD94CA3",
+            "Arn",
+          ],
+        },
+        "FunctionName": Object {
+          "Ref": "ConstructHubIngestion407909CE",
+        },
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
     },
     "ConstructHubMonitoringDashboard78E057C8": Object {
       "Properties": Object {
@@ -2812,7 +3270,7 @@ Object {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParametersc9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524S3Bucket265D5217",
+            "Ref": "AssetParametersac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7S3BucketBFB05787",
           },
         ],
         "SourceObjectKeys": Array [
@@ -2827,7 +3285,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersc9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524S3VersionKeyA48E92EB",
+                          "Ref": "AssetParametersac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7S3VersionKey4270971F",
                         },
                       ],
                     },
@@ -2840,7 +3298,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersc9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524S3VersionKeyA48E92EB",
+                          "Ref": "AssetParametersac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7S3VersionKey4270971F",
                         },
                       ],
                     },
@@ -3112,7 +3570,7 @@ Object {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersc9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524S3Bucket265D5217",
+                        "Ref": "AssetParametersac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7S3BucketBFB05787",
                       },
                     ],
                   ],
@@ -3127,7 +3585,7 @@ Object {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersc9cd5cf7cd05639608564a28ce3c6ce732dcfba9df2045d125302637301dc524S3Bucket265D5217",
+                        "Ref": "AssetParametersac07adba47a066f4139e473ffb8c677dda20b946934af3d78d4aed0d904713c7S3BucketBFB05787",
                       },
                       "/*",
                     ],

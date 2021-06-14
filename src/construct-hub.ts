@@ -1,9 +1,11 @@
+import * as iam from '@aws-cdk/aws-iam';
 import * as s3 from '@aws-cdk/aws-s3';
-import { StorageClass } from '@aws-cdk/aws-s3';
-import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
-import { Construct } from 'constructs';
+import * as sqs from '@aws-cdk/aws-sqs';
+import { Construct, Duration } from '@aws-cdk/core';
 import { AlarmActions, Domain } from './api';
-import { CatalogBuilder, Transliterator } from './backend';
+import { Transliterator } from './backend';
+import { CatalogBuilder } from './backend/catalog-builder';
+import { Ingestion } from './backend/ingestion';
 import { Monitoring } from './monitoring';
 import { WebApp } from './webapp';
 
@@ -34,7 +36,9 @@ export interface ConstructHubProps {
 /**
  * Construct Hub.
  */
-export class ConstructHub extends CoreConstruct {
+export class ConstructHub extends Construct implements iam.IGrantable {
+  private readonly ingestion: Ingestion;
+
   public constructor(scope: Construct, id: string, props: ConstructHubProps) {
     super(scope, id);
 
@@ -49,19 +53,28 @@ export class ConstructHub extends CoreConstruct {
         // Abort multi-part uploads after 1 day
         { abortIncompleteMultipartUploadAfter: Duration.days(1) },
         // Transition non-current object versions to IA after 1 month
-        { noncurrentVersionTransitions: [{ storageClass: StorageClass.INFREQUENT_ACCESS, transitionAfter: Duration.days(31) }] },
+        { noncurrentVersionTransitions: [{ storageClass: s3.StorageClass.INFREQUENT_ACCESS, transitionAfter: Duration.days(31) }] },
         // Permanently delete non-current object versions after 3 months
         { noncurrentVersionExpiration: Duration.days(90) },
       ],
       versioned: true,
     });
 
-    new CatalogBuilder(this, 'CatalogBuilder', { bucket: packageData });
+    this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData });
     new Transliterator(this, 'Transliterator', { bucket: packageData });
+    new CatalogBuilder(this, 'CatalogBuilder', { bucket: packageData });
 
     new WebApp(this, 'WebApp', {
       domain: props.domain,
       monitoring: monitoring,
     });
+  }
+
+  public get grantPrincipal(): iam.IPrincipal {
+    return this.ingestion.grantPrincipal;
+  }
+
+  public get ingestionQueue(): sqs.IQueue {
+    return this.ingestion.queue;
   }
 }
