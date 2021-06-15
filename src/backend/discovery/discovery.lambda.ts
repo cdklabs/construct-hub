@@ -7,6 +7,7 @@ import { URL } from 'url';
 import type { Context } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 import * as Nano from 'nano';
+import { IngestionInput, integrity } from '../shared';
 
 const TIMEOUT_MILLISECONDS = 10_000;
 const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set(['cdk', 'aws-cdk', 'cdk8s', 'cdktf']);
@@ -149,21 +150,22 @@ async function processPackageUpdate(change: Change, context: Context) {
   // change.dist.tarball => https://registry.npmjs.org/<@scope>/<name>/-/<name>-<version>.tgz
   // staging bucket key  => packages/<@scope>/<name>/-/<name>-<version>.tgz
   const key = `packages/${new URL(latestVersion.dist.tarball).pathname}`;
-  await copyPackageToS3(latestVersion, key, context);
-  await sendSqsMessage(latestVersion, publishTime, change.seq, key);
+  const tarball = await copyPackageToS3(latestVersion, key, context);
+  await sendSqsMessage(latestVersion, tarball, publishTime, change.seq, key);
 }
 
 /**
  * Copy the tarball from the npm registry to S3
 */
-async function copyPackageToS3(versionInfo: VersionInfo, key: string, context: Context): Promise<void> {
+async function copyPackageToS3(versionInfo: VersionInfo, key: string, context: Context): Promise<Buffer> {
   console.log(`uploading tarball to s3, key: ${key}`);
-  return new Promise<void>((ok, ko) => {
-    https.get(versionInfo.dist.tarball, function (response /* Readable */) {
+  return new Promise<Buffer>((ok, ko) => {
+    https.get(versionInfo.dist.tarball, (response) => {
+      const buffer = Buffer.from(response);
       s3!.putObject({
         Bucket: stagingBucket,
         Key: key,
-        Body: response,
+        Body: buffer,
         ContentType: 'application/x-gtar',
         Metadata: {
           'Lambda-Log-Group': context.logGroupName,
@@ -171,7 +173,7 @@ async function copyPackageToS3(versionInfo: VersionInfo, key: string, context: C
           'Lambda-Run-Id': context.awsRequestId,
           'Origin-Uri': versionInfo.dist.tarball,
         },
-      }).promise().then(() => ok(), ko);
+      }).promise().then(() => ok(buffer), ko);
     }).on('error', (error) => {
       console.error(`Error attempting to stage tarball in S3: ${error}`);
       ko(`Failed downloading file from ${versionInfo.dist.tarball}`);
@@ -184,13 +186,16 @@ async function copyPackageToS3(versionInfo: VersionInfo, key: string, context: C
  * @param versionInfo the version info
  * @param key the s3 key to which the tarball was uploaded
  */
-async function sendSqsMessage(versionInfo: VersionInfo, publishTime: Date, transactionId: number, key: string): Promise<void> {
+async function sendSqsMessage(versionInfo: VersionInfo, tarball: Buffer, publishTime: Date, transactionId: number, key: string): Promise<void> {
   console.log(`Posting sqs message for ${versionInfo.packageName}`);
-  const message: Message = {
+  const messageBase = {
     tarballUri: `s3://${stagingBucket}/${key}`,
     metadata: { tid: transactionId.toFixed() },
-    time: publishTime,
-    integrity: 'TODO',
+    time: publishTime.toUTCString(),
+  };
+  const message: IngestionInput = {
+    ...messageBase,
+    integrity: integrity(messageBase, tarball),
   };
 
   await sqs!.sendMessage({
@@ -288,11 +293,4 @@ interface Change {
   readonly doc: Document;
   readonly id: string;
   readonly deleted: boolean;
-}
-
-interface Message {
-  readonly tarballUri: string;
-  readonly metadata?: { readonly [key: string]: string };
-  readonly time: Date;
-  readonly integrity: string;
 }
