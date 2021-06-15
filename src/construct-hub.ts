@@ -3,9 +3,7 @@ import * as s3 from '@aws-cdk/aws-s3';
 import * as sqs from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
 import { AlarmActions, Domain } from './api';
-import { Transliterator } from './backend';
-import { CatalogBuilder } from './backend/catalog-builder';
-import { Ingestion } from './backend/ingestion';
+import { CatalogBuilder, DiscoveryFunction, Ingestion, Transliterator } from './backend';
 import { Monitoring } from './monitoring';
 import { WebApp } from './webapp';
 
@@ -61,6 +59,20 @@ export class ConstructHub extends Construct implements iam.IGrantable {
     });
 
     this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData });
+
+    const stagingBucket = new s3.Bucket(this, 'StagingBucket', {
+      lifecycleRules: [
+        {
+          prefix: 'packages', // delete the staged tarball after 30 days
+          expiration: Duration.days(30),
+        },
+      ],
+    });
+    new DiscoveryFunction(this, 'DiscoveryFunction', {
+      queue: this.ingestion.queue,
+      stagingBucket,
+    });
+
     new Transliterator(this, 'Transliterator', { bucket: packageData });
     new CatalogBuilder(this, 'CatalogBuilder', { bucket: packageData });
 

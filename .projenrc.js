@@ -22,6 +22,7 @@ const cdkDeps = [
   '@aws-cdk/aws-sqs',
   '@aws-cdk/aws-sns',
   '@aws-cdk/core',
+  '@aws-cdk/aws-sqs',
   '@aws-cdk/cx-api',
   'cdk-watchful',
   'constructs',
@@ -63,6 +64,7 @@ const project = new JsiiProject({
     'semver',
     'tar-stream',
     'yaml',
+    'nano',
   ],
 
   deps: cdkDeps,

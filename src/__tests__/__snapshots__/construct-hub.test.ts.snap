@@ -33,6 +33,18 @@ Object {
     },
   },
   "Parameters": Object {
+    "AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2ArtifactHashAA3DB115": Object {
+      "Description": "Artifact hash for asset \\"39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2\\"",
+      "Type": "String",
+    },
+    "AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2S3Bucket1B6624AE": Object {
+      "Description": "S3 bucket for asset \\"39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2\\"",
+      "Type": "String",
+    },
+    "AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2S3VersionKey3A7A31C2": Object {
+      "Description": "S3 key for asset version \\"39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2\\"",
+      "Type": "String",
+    },
     "AssetParameters52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0ArtifactHashFDB1C2B8": Object {
       "Description": "Artifact hash for asset \\"52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0\\"",
       "Type": "String",
@@ -443,6 +455,231 @@ Object {
         "Roles": Array [
           Object {
             "Ref": "ConstructHubCatalogBuilderServiceRole7EB4C395",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubDiscoveryFunctionDeadLetterQueueFE498555": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "MessageRetentionPeriod": 1209600,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubDiscoveryFunctionF5E139FD": Object {
+      "DependsOn": Array [
+        "ConstructHubDiscoveryFunctionServiceRoleDefaultPolicyA09546EC",
+        "ConstructHubDiscoveryFunctionServiceRoleD371794F",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2S3Bucket1B6624AE",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2S3VersionKey3A7A31C2",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2S3VersionKey3A7A31C2",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "DeadLetterConfig": Object {
+          "TargetArn": Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubDiscoveryFunctionDeadLetterQueueFE498555",
+              "Arn",
+            ],
+          },
+        },
+        "Description": "Periodically query npm.js index for new Constructs",
+        "Environment": Object {
+          "Variables": Object {
+            "QUEUE_URL": Object {
+              "Ref": "ConstructHubIngestionQueue1AD94CA3",
+            },
+            "STAGING_BUCKET_NAME": Object {
+              "Ref": "ConstructHubStagingBucket29942A98",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 10240,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubDiscoveryFunctionServiceRoleD371794F",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubDiscoveryFunctionScheduleRuleAllowEventRuleTestConstructHubDiscoveryFunctionC36D63A5E62E305C": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubDiscoveryFunctionF5E139FD",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubDiscoveryFunctionScheduleRuleE32FE899",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ConstructHubDiscoveryFunctionScheduleRuleE32FE899": Object {
+      "Properties": Object {
+        "ScheduleExpression": "rate(5 minutes)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubDiscoveryFunctionF5E139FD",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubDiscoveryFunctionServiceRoleD371794F": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubDiscoveryFunctionServiceRoleDefaultPolicyA09546EC": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubDiscoveryFunctionDeadLetterQueueFE498555",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubStagingBucket29942A98",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubStagingBucket29942A98",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionQueue1AD94CA3",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubDiscoveryFunctionServiceRoleDefaultPolicyA09546EC",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubDiscoveryFunctionServiceRoleD371794F",
           },
         ],
       },
@@ -1025,6 +1262,22 @@ Object {
         },
       },
       "Type": "Custom::S3BucketNotifications",
+    },
+    "ConstructHubStagingBucket29942A98": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "ExpirationInDays": 30,
+              "Prefix": "packages",
+              "Status": "Enabled",
+            },
+          ],
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
     },
     "ConstructHubTransliterator9C48708A": Object {
       "DependsOn": Array [
@@ -1805,6 +2058,18 @@ Object {
     },
   },
   "Parameters": Object {
+    "AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2ArtifactHashAA3DB115": Object {
+      "Description": "Artifact hash for asset \\"39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2\\"",
+      "Type": "String",
+    },
+    "AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2S3Bucket1B6624AE": Object {
+      "Description": "S3 bucket for asset \\"39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2\\"",
+      "Type": "String",
+    },
+    "AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2S3VersionKey3A7A31C2": Object {
+      "Description": "S3 key for asset version \\"39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2\\"",
+      "Type": "String",
+    },
     "AssetParameters52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0ArtifactHashFDB1C2B8": Object {
       "Description": "Artifact hash for asset \\"52cea7d7df6629e023416e089e45d163d6700c32da4997d6f349321f6a366bb0\\"",
       "Type": "String",
@@ -2376,6 +2641,231 @@ Object {
         "Roles": Array [
           Object {
             "Ref": "ConstructHubCatalogBuilderServiceRole7EB4C395",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubDiscoveryFunctionDeadLetterQueueFE498555": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "MessageRetentionPeriod": 1209600,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubDiscoveryFunctionF5E139FD": Object {
+      "DependsOn": Array [
+        "ConstructHubDiscoveryFunctionServiceRoleDefaultPolicyA09546EC",
+        "ConstructHubDiscoveryFunctionServiceRoleD371794F",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2S3Bucket1B6624AE",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2S3VersionKey3A7A31C2",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2S3VersionKey3A7A31C2",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "DeadLetterConfig": Object {
+          "TargetArn": Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubDiscoveryFunctionDeadLetterQueueFE498555",
+              "Arn",
+            ],
+          },
+        },
+        "Description": "Periodically query npm.js index for new Constructs",
+        "Environment": Object {
+          "Variables": Object {
+            "QUEUE_URL": Object {
+              "Ref": "ConstructHubIngestionQueue1AD94CA3",
+            },
+            "STAGING_BUCKET_NAME": Object {
+              "Ref": "ConstructHubStagingBucket29942A98",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 10240,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubDiscoveryFunctionServiceRoleD371794F",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubDiscoveryFunctionScheduleRuleAllowEventRuleTestConstructHubDiscoveryFunctionC36D63A5E62E305C": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubDiscoveryFunctionF5E139FD",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubDiscoveryFunctionScheduleRuleE32FE899",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ConstructHubDiscoveryFunctionScheduleRuleE32FE899": Object {
+      "Properties": Object {
+        "ScheduleExpression": "rate(5 minutes)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubDiscoveryFunctionF5E139FD",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubDiscoveryFunctionServiceRoleD371794F": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubDiscoveryFunctionServiceRoleDefaultPolicyA09546EC": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubDiscoveryFunctionDeadLetterQueueFE498555",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubStagingBucket29942A98",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubStagingBucket29942A98",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionQueue1AD94CA3",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubDiscoveryFunctionServiceRoleDefaultPolicyA09546EC",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubDiscoveryFunctionServiceRoleD371794F",
           },
         ],
       },
@@ -2958,6 +3448,22 @@ Object {
         },
       },
       "Type": "Custom::S3BucketNotifications",
+    },
+    "ConstructHubStagingBucket29942A98": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "ExpirationInDays": 30,
+              "Prefix": "packages",
+              "Status": "Enabled",
+            },
+          ],
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
     },
     "ConstructHubTransliterator9C48708A": Object {
       "DependsOn": Array [
