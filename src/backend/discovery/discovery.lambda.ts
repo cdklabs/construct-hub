@@ -24,6 +24,18 @@ let stagingBucket: string;
 let queueUrl: string;
 let functionContext: Context;
 
+/**
+ * This function triggers on a fixed schedule and reads a stream of changes frm npmjs couchdb _changes endpoint.
+ * Upon invocation the function starts reading from a sequence stored in an s3 object - the `marker`.
+ * If the marker fails to load (or do not exist), the stream will start from `now` - the latest change.
+ * For each change:
+ *  - the package version tarball will be copied from the npm registry to a stating bucket.
+ *  - a message will be sent to an sqs queue
+ * Currently we don't handle the function execution timeout, and accept that the last batch processed might be processed again,
+ * relying on the idempotency on the consumer side.
+ * npm registry API docs: https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md
+ * @param context a Lambda execution context
+ */
 export async function handler(context: Context) {
   s3 = new AWS.S3();
   sqs = new AWS.SQS();
