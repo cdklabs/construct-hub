@@ -1,4 +1,3 @@
-import { createHash } from 'crypto';
 import { URL } from 'url';
 
 import { validateAssembly } from '@jsii/spec';
@@ -6,6 +5,7 @@ import { validateAssembly } from '@jsii/spec';
 import { Context, SQSEvent } from 'aws-lambda';
 import { S3 } from 'aws-sdk';
 import { extract } from 'tar-stream';
+import { IngestionInput, integrity } from '../shared';
 
 let s3: S3 | undefined;
 
@@ -18,7 +18,7 @@ export async function handler(event: SQSEvent, context: Context) {
   const result = new Array<CreatedObject>();
 
   for (const record of event.Records ?? []) {
-    const payload = JSON.parse(record.body) as IngestionRequest;
+    const payload = JSON.parse(record.body) as IngestionInput;
 
     const tarballUri = new URL(payload.tarballUri);
     if (tarballUri.protocol !== 's3') {
@@ -31,9 +31,9 @@ export async function handler(event: SQSEvent, context: Context) {
       VersionId: tarballUri.searchParams.get('versionId') ?? undefined,
     }).promise();
 
-    const integrity = checksum(payload, Buffer.from(tarball.Body!));
-    if (payload.integrity !== integrity) {
-      throw new Error(`Integrity check failed: ${payload.integrity} !== ${integrity}`);
+    const integrityCheck = integrity(payload, Buffer.from(tarball.Body!));
+    if (payload.integrity !== integrityCheck) {
+      throw new Error(`Integrity check failed: ${payload.integrity} !== ${integrityCheck}`);
     }
 
     const dotJsii = await new Promise<Buffer>((ok, ko) => {
@@ -114,50 +114,11 @@ function requireEnv(name: string): string {
   return result;
 }
 
-function checksum(request: IngestionRequest, tarball: Buffer): string {
-  const alg = request.integrity.split('-')[0];
-
-  const hash = createHash(alg);
-  const addField = (name: string, data: string | Buffer) =>
-    //           <SOH>        $name          <STX>        $data          <ETX>
-    hash.update('\x01').update(name).update('\x02').update(data).update('\x03');
-
-  for (const [name, value] of Object.entries(request.metadata ?? {}).sort(([l], [r]) => l.localeCompare(r))) {
-    addField(`metadata/${name}`, value);
-  }
-  addField('tarball', tarball);
-  addField('time', request.time);
-
-  return `${alg}-${hash.digest('base64')}`;
-}
-
 /**
  * Visible for testing. Resets the S3 client used for running this function.
  */
 export function reset() {
   s3 = undefined;
-}
-
-interface IngestionRequest {
-  /**
-   * The URL to an S3 Object containing the npm package's `.tgz` bundle.
-   */
-  readonly tarballUri: string;
-
-  /**
-   * Metadata assigned by the discovery function to the package (key-value pairs)
-   */
-  readonly metadata?: Record<string, string>;
-
-  /**
-   * The timestamp at which the version was created.
-   */
-  readonly time: string;
-
-  /**
-   * An integrity check for the whole record.
-   */
-  readonly integrity: string;
 }
 
 interface CreatedObject {
