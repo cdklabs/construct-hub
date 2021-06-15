@@ -198,6 +198,150 @@ Resources:
         Fn::GetAtt:
           - ConstructHubPackageDataDC5EF35E
           - Arn
+  ConstructHubStagingBucket29942A98:
+    Type: AWS::S3::Bucket
+    Properties:
+      LifecycleConfiguration:
+        Rules:
+          - ExpirationInDays: 30
+            Prefix: packages
+            Status: Enabled
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+  ConstructHubIngestionQueue637E4740:
+    Type: AWS::SQS::Queue
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+  ConstructHubDiscoveryFunctionServiceRoleD371794F:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  ConstructHubDiscoveryFunctionServiceRoleDefaultPolicyA09546EC:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: sqs:SendMessage
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ConstructHubDiscoveryFunctionDeadLetterQueueFE498555
+                - Arn
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubStagingBucket29942A98
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubStagingBucket29942A98
+                        - Arn
+                    - /*
+          - Action:
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ConstructHubIngestionQueue637E4740
+                - Arn
+        Version: 2012-10-17
+      PolicyName: ConstructHubDiscoveryFunctionServiceRoleDefaultPolicyA09546EC
+      Roles:
+        - Ref: ConstructHubDiscoveryFunctionServiceRoleD371794F
+  ConstructHubDiscoveryFunctionDeadLetterQueueFE498555:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+  ConstructHubDiscoveryFunctionF5E139FD:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2S3Bucket1B6624AE
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2S3VersionKey3A7A31C2
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2S3VersionKey3A7A31C2
+      Role:
+        Fn::GetAtt:
+          - ConstructHubDiscoveryFunctionServiceRoleD371794F
+          - Arn
+      DeadLetterConfig:
+        TargetArn:
+          Fn::GetAtt:
+            - ConstructHubDiscoveryFunctionDeadLetterQueueFE498555
+            - Arn
+      Description: Periodically query npm.js index for new Constructs
+      Environment:
+        Variables:
+          STAGING_BUCKET_NAME:
+            Ref: ConstructHubStagingBucket29942A98
+          QUEUE_URL:
+            Ref: ConstructHubIngestionQueue637E4740
+      Handler: index.handler
+      MemorySize: 10240
+      Runtime: nodejs14.x
+      Timeout: 900
+    DependsOn:
+      - ConstructHubDiscoveryFunctionServiceRoleDefaultPolicyA09546EC
+      - ConstructHubDiscoveryFunctionServiceRoleD371794F
+  ConstructHubDiscoveryFunctionScheduleRuleE32FE899:
+    Type: AWS::Events::Rule
+    Properties:
+      ScheduleExpression: rate(5 minutes)
+      State: ENABLED
+      Targets:
+        - Arn:
+            Fn::GetAtt:
+              - ConstructHubDiscoveryFunctionF5E139FD
+              - Arn
+          Id: Target0
+  ConstructHubDiscoveryFunctionScheduleRuleAllowEventRuledevConstructHubDiscoveryFunction9006704D902BB631:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - ConstructHubDiscoveryFunctionF5E139FD
+          - Arn
+      Principal: events.amazonaws.com
+      SourceArn:
+        Fn::GetAtt:
+          - ConstructHubDiscoveryFunctionScheduleRuleE32FE899
+          - Arn
   ConstructHubTransliteratorServiceRole0F8A20C8:
     Type: AWS::IAM::Role
     Properties:
@@ -649,6 +793,18 @@ Outputs:
     Export:
       Name: ConstructHubDomainName
 Parameters:
+  AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2S3Bucket1B6624AE:
+    Type: String
+    Description: S3 bucket for asset
+      "39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2"
+  AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2S3VersionKey3A7A31C2:
+    Type: String
+    Description: S3 key for asset version
+      "39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2"
+  AssetParameters39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2ArtifactHashAA3DB115:
+    Type: String
+    Description: Artifact hash for asset
+      "39dfa980beb6ec79ed5fc097276858af56f73316603b87c217b3eea012202cd2"
   AssetParametersda254f731d96f448a42b847d5e631a6a426b230b48eab5b0862307875334e305S3BucketCED66570:
     Type: String
     Description: S3 bucket for asset
