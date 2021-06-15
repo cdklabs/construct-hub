@@ -26,16 +26,13 @@ const KEY_FORMAT_REGEX = /^packages\/((?:@[^/]+\/)?[^/]+)\/v([^/]+)\/.*$/;
  * @returns the information about the updated S3 object.
  */
 export async function handler(event: { readonly rebuild?: boolean }, context: Context) {
-  if (s3 == null) {
-    s3 = new S3();
-  }
   const BUCKET_NAME = requireEnv('BUCKET_NAME');
 
   const packages = new Map<string, Map<number, PackageInfo>>();
 
   if (!event.rebuild) {
     console.log('Loading existing catalog...');
-    const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: CATALOG_OBJECT_KEY }).promise()
+    const data = await s3Client().getObject({ Bucket: BUCKET_NAME, Key: CATALOG_OBJECT_KEY }).promise()
       .catch((err: AWSError) => err.code !== 'NoSuchKey'
         ? Promise.reject(err)
         : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
@@ -62,12 +59,11 @@ export async function handler(event: { readonly rebuild?: boolean }, context: Co
     if (found != null && version.compare(found.version) <= 0) {
       console.log(`Skipping ${packageName}@${version} because it is not newer than the existing ${found.version}`);
       continue;
-    } else {
-      console.log(`Registering ${packageName}@${version}`);
     }
+    console.log(`Registering ${packageName}@${version}`);
 
     // Donwload the tarball to inspect the `package.json` data therein.
-    const data = await s3.getObject({ Bucket: BUCKET_NAME, Key: object.Key! }).promise();
+    const data = await s3Client().getObject({ Bucket: BUCKET_NAME, Key: object.Key! }).promise();
     const manifest = await new Promise<Buffer>((ok, ko) => {
       gunzip(Buffer.from(data.Body!), (err, tar) => {
         if (err) {
@@ -129,7 +125,7 @@ export async function handler(event: { readonly rebuild?: boolean }, context: Co
 
   console.log(`Registered ${catalog.packages.length} package major versions`);
   // Upload the result to S3 and exit.
-  return s3.putObject({
+  return s3Client().putObject({
     Bucket: BUCKET_NAME,
     Key: CATALOG_OBJECT_KEY,
     Body: JSON.stringify(catalog, null, 2),
@@ -247,4 +243,11 @@ interface PackageInfo {
  */
 export function reset() {
   s3 = undefined;
+}
+
+function s3Client(): S3 {
+  if (s3 == null) {
+    s3 = new S3();
+  }
+  return s3;
 }
