@@ -1,7 +1,6 @@
 import * as s3 from '@aws-cdk/aws-s3';
 import { Queue } from '@aws-cdk/aws-sqs';
 import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
-import { SQS } from 'aws-sdk';
 import { Construct } from 'constructs';
 import { AlarmActions, Domain } from './api';
 import { Transliterator } from './backend';

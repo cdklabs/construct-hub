@@ -1,7 +1,7 @@
 const { basename, join, dirname, relative } = require('path');
 const glob = require('glob');
 const { pascalCase } = require('pascal-case');
-const { SourceCode, FileBase, JsonFile, JsiiProject } = require('projen');
+const { SourceCode, FileBase, JsonFile, JsiiProject, DependenciesUpgradeMechanism } = require('projen');
 
 const cdkDeps = [
   '@aws-cdk/aws-certificatemanager',
@@ -26,6 +26,9 @@ const cdkDeps = [
   'constructs',
 ];
 
+const cdkAssert = '@aws-cdk/assert';
+const cdkCli = 'aws-cdk';
+
 const project = new JsiiProject({
   name: 'construct-hub',
   description: 'A construct library that model Construct Hub instances.',
@@ -37,19 +40,16 @@ const project = new JsiiProject({
   homepage: 'https://github.com/cdklabs',
   defaultReleaseBranch: 'main',
   mergify: false,
-  dependabot: false,
 
   author: 'Amazon Web Services, Inc.',
   authorAddress: 'construct-ecosystem-team@amazon.com',
   authorOrganization: true,
 
-  cdkVersion: '1.100.0',
-
   devDeps: [
-    '@aws-cdk/assert',
+    cdkAssert,
     '@types/aws-lambda',
     '@types/fs-extra',
-    'aws-cdk',
+    cdkCli,
     'aws-sdk-mock',
     'aws-sdk',
     'esbuild',
@@ -103,6 +103,22 @@ const project = new JsiiProject({
 
   // Exclude handler images from TypeScript compier path
   excludeTypescript: ['resources/**'],
+  autoApproveOptions: {
+    allowedUsernames: ['aws-cdk-automation'],
+    secret: 'GITHUB_TOKEN',
+  },
+  autoApproveUpgrades: true,
+  depsUpgrade: DependenciesUpgradeMechanism.githubWorkflow({
+    exclude: [...cdkDeps, cdkAssert, cdkCli],
+    ignoreProjen: false,
+    workflowOptions: {
+      labels: ['auto-approve'],
+      secret: 'CDK_AUTOMATION_GITHUB_TOKEN',
+      container: {
+        image: 'jsii/superchain',
+      },
+    },
+  }),
 });
 
 // Required while we vendor-in jsii-rosetta to a pre-release version

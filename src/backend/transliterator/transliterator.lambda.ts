@@ -12,7 +12,9 @@ import { TargetLanguage } from 'jsii-rosetta';
 import { transliterateAssembly } from 'jsii-rosetta/lib/commands/transliterate';
 
 const clients = new Map<string, S3>();
+
 const PACKAGE_KEY_REGEX = /^packages\/((?:@[^/]+\/)?[^/]+)\/v([^/]+)\/package.tgz$/;
+// Capture groups:                     ┗━━━━━━━━1━━━━━━━━┛   ┗━━2━━┛
 
 /**
  * This function receives an S3 event, and for each record, proceeds to download
@@ -25,14 +27,19 @@ const PACKAGE_KEY_REGEX = /^packages\/((?:@[^/]+\/)?[^/]+)\/v([^/]+)\/package.tg
  * @returns nothing
  */
 export async function handler(event: S3Event, context: Context): Promise<readonly S3Object[]> {
-  console.error(JSON.stringify(event, null, 2));
+  console.log(JSON.stringify(event, null, 2));
 
   const created = new Array<S3Object>();
 
   for (const record of event.Records) {
-    const [, packageName, packageVersion] = record.s3.object.key.match(PACKAGE_KEY_REGEX) ?? [];
+    // Key names are escaped (`@` as `%40`) in the input payload... Decode it here... We cannot use
+    // `decodeURI` here because it does not undo encoding that `encodeURI` would not have done, and
+    // that would not replace `@` in the position where it is in the keys... So we have to work on
+    // the URI components instead.
+    const inputKey = record.s3.object.key.split('/').map((comp) => decodeURIComponent(comp)).join('/');
+    const [, packageName, packageVersion] = inputKey.match(PACKAGE_KEY_REGEX) ?? [];
     if (packageName == null) {
-      throw new Error(`Invalid object key: "${record.s3.object.key}". It was expected to match ${PACKAGE_KEY_REGEX}!`);
+      throw new Error(`Invalid object key: "${inputKey}". It was expected to match ${PACKAGE_KEY_REGEX}!`);
     }
 
     const client = (clients.has(record.awsRegion)
@@ -40,9 +47,13 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
       : clients.set(record.awsRegion, new S3({ region: record.awsRegion }))
     ).get(record.awsRegion)!;
 
+    console.log(`Source Bucket:  ${record.s3.bucket.name}`);
+    console.log(`Source Key:     ${inputKey}`);
+    console.log(`Source Version: ${record.s3.object.versionId}`);
+
     const object = await client.getObject({
       Bucket: record.s3.bucket.name,
-      Key: record.s3.object.key,
+      Key: inputKey,
       VersionId: record.s3.object.versionId,
     }).promise();
 
@@ -70,7 +81,7 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
           }
         });
       });
-      const packageDir = path.join(workdir, 'node_modules', packageName);
+      const packageDir = path.join(workdir, 'node_modules', ...packageName.split('/'));
 
       await transliterateAssembly(
         [packageDir],
@@ -79,7 +90,7 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
 
       // Payload object key => packages/[<@scope>/]<name>/v<version>/package.tgz
       // Output object key  => packages/[<@scope>/]<name>/v<version>/assembly-python.json
-      const key = record.s3.object.key.replace(/\/[^/]+$/, '/assembly-python.json');
+      const key = inputKey.replace(/\/[^/]+$/, '/assembly-python.json');
       const response = await client.putObject({
         Bucket: record.s3.bucket.name,
         Key: key,
@@ -103,6 +114,13 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
     }
   }
   return created;
+}
+
+/**
+ * Visible for testing. Clears the caches so that the next execution runs clean.
+ */
+export function reset() {
+  clients.clear();
 }
 
 interface S3Object {
