@@ -135,9 +135,14 @@ async function writeMarkerToS3(sequence: Number, context: Context) {
 
 async function processPackageUpdate(change: Change, context: Context) {
   console.log(`Processing transaction: ${change.seq}`);
+  if (Object.keys(change.doc.versions).length === 0) {
+    console.log(`Ignoring document ${change.id}, as it contains no versions`);
+    return;
+  }
 
   const [latestVersion, publishTime] = getLatestVersion(change);
   if (latestVersion == null || !isJsiiModule(latestVersion) || !isConstruct(latestVersion)) {
+    console.log(`Ignoring document ${change.id}, as it is not relevant`);
     return;
   }
 
