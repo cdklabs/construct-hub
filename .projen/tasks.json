@@ -48,6 +48,9 @@
           "spawn": "docgen"
         },
         {
+          "spawn": "bundle:catalog-builder"
+        },
+        {
           "spawn": "bundle:transliterator"
         },
         {
@@ -158,7 +161,7 @@
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @types/aws-lambda @types/fs-extra @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-sdk aws-sdk-mock construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak jsii-rosetta json-schema npm-check-updates pascal-case projen standard-version typescript yaml"
+          "exec": "yarn upgrade @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-sdk aws-sdk-mock construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak jsii-rosetta json-schema npm-check-updates pascal-case projen semver standard-version tar-stream typescript yaml"
         },
         {
           "exec": "npx projen"
@@ -228,6 +231,9 @@
       "description": "Bundle all lambda functions",
       "steps": [
         {
+          "spawn": "bundle:catalog-builder"
+        },
+        {
           "spawn": "bundle:transliterator"
         },
         {
@@ -264,6 +270,15 @@
         }
       ],
       "cwd": "lib/__tests__/devapp"
+    },
+    "bundle:catalog-builder": {
+      "name": "bundle:catalog-builder",
+      "description": "Create an AWS Lambda bundle from src/backend/catalog-builder/catalog-builder.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/catalog-builder/catalog-builder.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/catalog-builder/catalog-builder.bundle/index.js\" --external:aws-sdk"
+        }
+      ]
     },
     "bundle:transliterator": {
       "name": "bundle:transliterator",
