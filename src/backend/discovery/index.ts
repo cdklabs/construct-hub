@@ -1,7 +1,7 @@
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { RetentionDays } from '@aws-cdk/aws-logs';
-import { Bucket, EventType } from '@aws-cdk/aws-s3';
+import { Bucket } from '@aws-cdk/aws-s3';
 import { Queue } from '@aws-cdk/aws-sqs';
 
 import { Construct, Duration } from '@aws-cdk/core';

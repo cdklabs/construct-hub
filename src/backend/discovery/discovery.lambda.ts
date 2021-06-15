@@ -45,12 +45,12 @@ export async function handler(_request: unknown, context: Context) {
   }
 
   if (!process.env.STAGING_BUCKET_NAME) {
-    throw new Error('The STAGING_BUCKET environment variable is not set');
+    throw new Error('The STAGING_BUCKET_NAME environment variable is not set');
   }
-  stagingBucket = stagingBucket;
+  stagingBucket = process.env.STAGING_BUCKET_NAME;
 
   if (!process.env.QUEUE_URL) {
-    throw new Error('The NOTIFICATION_QUEUE_URL environment variable is not set');
+    throw new Error('The QUEUE_URL environment variable is not set');
   }
   queueUrl = process.env.QUEUE_URL;
 
@@ -73,7 +73,7 @@ export async function handler(_request: unknown, context: Context) {
     includeDocs: true,
     // pause the changes reader after each request
     wait: true,
-    since: marker ?? 'now',
+    since: marker ?? '45664',
     // `changesReader.get` stops once a response with zero changes is received, however it waits too long
     //  since we want to terminate the Lambda function we define a timeout shorter than the default
     timeout: TIMEOUT_MILLISECONDS,
@@ -84,37 +84,33 @@ export async function handler(_request: unknown, context: Context) {
 
   db.changesReader.get(config)
     .on('batch', async (batch: Change[]) => {
-      console.log(`Received a batch of ${batch.length} length`);
+      console.log(`Received a batch of ${batch.length} element(s)`);
       const batchPromises = batch
         // ignores changes which are not package update, see https://github.com/cdklabs/construct-hub/issues/3#issuecomment-858246275
         .filter(change => change.doc.name)
-        .map(change => {
-          return processPackageUpdate(change, context)
-            .catch(err => {
-              Object.defineProperty(change, '_construct_hub_failure_reason', err);
-              return s3!.putObject({
+        .map(change =>
+          processPackageUpdate(change, context)
+            .catch((err) =>
+              s3!.putObject({
                 Bucket: stagingBucket,
                 Key: `${FAILED_CHANGE_PREFIX}/${change.id}`,
-                Body: JSON.stringify(change, null, 2),
+                Body: JSON.stringify({ ...change, _construct_hub_failure_reason: err }, null, 2),
                 Metadata: {
                   'Lambda-Log-Group': context.logGroupName,
                   'Lambda-Log-Stream': context.logStreamName,
                   'Lambda-Run-Id': context.awsRequestId,
                 },
-              }).promise().then(() => (void undefined));
-            });
-        });
+              }).promise().then(() => (void undefined))));
 
-      await Promise.all(batchPromises).then(function() {
+      await Promise.all(batchPromises).then(function () {
         // write the last sequence to the marker file in S3
         const lastSequence = batch[batch.length - 1].seq;
         return writeMarkerToS3(lastSequence, context);
-      }).then(function() {
+      }).then(
         // resume reader
-        (db.changesReader as any).resume();
-      }).catch(function (error) {
-        throw Error(`Error while processing batch, marker will not be updated, exiting.\n ${error}`);
-      });
+        () => (db.changesReader as any).resume(),
+        (error) => Promise.reject(new Error(`Error while processing batch, marker will not be updated, exiting.\n${error}`)),
+      );
     })
     .on('end', () => {
       console.log('Changes feed monitoring has stopped');
@@ -122,6 +118,9 @@ export async function handler(_request: unknown, context: Context) {
 }
 
 async function writeMarkerToS3(sequence: Number, context: Context) {
+  if (process.env.SKIP_MARKER) {
+    return;
+  }
   await s3!.putObject({
     Bucket: stagingBucket,
     Key: MARKER_FILE_NAME,
@@ -135,23 +134,18 @@ async function writeMarkerToS3(sequence: Number, context: Context) {
 }
 
 async function processPackageUpdate(change: Change, context: Context) {
-  let latestVersion: VersionInfo;
-  try {
-    // we assume that the change is concerning the latest version
-    latestVersion = getLatestVersion(change);
-    if (!isJsiiModule(latestVersion) || !isConstruct(latestVersion)) {
-      return;
-    }
-  } catch (error) {
-    console.error(`Could not parse change for ${change.id}`);
-    throw error;
+  console.log(`Processing transaction: ${change.seq}`);
+
+  const [latestVersion, publishTime] = getLatestVersion(change);
+  if (latestVersion == null || !isJsiiModule(latestVersion) || !isConstruct(latestVersion)) {
+    return;
   }
 
   // change.dist.tarball => https://registry.npmjs.org/<@scope>/<name>/-/<name>-<version>.tgz
   // staging bucket key  => packages/<@scope>/<name>/-/<name>-<version>.tgz
   const key = `packages/${new URL(latestVersion.dist.tarball).pathname}`;
   await copyPackageToS3(latestVersion, key, context);
-  await sendSqsMessage(latestVersion, change.seq, key);
+  await sendSqsMessage(latestVersion, publishTime, change.seq, key);
 }
 
 /**
@@ -185,12 +179,12 @@ async function copyPackageToS3(versionInfo: VersionInfo, key: string, context: C
  * @param versionInfo the version info
  * @param key the s3 key to which the tarball was uploaded
  */
-async function sendSqsMessage(versionInfo: VersionInfo, transactionId: number, key: string): Promise<void> {
+async function sendSqsMessage(versionInfo: VersionInfo, publishTime: Date, transactionId: number, key: string): Promise<void> {
   console.log(`Posting sqs message for ${versionInfo.packageName}`);
   const message: Message = {
     tarballUri: `s3://${stagingBucket}/${key}`,
     metadata: { tid: transactionId.toFixed() },
-    time: new Date(versionInfo.time.modified),
+    time: publishTime,
     integrity: 'TODO',
   };
 
@@ -218,7 +212,7 @@ function isJsiiModule(pkgJason: VersionInfo): boolean {
  * @returns the version from the versions array with the most recent
  *          modification timestamp.
  */
-function getLatestVersion(update: Change): VersionInfo {
+function getLatestVersion(update: Change): [VersionInfo | undefined, Date] {
   const [lastModifiedVersion] = Object.entries(update.doc.time)
     // Ignore created & modified timestamps
     .filter(([key]) => key !== 'created' && key !== 'modified')
@@ -227,7 +221,10 @@ function getLatestVersion(update: Change): VersionInfo {
     // First entry is most recently changed version
     [0];
 
-  return update.doc.versions[lastModifiedVersion];
+  return [
+    update.doc.versions[lastModifiedVersion],
+    new Date(update.doc.time[lastModifiedVersion]),
+  ];
 }
 
 /**
@@ -256,11 +253,6 @@ interface VersionInfo {
     readonly tarball: string;
   };
   readonly version: string;
-  readonly time: {
-    readonly modified: string;
-    readonly created: string;
-    readonly [key: string]: string;
-  };
 }
 
 interface Document {
@@ -268,7 +260,7 @@ interface Document {
   /**
    * a List of all Version objects for the package
    */
-  readonly versions: { [key:string]: VersionInfo };
+  readonly versions: { [key:string]: VersionInfo | undefined };
 
   /**
    * The package's name.
