@@ -20,6 +20,7 @@ const cdkDeps = [
   '@aws-cdk/aws-s3',
   '@aws-cdk/aws-sns',
   '@aws-cdk/core',
+  '@aws-cdk/aws-sqs',
   '@aws-cdk/cx-api',
   'cdk-watchful',
   'constructs',
@@ -56,6 +57,7 @@ const project = new JsiiProject({
     'got',
     'jsii-rosetta',
     'yaml',
+    'nano',
   ],
 
   deps: cdkDeps,

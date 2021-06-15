@@ -1,8 +1,11 @@
 import * as s3 from '@aws-cdk/aws-s3';
-import { Construct as CoreConstruct } from '@aws-cdk/core';
+import { Queue } from '@aws-cdk/aws-sqs';
+import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
+import { SQS } from 'aws-sdk';
 import { Construct } from 'constructs';
 import { AlarmActions, Domain } from './api';
 import { Transliterator } from './backend';
+import { DiscoveryFunction } from './backend/discovery';
 import { Monitoring } from './monitoring';
 import { WebApp } from './webapp';
 
@@ -45,6 +48,22 @@ export class ConstructHub extends CoreConstruct {
     const packageData = new s3.Bucket(this, 'PackageData', {
       encryption: s3.BucketEncryption.S3_MANAGED,
       versioned: true,
+    });
+
+    const stagingBucket = new s3.Bucket(this, 'StagingBucket', {
+      lifecycleRules: [
+        {
+          prefix: 'packages', // delete the staged tarball after 30 days
+          expiration: Duration.days(30),
+        },
+      ],
+    });
+
+    const ingestionQueue = new Queue(this, 'IngestionQueue');
+
+    new DiscoveryFunction(this, 'DiscoveryFunction', {
+      queue: ingestionQueue,
+      stagingBucket,
     });
 
     new Transliterator(this, 'Transliterator', {
