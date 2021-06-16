@@ -110,8 +110,10 @@ export async function handler(_request: unknown, context: Context) {
       }).then(
         // resume reader
         () => (db.changesReader as any).resume(),
-        (error) => Promise.reject(new Error(`Error while processing batch, marker will not be updated, exiting.\n${error}`)),
-      );
+      ).catch((error) => {
+        db.changesReader.stop();
+        return Promise.reject(new Error(`Error while processing batch, marker will not be updated, exiting.\n${error}`));
+      });
     })
     .on('end', () => {
       console.log('Changes feed monitoring has stopped');
