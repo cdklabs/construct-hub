@@ -1,4 +1,5 @@
 import { URL } from 'url';
+import { createGunzip } from 'zlib';
 
 import { validateAssembly } from '@jsii/spec';
 // eslint-disable-next-line import/no-unresolved
@@ -33,6 +34,7 @@ export async function handler(event: SQSEvent, context: Context) {
       throw new Error(`Integrity check failed: ${payload.integrity} !== ${integrityCheck}`);
     }
 
+    const tar = await gunzip(Buffer.from(tarball.Body!));
     const dotJsii = await new Promise<Buffer>((ok, ko) => {
       extract()
         .on('entry', (headers, stream, next) => {
@@ -51,7 +53,7 @@ export async function handler(event: SQSEvent, context: Context) {
         })
         .once('error', ko)
         .once('close', () => ko(new Error('No .jsii file found in tarball!')))
-        .write(Buffer.from(tarball.Body!), (err) => {
+        .write(tar, (err) => {
           if (err != null) {
             ko(err);
           }
@@ -101,6 +103,16 @@ export async function handler(event: SQSEvent, context: Context) {
   }
 
   return result;
+}
+
+function gunzip(data: Buffer): Promise<Buffer> {
+  const chunks = new Array<Buffer>();
+  return new Promise<Buffer>((ok, ko) =>
+    createGunzip()
+      .once('error', ko)
+      .on('data', (chunk) => chunks.push(Buffer.from(chunk)))
+      .once('end', () => ok(Buffer.concat(chunks)))
+      .end(data));
 }
 
 interface CreatedObject {
