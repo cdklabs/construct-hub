@@ -31,7 +31,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
   const stagingBucket = requireEnv('BUCKET_NAME');
   const queueUrl = requireEnv('QUEUE_URL');
 
-  const initialMarker = await loadLastTransactionMarker(139369);
+  const initialMarker = await loadLastTransactionMarker(1_800_000 /* @aws-cdk/cdk initial release was at 1_846_709 */);
 
   const config: Nano.ChangesReaderOptions = {
     includeDocs: true,
