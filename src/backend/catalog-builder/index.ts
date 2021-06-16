@@ -38,7 +38,7 @@ export class CatalogBuilder extends Construct {
 
     handler.addEventSource(new S3EventSource(props.bucket, {
       events: [EventType.OBJECT_CREATED],
-      filters: [{ prefix: 'packages/', suffix: '/package.tgz' }],
+      filters: [{ prefix: 'packages/', suffix: '/assembly.json' }],
     }));
   }
 }

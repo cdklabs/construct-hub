@@ -63,7 +63,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData });
 
-    const discovery = new Discovery(this, 'DiscoveryFunction', { queue: this.ingestion.queue });
+    const discovery = new Discovery(this, 'Discovery', { queue: this.ingestion.queue });
     discovery.bucket.grantRead(this.ingestion);
 
     new Transliterator(this, 'Transliterator', { bucket: packageData });
