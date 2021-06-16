@@ -38,6 +38,7 @@ export class Ingestion extends Construct implements IGrantable {
 
     const handler = new Handler(this, 'Default', {
       deadLetterQueueEnabled: true,
+      description: 'Ingests new package versions into the Construct Hub',
       environment: {
         BUCKET_NAME: props.bucket.bucketName,
       },

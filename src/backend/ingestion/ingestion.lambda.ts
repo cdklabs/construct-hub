@@ -7,6 +7,8 @@ import { extract } from 'tar-stream';
 import { aws, IngestionInput, integrity, requireEnv } from '../shared';
 
 export async function handler(event: SQSEvent, context: Context) {
+  console.log(`Event: ${JSON.stringify(event, null, 2)}`);
+
   const BUCKET_NAME = requireEnv('BUCKET_NAME');
 
   const result = new Array<CreatedObject>();
@@ -15,13 +17,14 @@ export async function handler(event: SQSEvent, context: Context) {
     const payload = JSON.parse(record.body) as IngestionInput;
 
     const tarballUri = new URL(payload.tarballUri);
-    if (tarballUri.protocol !== 's3') {
+    if (tarballUri.protocol !== 's3:') {
       throw new Error(`Unsupported protocol in URI: ${tarballUri}`);
     }
     const tarball = await aws.s3().getObject({
       // Note: we drop anything after the first `.` in the host, as we only care about the bucket name.
       Bucket: tarballUri.host.split('.')[0],
-      Key: tarballUri.pathname,
+      // Note: the pathname part is absolute, so we strip the leading `/`.
+      Key: tarballUri.pathname.replace(/^\//, ''),
       VersionId: tarballUri.searchParams.get('versionId') ?? undefined,
     }).promise();
 
