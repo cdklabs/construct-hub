@@ -4,7 +4,7 @@ import { Queue } from '@aws-cdk/aws-sqs';
 import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { AlarmActions, Domain } from './api';
-import { CatalogBuilder, DiscoveryFunction, Transliterator } from './backend';
+import { CatalogBuilder, Discovery, Transliterator } from './backend';
 import { Monitoring } from './monitoring';
 import { WebApp } from './webapp';
 
@@ -57,20 +57,10 @@ export class ConstructHub extends CoreConstruct {
       versioned: true,
     });
 
-    const stagingBucket = new s3.Bucket(this, 'StagingBucket', {
-      lifecycleRules: [
-        {
-          prefix: 'packages', // delete the staged tarball after 30 days
-          expiration: Duration.days(30),
-        },
-      ],
-    });
-
     const ingestionQueue = new Queue(this, 'IngestionQueue');
 
-    new DiscoveryFunction(this, 'DiscoveryFunction', {
+    new Discovery(this, 'Discovery', {
       queue: ingestionQueue,
-      stagingBucket,
     });
 
     new Transliterator(this, 'Transliterator', {

@@ -1,5 +1,5 @@
 import { createHash } from 'crypto';
-import type { IngestionInput } from './ingestion-input';
+import type { IngestionInput } from './ingestion-input.lambda-shared';
 
 /**
  * Computes an integrity checksum for the provided `IngestionInput`.
