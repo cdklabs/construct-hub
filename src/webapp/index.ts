@@ -28,7 +28,7 @@ export class WebApp extends Construct {
   public constructor(scope: Construct, id: string, props: WebAppProps) {
     super(scope, id);
 
-    this.bucket = new s3.Bucket(this, 'WebsiteBucket');
+    this.bucket = new s3.Bucket(this, 'WebsiteBucket', { blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL });
 
     this.distribution = new cloudfront.Distribution(this, 'Distribution', {
       defaultBehavior: { origin: new origins.S3Origin(this.bucket) },

@@ -33,7 +33,7 @@ __Extends__: [Construct](#aws-cdk-core-construct)
 new ConstructHub(scope: Construct, id: string, props: ConstructHubProps)
 ```
 
-* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
+* **scope** (<code>[Construct](#constructs-construct)</code>)  *No description*
 * **id** (<code>string</code>)  *No description*
 * **props** (<code>[ConstructHubProps](#construct-hub-constructhubprops)</code>)  *No description*
   * **alarmActions** (<code>[AlarmActions](#construct-hub-alarmactions)</code>)  Actions to perform when alarms are set. 

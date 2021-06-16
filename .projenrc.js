@@ -3,7 +3,7 @@ const glob = require('glob');
 const { pascalCase } = require('pascal-case');
 const { SourceCode, FileBase, JsonFile, JsiiProject, DependenciesUpgradeMechanism } = require('projen');
 
-const cdkDeps = [
+const runtimeDeps = [
   '@aws-cdk/aws-certificatemanager',
   '@aws-cdk/aws-cloudfront-origins',
   '@aws-cdk/aws-cloudfront',
@@ -67,8 +67,8 @@ const project = new JsiiProject({
     'nano',
   ],
 
-  deps: cdkDeps,
-  peerDeps: cdkDeps,
+  deps: runtimeDeps,
+  peerDeps: runtimeDeps,
 
   minNodeVersion: '12.0.0',
 
@@ -116,7 +116,7 @@ const project = new JsiiProject({
   },
   autoApproveUpgrades: true,
   depsUpgrade: DependenciesUpgradeMechanism.githubWorkflow({
-    exclude: [...cdkDeps, cdkAssert, cdkCli],
+    exclude: [...runtimeDeps, cdkAssert, cdkCli],
     ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve'],
@@ -249,6 +249,8 @@ function newLambdaHandler(entrypoint) {
 function discoverLambdas() {
   // allow .lambda code to import dev-deps (since they are only needed during bundling)
   project.eslint.allowDevDeps('src/**/*.lambda.ts');
+  // Allow .lambda-shared code to import dev-deps (these are not entry points, but are shared by several lambdas)
+  project.eslint.allowDevDeps('src/**/*.lambda-shared.ts');
   project.addDevDeps('glob');
   for (const entry of glob.sync('src/**/*.lambda.ts')) {
     newLambdaHandler(entry);

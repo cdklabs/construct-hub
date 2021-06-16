@@ -1,9 +1,11 @@
 import * as iam from '@aws-cdk/aws-iam';
 import * as s3 from '@aws-cdk/aws-s3';
+import { BlockPublicAccess } from '@aws-cdk/aws-s3';
 import * as sqs from '@aws-cdk/aws-sqs';
-import { Construct, Duration } from '@aws-cdk/core';
+import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
+import { Construct } from 'constructs';
 import { AlarmActions, Domain } from './api';
-import { CatalogBuilder, DiscoveryFunction, Ingestion, Transliterator } from './backend';
+import { CatalogBuilder, Discovery, Ingestion, Transliterator } from './backend';
 import { Monitoring } from './monitoring';
 import { WebApp } from './webapp';
 
@@ -34,7 +36,7 @@ export interface ConstructHubProps {
 /**
  * Construct Hub.
  */
-export class ConstructHub extends Construct implements iam.IGrantable {
+export class ConstructHub extends CoreConstruct implements iam.IGrantable {
   private readonly ingestion: Ingestion;
 
   public constructor(scope: Construct, id: string, props: ConstructHubProps) {
@@ -46,6 +48,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
     });
 
     const packageData = new s3.Bucket(this, 'PackageData', {
+      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       encryption: s3.BucketEncryption.S3_MANAGED,
       lifecycleRules: [
         // Abort multi-part uploads after 1 day
@@ -60,18 +63,8 @@ export class ConstructHub extends Construct implements iam.IGrantable {
 
     this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData });
 
-    const stagingBucket = new s3.Bucket(this, 'StagingBucket', {
-      lifecycleRules: [
-        {
-          prefix: 'packages', // delete the staged tarball after 30 days
-          expiration: Duration.days(30),
-        },
-      ],
-    });
-    new DiscoveryFunction(this, 'DiscoveryFunction', {
-      queue: this.ingestion.queue,
-      stagingBucket,
-    });
+    const discovery = new Discovery(this, 'DiscoveryFunction', { queue: this.ingestion.queue });
+    discovery.bucket.grantRead(this.ingestion);
 
     new Transliterator(this, 'Transliterator', { bucket: packageData });
     new CatalogBuilder(this, 'CatalogBuilder', { bucket: packageData });
