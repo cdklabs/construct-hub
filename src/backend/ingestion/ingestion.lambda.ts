@@ -59,10 +59,13 @@ export async function handler(event: SQSEvent, context: Context) {
           }
         });
     });
+
     const { name: packageName, version: packageVersion } = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
 
     const assemblyKey = `packages/${packageName}/v${packageVersion}/assembly.json`;
+    console.log(`Writing assembly at ${assemblyKey}`);
     const packageKey = `packages/${packageName}/v${packageVersion}/package.tgz`;
+    console.log(`Writing package at  ${packageKey}`);
 
     const [assembly, pkg] = await Promise.all([
       aws.s3().putObject({
@@ -89,7 +92,7 @@ export async function handler(event: SQSEvent, context: Context) {
       }).promise(),
     ]);
 
-    result.push({
+    const created = {
       bucket: BUCKET_NAME,
       assembly: {
         key: assemblyKey,
@@ -99,7 +102,9 @@ export async function handler(event: SQSEvent, context: Context) {
         key: packageKey,
         versionId: pkg.VersionId,
       },
-    });
+    };
+    console.log(`Created objects: ${JSON.stringify(created, null, 2)}`);
+    result.push(created);
   }
 
   return result;
