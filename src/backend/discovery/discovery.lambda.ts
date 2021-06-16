@@ -74,7 +74,7 @@ export async function handler(_request: unknown, context: Context) {
     includeDocs: true,
     // pause the changes reader after each request
     wait: true,
-    since: marker ?? '139369',
+    since: marker,
     // `changesReader.get` stops once a response with zero changes is received, however it waits too long
     //  since we want to terminate the Lambda function we define a timeout shorter than the default
     timeout: TIMEOUT_MILLISECONDS,
