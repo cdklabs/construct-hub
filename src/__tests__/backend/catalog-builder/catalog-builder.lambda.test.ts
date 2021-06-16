@@ -6,7 +6,8 @@ import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import * as tar from 'tar-stream';
 
-import { CATALOG_OBJECT_KEY, handler, reset } from '../../../backend/catalog-builder/catalog-builder.lambda';
+import { CATALOG_OBJECT_KEY, handler } from '../../../backend/catalog-builder/catalog-builder.lambda';
+import { aws } from '../../../backend/shared';
 
 let mockBucketName: string | undefined;
 
@@ -18,7 +19,7 @@ beforeEach((done) => {
 
 afterEach((done) => {
   AWSMock.restore();
-  reset();
+  aws.reset();
   process.env.BUCKET_NAME = mockBucketName = undefined;
   done();
 });

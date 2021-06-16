@@ -3,17 +3,11 @@ import { URL } from 'url';
 import { validateAssembly } from '@jsii/spec';
 // eslint-disable-next-line import/no-unresolved
 import { Context, SQSEvent } from 'aws-lambda';
-import { S3 } from 'aws-sdk';
 import { extract } from 'tar-stream';
-import { IngestionInput, integrity } from '../shared';
-
-let s3: S3 | undefined;
+import { aws, IngestionInput, integrity, requireEnv } from '../shared';
 
 export async function handler(event: SQSEvent, context: Context) {
   const BUCKET_NAME = requireEnv('BUCKET_NAME');
-  if (s3 == null) {
-    s3 = new S3();
-  }
 
   const result = new Array<CreatedObject>();
 
@@ -24,7 +18,7 @@ export async function handler(event: SQSEvent, context: Context) {
     if (tarballUri.protocol !== 's3') {
       throw new Error(`Unsupported protocol in URI: ${tarballUri}`);
     }
-    const tarball = await s3.getObject({
+    const tarball = await aws.s3().getObject({
       // Note: we drop anything after the first `.` in the host, as we only care about the bucket name.
       Bucket: tarballUri.host.split('.')[0],
       Key: tarballUri.pathname,
@@ -66,7 +60,7 @@ export async function handler(event: SQSEvent, context: Context) {
     const packageKey = `packages/${packageName}/v${packageVersion}/package.tgz`;
 
     const [assembly, pkg] = await Promise.all([
-      s3.putObject({
+      aws.s3().putObject({
         Bucket: BUCKET_NAME,
         Key: assemblyKey,
         Body: dotJsii,
@@ -77,7 +71,7 @@ export async function handler(event: SQSEvent, context: Context) {
           'Lambda-Run-Id': context.awsRequestId,
         },
       }).promise(),
-      s3.putObject({
+      aws.s3().putObject({
         Bucket: BUCKET_NAME,
         Key: packageKey,
         Body: tarball.Body,
@@ -104,21 +98,6 @@ export async function handler(event: SQSEvent, context: Context) {
   }
 
   return result;
-}
-
-function requireEnv(name: string): string {
-  const result = process.env[name];
-  if (!result) {
-    throw new Error(`No value provided for required environment variable "${name}"`);
-  }
-  return result;
-}
-
-/**
- * Visible for testing. Resets the S3 client used for running this function.
- */
-export function reset() {
-  s3 = undefined;
 }
 
 interface CreatedObject {
