@@ -147,7 +147,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
       // Store the tarball into the staging bucket
       // - infos.dist.tarball => https://registry.npmjs.org/<@scope>/<name>/-/<name>-<version>.tgz
       // - stagingKey         =>                     staged/<@scope>/<name>/-/<name>-<version>.tgz
-      const stagingKey = `staged/${new URL(infos.dist.tarball).pathname}`;
+      const stagingKey = `staged/${new URL(infos.dist.tarball).pathname}`.replace(/\/{2,}/g, '/');
       await putObject(stagingKey, tarball, {
         ContentType: 'application/x-gtar',
         Metadata: {
