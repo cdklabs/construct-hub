@@ -65,7 +65,7 @@ export async function handler(_request: unknown, context: Context) {
       marker = data.Body?.toString('utf-8');
     });
   } catch (error) {
-    console.log(`Failed to load marker for bucket: ${stagingBucket}, will start read from latest`);
+    throw new Error(`Failed to load marker for bucket: ${stagingBucket}, exiting`);
   }
 
   console.log(`Starting changes stream read from ${marker}`);
@@ -84,12 +84,12 @@ export async function handler(_request: unknown, context: Context) {
   const db = nano.db.use('registry');
 
   db.changesReader.get(config)
-    .on('batch', async (batch: Change[]) => {
+    .on('batch', async (batch: readonly Change[]) => {
       console.log(`Received a batch of ${batch.length} element(s)`);
       const batchPromises = batch
         // ignores changes which are not package update, see https://github.com/cdklabs/construct-hub/issues/3#issuecomment-858246275
-        .filter(change => change.doc.name)
-        .map(change =>
+        .filter((change) => change.doc.name)
+        .map((change) =>
           processPackageUpdate(change, context)
             .catch((err) =>
               s3!.putObject({
@@ -208,10 +208,9 @@ async function sendSqsMessage(versionInfo: VersionInfo, tarball: Buffer, publish
 
 /**
   * @returns returns true if the package.json contains a jsii clause, false otherwise
-  * @param pkgJason
   */
-function isJsiiModule(pkgJason: VersionInfo): boolean {
-  return pkgJason.jsii != null;
+function isJsiiModule(versionInfo: VersionInfo): boolean {
+  return versionInfo.jsii != null;
 }
 
 /**
@@ -244,9 +243,9 @@ function getLatestVersion(update: Change): [VersionInfo | undefined, Date] {
   * @param pkgJason
   * @returns
   */
-function isConstruct(pkgJason: VersionInfo): boolean {
+function isConstruct(versionInfo: VersionInfo): boolean {
   // currently we only check for specific keywords
-  return pkgJason.keywords?.some(k => CONSTRUCT_KEYWORDS.has(k));
+  return versionInfo.keywords?.some((k) => CONSTRUCT_KEYWORDS.has(k));
 }
 
 /**
