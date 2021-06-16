@@ -1,5 +1,6 @@
+import { S3EventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { RetentionDays } from '@aws-cdk/aws-logs';
-import { Bucket } from '@aws-cdk/aws-s3';
+import { Bucket, EventType } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 
 import { CatalogBuilder as Handler } from './catalog-builder';
@@ -34,5 +35,10 @@ export class CatalogBuilder extends Construct {
     });
 
     props.bucket.grantReadWrite(handler);
+
+    handler.addEventSource(new S3EventSource(props.bucket, {
+      events: [EventType.OBJECT_CREATED],
+      filters: [{ prefix: 'packages/', suffix: '/package.tgz' }],
+    }));
   }
 }
