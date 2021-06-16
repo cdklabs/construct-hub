@@ -103,6 +103,7 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
           'Lambda-Run-Id': context.awsRequestId,
         },
       }).promise();
+
       created.push({
         bucket: record.s3.bucket.name,
         key,

@@ -1,9 +1,10 @@
 import * as s3 from '@aws-cdk/aws-s3';
 import { StorageClass } from '@aws-cdk/aws-s3';
+import { Queue } from '@aws-cdk/aws-sqs';
 import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { AlarmActions, Domain } from './api';
-import { CatalogBuilder, Transliterator } from './backend';
+import { CatalogBuilder, Discovery, Transliterator } from './backend';
 import { Monitoring } from './monitoring';
 import { WebApp } from './webapp';
 
@@ -56,8 +57,19 @@ export class ConstructHub extends CoreConstruct {
       versioned: true,
     });
 
-    new CatalogBuilder(this, 'CatalogBuilder', { bucket: packageData });
-    new Transliterator(this, 'Transliterator', { bucket: packageData });
+    const ingestionQueue = new Queue(this, 'IngestionQueue');
+
+    new Discovery(this, 'Discovery', {
+      queue: ingestionQueue,
+    });
+
+    new Transliterator(this, 'Transliterator', {
+      bucket: packageData,
+    });
+
+    new CatalogBuilder(this, 'CatalogBuilder', {
+      bucket: packageData,
+    });
 
     new WebApp(this, 'WebApp', {
       domain: props.domain,

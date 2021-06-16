@@ -20,6 +20,7 @@ const cdkDeps = [
   '@aws-cdk/aws-s3',
   '@aws-cdk/aws-sns',
   '@aws-cdk/core',
+  '@aws-cdk/aws-sqs',
   '@aws-cdk/cx-api',
   'cdk-watchful',
   'constructs',
@@ -60,6 +61,7 @@ const project = new JsiiProject({
     'semver',
     'tar-stream',
     'yaml',
+    'nano',
   ],
 
   deps: cdkDeps,
@@ -244,6 +246,8 @@ function newLambdaHandler(entrypoint) {
 function discoverLambdas() {
   // allow .lambda code to import dev-deps (since they are only needed during bundling)
   project.eslint.allowDevDeps('src/**/*.lambda.ts');
+  // Allow .lambda-shared code to import dev-deps (these are not entry points, but are shared by several lambdas)
+  project.eslint.allowDevDeps('src/**/*.lambda-shared.ts');
   project.addDevDeps('glob');
   for (const entry of glob.sync('src/**/*.lambda.ts')) {
     newLambdaHandler(entry);
