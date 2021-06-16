@@ -1,10 +1,18 @@
 import * as s3 from '@aws-cdk/aws-s3';
-import { StorageClass } from '@aws-cdk/aws-s3';
+<<<<<<< HEAD
 import { Queue } from '@aws-cdk/aws-sqs';
 import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { AlarmActions, Domain } from './api';
-import { CatalogBuilder, DiscoveryFunction, Transliterator } from './backend';
+import { Transliterator } from './backend';
+import { DiscoveryFunction } from './backend/discovery';
+=======
+import { StorageClass } from '@aws-cdk/aws-s3';
+import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
+import { Construct } from 'constructs';
+import { AlarmActions, Domain } from './api';
+import { CatalogBuilder, Transliterator } from './backend';
+>>>>>>> main
 import { Monitoring } from './monitoring';
 import { WebApp } from './webapp';
 
@@ -57,6 +65,7 @@ export class ConstructHub extends CoreConstruct {
       versioned: true,
     });
 
+<<<<<<< HEAD
     const stagingBucket = new s3.Bucket(this, 'StagingBucket', {
       lifecycleRules: [
         {
@@ -74,12 +83,12 @@ export class ConstructHub extends CoreConstruct {
     });
 
     new Transliterator(this, 'Transliterator', {
-      bucket: packageData,
+      sourceBucket: packageData,
     });
-
-    new CatalogBuilder(this, 'CatalogBuilder', {
-      bucket: packageData,
-    });
+=======
+    new CatalogBuilder(this, 'CatalogBuilder', { bucket: packageData });
+    new Transliterator(this, 'Transliterator', { bucket: packageData });
+>>>>>>> main
 
     new WebApp(this, 'WebApp', {
       domain: props.domain,

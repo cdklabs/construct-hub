@@ -237,7 +237,7 @@ test('unscoped package', async () => {
   expect(mockTransliterateAssembly).toHaveBeenCalled();
 });
 
-type Response<T> = (err: Error | null, data?: T) => void;
+type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
 
 class MockChildProcess extends EventEmitter implements child_process.ChildProcess {
   public readonly stdin = null;
