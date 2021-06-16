@@ -130,6 +130,7 @@ const project = new JsiiProject({
 
 // Required while we vendor-in jsii-rosetta to a pre-release version
 project.addDevDeps('jsii-rosetta@./vendor/jsii-rosetta.tgz');
+project.addDevDeps('@jsii/spec@./vendor/jsii-spec.tgz');
 project.addFields({ resolutions: { '@jsii/spec': './vendor/jsii-spec.tgz' } });
 
 function addDevApp() {
