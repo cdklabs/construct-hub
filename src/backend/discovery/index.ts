@@ -6,6 +6,7 @@ import { IQueue } from '@aws-cdk/aws-sqs';
 
 import { Construct, Duration } from '@aws-cdk/core';
 import { Discovery as Handler } from './discovery';
+import { STAGED_KEY_PREFIX } from './discovery.lambda';
 
 export interface DiscoveryProps {
   /**
@@ -35,7 +36,7 @@ export class Discovery extends Construct {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       lifecycleRules: [
         {
-          prefix: 'staged/', // delete the staged tarball after 30 days
+          prefix: STAGED_KEY_PREFIX, // delete the staged tarball after 30 days
           expiration: Duration.days(30),
         },
       ],

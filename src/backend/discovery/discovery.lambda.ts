@@ -13,6 +13,9 @@ const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set(['cdk', 'aws-cdk', 'cdk8
 const MARKER_FILE_NAME = 'couchdb-last-transaction-id';
 const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
 
+export const FAILED_KEY_PREFIX = 'failed/';
+export const STAGED_KEY_PREFIX = 'staged/';
+
 /**
  * This function triggers on a fixed schedule and reads a stream of changes frm npmjs couchdb _changes endpoint.
  * Upon invocation the function starts reading from a sequence stored in an s3 object - the `marker`.
@@ -147,7 +150,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
       // Store the tarball into the staging bucket
       // - infos.dist.tarball => https://registry.npmjs.org/<@scope>/<name>/-/<name>-<version>.tgz
       // - stagingKey         =>                     staged/<@scope>/<name>/-/<name>-<version>.tgz
-      const stagingKey = `staged/${new URL(infos.dist.tarball).pathname}`.replace(/\/{2,}/g, '/');
+      const stagingKey = `${STAGED_KEY_PREFIX}${new URL(infos.dist.tarball).pathname}`.replace(/\/{2,}/g, '/');
       await putObject(stagingKey, tarball, {
         ContentType: 'application/x-gtar',
         Metadata: {
@@ -180,7 +183,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
     } catch (err) {
       // Something failed, store the payload in the problem prefix, and move on.
       console.error(`[${seq}] Failed processing ${infos.name}@${infos.version}: ${err}`);
-      await putObject(`failed/${seq}`, JSON.stringify(infos, null, 2), {
+      await putObject(`${FAILED_KEY_PREFIX}${seq}`, JSON.stringify(infos, null, 2), {
         ContentType: 'text/json',
         Metadata: {
           // User-defined metadata is limited to 2KB in size, in total. So we
@@ -256,7 +259,7 @@ function getRelevantVersionInfos(changes: readonly Change[]): readonly UpdatedVe
   const result = new Array<UpdatedVersion>();
   for (const change of changes) {
     // Sometimes, there are no versions in the document. We skip those.
-    if (Object.keys(change.doc.versions).length === 0) {
+    if (change.doc.versions == null) {
       console.error(`[${change.seq}] Changed document contains no 'versions': ${JSON.stringify(change, null, 2)}`);
       continue;
     }

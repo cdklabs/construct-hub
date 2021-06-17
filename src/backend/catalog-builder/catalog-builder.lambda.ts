@@ -6,12 +6,10 @@ import type { Context } from 'aws-lambda';
 import { AWSError, S3 } from 'aws-sdk';
 import { SemVer } from 'semver';
 import { extract } from 'tar-stream';
-import { aws, requireEnv } from '../shared';
+import { aws, constants, requireEnv } from '../shared';
 
-export const CATALOG_OBJECT_KEY = 'catalog.json';
-
-const KEY_FORMAT_REGEX = /^packages\/((?:@[^/]+\/)?[^/]+)\/v([^/]+)\/.*$/;
-// Capture groups:                   ┗━━━━━━━━1━━━━━━━━━┛   ┗━━2━━┛
+const KEY_FORMAT_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`);
+// Capture groups:                                                   ┗━━━━━━━━1━━━━━━━━┛  ┗━━2━━┛
 
 /**
  * Regenerates the `catalog.json` object in the configured S3 bucket.
@@ -30,7 +28,7 @@ export async function handler(event: { readonly rebuild?: boolean }, context: Co
 
   if (!event.rebuild) {
     console.log('Loading existing catalog...');
-    const data = await aws.s3().getObject({ Bucket: BUCKET_NAME, Key: CATALOG_OBJECT_KEY }).promise()
+    const data = await aws.s3().getObject({ Bucket: BUCKET_NAME, Key: constants.CATALOG_KEY }).promise()
       .catch((err: AWSError) => err.code !== 'NoSuchKey'
         ? Promise.reject(err)
         : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
@@ -125,7 +123,7 @@ export async function handler(event: { readonly rebuild?: boolean }, context: Co
   // Upload the result to S3 and exit.
   return aws.s3().putObject({
     Bucket: BUCKET_NAME,
-    Key: CATALOG_OBJECT_KEY,
+    Key: constants.CATALOG_KEY,
     Body: JSON.stringify(catalog, null, 2),
     ContentType: 'text/json',
     Metadata: {
@@ -144,11 +142,11 @@ export async function handler(event: { readonly rebuild?: boolean }, context: Co
  * npm package tarballs present under the `packages/` prefix in the bucket.
  */
 async function* relevantObjects(bucket: string) {
-  const request: S3.ListObjectsV2Request = { Bucket: bucket, Prefix: 'packages/' };
+  const request: S3.ListObjectsV2Request = { Bucket: bucket, Prefix: constants.STORAGE_KEY_PREFIX };
   do {
     const result = await aws.s3().listObjectsV2(request).promise();
     for (const object of result.Contents ?? []) {
-      if (!object.Key?.endsWith('/package.tgz')) {
+      if (!object.Key?.endsWith(constants.PACKAGE_KEY_SUFFIX)) {
         continue;
       }
       yield object;

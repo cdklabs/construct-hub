@@ -6,8 +6,8 @@ import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import * as tar from 'tar-stream';
 
-import { CATALOG_OBJECT_KEY, handler } from '../../../backend/catalog-builder/catalog-builder.lambda';
-import { aws } from '../../../backend/shared';
+import { handler } from '../../../backend/catalog-builder/catalog-builder.lambda';
+import { aws, constants } from '../../../backend/shared';
 
 let mockBucketName: string | undefined;
 
@@ -29,7 +29,7 @@ test('no indexed packages', () => {
   AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<never>) => {
     try {
       expect(req.Bucket).toBe(mockBucketName);
-      expect(req.Key).toBe(CATALOG_OBJECT_KEY);
+      expect(req.Key).toBe(constants.CATALOG_KEY);
     } catch (e) {
       return cb(e);
     }
@@ -49,7 +49,7 @@ test('no indexed packages', () => {
   AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
     try {
       expect(req.Bucket).toBe(mockBucketName);
-      expect(req.Key).toBe(CATALOG_OBJECT_KEY);
+      expect(req.Key).toBe(constants.CATALOG_KEY);
       expect(req.ContentType).toBe('text/json');
       const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
       expect(body.packages).toEqual([]);
@@ -86,21 +86,21 @@ test('initial build', () => {
     }
   });
   const mockFirstPage: AWS.S3.ObjectList = [
-    { Key: 'packages/@scope/package/v1.2.3/assembly.json' },
-    { Key: 'packages/@scope/package/v1.2.3/package.tgz' },
-    { Key: 'packages/name/v1.2.3/assembly.json' },
-    { Key: 'packages/name/v1.2.3/package.tgz' },
+    { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.3${constants.ASSEMBLY_KEY_SUFFIX}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.3${constants.PACKAGE_KEY_SUFFIX}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}name/v1.2.3${constants.ASSEMBLY_KEY_SUFFIX}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}name/v1.2.3${constants.PACKAGE_KEY_SUFFIX}` },
   ];
   const mockSecondPage: AWS.S3.ObjectList = [
-    { Key: 'packages/@scope/package/v1.0.0/assembly.json' },
-    { Key: 'packages/@scope/package/v1.0.0/package.tgz' },
-    { Key: 'packages/name/v2.0.0-pre/assembly.json' },
-    { Key: 'packages/name/v2.0.0-pre/package.tgz' },
+    { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.0.0${constants.ASSEMBLY_KEY_SUFFIX}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.0.0${constants.PACKAGE_KEY_SUFFIX}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}name/v2.0.0-pre${constants.ASSEMBLY_KEY_SUFFIX}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}name/v2.0.0-pre${constants.PACKAGE_KEY_SUFFIX}` },
   ];
   AWSMock.mock('S3', 'listObjectsV2', (req: AWS.S3.ListObjectsV2Request, cb: Response<AWS.S3.ListObjectsV2Output>) => {
     try {
       expect(req.Bucket).toBe(mockBucketName);
-      expect(req.Prefix).toBe('packages/');
+      expect(req.Prefix).toBe(constants.STORAGE_KEY_PREFIX);
     } catch (e) {
       return cb(e);
     }
@@ -118,7 +118,7 @@ test('initial build', () => {
   AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
     try {
       expect(req.Bucket).toBe(mockBucketName);
-      expect(req.Key).toBe(CATALOG_OBJECT_KEY);
+      expect(req.Key).toBe(constants.CATALOG_KEY);
       expect(req.ContentType).toBe('text/json');
       expect(req.Metadata).toHaveProperty('Package-Count', '3');
       const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
@@ -173,7 +173,7 @@ test('incremental build', () => {
         (pack) => cb(null, { Body: pack }),
         cb,
       );
-    } else if (req.Key === CATALOG_OBJECT_KEY) {
+    } else if (req.Key === constants.CATALOG_KEY) {
       return cb(null, {
         Body: JSON.stringify({
           packages: [
@@ -207,17 +207,17 @@ test('incremental build', () => {
     }
   });
   const mockFirstPage: AWS.S3.ObjectList = [
-    { Key: 'packages/@scope/package/v1.2.3/package.tgz' },
-    { Key: 'packages/name/v1.2.3/package.tgz' },
+    { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.3${constants.PACKAGE_KEY_SUFFIX}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}name/v1.2.3${constants.PACKAGE_KEY_SUFFIX}` },
   ];
   const mockSecondPage: AWS.S3.ObjectList = [
-    { Key: 'packages/@scope/package/v2.0.5/package.tgz' },
-    { Key: 'packages/name/v2.0.0-pre.1/package.tgz' },
+    { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v2.0.5${constants.PACKAGE_KEY_SUFFIX}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}name/v2.0.0-pre.1${constants.PACKAGE_KEY_SUFFIX}` },
   ];
   AWSMock.mock('S3', 'listObjectsV2', (req: AWS.S3.ListObjectsV2Request, cb: Response<AWS.S3.ListObjectsV2Output>) => {
     try {
       expect(req.Bucket).toBe(mockBucketName);
-      expect(req.Prefix).toBe('packages/');
+      expect(req.Prefix).toBe(constants.STORAGE_KEY_PREFIX);
     } catch (e) {
       return cb(e);
     }
@@ -235,7 +235,7 @@ test('incremental build', () => {
   AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
     try {
       expect(req.Bucket).toBe(mockBucketName);
-      expect(req.Key).toBe(CATALOG_OBJECT_KEY);
+      expect(req.Key).toBe(constants.CATALOG_KEY);
       expect(req.ContentType).toBe('text/json');
       expect(req.Metadata).toHaveProperty('Package-Count', '4');
       const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');

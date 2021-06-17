@@ -5,7 +5,7 @@ import { validateAssembly } from '@jsii/spec';
 // eslint-disable-next-line import/no-unresolved
 import { Context, SQSEvent } from 'aws-lambda';
 import { extract } from 'tar-stream';
-import { aws, IngestionInput, integrity, requireEnv } from '../shared';
+import { aws, constants, IngestionInput, integrity, requireEnv } from '../shared';
 
 export async function handler(event: SQSEvent, context: Context) {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
@@ -62,9 +62,9 @@ export async function handler(event: SQSEvent, context: Context) {
 
     const { name: packageName, version: packageVersion } = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
 
-    const assemblyKey = `packages/${packageName}/v${packageVersion}/assembly.json`;
+    const assemblyKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`;
     console.log(`Writing assembly at ${assemblyKey}`);
-    const packageKey = `packages/${packageName}/v${packageVersion}/package.tgz`;
+    const packageKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`;
     console.log(`Writing package at  ${packageKey}`);
 
     const [assembly, pkg] = await Promise.all([
