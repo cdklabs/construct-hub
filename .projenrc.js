@@ -11,6 +11,7 @@ const cdkDeps = [
   '@aws-cdk/aws-cloudwatch',
   '@aws-cdk/aws-events-targets',
   '@aws-cdk/aws-events',
+  '@aws-cdk/aws-iam',
   '@aws-cdk/aws-lambda-event-sources',
   '@aws-cdk/aws-lambda',
   '@aws-cdk/aws-logs',
@@ -18,6 +19,7 @@ const cdkDeps = [
   '@aws-cdk/aws-route53',
   '@aws-cdk/aws-s3-deployment',
   '@aws-cdk/aws-s3',
+  '@aws-cdk/aws-sqs',
   '@aws-cdk/aws-sns',
   '@aws-cdk/core',
   '@aws-cdk/aws-sqs',
@@ -47,6 +49,7 @@ const project = new JsiiProject({
 
   devDeps: [
     cdkAssert,
+    '@jsii/spec',
     '@types/aws-lambda',
     '@types/fs-extra',
     '@types/semver',
@@ -126,6 +129,7 @@ const project = new JsiiProject({
 
 // Required while we vendor-in jsii-rosetta to a pre-release version
 project.addDevDeps('jsii-rosetta@./vendor/jsii-rosetta.tgz');
+project.addDevDeps('@jsii/spec@./vendor/jsii-spec.tgz');
 project.addFields({ resolutions: { '@jsii/spec': './vendor/jsii-spec.tgz' } });
 
 function addDevApp() {
