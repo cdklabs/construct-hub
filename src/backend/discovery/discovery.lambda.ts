@@ -256,7 +256,7 @@ function getRelevantVersionInfos(changes: readonly Change[]): readonly UpdatedVe
   const result = new Array<UpdatedVersion>();
   for (const change of changes) {
     // Sometimes, there are no versions in the document. We skip those.
-    if (Object.keys(change.doc.versions).length === 0) {
+    if (change.doc.versions == null) {
       console.error(`[${change.seq}] Changed document contains no 'versions': ${JSON.stringify(change, null, 2)}`);
       continue;
     }
