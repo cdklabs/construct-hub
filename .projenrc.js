@@ -64,8 +64,7 @@ const project = new JsiiProject({
     'nano',
   ],
 
-  deps: cdkDeps,
-  peerDeps: [...cdkDeps, 'constructs'],
+  peerDeps: [...cdkDeps],
 
   minNodeVersion: '12.0.0',
 
