@@ -11,6 +11,7 @@ import * as AWSMock from 'aws-sdk-mock';
 import { TargetLanguage } from 'jsii-rosetta';
 import type { transliterateAssembly } from 'jsii-rosetta/lib/commands/transliterate';
 
+import { constants } from '../../../backend/shared';
 import { handler, reset } from '../../../backend/transliterator/transliterator.lambda';
 
 jest.mock('child_process');
@@ -54,7 +55,7 @@ test('scoped package', async () => {
         configurationId: '42',
         object: {
           eTag: 'eTag',
-          key: `packages/%40${packageScope}/${packageName}/v${packageVersion}/package.tgz`,
+          key: `${constants.STORAGE_KEY_PREFIX}%40${packageScope}/${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`,
           sequencer: 'Seq',
           size: 1337,
           versionId: 'VersionId',
@@ -160,7 +161,7 @@ test('unscoped package', async () => {
         configurationId: '42',
         object: {
           eTag: 'eTag',
-          key: `packages/${packageName}/v${packageVersion}/package.tgz`,
+          key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`,
           sequencer: 'Seq',
           size: 1337,
           versionId: 'VersionId',

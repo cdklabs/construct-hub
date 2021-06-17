@@ -21,7 +21,7 @@ Name|Description
 
 Construct Hub.
 
-__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable)
+__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable), [IGrantable](#aws-cdk-aws-iam-igrantable)
 __Extends__: [Construct](#aws-cdk-core-construct)
 
 ### Initializer
@@ -40,6 +40,15 @@ new ConstructHub(scope: Construct, id: string, props: ConstructHubProps)
   * **dashboardName** (<code>string</code>)  The name of the CloudWatch Dashboard created to observe this application. __*Default*__: "construct-hub"
   * **domain** (<code>[Domain](#construct-hub-domain)</code>)  Connect the hub to a domain (requires a hosted zone and a certificate). __*Optional*__
 
+
+
+### Properties
+
+
+Name | Type | Description 
+-----|------|-------------
+**grantPrincipal**🔹 | <code>[IPrincipal](#aws-cdk-aws-iam-iprincipal)</code> | The principal to grant permissions to.
+**ingestionQueue**🔹 | <code>[IQueue](#aws-cdk-aws-sqs-iqueue)</code> | <span></span>
 
 
 

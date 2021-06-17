@@ -3,6 +3,7 @@ import { RetentionDays } from '@aws-cdk/aws-logs';
 import { Bucket, EventType } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 
+import { constants } from '../shared';
 import { Transliterator as Handler } from './transliterator';
 
 export interface TransliteratorProps {
@@ -35,7 +36,7 @@ export class Transliterator extends Construct {
     // Creating the event chaining
     lambda.addEventSource(new S3EventSource(props.bucket, {
       events: [EventType.OBJECT_CREATED],
-      filters: [{ prefix: 'packages/', suffix: '/package.tgz' }],
+      filters: [{ prefix: constants.STORAGE_KEY_PREFIX, suffix: constants.PACKAGE_KEY_SUFFIX }],
     }));
   }
 }

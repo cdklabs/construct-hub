@@ -1,10 +1,11 @@
+import * as iam from '@aws-cdk/aws-iam';
 import * as s3 from '@aws-cdk/aws-s3';
-import { StorageClass } from '@aws-cdk/aws-s3';
-import { Queue } from '@aws-cdk/aws-sqs';
+import { BlockPublicAccess } from '@aws-cdk/aws-s3';
+import * as sqs from '@aws-cdk/aws-sqs';
 import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { AlarmActions, Domain } from './api';
-import { CatalogBuilder, Discovery, Transliterator } from './backend';
+import { CatalogBuilder, Discovery, Ingestion, Transliterator } from './backend';
 import { Monitoring } from './monitoring';
 import { WebApp } from './webapp';
 
@@ -35,7 +36,9 @@ export interface ConstructHubProps {
 /**
  * Construct Hub.
  */
-export class ConstructHub extends CoreConstruct {
+export class ConstructHub extends CoreConstruct implements iam.IGrantable {
+  private readonly ingestion: Ingestion;
+
   public constructor(scope: Construct, id: string, props: ConstructHubProps) {
     super(scope, id);
 
@@ -45,35 +48,38 @@ export class ConstructHub extends CoreConstruct {
     });
 
     const packageData = new s3.Bucket(this, 'PackageData', {
+      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       encryption: s3.BucketEncryption.S3_MANAGED,
       lifecycleRules: [
         // Abort multi-part uploads after 1 day
         { abortIncompleteMultipartUploadAfter: Duration.days(1) },
         // Transition non-current object versions to IA after 1 month
-        { noncurrentVersionTransitions: [{ storageClass: StorageClass.INFREQUENT_ACCESS, transitionAfter: Duration.days(31) }] },
+        { noncurrentVersionTransitions: [{ storageClass: s3.StorageClass.INFREQUENT_ACCESS, transitionAfter: Duration.days(31) }] },
         // Permanently delete non-current object versions after 3 months
         { noncurrentVersionExpiration: Duration.days(90) },
       ],
       versioned: true,
     });
 
-    const ingestionQueue = new Queue(this, 'IngestionQueue');
+    this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData });
 
-    new Discovery(this, 'Discovery', {
-      queue: ingestionQueue,
-    });
+    const discovery = new Discovery(this, 'Discovery', { queue: this.ingestion.queue });
+    discovery.bucket.grantRead(this.ingestion);
 
-    new Transliterator(this, 'Transliterator', {
-      bucket: packageData,
-    });
-
-    new CatalogBuilder(this, 'CatalogBuilder', {
-      bucket: packageData,
-    });
+    new Transliterator(this, 'Transliterator', { bucket: packageData });
+    new CatalogBuilder(this, 'CatalogBuilder', { bucket: packageData });
 
     new WebApp(this, 'WebApp', {
       domain: props.domain,
       monitoring: monitoring,
     });
+  }
+
+  public get grantPrincipal(): iam.IPrincipal {
+    return this.ingestion.grantPrincipal;
+  }
+
+  public get ingestionQueue(): sqs.IQueue {
+    return this.ingestion.queue;
   }
 }
