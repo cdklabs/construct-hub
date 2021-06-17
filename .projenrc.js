@@ -25,7 +25,6 @@ const runtimeDeps = [
   '@aws-cdk/aws-sqs',
   '@aws-cdk/cx-api',
   'cdk-watchful',
-  'constructs',
 ];
 
 const cdkAssert = '@aws-cdk/assert';
@@ -68,7 +67,7 @@ const project = new JsiiProject({
   ],
 
   deps: runtimeDeps,
-  peerDeps: runtimeDeps,
+  peerDeps: [...runtimeDeps, 'constructs'],
 
   minNodeVersion: '12.0.0',
 
