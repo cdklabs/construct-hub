@@ -60,20 +60,23 @@ export class ConstructHub extends CoreConstruct {
     const ingestionQueue = new Queue(this, 'IngestionQueue');
 
     new Discovery(this, 'Discovery', {
+      monitoring,
       queue: ingestionQueue,
     });
 
     new Transliterator(this, 'Transliterator', {
       bucket: packageData,
+      monitoring,
     });
 
     new CatalogBuilder(this, 'CatalogBuilder', {
       bucket: packageData,
+      monitoring,
     });
 
     new WebApp(this, 'WebApp', {
       domain: props.domain,
-      monitoring: monitoring,
+      monitoring,
     });
   }
 }

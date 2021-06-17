@@ -1,12 +1,22 @@
+import { ComparisonOperator } from '@aws-cdk/aws-cloudwatch';
 import { S3EventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { Bucket, EventType } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
+import { Monitoring } from '../../monitoring';
 
 import { Transliterator as Handler } from './transliterator';
 
 export interface TransliteratorProps {
+  /**
+   * The bucket in which to source assemblies to transliterate.
+   */
   readonly bucket: Bucket;
+
+  /**
+   * The monitoring handler to register alarms with.
+   */
+  readonly monitoring: Monitoring;
 
   /**
    * How long should execution logs be retained?
@@ -37,5 +47,15 @@ export class Transliterator extends Construct {
       events: [EventType.OBJECT_CREATED],
       filters: [{ prefix: 'packages/', suffix: '/package.tgz' }],
     }));
+
+    props.monitoring.watchful.watchLambdaFunction('Transliterator Function', lambda);
+    props.monitoring.addHighSeverityAlarm(
+      'Transliterator DLQ',
+      lambda.deadLetterQueue!.metricApproximateNumberOfMessagesVisible().createAlarm(this, 'DLQAlarm', {
+        evaluationPeriods: 1,
+        comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        threshold: 1,
+      }),
+    );
   }
 }

@@ -1,17 +1,24 @@
+import { ComparisonOperator } from '@aws-cdk/aws-cloudwatch';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { Bucket, IBucket } from '@aws-cdk/aws-s3';
 import { Queue } from '@aws-cdk/aws-sqs';
-
 import { Construct, Duration } from '@aws-cdk/core';
+import { Monitoring } from '../../monitoring';
 import { Discovery as Handler } from './discovery';
 
 export interface DiscoveryFunctionProps {
   /**
+   * The monitoring handler to register alarms with.
+   */
+  readonly monitoring: Monitoring;
+
+  /**
    * The queue to post package updated messages to
    */
   readonly queue: Queue;
+
   /**
    * How long should execution logs be retained?
    *
@@ -55,5 +62,23 @@ export class Discovery extends Construct {
       schedule: Schedule.rate(timeout),
       targets: [new LambdaFunction(lambda)],
     });
+
+    props.monitoring.watchful.watchLambdaFunction('Discovery Function', lambda);
+    props.monitoring.addHighSeverityAlarm(
+      'Discovery Function Errors',
+      lambda.metricErrors({ period: Duration.minutes(15) }).createAlarm(this, 'ErrorsAlarm', {
+        comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        evaluationPeriods: 1,
+        threshold: 1,
+      }),
+    );
+    props.monitoring.addHighSeverityAlarm(
+      'Discovery Function Executions',
+      lambda.metricInvocations({ period: Duration.minutes(15) }).createAlarm(this, 'InvocationsAlarm', {
+        comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+        evaluationPeriods: 1,
+        threshold: 1,
+      }),
+    );
   }
 }
