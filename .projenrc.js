@@ -23,6 +23,7 @@ const cdkDeps = [
   '@aws-cdk/aws-sqs',
   '@aws-cdk/cx-api',
   'cdk-watchful',
+  'constructs',
 ];
 
 const cdkAssert = '@aws-cdk/assert';
