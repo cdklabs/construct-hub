@@ -38,7 +38,7 @@ test('no indexed packages', () => {
   AWSMock.mock('S3', 'listObjectsV2', (req: AWS.S3.ListObjectsV2Request, cb: Response<AWS.S3.ListObjectsV2Output>) => {
     try {
       expect(req.Bucket).toBe(mockBucketName);
-      expect(req.Prefix).toBe('packages/');
+      expect(req.Prefix).toBe(constants.STORAGE_KEY_PREFIX);
       expect(req.ContinuationToken).toBeUndefined();
     } catch (e) {
       return cb(e);
@@ -75,7 +75,7 @@ test('initial build', () => {
     } catch (e) {
       return cb(e);
     }
-    const matches = /^packages\/((?:@[^/]+\/)?[^/]+)\/v([^/]+)\/.*$/.exec(req.Key);
+    const matches = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`).exec(req.Key);
     if (matches != null) {
       mockNpmPackage(matches[1], matches[2]).then(
         (pack) => cb(null, { Body: pack }),
@@ -167,7 +167,7 @@ test('incremental build', () => {
     } catch (e) {
       return cb(e);
     }
-    const matches = /^packages\/((?:@[^/]+\/)?[^/]+)\/v([^/]+)\/.*$/.exec(req.Key);
+    const matches = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`).exec(req.Key);
     if (matches != null) {
       mockNpmPackage(matches[1], matches[2]).then(
         (pack) => cb(null, { Body: pack }),
