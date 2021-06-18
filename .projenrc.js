@@ -3,7 +3,7 @@ const glob = require('glob');
 const { pascalCase } = require('pascal-case');
 const { SourceCode, FileBase, JsonFile, JsiiProject, DependenciesUpgradeMechanism } = require('projen');
 
-const runtimeDeps = [
+const peerDeps = [
   '@aws-cdk/aws-certificatemanager',
   '@aws-cdk/aws-cloudfront-origins',
   '@aws-cdk/aws-cloudfront',
@@ -25,6 +25,7 @@ const runtimeDeps = [
   '@aws-cdk/aws-sqs',
   '@aws-cdk/cx-api',
   'cdk-watchful',
+  'constructs',
 ];
 
 const cdkAssert = '@aws-cdk/assert';
@@ -48,6 +49,7 @@ const project = new JsiiProject({
 
   devDeps: [
     cdkAssert,
+    ...peerDeps,
     '@jsii/spec',
     '@types/aws-lambda',
     '@types/fs-extra',
@@ -66,8 +68,7 @@ const project = new JsiiProject({
     'nano',
   ],
 
-  deps: runtimeDeps,
-  peerDeps: [...runtimeDeps, 'constructs'],
+  peerDeps: peerDeps,
 
   minNodeVersion: '12.0.0',
 
@@ -115,7 +116,7 @@ const project = new JsiiProject({
   },
   autoApproveUpgrades: true,
   depsUpgrade: DependenciesUpgradeMechanism.githubWorkflow({
-    exclude: [...runtimeDeps, cdkAssert, cdkCli],
+    exclude: [...peerDeps, cdkAssert, cdkCli],
     ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve'],
