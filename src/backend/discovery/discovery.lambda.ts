@@ -3,10 +3,13 @@ import * as https from 'https';
 import { URL } from 'url';
 
 // eslint-disable-next-line import/no-unresolved
-import type { Context, ScheduledEvent } from 'aws-lambda';
+import type { Context } from 'aws-lambda';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import Nano = require('nano');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 import { aws, IngestionInput, integrity, requireEnv } from '../shared';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const normalizeNPMMetadata = require('normalize-registry-metadata');
 
 const TIMEOUT_MILLISECONDS = 10_000;
 const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set(['cdk', 'aws-cdk', 'cdk8s', 'cdktf']);
@@ -23,13 +26,11 @@ export const STAGED_KEY_PREFIX = 'staged/';
  * For each change:
  *  - the package version tarball will be copied from the npm registry to a stating bucket.
  *  - a message will be sent to an sqs queue
- * Currently we don't handle the function execution timeout, and accept that the last batch processed might be processed again,
- * relying on the idempotency on the consumer side.
  * npm registry API docs: https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md
  * @param context a Lambda execution context
  */
-export async function handler(event: ScheduledEvent, context: Context) {
-  console.log(`Event: ${JSON.stringify(event, null, 2)}`);
+export async function handler( context: Context) {
+  // console.log(`Event: ${JSON.stringify(event, null, 2)}`);
 
   const stagingBucket = requireEnv('BUCKET_NAME');
   const queueUrl = requireEnv('QUEUE_URL');
@@ -264,6 +265,7 @@ function getRelevantVersionInfos(changes: readonly Change[]): readonly UpdatedVe
       continue;
     }
 
+    normalizeNPMMetadata(change.doc);
     // Sometimes, there is no 'time' entry in the document. We skip those.
     if (change.doc.time == null) {
       console.error(`[${change.seq}] Changed document contains no 'time': ${JSON.stringify(change, null, 2)}`);
@@ -372,3 +374,26 @@ interface Change {
   readonly id: string;
   readonly deleted: boolean;
 }
+
+
+const context: Context = {
+  callbackWaitsForEmptyEventLoop: true,
+  functionName: 'discovery',
+  invokedFunctionArn: 'arn:aws:lambda',
+  awsRequestId: 'id',
+  logGroupName: '/aws/lambda/',
+  logStreamName: '/aws/lambda/stream',
+  functionVersion: '3',
+  memoryLimitInMB: '10_2004',
+  getRemainingTimeInMillis: () => {
+    return 140_000;
+  },
+  succeed: () => {
+  },
+  fail: () => {
+  },
+  done: () => {
+  },
+};
+
+handler(context).catch((error) => {console.log(error);});
