@@ -181,10 +181,6 @@ export async function handler(event: ScheduledEvent, context: Context) {
       await putObject(`${FAILED_KEY_PREFIX}${seq}`, JSON.stringify({ ...infos, _construct_hub_failure_reason: err }, null, 2), {
         ContentType: 'text/json',
         Metadata: {
-          // User-defined metadata is limited to 2KB in size, in total. So we
-          // cap the error text to 1KB maximum, allowing up to 1KB for other
-          // attributes (which should be sufficient).
-          'Error': `${err.stack ?? err}`.substring(0, 1_024),
           'Modified-At': modified.toISOString(),
         },
       });
