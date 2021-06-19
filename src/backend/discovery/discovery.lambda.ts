@@ -177,7 +177,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
       }).promise();
     } catch (err) {
       // Something failed, store the payload in the problem prefix, and move on.
-      console.error(`[${seq}] Failed processing, logging the error to s3 and resuming processing. ${infos.name}@${infos.version}: ${err}`);
+      console.error(`[${seq}] Failed processing, logging error to s3 and resuming processing. ${infos.name}@${infos.version}: ${err}`);
       await putObject(`${FAILED_KEY_PREFIX}${seq}`, JSON.stringify({ ...infos, _construct_hub_failure_reason: err }, null, 2), {
         ContentType: 'text/json',
         Metadata: {
