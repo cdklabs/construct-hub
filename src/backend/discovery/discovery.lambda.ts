@@ -263,6 +263,7 @@ function getRelevantVersionInfos(changes: readonly Change[]): readonly UpdatedVe
 
     // The normalize function change the object in place, if the doc object is invalid it will return undefined
     if (normalizeNPMMetadata(change.doc) === undefined) {
+      console.error(`[${change.seq}] Changed document invalid, npm normalize returned undefined: ${change.id}`);
       continue;
     }
 
