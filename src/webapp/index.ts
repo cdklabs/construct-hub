@@ -30,8 +30,18 @@ export class WebApp extends Construct {
 
     this.bucket = new s3.Bucket(this, 'WebsiteBucket', { blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL });
 
+    const cachingPolicy = new cloudfront.CachePolicy(this, 'CachePolicy', {
+      enableAcceptEncodingGzip: true,
+      enableAcceptEncodingBrotli: true,
+    });
+
+    const behaviorOptions = {
+      compress: true,
+      cachePolicy: cachingPolicy,
+    };
+
     this.distribution = new cloudfront.Distribution(this, 'Distribution', {
-      defaultBehavior: { origin: new origins.S3Origin(this.bucket) },
+      defaultBehavior: { origin: new origins.S3Origin(this.bucket), ...behaviorOptions },
       domainNames: props.domain ? [props.domain.zone.zoneName] : undefined,
       certificate: props.domain ? props.domain.cert : undefined,
       defaultRootObject: 'index.html',
@@ -43,8 +53,8 @@ export class WebApp extends Construct {
     });
 
     const jsiiObjOrigin = new origins.HttpOrigin('awscdk.io');
-    this.distribution.addBehavior('/packages/*', jsiiObjOrigin);
-    this.distribution.addBehavior('/index/packages.json', jsiiObjOrigin);
+    this.distribution.addBehavior('/packages/*', jsiiObjOrigin, behaviorOptions);
+    this.distribution.addBehavior('/index/packages.json', jsiiObjOrigin, behaviorOptions);
 
     // if we use a domain, and A records with a CloudFront alias
     if (props.domain) {
