@@ -7,6 +7,8 @@ import type { Context, ScheduledEvent } from 'aws-lambda';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import Nano = require('nano');
 import { aws, IngestionInput, integrity, requireEnv } from '../shared';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const normalizeNPMMetadata = require('normalize-registry-metadata');
 
 const TIMEOUT_MILLISECONDS = 10_000;
 const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set(['cdk', 'aws-cdk', 'cdk8s', 'cdktf']);
@@ -17,14 +19,12 @@ export const FAILED_KEY_PREFIX = 'failed/';
 export const STAGED_KEY_PREFIX = 'staged/';
 
 /**
- * This function triggers on a fixed schedule and reads a stream of changes frm npmjs couchdb _changes endpoint.
+ * This function triggers on a fixed schedule and reads a stream of changes from npmjs couchdb _changes endpoint.
  * Upon invocation the function starts reading from a sequence stored in an s3 object - the `marker`.
  * If the marker fails to load (or do not exist), the stream will start from `now` - the latest change.
  * For each change:
  *  - the package version tarball will be copied from the npm registry to a stating bucket.
  *  - a message will be sent to an sqs queue
- * Currently we don't handle the function execution timeout, and accept that the last batch processed might be processed again,
- * relying on the idempotency on the consumer side.
  * npm registry API docs: https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md
  * @param context a Lambda execution context
  */
@@ -63,11 +63,6 @@ export async function handler(event: ScheduledEvent, context: Context) {
         try {
           console.log(`Received a batch of ${batch.length} element(s)`);
           const lastSeq = Math.max(...batch.map((change) => change.seq));
-
-          // Filter out all elements that don't have a "name" in the document, as
-          // these are schemas, which are not relevant to our business here.
-          batch = batch.filter((item) => item.doc.name);
-          console.log(`Identified ${batch.length} package update element(s)`);
 
           // Obtain the modified package version from the update event, and filter
           // out packages that are not of interest to us (not construct libraries).
@@ -253,16 +248,30 @@ export async function handler(event: ScheduledEvent, context: Context) {
  */
 function getRelevantVersionInfos(changes: readonly Change[]): readonly UpdatedVersion[] {
   const result = new Array<UpdatedVersion>();
+
   for (const change of changes) {
+    // Filter out all elements that don't have a "name" in the document, as
+    // these are schemas, which are not relevant to our business here.
+    if (change.doc.name === undefined) {
+      console.error(`[${change.seq}] Changed document contains no 'name': ${change.id}`);
+      continue;
+    }
+
+    // The normalize function change the object in place, if the doc object is invalid it will return undefined
+    if (normalizeNPMMetadata(change.doc) === undefined) {
+      console.error(`[${change.seq}] Changed document invalid, npm normalize returned undefined: ${change.id}`);
+      continue;
+    }
+
     // Sometimes, there are no versions in the document. We skip those.
     if (change.doc.versions == null) {
-      console.error(`[${change.seq}] Changed document contains no 'versions': ${JSON.stringify(change, null, 2)}`);
+      console.error(`[${change.seq}] Changed document contains no 'versions': ${change.id}`);
       continue;
     }
 
     // Sometimes, there is no 'time' entry in the document. We skip those.
     if (change.doc.time == null) {
-      console.error(`[${change.seq}] Changed document contains no 'time': ${JSON.stringify(change, null, 2)}`);
+      console.error(`[${change.seq}] Changed document contains no 'time': ${change.id}`);
       continue;
     }
 

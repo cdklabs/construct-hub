@@ -66,6 +66,7 @@ const project = new JsiiProject({
     'tar-stream',
     'yaml',
     'nano',
+    'normalize-registry-metadata',
   ],
 
   peerDeps: peerDeps,
