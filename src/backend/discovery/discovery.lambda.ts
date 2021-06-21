@@ -6,14 +6,13 @@ import { URL } from 'url';
 import type { Context, ScheduledEvent } from 'aws-lambda';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import Nano = require('nano');
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const normalizeNPMMetadata = require('normalize-registry-metadata');
-
 import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const normalizeNPMMetadata = require('normalize-registry-metadata');
 
 const TIMEOUT_MILLISECONDS = 10_000;
 const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set(['cdk', 'aws-cdk', 'cdk8s', 'cdktf']);
