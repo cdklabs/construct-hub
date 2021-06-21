@@ -1,4 +1,4 @@
-import { ComparisonOperator } from '@aws-cdk/aws-cloudwatch';
+import { ComparisonOperator, IAlarm } from '@aws-cdk/aws-cloudwatch';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { RetentionDays } from '@aws-cdk/aws-logs';
@@ -27,8 +27,26 @@ export interface DiscoveryFunctionProps {
   readonly logRetention?: RetentionDays;
 }
 
+/**
+ * This discovery function periodically scans the CouchDB replica of npmjs.com
+ * to discover newly published packages that are relevant for indexing in the
+ * Construct Hub, then notifies the ingestion function about those.
+ */
 export class Discovery extends Construct {
+  /**
+   * The S3 bucket in which the discovery function stages npm packages.
+   */
   public readonly bucket: IBucket;
+
+  /**
+   * Alarms if the discovery function does not complete successfully.
+   */
+  public readonly alarmErrors: IAlarm;
+
+  /**
+   * Alarms if the discovery function does not run as expected.
+   */
+  public readonly alarmNoInvocations: IAlarm;
 
   public constructor(scope: Construct, id: string, props: DiscoveryFunctionProps) {
     super(scope, id);
@@ -64,21 +82,18 @@ export class Discovery extends Construct {
     });
 
     props.monitoring.watchful.watchLambdaFunction('Discovery Function', lambda);
-    props.monitoring.addHighSeverityAlarm(
-      'Discovery Function Errors',
-      lambda.metricErrors({ period: Duration.minutes(15) }).createAlarm(this, 'ErrorsAlarm', {
-        comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-        evaluationPeriods: 1,
-        threshold: 1,
-      }),
-    );
-    props.monitoring.addHighSeverityAlarm(
-      'Discovery Function Executions',
-      lambda.metricInvocations({ period: Duration.minutes(15) }).createAlarm(this, 'InvocationsAlarm', {
+    this.alarmErrors = lambda.metricErrors({ period: Duration.minutes(15) }).createAlarm(this, 'ErrorsAlarm', {
+      alarmDescription: 'The discovery function (on npmjs.com) failed to run',
+      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      evaluationPeriods: 1,
+      threshold: 1,
+    });
+    this.alarmNoInvocations = lambda.metricInvocations({ period: Duration.minutes(15) })
+      .createAlarm(this, 'NoInvocationsAlarm', {
+        alarmDescription: 'The discovery function (on npmjs.com) is not running as scheduled',
         comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
         evaluationPeriods: 1,
         threshold: 1,
-      }),
-    );
+      });
   }
 }

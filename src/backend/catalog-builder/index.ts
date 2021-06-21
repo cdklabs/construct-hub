@@ -1,4 +1,4 @@
-import { ComparisonOperator } from '@aws-cdk/aws-cloudwatch';
+import { ComparisonOperator, IAlarm } from '@aws-cdk/aws-cloudwatch';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { Bucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
@@ -24,7 +24,17 @@ export interface CatalogBuilderProps {
   readonly logRetention?: RetentionDays;
 }
 
+/**
+ * Builds or re-builds the `catalog.json` object in the designated bucket.
+ */
 export class CatalogBuilder extends Construct {
+  /**
+   * Alarms when the dead-letter-queue associated with the catalog builder
+   * function is not empty, meaning the catalog builder failed to run and
+   * requires operator attention.
+   */
+  public readonly alarmDeadLetterQueueNotEmpty: IAlarm;
+
   public constructor(scope: Construct, id: string, props: CatalogBuilderProps) {
     super(scope, id);
 
@@ -43,13 +53,12 @@ export class CatalogBuilder extends Construct {
     props.bucket.grantReadWrite(handler);
 
     props.monitoring.watchful.watchLambdaFunction('Catalog Builder Function', handler);
-    props.monitoring.addHighSeverityAlarm(
-      'Catalog Builder DLQ',
-      handler.deadLetterQueue!.metricApproximateNumberOfMessagesVisible().createAlarm(this, 'DLQAlarm', {
-        evaluationPeriods: 1,
+    this.alarmDeadLetterQueueNotEmpty = handler.deadLetterQueue!.metricApproximateNumberOfMessagesVisible()
+      .createAlarm(this, 'DLQAlarm', {
+        alarmDescription: 'The catalog builder function failed to run',
         comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        evaluationPeriods: 1,
         threshold: 1,
-      }),
-    );
+      });
   }
 }
