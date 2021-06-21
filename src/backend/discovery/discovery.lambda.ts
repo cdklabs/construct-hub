@@ -6,15 +6,16 @@ import { URL } from 'url';
 import type { Context, ScheduledEvent } from 'aws-lambda';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import Nano = require('nano');
-import { aws, IngestionInput, integrity, requireEnv } from '../shared';
+import * as aws from '../shared/aws.lambda-shared';
+import * as constants from '../shared/constants.lambda-shared';
+import { requireEnv } from '../shared/env.lambda-shared';
+import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
+import { integrity } from '../shared/integrity.lambda-shared';
 
 const TIMEOUT_MILLISECONDS = 10_000;
 const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set(['cdk', 'aws-cdk', 'cdk8s', 'cdktf']);
 const MARKER_FILE_NAME = 'couchdb-last-transaction-id';
 const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
-
-export const FAILED_KEY_PREFIX = 'failed/';
-export const STAGED_KEY_PREFIX = 'staged/';
 
 /**
  * This function triggers on a fixed schedule and reads a stream of changes frm npmjs couchdb _changes endpoint.
@@ -150,7 +151,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
       // Store the tarball into the staging bucket
       // - infos.dist.tarball => https://registry.npmjs.org/<@scope>/<name>/-/<name>-<version>.tgz
       // - stagingKey         =>                     staged/<@scope>/<name>/-/<name>-<version>.tgz
-      const stagingKey = `${STAGED_KEY_PREFIX}${new URL(infos.dist.tarball).pathname}`.replace(/\/{2,}/g, '/');
+      const stagingKey = `${constants.STAGED_KEY_PREFIX}${new URL(infos.dist.tarball).pathname}`.replace(/\/{2,}/g, '/');
       await putObject(stagingKey, tarball, {
         ContentType: 'application/x-gtar',
         Metadata: {
@@ -183,7 +184,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
     } catch (err) {
       // Something failed, store the payload in the problem prefix, and move on.
       console.error(`[${seq}] Failed processing, logging error to S3 and resuming work. ${infos.name}@${infos.version}: ${err}`);
-      await putObject(`${FAILED_KEY_PREFIX}${seq}`, JSON.stringify({ ...infos, _construct_hub_failure_reason: err }, null, 2), {
+      await putObject(`${constants.FAILED_KEY_PREFIX}${seq}`, JSON.stringify({ ...infos, _construct_hub_failure_reason: err }, null, 2), {
         ContentType: 'text/json',
         Metadata: {
           'Modified-At': modified.toISOString(),

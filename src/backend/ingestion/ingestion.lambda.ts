@@ -5,7 +5,11 @@ import { validateAssembly } from '@jsii/spec';
 // eslint-disable-next-line import/no-unresolved
 import { Context, SQSEvent } from 'aws-lambda';
 import { extract } from 'tar-stream';
-import { aws, constants, IngestionInput, integrity, requireEnv } from '../shared';
+import * as aws from '../shared/aws.lambda-shared';
+import * as constants from '../shared/constants.lambda-shared';
+import { requireEnv } from '../shared/env.lambda-shared';
+import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
+import { integrity } from '../shared/integrity.lambda-shared';
 
 export async function handler(event: SQSEvent, context: Context) {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);

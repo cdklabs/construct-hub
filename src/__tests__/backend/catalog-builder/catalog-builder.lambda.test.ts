@@ -7,7 +7,8 @@ import * as AWSMock from 'aws-sdk-mock';
 import * as tar from 'tar-stream';
 
 import { handler } from '../../../backend/catalog-builder/catalog-builder.lambda';
-import { aws, constants } from '../../../backend/shared';
+import * as aws from '../../../backend/shared/aws.lambda-shared';
+import * as constants from '../../../backend/shared/constants.lambda-shared';
 
 let mockBucketName: string | undefined;
 
