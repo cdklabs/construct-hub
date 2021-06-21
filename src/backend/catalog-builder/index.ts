@@ -5,7 +5,7 @@ import { Bucket, EventType } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 
 import { Monitoring } from '../../monitoring';
-import { constants } from '../shared';
+import * as constants from '../shared/constants.lambda-shared';
 import { CatalogBuilder as Handler } from './catalog-builder';
 
 export interface CatalogBuilderProps {

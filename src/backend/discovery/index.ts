@@ -7,8 +7,8 @@ import { IQueue } from '@aws-cdk/aws-sqs';
 
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
+import { STAGED_KEY_PREFIX } from '../shared/constants.lambda-shared';
 import { Discovery as Handler } from './discovery';
-import { STAGED_KEY_PREFIX } from './discovery.lambda';
 
 export interface DiscoveryProps {
   /**

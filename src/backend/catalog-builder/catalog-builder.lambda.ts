@@ -6,7 +6,9 @@ import type { Context } from 'aws-lambda';
 import { AWSError, S3 } from 'aws-sdk';
 import { SemVer } from 'semver';
 import { extract } from 'tar-stream';
-import { aws, constants, requireEnv } from '../shared';
+import * as aws from '../shared/aws.lambda-shared';
+import * as constants from '../shared/constants.lambda-shared';
+import { requireEnv } from '../shared/env.lambda-shared';
 
 const KEY_FORMAT_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`);
 // Capture groups:                                                   ┗━━━━━━━━1━━━━━━━━┛  ┗━━2━━┛
