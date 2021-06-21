@@ -182,14 +182,10 @@ export async function handler(event: ScheduledEvent, context: Context) {
       }).promise();
     } catch (err) {
       // Something failed, store the payload in the problem prefix, and move on.
-      console.error(`[${seq}] Failed processing ${infos.name}@${infos.version}: ${err}`);
-      await putObject(`${FAILED_KEY_PREFIX}${seq}`, JSON.stringify(infos, null, 2), {
+      console.error(`[${seq}] Failed processing, logging error to S3 and resuming work. ${infos.name}@${infos.version}: ${err}`);
+      await putObject(`${FAILED_KEY_PREFIX}${seq}`, JSON.stringify({ ...infos, _construct_hub_failure_reason: err }, null, 2), {
         ContentType: 'text/json',
         Metadata: {
-          // User-defined metadata is limited to 2KB in size, in total. So we
-          // cap the error text to 1KB maximum, allowing up to 1KB for other
-          // attributes (which should be sufficient).
-          'Error': `${err.stack ?? err}`.substring(0, 1_024),
           'Modified-At': modified.toISOString(),
         },
       });
