@@ -8,6 +8,7 @@ import * as s3deploy from '@aws-cdk/aws-s3-deployment';
 import { CfnOutput, Construct } from '@aws-cdk/core';
 import { Domain } from '../api';
 import { Monitoring } from '../monitoring';
+import { ResponseFunction } from './response-function';
 
 export interface WebAppProps {
   /**
@@ -33,6 +34,10 @@ export class WebApp extends Construct {
     const behaviorOptions = {
       compress: true,
       cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+      functionAssociations: [{
+        function: new ResponseFunction(this, 'ResponseFunction'),
+        eventType: cloudfront.FunctionEventType.VIEWER_RESPONSE,
+      }],
     };
 
     this.distribution = new cloudfront.Distribution(this, 'Distribution', {
