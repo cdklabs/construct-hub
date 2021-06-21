@@ -11,10 +11,12 @@ import * as fs from 'fs-extra';
 import { TargetLanguage } from 'jsii-rosetta';
 import { transliterateAssembly } from 'jsii-rosetta/lib/commands/transliterate';
 
+import { constants } from '../shared';
+
 const clients = new Map<string, S3>();
 
-const PACKAGE_KEY_REGEX = /^packages\/((?:@[^/]+\/)?[^/]+)\/v([^/]+)\/package.tgz$/;
-// Capture groups:                     ┗━━━━━━━━1━━━━━━━━┛   ┗━━2━━┛
+const PACKAGE_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)${constants.PACKAGE_KEY_SUFFIX}$`);
+// Capture groups:                                                    ┗━━━━━━━━━1━━━━━━━┛  ┗━━2━━┛
 
 /**
  * This function receives an S3 event, and for each record, proceeds to download
@@ -90,7 +92,7 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
 
       // Payload object key => packages/[<@scope>/]<name>/v<version>/package.tgz
       // Output object key  => packages/[<@scope>/]<name>/v<version>/assembly-python.json
-      const key = inputKey.replace(/\/[^/]+$/, '/assembly-python.json');
+      const key = inputKey.replace(/\/[^/]+$/, constants.assemblyKeySuffix(TargetLanguage.PYTHON));
       const response = await client.putObject({
         Bucket: record.s3.bucket.name,
         Key: key,

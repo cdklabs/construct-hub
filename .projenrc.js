@@ -3,7 +3,7 @@ const glob = require('glob');
 const { pascalCase } = require('pascal-case');
 const { SourceCode, FileBase, JsonFile, JsiiProject, DependenciesUpgradeMechanism } = require('projen');
 
-const cdkDeps = [
+const peerDeps = [
   '@aws-cdk/aws-certificatemanager',
   '@aws-cdk/aws-cloudfront-origins',
   '@aws-cdk/aws-cloudfront',
@@ -11,6 +11,7 @@ const cdkDeps = [
   '@aws-cdk/aws-cloudwatch',
   '@aws-cdk/aws-events-targets',
   '@aws-cdk/aws-events',
+  '@aws-cdk/aws-iam',
   '@aws-cdk/aws-lambda-event-sources',
   '@aws-cdk/aws-lambda',
   '@aws-cdk/aws-logs',
@@ -18,11 +19,13 @@ const cdkDeps = [
   '@aws-cdk/aws-route53',
   '@aws-cdk/aws-s3-deployment',
   '@aws-cdk/aws-s3',
+  '@aws-cdk/aws-sqs',
   '@aws-cdk/aws-sns',
   '@aws-cdk/core',
   '@aws-cdk/aws-sqs',
   '@aws-cdk/cx-api',
   'cdk-watchful',
+  'constructs',
 ];
 
 const cdkAssert = '@aws-cdk/assert';
@@ -46,6 +49,8 @@ const project = new JsiiProject({
 
   devDeps: [
     cdkAssert,
+    ...peerDeps,
+    '@jsii/spec',
     '@types/aws-lambda',
     '@types/fs-extra',
     '@types/semver',
@@ -61,10 +66,10 @@ const project = new JsiiProject({
     'tar-stream',
     'yaml',
     'nano',
+    'normalize-registry-metadata',
   ],
 
-  deps: cdkDeps,
-  peerDeps: [...cdkDeps, 'constructs'],
+  peerDeps: peerDeps,
 
   minNodeVersion: '12.0.0',
 
@@ -112,7 +117,7 @@ const project = new JsiiProject({
   },
   autoApproveUpgrades: true,
   depsUpgrade: DependenciesUpgradeMechanism.githubWorkflow({
-    exclude: [...cdkDeps, cdkAssert, cdkCli],
+    exclude: [...peerDeps, cdkAssert, cdkCli],
     ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve'],
@@ -126,6 +131,7 @@ const project = new JsiiProject({
 
 // Required while we vendor-in jsii-rosetta to a pre-release version
 project.addDevDeps('jsii-rosetta@./vendor/jsii-rosetta.tgz');
+project.addDevDeps('@jsii/spec@./vendor/jsii-spec.tgz');
 project.addFields({ resolutions: { '@jsii/spec': './vendor/jsii-spec.tgz' } });
 
 function addDevApp() {
