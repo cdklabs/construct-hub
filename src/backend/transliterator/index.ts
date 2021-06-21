@@ -3,7 +3,7 @@ import { RetentionDays } from '@aws-cdk/aws-logs';
 import { Bucket, EventType } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 
-import { constants } from '../shared';
+import * as constants from '../shared/constants.lambda-shared';
 import { Transliterator as Handler } from './transliterator';
 
 export interface TransliteratorProps {
