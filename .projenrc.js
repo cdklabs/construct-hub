@@ -41,7 +41,6 @@ const project = new JsiiProject({
   repositoryUrl: 'https://github.com/cdklabs/construct-hub.git',
   homepage: 'https://github.com/cdklabs',
   defaultReleaseBranch: 'main',
-  mergify: false,
 
   author: 'Amazon Web Services, Inc.',
   authorAddress: 'construct-ecosystem-team@amazon.com',
