@@ -20,6 +20,11 @@ export interface WebAppProps {
    * Monitoring system.
    */
   readonly monitoring: Monitoring;
+
+  /**
+   * The bucket containig package data.
+   */
+  readonly packageDataBucket: s3.IBucket;
 }
 
 export class WebApp extends Construct {
@@ -42,9 +47,9 @@ export class WebApp extends Construct {
       })),
     });
 
-    const jsiiObjOrigin = new origins.HttpOrigin('awscdk.io');
-    this.distribution.addBehavior('/packages/*', jsiiObjOrigin);
-    this.distribution.addBehavior('/index/packages.json', jsiiObjOrigin);
+    const jsiiObjOrigin = new origins.S3Origin(props.packageDataBucket);
+    this.distribution.addBehavior('/data/*', jsiiObjOrigin);
+    this.distribution.addBehavior('/catalog.json', jsiiObjOrigin);
 
     // if we use a domain, and A records with a CloudFront alias
     if (props.domain) {
