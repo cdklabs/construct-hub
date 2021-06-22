@@ -1542,6 +1542,40 @@ Object {
       },
       "Type": "AWS::IAM::Policy",
     },
+    "ConstructHubWebAppCachePolicyECC79625": Object {
+      "Properties": Object {
+        "CachePolicyConfig": Object {
+          "DefaultTTL": 86400,
+          "MaxTTL": 31536000,
+          "MinTTL": 0,
+          "Name": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "TestConstructHubWebAppCachePolicy93E31605-",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+              ],
+            ],
+          },
+          "ParametersInCacheKeyAndForwardedToOrigin": Object {
+            "CookiesConfig": Object {
+              "CookieBehavior": "none",
+            },
+            "EnableAcceptEncodingBrotli": true,
+            "EnableAcceptEncodingGzip": true,
+            "HeadersConfig": Object {
+              "HeaderBehavior": "none",
+            },
+            "QueryStringsConfig": Object {
+              "QueryStringBehavior": "none",
+            },
+          },
+        },
+      },
+      "Type": "AWS::CloudFront::CachePolicy",
+    },
     "ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1": Object {
       "Properties": Object {
         "Content": Object {
@@ -1651,14 +1685,18 @@ Object {
         "DistributionConfig": Object {
           "CacheBehaviors": Array [
             Object {
-              "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+              "CachePolicyId": Object {
+                "Ref": "ConstructHubWebAppCachePolicyECC79625",
+              },
               "Compress": true,
               "PathPattern": "/packages/*",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
             Object {
-              "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+              "CachePolicyId": Object {
+                "Ref": "ConstructHubWebAppCachePolicyECC79625",
+              },
               "Compress": true,
               "PathPattern": "/index/packages.json",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
@@ -1678,7 +1716,9 @@ Object {
             },
           ],
           "DefaultCacheBehavior": Object {
-            "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+            "CachePolicyId": Object {
+              "Ref": "ConstructHubWebAppCachePolicyECC79625",
+            },
             "Compress": true,
             "TargetOriginId": "TestConstructHubWebAppDistributionOrigin171FF58D3",
             "ViewerProtocolPolicy": "allow-all",
@@ -3854,6 +3894,40 @@ Object {
       },
       "Type": "AWS::Route53::RecordSet",
     },
+    "ConstructHubWebAppCachePolicyECC79625": Object {
+      "Properties": Object {
+        "CachePolicyConfig": Object {
+          "DefaultTTL": 86400,
+          "MaxTTL": 31536000,
+          "MinTTL": 0,
+          "Name": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "TestConstructHubWebAppCachePolicy93E31605-",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+              ],
+            ],
+          },
+          "ParametersInCacheKeyAndForwardedToOrigin": Object {
+            "CookiesConfig": Object {
+              "CookieBehavior": "none",
+            },
+            "EnableAcceptEncodingBrotli": true,
+            "EnableAcceptEncodingGzip": true,
+            "HeadersConfig": Object {
+              "HeaderBehavior": "none",
+            },
+            "QueryStringsConfig": Object {
+              "QueryStringBehavior": "none",
+            },
+          },
+        },
+      },
+      "Type": "AWS::CloudFront::CachePolicy",
+    },
     "ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1": Object {
       "Properties": Object {
         "Content": Object {
@@ -3966,14 +4040,18 @@ Object {
           ],
           "CacheBehaviors": Array [
             Object {
-              "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+              "CachePolicyId": Object {
+                "Ref": "ConstructHubWebAppCachePolicyECC79625",
+              },
               "Compress": true,
               "PathPattern": "/packages/*",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
             Object {
-              "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+              "CachePolicyId": Object {
+                "Ref": "ConstructHubWebAppCachePolicyECC79625",
+              },
               "Compress": true,
               "PathPattern": "/index/packages.json",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
@@ -3993,7 +4071,9 @@ Object {
             },
           ],
           "DefaultCacheBehavior": Object {
-            "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+            "CachePolicyId": Object {
+              "Ref": "ConstructHubWebAppCachePolicyECC79625",
+            },
             "Compress": true,
             "TargetOriginId": "TestConstructHubWebAppDistributionOrigin171FF58D3",
             "ViewerProtocolPolicy": "allow-all",
