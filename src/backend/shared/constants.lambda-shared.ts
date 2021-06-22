@@ -17,6 +17,11 @@ export const STORAGE_KEY_PREFIX = 'data/';
 export const PACKAGE_KEY_SUFFIX = '/package.tgz';
 
 /**
+ * Key suffix for storing npm package metadata.
+ */
+export const METADATA_KEY_SUFFIX = '/metadata.json';
+
+/**
  * The key suffix for (TypeScript) assembly files
  */
 export const ASSEMBLY_KEY_SUFFIX = '/assembly.json';

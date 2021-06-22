@@ -50,6 +50,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
     selector: {
       name: { $gt: null },
     },
+    batchSize: 30,
   };
 
   const nano = Nano(NPM_REPLICA_REGISTRY_URL);
@@ -87,7 +88,9 @@ export async function handler(event: ScheduledEvent, context: Context) {
           updatedMarker = lastSeq;
 
           // If we have enough time left before timeout, proceed with the next batch, otherwise we're done here.
-          if (context.getRemainingTimeInMillis() >= 120_000 /* 2 minutes */) {
+          // Since the distribution of the time it takes to process each package/batch is non uniform, this is a best
+          // effort, and we expect the function to timeout in some invocations, we rely on the downstream idempotency to handle this.
+          if (context.getRemainingTimeInMillis() >= 30_000 /* 30 seconds */) {
             console.log('There is still time, requesting the next batch...');
             // Note: the `resume` function is missing from the `nano` type definitions, but is there...
             (db.changesReader as any).resume();

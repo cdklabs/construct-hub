@@ -63,6 +63,7 @@ export async function handler(event: SQSEvent, context: Context) {
           }
         });
     });
+    const metadata = { date: payload.time };
 
     const { name: packageName, version: packageVersion } = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
 
@@ -70,8 +71,10 @@ export async function handler(event: SQSEvent, context: Context) {
     console.log(`Writing assembly at ${assemblyKey}`);
     const packageKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`;
     console.log(`Writing package at  ${packageKey}`);
+    const metadataKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.METADATA_KEY_SUFFIX}`;
+    console.log(`Writing metadata at  ${metadataKey}`);
 
-    const [assembly, pkg] = await Promise.all([
+    const [assembly, pkg, storedMetadata] = await Promise.all([
       aws.s3().putObject({
         Bucket: BUCKET_NAME,
         Key: assemblyKey,
@@ -94,6 +97,17 @@ export async function handler(event: SQSEvent, context: Context) {
           'Lambda-Run-Id': context.awsRequestId,
         },
       }).promise(),
+      aws.s3().putObject({
+        Bucket: BUCKET_NAME,
+        Key: metadataKey,
+        Body: JSON.stringify(metadata),
+        ContentType: 'text/json',
+        Metadata: {
+          'Lambda-Log-Group': context.logGroupName,
+          'Lambda-Log-Stream': context.logStreamName,
+          'Lambda-Run-Id': context.awsRequestId,
+        },
+      }).promise(),
     ]);
 
     const created = {
@@ -105,6 +119,10 @@ export async function handler(event: SQSEvent, context: Context) {
       package: {
         key: packageKey,
         versionId: pkg.VersionId,
+      },
+      metadata: {
+        key: metadataKey,
+        versionId: storedMetadata.VersionId,
       },
     };
     console.log(`Created objects: ${JSON.stringify(created, null, 2)}`);
