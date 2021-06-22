@@ -55,6 +55,7 @@ const project = new JsiiProject({
     '@types/semver',
     '@types/tar-stream',
     cdkCli,
+    'aws-embedded-metrics',
     'aws-sdk-mock',
     'aws-sdk',
     'esbuild',
