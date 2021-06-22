@@ -2,6 +2,7 @@ import * as console from 'console';
 import * as https from 'https';
 import { URL } from 'url';
 
+import { metricScope, MetricsLogger, Unit } from 'aws-embedded-metrics';
 // eslint-disable-next-line import/no-unresolved
 import type { Context, ScheduledEvent } from 'aws-lambda';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -60,18 +61,26 @@ export async function handler(event: ScheduledEvent, context: Context) {
     let updatedMarker = initialMarker;
 
     db.changesReader.get(config)
-      .on('batch', async (batch: readonly Change[]) => {
+      .on('batch', metricScope((metrics) => async (batch: readonly Change[]) => {
+        metrics.setNamespace('ConstructHub/Discovery');
+        const startTime = Date.now();
         try {
           console.log(`Received a batch of ${batch.length} element(s)`);
+          metrics.putMetric('BatchSize', batch.length, Unit.Count);
           const lastSeq = Math.max(...batch.map((change) => change.seq));
 
           // Obtain the modified package version from the update event, and filter
           // out packages that are not of interest to us (not construct libraries).
-          const versionInfos = getRelevantVersionInfos(batch);
+          const versionInfos = getRelevantVersionInfos(batch, metrics);
           console.log(`Identified ${versionInfos.length} relevant package version update(s)`);
+          metrics.putMetric('RelevantPackageVersions', versionInfos.length, Unit.Count);
 
           // Process all remaining updates
-          await Promise.all(versionInfos.map(processUpdatedVersion));
+          await Promise.all(versionInfos.map(async (infos) => {
+            const before = Date.now();
+            await processUpdatedVersion(infos);
+            metrics.putMetric('StagingTime', Date.now() - before, Unit.Milliseconds);
+          }));
 
           // Update the transaction marker in S3.
           await saveLastTransactionMarker(lastSeq);
@@ -85,6 +94,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
           } else {
             console.log('We are almost out of time, so stopping here.');
             db.changesReader.stop();
+            metrics.putMetric('RemainingTime', context.getRemainingTimeInMillis(), Unit.Milliseconds);
             ok({ initialMarker, updatedMarker });
           }
         } catch (err) {
@@ -92,8 +102,10 @@ export async function handler(event: ScheduledEvent, context: Context) {
           console.error(`Unexpected error: ${err}`);
           db.changesReader.stop();
           ko(err);
+        } finally {
+          metrics.putMetric('BatchProcessingTime', Date.now() - startTime, Unit.Milliseconds);
         }
-      })
+      }))
       .once('end', () => {
         console.log('No more updates to process, exiting.');
         ok({ initialMarker, updatedMarker });
@@ -247,7 +259,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
  *
  * @returns a list of `VersionInfo` objects
  */
-function getRelevantVersionInfos(changes: readonly Change[]): readonly UpdatedVersion[] {
+function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLogger): readonly UpdatedVersion[] {
   const result = new Array<UpdatedVersion>();
 
   for (const change of changes) {
@@ -255,24 +267,28 @@ function getRelevantVersionInfos(changes: readonly Change[]): readonly UpdatedVe
     // these are schemas, which are not relevant to our business here.
     if (change.doc.name === undefined) {
       console.error(`[${change.seq}] Changed document contains no 'name': ${change.id}`);
+      metrics.putMetric('UnprocessableEntity', 1, Unit.Count);
       continue;
     }
 
     // The normalize function change the object in place, if the doc object is invalid it will return undefined
     if (normalizeNPMMetadata(change.doc) === undefined) {
       console.error(`[${change.seq}] Changed document invalid, npm normalize returned undefined: ${change.id}`);
+      metrics.putMetric('UnprocessableEntity', 1, Unit.Count);
       continue;
     }
 
     // Sometimes, there are no versions in the document. We skip those.
     if (change.doc.versions == null) {
       console.error(`[${change.seq}] Changed document contains no 'versions': ${change.id}`);
+      metrics.putMetric('UnprocessableEntity', 1, Unit.Count);
       continue;
     }
 
     // Sometimes, there is no 'time' entry in the document. We skip those.
     if (change.doc.time == null) {
       console.error(`[${change.seq}] Changed document contains no 'time': ${change.id}`);
+      metrics.putMetric('UnprocessableEntity', 1, Unit.Count);
       continue;
     }
 
@@ -293,6 +309,7 @@ function getRelevantVersionInfos(changes: readonly Change[]): readonly UpdatedVe
           // Could be the version in question was un-published.
           console.log(`[${change.seq}] Could not find info for "${change.doc.name}@${version}". Was it un-published?`);
         } else if (isRelevantPackageVersion(infos)) {
+          metrics.putMetric('PackageVersionAge', Date.now() - modified.getTime(), Unit.Milliseconds);
           result.push({ infos, modified, seq: change.seq });
         } else {
           console.log(`[${change.seq}] Ignoring "${change.doc.name}@${version}" as it is not a construct library.`);
