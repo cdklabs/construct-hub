@@ -243,6 +243,28 @@ Resources:
         Fn::GetAtt:
           - ConstructHubPackageDataDC5EF35E
           - Arn
+  ConstructHubPackageDataPolicy4615475A:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: ConstructHubPackageDataDC5EF35E
+      PolicyDocument:
+        Statement:
+          - Action: s3:GetObject
+            Effect: Allow
+            Principal:
+              CanonicalUser:
+                Fn::GetAtt:
+                  - ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4
+                  - S3CanonicalUserId
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /*
+        Version: 2012-10-17
   ConstructHubIngestionQueue1AD94CA3:
     Type: AWS::SQS::Queue
     Properties:
@@ -753,27 +775,6 @@ Resources:
                       - Arn
                   - /*
         Version: 2012-10-17
-  ConstructHubWebAppCachePolicyECC79625:
-    Type: AWS::CloudFront::CachePolicy
-    Properties:
-      CachePolicyConfig:
-        DefaultTTL: 86400
-        MaxTTL: 31536000
-        MinTTL: 0
-        Name:
-          Fn::Join:
-            - ""
-            - - devConstructHubWebAppCachePolicyB26D14DF-
-              - Ref: AWS::Region
-        ParametersInCacheKeyAndForwardedToOrigin:
-          CookiesConfig:
-            CookieBehavior: none
-          EnableAcceptEncodingBrotli: true
-          EnableAcceptEncodingGzip: true
-          HeadersConfig:
-            HeaderBehavior: none
-          QueryStringsConfig:
-            QueryStringBehavior: none
   ConstructHubWebAppDistributionOrigin1S3Origin694AF937:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
@@ -784,16 +785,14 @@ Resources:
     Properties:
       DistributionConfig:
         CacheBehaviors:
-          - CachePolicyId:
-              Ref: ConstructHubWebAppCachePolicyECC79625
+          - CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
             Compress: true
-            PathPattern: /packages/*
+            PathPattern: /data/*
             TargetOriginId: devConstructHubWebAppDistributionOrigin2A726FD66
             ViewerProtocolPolicy: allow-all
-          - CachePolicyId:
-              Ref: ConstructHubWebAppCachePolicyECC79625
+          - CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
             Compress: true
-            PathPattern: /index/packages.json
+            PathPattern: /catalog.json
             TargetOriginId: devConstructHubWebAppDistributionOrigin2A726FD66
             ViewerProtocolPolicy: allow-all
         CustomErrorResponses:
@@ -804,8 +803,7 @@ Resources:
             ResponseCode: 200
             ResponsePagePath: /index.html
         DefaultCacheBehavior:
-          CachePolicyId:
-            Ref: ConstructHubWebAppCachePolicyECC79625
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
           Compress: true
           TargetOriginId: devConstructHubWebAppDistributionOrigin1FBBA04AE
           ViewerProtocolPolicy: allow-all
@@ -825,12 +823,22 @@ Resources:
                   - ""
                   - - origin-access-identity/cloudfront/
                     - Ref: ConstructHubWebAppDistributionOrigin1S3Origin694AF937
-          - CustomOriginConfig:
-              OriginProtocolPolicy: https-only
-              OriginSSLProtocols:
-                - TLSv1.2
-            DomainName: awscdk.io
+          - DomainName:
+              Fn::GetAtt:
+                - ConstructHubPackageDataDC5EF35E
+                - RegionalDomainName
             Id: devConstructHubWebAppDistributionOrigin2A726FD66
+            S3OriginConfig:
+              OriginAccessIdentity:
+                Fn::Join:
+                  - ""
+                  - - origin-access-identity/cloudfront/
+                    - Ref: ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4
+  ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: Identity for devConstructHubWebAppDistributionOrigin2A726FD66
   ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1:
     Type: AWS::Lambda::LayerVersion
     Properties:
@@ -859,7 +867,7 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3BucketF79EABC1
+        - Ref: AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3Bucket88951D31
       SourceObjectKeys:
         - Fn::Join:
             - ""
@@ -867,12 +875,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3VersionKeyEBE33688
+                      - Ref: AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3VersionKeyCA837A57
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3VersionKeyEBE33688
+                      - Ref: AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3VersionKeyCA837A57
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: true
@@ -1080,13 +1088,13 @@ Resources:
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3BucketF79EABC1
+                    - Ref: AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3Bucket88951D31
               - Fn::Join:
                   - ""
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3BucketF79EABC1
+                    - Ref: AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3Bucket88951D31
                     - /*
           - Action:
               - s3:GetObject*
@@ -1247,18 +1255,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf"
-  AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3BucketF79EABC1:
+  AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3Bucket88951D31:
     Type: String
     Description: S3 bucket for asset
-      "7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92"
-  AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3VersionKeyEBE33688:
+      "59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607"
+  AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3VersionKeyCA837A57:
     Type: String
     Description: S3 key for asset version
-      "7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92"
-  AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92ArtifactHashAC43CB57:
+      "59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607"
+  AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607ArtifactHash6CD7E0E6:
     Type: String
     Description: Artifact hash for asset
-      "7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92"
+      "59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607"
   AssetParametersdcc427ad1a9c4d2a63344256acec911f0ef035359b814054fe1485aeb59e789dS3Bucket8C070E54:
     Type: String
     Description: S3 bucket for asset

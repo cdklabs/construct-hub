@@ -20,6 +20,11 @@ export interface WebAppProps {
    * Monitoring system.
    */
   readonly monitoring: Monitoring;
+
+  /**
+   * The bucket containig package data.
+   */
+  readonly packageDataBucket: s3.IBucket;
 }
 
 export class WebApp extends Construct {
@@ -30,14 +35,9 @@ export class WebApp extends Construct {
 
     this.bucket = new s3.Bucket(this, 'WebsiteBucket', { blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL });
 
-    const cachingPolicy = new cloudfront.CachePolicy(this, 'CachePolicy', {
-      enableAcceptEncodingGzip: true,
-      enableAcceptEncodingBrotli: true,
-    });
-
     const behaviorOptions = {
       compress: true,
-      cachePolicy: cachingPolicy,
+      cachePolicy: cloudfront.CachePolicy.fromCachePolicyId(this, 'CachePolicy', '658327ea-f89d-4fab-a63d-7e88639e58f6'),
     };
 
     this.distribution = new cloudfront.Distribution(this, 'Distribution', {
@@ -52,9 +52,9 @@ export class WebApp extends Construct {
       })),
     });
 
-    const jsiiObjOrigin = new origins.HttpOrigin('awscdk.io');
-    this.distribution.addBehavior('/packages/*', jsiiObjOrigin, behaviorOptions);
-    this.distribution.addBehavior('/index/packages.json', jsiiObjOrigin, behaviorOptions);
+    const jsiiObjOrigin = new origins.S3Origin(props.packageDataBucket);
+    this.distribution.addBehavior('/data/*', jsiiObjOrigin, behaviorOptions);
+    this.distribution.addBehavior('/catalog.json', jsiiObjOrigin, behaviorOptions);
 
     // if we use a domain, and A records with a CloudFront alias
     if (props.domain) {

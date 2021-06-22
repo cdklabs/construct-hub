@@ -33,6 +33,18 @@ Object {
     },
   },
   "Parameters": Object {
+    "AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607ArtifactHash6CD7E0E6": Object {
+      "Description": "Artifact hash for asset \\"59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607\\"",
+      "Type": "String",
+    },
+    "AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3Bucket88951D31": Object {
+      "Description": "S3 bucket for asset \\"59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607\\"",
+      "Type": "String",
+    },
+    "AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3VersionKeyCA837A57": Object {
+      "Description": "S3 key for asset version \\"59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607\\"",
+      "Type": "String",
+    },
     "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24ArtifactHashBA91B77F": Object {
       "Description": "Artifact hash for asset \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
       "Type": "String",
@@ -55,18 +67,6 @@ Object {
     },
     "AssetParameters7a2bbccc29d678a46137de4f305df8f456778031d8718123cbeb3c11a8badb79S3VersionKey1782299A": Object {
       "Description": "S3 key for asset version \\"7a2bbccc29d678a46137de4f305df8f456778031d8718123cbeb3c11a8badb79\\"",
-      "Type": "String",
-    },
-    "AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92ArtifactHashAC43CB57": Object {
-      "Description": "Artifact hash for asset \\"7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92\\"",
-      "Type": "String",
-    },
-    "AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3BucketF79EABC1": Object {
-      "Description": "S3 bucket for asset \\"7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92\\"",
-      "Type": "String",
-    },
-    "AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3VersionKeyEBE33688": Object {
-      "Description": "S3 key for asset version \\"7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92\\"",
       "Type": "String",
     },
     "AssetParameters84f77af86bf091027b60cd0952861d2d5a53fff5963b082775ec8485f0b28b29ArtifactHashCD3F587B": Object {
@@ -1345,6 +1345,45 @@ Object {
       },
       "Type": "Custom::S3BucketNotifications",
     },
+    "ConstructHubPackageDataPolicy4615475A": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubPackageDataDC5EF35E",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Principal": Object {
+                "CanonicalUser": Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4",
+                    "S3CanonicalUserId",
+                  ],
+                },
+              },
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "ConstructHubTransliterator9C48708A": Object {
       "DependsOn": Array [
         "ConstructHubTransliteratorServiceRoleDefaultPolicyB9C4BE06",
@@ -1542,40 +1581,6 @@ Object {
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ConstructHubWebAppCachePolicyECC79625": Object {
-      "Properties": Object {
-        "CachePolicyConfig": Object {
-          "DefaultTTL": 86400,
-          "MaxTTL": 31536000,
-          "MinTTL": 0,
-          "Name": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "TestConstructHubWebAppCachePolicy93E31605-",
-                Object {
-                  "Ref": "AWS::Region",
-                },
-              ],
-            ],
-          },
-          "ParametersInCacheKeyAndForwardedToOrigin": Object {
-            "CookiesConfig": Object {
-              "CookieBehavior": "none",
-            },
-            "EnableAcceptEncodingBrotli": true,
-            "EnableAcceptEncodingGzip": true,
-            "HeadersConfig": Object {
-              "HeaderBehavior": "none",
-            },
-            "QueryStringsConfig": Object {
-              "QueryStringBehavior": "none",
-            },
-          },
-        },
-      },
-      "Type": "AWS::CloudFront::CachePolicy",
-    },
     "ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1": Object {
       "Properties": Object {
         "Content": Object {
@@ -1638,7 +1643,7 @@ Object {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3BucketF79EABC1",
+            "Ref": "AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3Bucket88951D31",
           },
         ],
         "SourceObjectKeys": Array [
@@ -1653,7 +1658,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3VersionKeyEBE33688",
+                          "Ref": "AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3VersionKeyCA837A57",
                         },
                       ],
                     },
@@ -1666,7 +1671,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3VersionKeyEBE33688",
+                          "Ref": "AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3VersionKeyCA837A57",
                         },
                       ],
                     },
@@ -1685,20 +1690,16 @@ Object {
         "DistributionConfig": Object {
           "CacheBehaviors": Array [
             Object {
-              "CachePolicyId": Object {
-                "Ref": "ConstructHubWebAppCachePolicyECC79625",
-              },
+              "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
               "Compress": true,
-              "PathPattern": "/packages/*",
+              "PathPattern": "/data/*",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
             Object {
-              "CachePolicyId": Object {
-                "Ref": "ConstructHubWebAppCachePolicyECC79625",
-              },
+              "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
               "Compress": true,
-              "PathPattern": "/index/packages.json",
+              "PathPattern": "/catalog.json",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
@@ -1716,9 +1717,7 @@ Object {
             },
           ],
           "DefaultCacheBehavior": Object {
-            "CachePolicyId": Object {
-              "Ref": "ConstructHubWebAppCachePolicyECC79625",
-            },
+            "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
             "Compress": true,
             "TargetOriginId": "TestConstructHubWebAppDistributionOrigin171FF58D3",
             "ViewerProtocolPolicy": "allow-all",
@@ -1751,14 +1750,26 @@ Object {
               },
             },
             Object {
-              "CustomOriginConfig": Object {
-                "OriginProtocolPolicy": "https-only",
-                "OriginSSLProtocols": Array [
-                  "TLSv1.2",
+              "DomainName": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubPackageDataDC5EF35E",
+                  "RegionalDomainName",
                 ],
               },
-              "DomainName": "awscdk.io",
               "Id": "TestConstructHubWebAppDistributionOrigin276090F90",
+              "S3OriginConfig": Object {
+                "OriginAccessIdentity": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "origin-access-identity/cloudfront/",
+                      Object {
+                        "Ref": "ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4",
+                      },
+                    ],
+                  ],
+                },
+              },
             },
           ],
         },
@@ -1769,6 +1780,14 @@ Object {
       "Properties": Object {
         "CloudFrontOriginAccessIdentityConfig": Object {
           "Comment": "Identity for TestConstructHubWebAppDistributionOrigin171FF58D3",
+        },
+      },
+      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+    },
+    "ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4": Object {
+      "Properties": Object {
+        "CloudFrontOriginAccessIdentityConfig": Object {
+          "Comment": "Identity for TestConstructHubWebAppDistributionOrigin276090F90",
         },
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
@@ -1939,7 +1958,7 @@ Object {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3BucketF79EABC1",
+                        "Ref": "AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3Bucket88951D31",
                       },
                     ],
                   ],
@@ -1954,7 +1973,7 @@ Object {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3BucketF79EABC1",
+                        "Ref": "AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3Bucket88951D31",
                       },
                       "/*",
                     ],
@@ -2172,6 +2191,18 @@ Object {
     },
   },
   "Parameters": Object {
+    "AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607ArtifactHash6CD7E0E6": Object {
+      "Description": "Artifact hash for asset \\"59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607\\"",
+      "Type": "String",
+    },
+    "AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3Bucket88951D31": Object {
+      "Description": "S3 bucket for asset \\"59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607\\"",
+      "Type": "String",
+    },
+    "AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3VersionKeyCA837A57": Object {
+      "Description": "S3 key for asset version \\"59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607\\"",
+      "Type": "String",
+    },
     "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24ArtifactHashBA91B77F": Object {
       "Description": "Artifact hash for asset \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
       "Type": "String",
@@ -2194,18 +2225,6 @@ Object {
     },
     "AssetParameters7a2bbccc29d678a46137de4f305df8f456778031d8718123cbeb3c11a8badb79S3VersionKey1782299A": Object {
       "Description": "S3 key for asset version \\"7a2bbccc29d678a46137de4f305df8f456778031d8718123cbeb3c11a8badb79\\"",
-      "Type": "String",
-    },
-    "AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92ArtifactHashAC43CB57": Object {
-      "Description": "Artifact hash for asset \\"7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92\\"",
-      "Type": "String",
-    },
-    "AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3BucketF79EABC1": Object {
-      "Description": "S3 bucket for asset \\"7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92\\"",
-      "Type": "String",
-    },
-    "AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3VersionKeyEBE33688": Object {
-      "Description": "S3 key for asset version \\"7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92\\"",
       "Type": "String",
     },
     "AssetParameters7af6295e521fd55af94332393ceffb3e866aac4dc4956321f7918f21e72199e4ArtifactHash5E28809B": Object {
@@ -3645,6 +3664,45 @@ Object {
       },
       "Type": "Custom::S3BucketNotifications",
     },
+    "ConstructHubPackageDataPolicy4615475A": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubPackageDataDC5EF35E",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Principal": Object {
+                "CanonicalUser": Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4",
+                    "S3CanonicalUserId",
+                  ],
+                },
+              },
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "ConstructHubTransliterator9C48708A": Object {
       "DependsOn": Array [
         "ConstructHubTransliteratorServiceRoleDefaultPolicyB9C4BE06",
@@ -3894,40 +3952,6 @@ Object {
       },
       "Type": "AWS::Route53::RecordSet",
     },
-    "ConstructHubWebAppCachePolicyECC79625": Object {
-      "Properties": Object {
-        "CachePolicyConfig": Object {
-          "DefaultTTL": 86400,
-          "MaxTTL": 31536000,
-          "MinTTL": 0,
-          "Name": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "TestConstructHubWebAppCachePolicy93E31605-",
-                Object {
-                  "Ref": "AWS::Region",
-                },
-              ],
-            ],
-          },
-          "ParametersInCacheKeyAndForwardedToOrigin": Object {
-            "CookiesConfig": Object {
-              "CookieBehavior": "none",
-            },
-            "EnableAcceptEncodingBrotli": true,
-            "EnableAcceptEncodingGzip": true,
-            "HeadersConfig": Object {
-              "HeaderBehavior": "none",
-            },
-            "QueryStringsConfig": Object {
-              "QueryStringBehavior": "none",
-            },
-          },
-        },
-      },
-      "Type": "AWS::CloudFront::CachePolicy",
-    },
     "ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1": Object {
       "Properties": Object {
         "Content": Object {
@@ -3990,7 +4014,7 @@ Object {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3BucketF79EABC1",
+            "Ref": "AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3Bucket88951D31",
           },
         ],
         "SourceObjectKeys": Array [
@@ -4005,7 +4029,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3VersionKeyEBE33688",
+                          "Ref": "AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3VersionKeyCA837A57",
                         },
                       ],
                     },
@@ -4018,7 +4042,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3VersionKeyEBE33688",
+                          "Ref": "AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3VersionKeyCA837A57",
                         },
                       ],
                     },
@@ -4040,20 +4064,16 @@ Object {
           ],
           "CacheBehaviors": Array [
             Object {
-              "CachePolicyId": Object {
-                "Ref": "ConstructHubWebAppCachePolicyECC79625",
-              },
+              "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
               "Compress": true,
-              "PathPattern": "/packages/*",
+              "PathPattern": "/data/*",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
             Object {
-              "CachePolicyId": Object {
-                "Ref": "ConstructHubWebAppCachePolicyECC79625",
-              },
+              "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
               "Compress": true,
-              "PathPattern": "/index/packages.json",
+              "PathPattern": "/catalog.json",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
@@ -4071,9 +4091,7 @@ Object {
             },
           ],
           "DefaultCacheBehavior": Object {
-            "CachePolicyId": Object {
-              "Ref": "ConstructHubWebAppCachePolicyECC79625",
-            },
+            "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
             "Compress": true,
             "TargetOriginId": "TestConstructHubWebAppDistributionOrigin171FF58D3",
             "ViewerProtocolPolicy": "allow-all",
@@ -4106,14 +4124,26 @@ Object {
               },
             },
             Object {
-              "CustomOriginConfig": Object {
-                "OriginProtocolPolicy": "https-only",
-                "OriginSSLProtocols": Array [
-                  "TLSv1.2",
+              "DomainName": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubPackageDataDC5EF35E",
+                  "RegionalDomainName",
                 ],
               },
-              "DomainName": "awscdk.io",
               "Id": "TestConstructHubWebAppDistributionOrigin276090F90",
+              "S3OriginConfig": Object {
+                "OriginAccessIdentity": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "origin-access-identity/cloudfront/",
+                      Object {
+                        "Ref": "ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4",
+                      },
+                    ],
+                  ],
+                },
+              },
             },
           ],
           "ViewerCertificate": Object {
@@ -4134,6 +4164,14 @@ Object {
       "Properties": Object {
         "CloudFrontOriginAccessIdentityConfig": Object {
           "Comment": "Identity for TestConstructHubWebAppDistributionOrigin171FF58D3",
+        },
+      },
+      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+    },
+    "ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4": Object {
+      "Properties": Object {
+        "CloudFrontOriginAccessIdentityConfig": Object {
+          "Comment": "Identity for TestConstructHubWebAppDistributionOrigin276090F90",
         },
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
@@ -4304,7 +4342,7 @@ Object {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3BucketF79EABC1",
+                        "Ref": "AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3Bucket88951D31",
                       },
                     ],
                   ],
@@ -4319,7 +4357,7 @@ Object {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters7abd1fafd87a608c055d7dcbe712a30009e59267d1b423086749cb59482ceb92S3BucketF79EABC1",
+                        "Ref": "AssetParameters59a0737b6d5a1495d12562d23eb5bde769a14f8885fdf524d2817618f6f87607S3Bucket88951D31",
                       },
                       "/*",
                     ],
