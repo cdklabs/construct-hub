@@ -753,6 +753,27 @@ Resources:
                       - Arn
                   - /*
         Version: 2012-10-17
+  ConstructHubWebAppCachePolicyECC79625:
+    Type: AWS::CloudFront::CachePolicy
+    Properties:
+      CachePolicyConfig:
+        DefaultTTL: 86400
+        MaxTTL: 31536000
+        MinTTL: 0
+        Name:
+          Fn::Join:
+            - ""
+            - - devConstructHubWebAppCachePolicyB26D14DF-
+              - Ref: AWS::Region
+        ParametersInCacheKeyAndForwardedToOrigin:
+          CookiesConfig:
+            CookieBehavior: none
+          EnableAcceptEncodingBrotli: true
+          EnableAcceptEncodingGzip: true
+          HeadersConfig:
+            HeaderBehavior: none
+          QueryStringsConfig:
+            QueryStringBehavior: none
   ConstructHubWebAppDistributionOrigin1S3Origin694AF937:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
@@ -763,12 +784,14 @@ Resources:
     Properties:
       DistributionConfig:
         CacheBehaviors:
-          - CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          - CachePolicyId:
+              Ref: ConstructHubWebAppCachePolicyECC79625
             Compress: true
             PathPattern: /packages/*
             TargetOriginId: devConstructHubWebAppDistributionOrigin2A726FD66
             ViewerProtocolPolicy: allow-all
-          - CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          - CachePolicyId:
+              Ref: ConstructHubWebAppCachePolicyECC79625
             Compress: true
             PathPattern: /index/packages.json
             TargetOriginId: devConstructHubWebAppDistributionOrigin2A726FD66
@@ -781,7 +804,8 @@ Resources:
             ResponseCode: 200
             ResponsePagePath: /index.html
         DefaultCacheBehavior:
-          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          CachePolicyId:
+            Ref: ConstructHubWebAppCachePolicyECC79625
           Compress: true
           TargetOriginId: devConstructHubWebAppDistributionOrigin1FBBA04AE
           ViewerProtocolPolicy: allow-all
