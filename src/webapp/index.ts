@@ -24,7 +24,7 @@ export interface WebAppProps {
   /**
    * The bucket containig package data.
    */
-  readonly packageDataBucket: s3.IBucket;
+  readonly packageData: s3.IBucket;
 }
 
 export class WebApp extends Construct {
@@ -52,7 +52,7 @@ export class WebApp extends Construct {
       })),
     });
 
-    const jsiiObjOrigin = new origins.S3Origin(props.packageDataBucket);
+    const jsiiObjOrigin = new origins.S3Origin(props.packageData);
     this.distribution.addBehavior('/data/*', jsiiObjOrigin, behaviorOptions);
     this.distribution.addBehavior('/catalog.json', jsiiObjOrigin, behaviorOptions);
 
