@@ -79,7 +79,7 @@ export async function handler(event: SQSEvent, context: Context) {
         Bucket: BUCKET_NAME,
         Key: assemblyKey,
         Body: dotJsii,
-        ContentType: 'text/json',
+        ContentType: 'application/json',
         Metadata: {
           'Lambda-Log-Group': context.logGroupName,
           'Lambda-Log-Stream': context.logStreamName,
@@ -101,7 +101,7 @@ export async function handler(event: SQSEvent, context: Context) {
         Bucket: BUCKET_NAME,
         Key: metadataKey,
         Body: JSON.stringify(metadata),
-        ContentType: 'text/json',
+        ContentType: 'application/json',
         Metadata: {
           'Lambda-Log-Group': context.logGroupName,
           'Lambda-Log-Stream': context.logStreamName,
