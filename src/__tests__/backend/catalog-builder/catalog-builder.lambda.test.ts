@@ -70,11 +70,18 @@ test('no indexed packages', () => {
 
 test('initial build', () => {
   // GIVEN
+
+  const npmMetadata = { date: 'Thu, 17 Jun 2021 01:52:04 GMT' };
+
   AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
     try {
       expect(req.Bucket).toBe(mockBucketName);
     } catch (e) {
       return cb(e);
+    }
+
+    if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
+      return cb(null, { Body: JSON.stringify(npmMetadata) });
     }
     const matches = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`).exec(req.Key);
     if (matches != null) {
@@ -128,6 +135,7 @@ test('initial build', () => {
           description: 'Package @scope/package, version 1.2.3',
           languages: { foo: 'bar' },
           major: 1,
+          metadata: npmMetadata,
           name: '@scope/package',
           version: '1.2.3',
         },
@@ -135,6 +143,7 @@ test('initial build', () => {
           description: 'Package name, version 1.2.3',
           languages: { foo: 'bar' },
           major: 1,
+          metadata: npmMetadata,
           name: 'name',
           version: '1.2.3',
         },
@@ -142,6 +151,7 @@ test('initial build', () => {
           description: 'Package name, version 2.0.0-pre',
           languages: { foo: 'bar' },
           major: 2,
+          metadata: npmMetadata,
           name: 'name',
           version: '2.0.0-pre',
         },
@@ -161,6 +171,9 @@ test('initial build', () => {
 });
 
 test('incremental build', () => {
+
+  const npmMetadata = { date: 'Thu, 17 Jun 2021 01:52:04 GMT' };
+
   // GIVEN
   AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
     try {
@@ -168,6 +181,11 @@ test('incremental build', () => {
     } catch (e) {
       return cb(e);
     }
+
+    if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
+      return cb(null, { Body: JSON.stringify(npmMetadata) });
+    }
+
     const matches = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`).exec(req.Key);
     if (matches != null) {
       mockNpmPackage(matches[1], matches[2]).then(
@@ -182,6 +200,7 @@ test('incremental build', () => {
               description: 'Package @scope/package, version 2.3.4',
               languages: { foo: 'bar' },
               major: 2,
+              metadata: npmMetadata,
               name: '@scope/package',
               version: '2.3.4',
             },
@@ -189,6 +208,7 @@ test('incremental build', () => {
               description: 'Package name, version 1.0.0',
               languages: { foo: 'bar' },
               major: 1,
+              metadata: npmMetadata,
               name: 'name',
               version: '1.0.0',
             },
@@ -196,6 +216,7 @@ test('incremental build', () => {
               description: 'Package name, version 2.0.0-pre.10',
               languages: { foo: 'bar' },
               major: 2,
+              metadata: npmMetadata,
               name: 'name',
               version: '2.0.0-pre.10',
             },
@@ -245,6 +266,7 @@ test('incremental build', () => {
           description: 'Package @scope/package, version 2.3.4',
           languages: { foo: 'bar' },
           major: 2,
+          metadata: npmMetadata,
           name: '@scope/package',
           version: '2.3.4',
         },
@@ -252,6 +274,7 @@ test('incremental build', () => {
           description: 'Package @scope/package, version 1.2.3',
           languages: { foo: 'bar' },
           major: 1,
+          metadata: npmMetadata,
           name: '@scope/package',
           version: '1.2.3',
         },
@@ -259,6 +282,7 @@ test('incremental build', () => {
           description: 'Package name, version 1.2.3',
           languages: { foo: 'bar' },
           major: 1,
+          metadata: npmMetadata,
           name: 'name',
           version: '1.2.3',
         },
@@ -266,6 +290,7 @@ test('incremental build', () => {
           description: 'Package name, version 2.0.0-pre.10',
           languages: { foo: 'bar' },
           major: 2,
+          metadata: npmMetadata,
           name: 'name',
           version: '2.0.0-pre.10',
         },
