@@ -1968,6 +1968,45 @@ Object {
       },
       "Type": "Custom::S3BucketNotifications",
     },
+    "ConstructHubPackageDataPolicy4615475A": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubPackageDataDC5EF35E",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Principal": Object {
+                "CanonicalUser": Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4",
+                    "S3CanonicalUserId",
+                  ],
+                },
+              },
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "ConstructHubTransliterator9C48708A": Object {
       "DependsOn": Array [
         "ConstructHubTransliteratorServiceRoleDefaultPolicyB9C4BE06",
@@ -2300,14 +2339,14 @@ Object {
             Object {
               "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
               "Compress": true,
-              "PathPattern": "/packages/*",
+              "PathPattern": "/data/*",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
             Object {
               "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
               "Compress": true,
-              "PathPattern": "/index/packages.json",
+              "PathPattern": "/catalog.json",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
@@ -2358,14 +2397,26 @@ Object {
               },
             },
             Object {
-              "CustomOriginConfig": Object {
-                "OriginProtocolPolicy": "https-only",
-                "OriginSSLProtocols": Array [
-                  "TLSv1.2",
+              "DomainName": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubPackageDataDC5EF35E",
+                  "RegionalDomainName",
                 ],
               },
-              "DomainName": "awscdk.io",
               "Id": "TestConstructHubWebAppDistributionOrigin276090F90",
+              "S3OriginConfig": Object {
+                "OriginAccessIdentity": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "origin-access-identity/cloudfront/",
+                      Object {
+                        "Ref": "ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4",
+                      },
+                    ],
+                  ],
+                },
+              },
             },
           ],
         },
@@ -2376,6 +2427,14 @@ Object {
       "Properties": Object {
         "CloudFrontOriginAccessIdentityConfig": Object {
           "Comment": "Identity for TestConstructHubWebAppDistributionOrigin171FF58D3",
+        },
+      },
+      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+    },
+    "ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4": Object {
+      "Properties": Object {
+        "CloudFrontOriginAccessIdentityConfig": Object {
+          "Comment": "Identity for TestConstructHubWebAppDistributionOrigin276090F90",
         },
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
@@ -4875,6 +4934,45 @@ Object {
       },
       "Type": "Custom::S3BucketNotifications",
     },
+    "ConstructHubPackageDataPolicy4615475A": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubPackageDataDC5EF35E",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Principal": Object {
+                "CanonicalUser": Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4",
+                    "S3CanonicalUserId",
+                  ],
+                },
+              },
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "ConstructHubTransliterator9C48708A": Object {
       "DependsOn": Array [
         "ConstructHubTransliteratorServiceRoleDefaultPolicyB9C4BE06",
@@ -5262,14 +5360,14 @@ Object {
             Object {
               "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
               "Compress": true,
-              "PathPattern": "/packages/*",
+              "PathPattern": "/data/*",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
             Object {
               "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
               "Compress": true,
-              "PathPattern": "/index/packages.json",
+              "PathPattern": "/catalog.json",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
@@ -5320,14 +5418,26 @@ Object {
               },
             },
             Object {
-              "CustomOriginConfig": Object {
-                "OriginProtocolPolicy": "https-only",
-                "OriginSSLProtocols": Array [
-                  "TLSv1.2",
+              "DomainName": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubPackageDataDC5EF35E",
+                  "RegionalDomainName",
                 ],
               },
-              "DomainName": "awscdk.io",
               "Id": "TestConstructHubWebAppDistributionOrigin276090F90",
+              "S3OriginConfig": Object {
+                "OriginAccessIdentity": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "origin-access-identity/cloudfront/",
+                      Object {
+                        "Ref": "ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4",
+                      },
+                    ],
+                  ],
+                },
+              },
             },
           ],
           "ViewerCertificate": Object {
@@ -5348,6 +5458,14 @@ Object {
       "Properties": Object {
         "CloudFrontOriginAccessIdentityConfig": Object {
           "Comment": "Identity for TestConstructHubWebAppDistributionOrigin171FF58D3",
+        },
+      },
+      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+    },
+    "ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4": Object {
+      "Properties": Object {
+        "CloudFrontOriginAccessIdentityConfig": Object {
+          "Comment": "Identity for TestConstructHubWebAppDistributionOrigin276090F90",
         },
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",

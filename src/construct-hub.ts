@@ -72,6 +72,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     new WebApp(this, 'WebApp', {
       domain: props.domain,
       monitoring,
+      packageData,
     });
   }
 
