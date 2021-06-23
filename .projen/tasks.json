@@ -39,7 +39,10 @@
       "description": "Only compile",
       "steps": [
         {
-          "exec": "cp -r ./node_modules/construct-hub-webapp/build ./website"
+          "exec": "rm -rf ./website"
+        },
+        {
+          "exec": "cp -r /Users/epolon/dev/src/github.com/cdklabs/construct-hub-webapp/build ./website"
         },
         {
           "exec": "jsii --silence-warnings=reserved-word --no-fix-peer-dependencies"
