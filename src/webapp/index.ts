@@ -22,7 +22,7 @@ export interface WebAppProps {
   readonly monitoring: Monitoring;
 
   /**
-   * The bucket containig package data.
+   * The bucket containing package data.
    */
   readonly packageData: s3.IBucket;
 }
