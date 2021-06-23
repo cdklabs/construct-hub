@@ -1,3 +1,4 @@
+import { ComparisonOperator, IAlarm } from '@aws-cdk/aws-cloudwatch';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { RetentionDays } from '@aws-cdk/aws-logs';
@@ -5,10 +6,16 @@ import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
 import { IQueue } from '@aws-cdk/aws-sqs';
 
 import { Construct, Duration } from '@aws-cdk/core';
+import { Monitoring } from '../../monitoring';
 import { STAGED_KEY_PREFIX } from '../shared/constants.lambda-shared';
 import { Discovery as Handler } from './discovery';
 
 export interface DiscoveryProps {
+  /**
+   * The monitoring handler to register alarms with.
+   */
+  readonly monitoring: Monitoring;
+
   /**
    * The queue to post package updated messages to
    */
@@ -22,12 +29,26 @@ export interface DiscoveryProps {
   readonly logRetention?: RetentionDays;
 }
 
+/**
+ * This discovery function periodically scans the CouchDB replica of npmjs.com
+ * to discover newly published packages that are relevant for indexing in the
+ * Construct Hub, then notifies the ingestion function about those.
+ */
 export class Discovery extends Construct {
   /**
-   * The bucket in which the discovery function stages objects before notifying
-   * the Construct Hub about them.
+   * The S3 bucket in which the discovery function stages npm packages.
    */
   public readonly bucket: IBucket;
+
+  /**
+   * Alarms if the discovery function does not complete successfully.
+   */
+  public readonly alarmErrors: IAlarm;
+
+  /**
+   * Alarms if the discovery function does not run as expected.
+   */
+  public readonly alarmNoInvocations: IAlarm;
 
   public constructor(scope: Construct, id: string, props: DiscoveryProps) {
     super(scope, id);
@@ -62,5 +83,20 @@ export class Discovery extends Construct {
       schedule: Schedule.rate(timeout),
       targets: [new LambdaFunction(lambda)],
     });
+
+    props.monitoring.watchful.watchLambdaFunction('Discovery Function', lambda);
+    this.alarmErrors = lambda.metricErrors({ period: Duration.minutes(15) }).createAlarm(this, 'ErrorsAlarm', {
+      alarmDescription: 'The discovery function (on npmjs.com) failed to run',
+      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      evaluationPeriods: 1,
+      threshold: 1,
+    });
+    this.alarmNoInvocations = lambda.metricInvocations({ period: Duration.minutes(15) })
+      .createAlarm(this, 'NoInvocationsAlarm', {
+        alarmDescription: 'The discovery function (on npmjs.com) is not running as scheduled',
+        comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+        evaluationPeriods: 1,
+        threshold: 1,
+      });
   }
 }

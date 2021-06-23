@@ -1,8 +1,10 @@
+import { ComparisonOperator, IAlarm } from '@aws-cdk/aws-cloudwatch';
 import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
+import { Monitoring } from '../../monitoring';
 
 import { Ingestion as Handler } from './ingestion';
 
@@ -11,6 +13,11 @@ export interface IngestionProps {
    * The bucket in which ingested objects are due to be inserted.
    */
   readonly bucket: IBucket;
+
+  /**
+   * The monitoring handler to register alarms with.
+   */
+  readonly monitoring: Monitoring;
 }
 
 /**
@@ -22,6 +29,13 @@ export interface IngestionProps {
  */
 export class Ingestion extends Construct implements IGrantable {
   public readonly grantPrincipal: IPrincipal;
+
+  /**
+   * Alarms if the dead-letter-queue associated with the ingestion process
+   * is not empty, meaning some packages failed ingestion and require operator
+   * attention.
+   */
+  public readonly alarmDeadLetterQueueNotEmpty: IAlarm;
 
   /**
    * The SQS queue that triggers the ingestion function.
@@ -52,5 +66,14 @@ export class Ingestion extends Construct implements IGrantable {
     handler.addEventSource(new SqsEventSource(this.queue, { batchSize: 1 }));
 
     this.grantPrincipal = handler.grantPrincipal;
+
+    props.monitoring.watchful.watchLambdaFunction('Ingestion Function', handler);
+    this.alarmDeadLetterQueueNotEmpty = handler.deadLetterQueue!.metricApproximateNumberOfMessagesVisible()
+      .createAlarm(this, 'DLQAlarm', {
+        alarmDescription: 'The ingestion function failed for one or more packages',
+        comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        evaluationPeriods: 1,
+        threshold: 1,
+      });
   }
 }
