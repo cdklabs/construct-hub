@@ -136,7 +136,7 @@ project.addFields({ resolutions: { '@jsii/spec': './vendor/jsii-spec.tgz' } });
 function addDevApp() {
   // add "dev:xxx" tasks for interacting with the dev stack
   const devapp = 'lib/__tests__/devapp';
-  const commands = ['synth', 'diff', 'deploy'];
+  const commands = ['synth', 'diff', 'deploy', 'destroy'];
   for (const cmd of commands) {
     project.addTask(`dev:${cmd}`, {
       description: `cdk ${cmd}`,
