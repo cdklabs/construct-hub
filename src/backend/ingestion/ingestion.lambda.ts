@@ -110,15 +110,13 @@ export async function handler(event: SQSEvent, context: Context) {
       },
     }).promise();
 
-    // since the catalog-builder is invoked when the assembly is uploaded
-    // we need to make sure all the files it depends on are uploaded before.
-    // currently this means uploading the metadata before
-    console.log(`${packageName}@${packageVersion} | Uploading package and metadata files`);
-    const [pkg, storedMetadata] = await Promise.all([packageRequest, metadataRequest]);
+    // we upload the metadata file first because the catalog builder depends on
+    // it and is triggered by the assembly file upload.
+    console.log(`${packageName}@${packageVersion} | Uploading metadata file`);
+    const storedMetadata = await metadataRequest;
 
-    // now we can upload the assembly
-    console.log(`${packageName}@${packageVersion} | Uploading assembly file`);
-    const assembly = await assemblyRequest;
+    console.log(`${packageName}@${packageVersion} | Uploading package and assembly files`);
+    const [assembly, pkg] = await Promise.all([assemblyRequest, packageRequest]);
 
     const created = {
       bucket: BUCKET_NAME,
