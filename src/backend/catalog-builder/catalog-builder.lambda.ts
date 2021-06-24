@@ -1,7 +1,6 @@
 import { gunzip } from 'zlib';
 
 import type { AssemblyTargets } from '@jsii/spec';
-// eslint-disable-next-line import/no-unresolved
 import type { Context } from 'aws-lambda';
 import { AWSError, S3 } from 'aws-sdk';
 import { SemVer } from 'semver';

@@ -44,7 +44,7 @@ Resources:
             - '",{"label":"p99","stat":"p99"}]],"annotations":{"horizontal":[{"label":"p99
               > 720000 for 3 datapoints within 15
               minutes","value":720000,"yAxis":"left"}]},"yAxis":{}}},{"type":"text","width":24,"height":2,"x":0,"y":8,"properties":{"markdown":"#
-              Discovery Function\\n\\n[button:AWS Lambda
+              Discovery npmjs.com follower\\n\\n[button:AWS Lambda
               Console](https://console.aws.amazon.com/lambda/home?region='
             - Ref: AWS::Region
             - "#/functions/"
@@ -77,6 +77,39 @@ Resources:
             - '",{"label":"p99","stat":"p99"}]],"annotations":{"horizontal":[{"label":"p99
               > 720000 for 3 datapoints within 15
               minutes","value":720000,"yAxis":"left"}]},"yAxis":{}}},{"type":"text","width":24,"height":2,"x":0,"y":16,"properties":{"markdown":"#
+              Discovery stager\\n\\n[button:AWS Lambda
+              Console](https://console.aws.amazon.com/lambda/home?region='
+            - Ref: AWS::Region
+            - "#/functions/"
+            - Ref: ConstructHubDiscoveryStageAndNotify3D0F7A4F
+            - ?tab=graph) [button:CloudWatch
+              Logs](https://console.aws.amazon.com/cloudwatch/home?region=
+            - Ref: AWS::Region
+            - "#logEventViewer:group=/aws/lambda/"
+            - Ref: ConstructHubDiscoveryStageAndNotify3D0F7A4F
+            - )"}},{"type":"metric","width":6,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Invocations/5min","region":"
+            - Ref: AWS::Region
+            - '","metrics":[["AWS/Lambda","Invocations","FunctionName","'
+            - Ref: ConstructHubDiscoveryStageAndNotify3D0F7A4F
+            - '",{"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":18,"properties":{"view":"timeSeries","title":"Errors/5min","region":"'
+            - Ref: AWS::Region
+            - '","metrics":[["AWS/Lambda","Errors","FunctionName","'
+            - Ref: ConstructHubDiscoveryStageAndNotify3D0F7A4F
+            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Errors
+              > 0 for 3 datapoints within 15
+              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":18,"properties":{"view":"timeSeries","title":"Throttles/5min","region":"'
+            - Ref: AWS::Region
+            - '","metrics":[["AWS/Lambda","Throttles","FunctionName","'
+            - Ref: ConstructHubDiscoveryStageAndNotify3D0F7A4F
+            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Throttles
+              > 0 for 3 datapoints within 15
+              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":18,"properties":{"view":"timeSeries","title":"Duration/5min","region":"'
+            - Ref: AWS::Region
+            - '","metrics":[["AWS/Lambda","Duration","FunctionName","'
+            - Ref: ConstructHubDiscoveryStageAndNotify3D0F7A4F
+            - '",{"label":"p99","stat":"p99"}]],"annotations":{"horizontal":[{"label":"p99
+              > 720000 for 3 datapoints within 15
+              minutes","value":720000,"yAxis":"left"}]},"yAxis":{}}},{"type":"text","width":24,"height":2,"x":0,"y":24,"properties":{"markdown":"#
               Transliterator Function\\n\\n[button:AWS Lambda
               Console](https://console.aws.amazon.com/lambda/home?region='
             - Ref: AWS::Region
@@ -87,29 +120,29 @@ Resources:
             - Ref: AWS::Region
             - "#logEventViewer:group=/aws/lambda/"
             - Ref: ConstructHubTransliterator9C48708A
-            - )"}},{"type":"metric","width":6,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Invocations/5min","region":"
+            - )"}},{"type":"metric","width":6,"height":6,"x":0,"y":26,"properties":{"view":"timeSeries","title":"Invocations/5min","region":"
             - Ref: AWS::Region
             - '","metrics":[["AWS/Lambda","Invocations","FunctionName","'
             - Ref: ConstructHubTransliterator9C48708A
-            - '",{"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":18,"properties":{"view":"timeSeries","title":"Errors/5min","region":"'
+            - '",{"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":26,"properties":{"view":"timeSeries","title":"Errors/5min","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/Lambda","Errors","FunctionName","'
             - Ref: ConstructHubTransliterator9C48708A
             - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Errors
               > 0 for 3 datapoints within 15
-              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":18,"properties":{"view":"timeSeries","title":"Throttles/5min","region":"'
+              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":26,"properties":{"view":"timeSeries","title":"Throttles/5min","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/Lambda","Throttles","FunctionName","'
             - Ref: ConstructHubTransliterator9C48708A
             - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Throttles
               > 0 for 3 datapoints within 15
-              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":18,"properties":{"view":"timeSeries","title":"Duration/5min","region":"'
+              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":26,"properties":{"view":"timeSeries","title":"Duration/5min","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/Lambda","Duration","FunctionName","'
             - Ref: ConstructHubTransliterator9C48708A
             - '",{"label":"p99","stat":"p99"}]],"annotations":{"horizontal":[{"label":"p99
               > 720000 for 3 datapoints within 15
-              minutes","value":720000,"yAxis":"left"}]},"yAxis":{}}},{"type":"text","width":24,"height":2,"x":0,"y":24,"properties":{"markdown":"#
+              minutes","value":720000,"yAxis":"left"}]},"yAxis":{}}},{"type":"text","width":24,"height":2,"x":0,"y":32,"properties":{"markdown":"#
               Catalog Builder Function\\n\\n[button:AWS Lambda
               Console](https://console.aws.amazon.com/lambda/home?region='
             - Ref: AWS::Region
@@ -120,23 +153,23 @@ Resources:
             - Ref: AWS::Region
             - "#logEventViewer:group=/aws/lambda/"
             - Ref: ConstructHubCatalogBuilder5A9DE4AF
-            - )"}},{"type":"metric","width":6,"height":6,"x":0,"y":26,"properties":{"view":"timeSeries","title":"Invocations/5min","region":"
+            - )"}},{"type":"metric","width":6,"height":6,"x":0,"y":34,"properties":{"view":"timeSeries","title":"Invocations/5min","region":"
             - Ref: AWS::Region
             - '","metrics":[["AWS/Lambda","Invocations","FunctionName","'
             - Ref: ConstructHubCatalogBuilder5A9DE4AF
-            - '",{"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":26,"properties":{"view":"timeSeries","title":"Errors/5min","region":"'
+            - '",{"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":34,"properties":{"view":"timeSeries","title":"Errors/5min","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/Lambda","Errors","FunctionName","'
             - Ref: ConstructHubCatalogBuilder5A9DE4AF
             - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Errors
               > 0 for 3 datapoints within 15
-              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":26,"properties":{"view":"timeSeries","title":"Throttles/5min","region":"'
+              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":34,"properties":{"view":"timeSeries","title":"Throttles/5min","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/Lambda","Throttles","FunctionName","'
             - Ref: ConstructHubCatalogBuilder5A9DE4AF
             - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Throttles
               > 0 for 3 datapoints within 15
-              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":26,"properties":{"view":"timeSeries","title":"Duration/5min","region":"'
+              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":34,"properties":{"view":"timeSeries","title":"Duration/5min","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/Lambda","Duration","FunctionName","'
             - Ref: ConstructHubCatalogBuilder5A9DE4AF
@@ -252,6 +285,63 @@ Resources:
                 - Name: FunctionName
                   Value:
                     Ref: ConstructHubDiscoveryD6EEC2B8
+              MetricName: Duration
+              Namespace: AWS/Lambda
+            Period: 300
+            Stat: p99
+          ReturnData: true
+      Threshold: 720000
+  ConstructHubMonitoringWatchfuldevConstructHubDiscoveryStageAndNotify6BE0838CErrorsAlarmB4CBE333:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 3
+      AlarmActions:
+        - Ref: TopicBFC7AF6E
+      AlarmDescription: Over 0 errors per minute
+      Dimensions:
+        - Name: FunctionName
+          Value:
+            Ref: ConstructHubDiscoveryStageAndNotify3D0F7A4F
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Period: 300
+      Statistic: Sum
+      Threshold: 0
+  ConstructHubMonitoringWatchfuldevConstructHubDiscoveryStageAndNotify6BE0838CThrottlesAlarmCB68B096:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 3
+      AlarmActions:
+        - Ref: TopicBFC7AF6E
+      AlarmDescription: Over 0 throttles per minute
+      Dimensions:
+        - Name: FunctionName
+          Value:
+            Ref: ConstructHubDiscoveryStageAndNotify3D0F7A4F
+      MetricName: Throttles
+      Namespace: AWS/Lambda
+      Period: 300
+      Statistic: Sum
+      Threshold: 0
+  ConstructHubMonitoringWatchfuldevConstructHubDiscoveryStageAndNotify6BE0838CDurationAlarmF5DE13CC:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 3
+      AlarmActions:
+        - Ref: TopicBFC7AF6E
+      AlarmDescription: p99 latency >= 720s (80%)
+      Metrics:
+        - Id: m1
+          Label: p99
+          MetricStat:
+            Metric:
+              Dimensions:
+                - Name: FunctionName
+                  Value:
+                    Ref: ConstructHubDiscoveryStageAndNotify3D0F7A4F
               MetricName: Duration
               Namespace: AWS/Lambda
             Period: 300
@@ -718,7 +808,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters678468d43fad9ea06b37f0bd36e650ccc3376edd3334c300848573aa150d6446S3Bucket1A202C55
+          Ref: AssetParameters6499a4fe9dce778fa188e5a3258f68a7f1ffa57832add2c1e1f75da1f49611cfS3Bucket1C405465
         S3Key:
           Fn::Join:
             - ""
@@ -726,12 +816,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters678468d43fad9ea06b37f0bd36e650ccc3376edd3334c300848573aa150d6446S3VersionKeyC6E05BAD
+                      - Ref: AssetParameters6499a4fe9dce778fa188e5a3258f68a7f1ffa57832add2c1e1f75da1f49611cfS3VersionKeyC2DDDE10
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters678468d43fad9ea06b37f0bd36e650ccc3376edd3334c300848573aa150d6446S3VersionKeyC6E05BAD
+                      - Ref: AssetParameters6499a4fe9dce778fa188e5a3258f68a7f1ffa57832add2c1e1f75da1f49611cfS3VersionKeyC2DDDE10
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
@@ -802,6 +892,13 @@ Resources:
         RestrictPublicBuckets: true
     UpdateReplacePolicy: Retain
     DeletionPolicy: Retain
+  ConstructHubDiscoveryDiscoveredPackages0000A0C8:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId: alias/aws/sqs
+      VisibilityTimeout: 900
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
   ConstructHubDiscoveryServiceRole1B3CFF96:
     Type: AWS::IAM::Role
     Properties:
@@ -824,6 +921,15 @@ Resources:
       PolicyDocument:
         Statement:
           - Action:
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ConstructHubDiscoveryDiscoveredPackages0000A0C8
+                - Arn
+          - Action:
               - s3:GetObject*
               - s3:GetBucket*
               - s3:List*
@@ -840,16 +946,25 @@ Resources:
                   - - Fn::GetAtt:
                         - ConstructHubDiscoveryStagingBucket1F2F7AE8
                         - Arn
-                    - /*
+                    - /couchdb-last-transaction-id
           - Action:
-              - sqs:SendMessage
-              - sqs:GetQueueAttributes
-              - sqs:GetQueueUrl
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
             Effect: Allow
             Resource:
-              Fn::GetAtt:
-                - ConstructHubIngestionQueue1AD94CA3
-                - Arn
+              - Fn::GetAtt:
+                  - ConstructHubDiscoveryStagingBucket1F2F7AE8
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubDiscoveryStagingBucket1F2F7AE8
+                        - Arn
+                    - /couchdb-last-transaction-id.reset
         Version: 2012-10-17
       PolicyName: ConstructHubDiscoveryServiceRoleDefaultPolicy9D5F91B3
       Roles:
@@ -859,7 +974,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersa3d13916fdb6321f8e433bfcbbaaf0ce37d7484a6d75635fdbaceebe8bbe46ffS3BucketEF8F1FA8
+          Ref: AssetParametersf6bb3e6fe0dff121c32ce92c5822842dc46e02e38fecc22af4f2185a1e976c6eS3Bucket690EA67D
         S3Key:
           Fn::Join:
             - ""
@@ -867,23 +982,24 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersa3d13916fdb6321f8e433bfcbbaaf0ce37d7484a6d75635fdbaceebe8bbe46ffS3VersionKey0B0E7067
+                      - Ref: AssetParametersf6bb3e6fe0dff121c32ce92c5822842dc46e02e38fecc22af4f2185a1e976c6eS3VersionKey14FBE02A
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersa3d13916fdb6321f8e433bfcbbaaf0ce37d7484a6d75635fdbaceebe8bbe46ffS3VersionKey0B0E7067
+                      - Ref: AssetParametersf6bb3e6fe0dff121c32ce92c5822842dc46e02e38fecc22af4f2185a1e976c6eS3VersionKey14FBE02A
       Role:
         Fn::GetAtt:
           - ConstructHubDiscoveryServiceRole1B3CFF96
           - Arn
-      Description: Periodically query npm.js index for new construct libraries
+      Description: "[Discovery/NpmCatalogFollower] Periodically query npm.js index for
+        new construct libraries"
       Environment:
         Variables:
           BUCKET_NAME:
             Ref: ConstructHubDiscoveryStagingBucket1F2F7AE8
           QUEUE_URL:
-            Ref: ConstructHubIngestionQueue1AD94CA3
+            Ref: ConstructHubDiscoveryDiscoveredPackages0000A0C8
       Handler: index.handler
       MemorySize: 10240
       ReservedConcurrentExecutions: 1
@@ -892,6 +1008,133 @@ Resources:
     DependsOn:
       - ConstructHubDiscoveryServiceRoleDefaultPolicy9D5F91B3
       - ConstructHubDiscoveryServiceRole1B3CFF96
+  ConstructHubDiscoveryStageAndNotifyServiceRole2202729C:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  ConstructHubDiscoveryStageAndNotifyServiceRoleDefaultPolicy21099D66:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: sqs:SendMessage
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ConstructHubDiscoveryStageAndNotifyDeadLetterQueueD57C9834
+                - Arn
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubDiscoveryStagingBucket1F2F7AE8
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubDiscoveryStagingBucket1F2F7AE8
+                        - Arn
+                    - /staged/*
+          - Action:
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ConstructHubIngestionQueue1AD94CA3
+                - Arn
+          - Action:
+              - sqs:ReceiveMessage
+              - sqs:ChangeMessageVisibility
+              - sqs:GetQueueUrl
+              - sqs:DeleteMessage
+              - sqs:GetQueueAttributes
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ConstructHubDiscoveryDiscoveredPackages0000A0C8
+                - Arn
+        Version: 2012-10-17
+      PolicyName: ConstructHubDiscoveryStageAndNotifyServiceRoleDefaultPolicy21099D66
+      Roles:
+        - Ref: ConstructHubDiscoveryStageAndNotifyServiceRole2202729C
+  ConstructHubDiscoveryStageAndNotifyDeadLetterQueueD57C9834:
+    Type: AWS::SQS::Queue
+    Properties:
+      MessageRetentionPeriod: 1209600
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+  ConstructHubDiscoveryStageAndNotify3D0F7A4F:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParametersfcefd6f23ab297d4b42283ad434da93b27dc11c32a0553867c430bfa3b23ad06S3BucketAF4DAA92
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersfcefd6f23ab297d4b42283ad434da93b27dc11c32a0553867c430bfa3b23ad06S3VersionKey698DC5C3
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersfcefd6f23ab297d4b42283ad434da93b27dc11c32a0553867c430bfa3b23ad06S3VersionKey698DC5C3
+      Role:
+        Fn::GetAtt:
+          - ConstructHubDiscoveryStageAndNotifyServiceRole2202729C
+          - Arn
+      DeadLetterConfig:
+        TargetArn:
+          Fn::GetAtt:
+            - ConstructHubDiscoveryStageAndNotifyDeadLetterQueueD57C9834
+            - Arn
+      Description: "[Discovery/StageAndNotify] Stages a new package version and
+        notifies Construct Hub about it"
+      Environment:
+        Variables:
+          BUCKET_NAME:
+            Ref: ConstructHubDiscoveryStagingBucket1F2F7AE8
+          QUEUE_URL:
+            Ref: ConstructHubIngestionQueue1AD94CA3
+      Handler: index.handler
+      MemorySize: 10240
+      Runtime: nodejs14.x
+      Timeout: 900
+    DependsOn:
+      - ConstructHubDiscoveryStageAndNotifyServiceRoleDefaultPolicy21099D66
+      - ConstructHubDiscoveryStageAndNotifyServiceRole2202729C
+  ConstructHubDiscoveryStageAndNotifySqsEventSourcedevConstructHubDiscoveryDiscoveredPackages2BF0800C89DC989F:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      FunctionName:
+        Ref: ConstructHubDiscoveryStageAndNotify3D0F7A4F
+      EventSourceArn:
+        Fn::GetAtt:
+          - ConstructHubDiscoveryDiscoveredPackages0000A0C8
+          - Arn
   ConstructHubDiscoveryScheduleRule90EE2E2A:
     Type: AWS::Events::Rule
     Properties:
@@ -921,7 +1164,7 @@ Resources:
     Properties:
       ComparisonOperator: GreaterThanOrEqualToThreshold
       EvaluationPeriods: 1
-      AlarmDescription: The discovery function (on npmjs.com) failed to run
+      AlarmDescription: The npm catalog follower function failed to run
       Dimensions:
         - Name: FunctionName
           Value:
@@ -936,7 +1179,7 @@ Resources:
     Properties:
       ComparisonOperator: LessThanThreshold
       EvaluationPeriods: 1
-      AlarmDescription: The discovery function (on npmjs.com) is not running as scheduled
+      AlarmDescription: The npm catalog follower function is not running as scheduled
       Dimensions:
         - Name: FunctionName
           Value:
@@ -945,6 +1188,24 @@ Resources:
       Namespace: AWS/Lambda
       Period: 900
       Statistic: Sum
+      Threshold: 1
+  ConstructHubDiscoveryAlarmDLQ2D5DDE4C:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      EvaluationPeriods: 1
+      AlarmDescription: The dead-letter-queue associated with the discovery
+        stage-and-notify function is not empty
+      Dimensions:
+        - Name: QueueName
+          Value:
+            Fn::GetAtt:
+              - ConstructHubDiscoveryStageAndNotifyDeadLetterQueueD57C9834
+              - QueueName
+      MetricName: ApproximateNumberOfMessagesVisible
+      Namespace: AWS/SQS
+      Period: 300
+      Statistic: Maximum
       Threshold: 1
   ConstructHubTransliteratorServiceRole0F8A20C8:
     Type: AWS::IAM::Role
@@ -1134,7 +1395,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters6669a79705ce7c49be098161b633cd6b126f9aa97e5e35896cf94f00c4135c45S3BucketBF7901DF
+          Ref: AssetParameterse905e3e1324a83435f6083f47cfe7627baab5614ae96e1bea7aac2794ff65e79S3Bucket22CE27F3
         S3Key:
           Fn::Join:
             - ""
@@ -1142,12 +1403,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters6669a79705ce7c49be098161b633cd6b126f9aa97e5e35896cf94f00c4135c45S3VersionKeyBD8BA804
+                      - Ref: AssetParameterse905e3e1324a83435f6083f47cfe7627baab5614ae96e1bea7aac2794ff65e79S3VersionKeyEA9DA7C7
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters6669a79705ce7c49be098161b633cd6b126f9aa97e5e35896cf94f00c4135c45S3VersionKeyBD8BA804
+                      - Ref: AssetParameterse905e3e1324a83435f6083f47cfe7627baab5614ae96e1bea7aac2794ff65e79S3VersionKeyEA9DA7C7
       Role:
         Fn::GetAtt:
           - ConstructHubCatalogBuilderServiceRole7EB4C395
@@ -1328,7 +1589,7 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParameters3ccc0f4b6c8a43b7b706b602ff31dd960b8a430bc30136c66b92495903b45de9S3BucketC836AEFC
+        - Ref: AssetParametersf8c97298e3b8c43e26b67a690ac1a806cf3c78a98a7d358747747216667607b3S3BucketDE61038D
       SourceObjectKeys:
         - Fn::Join:
             - ""
@@ -1336,12 +1597,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters3ccc0f4b6c8a43b7b706b602ff31dd960b8a430bc30136c66b92495903b45de9S3VersionKeyCA335036
+                      - Ref: AssetParametersf8c97298e3b8c43e26b67a690ac1a806cf3c78a98a7d358747747216667607b3S3VersionKey5F246D97
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters3ccc0f4b6c8a43b7b706b602ff31dd960b8a430bc30136c66b92495903b45de9S3VersionKeyCA335036
+                      - Ref: AssetParametersf8c97298e3b8c43e26b67a690ac1a806cf3c78a98a7d358747747216667607b3S3VersionKey5F246D97
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: true
@@ -1549,13 +1810,13 @@ Resources:
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters3ccc0f4b6c8a43b7b706b602ff31dd960b8a430bc30136c66b92495903b45de9S3BucketC836AEFC
+                    - Ref: AssetParametersf8c97298e3b8c43e26b67a690ac1a806cf3c78a98a7d358747747216667607b3S3BucketDE61038D
               - Fn::Join:
                   - ""
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters3ccc0f4b6c8a43b7b706b602ff31dd960b8a430bc30136c66b92495903b45de9S3BucketC836AEFC
+                    - Ref: AssetParametersf8c97298e3b8c43e26b67a690ac1a806cf3c78a98a7d358747747216667607b3S3BucketDE61038D
                     - /*
           - Action:
               - s3:GetObject*
@@ -1632,30 +1893,42 @@ Outputs:
     Export:
       Name: ConstructHubDomainName
 Parameters:
-  AssetParameters678468d43fad9ea06b37f0bd36e650ccc3376edd3334c300848573aa150d6446S3Bucket1A202C55:
+  AssetParameters6499a4fe9dce778fa188e5a3258f68a7f1ffa57832add2c1e1f75da1f49611cfS3Bucket1C405465:
     Type: String
     Description: S3 bucket for asset
-      "678468d43fad9ea06b37f0bd36e650ccc3376edd3334c300848573aa150d6446"
-  AssetParameters678468d43fad9ea06b37f0bd36e650ccc3376edd3334c300848573aa150d6446S3VersionKeyC6E05BAD:
+      "6499a4fe9dce778fa188e5a3258f68a7f1ffa57832add2c1e1f75da1f49611cf"
+  AssetParameters6499a4fe9dce778fa188e5a3258f68a7f1ffa57832add2c1e1f75da1f49611cfS3VersionKeyC2DDDE10:
     Type: String
     Description: S3 key for asset version
-      "678468d43fad9ea06b37f0bd36e650ccc3376edd3334c300848573aa150d6446"
-  AssetParameters678468d43fad9ea06b37f0bd36e650ccc3376edd3334c300848573aa150d6446ArtifactHashAAD1D423:
+      "6499a4fe9dce778fa188e5a3258f68a7f1ffa57832add2c1e1f75da1f49611cf"
+  AssetParameters6499a4fe9dce778fa188e5a3258f68a7f1ffa57832add2c1e1f75da1f49611cfArtifactHashBF5BB582:
     Type: String
     Description: Artifact hash for asset
-      "678468d43fad9ea06b37f0bd36e650ccc3376edd3334c300848573aa150d6446"
-  AssetParametersa3d13916fdb6321f8e433bfcbbaaf0ce37d7484a6d75635fdbaceebe8bbe46ffS3BucketEF8F1FA8:
+      "6499a4fe9dce778fa188e5a3258f68a7f1ffa57832add2c1e1f75da1f49611cf"
+  AssetParametersf6bb3e6fe0dff121c32ce92c5822842dc46e02e38fecc22af4f2185a1e976c6eS3Bucket690EA67D:
     Type: String
     Description: S3 bucket for asset
-      "a3d13916fdb6321f8e433bfcbbaaf0ce37d7484a6d75635fdbaceebe8bbe46ff"
-  AssetParametersa3d13916fdb6321f8e433bfcbbaaf0ce37d7484a6d75635fdbaceebe8bbe46ffS3VersionKey0B0E7067:
+      "f6bb3e6fe0dff121c32ce92c5822842dc46e02e38fecc22af4f2185a1e976c6e"
+  AssetParametersf6bb3e6fe0dff121c32ce92c5822842dc46e02e38fecc22af4f2185a1e976c6eS3VersionKey14FBE02A:
     Type: String
     Description: S3 key for asset version
-      "a3d13916fdb6321f8e433bfcbbaaf0ce37d7484a6d75635fdbaceebe8bbe46ff"
-  AssetParametersa3d13916fdb6321f8e433bfcbbaaf0ce37d7484a6d75635fdbaceebe8bbe46ffArtifactHash817B54E3:
+      "f6bb3e6fe0dff121c32ce92c5822842dc46e02e38fecc22af4f2185a1e976c6e"
+  AssetParametersf6bb3e6fe0dff121c32ce92c5822842dc46e02e38fecc22af4f2185a1e976c6eArtifactHashDF60364B:
     Type: String
     Description: Artifact hash for asset
-      "a3d13916fdb6321f8e433bfcbbaaf0ce37d7484a6d75635fdbaceebe8bbe46ff"
+      "f6bb3e6fe0dff121c32ce92c5822842dc46e02e38fecc22af4f2185a1e976c6e"
+  AssetParametersfcefd6f23ab297d4b42283ad434da93b27dc11c32a0553867c430bfa3b23ad06S3BucketAF4DAA92:
+    Type: String
+    Description: S3 bucket for asset
+      "fcefd6f23ab297d4b42283ad434da93b27dc11c32a0553867c430bfa3b23ad06"
+  AssetParametersfcefd6f23ab297d4b42283ad434da93b27dc11c32a0553867c430bfa3b23ad06S3VersionKey698DC5C3:
+    Type: String
+    Description: S3 key for asset version
+      "fcefd6f23ab297d4b42283ad434da93b27dc11c32a0553867c430bfa3b23ad06"
+  AssetParametersfcefd6f23ab297d4b42283ad434da93b27dc11c32a0553867c430bfa3b23ad06ArtifactHash6F5099AE:
+    Type: String
+    Description: Artifact hash for asset
+      "fcefd6f23ab297d4b42283ad434da93b27dc11c32a0553867c430bfa3b23ad06"
   AssetParametersf571294ae268bb9a6c61cd3df245c69279d4fcc5e481065702bcd6aa484199aeS3Bucket94B451B0:
     Type: String
     Description: S3 bucket for asset
@@ -1680,18 +1953,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24"
-  AssetParameters6669a79705ce7c49be098161b633cd6b126f9aa97e5e35896cf94f00c4135c45S3BucketBF7901DF:
+  AssetParameterse905e3e1324a83435f6083f47cfe7627baab5614ae96e1bea7aac2794ff65e79S3Bucket22CE27F3:
     Type: String
     Description: S3 bucket for asset
-      "6669a79705ce7c49be098161b633cd6b126f9aa97e5e35896cf94f00c4135c45"
-  AssetParameters6669a79705ce7c49be098161b633cd6b126f9aa97e5e35896cf94f00c4135c45S3VersionKeyBD8BA804:
+      "e905e3e1324a83435f6083f47cfe7627baab5614ae96e1bea7aac2794ff65e79"
+  AssetParameterse905e3e1324a83435f6083f47cfe7627baab5614ae96e1bea7aac2794ff65e79S3VersionKeyEA9DA7C7:
     Type: String
     Description: S3 key for asset version
-      "6669a79705ce7c49be098161b633cd6b126f9aa97e5e35896cf94f00c4135c45"
-  AssetParameters6669a79705ce7c49be098161b633cd6b126f9aa97e5e35896cf94f00c4135c45ArtifactHashC649E97F:
+      "e905e3e1324a83435f6083f47cfe7627baab5614ae96e1bea7aac2794ff65e79"
+  AssetParameterse905e3e1324a83435f6083f47cfe7627baab5614ae96e1bea7aac2794ff65e79ArtifactHash0B7595FE:
     Type: String
     Description: Artifact hash for asset
-      "6669a79705ce7c49be098161b633cd6b126f9aa97e5e35896cf94f00c4135c45"
+      "e905e3e1324a83435f6083f47cfe7627baab5614ae96e1bea7aac2794ff65e79"
   AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7:
     Type: String
     Description: S3 bucket for asset
@@ -1716,18 +1989,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf"
-  AssetParameters3ccc0f4b6c8a43b7b706b602ff31dd960b8a430bc30136c66b92495903b45de9S3BucketC836AEFC:
+  AssetParametersf8c97298e3b8c43e26b67a690ac1a806cf3c78a98a7d358747747216667607b3S3BucketDE61038D:
     Type: String
     Description: S3 bucket for asset
-      "3ccc0f4b6c8a43b7b706b602ff31dd960b8a430bc30136c66b92495903b45de9"
-  AssetParameters3ccc0f4b6c8a43b7b706b602ff31dd960b8a430bc30136c66b92495903b45de9S3VersionKeyCA335036:
+      "f8c97298e3b8c43e26b67a690ac1a806cf3c78a98a7d358747747216667607b3"
+  AssetParametersf8c97298e3b8c43e26b67a690ac1a806cf3c78a98a7d358747747216667607b3S3VersionKey5F246D97:
     Type: String
     Description: S3 key for asset version
-      "3ccc0f4b6c8a43b7b706b602ff31dd960b8a430bc30136c66b92495903b45de9"
-  AssetParameters3ccc0f4b6c8a43b7b706b602ff31dd960b8a430bc30136c66b92495903b45de9ArtifactHash9FA9D77F:
+      "f8c97298e3b8c43e26b67a690ac1a806cf3c78a98a7d358747747216667607b3"
+  AssetParametersf8c97298e3b8c43e26b67a690ac1a806cf3c78a98a7d358747747216667607b3ArtifactHash53CB739C:
     Type: String
     Description: Artifact hash for asset
-      "3ccc0f4b6c8a43b7b706b602ff31dd960b8a430bc30136c66b92495903b45de9"
+      "f8c97298e3b8c43e26b67a690ac1a806cf3c78a98a7d358747747216667607b3"
   AssetParameters59be5a60739e4f0f9b881492bce41ccffa8d47d16b0a4d640db1bb8200f48bd5S3BucketFA2341B6:
     Type: String
     Description: S3 bucket for asset
