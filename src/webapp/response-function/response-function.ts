@@ -2,7 +2,7 @@ interface CloudFrontResponse {
   response: any;
   headers: {
     [key: string]: {
-      vaue: string;
+      value: string;
     };
   };
 }
