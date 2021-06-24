@@ -62,6 +62,8 @@ export async function handler(event: { readonly rebuild?: boolean }, context: Co
 
     // Donwload the tarball to inspect the `package.json` data therein.
     const data = await aws.s3().getObject({ Bucket: BUCKET_NAME, Key: object.Key! }).promise();
+    const npmMetadataKey = object.Key!.replace(constants.PACKAGE_KEY_SUFFIX, constants.METADATA_KEY_SUFFIX);
+    const npmMetadataResponse = await aws.s3().getObject({ Bucket: BUCKET_NAME, Key: npmMetadataKey }).promise();
     const manifest = await new Promise<Buffer>((ok, ko) => {
       gunzip(Buffer.from(data.Body!), (err, tar) => {
         if (err) {
@@ -93,22 +95,23 @@ export async function handler(event: { readonly rebuild?: boolean }, context: Co
       });
     });
     // Add the PackageInfo into the working set
-    const metadata = JSON.parse(manifest.toString('utf-8'));
-    const major = new SemVer(metadata.version).major;
-    if (!packages.has(metadata.name)) {
-      packages.set(metadata.name, new Map());
+    const pkgMetadata = JSON.parse(manifest.toString('utf-8'));
+    const npmMetadata = JSON.parse(npmMetadataResponse?.Body?.toString('utf-8') ?? '{}');
+    const major = new SemVer(pkgMetadata.version).major;
+    if (!packages.has(pkgMetadata.name)) {
+      packages.set(pkgMetadata.name, new Map());
     }
-    packages.get(metadata.name)!.set(major, {
-      author: metadata.author,
-      description: metadata.description,
-      keywords: metadata.keywords,
-      languages: metadata.jsii.targets,
-      license: metadata.license,
+    packages.get(pkgMetadata.name)!.set(major, {
+      author: pkgMetadata.author,
+      description: pkgMetadata.description,
+      keywords: pkgMetadata.keywords,
+      languages: pkgMetadata.jsii.targets,
+      license: pkgMetadata.license,
       major,
-      metadata: metadata.jsii.metadata,
-      name: metadata.name,
-      time: metadata.time, // TODO: Change this to an appropriate value
-      version: metadata.version,
+      metadata: npmMetadata,
+      name: pkgMetadata.name,
+      time: pkgMetadata.time, // TODO: Change this to an appropriate value
+      version: pkgMetadata.version,
     });
   }
 
