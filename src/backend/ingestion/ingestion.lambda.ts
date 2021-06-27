@@ -77,12 +77,12 @@ export async function handler(event: SQSEvent, context: Context) {
     // we upload the metadata file first because the catalog builder depends on
     // it and is triggered by the assembly file upload.
     console.log(`${packageName}@${packageVersion} | Uploading package and metadata files`);
-    const [storedMetadata, pkg] = await Promise.all([
+    const [pkg, storedMetadata] = await Promise.all([
       aws.s3().putObject({
         Bucket: BUCKET_NAME,
-        Key: metadataKey,
-        Body: JSON.stringify(metadata),
-        ContentType: 'application/json',
+        Key: packageKey,
+        Body: tarball.Body,
+        ContentType: 'application/x-gtar',
         Metadata: {
           'Lambda-Log-Group': context.logGroupName,
           'Lambda-Log-Stream': context.logStreamName,
@@ -91,9 +91,9 @@ export async function handler(event: SQSEvent, context: Context) {
       }).promise(),
       aws.s3().putObject({
         Bucket: BUCKET_NAME,
-        Key: packageKey,
-        Body: tarball.Body,
-        ContentType: 'application/x-gtar',
+        Key: metadataKey,
+        Body: JSON.stringify(metadata),
+        ContentType: 'application/json',
         Metadata: {
           'Lambda-Log-Group': context.logGroupName,
           'Lambda-Log-Stream': context.logStreamName,
