@@ -74,31 +74,37 @@ export async function handler(event: SQSEvent, context: Context) {
     const metadataKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.METADATA_KEY_SUFFIX}`;
     console.log(`Writing metadata at  ${metadataKey}`);
 
-    const metadataRequest = aws.s3().putObject({
-      Bucket: BUCKET_NAME,
-      Key: metadataKey,
-      Body: JSON.stringify(metadata),
-      ContentType: 'application/json',
-      Metadata: {
-        'Lambda-Log-Group': context.logGroupName,
-        'Lambda-Log-Stream': context.logStreamName,
-        'Lambda-Run-Id': context.awsRequestId,
-      },
-    }).promise();
+    // we upload the metadata file first because the catalog builder depends on
+    // it and is triggered by the assembly file upload.
+    console.log(`${packageName}@${packageVersion} | Uploading package and metadata files`);
+    const [storedMetadata, pkg] = await Promise.all([
+      aws.s3().putObject({
+        Bucket: BUCKET_NAME,
+        Key: metadataKey,
+        Body: JSON.stringify(metadata),
+        ContentType: 'application/json',
+        Metadata: {
+          'Lambda-Log-Group': context.logGroupName,
+          'Lambda-Log-Stream': context.logStreamName,
+          'Lambda-Run-Id': context.awsRequestId,
+        },
+      }).promise(),
+      aws.s3().putObject({
+        Bucket: BUCKET_NAME,
+        Key: packageKey,
+        Body: tarball.Body,
+        ContentType: 'application/x-gtar',
+        Metadata: {
+          'Lambda-Log-Group': context.logGroupName,
+          'Lambda-Log-Stream': context.logStreamName,
+          'Lambda-Run-Id': context.awsRequestId,
+        },
+      }).promise(),
+    ]);
 
-    const packageRequest = aws.s3().putObject({
-      Bucket: BUCKET_NAME,
-      Key: packageKey,
-      Body: tarball.Body,
-      ContentType: 'application/x-gtar',
-      Metadata: {
-        'Lambda-Log-Group': context.logGroupName,
-        'Lambda-Log-Stream': context.logStreamName,
-        'Lambda-Run-Id': context.awsRequestId,
-      },
-    }).promise();
-
-    const assemblyRequest = aws.s3().putObject({
+    // now we can upload the assembly.
+    console.log(`${packageName}@${packageVersion} | Uploading assembly file`);
+    const assembly = await aws.s3().putObject({
       Bucket: BUCKET_NAME,
       Key: assemblyKey,
       Body: dotJsii,
@@ -109,14 +115,6 @@ export async function handler(event: SQSEvent, context: Context) {
         'Lambda-Run-Id': context.awsRequestId,
       },
     }).promise();
-
-    // we upload the metadata file first because the catalog builder depends on
-    // it and is triggered by the assembly file upload.
-    console.log(`${packageName}@${packageVersion} | Uploading metadata file`);
-    const storedMetadata = await metadataRequest;
-
-    console.log(`${packageName}@${packageVersion} | Uploading package and assembly files`);
-    const [assembly, pkg] = await Promise.all([assemblyRequest, packageRequest]);
 
     const created = {
       bucket: BUCKET_NAME,
