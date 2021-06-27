@@ -45,6 +45,18 @@ Object {
       "Description": "S3 key for asset version \\"59be5a60739e4f0f9b881492bce41ccffa8d47d16b0a4d640db1bb8200f48bd5\\"",
       "Type": "String",
     },
+    "AssetParameters5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183ArtifactHashBBE19D08": Object {
+      "Description": "Artifact hash for asset \\"5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183\\"",
+      "Type": "String",
+    },
+    "AssetParameters5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183S3Bucket00504CE9": Object {
+      "Description": "S3 bucket for asset \\"5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183\\"",
+      "Type": "String",
+    },
+    "AssetParameters5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183S3VersionKey4E1155AC": Object {
+      "Description": "S3 key for asset version \\"5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183\\"",
+      "Type": "String",
+    },
     "AssetParameters6669a79705ce7c49be098161b633cd6b126f9aa97e5e35896cf94f00c4135c45ArtifactHashC649E97F": Object {
       "Description": "Artifact hash for asset \\"6669a79705ce7c49be098161b633cd6b126f9aa97e5e35896cf94f00c4135c45\\"",
       "Type": "String",
@@ -67,18 +79,6 @@ Object {
     },
     "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861": Object {
       "Description": "S3 key for asset version \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
-      "Type": "String",
-    },
-    "AssetParameters71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696ArtifactHashA62FDFF4": Object {
-      "Description": "Artifact hash for asset \\"71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696\\"",
-      "Type": "String",
-    },
-    "AssetParameters71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696S3BucketD60D0828": Object {
-      "Description": "S3 bucket for asset \\"71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696\\"",
-      "Type": "String",
-    },
-    "AssetParameters71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696S3VersionKey91ED7D67": Object {
-      "Description": "S3 key for asset version \\"71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696\\"",
       "Type": "String",
     },
     "AssetParameters7aa4bde43421e88bcfa842774b274273404e08e5b0c2a0629f75823b64e30bd7ArtifactHashD8BAE8A1": Object {
@@ -2290,7 +2290,7 @@ Object {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParameters71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696S3BucketD60D0828",
+            "Ref": "AssetParameters5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183S3Bucket00504CE9",
           },
         ],
         "SourceObjectKeys": Array [
@@ -2305,7 +2305,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696S3VersionKey91ED7D67",
+                          "Ref": "AssetParameters5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183S3VersionKey4E1155AC",
                         },
                       ],
                     },
@@ -2318,7 +2318,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696S3VersionKey91ED7D67",
+                          "Ref": "AssetParameters5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183S3VersionKey4E1155AC",
                         },
                       ],
                     },
@@ -2339,6 +2339,17 @@ Object {
             Object {
               "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
               "Compress": true,
+              "FunctionAssociations": Array [
+                Object {
+                  "EventType": "viewer-response",
+                  "FunctionARN": Object {
+                    "Fn::GetAtt": Array [
+                      "ConstructHubWebAppResponseFunction4C2BF3E9",
+                      "FunctionARN",
+                    ],
+                  },
+                },
+              ],
               "PathPattern": "/data/*",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
@@ -2346,6 +2357,17 @@ Object {
             Object {
               "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
               "Compress": true,
+              "FunctionAssociations": Array [
+                Object {
+                  "EventType": "viewer-response",
+                  "FunctionARN": Object {
+                    "Fn::GetAtt": Array [
+                      "ConstructHubWebAppResponseFunction4C2BF3E9",
+                      "FunctionARN",
+                    ],
+                  },
+                },
+              ],
               "PathPattern": "/catalog.json",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
@@ -2366,6 +2388,17 @@ Object {
           "DefaultCacheBehavior": Object {
             "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
             "Compress": true,
+            "FunctionAssociations": Array [
+              Object {
+                "EventType": "viewer-response",
+                "FunctionARN": Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubWebAppResponseFunction4C2BF3E9",
+                    "FunctionARN",
+                  ],
+                },
+              },
+            ],
             "TargetOriginId": "TestConstructHubWebAppDistributionOrigin171FF58D3",
             "ViewerProtocolPolicy": "allow-all",
           },
@@ -2438,6 +2471,51 @@ Object {
         },
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+    },
+    "ConstructHubWebAppResponseFunction4C2BF3E9": Object {
+      "Properties": Object {
+        "AutoPublish": true,
+        "FunctionCode": "\\"use strict\\";
+function handler(event) {
+    var response = event.response;
+    var headers = response.headers;
+    headers['x-frame-options'] = { value: 'deny' };
+    headers['x-xss-protection'] = { value: '1; mode=block' };
+    headers['x-content-type-options'] = { value: 'nosniff' };
+    headers['strict-transport-security'] = { value: 'max-age=47304000; includeSubDomains' };
+    headers['content-security-policy'] = {
+        value: 'default-src \\\\'none\\\\'; img-src \\\\'self\\\\' https://img.shields.io; script-src \\\\'self\\\\'; style-src \\\\'unsafe-inline\\\\' \\\\'self\\\\'; object-src \\\\'none\\\\'; connect-src \\\\'self\\\\'; manifest-src \\\\'self\\\\'; font-src \\\\'self\\\\'; frame-src \\\\'none\\\\'',
+    };
+    return response;
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxTQUFTLE9BQU8sQ0FBQyxLQUF5QjtJQUN4QyxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0gsbU9BQW1PO0tBQ3RPLENBQUM7SUFFRixPQUFPLFFBQVEsQ0FBQztBQUNsQixDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiaW50ZXJmYWNlIENsb3VkRnJvbnRSZXNwb25zZSB7XG4gIHJlc3BvbnNlOiBhbnk7XG4gIGhlYWRlcnM6IHtcbiAgICBba2V5OiBzdHJpbmddOiB7XG4gICAgICB2YWx1ZTogc3RyaW5nO1xuICAgIH07XG4gIH07XG59XG5cbmZ1bmN0aW9uIGhhbmRsZXIoZXZlbnQ6IENsb3VkRnJvbnRSZXNwb25zZSkge1xuICB2YXIgcmVzcG9uc2UgPSBldmVudC5yZXNwb25zZTtcbiAgdmFyIGhlYWRlcnMgPSByZXNwb25zZS5oZWFkZXJzO1xuXG4gIGhlYWRlcnNbJ3gtZnJhbWUtb3B0aW9ucyddID0geyB2YWx1ZTogJ2RlbnknIH07XG4gIGhlYWRlcnNbJ3gteHNzLXByb3RlY3Rpb24nXSA9IHsgdmFsdWU6ICcxOyBtb2RlPWJsb2NrJyB9O1xuICBoZWFkZXJzWyd4LWNvbnRlbnQtdHlwZS1vcHRpb25zJ10gPSB7IHZhbHVlOiAnbm9zbmlmZicgfTtcbiAgaGVhZGVyc1snc3RyaWN0LXRyYW5zcG9ydC1zZWN1cml0eSddID0geyB2YWx1ZTogJ21heC1hZ2U9NDczMDQwMDA7IGluY2x1ZGVTdWJEb21haW5zJyB9O1xuICBoZWFkZXJzWydjb250ZW50LXNlY3VyaXR5LXBvbGljeSddID0ge1xuICAgIHZhbHVlOlxuICAgICAgJ2RlZmF1bHQtc3JjIFxcJ25vbmVcXCc7IGltZy1zcmMgXFwnc2VsZlxcJyBodHRwczovL2ltZy5zaGllbGRzLmlvOyBzY3JpcHQtc3JjIFxcJ3NlbGZcXCc7IHN0eWxlLXNyYyBcXCd1bnNhZmUtaW5saW5lXFwnIFxcJ3NlbGZcXCc7IG9iamVjdC1zcmMgXFwnbm9uZVxcJzsgY29ubmVjdC1zcmMgXFwnc2VsZlxcJzsgbWFuaWZlc3Qtc3JjIFxcJ3NlbGZcXCc7IGZvbnQtc3JjIFxcJ3NlbGZcXCc7IGZyYW1lLXNyYyBcXCdub25lXFwnJyxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=",
+        "FunctionConfig": Object {
+          "Comment": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Ref": "AWS::Region",
+                },
+                "TestConstrubWebAppResponseFunction1F387BCC",
+              ],
+            ],
+          },
+          "Runtime": "cloudfront-js-1.0",
+        },
+        "Name": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "TestConstrubWebAppResponseFunction1F387BCC",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::CloudFront::Function",
     },
     "ConstructHubWebAppWebsiteBucket4B2B9DB2": Object {
       "DeletionPolicy": "Retain",
@@ -2605,7 +2683,7 @@ Object {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696S3BucketD60D0828",
+                        "Ref": "AssetParameters5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183S3Bucket00504CE9",
                       },
                     ],
                   ],
@@ -2620,7 +2698,7 @@ Object {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696S3BucketD60D0828",
+                        "Ref": "AssetParameters5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183S3Bucket00504CE9",
                       },
                       "/*",
                     ],
@@ -2850,6 +2928,18 @@ Object {
       "Description": "S3 key for asset version \\"59be5a60739e4f0f9b881492bce41ccffa8d47d16b0a4d640db1bb8200f48bd5\\"",
       "Type": "String",
     },
+    "AssetParameters5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183ArtifactHashBBE19D08": Object {
+      "Description": "Artifact hash for asset \\"5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183\\"",
+      "Type": "String",
+    },
+    "AssetParameters5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183S3Bucket00504CE9": Object {
+      "Description": "S3 bucket for asset \\"5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183\\"",
+      "Type": "String",
+    },
+    "AssetParameters5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183S3VersionKey4E1155AC": Object {
+      "Description": "S3 key for asset version \\"5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183\\"",
+      "Type": "String",
+    },
     "AssetParameters6669a79705ce7c49be098161b633cd6b126f9aa97e5e35896cf94f00c4135c45ArtifactHashC649E97F": Object {
       "Description": "Artifact hash for asset \\"6669a79705ce7c49be098161b633cd6b126f9aa97e5e35896cf94f00c4135c45\\"",
       "Type": "String",
@@ -2872,18 +2962,6 @@ Object {
     },
     "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861": Object {
       "Description": "S3 key for asset version \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
-      "Type": "String",
-    },
-    "AssetParameters71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696ArtifactHashA62FDFF4": Object {
-      "Description": "Artifact hash for asset \\"71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696\\"",
-      "Type": "String",
-    },
-    "AssetParameters71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696S3BucketD60D0828": Object {
-      "Description": "S3 bucket for asset \\"71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696\\"",
-      "Type": "String",
-    },
-    "AssetParameters71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696S3VersionKey91ED7D67": Object {
-      "Description": "S3 key for asset version \\"71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696\\"",
       "Type": "String",
     },
     "AssetParameters7aa4bde43421e88bcfa842774b274273404e08e5b0c2a0629f75823b64e30bd7ArtifactHashD8BAE8A1": Object {
@@ -5308,7 +5386,7 @@ Object {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParameters71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696S3BucketD60D0828",
+            "Ref": "AssetParameters5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183S3Bucket00504CE9",
           },
         ],
         "SourceObjectKeys": Array [
@@ -5323,7 +5401,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696S3VersionKey91ED7D67",
+                          "Ref": "AssetParameters5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183S3VersionKey4E1155AC",
                         },
                       ],
                     },
@@ -5336,7 +5414,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696S3VersionKey91ED7D67",
+                          "Ref": "AssetParameters5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183S3VersionKey4E1155AC",
                         },
                       ],
                     },
@@ -5360,6 +5438,17 @@ Object {
             Object {
               "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
               "Compress": true,
+              "FunctionAssociations": Array [
+                Object {
+                  "EventType": "viewer-response",
+                  "FunctionARN": Object {
+                    "Fn::GetAtt": Array [
+                      "ConstructHubWebAppResponseFunction4C2BF3E9",
+                      "FunctionARN",
+                    ],
+                  },
+                },
+              ],
               "PathPattern": "/data/*",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
@@ -5367,6 +5456,17 @@ Object {
             Object {
               "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
               "Compress": true,
+              "FunctionAssociations": Array [
+                Object {
+                  "EventType": "viewer-response",
+                  "FunctionARN": Object {
+                    "Fn::GetAtt": Array [
+                      "ConstructHubWebAppResponseFunction4C2BF3E9",
+                      "FunctionARN",
+                    ],
+                  },
+                },
+              ],
               "PathPattern": "/catalog.json",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
@@ -5387,6 +5487,17 @@ Object {
           "DefaultCacheBehavior": Object {
             "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
             "Compress": true,
+            "FunctionAssociations": Array [
+              Object {
+                "EventType": "viewer-response",
+                "FunctionARN": Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubWebAppResponseFunction4C2BF3E9",
+                    "FunctionARN",
+                  ],
+                },
+              },
+            ],
             "TargetOriginId": "TestConstructHubWebAppDistributionOrigin171FF58D3",
             "ViewerProtocolPolicy": "allow-all",
           },
@@ -5469,6 +5580,51 @@ Object {
         },
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+    },
+    "ConstructHubWebAppResponseFunction4C2BF3E9": Object {
+      "Properties": Object {
+        "AutoPublish": true,
+        "FunctionCode": "\\"use strict\\";
+function handler(event) {
+    var response = event.response;
+    var headers = response.headers;
+    headers['x-frame-options'] = { value: 'deny' };
+    headers['x-xss-protection'] = { value: '1; mode=block' };
+    headers['x-content-type-options'] = { value: 'nosniff' };
+    headers['strict-transport-security'] = { value: 'max-age=47304000; includeSubDomains' };
+    headers['content-security-policy'] = {
+        value: 'default-src \\\\'none\\\\'; img-src \\\\'self\\\\' https://img.shields.io; script-src \\\\'self\\\\'; style-src \\\\'unsafe-inline\\\\' \\\\'self\\\\'; object-src \\\\'none\\\\'; connect-src \\\\'self\\\\'; manifest-src \\\\'self\\\\'; font-src \\\\'self\\\\'; frame-src \\\\'none\\\\'',
+    };
+    return response;
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxTQUFTLE9BQU8sQ0FBQyxLQUF5QjtJQUN4QyxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0gsbU9BQW1PO0tBQ3RPLENBQUM7SUFFRixPQUFPLFFBQVEsQ0FBQztBQUNsQixDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiaW50ZXJmYWNlIENsb3VkRnJvbnRSZXNwb25zZSB7XG4gIHJlc3BvbnNlOiBhbnk7XG4gIGhlYWRlcnM6IHtcbiAgICBba2V5OiBzdHJpbmddOiB7XG4gICAgICB2YWx1ZTogc3RyaW5nO1xuICAgIH07XG4gIH07XG59XG5cbmZ1bmN0aW9uIGhhbmRsZXIoZXZlbnQ6IENsb3VkRnJvbnRSZXNwb25zZSkge1xuICB2YXIgcmVzcG9uc2UgPSBldmVudC5yZXNwb25zZTtcbiAgdmFyIGhlYWRlcnMgPSByZXNwb25zZS5oZWFkZXJzO1xuXG4gIGhlYWRlcnNbJ3gtZnJhbWUtb3B0aW9ucyddID0geyB2YWx1ZTogJ2RlbnknIH07XG4gIGhlYWRlcnNbJ3gteHNzLXByb3RlY3Rpb24nXSA9IHsgdmFsdWU6ICcxOyBtb2RlPWJsb2NrJyB9O1xuICBoZWFkZXJzWyd4LWNvbnRlbnQtdHlwZS1vcHRpb25zJ10gPSB7IHZhbHVlOiAnbm9zbmlmZicgfTtcbiAgaGVhZGVyc1snc3RyaWN0LXRyYW5zcG9ydC1zZWN1cml0eSddID0geyB2YWx1ZTogJ21heC1hZ2U9NDczMDQwMDA7IGluY2x1ZGVTdWJEb21haW5zJyB9O1xuICBoZWFkZXJzWydjb250ZW50LXNlY3VyaXR5LXBvbGljeSddID0ge1xuICAgIHZhbHVlOlxuICAgICAgJ2RlZmF1bHQtc3JjIFxcJ25vbmVcXCc7IGltZy1zcmMgXFwnc2VsZlxcJyBodHRwczovL2ltZy5zaGllbGRzLmlvOyBzY3JpcHQtc3JjIFxcJ3NlbGZcXCc7IHN0eWxlLXNyYyBcXCd1bnNhZmUtaW5saW5lXFwnIFxcJ3NlbGZcXCc7IG9iamVjdC1zcmMgXFwnbm9uZVxcJzsgY29ubmVjdC1zcmMgXFwnc2VsZlxcJzsgbWFuaWZlc3Qtc3JjIFxcJ3NlbGZcXCc7IGZvbnQtc3JjIFxcJ3NlbGZcXCc7IGZyYW1lLXNyYyBcXCdub25lXFwnJyxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=",
+        "FunctionConfig": Object {
+          "Comment": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Ref": "AWS::Region",
+                },
+                "TestConstrubWebAppResponseFunction1F387BCC",
+              ],
+            ],
+          },
+          "Runtime": "cloudfront-js-1.0",
+        },
+        "Name": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "TestConstrubWebAppResponseFunction1F387BCC",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::CloudFront::Function",
     },
     "ConstructHubWebAppWebsiteBucket4B2B9DB2": Object {
       "DeletionPolicy": "Retain",
@@ -5636,7 +5792,7 @@ Object {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696S3BucketD60D0828",
+                        "Ref": "AssetParameters5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183S3Bucket00504CE9",
                       },
                     ],
                   ],
@@ -5651,7 +5807,7 @@ Object {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters71d02eed4dfd31d77115bf5fd41c5c0a2b0633edf4d869855d765ddfa32f5696S3BucketD60D0828",
+                        "Ref": "AssetParameters5f5ebd10bfb2eb193a2f4d62f76de9f39a12b26ec7425952a4be3300c2a84183S3Bucket00504CE9",
                       },
                       "/*",
                     ],
