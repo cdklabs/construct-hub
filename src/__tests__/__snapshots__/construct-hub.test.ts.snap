@@ -33,6 +33,18 @@ Object {
     },
   },
   "Parameters": Object {
+    "AssetParameters44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992ArtifactHash34924665": Object {
+      "Description": "Artifact hash for asset \\"44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992\\"",
+      "Type": "String",
+    },
+    "AssetParameters44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992S3Bucket6E154218": Object {
+      "Description": "S3 bucket for asset \\"44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992\\"",
+      "Type": "String",
+    },
+    "AssetParameters44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992S3VersionKey451F1636": Object {
+      "Description": "S3 key for asset version \\"44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992\\"",
+      "Type": "String",
+    },
     "AssetParameters59be5a60739e4f0f9b881492bce41ccffa8d47d16b0a4d640db1bb8200f48bd5ArtifactHash76FE5C86": Object {
       "Description": "Artifact hash for asset \\"59be5a60739e4f0f9b881492bce41ccffa8d47d16b0a4d640db1bb8200f48bd5\\"",
       "Type": "String",
@@ -79,18 +91,6 @@ Object {
     },
     "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861": Object {
       "Description": "S3 key for asset version \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
-      "Type": "String",
-    },
-    "AssetParametersa1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6ArtifactHash65152261": Object {
-      "Description": "Artifact hash for asset \\"a1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6\\"",
-      "Type": "String",
-    },
-    "AssetParametersa1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6S3Bucket4D0E8AF6": Object {
-      "Description": "S3 bucket for asset \\"a1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6\\"",
-      "Type": "String",
-    },
-    "AssetParametersa1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6S3VersionKeyED72FE08": Object {
-      "Description": "S3 key for asset version \\"a1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6\\"",
       "Type": "String",
     },
     "AssetParametersa3d13916fdb6321f8e433bfcbbaaf0ce37d7484a6d75635fdbaceebe8bbe46ffArtifactHash817B54E3": Object {
@@ -2290,7 +2290,7 @@ Object {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParametersa1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6S3Bucket4D0E8AF6",
+            "Ref": "AssetParameters44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992S3Bucket6E154218",
           },
         ],
         "SourceObjectKeys": Array [
@@ -2305,7 +2305,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersa1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6S3VersionKeyED72FE08",
+                          "Ref": "AssetParameters44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992S3VersionKey451F1636",
                         },
                       ],
                     },
@@ -2318,7 +2318,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersa1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6S3VersionKeyED72FE08",
+                          "Ref": "AssetParameters44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992S3VersionKey451F1636",
                         },
                       ],
                     },
@@ -2497,7 +2497,7 @@ function handler(event) {
                 Object {
                   "Ref": "AWS::Region",
                 },
-                "TestConstubWebAppResponseFunction1F387BCC",
+                "TestConstrubWebAppResponseFunction1F387BCC",
               ],
             ],
           },
@@ -2510,7 +2510,7 @@ function handler(event) {
               Object {
                 "Ref": "AWS::Region",
               },
-              "TestConstubWebAppResponseFunction1F387BCC",
+              "TestConstrubWebAppResponseFunction1F387BCC",
             ],
           ],
         },
@@ -2683,7 +2683,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersa1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6S3Bucket4D0E8AF6",
+                        "Ref": "AssetParameters44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992S3Bucket6E154218",
                       },
                     ],
                   ],
@@ -2698,7 +2698,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersa1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6S3Bucket4D0E8AF6",
+                        "Ref": "AssetParameters44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992S3Bucket6E154218",
                       },
                       "/*",
                     ],
@@ -2886,7 +2886,7 @@ Object {
     },
   },
   "Outputs": Object {
-    "ConstructBBBHubMonitoringWatchfulWatchfulDashboardC8ACBDC3": Object {
+    "ConstructHubMonitoringWatchfulWatchfulDashboard75D318D0": Object {
       "Value": Object {
         "Fn::Join": Array [
           "",
@@ -2897,25 +2897,37 @@ Object {
             },
             "#dashboards:name=",
             Object {
-              "Ref": "ConstructBBBHubMonitoringWatchfulDashboard7830878E",
+              "Ref": "ConstructHubMonitoringWatchfulDashboardB8493D55",
             },
           ],
         ],
       },
     },
-    "ConstructBBBHubWebAppDomainName4DEE877D": Object {
+    "ConstructHubWebAppDomainNameDC10F8DD": Object {
       "Export": Object {
         "Name": "ConstructHubDomainName",
       },
       "Value": Object {
         "Fn::GetAtt": Array [
-          "ConstructBBBHubWebAppDistribution9A79EFAC",
+          "ConstructHubWebAppDistribution1F181DC9",
           "DomainName",
         ],
       },
     },
   },
   "Parameters": Object {
+    "AssetParameters44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992ArtifactHash34924665": Object {
+      "Description": "Artifact hash for asset \\"44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992\\"",
+      "Type": "String",
+    },
+    "AssetParameters44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992S3Bucket6E154218": Object {
+      "Description": "S3 bucket for asset \\"44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992\\"",
+      "Type": "String",
+    },
+    "AssetParameters44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992S3VersionKey451F1636": Object {
+      "Description": "S3 key for asset version \\"44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992\\"",
+      "Type": "String",
+    },
     "AssetParameters59be5a60739e4f0f9b881492bce41ccffa8d47d16b0a4d640db1bb8200f48bd5ArtifactHash76FE5C86": Object {
       "Description": "Artifact hash for asset \\"59be5a60739e4f0f9b881492bce41ccffa8d47d16b0a4d640db1bb8200f48bd5\\"",
       "Type": "String",
@@ -2974,18 +2986,6 @@ Object {
     },
     "AssetParameters7af6295e521fd55af94332393ceffb3e866aac4dc4956321f7918f21e72199e4S3VersionKey326451BC": Object {
       "Description": "S3 key for asset version \\"7af6295e521fd55af94332393ceffb3e866aac4dc4956321f7918f21e72199e4\\"",
-      "Type": "String",
-    },
-    "AssetParametersa1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6ArtifactHash65152261": Object {
-      "Description": "Artifact hash for asset \\"a1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6\\"",
-      "Type": "String",
-    },
-    "AssetParametersa1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6S3Bucket4D0E8AF6": Object {
-      "Description": "S3 bucket for asset \\"a1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6\\"",
-      "Type": "String",
-    },
-    "AssetParametersa1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6S3VersionKeyED72FE08": Object {
-      "Description": "S3 key for asset version \\"a1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6\\"",
       "Type": "String",
     },
     "AssetParametersa3d13916fdb6321f8e433bfcbbaaf0ce37d7484a6d75635fdbaceebe8bbe46ffArtifactHash817B54E3": Object {
@@ -3325,10 +3325,10 @@ Object {
       "Type": "AWS::CloudFormation::CustomResource",
       "UpdateReplacePolicy": "Delete",
     },
-    "ConstructBBBHubCatalogBuilder00E4035B": Object {
+    "ConstructHubCatalogBuilder5A9DE4AF": Object {
       "DependsOn": Array [
-        "ConstructBBBHubCatalogBuilderServiceRoleDefaultPolicy62774818",
-        "ConstructBBBHubCatalogBuilderServiceRole5838AEC7",
+        "ConstructHubCatalogBuilderServiceRoleDefaultPolicyF51442BC",
+        "ConstructHubCatalogBuilderServiceRole7EB4C395",
       ],
       "Properties": Object {
         "Code": Object {
@@ -3372,7 +3372,7 @@ Object {
         "DeadLetterConfig": Object {
           "TargetArn": Object {
             "Fn::GetAtt": Array [
-              "ConstructBBBHubCatalogBuilderDeadLetterQueue811DDD5A",
+              "ConstructHubCatalogBuilderDeadLetterQueue1D42C407",
               "Arn",
             ],
           },
@@ -3383,7 +3383,7 @@ Object {
             Array [
               "Creates the catalog.json object in ",
               Object {
-                "Ref": "ConstructBBBHubPackageData769485D1",
+                "Ref": "ConstructHubPackageDataDC5EF35E",
               },
             ],
           ],
@@ -3391,7 +3391,7 @@ Object {
         "Environment": Object {
           "Variables": Object {
             "BUCKET_NAME": Object {
-              "Ref": "ConstructBBBHubPackageData769485D1",
+              "Ref": "ConstructHubPackageDataDC5EF35E",
             },
           },
         },
@@ -3400,7 +3400,7 @@ Object {
         "ReservedConcurrentExecutions": 1,
         "Role": Object {
           "Fn::GetAtt": Array [
-            "ConstructBBBHubCatalogBuilderServiceRole5838AEC7",
+            "ConstructHubCatalogBuilderServiceRole7EB4C395",
             "Arn",
           ],
         },
@@ -3409,7 +3409,7 @@ Object {
       },
       "Type": "AWS::Lambda::Function",
     },
-    "ConstructBBBHubCatalogBuilderDLQAlarm7EF4C8A1": Object {
+    "ConstructHubCatalogBuilderDLQAlarm9D928A2B": Object {
       "Properties": Object {
         "AlarmDescription": "The catalog builder function failed to run",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
@@ -3418,7 +3418,7 @@ Object {
             "Name": "QueueName",
             "Value": Object {
               "Fn::GetAtt": Array [
-                "ConstructBBBHubCatalogBuilderDeadLetterQueue811DDD5A",
+                "ConstructHubCatalogBuilderDeadLetterQueue1D42C407",
                 "QueueName",
               ],
             },
@@ -3433,7 +3433,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubCatalogBuilderDeadLetterQueue811DDD5A": Object {
+    "ConstructHubCatalogBuilderDeadLetterQueue1D42C407": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
         "MessageRetentionPeriod": 1209600,
@@ -3441,7 +3441,7 @@ Object {
       "Type": "AWS::SQS::Queue",
       "UpdateReplacePolicy": "Delete",
     },
-    "ConstructBBBHubCatalogBuilderLogRetentionCA2BB4B3": Object {
+    "ConstructHubCatalogBuilderLogRetentionD5D7858F": Object {
       "Properties": Object {
         "LogGroupName": Object {
           "Fn::Join": Array [
@@ -3449,7 +3449,7 @@ Object {
             Array [
               "/aws/lambda/",
               Object {
-                "Ref": "ConstructBBBHubCatalogBuilder00E4035B",
+                "Ref": "ConstructHubCatalogBuilder5A9DE4AF",
               },
             ],
           ],
@@ -3464,7 +3464,7 @@ Object {
       },
       "Type": "Custom::LogRetention",
     },
-    "ConstructBBBHubCatalogBuilderServiceRole5838AEC7": Object {
+    "ConstructHubCatalogBuilderServiceRole7EB4C395": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -3495,7 +3495,7 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "ConstructBBBHubCatalogBuilderServiceRoleDefaultPolicy62774818": Object {
+    "ConstructHubCatalogBuilderServiceRoleDefaultPolicyF51442BC": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
@@ -3504,7 +3504,7 @@ Object {
               "Effect": "Allow",
               "Resource": Object {
                 "Fn::GetAtt": Array [
-                  "ConstructBBBHubCatalogBuilderDeadLetterQueue811DDD5A",
+                  "ConstructHubCatalogBuilderDeadLetterQueue1D42C407",
                   "Arn",
                 ],
               },
@@ -3522,7 +3522,7 @@ Object {
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
-                    "ConstructBBBHubPackageData769485D1",
+                    "ConstructHubPackageDataDC5EF35E",
                     "Arn",
                   ],
                 },
@@ -3532,7 +3532,7 @@ Object {
                     Array [
                       Object {
                         "Fn::GetAtt": Array [
-                          "ConstructBBBHubPackageData769485D1",
+                          "ConstructHubPackageDataDC5EF35E",
                           "Arn",
                         ],
                       },
@@ -3545,19 +3545,19 @@ Object {
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ConstructBBBHubCatalogBuilderServiceRoleDefaultPolicy62774818",
+        "PolicyName": "ConstructHubCatalogBuilderServiceRoleDefaultPolicyF51442BC",
         "Roles": Array [
           Object {
-            "Ref": "ConstructBBBHubCatalogBuilderServiceRole5838AEC7",
+            "Ref": "ConstructHubCatalogBuilderServiceRole7EB4C395",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ConstructBBBHubDiscovery23EA4E68": Object {
+    "ConstructHubDiscoveryD6EEC2B8": Object {
       "DependsOn": Array [
-        "ConstructBBBHubDiscoveryServiceRoleDefaultPolicy0CA686BD",
-        "ConstructBBBHubDiscoveryServiceRoleE8119B9A",
+        "ConstructHubDiscoveryServiceRoleDefaultPolicy9D5F91B3",
+        "ConstructHubDiscoveryServiceRole1B3CFF96",
       ],
       "Properties": Object {
         "Code": Object {
@@ -3602,10 +3602,10 @@ Object {
         "Environment": Object {
           "Variables": Object {
             "BUCKET_NAME": Object {
-              "Ref": "ConstructBBBHubDiscoveryStagingBucket4EE6367C",
+              "Ref": "ConstructHubDiscoveryStagingBucket1F2F7AE8",
             },
             "QUEUE_URL": Object {
-              "Ref": "ConstructBBBHubIngestionQueueFF177361",
+              "Ref": "ConstructHubIngestionQueue1AD94CA3",
             },
           },
         },
@@ -3614,7 +3614,7 @@ Object {
         "ReservedConcurrentExecutions": 1,
         "Role": Object {
           "Fn::GetAtt": Array [
-            "ConstructBBBHubDiscoveryServiceRoleE8119B9A",
+            "ConstructHubDiscoveryServiceRole1B3CFF96",
             "Arn",
           ],
         },
@@ -3623,7 +3623,7 @@ Object {
       },
       "Type": "AWS::Lambda::Function",
     },
-    "ConstructBBBHubDiscoveryErrorsAlarmFC5DDD99": Object {
+    "ConstructHubDiscoveryErrorsAlarmDEA85148": Object {
       "Properties": Object {
         "AlarmDescription": "The discovery function (on npmjs.com) failed to run",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
@@ -3631,7 +3631,7 @@ Object {
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructBBBHubDiscovery23EA4E68",
+              "Ref": "ConstructHubDiscoveryD6EEC2B8",
             },
           },
         ],
@@ -3644,7 +3644,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubDiscoveryNoInvocationsAlarm35E5F284": Object {
+    "ConstructHubDiscoveryNoInvocationsAlarm6F5E3A99": Object {
       "Properties": Object {
         "AlarmDescription": "The discovery function (on npmjs.com) is not running as scheduled",
         "ComparisonOperator": "LessThanThreshold",
@@ -3652,7 +3652,7 @@ Object {
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructBBBHubDiscovery23EA4E68",
+              "Ref": "ConstructHubDiscoveryD6EEC2B8",
             },
           },
         ],
@@ -3665,7 +3665,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubDiscoveryScheduleRule742AA584": Object {
+    "ConstructHubDiscoveryScheduleRule90EE2E2A": Object {
       "Properties": Object {
         "ScheduleExpression": "rate(15 minutes)",
         "State": "ENABLED",
@@ -3673,7 +3673,7 @@ Object {
           Object {
             "Arn": Object {
               "Fn::GetAtt": Array [
-                "ConstructBBBHubDiscovery23EA4E68",
+                "ConstructHubDiscoveryD6EEC2B8",
                 "Arn",
               ],
             },
@@ -3683,89 +3683,26 @@ Object {
       },
       "Type": "AWS::Events::Rule",
     },
-    "ConstructBBBHubDiscoveryScheduleRuleAllowEventRuleTestConstructBBBHubDiscovery862BFC5F6D7657BD": Object {
+    "ConstructHubDiscoveryScheduleRuleAllowEventRuleTestConstructHubDiscovery5714D5BB9D860B10": Object {
       "Properties": Object {
         "Action": "lambda:InvokeFunction",
         "FunctionName": Object {
           "Fn::GetAtt": Array [
-            "ConstructBBBHubDiscovery23EA4E68",
+            "ConstructHubDiscoveryD6EEC2B8",
             "Arn",
           ],
         },
         "Principal": "events.amazonaws.com",
         "SourceArn": Object {
           "Fn::GetAtt": Array [
-            "ConstructBBBHubDiscoveryScheduleRule742AA584",
+            "ConstructHubDiscoveryScheduleRule90EE2E2A",
             "Arn",
           ],
         },
       },
       "Type": "AWS::Lambda::Permission",
     },
-    "ConstructBBBHubDiscoveryServiceRoleDefaultPolicy0CA686BD": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructBBBHubDiscoveryStagingBucket4EE6367C",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructBBBHubDiscoveryStagingBucket4EE6367C",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "sqs:SendMessage",
-                "sqs:GetQueueAttributes",
-                "sqs:GetQueueUrl",
-              ],
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructBBBHubIngestionQueueFF177361",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ConstructBBBHubDiscoveryServiceRoleDefaultPolicy0CA686BD",
-        "Roles": Array [
-          Object {
-            "Ref": "ConstructBBBHubDiscoveryServiceRoleE8119B9A",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
-    "ConstructBBBHubDiscoveryServiceRoleE8119B9A": Object {
+    "ConstructHubDiscoveryServiceRole1B3CFF96": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -3796,7 +3733,70 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "ConstructBBBHubDiscoveryStagingBucket4EE6367C": Object {
+    "ConstructHubDiscoveryServiceRoleDefaultPolicy9D5F91B3": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubDiscoveryStagingBucket1F2F7AE8",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubDiscoveryStagingBucket1F2F7AE8",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionQueue1AD94CA3",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubDiscoveryServiceRoleDefaultPolicy9D5F91B3",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubDiscoveryServiceRole1B3CFF96",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubDiscoveryStagingBucket1F2F7AE8": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
         "LifecycleConfiguration": Object {
@@ -3818,10 +3818,10 @@ Object {
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
     },
-    "ConstructBBBHubIngestion5B3414AA": Object {
+    "ConstructHubIngestion407909CE": Object {
       "DependsOn": Array [
-        "ConstructBBBHubIngestionServiceRoleDefaultPolicyA6457846",
-        "ConstructBBBHubIngestionServiceRoleE3C6B3C3",
+        "ConstructHubIngestionServiceRoleDefaultPolicyC0D2B6F2",
+        "ConstructHubIngestionServiceRole6380BAB6",
       ],
       "Properties": Object {
         "Code": Object {
@@ -3865,7 +3865,7 @@ Object {
         "DeadLetterConfig": Object {
           "TargetArn": Object {
             "Fn::GetAtt": Array [
-              "ConstructBBBHubIngestionDeadLetterQueue0B804570",
+              "ConstructHubIngestionDeadLetterQueueFC1025F8",
               "Arn",
             ],
           },
@@ -3874,7 +3874,7 @@ Object {
         "Environment": Object {
           "Variables": Object {
             "BUCKET_NAME": Object {
-              "Ref": "ConstructBBBHubPackageData769485D1",
+              "Ref": "ConstructHubPackageDataDC5EF35E",
             },
           },
         },
@@ -3882,7 +3882,7 @@ Object {
         "MemorySize": 10240,
         "Role": Object {
           "Fn::GetAtt": Array [
-            "ConstructBBBHubIngestionServiceRoleE3C6B3C3",
+            "ConstructHubIngestionServiceRole6380BAB6",
             "Arn",
           ],
         },
@@ -3891,7 +3891,7 @@ Object {
       },
       "Type": "AWS::Lambda::Function",
     },
-    "ConstructBBBHubIngestionDLQAlarm7802C7CC": Object {
+    "ConstructHubIngestionDLQAlarm83BD1903": Object {
       "Properties": Object {
         "AlarmDescription": "The ingestion function failed for one or more packages",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
@@ -3900,7 +3900,7 @@ Object {
             "Name": "QueueName",
             "Value": Object {
               "Fn::GetAtt": Array [
-                "ConstructBBBHubIngestionDeadLetterQueue0B804570",
+                "ConstructHubIngestionDeadLetterQueueFC1025F8",
                 "QueueName",
               ],
             },
@@ -3915,7 +3915,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubIngestionDeadLetterQueue0B804570": Object {
+    "ConstructHubIngestionDeadLetterQueueFC1025F8": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
         "MessageRetentionPeriod": 1209600,
@@ -3923,17 +3923,17 @@ Object {
       "Type": "AWS::SQS::Queue",
       "UpdateReplacePolicy": "Delete",
     },
-    "ConstructBBBHubIngestionEventInvokeConfigD71866F5": Object {
+    "ConstructHubIngestionEventInvokeConfig47AAD616": Object {
       "Properties": Object {
         "FunctionName": Object {
-          "Ref": "ConstructBBBHubIngestion5B3414AA",
+          "Ref": "ConstructHubIngestion407909CE",
         },
         "MaximumRetryAttempts": 2,
         "Qualifier": "$LATEST",
       },
       "Type": "AWS::Lambda::EventInvokeConfig",
     },
-    "ConstructBBBHubIngestionQueueFF177361": Object {
+    "ConstructHubIngestionQueue1AD94CA3": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
         "KmsMasterKeyId": "alias/aws/sqs",
@@ -3942,109 +3942,7 @@ Object {
       "Type": "AWS::SQS::Queue",
       "UpdateReplacePolicy": "Delete",
     },
-    "ConstructBBBHubIngestionServiceRoleDefaultPolicyA6457846": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sqs:SendMessage",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructBBBHubIngestionDeadLetterQueue0B804570",
-                  "Arn",
-                ],
-              },
-            },
-            Object {
-              "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructBBBHubPackageData769485D1",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructBBBHubPackageData769485D1",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "sqs:ReceiveMessage",
-                "sqs:ChangeMessageVisibility",
-                "sqs:GetQueueUrl",
-                "sqs:DeleteMessage",
-                "sqs:GetQueueAttributes",
-              ],
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructBBBHubIngestionQueueFF177361",
-                  "Arn",
-                ],
-              },
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructBBBHubDiscoveryStagingBucket4EE6367C",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructBBBHubDiscoveryStagingBucket4EE6367C",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ConstructBBBHubIngestionServiceRoleDefaultPolicyA6457846",
-        "Roles": Array [
-          Object {
-            "Ref": "ConstructBBBHubIngestionServiceRoleE3C6B3C3",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
-    "ConstructBBBHubIngestionServiceRoleE3C6B3C3": Object {
+    "ConstructHubIngestionServiceRole6380BAB6": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -4075,22 +3973,124 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "ConstructBBBHubIngestionSqsEventSourceTestConstructBBBHubIngestionQueue6A72C75CDDEE2633": Object {
+    "ConstructHubIngestionServiceRoleDefaultPolicyC0D2B6F2": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionDeadLetterQueueFC1025F8",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionQueue1AD94CA3",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubDiscoveryStagingBucket1F2F7AE8",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubDiscoveryStagingBucket1F2F7AE8",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubIngestionServiceRoleDefaultPolicyC0D2B6F2",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubIngestionServiceRole6380BAB6",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubIngestionSqsEventSourceTestConstructHubIngestionQueue165B81E2C095FF2A": Object {
       "Properties": Object {
         "BatchSize": 1,
         "EventSourceArn": Object {
           "Fn::GetAtt": Array [
-            "ConstructBBBHubIngestionQueueFF177361",
+            "ConstructHubIngestionQueue1AD94CA3",
             "Arn",
           ],
         },
         "FunctionName": Object {
-          "Ref": "ConstructBBBHubIngestion5B3414AA",
+          "Ref": "ConstructHubIngestion407909CE",
         },
       },
       "Type": "AWS::Lambda::EventSourceMapping",
     },
-    "ConstructBBBHubMonitoringDashboard8201F353": Object {
+    "ConstructHubMonitoringDashboard78E057C8": Object {
       "Properties": Object {
         "DashboardBody": Object {
           "Fn::Join": Array [
@@ -4103,7 +4103,7 @@ Object {
               "\\",\\"annotations\\":{\\"alarms\\":[\\"",
               Object {
                 "Fn::GetAtt": Array [
-                  "ConstructBBBHubMonitoringWebCanaryHomePageErrorsC7EB1D30",
+                  "ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002",
                   "Arn",
                 ],
               },
@@ -4115,7 +4115,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Dashboard",
     },
-    "ConstructBBBHubMonitoringWatchfulDashboard7830878E": Object {
+    "ConstructHubMonitoringWatchfulDashboardB8493D55": Object {
       "Properties": Object {
         "DashboardBody": Object {
           "Fn::Join": Array [
@@ -4127,7 +4127,7 @@ Object {
               },
               "#/functions/",
               Object {
-                "Ref": "ConstructBBBHubIngestion5B3414AA",
+                "Ref": "ConstructHubIngestion407909CE",
               },
               "?tab=graph) [button:CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home?region=",
               Object {
@@ -4135,7 +4135,7 @@ Object {
               },
               "#logEventViewer:group=/aws/lambda/",
               Object {
-                "Ref": "ConstructBBBHubIngestion5B3414AA",
+                "Ref": "ConstructHubIngestion407909CE",
               },
               ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocations/5min\\",\\"region\\":\\"",
               Object {
@@ -4143,7 +4143,7 @@ Object {
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructBBBHubIngestion5B3414AA",
+                "Ref": "ConstructHubIngestion407909CE",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":6,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Errors/5min\\",\\"region\\":\\"",
               Object {
@@ -4151,7 +4151,7 @@ Object {
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructBBBHubIngestion5B3414AA",
+                "Ref": "ConstructHubIngestion407909CE",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Errors > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":12,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Throttles/5min\\",\\"region\\":\\"",
               Object {
@@ -4159,7 +4159,7 @@ Object {
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Throttles\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructBBBHubIngestion5B3414AA",
+                "Ref": "ConstructHubIngestion407909CE",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Throttles > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":18,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Duration/5min\\",\\"region\\":\\"",
               Object {
@@ -4167,7 +4167,7 @@ Object {
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Duration\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructBBBHubIngestion5B3414AA",
+                "Ref": "ConstructHubIngestion407909CE",
               },
               "\\",{\\"label\\":\\"p99\\",\\"stat\\":\\"p99\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"p99 > 720000 for 3 datapoints within 15 minutes\\",\\"value\\":720000,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":8,\\"properties\\":{\\"markdown\\":\\"# Discovery Function\\\\n\\\\n[button:AWS Lambda Console](https://console.aws.amazon.com/lambda/home?region=",
               Object {
@@ -4175,7 +4175,7 @@ Object {
               },
               "#/functions/",
               Object {
-                "Ref": "ConstructBBBHubDiscovery23EA4E68",
+                "Ref": "ConstructHubDiscoveryD6EEC2B8",
               },
               "?tab=graph) [button:CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home?region=",
               Object {
@@ -4183,7 +4183,7 @@ Object {
               },
               "#logEventViewer:group=/aws/lambda/",
               Object {
-                "Ref": "ConstructBBBHubDiscovery23EA4E68",
+                "Ref": "ConstructHubDiscoveryD6EEC2B8",
               },
               ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":0,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocations/5min\\",\\"region\\":\\"",
               Object {
@@ -4191,7 +4191,7 @@ Object {
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructBBBHubDiscovery23EA4E68",
+                "Ref": "ConstructHubDiscoveryD6EEC2B8",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":6,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Errors/5min\\",\\"region\\":\\"",
               Object {
@@ -4199,7 +4199,7 @@ Object {
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructBBBHubDiscovery23EA4E68",
+                "Ref": "ConstructHubDiscoveryD6EEC2B8",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Errors > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":12,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Throttles/5min\\",\\"region\\":\\"",
               Object {
@@ -4207,7 +4207,7 @@ Object {
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Throttles\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructBBBHubDiscovery23EA4E68",
+                "Ref": "ConstructHubDiscoveryD6EEC2B8",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Throttles > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":18,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Duration/5min\\",\\"region\\":\\"",
               Object {
@@ -4215,7 +4215,7 @@ Object {
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Duration\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructBBBHubDiscovery23EA4E68",
+                "Ref": "ConstructHubDiscoveryD6EEC2B8",
               },
               "\\",{\\"label\\":\\"p99\\",\\"stat\\":\\"p99\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"p99 > 720000 for 3 datapoints within 15 minutes\\",\\"value\\":720000,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":16,\\"properties\\":{\\"markdown\\":\\"# Transliterator Function\\\\n\\\\n[button:AWS Lambda Console](https://console.aws.amazon.com/lambda/home?region=",
               Object {
@@ -4223,7 +4223,7 @@ Object {
               },
               "#/functions/",
               Object {
-                "Ref": "ConstructBBBHubTransliterator8E119FAC",
+                "Ref": "ConstructHubTransliterator9C48708A",
               },
               "?tab=graph) [button:CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home?region=",
               Object {
@@ -4231,7 +4231,7 @@ Object {
               },
               "#logEventViewer:group=/aws/lambda/",
               Object {
-                "Ref": "ConstructBBBHubTransliterator8E119FAC",
+                "Ref": "ConstructHubTransliterator9C48708A",
               },
               ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":0,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocations/5min\\",\\"region\\":\\"",
               Object {
@@ -4239,7 +4239,7 @@ Object {
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructBBBHubTransliterator8E119FAC",
+                "Ref": "ConstructHubTransliterator9C48708A",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":6,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Errors/5min\\",\\"region\\":\\"",
               Object {
@@ -4247,7 +4247,7 @@ Object {
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructBBBHubTransliterator8E119FAC",
+                "Ref": "ConstructHubTransliterator9C48708A",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Errors > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":12,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Throttles/5min\\",\\"region\\":\\"",
               Object {
@@ -4255,7 +4255,7 @@ Object {
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Throttles\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructBBBHubTransliterator8E119FAC",
+                "Ref": "ConstructHubTransliterator9C48708A",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Throttles > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":18,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Duration/5min\\",\\"region\\":\\"",
               Object {
@@ -4263,7 +4263,7 @@ Object {
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Duration\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructBBBHubTransliterator8E119FAC",
+                "Ref": "ConstructHubTransliterator9C48708A",
               },
               "\\",{\\"label\\":\\"p99\\",\\"stat\\":\\"p99\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"p99 > 720000 for 3 datapoints within 15 minutes\\",\\"value\\":720000,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":24,\\"properties\\":{\\"markdown\\":\\"# Catalog Builder Function\\\\n\\\\n[button:AWS Lambda Console](https://console.aws.amazon.com/lambda/home?region=",
               Object {
@@ -4271,7 +4271,7 @@ Object {
               },
               "#/functions/",
               Object {
-                "Ref": "ConstructBBBHubCatalogBuilder00E4035B",
+                "Ref": "ConstructHubCatalogBuilder5A9DE4AF",
               },
               "?tab=graph) [button:CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home?region=",
               Object {
@@ -4279,7 +4279,7 @@ Object {
               },
               "#logEventViewer:group=/aws/lambda/",
               Object {
-                "Ref": "ConstructBBBHubCatalogBuilder00E4035B",
+                "Ref": "ConstructHubCatalogBuilder5A9DE4AF",
               },
               ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":0,\\"y\\":26,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocations/5min\\",\\"region\\":\\"",
               Object {
@@ -4287,7 +4287,7 @@ Object {
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructBBBHubCatalogBuilder00E4035B",
+                "Ref": "ConstructHubCatalogBuilder5A9DE4AF",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":6,\\"y\\":26,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Errors/5min\\",\\"region\\":\\"",
               Object {
@@ -4295,7 +4295,7 @@ Object {
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructBBBHubCatalogBuilder00E4035B",
+                "Ref": "ConstructHubCatalogBuilder5A9DE4AF",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Errors > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":12,\\"y\\":26,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Throttles/5min\\",\\"region\\":\\"",
               Object {
@@ -4303,7 +4303,7 @@ Object {
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Throttles\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructBBBHubCatalogBuilder00E4035B",
+                "Ref": "ConstructHubCatalogBuilder5A9DE4AF",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Throttles > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":18,\\"y\\":26,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Duration/5min\\",\\"region\\":\\"",
               Object {
@@ -4311,7 +4311,7 @@ Object {
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Duration\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructBBBHubCatalogBuilder00E4035B",
+                "Ref": "ConstructHubCatalogBuilder5A9DE4AF",
               },
               "\\",{\\"label\\":\\"p99\\",\\"stat\\":\\"p99\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"p99 > 720000 for 3 datapoints within 15 minutes\\",\\"value\\":720000,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}}]}",
             ],
@@ -4321,7 +4321,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Dashboard",
     },
-    "ConstructBBBHubMonitoringWatchfulTestConstructBBBHubCatalogBuilderEFDD4708DurationAlarmE2A63D97": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubCatalogBuilderC9A41048DurationAlarm557052D9": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "p99 latency >= 720s (80%)",
@@ -4337,7 +4337,7 @@ Object {
                   Object {
                     "Name": "FunctionName",
                     "Value": Object {
-                      "Ref": "ConstructBBBHubCatalogBuilder00E4035B",
+                      "Ref": "ConstructHubCatalogBuilder5A9DE4AF",
                     },
                   },
                 ],
@@ -4354,7 +4354,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubMonitoringWatchfulTestConstructBBBHubCatalogBuilderEFDD4708ErrorsAlarm69B54D02": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubCatalogBuilderC9A41048ErrorsAlarmF91F07CD": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "Over 0 errors per minute",
@@ -4363,7 +4363,7 @@ Object {
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructBBBHubCatalogBuilder00E4035B",
+              "Ref": "ConstructHubCatalogBuilder5A9DE4AF",
             },
           },
         ],
@@ -4376,7 +4376,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubMonitoringWatchfulTestConstructBBBHubCatalogBuilderEFDD4708ThrottlesAlarm0F076967": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubCatalogBuilderC9A41048ThrottlesAlarm2A5B0492": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "Over 0 throttles per minute",
@@ -4385,7 +4385,7 @@ Object {
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructBBBHubCatalogBuilder00E4035B",
+              "Ref": "ConstructHubCatalogBuilder5A9DE4AF",
             },
           },
         ],
@@ -4398,7 +4398,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubMonitoringWatchfulTestConstructBBBHubDiscovery862BFC5FDurationAlarm21FE235F": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubDiscovery5714D5BBDurationAlarm5CFE5B52": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "p99 latency >= 720s (80%)",
@@ -4414,7 +4414,7 @@ Object {
                   Object {
                     "Name": "FunctionName",
                     "Value": Object {
-                      "Ref": "ConstructBBBHubDiscovery23EA4E68",
+                      "Ref": "ConstructHubDiscoveryD6EEC2B8",
                     },
                   },
                 ],
@@ -4431,7 +4431,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubMonitoringWatchfulTestConstructBBBHubDiscovery862BFC5FErrorsAlarmA81F9EA5": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubDiscovery5714D5BBErrorsAlarm373566EE": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "Over 0 errors per minute",
@@ -4440,7 +4440,7 @@ Object {
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructBBBHubDiscovery23EA4E68",
+              "Ref": "ConstructHubDiscoveryD6EEC2B8",
             },
           },
         ],
@@ -4453,7 +4453,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubMonitoringWatchfulTestConstructBBBHubDiscovery862BFC5FThrottlesAlarmDAD41178": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubDiscovery5714D5BBThrottlesAlarm261A4778": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "Over 0 throttles per minute",
@@ -4462,7 +4462,7 @@ Object {
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructBBBHubDiscovery23EA4E68",
+              "Ref": "ConstructHubDiscoveryD6EEC2B8",
             },
           },
         ],
@@ -4475,7 +4475,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubMonitoringWatchfulTestConstructBBBHubIngestion6023B4F9DurationAlarm246F9254": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubIngestionAE667A08DurationAlarm8C97ADAD": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "p99 latency >= 720s (80%)",
@@ -4491,7 +4491,7 @@ Object {
                   Object {
                     "Name": "FunctionName",
                     "Value": Object {
-                      "Ref": "ConstructBBBHubIngestion5B3414AA",
+                      "Ref": "ConstructHubIngestion407909CE",
                     },
                   },
                 ],
@@ -4508,7 +4508,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubMonitoringWatchfulTestConstructBBBHubIngestion6023B4F9ErrorsAlarm6674AB77": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubIngestionAE667A08ErrorsAlarm76E1369B": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "Over 0 errors per minute",
@@ -4517,7 +4517,7 @@ Object {
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructBBBHubIngestion5B3414AA",
+              "Ref": "ConstructHubIngestion407909CE",
             },
           },
         ],
@@ -4530,7 +4530,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubMonitoringWatchfulTestConstructBBBHubIngestion6023B4F9ThrottlesAlarm3A989B97": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubIngestionAE667A08ThrottlesAlarm2CD0B31C": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "Over 0 throttles per minute",
@@ -4539,7 +4539,7 @@ Object {
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructBBBHubIngestion5B3414AA",
+              "Ref": "ConstructHubIngestion407909CE",
             },
           },
         ],
@@ -4552,7 +4552,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubMonitoringWatchfulTestConstructBBBHubTransliterator200697C2DurationAlarmC186B798": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubTransliterator3B0A6087DurationAlarm0D60D33F": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "p99 latency >= 720s (80%)",
@@ -4568,7 +4568,7 @@ Object {
                   Object {
                     "Name": "FunctionName",
                     "Value": Object {
-                      "Ref": "ConstructBBBHubTransliterator8E119FAC",
+                      "Ref": "ConstructHubTransliterator9C48708A",
                     },
                   },
                 ],
@@ -4585,7 +4585,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubMonitoringWatchfulTestConstructBBBHubTransliterator200697C2ErrorsAlarm124975E5": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubTransliterator3B0A6087ErrorsAlarm1EDE57BC": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "Over 0 errors per minute",
@@ -4594,7 +4594,7 @@ Object {
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructBBBHubTransliterator8E119FAC",
+              "Ref": "ConstructHubTransliterator9C48708A",
             },
           },
         ],
@@ -4607,7 +4607,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubMonitoringWatchfulTestConstructBBBHubTransliterator200697C2ThrottlesAlarmD773D2B9": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubTransliterator3B0A6087ThrottlesAlarm34A8C7C1": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "Over 0 throttles per minute",
@@ -4616,7 +4616,7 @@ Object {
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructBBBHubTransliterator8E119FAC",
+              "Ref": "ConstructHubTransliterator9C48708A",
             },
           },
         ],
@@ -4629,7 +4629,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubMonitoringWebCanaryHomePageErrorsC7EB1D30": Object {
+    "ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002": Object {
       "Properties": Object {
         "AlarmActions": Array [
           "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
@@ -4641,7 +4641,7 @@ Object {
               "80% error rate for https://",
               Object {
                 "Fn::GetAtt": Array [
-                  "ConstructBBBHubWebAppDistribution9A79EFAC",
+                  "ConstructHubWebAppDistribution1F181DC9",
                   "DomainName",
                 ],
               },
@@ -4661,7 +4661,7 @@ Object {
                   "https://",
                   Object {
                     "Fn::GetAtt": Array [
-                      "ConstructBBBHubWebAppDistribution9A79EFAC",
+                      "ConstructHubWebAppDistribution1F181DC9",
                       "DomainName",
                     ],
                   },
@@ -4675,7 +4675,7 @@ Object {
                   Object {
                     "Name": "FunctionName",
                     "Value": Object {
-                      "Ref": "ConstructBBBHubMonitoringWebCanaryHomePageHttpGetFunctionD6E1903F",
+                      "Ref": "ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionF27ADDC8",
                     },
                   },
                 ],
@@ -4693,9 +4693,9 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubMonitoringWebCanaryHomePageHttpGetFunctionD6E1903F": Object {
+    "ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionF27ADDC8": Object {
       "DependsOn": Array [
-        "ConstructBBBHubMonitoringWebCanaryHomePageHttpGetFunctionServiceRole4EE1425B",
+        "ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionServiceRole9AAAD93C",
       ],
       "Properties": Object {
         "Code": Object {
@@ -4743,7 +4743,7 @@ Object {
               "HTTP GET https://",
               Object {
                 "Fn::GetAtt": Array [
-                  "ConstructBBBHubWebAppDistribution9A79EFAC",
+                  "ConstructHubWebAppDistribution1F181DC9",
                   "DomainName",
                 ],
               },
@@ -4760,7 +4760,7 @@ Object {
                   "https://",
                   Object {
                     "Fn::GetAtt": Array [
-                      "ConstructBBBHubWebAppDistribution9A79EFAC",
+                      "ConstructHubWebAppDistribution1F181DC9",
                       "DomainName",
                     ],
                   },
@@ -4772,7 +4772,7 @@ Object {
         "Handler": "index.handler",
         "Role": Object {
           "Fn::GetAtt": Array [
-            "ConstructBBBHubMonitoringWebCanaryHomePageHttpGetFunctionServiceRole4EE1425B",
+            "ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionServiceRole9AAAD93C",
             "Arn",
           ],
         },
@@ -4780,7 +4780,7 @@ Object {
       },
       "Type": "AWS::Lambda::Function",
     },
-    "ConstructBBBHubMonitoringWebCanaryHomePageHttpGetFunctionServiceRole4EE1425B": Object {
+    "ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionServiceRole9AAAD93C": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -4811,7 +4811,26 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "ConstructBBBHubMonitoringWebCanaryHomePageRule20D658CF": Object {
+    "ConstructHubMonitoringWebCanaryHomePageRuleAllowEventRuleTestConstructHubMonitoringWebCanaryHomePageHttpGetFunction941819C9E47F90EE": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionF27ADDC8",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubMonitoringWebCanaryHomePageRuleE14F9F4E",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ConstructHubMonitoringWebCanaryHomePageRuleE14F9F4E": Object {
       "Properties": Object {
         "ScheduleExpression": "rate(1 minute)",
         "State": "ENABLED",
@@ -4819,7 +4838,7 @@ Object {
           Object {
             "Arn": Object {
               "Fn::GetAtt": Array [
-                "ConstructBBBHubMonitoringWebCanaryHomePageHttpGetFunctionD6E1903F",
+                "ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionF27ADDC8",
                 "Arn",
               ],
             },
@@ -4829,26 +4848,51 @@ Object {
       },
       "Type": "AWS::Events::Rule",
     },
-    "ConstructBBBHubMonitoringWebCanaryHomePageRuleAllowEventRuleTestConstructBBBHubMonitoringWebCanaryHomePageHttpGetFunctionB4C162DA82271B02": Object {
+    "ConstructHubPackageDataAllowBucketNotificationsToTestConstructHubCatalogBuilderC9A41048952FCDC8": Object {
       "Properties": Object {
         "Action": "lambda:InvokeFunction",
         "FunctionName": Object {
           "Fn::GetAtt": Array [
-            "ConstructBBBHubMonitoringWebCanaryHomePageHttpGetFunctionD6E1903F",
+            "ConstructHubCatalogBuilder5A9DE4AF",
             "Arn",
           ],
         },
-        "Principal": "events.amazonaws.com",
+        "Principal": "s3.amazonaws.com",
+        "SourceAccount": Object {
+          "Ref": "AWS::AccountId",
+        },
         "SourceArn": Object {
           "Fn::GetAtt": Array [
-            "ConstructBBBHubMonitoringWebCanaryHomePageRule20D658CF",
+            "ConstructHubPackageDataDC5EF35E",
             "Arn",
           ],
         },
       },
       "Type": "AWS::Lambda::Permission",
     },
-    "ConstructBBBHubPackageData769485D1": Object {
+    "ConstructHubPackageDataAllowBucketNotificationsToTestConstructHubTransliterator3B0A6087EA339303": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubTransliterator9C48708A",
+            "Arn",
+          ],
+        },
+        "Principal": "s3.amazonaws.com",
+        "SourceAccount": Object {
+          "Ref": "AWS::AccountId",
+        },
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubPackageDataDC5EF35E",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ConstructHubPackageDataDC5EF35E": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
@@ -4896,58 +4940,14 @@ Object {
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
     },
-    "ConstructBBBHubPackageDataAllowBucketNotificationsToTestConstructBBBHubCatalogBuilderEFDD4708E3AD65D9": Object {
-      "Properties": Object {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": Object {
-          "Fn::GetAtt": Array [
-            "ConstructBBBHubCatalogBuilder00E4035B",
-            "Arn",
-          ],
-        },
-        "Principal": "s3.amazonaws.com",
-        "SourceAccount": Object {
-          "Ref": "AWS::AccountId",
-        },
-        "SourceArn": Object {
-          "Fn::GetAtt": Array [
-            "ConstructBBBHubPackageData769485D1",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "ConstructBBBHubPackageDataAllowBucketNotificationsToTestConstructBBBHubTransliterator200697C297F119D9": Object {
-      "Properties": Object {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": Object {
-          "Fn::GetAtt": Array [
-            "ConstructBBBHubTransliterator8E119FAC",
-            "Arn",
-          ],
-        },
-        "Principal": "s3.amazonaws.com",
-        "SourceAccount": Object {
-          "Ref": "AWS::AccountId",
-        },
-        "SourceArn": Object {
-          "Fn::GetAtt": Array [
-            "ConstructBBBHubPackageData769485D1",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "ConstructBBBHubPackageDataNotifications4EB65FAC": Object {
+    "ConstructHubPackageDataNotifications81B45141": Object {
       "DependsOn": Array [
-        "ConstructBBBHubPackageDataAllowBucketNotificationsToTestConstructBBBHubCatalogBuilderEFDD4708E3AD65D9",
-        "ConstructBBBHubPackageDataAllowBucketNotificationsToTestConstructBBBHubTransliterator200697C297F119D9",
+        "ConstructHubPackageDataAllowBucketNotificationsToTestConstructHubCatalogBuilderC9A41048952FCDC8",
+        "ConstructHubPackageDataAllowBucketNotificationsToTestConstructHubTransliterator3B0A6087EA339303",
       ],
       "Properties": Object {
         "BucketName": Object {
-          "Ref": "ConstructBBBHubPackageData769485D1",
+          "Ref": "ConstructHubPackageDataDC5EF35E",
         },
         "NotificationConfiguration": Object {
           "LambdaFunctionConfigurations": Array [
@@ -4971,7 +4971,7 @@ Object {
               },
               "LambdaFunctionArn": Object {
                 "Fn::GetAtt": Array [
-                  "ConstructBBBHubTransliterator8E119FAC",
+                  "ConstructHubTransliterator9C48708A",
                   "Arn",
                 ],
               },
@@ -4996,7 +4996,7 @@ Object {
               },
               "LambdaFunctionArn": Object {
                 "Fn::GetAtt": Array [
-                  "ConstructBBBHubCatalogBuilder00E4035B",
+                  "ConstructHubCatalogBuilder5A9DE4AF",
                   "Arn",
                 ],
               },
@@ -5012,10 +5012,10 @@ Object {
       },
       "Type": "Custom::S3BucketNotifications",
     },
-    "ConstructBBBHubPackageDataPolicy128448EA": Object {
+    "ConstructHubPackageDataPolicy4615475A": Object {
       "Properties": Object {
         "Bucket": Object {
-          "Ref": "ConstructBBBHubPackageData769485D1",
+          "Ref": "ConstructHubPackageDataDC5EF35E",
         },
         "PolicyDocument": Object {
           "Statement": Array [
@@ -5025,7 +5025,7 @@ Object {
               "Principal": Object {
                 "CanonicalUser": Object {
                   "Fn::GetAtt": Array [
-                    "ConstructBBBHubWebAppDistributionOrigin2S3OriginF7520458",
+                    "ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4",
                     "S3CanonicalUserId",
                   ],
                 },
@@ -5036,7 +5036,7 @@ Object {
                   Array [
                     Object {
                       "Fn::GetAtt": Array [
-                        "ConstructBBBHubPackageData769485D1",
+                        "ConstructHubPackageDataDC5EF35E",
                         "Arn",
                       ],
                     },
@@ -5051,10 +5051,10 @@ Object {
       },
       "Type": "AWS::S3::BucketPolicy",
     },
-    "ConstructBBBHubTransliterator8E119FAC": Object {
+    "ConstructHubTransliterator9C48708A": Object {
       "DependsOn": Array [
-        "ConstructBBBHubTransliteratorServiceRoleDefaultPolicyEAF2181D",
-        "ConstructBBBHubTransliteratorServiceRole5217B1DA",
+        "ConstructHubTransliteratorServiceRoleDefaultPolicyB9C4BE06",
+        "ConstructHubTransliteratorServiceRole0F8A20C8",
       ],
       "Properties": Object {
         "Code": Object {
@@ -5098,7 +5098,7 @@ Object {
         "DeadLetterConfig": Object {
           "TargetArn": Object {
             "Fn::GetAtt": Array [
-              "ConstructBBBHubTransliteratorDeadLetterQueueFF7E3E67",
+              "ConstructHubTransliteratorDeadLetterQueue5544BC9A",
               "Arn",
             ],
           },
@@ -5108,7 +5108,7 @@ Object {
         "MemorySize": 10240,
         "Role": Object {
           "Fn::GetAtt": Array [
-            "ConstructBBBHubTransliteratorServiceRole5217B1DA",
+            "ConstructHubTransliteratorServiceRole0F8A20C8",
             "Arn",
           ],
         },
@@ -5117,7 +5117,7 @@ Object {
       },
       "Type": "AWS::Lambda::Function",
     },
-    "ConstructBBBHubTransliteratorDLQAlarmFDAA5CCD": Object {
+    "ConstructHubTransliteratorDLQAlarmA93C182B": Object {
       "Properties": Object {
         "AlarmDescription": "The transliteration function failed for one or more packages",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
@@ -5126,7 +5126,7 @@ Object {
             "Name": "QueueName",
             "Value": Object {
               "Fn::GetAtt": Array [
-                "ConstructBBBHubTransliteratorDeadLetterQueueFF7E3E67",
+                "ConstructHubTransliteratorDeadLetterQueue5544BC9A",
                 "QueueName",
               ],
             },
@@ -5141,7 +5141,7 @@ Object {
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructBBBHubTransliteratorDeadLetterQueueFF7E3E67": Object {
+    "ConstructHubTransliteratorDeadLetterQueue5544BC9A": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
         "MessageRetentionPeriod": 1209600,
@@ -5149,17 +5149,17 @@ Object {
       "Type": "AWS::SQS::Queue",
       "UpdateReplacePolicy": "Delete",
     },
-    "ConstructBBBHubTransliteratorEventInvokeConfigB840F6BD": Object {
+    "ConstructHubTransliteratorEventInvokeConfig999CBA91": Object {
       "Properties": Object {
         "FunctionName": Object {
-          "Ref": "ConstructBBBHubTransliterator8E119FAC",
+          "Ref": "ConstructHubTransliterator9C48708A",
         },
         "MaximumRetryAttempts": 2,
         "Qualifier": "$LATEST",
       },
       "Type": "AWS::Lambda::EventInvokeConfig",
     },
-    "ConstructBBBHubTransliteratorLogRetentionA7AAAAC8": Object {
+    "ConstructHubTransliteratorLogRetention25A9F47C": Object {
       "Properties": Object {
         "LogGroupName": Object {
           "Fn::Join": Array [
@@ -5167,7 +5167,7 @@ Object {
             Array [
               "/aws/lambda/",
               Object {
-                "Ref": "ConstructBBBHubTransliterator8E119FAC",
+                "Ref": "ConstructHubTransliterator9C48708A",
               },
             ],
           ],
@@ -5182,7 +5182,7 @@ Object {
       },
       "Type": "Custom::LogRetention",
     },
-    "ConstructBBBHubTransliteratorServiceRole5217B1DA": Object {
+    "ConstructHubTransliteratorServiceRole0F8A20C8": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -5213,7 +5213,7 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "ConstructBBBHubTransliteratorServiceRoleDefaultPolicyEAF2181D": Object {
+    "ConstructHubTransliteratorServiceRoleDefaultPolicyB9C4BE06": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
@@ -5222,7 +5222,7 @@ Object {
               "Effect": "Allow",
               "Resource": Object {
                 "Fn::GetAtt": Array [
-                  "ConstructBBBHubTransliteratorDeadLetterQueueFF7E3E67",
+                  "ConstructHubTransliteratorDeadLetterQueue5544BC9A",
                   "Arn",
                 ],
               },
@@ -5240,7 +5240,7 @@ Object {
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
-                    "ConstructBBBHubPackageData769485D1",
+                    "ConstructHubPackageDataDC5EF35E",
                     "Arn",
                   ],
                 },
@@ -5250,7 +5250,7 @@ Object {
                     Array [
                       Object {
                         "Fn::GetAtt": Array [
-                          "ConstructBBBHubPackageData769485D1",
+                          "ConstructHubPackageDataDC5EF35E",
                           "Arn",
                         ],
                       },
@@ -5263,21 +5263,21 @@ Object {
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ConstructBBBHubTransliteratorServiceRoleDefaultPolicyEAF2181D",
+        "PolicyName": "ConstructHubTransliteratorServiceRoleDefaultPolicyB9C4BE06",
         "Roles": Array [
           Object {
-            "Ref": "ConstructBBBHubTransliteratorServiceRole5217B1DA",
+            "Ref": "ConstructHubTransliteratorServiceRole0F8A20C8",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ConstructBBBHubWebAppARecord7CCAD0D0": Object {
+    "ConstructHubWebAppARecord3863FF6C": Object {
       "Properties": Object {
         "AliasTarget": Object {
           "DNSName": Object {
             "Fn::GetAtt": Array [
-              "ConstructBBBHubWebAppDistribution9A79EFAC",
+              "ConstructHubWebAppDistribution1F181DC9",
               "DomainName",
             ],
           },
@@ -5298,12 +5298,12 @@ Object {
       },
       "Type": "AWS::Route53::RecordSet",
     },
-    "ConstructBBBHubWebAppAaaaRecordC26054B3": Object {
+    "ConstructHubWebAppAaaaRecord5D99098B": Object {
       "Properties": Object {
         "AliasTarget": Object {
           "DNSName": Object {
             "Fn::GetAtt": Array [
-              "ConstructBBBHubWebAppDistribution9A79EFAC",
+              "ConstructHubWebAppDistribution1F181DC9",
               "DomainName",
             ],
           },
@@ -5324,7 +5324,7 @@ Object {
       },
       "Type": "AWS::Route53::RecordSet",
     },
-    "ConstructBBBHubWebAppDeployWebsiteAwsCliLayer6EB163DA": Object {
+    "ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1": Object {
       "Properties": Object {
         "Content": Object {
           "S3Bucket": Object {
@@ -5368,14 +5368,14 @@ Object {
       },
       "Type": "AWS::Lambda::LayerVersion",
     },
-    "ConstructBBBHubWebAppDeployWebsiteCustomResourceEDCC4923": Object {
+    "ConstructHubWebAppDeployWebsiteCustomResourceE6DF98C9": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
         "DestinationBucketName": Object {
-          "Ref": "ConstructBBBHubWebAppWebsiteBucket47FAD893",
+          "Ref": "ConstructHubWebAppWebsiteBucket4B2B9DB2",
         },
         "DistributionId": Object {
-          "Ref": "ConstructBBBHubWebAppDistribution9A79EFAC",
+          "Ref": "ConstructHubWebAppDistribution1F181DC9",
         },
         "Prune": true,
         "ServiceToken": Object {
@@ -5386,7 +5386,7 @@ Object {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParametersa1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6S3Bucket4D0E8AF6",
+            "Ref": "AssetParameters44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992S3Bucket6E154218",
           },
         ],
         "SourceObjectKeys": Array [
@@ -5401,7 +5401,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersa1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6S3VersionKeyED72FE08",
+                          "Ref": "AssetParameters44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992S3VersionKey451F1636",
                         },
                       ],
                     },
@@ -5414,7 +5414,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersa1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6S3VersionKeyED72FE08",
+                          "Ref": "AssetParameters44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992S3VersionKey451F1636",
                         },
                       ],
                     },
@@ -5428,7 +5428,7 @@ Object {
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
     },
-    "ConstructBBBHubWebAppDistribution9A79EFAC": Object {
+    "ConstructHubWebAppDistribution1F181DC9": Object {
       "Properties": Object {
         "DistributionConfig": Object {
           "Aliases": Array [
@@ -5443,14 +5443,14 @@ Object {
                   "EventType": "viewer-response",
                   "FunctionARN": Object {
                     "Fn::GetAtt": Array [
-                      "ConstructBBBHubWebAppResponseFunction8F8021F6",
+                      "ConstructHubWebAppResponseFunction4C2BF3E9",
                       "FunctionARN",
                     ],
                   },
                 },
               ],
               "PathPattern": "/data/*",
-              "TargetOriginId": "TestConstructBBBHubWebAppDistributionOrigin2F80EACAF",
+              "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
             Object {
@@ -5461,14 +5461,14 @@ Object {
                   "EventType": "viewer-response",
                   "FunctionARN": Object {
                     "Fn::GetAtt": Array [
-                      "ConstructBBBHubWebAppResponseFunction8F8021F6",
+                      "ConstructHubWebAppResponseFunction4C2BF3E9",
                       "FunctionARN",
                     ],
                   },
                 },
               ],
               "PathPattern": "/catalog.json",
-              "TargetOriginId": "TestConstructBBBHubWebAppDistributionOrigin2F80EACAF",
+              "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
           ],
@@ -5492,13 +5492,13 @@ Object {
                 "EventType": "viewer-response",
                 "FunctionARN": Object {
                   "Fn::GetAtt": Array [
-                    "ConstructBBBHubWebAppResponseFunction8F8021F6",
+                    "ConstructHubWebAppResponseFunction4C2BF3E9",
                     "FunctionARN",
                   ],
                 },
               },
             ],
-            "TargetOriginId": "TestConstructBBBHubWebAppDistributionOrigin1749DFF49",
+            "TargetOriginId": "TestConstructHubWebAppDistributionOrigin171FF58D3",
             "ViewerProtocolPolicy": "allow-all",
           },
           "DefaultRootObject": "index.html",
@@ -5509,11 +5509,11 @@ Object {
             Object {
               "DomainName": Object {
                 "Fn::GetAtt": Array [
-                  "ConstructBBBHubWebAppWebsiteBucket47FAD893",
+                  "ConstructHubWebAppWebsiteBucket4B2B9DB2",
                   "RegionalDomainName",
                 ],
               },
-              "Id": "TestConstructBBBHubWebAppDistributionOrigin1749DFF49",
+              "Id": "TestConstructHubWebAppDistributionOrigin171FF58D3",
               "S3OriginConfig": Object {
                 "OriginAccessIdentity": Object {
                   "Fn::Join": Array [
@@ -5521,7 +5521,7 @@ Object {
                     Array [
                       "origin-access-identity/cloudfront/",
                       Object {
-                        "Ref": "ConstructBBBHubWebAppDistributionOrigin1S3Origin8BA0D3E8",
+                        "Ref": "ConstructHubWebAppDistributionOrigin1S3Origin694AF937",
                       },
                     ],
                   ],
@@ -5531,11 +5531,11 @@ Object {
             Object {
               "DomainName": Object {
                 "Fn::GetAtt": Array [
-                  "ConstructBBBHubPackageData769485D1",
+                  "ConstructHubPackageDataDC5EF35E",
                   "RegionalDomainName",
                 ],
               },
-              "Id": "TestConstructBBBHubWebAppDistributionOrigin2F80EACAF",
+              "Id": "TestConstructHubWebAppDistributionOrigin276090F90",
               "S3OriginConfig": Object {
                 "OriginAccessIdentity": Object {
                   "Fn::Join": Array [
@@ -5543,7 +5543,7 @@ Object {
                     Array [
                       "origin-access-identity/cloudfront/",
                       Object {
-                        "Ref": "ConstructBBBHubWebAppDistributionOrigin2S3OriginF7520458",
+                        "Ref": "ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4",
                       },
                     ],
                   ],
@@ -5565,23 +5565,23 @@ Object {
       },
       "Type": "AWS::CloudFront::Distribution",
     },
-    "ConstructBBBHubWebAppDistributionOrigin1S3Origin8BA0D3E8": Object {
+    "ConstructHubWebAppDistributionOrigin1S3Origin694AF937": Object {
       "Properties": Object {
         "CloudFrontOriginAccessIdentityConfig": Object {
-          "Comment": "Identity for TestConstructBBBHubWebAppDistributionOrigin1749DFF49",
+          "Comment": "Identity for TestConstructHubWebAppDistributionOrigin171FF58D3",
         },
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
     },
-    "ConstructBBBHubWebAppDistributionOrigin2S3OriginF7520458": Object {
+    "ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4": Object {
       "Properties": Object {
         "CloudFrontOriginAccessIdentityConfig": Object {
-          "Comment": "Identity for TestConstructBBBHubWebAppDistributionOrigin2F80EACAF",
+          "Comment": "Identity for TestConstructHubWebAppDistributionOrigin276090F90",
         },
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
     },
-    "ConstructBBBHubWebAppResponseFunction8F8021F6": Object {
+    "ConstructHubWebAppResponseFunction4C2BF3E9": Object {
       "Properties": Object {
         "AutoPublish": true,
         "FunctionCode": "\\"use strict\\";
@@ -5606,7 +5606,7 @@ function handler(event) {
                 Object {
                   "Ref": "AWS::Region",
                 },
-                "TestConstubWebAppResponseFunctionE28EE509",
+                "TestConstrubWebAppResponseFunction1F387BCC",
               ],
             ],
           },
@@ -5619,14 +5619,14 @@ function handler(event) {
               Object {
                 "Ref": "AWS::Region",
               },
-              "TestConstubWebAppResponseFunctionE28EE509",
+              "TestConstrubWebAppResponseFunction1F387BCC",
             ],
           ],
         },
       },
       "Type": "AWS::CloudFront::Function",
     },
-    "ConstructBBBHubWebAppWebsiteBucket47FAD893": Object {
+    "ConstructHubWebAppWebsiteBucket4B2B9DB2": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
         "PublicAccessBlockConfiguration": Object {
@@ -5639,10 +5639,10 @@ function handler(event) {
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
     },
-    "ConstructBBBHubWebAppWebsiteBucketPolicy608FBFBF": Object {
+    "ConstructHubWebAppWebsiteBucketPolicy17174C06": Object {
       "Properties": Object {
         "Bucket": Object {
-          "Ref": "ConstructBBBHubWebAppWebsiteBucket47FAD893",
+          "Ref": "ConstructHubWebAppWebsiteBucket4B2B9DB2",
         },
         "PolicyDocument": Object {
           "Statement": Array [
@@ -5652,7 +5652,7 @@ function handler(event) {
               "Principal": Object {
                 "CanonicalUser": Object {
                   "Fn::GetAtt": Array [
-                    "ConstructBBBHubWebAppDistributionOrigin1S3Origin8BA0D3E8",
+                    "ConstructHubWebAppDistributionOrigin1S3Origin694AF937",
                     "S3CanonicalUserId",
                   ],
                 },
@@ -5663,7 +5663,7 @@ function handler(event) {
                   Array [
                     Object {
                       "Fn::GetAtt": Array [
-                        "ConstructBBBHubWebAppWebsiteBucket47FAD893",
+                        "ConstructHubWebAppWebsiteBucket4B2B9DB2",
                         "Arn",
                       ],
                     },
@@ -5725,7 +5725,7 @@ function handler(event) {
         "Handler": "index.handler",
         "Layers": Array [
           Object {
-            "Ref": "ConstructBBBHubWebAppDeployWebsiteAwsCliLayer6EB163DA",
+            "Ref": "ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1",
           },
         ],
         "Role": Object {
@@ -5792,7 +5792,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersa1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6S3Bucket4D0E8AF6",
+                        "Ref": "AssetParameters44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992S3Bucket6E154218",
                       },
                     ],
                   ],
@@ -5807,7 +5807,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersa1eb6da5509a8839142d7df8495f59763dfc4a25d1b7f73bf92c732c8946a5b6S3Bucket4D0E8AF6",
+                        "Ref": "AssetParameters44340721dbfd13cca547992fe942f67137fa5d5e2b00029886703d95029fb992S3Bucket6E154218",
                       },
                       "/*",
                     ],
@@ -5828,7 +5828,7 @@ function handler(event) {
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
-                    "ConstructBBBHubWebAppWebsiteBucket47FAD893",
+                    "ConstructHubWebAppWebsiteBucket4B2B9DB2",
                     "Arn",
                   ],
                 },
@@ -5838,7 +5838,7 @@ function handler(event) {
                     Array [
                       Object {
                         "Fn::GetAtt": Array [
-                          "ConstructBBBHubWebAppWebsiteBucket47FAD893",
+                          "ConstructHubWebAppWebsiteBucket4B2B9DB2",
                           "Arn",
                         ],
                       },
