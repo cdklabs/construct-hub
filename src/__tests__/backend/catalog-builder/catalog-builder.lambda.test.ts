@@ -62,7 +62,7 @@ test('no indexed packages', () => {
   });
 
   // WHEN
-  const result = handler({}, { /* context */ } as any);
+  const result = handler({} as any, { /* context */ } as any);
 
   // THEN
   return expect(result).resolves.toBe(mockPutObjectResult);
@@ -164,7 +164,7 @@ test('initial build', () => {
   });
 
   // WHEN
-  const result = handler({}, { /* context */ } as any);
+  const result = handler({} as any, { /* context */ } as any);
 
   // THEN
   return expect(result).resolves.toBe(mockPutObjectResult);
@@ -303,7 +303,7 @@ test('incremental build', () => {
   });
 
   // WHEN
-  const result = handler({}, { /* context */ } as any);
+  const result = handler({} as any, { /* context */ } as any);
 
   // THEN
   return expect(result).resolves.toBe(mockPutObjectResult);

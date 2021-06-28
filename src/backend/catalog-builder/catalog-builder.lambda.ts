@@ -2,7 +2,7 @@ import { gunzip } from 'zlib';
 
 import type { AssemblyTargets } from '@jsii/spec';
 // eslint-disable-next-line import/no-unresolved
-import type { Context } from 'aws-lambda';
+import type { Context, S3Event } from 'aws-lambda';
 import { AWSError, S3 } from 'aws-sdk';
 import { SemVer } from 'semver';
 import { extract } from 'tar-stream';
@@ -23,96 +23,49 @@ const KEY_FORMAT_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/
  *
  * @returns the information about the updated S3 object.
  */
-export async function handler(event: { readonly rebuild?: boolean }, context: Context) {
+export async function handler(event: S3Event, context: Context) {
+  console.log(JSON.stringify(event, null, 2));
+
   const BUCKET_NAME = requireEnv('BUCKET_NAME');
 
   const packages = new Map<string, Map<number, PackageInfo>>();
 
-  if (!event.rebuild) {
-    console.log('Loading existing catalog...');
-    const data = await aws.s3().getObject({ Bucket: BUCKET_NAME, Key: constants.CATALOG_KEY }).promise()
-      .catch((err: AWSError) => err.code !== 'NoSuchKey'
-        ? Promise.reject(err)
-        : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
+  console.log('Loading existing catalog...');
+  const data = await aws.s3().getObject({ Bucket: BUCKET_NAME, Key: constants.CATALOG_KEY }).promise()
+    .catch((err: AWSError) => err.code !== 'NoSuchKey'
+      ? Promise.reject(err)
+      : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
 
-    if (data.Body != null) {
-      const catalog = JSON.parse(data.Body.toString('utf-8'));
-      for (const info of catalog.packages) {
-        if (!packages.has(info.name)) {
-          packages.set(info.name, new Map());
-        }
-        packages.get(info.name)!.set(info.major, info);
+  if (!data.Body) {
+    console.log('Catalog not found. Recreating...');
+    for await (const object of relevantObjects(BUCKET_NAME)) {
+      try {
+        await appendPackage(packages, object.Key!, BUCKET_NAME);
+      } catch (e) {
+        // corrupt package, mark it and move on.
+        // its probably already in the DLQ.
+        console.log(`Error: ${e}`);
       }
     }
   } else {
-    console.log('Rebuild requested, ignoring existing catalog...');
-  }
-
-  console.log('Listing existing objects...');
-  for await (const object of relevantObjects(BUCKET_NAME)) {
-    // Ensure we don't already have a more recent version tracked for this package-major.
-    const [, packageName, versionStr] = object.Key!.match(KEY_FORMAT_REGEX)!;
-    const version = new SemVer(versionStr);
-    const found = packages.get(packageName)?.get(version.major);
-    if (found != null && version.compare(found.version) <= 0) {
-      console.log(`Skipping ${packageName}@${version} because it is not newer than the existing ${found.version}`);
-      continue;
+    console.log('Catalog found. Loading...');
+    const catalog = JSON.parse(data.Body.toString('utf-8'));
+    for (const info of catalog.packages) {
+      if (!packages.has(info.name)) {
+        packages.set(info.name, new Map());
+      }
+      packages.get(info.name)!.set(info.major, info);
     }
-    console.log(`Registering ${packageName}@${version}`);
+    console.log('Registering new packages...');
+    for (const record of event.Records) {
 
-    // Donwload the tarball to inspect the `package.json` data therein.
-    const data = await aws.s3().getObject({ Bucket: BUCKET_NAME, Key: object.Key! }).promise();
-    const npmMetadataKey = object.Key!.replace(constants.PACKAGE_KEY_SUFFIX, constants.METADATA_KEY_SUFFIX);
-    const npmMetadataResponse = await aws.s3().getObject({ Bucket: BUCKET_NAME, Key: npmMetadataKey }).promise();
-    const manifest = await new Promise<Buffer>((ok, ko) => {
-      gunzip(Buffer.from(data.Body!), (err, tar) => {
-        if (err) {
-          return ko(err);
-        }
-        extract()
-          .on('entry', (header, stream, next) => {
-            if (header.name !== 'package/package.json') {
-              // Not the file we are looking for, skip ahead (next run-loop tick).
-              return setImmediate(next);
-            }
-            const chunks = new Array<Buffer>();
-            return stream
-              .on('data', (chunk) => chunks.push(Buffer.from(chunk)))
-              .once('end', () => {
-                ok(Buffer.concat(chunks));
-                next();
-              })
-              .resume();
-          })
-          .once('finish', () => {
-            ko(new Error('Could not find package/package.json in tarball!'));
-          })
-          .write(tar, (writeErr) => {
-            if (writeErr) {
-              ko(writeErr);
-            }
-          });
-      });
-    });
-    // Add the PackageInfo into the working set
-    const pkgMetadata = JSON.parse(manifest.toString('utf-8'));
-    const npmMetadata = JSON.parse(npmMetadataResponse?.Body?.toString('utf-8') ?? '{}');
-    const major = new SemVer(pkgMetadata.version).major;
-    if (!packages.has(pkgMetadata.name)) {
-      packages.set(pkgMetadata.name, new Map());
+      // Key names are escaped (`@` as `%40`) in the input payload... Decode it here... We cannot use
+      // `decodeURI` here because it does not undo encoding that `encodeURI` would not have done, and
+      // that would not replace `@` in the position where it is in the keys... So we have to work on
+      // the URI components instead.
+      const key = record.s3.object.key.split('/').map((comp) => decodeURIComponent(comp)).join('/');
+      await appendPackage(packages, key, BUCKET_NAME);
     }
-    packages.get(pkgMetadata.name)!.set(major, {
-      author: pkgMetadata.author,
-      description: pkgMetadata.description,
-      keywords: pkgMetadata.keywords,
-      languages: pkgMetadata.jsii.targets,
-      license: pkgMetadata.license,
-      major,
-      metadata: npmMetadata,
-      name: pkgMetadata.name,
-      time: pkgMetadata.time, // TODO: Change this to an appropriate value
-      version: pkgMetadata.version,
-    });
   }
 
   // Build the final data package...
@@ -132,7 +85,6 @@ export async function handler(event: { readonly rebuild?: boolean }, context: Co
     Body: JSON.stringify(catalog, null, 2),
     ContentType: 'text/json',
     Metadata: {
-      'Build-Process': event.rebuild ? 'FROM_SCRATCH' : 'INCREMENTAL',
       'Lambda-Log-Group': context.logGroupName,
       'Lambda-Log-Stream': context.logStreamName,
       'Lambda-Run-Id': context.awsRequestId,
@@ -151,13 +103,81 @@ async function* relevantObjects(bucket: string) {
   do {
     const result = await aws.s3().listObjectsV2(request).promise();
     for (const object of result.Contents ?? []) {
-      if (!object.Key?.endsWith(constants.PACKAGE_KEY_SUFFIX)) {
+      if (!object.Key?.endsWith(constants.ASSEMBLY_KEY_SUFFIX)) {
         continue;
       }
       yield object;
     }
     request.ContinuationToken = result.NextContinuationToken;
   } while (request.ContinuationToken != null);
+}
+
+async function appendPackage(packages: any, assemblyKey: string, bucketName: string) {
+  console.log(`Processing key: ${assemblyKey}`);
+  const pkgKey = assemblyKey.replace(constants.ASSEMBLY_KEY_SUFFIX, constants.PACKAGE_KEY_SUFFIX);
+  const [, packageName, versionStr] = pkgKey.match(KEY_FORMAT_REGEX)!;
+  const version = new SemVer(versionStr);
+  const found = packages.get(packageName)?.get(version.major);
+  if (found != null && version.compare(found.version) <= 0) {
+    console.log(`Skipping ${packageName}@${version} because it is not newer than the existing ${found.version}`);
+    return;
+  }
+  console.log(`Registering ${packageName}@${version}`);
+
+  // Donwload the tarball to inspect the `package.json` data therein.
+  const pkg = await aws.s3().getObject({ Bucket: bucketName, Key: pkgKey }).promise();
+  const metadataKey = pkgKey.replace(constants.PACKAGE_KEY_SUFFIX, constants.METADATA_KEY_SUFFIX);
+  const metadataResponse = await aws.s3().getObject({ Bucket: bucketName, Key: metadataKey }).promise();
+  const manifest = await new Promise<Buffer>((ok, ko) => {
+    gunzip(Buffer.from(pkg.Body!), (err, tar) => {
+      if (err) {
+        return ko(err);
+      }
+      extract()
+        .on('entry', (header, stream, next) => {
+          if (header.name !== 'package/package.json') {
+            // Not the file we are looking for, skip ahead (next run-loop tick).
+            return setImmediate(next);
+          }
+          const chunks = new Array<Buffer>();
+          return stream
+            .on('data', (chunk) => chunks.push(Buffer.from(chunk)))
+            .once('end', () => {
+              ok(Buffer.concat(chunks));
+              next();
+            })
+            .resume();
+        })
+        .once('finish', () => {
+          ko(new Error('Could not find package/package.json in tarball!'));
+        })
+        .write(tar, (writeErr) => {
+          if (writeErr) {
+            ko(writeErr);
+          }
+        });
+    });
+  });
+    // Add the PackageInfo into the working set
+  const pkgMetadata = JSON.parse(manifest.toString('utf-8'));
+  const npmMetadata = JSON.parse(metadataResponse?.Body?.toString('utf-8') ?? '{}');
+  const major = new SemVer(pkgMetadata.version).major;
+  if (!packages.has(pkgMetadata.name)) {
+    packages.set(pkgMetadata.name, new Map());
+  }
+  packages.get(pkgMetadata.name)!.set(major, {
+    author: pkgMetadata.author,
+    description: pkgMetadata.description,
+    keywords: pkgMetadata.keywords,
+    languages: pkgMetadata.jsii.targets,
+    license: pkgMetadata.license,
+    major,
+    metadata: npmMetadata,
+    name: pkgMetadata.name,
+    time: pkgMetadata.time, // TODO: Change this to an appropriate value
+    version: pkgMetadata.version,
+  });
+
 }
 
 interface PackageInfo {
