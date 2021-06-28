@@ -39,12 +39,14 @@ export async function handler(event: S3Event, context: Context) {
   if (!data.Body) {
     console.log('Catalog not found. Recreating...');
     for await (const object of relevantObjects(BUCKET_NAME)) {
+      const assemblyKey = object.Key!;
       try {
-        await appendPackage(packages, object.Key!, BUCKET_NAME);
+        await appendPackage(packages, assemblyKey, BUCKET_NAME);
       } catch (e) {
         // corrupt package, mark it and move on.
         // its probably already in the DLQ.
-        console.log(`Error: ${e}`);
+        // TODO emit a metric so we can trace back the logs of this execution.
+        console.log(`Failed processing ${assemblyKey}: ${e}`);
       }
     }
   } else {
@@ -64,6 +66,9 @@ export async function handler(event: S3Event, context: Context) {
       // that would not replace `@` in the position where it is in the keys... So we have to work on
       // the URI components instead.
       const key = record.s3.object.key.split('/').map((comp) => decodeURIComponent(comp)).join('/');
+
+      // note that we intentionally don't catch errors here to let these
+      // event go to the DLQ for manual inspection.
       await appendPackage(packages, key, BUCKET_NAME);
     }
   }

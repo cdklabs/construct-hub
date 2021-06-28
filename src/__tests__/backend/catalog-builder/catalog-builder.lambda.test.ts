@@ -2,6 +2,8 @@ import { randomBytes } from 'crypto';
 import { PassThrough } from 'stream';
 import * as zip from 'zlib';
 
+// eslint-disable-next-line import/no-unresolved
+import type { S3Event, S3EventRecord } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import * as tar from 'tar-stream';
@@ -62,7 +64,7 @@ test('no indexed packages', () => {
   });
 
   // WHEN
-  const result = handler({} as any, { /* context */ } as any);
+  const result = handler({ Records: [] }, { /* context */ } as any);
 
   // THEN
   return expect(result).resolves.toBe(mockPutObjectResult);
@@ -164,7 +166,7 @@ test('initial build', () => {
   });
 
   // WHEN
-  const result = handler({} as any, { /* context */ } as any);
+  const result = handler({ Records: [] }, { /* context */ } as any);
 
   // THEN
   return expect(result).resolves.toBe(mockPutObjectResult);
@@ -228,31 +230,18 @@ test('incremental build', () => {
       return cb(new NoSuchKeyError());
     }
   });
-  const mockFirstPage: AWS.S3.ObjectList = [
-    { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.3${constants.PACKAGE_KEY_SUFFIX}` },
-    { Key: `${constants.STORAGE_KEY_PREFIX}name/v1.2.3${constants.PACKAGE_KEY_SUFFIX}` },
-  ];
-  const mockSecondPage: AWS.S3.ObjectList = [
-    { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v2.0.5${constants.PACKAGE_KEY_SUFFIX}` },
-    { Key: `${constants.STORAGE_KEY_PREFIX}name/v2.0.0-pre.1${constants.PACKAGE_KEY_SUFFIX}` },
-  ];
-  AWSMock.mock('S3', 'listObjectsV2', (req: AWS.S3.ListObjectsV2Request, cb: Response<AWS.S3.ListObjectsV2Output>) => {
-    try {
-      expect(req.Bucket).toBe(mockBucketName);
-      expect(req.Prefix).toBe(constants.STORAGE_KEY_PREFIX);
-    } catch (e) {
-      return cb(e);
-    }
-    if (req.ContinuationToken == null) {
-      return cb(null, { Contents: mockFirstPage, NextContinuationToken: 'next' });
-    }
-    try {
-      expect(req.ContinuationToken).toBe('next');
-    } catch (e) {
-      return cb(e);
-    }
-    return cb(null, { Contents: mockSecondPage });
-  });
+
+  function createRecord(key: string): S3EventRecord {
+    return { s3: { object: { key } } } as any;
+  }
+  const event: S3Event = {
+    Records: [
+      createRecord(`${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.3${constants.PACKAGE_KEY_SUFFIX}`),
+      createRecord(`${constants.STORAGE_KEY_PREFIX}name/v1.2.3${constants.PACKAGE_KEY_SUFFIX}`),
+      createRecord(`${constants.STORAGE_KEY_PREFIX}@scope/package/v2.0.5${constants.PACKAGE_KEY_SUFFIX}`),
+      createRecord(`${constants.STORAGE_KEY_PREFIX}name/v2.0.0-pre.1${constants.PACKAGE_KEY_SUFFIX}`),
+    ],
+  };
   const mockPutObjectResult: AWS.S3.PutObjectOutput = {};
   AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
     try {
@@ -303,7 +292,7 @@ test('incremental build', () => {
   });
 
   // WHEN
-  const result = handler({} as any, { /* context */ } as any);
+  const result = handler(event, { /* context */ } as any);
 
   // THEN
   return expect(result).resolves.toBe(mockPutObjectResult);
