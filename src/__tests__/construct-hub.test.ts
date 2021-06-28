@@ -28,7 +28,7 @@ test('with domain', () => {
 
   const cert = new DnsValidatedCertificate(stack, 'Cert', { hostedZone: zone, domainName: zone.zoneName });
 
-  new ConstructHub(stack, 'ConstructBBBHub', {
+  new ConstructHub(stack, 'ConstructHub', {
     domain: {
       zone, cert,
     },
