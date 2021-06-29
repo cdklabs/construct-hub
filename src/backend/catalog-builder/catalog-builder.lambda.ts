@@ -1,6 +1,7 @@
 import { gunzip } from 'zlib';
 
 import type { AssemblyTargets } from '@jsii/spec';
+import { metricScope, Unit } from 'aws-embedded-metrics';
 // eslint-disable-next-line import/no-unresolved
 import type { Context, S3Event } from 'aws-lambda';
 import { AWSError, S3 } from 'aws-sdk';
@@ -24,6 +25,7 @@ const KEY_FORMAT_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/
  * @returns the information about the updated S3 object.
  */
 export async function handler(event: S3Event, context: Context) {
+
   console.log(JSON.stringify(event, null, 2));
 
   const BUCKET_NAME = requireEnv('BUCKET_NAME');
@@ -38,17 +40,26 @@ export async function handler(event: S3Event, context: Context) {
 
   if (!data.Body) {
     console.log('Catalog not found. Recreating...');
+    const failures: any = {};
     for await (const object of relevantObjects(BUCKET_NAME)) {
       const assemblyKey = object.Key!;
       try {
         await appendPackage(packages, assemblyKey, BUCKET_NAME);
       } catch (e) {
-        // corrupt package, mark it and move on.
-        // its probably already in the DLQ.
-        // TODO emit a metric so we can trace back the logs of this execution.
-        console.log(`Failed processing ${assemblyKey}: ${e}`);
+        failures[assemblyKey] = e;
       }
     }
+    for (const [key, error] of Object.entries(failures)) {
+      console.log(`Failed processing ${key}: ${error}`);
+    }
+
+    await metricScope((metrics) => async () => {
+      metrics.setNamespace('ConstructHub/CatalogBuilder');
+      const failedCount = Object.keys(failures).length;
+      console.log(`Marking ${failedCount} failed packages`);
+      metrics.putMetric('FailedPackagesOnRecreation', failedCount, Unit.Count);
+    })();
+
   } else {
     console.log('Catalog found. Loading...');
     const catalog = JSON.parse(data.Body.toString('utf-8'));
@@ -82,7 +93,7 @@ export async function handler(event: S3Event, context: Context) {
     }
   }
 
-  console.log(`Registered ${catalog.packages.length} package major versions`);
+  console.log(`There are now ${catalog.packages.length} registered package major versions`);
   // Upload the result to S3 and exit.
   return aws.s3().putObject({
     Bucket: BUCKET_NAME,
@@ -96,6 +107,7 @@ export async function handler(event: S3Event, context: Context) {
       'Package-Count': `${catalog.packages.length}`,
     },
   }).promise();
+
 }
 
 /**
