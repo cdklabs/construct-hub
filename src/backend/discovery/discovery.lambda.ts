@@ -85,7 +85,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
           // Process all remaining updates
           await Promise.all(versionInfos.map(async (infos) => {
             const before = Date.now();
-            await processUpdatedVersion(infos);
+            await processUpdatedVersion(infos, metrics);
             metrics.putMetric(MetricName.STAGING_TIME, Date.now() - before, Unit.Milliseconds);
           }));
 
