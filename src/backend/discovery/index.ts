@@ -183,7 +183,7 @@ export class Discovery extends Construct {
   /**
    * The total count of staging failures.
    */
-   public metricStagingFailureCount(opts?: MetricOptions): IMetric {
+  public metricStagingFailureCount(opts?: MetricOptions): IMetric {
     return new Metric({
       metricName: MetricName.STAGING_FAILURE_COUNT,
       namespace: METRIC_NAMESPACE,
