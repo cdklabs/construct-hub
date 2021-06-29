@@ -1,4 +1,4 @@
-import { ComparisonOperator, IAlarm } from '@aws-cdk/aws-cloudwatch';
+import { ComparisonOperator, IAlarm, IMetric, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { RetentionDays } from '@aws-cdk/aws-logs';
@@ -7,7 +7,7 @@ import { IQueue } from '@aws-cdk/aws-sqs';
 
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
-import { STAGED_KEY_PREFIX } from '../shared/constants.lambda-shared';
+import { MetricName, METRIC_NAMESPACE, S3KeyPrefix } from './constants.lambda-shared';
 import { Discovery as Handler } from './discovery';
 
 export interface DiscoveryProps {
@@ -50,6 +50,8 @@ export class Discovery extends Construct {
    */
   public readonly alarmNoInvocations: IAlarm;
 
+  private readonly timeout = Duration.minutes(15);
+
   public constructor(scope: Construct, id: string, props: DiscoveryProps) {
     super(scope, id);
 
@@ -57,19 +59,18 @@ export class Discovery extends Construct {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       lifecycleRules: [
         {
-          prefix: STAGED_KEY_PREFIX, // delete the staged tarball after 30 days
+          prefix: S3KeyPrefix.STAGED_KEY_PREFIX, // delete the staged tarball after 30 days
           expiration: Duration.days(30),
         },
       ],
     });
 
     // Note: the handler is designed to stop processing more batches about 2 minutes ahead of the timeout.
-    const timeout = Duration.minutes(15);
     const lambda = new Handler(this, 'Default', {
       description: 'Periodically query npm.js index for new construct libraries',
       memorySize: 10_240,
       reservedConcurrentExecutions: 1, // Only one execution (avoids race conditions on the S3 marker object)
-      timeout,
+      timeout: this.timeout,
       environment: {
         BUCKET_NAME: this.bucket.bucketName,
         QUEUE_URL: props.queue.queueUrl,
@@ -80,7 +81,7 @@ export class Discovery extends Construct {
     props.queue.grantSendMessages(lambda);
 
     new Rule(this, 'ScheduleRule', {
-      schedule: Schedule.rate(timeout),
+      schedule: Schedule.rate(this.timeout),
       targets: [new LambdaFunction(lambda)],
     });
 
@@ -99,4 +100,124 @@ export class Discovery extends Construct {
         threshold: 1,
       });
   }
+
+  /**
+   * The average time it took to process a changes batch.
+   */
+  public metricBatchProcessingTime(opts?: MetricOptions): IMetric {
+    return new Metric({
+      metricName: MetricName.BATCH_PROCESSING_TIME,
+      namespace: METRIC_NAMESPACE,
+      period: this.timeout,
+      statistic: Statistic.AVERAGE,
+      ...opts,
+    });
+  }
+
+  /**
+   * The total count of changes that were processed.
+   */
+  public metricChangeCount(opts?: MetricOptions): IMetric {
+    return new Metric({
+      metricName: MetricName.CHANGE_COUNT,
+      namespace: METRIC_NAMESPACE,
+      period: this.timeout,
+      statistic: Statistic.SUM,
+      ...opts,
+    });
+  }
+
+  /**
+   * The age of the oldest package version that was processed.
+   */
+  public metricPackageVersionAge(opts?: MetricOptions): IMetric {
+    return new Metric({
+      metricName: MetricName.PACKAGE_VERSION_AGE,
+      namespace: METRIC_NAMESPACE,
+      period: this.timeout,
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+    });
+  }
+
+  /**
+   * The total count of package versions that were inspected.
+   */
+  public metricPackageVersionCount(opts?: MetricOptions): IMetric {
+    return new Metric({
+      metricName: MetricName.PACKAGE_VERSION_COUNT,
+      namespace: METRIC_NAMESPACE,
+      period: this.timeout,
+      statistic: Statistic.SUM,
+      ...opts,
+    });
+  }
+
+  /**
+   * The total count of package versions that were deemed relevant.
+   */
+  public metricRelevantPackageVersions(opts?: MetricOptions): IMetric {
+    return new Metric({
+      metricName: MetricName.RELEVANT_PACKAGE_VERSIONS,
+      namespace: METRIC_NAMESPACE,
+      period: this.timeout,
+      statistic: Statistic.SUM,
+      ...opts,
+    });
+  }
+
+  /**
+   * The amount of time that was remaining when the lambda returned in order to
+   * avoid hitting a timeout.
+   */
+  public metricRemainingTime(opts?: MetricOptions): IMetric {
+    return new Metric({
+      metricName: MetricName.REMAINING_TIME,
+      namespace: METRIC_NAMESPACE,
+      period: this.timeout,
+      statistic: Statistic.AVERAGE,
+      ...opts,
+    });
+  }
+
+  /**
+   * The total count of staging failures.
+   */
+   public metricStagingFailureCount(opts?: MetricOptions): IMetric {
+    return new Metric({
+      metricName: MetricName.STAGING_FAILURE_COUNT,
+      namespace: METRIC_NAMESPACE,
+      period: this.timeout,
+      statistic: Statistic.SUM,
+      ...opts,
+    });
+  }
+
+  /**
+   * The average time it took to stage a package to S3.
+   */
+  public metricStagingTime(opts?: MetricOptions): IMetric {
+    return new Metric({
+      metricName: MetricName.STAGING_TIME,
+      namespace: METRIC_NAMESPACE,
+      period: this.timeout,
+      statistic: Statistic.AVERAGE,
+      ...opts,
+    });
+  }
+
+  /**
+   * The amount of changes that were not processed due to having an invalid
+   * format.
+   */
+  public metricUnprocessableEntity(opts?: MetricOptions): IMetric {
+    return new Metric({
+      metricName: MetricName.UNPROCESSABLE_ENTITY,
+      namespace: METRIC_NAMESPACE,
+      period: this.timeout,
+      statistic: Statistic.SUM,
+      ...opts,
+    });
+  }
+
 }
