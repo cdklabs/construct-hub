@@ -11,6 +11,7 @@ import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 
+const METRICS_NAMESPACE = 'ConstructHub/CatalogBuilder';
 const KEY_FORMAT_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`);
 // Capture groups:                                                   ┗━━━━━━━━1━━━━━━━━┛  ┗━━2━━┛
 
@@ -54,7 +55,7 @@ export async function handler(event: S3Event, context: Context) {
     }
 
     await metricScope((metrics) => async () => {
-      metrics.setNamespace('ConstructHub/CatalogBuilder');
+      metrics.setNamespace(METRICS_NAMESPACE);
       const failedCount = Object.keys(failures).length;
       console.log(`Marking ${failedCount} failed packages`);
       metrics.putMetric('FailedPackagesOnRecreation', failedCount, Unit.Count);
@@ -94,6 +95,11 @@ export async function handler(event: S3Event, context: Context) {
   }
 
   console.log(`There are now ${catalog.packages.length} registered package major versions`);
+  await metricScope((metrics) => async () => {
+    metrics.setNamespace(METRICS_NAMESPACE);
+    metrics.putMetric('RegisteredPackagesMajorVersion', catalog.packages.length, Unit.Count);
+  })();
+
   // Upload the result to S3 and exit.
   return aws.s3().putObject({
     Bucket: BUCKET_NAME,
@@ -191,7 +197,6 @@ async function appendPackage(packages: any, assemblyKey: string, bucketName: str
     major,
     metadata: npmMetadata,
     name: pkgMetadata.name,
-    time: pkgMetadata.time, // TODO: Change this to an appropriate value
     version: pkgMetadata.version,
   });
 
