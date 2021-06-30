@@ -66,7 +66,7 @@ export class Inventory extends Construct {
       namespace: METRICS_NAMESPACE,
       metricName: MetricName.MISSING_METADATA_COUNT,
       period: Duration.minutes(5),
-      statistic: Statistic.SUM,
+      statistic: Statistic.MAXIMUM,
       ...opts,
     });
   }
@@ -76,7 +76,7 @@ export class Inventory extends Construct {
       namespace: METRICS_NAMESPACE,
       metricName: MetricName.MISSING_ORIGINAL_ASSEMBLY_COUNT,
       period: Duration.minutes(5),
-      statistic: Statistic.SUM,
+      statistic: Statistic.MAXIMUM,
       ...opts,
     });
   }
@@ -86,7 +86,7 @@ export class Inventory extends Construct {
       namespace: METRICS_NAMESPACE,
       metricName: MetricName.PACKAGE_VERSION_COUNT,
       period: Duration.minutes(5),
-      statistic: Statistic.SUM,
+      statistic: Statistic.MAXIMUM,
       ...opts,
     });
   }
@@ -96,7 +96,7 @@ export class Inventory extends Construct {
       namespace: METRICS_NAMESPACE,
       metricName: MetricName.MISSING_PYTHON_ASSEMBLY_COUNT,
       period: Duration.minutes(5),
-      statistic: Statistic.SUM,
+      statistic: Statistic.MAXIMUM,
       ...opts,
     });
   }
@@ -106,7 +106,7 @@ export class Inventory extends Construct {
       namespace: METRICS_NAMESPACE,
       metricName: MetricName.MISSING_TARBALL_COUNT,
       period: Duration.minutes(5),
-      statistic: Statistic.SUM,
+      statistic: Statistic.MAXIMUM,
       ...opts,
     });
   }
@@ -116,7 +116,7 @@ export class Inventory extends Construct {
       namespace: METRICS_NAMESPACE,
       metricName: MetricName.UNKNOWN_OBJECT_COUNT,
       period: Duration.minutes(5),
-      statistic: Statistic.SUM,
+      statistic: Statistic.MAXIMUM,
       ...opts,
     });
   }

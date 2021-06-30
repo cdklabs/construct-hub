@@ -16,8 +16,6 @@ export async function handler(event: ScheduledEvent, _context: Context) {
   const indexedPackages = new Map<string, IndexedPackageStatus>();
 
   const bucket = requireEnv('BUCKET_NAME');
-  const timestamp = Date.now();
-
   for await (const key of relevantObjectKeys(bucket)) {
     const [, name, version] = constants.STORAGE_KEY_FORMAT_REGEX.exec(key)!;
     const fullName = `${name}@${version}`;
@@ -40,24 +38,42 @@ export async function handler(event: ScheduledEvent, _context: Context) {
     }
   }
 
-  for (const [name, status] of indexedPackages.entries()) {
-    await metricScope((metrics) => () => {
-      metrics.setDimensions();
+  await metricScope((metrics) => () => {
+    // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
+    metrics.setDimensions();
 
-      metrics.setTimestamp(timestamp);
-      metrics.setProperty('PackageVersion', name);
-      metrics.putMetric(MetricName.MISSING_METADATA_COUNT, status.metadataPresent ? 0 : 1, Unit.Count);
-      metrics.putMetric(MetricName.MISSING_ORIGINAL_ASSEMBLY_COUNT, status.originalAssemblyPresent ? 0 : 1, Unit.Count);
-      metrics.putMetric(MetricName.MISSING_PYTHON_ASSEMBLY_COUNT, status.pythonAssemblyPresent ? 0 : 1, Unit.Count);
-      metrics.putMetric(MetricName.MISSING_TARBALL_COUNT, status.tarballPresent ? 0 : 1, Unit.Count);
-      metrics.putMetric(MetricName.PACKAGE_VERSION_COUNT, 1, Unit.Count);
-
-      if (status.unknownObjects != null) {
-        metrics.setProperty('UnknownObjects', status.unknownObjects);
+    const missingMetadata = new Array<string>();
+    const missingOriginalAssembly = new Array<string>();
+    const missingPythonAssembly = new Array<string>();
+    const missingTarball = new Array<string>();
+    const unknownObjects = new Array<string>();
+    for (const [name, status] of indexedPackages.entries()) {
+      if (!status.metadataPresent) {
+        missingMetadata.push(name);
       }
-      metrics.putMetric(MetricName.UNKNOWN_OBJECT_COUNT, status.unknownObjects?.length ?? 0, Unit.Count);
-    })();
-  }
+      if (!status.originalAssemblyPresent) {
+        missingOriginalAssembly.push(name);
+      }
+      if (!status.pythonAssemblyPresent) {
+        missingPythonAssembly.push(name);
+      }
+      if (!status.tarballPresent) {
+        missingTarball.push(name);
+      }
+      if (status.unknownObjects?.length ?? 0 > 0) {
+        unknownObjects.push(...status.unknownObjects!);
+      }
+    }
+
+    metrics.setProperty('detail', { missingMetadata, missingOriginalAssembly, missingPythonAssembly, missingTarball, unknownObjects });
+
+    metrics.putMetric(MetricName.MISSING_METADATA_COUNT, missingMetadata.length, Unit.Count);
+    metrics.putMetric(MetricName.MISSING_ORIGINAL_ASSEMBLY_COUNT, missingOriginalAssembly.length, Unit.Count);
+    metrics.putMetric(MetricName.MISSING_PYTHON_ASSEMBLY_COUNT, missingPythonAssembly.length, Unit.Count);
+    metrics.putMetric(MetricName.MISSING_TARBALL_COUNT, missingTarball.length, Unit.Count);
+    metrics.putMetric(MetricName.PACKAGE_VERSION_COUNT, indexedPackages.size, Unit.Count);
+    metrics.putMetric(MetricName.UNKNOWN_OBJECT_COUNT, unknownObjects.length, Unit.Count);
+  })();
 }
 
 async function* relevantObjectKeys(bucket: string): AsyncGenerator<string, void, void> {
