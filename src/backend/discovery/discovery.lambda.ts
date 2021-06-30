@@ -68,6 +68,9 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
     db.changesReader.get(config)
       .on('batch', metricScope((metrics) => async (batch: readonly Change[]) => {
+        // Clear automatically set dimensions - we don't need them (see https://github.com/awslabs/aws-embedded-metrics-node/issues/73)
+        metrics.setDimensions();
+
         metrics.setProperty('StartSeq', updatedMarker);
         const startTime = Date.now();
         try {
