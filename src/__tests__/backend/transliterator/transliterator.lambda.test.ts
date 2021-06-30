@@ -4,7 +4,6 @@ import { EventEmitter } from 'events';
 import { promises as fs } from 'fs';
 import * as path from 'path';
 
-// eslint-disable-next-line import/no-unresolved
 import type { S3Event } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';

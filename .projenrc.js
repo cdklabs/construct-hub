@@ -50,7 +50,6 @@ const project = new JsiiProject({
     cdkAssert,
     ...peerDeps,
     '@jsii/spec',
-    '@types/aws-lambda',
     '@types/fs-extra',
     '@types/semver',
     '@types/tar-stream',
@@ -257,6 +256,11 @@ function discoverLambdas() {
   for (const entry of glob.sync('src/**/*.lambda.ts')) {
     newLambdaHandler(entry);
   }
+
+  // Add the AWS Lambda type definitions, and ignore that it never resolves
+  project.addDevDeps('@types/aws-lambda');
+  const noUnresolvedRule = project.eslint?.rules['import/no-unresolved'];
+  noUnresolvedRule[1] = { ...noUnresolvedRule[1] ?? {}, ignore: [...noUnresolvedRule[1]?.ignore ?? [], 'aws-lambda'] };
 }
 
 // extract the "build/" directory from "construct-hub-webapp" into "./website"

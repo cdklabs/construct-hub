@@ -2,7 +2,6 @@ import { randomBytes } from 'crypto';
 import { PassThrough } from 'stream';
 import * as zip from 'zlib';
 
-// eslint-disable-next-line import/no-unresolved
 import type { S3Event, S3EventRecord } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';

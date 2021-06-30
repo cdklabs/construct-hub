@@ -3,7 +3,6 @@ import * as https from 'https';
 import { URL } from 'url';
 
 import { metricScope, MetricsLogger, Unit } from 'aws-embedded-metrics';
-// eslint-disable-next-line import/no-unresolved
 import type { Context, ScheduledEvent } from 'aws-lambda';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import Nano = require('nano');

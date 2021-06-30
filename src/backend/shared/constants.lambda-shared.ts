@@ -48,3 +48,9 @@ export const FAILED_KEY_PREFIX = 'failed/';
  * Key prefix used by the built-in discovery function to stage tarballs.
  */
 export const STAGED_KEY_PREFIX = 'staged/';
+
+/**
+ * A regular expression that can be used to parse out a storage key.
+ */
+export const STORAGE_KEY_FORMAT_REGEX = new RegExp(`^${STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`);
+// Capture groups:                                                        ┗━━━━━━━━1━━━━━━━━┛  ┗━━2━━┛
