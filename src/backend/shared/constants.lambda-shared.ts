@@ -30,7 +30,7 @@ export const ASSEMBLY_KEY_SUFFIX = '/assembly.json';
  * The key suffix for assemblies in the provided language. This should NOT be
  * used for the TypeScript/JavaScript assembly however.
  */
-export function assemblyKeySuffix(lang: TargetLanguage) {
+export function assemblyKeySuffix(lang: TargetLanguage | '*') {
   return `/assembly-${lang}.json`;
 }
 
