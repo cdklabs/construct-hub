@@ -259,8 +259,10 @@ function discoverLambdas() {
 
   // Add the AWS Lambda type definitions, and ignore that it never resolves
   project.addDevDeps('@types/aws-lambda');
-  const noUnresolvedRule = project.eslint?.rules['import/no-unresolved'];
-  noUnresolvedRule[1] = { ...noUnresolvedRule[1] ?? {}, ignore: [...noUnresolvedRule[1]?.ignore ?? [], 'aws-lambda'] };
+  const noUnresolvedRule = project.eslint && project.eslint.rules['import/no-unresolved'];
+  if (noUnresolvedRule != null) {
+    noUnresolvedRule[1] = { ...noUnresolvedRule[1] || {}, ignore: [...noUnresolvedRule[1].ignore || [], 'aws-lambda'] };
+  }
 }
 
 // extract the "build/" directory from "construct-hub-webapp" into "./website"
