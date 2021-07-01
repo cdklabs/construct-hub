@@ -261,7 +261,7 @@ function discoverLambdas() {
   project.addDevDeps('@types/aws-lambda');
   const noUnresolvedRule = project.eslint && project.eslint.rules['import/no-unresolved'];
   if (noUnresolvedRule != null) {
-    noUnresolvedRule[1] = { ...noUnresolvedRule[1] || {}, ignore: [...noUnresolvedRule[1].ignore || [], 'aws-lambda'] };
+    noUnresolvedRule[1] = { ...noUnresolvedRule[1] || {}, ignore: [...(noUnresolvedRule[1] || {}).ignore || [], 'aws-lambda'] };
   }
 }
 
