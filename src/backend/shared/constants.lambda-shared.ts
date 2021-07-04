@@ -27,11 +27,15 @@ export const METADATA_KEY_SUFFIX = '/metadata.json';
 export const ASSEMBLY_KEY_SUFFIX = '/assembly.json';
 
 /**
- * The key suffix for assemblies in the provided language. This should NOT be
- * used for the TypeScript/JavaScript assembly however.
+ * The key suffix for documentation artifacts.
  */
-export function assemblyKeySuffix(lang: TargetLanguage | '*') {
-  return `/assembly-${lang}.json`;
+export const DOCS_KEY_SUFFIX = '/docs-';
+
+/**
+ * The key suffix for documentation artifacts in a specific target language.
+ */
+export function docsKeySuffix(lang: TargetLanguage) {
+  return `${DOCS_KEY_SUFFIX}${lang}.md`;
 }
 
 /**

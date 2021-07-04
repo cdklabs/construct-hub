@@ -1,15 +1,10 @@
-import { spawn } from 'child_process';
 import * as console from 'console';
-import * as os from 'os';
-import * as path from 'path';
-import * as process from 'process';
 
 // eslint-disable-next-line import/no-unresolved
 import type { Context, S3Event } from 'aws-lambda';
 import { S3 } from 'aws-sdk';
-import * as fs from 'fs-extra';
+import { Documentation } from 'jsii-docgen';
 import { TargetLanguage } from 'jsii-rosetta';
-import { transliterateAssembly } from 'jsii-rosetta/lib/commands/transliterate';
 
 import * as constants from '../shared/constants.lambda-shared';
 
@@ -53,68 +48,28 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
     console.log(`Source Key:     ${inputKey}`);
     console.log(`Source Version: ${record.s3.object.versionId}`);
 
-    const object = await client.getObject({
+    const docs = await Documentation.forRemotePackage(packageName, packageVersion);
+    const artifact = constants.docsKeySuffix(TargetLanguage.PYTHON);
+    const key = inputKey.replace(/\/[^/]+$/, artifact);
+
+    const response = await client.putObject({
       Bucket: record.s3.bucket.name,
-      Key: inputKey,
-      VersionId: record.s3.object.versionId,
+      Key: key,
+      Body: docs.render(),
+      ContentType: 'text/html',
+      Metadata: {
+        'Origin-Version-Id': record.s3.object.versionId ?? 'N/A',
+        'Lambda-Log-Group': context.logGroupName,
+        'Lambda-Log-Stream': context.logStreamName,
+        'Lambda-Run-Id': context.awsRequestId,
+      },
     }).promise();
 
-    const workdir = await fs.mkdtemp(path.join(os.tmpdir(), 'workdir'));
-    try {
-      const tarball = path.join(workdir, `${packageName.replace('@', '').replace('/', '-')}-${packageVersion}.tgz`);
-      await fs.writeFile(tarball, object.Body!);
-      await new Promise<void>((ok, ko) => {
-        // --ignore-scripts disables lifecycle hooks, in order to prevent execution of arbitrary code
-        // --no-bin-links ensures npm does not insert anything in $PATH
-        const npmInstall = spawn('npm', ['install', '--ignore-scripts', '--no-bin-links', '--no-save', tarball], {
-          cwd: workdir,
-          env: {
-            ...process.env,
-            HOME: os.tmpdir(), // npm fails with EROFS if $HOME is read-only, event if it won't write there
-          },
-          stdio: ['ignore', 'inherit', 'inherit'],
-        });
-        npmInstall.once('error', ko);
-        npmInstall.once('close', (code, signal) => {
-          if (code === 0) {
-            ok();
-          } else {
-            ko(`"npm install" command ${code != null ? `exited with code ${code}` : `was terminated by signal ${signal}`}`);
-          }
-        });
-      });
-      const packageDir = path.join(workdir, 'node_modules', ...packageName.split('/'));
-
-      await transliterateAssembly(
-        [packageDir],
-        [TargetLanguage.PYTHON], // TODO: allow configuring this
-        { loose: true }, // Ignore missing assets, etc... Maximize chances of success!
-      );
-
-      // Payload object key => packages/[<@scope>/]<name>/v<version>/package.tgz
-      // Output object key  => packages/[<@scope>/]<name>/v<version>/assembly-python.json
-      const key = inputKey.replace(/\/[^/]+$/, constants.assemblyKeySuffix(TargetLanguage.PYTHON));
-      const response = await client.putObject({
-        Bucket: record.s3.bucket.name,
-        Key: key,
-        Body: await fs.readFile(path.join(packageDir, '.jsii.python')),
-        ContentType: 'text/json',
-        Metadata: {
-          'Origin-Version-Id': record.s3.object.versionId ?? 'N/A',
-          'Lambda-Log-Group': context.logGroupName,
-          'Lambda-Log-Stream': context.logStreamName,
-          'Lambda-Run-Id': context.awsRequestId,
-        },
-      }).promise();
-
-      created.push({
-        bucket: record.s3.bucket.name,
-        key,
-        versionId: response.VersionId,
-      });
-    } finally {
-      await fs.remove(workdir);
-    }
+    created.push({
+      bucket: record.s3.bucket.name,
+      key,
+      versionId: response.VersionId,
+    });
   }
   return created;
 }

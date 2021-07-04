@@ -51,13 +51,12 @@ export class Transliterator extends Construct {
     });
 
     // The handler reads & writes to this bucket.
-    props.bucket.grantRead(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.PACKAGE_KEY_SUFFIX}`);
-    props.bucket.grantWrite(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.assemblyKeySuffix('*')}`);
+    props.bucket.grantWrite(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.DOCS_KEY_SUFFIX}*`);
 
     // Creating the event chaining
     lambda.addEventSource(new S3EventSource(props.bucket, {
       events: [EventType.OBJECT_CREATED],
-      filters: [{ prefix: constants.STORAGE_KEY_PREFIX, suffix: constants.PACKAGE_KEY_SUFFIX }],
+      filters: [{ prefix: constants.STORAGE_KEY_PREFIX, suffix: constants.ASSEMBLY_KEY_SUFFIX }],
     }));
 
     props.monitoring.watchful.watchLambdaFunction('Transliterator Function', lambda);
