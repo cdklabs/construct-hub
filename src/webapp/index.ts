@@ -55,6 +55,7 @@ export class WebApp extends Construct {
         responseHttpStatus: 200,
         responsePagePath: '/index.html',
       })),
+      minimumProtocolVersion: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2018,
     });
 
     const jsiiObjOrigin = new origins.S3Origin(props.packageData);
