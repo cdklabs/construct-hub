@@ -6,9 +6,9 @@ import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
 
 import * as constants from '../shared/constants.lambda-shared';
-import { Docgenerator as Handler } from './docgenerator';
+import { Transliterator as Handler } from './transliterator';
 
-export interface DocGeneratorProps {
+export interface TransliteratorProps {
   /**
    * The bucket in which to source assemblies to transliterate.
    */
@@ -30,7 +30,7 @@ export interface DocGeneratorProps {
 /**
  * Transliterates jsii assemblies to various other languages.
  */
-export class DocGenerator extends Construct {
+export class Transliterator extends Construct {
   /**
    * Alarms if the dead-letter-queue associated with the transliteration process
    * is not empty, meaning some packages failed transliteration and require
@@ -38,7 +38,7 @@ export class DocGenerator extends Construct {
    */
   public readonly alarmDeadLetterQueueNotEmpty: IAlarm;
 
-  public constructor(scope: Construct, id: string, props: DocGeneratorProps) {
+  public constructor(scope: Construct, id: string, props: TransliteratorProps) {
     super(scope, id);
 
     const lambda = new Handler(this, 'Default', {
