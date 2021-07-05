@@ -6,9 +6,9 @@ import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
 
 import * as constants from '../shared/constants.lambda-shared';
-import { Transliterator as Handler } from './transliterator';
+import { Docgenerator as Handler } from './docgenerator';
 
-export interface TransliteratorProps {
+export interface DocGeneratorProps {
   /**
    * The bucket in which to source assemblies to transliterate.
    */
@@ -30,7 +30,7 @@ export interface TransliteratorProps {
 /**
  * Transliterates jsii assemblies to various other languages.
  */
-export class Transliterator extends Construct {
+export class DocGenerator extends Construct {
   /**
    * Alarms if the dead-letter-queue associated with the transliteration process
    * is not empty, meaning some packages failed transliteration and require
@@ -38,7 +38,7 @@ export class Transliterator extends Construct {
    */
   public readonly alarmDeadLetterQueueNotEmpty: IAlarm;
 
-  public constructor(scope: Construct, id: string, props: TransliteratorProps) {
+  public constructor(scope: Construct, id: string, props: DocGeneratorProps) {
     super(scope, id);
 
     const lambda = new Handler(this, 'Default', {
@@ -48,10 +48,18 @@ export class Transliterator extends Construct {
       memorySize: 10_240, // Currently the maximum possible setting
       retryAttempts: 2,
       timeout: Duration.minutes(15),
+      environment: {
+        // temporaty hack to generate construct-hub compliant markdown.
+        // see https://github.com/cdklabs/jsii-docgen/blob/master/src/docgen/render/markdown.ts#L172
+        HEADER_SPAN: 'true',
+      },
     });
 
-    // The handler reads & writes to this bucket.
-    props.bucket.grantWrite(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.DOCS_KEY_SUFFIX}*`);
+    // the handler fetches the assembly to read the target languages of the package
+    props.bucket.grantRead(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.ASSEMBLY_KEY_SUFFIX}`);
+
+    // the handler writes a file for each target language
+    props.bucket.grantWrite(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix('*')}`);
 
     // Creating the event chaining
     lambda.addEventSource(new S3EventSource(props.bucket, {

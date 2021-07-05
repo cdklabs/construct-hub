@@ -5,7 +5,7 @@ import * as sqs from '@aws-cdk/aws-sqs';
 import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { AlarmActions, Domain } from './api';
-import { CatalogBuilder, Discovery, Ingestion, Transliterator } from './backend';
+import { CatalogBuilder, Discovery, Ingestion, DocGenerator } from './backend';
 import { Monitoring } from './monitoring';
 import { WebApp } from './webapp';
 
@@ -66,7 +66,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     const discovery = new Discovery(this, 'Discovery', { queue: this.ingestion.queue, monitoring });
     discovery.bucket.grantRead(this.ingestion);
 
-    new Transliterator(this, 'Transliterator', { bucket: packageData, monitoring });
+    new DocGenerator(this, 'DocGenerator', { bucket: packageData, monitoring });
     new CatalogBuilder(this, 'CatalogBuilder', { bucket: packageData, monitoring });
 
     new WebApp(this, 'WebApp', {

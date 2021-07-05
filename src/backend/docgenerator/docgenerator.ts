@@ -3,15 +3,15 @@ import * as path from 'path';
 import * as lambda from '@aws-cdk/aws-lambda';
 import { Construct } from 'constructs';
 
-export interface TransliteratorProps extends lambda.FunctionOptions {
+export interface DocgeneratorProps extends lambda.FunctionOptions {
 }
 
-export class Transliterator extends lambda.Function {
-  constructor(scope: Construct, id: string, props: TransliteratorProps = {}) {
+export class Docgenerator extends lambda.Function {
+  constructor(scope: Construct, id: string, props: DocgeneratorProps = {}) {
     super(scope, id, {
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '/transliterator.bundle')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '/docgenerator.bundle')),
       ...props,
     });
   }

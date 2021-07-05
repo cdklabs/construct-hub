@@ -43,11 +43,11 @@ export async function handler(event: S3Event, context: Context) {
     console.log('Catalog not found. Recreating...');
     const failures: any = {};
     for await (const object of relevantObjects(BUCKET_NAME)) {
-      const assemblyKey = object.Key!;
+      const docsKey = object.Key!;
       try {
-        await appendPackage(packages, assemblyKey, BUCKET_NAME);
+        await appendPackage(packages, docsKey, BUCKET_NAME);
       } catch (e) {
-        failures[assemblyKey] = e;
+        failures[docsKey] = e;
       }
     }
     for (const [key, error] of Object.entries(failures)) {
@@ -126,7 +126,7 @@ async function* relevantObjects(bucket: string) {
   do {
     const result = await aws.s3().listObjectsV2(request).promise();
     for (const object of result.Contents ?? []) {
-      if (!object.Key?.endsWith(constants.ASSEMBLY_KEY_SUFFIX)) {
+      if (!object.Key?.endsWith(constants.docsKeySuffix('ts'))) {
         continue;
       }
       yield object;
@@ -135,9 +135,9 @@ async function* relevantObjects(bucket: string) {
   } while (request.ContinuationToken != null);
 }
 
-async function appendPackage(packages: any, assemblyKey: string, bucketName: string) {
-  console.log(`Processing key: ${assemblyKey}`);
-  const pkgKey = assemblyKey.replace(constants.ASSEMBLY_KEY_SUFFIX, constants.PACKAGE_KEY_SUFFIX);
+async function appendPackage(packages: any, docsKey: string, bucketName: string) {
+  console.log(`Processing key: ${docsKey}`);
+  const pkgKey = docsKey.replace(constants.docsKeySuffix('ts'), constants.PACKAGE_KEY_SUFFIX);
   const [, packageName, versionStr] = pkgKey.match(KEY_FORMAT_REGEX)!;
   const version = new SemVer(versionStr);
   const found = packages.get(packageName)?.get(version.major);

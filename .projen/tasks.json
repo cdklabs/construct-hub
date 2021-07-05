@@ -54,10 +54,10 @@
           "spawn": "bundle:discovery"
         },
         {
-          "spawn": "bundle:ingestion"
+          "spawn": "bundle:docgenerator"
         },
         {
-          "spawn": "bundle:transliterator"
+          "spawn": "bundle:ingestion"
         },
         {
           "spawn": "bundle:http-get-function"
@@ -243,10 +243,10 @@
           "spawn": "bundle:discovery"
         },
         {
-          "spawn": "bundle:ingestion"
+          "spawn": "bundle:docgenerator"
         },
         {
-          "spawn": "bundle:transliterator"
+          "spawn": "bundle:ingestion"
         },
         {
           "spawn": "bundle:http-get-function"
@@ -311,21 +311,21 @@
         }
       ]
     },
+    "bundle:docgenerator": {
+      "name": "bundle:docgenerator",
+      "description": "Create an AWS Lambda bundle from src/backend/docgenerator/docgenerator.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/docgenerator/docgenerator.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/docgenerator/docgenerator.bundle/index.js\" --external:aws-sdk"
+        }
+      ]
+    },
     "bundle:ingestion": {
       "name": "bundle:ingestion",
       "description": "Create an AWS Lambda bundle from src/backend/ingestion/ingestion.lambda.ts",
       "steps": [
         {
           "exec": "esbuild --bundle src/backend/ingestion/ingestion.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/ingestion.bundle/index.js\" --external:aws-sdk"
-        }
-      ]
-    },
-    "bundle:transliterator": {
-      "name": "bundle:transliterator",
-      "description": "Create an AWS Lambda bundle from src/backend/transliterator/transliterator.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/backend/transliterator/transliterator.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/transliterator/transliterator.bundle/index.js\" --external:aws-sdk"
         }
       ]
     },
