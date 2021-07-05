@@ -70,7 +70,7 @@ function tlsValidDaysRemaining(endpoint: string, now: Date): Promise<number> {
   });
   return new Promise<number>((ok, ko) => {
     try {
-      sock.once('error', ko);
+      sock.once('error', (err) => err.code === 'CERT_HAS_EXPIRED' ? ok(0) : ko(err));
       sock.once('secureConnect', () => {
         const cert = sock.getPeerCertificate();
         console.log(`Secure connection established: ${cert.fingerprint256} is valid from ${cert.valid_from} until ${cert.valid_to}`);
