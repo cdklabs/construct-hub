@@ -1,15 +1,18 @@
+import { basename, extname } from 'path';
 import { URL } from 'url';
 import { createGunzip } from 'zlib';
 
 import { validateAssembly } from '@jsii/spec';
 // eslint-disable-next-line import/no-unresolved
 import { Context, SQSEvent } from 'aws-lambda';
+import { metricScope, Unit } from 'aws-embedded-metrics';
 import { extract } from 'tar-stream';
 import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
+import { MetricName } from './constants.lambda-shared';
 
 export async function handler(event: SQSEvent, context: Context) {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
@@ -45,27 +48,24 @@ export async function handler(event: SQSEvent, context: Context) {
       extract()
         .on('entry', (headers, stream, next) => {
           const chunks = new Array<Buffer>();
-          switch (headers.name) {
-            case 'package/.jsii':
-              return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
-                .once('error', ko)
-                .once('end', () => {
-                  dotJsiiBuffer = Buffer.concat(chunks);
-                  // Skip on next runLoop iteration so we avoid filling the stack.
-                  setImmediate(next);
-                })
-                .resume();
-            case 'package/LICENSE':
-            case 'package/LICENSE.md':
-            case 'package/LICENSE.txt':
-              return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
-                .once('error', ko)
-                .once('end', () => {
-                  licenseTextBuffer = Buffer.concat(chunks);
-                  // Skip on next runLoop iteration so we avoid filling the stack.
-                  setImmediate(next);
-                })
-                .resume();
+          if (headers.name === 'package/.jsii') {
+            return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
+              .once('error', ko)
+              .once('end', () => {
+                dotJsiiBuffer = Buffer.concat(chunks);
+                // Skip on next runLoop iteration so we avoid filling the stack.
+                setImmediate(next);
+              })
+              .resume();
+          } else if (isLicenseFile(headers.name)) {
+            return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
+              .once('error', ko)
+              .once('end', () => {
+                licenseTextBuffer = Buffer.concat(chunks);
+                // Skip on next runLoop iteration so we avoid filling the stack.
+                setImmediate(next);
+              })
+              .resume();
           }
           // Skip on next runLoop iteration so we avoid filling the stack.
           return setImmediate(next);
@@ -92,6 +92,10 @@ export async function handler(event: SQSEvent, context: Context) {
       console.log(`Ignoring package with ineligible license (SPDX identifier "${license}")`);
       continue;
     }
+
+    await metricScope((metrics) => () => {
+      metrics.putMetric(MetricName.FOUND_LICENSE_FILE, licenseText != null ? 1 : 0, Unit.Count);
+    })();
 
     const assemblyKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`;
     console.log(`Writing assembly at ${assemblyKey}`);
@@ -172,6 +176,21 @@ function gunzip(data: Buffer): Promise<Buffer> {
       .on('data', (chunk) => chunks.push(Buffer.from(chunk)))
       .once('end', () => ok(Buffer.concat(chunks)))
       .end(data));
+}
+
+/**
+ * Checks whether the provided file name corresponds to a license file or not.
+ *
+ * @param fileName the file name to be checked.
+ *
+ * @returns `true` IIF the file is named LICENSE and has the .MD or .TXT
+ *          extension, or no extension at all. The test is case-insensitive.
+ */
+function isLicenseFile(fileName: string): boolean {
+  const ext = extname(fileName);
+  const possibleExtensions = new Set(['', '.md', '.txt']);
+  return possibleExtensions.has(ext.toLowerCase())
+    && basename(fileName, ext).toUpperCase() === 'LICENSE';
 }
 
 interface CreatedObject {

@@ -42,6 +42,8 @@ export const CATALOG_KEY = 'catalog.json';
 /**
  * A list of case-normalized (upper) SPDX license identifiers that are deemed
  * eligible for listing on the Construct Hub.
+ *
+ * @see https://github.com/cdklabs/construct-hub/issues/145
  */
 export const ELIGIBLE_LICENSES: ReadonlySet<string> = new Set([
   // Apache Licenses
