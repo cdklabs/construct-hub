@@ -51,7 +51,7 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
 
     const assemblyResponse = await aws.s3().getObject({ Bucket: record.s3.bucket.name, Key: inputKey }).promise();
     if (!assemblyResponse.Body) {
-      throw new Error(`Response body for assembly at key ${record.s3.object.key} is empty`);
+      throw new Error(`Response body for assembly at key ${inputKey} is empty`);
     }
 
     const assembly = JSON.parse(assemblyResponse.Body.toString('utf-8'));
