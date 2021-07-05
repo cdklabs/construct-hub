@@ -87,6 +87,7 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
       await transliterateAssembly(
         [packageDir],
         [TargetLanguage.PYTHON], // TODO: allow configuring this
+        { loose: true }, // Ignore missing assets, etc... Maximize chances of success!
       );
 
       // Payload object key => packages/[<@scope>/]<name>/v<version>/package.tgz

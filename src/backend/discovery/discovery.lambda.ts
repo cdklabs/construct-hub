@@ -2,15 +2,16 @@ import * as console from 'console';
 import * as https from 'https';
 import { URL } from 'url';
 
-import { metricScope, MetricsLogger, Unit } from 'aws-embedded-metrics';
+import { metricScope, Configuration, MetricsLogger, Unit } from 'aws-embedded-metrics';
+import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, ScheduledEvent } from 'aws-lambda';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import Nano = require('nano');
 import * as aws from '../shared/aws.lambda-shared';
-import * as constants from '../shared/constants.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
+import { MetricName, METRIC_NAMESPACE, S3KeyPrefix } from './constants.lambda-shared';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const normalizeNPMMetadata = require('normalize-registry-metadata');
 
@@ -18,6 +19,10 @@ const TIMEOUT_MILLISECONDS = 10_000;
 const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set(['cdk', 'aws-cdk', 'cdk8s', 'cdktf']);
 const MARKER_FILE_NAME = 'couchdb-last-transaction-id';
 const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
+
+// Configure embedded metrics format
+Configuration.environmentOverride = Environments.Lambda;
+Configuration.namespace = METRIC_NAMESPACE;
 
 /**
  * This function triggers on a fixed schedule and reads a stream of changes from npmjs couchdb _changes endpoint.
@@ -62,24 +67,28 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
     db.changesReader.get(config)
       .on('batch', metricScope((metrics) => async (batch: readonly Change[]) => {
-        metrics.setNamespace('ConstructHub/Discovery');
+        // Clear automatically set dimensions - we don't need them (see https://github.com/awslabs/aws-embedded-metrics-node/issues/73)
+        metrics.setDimensions();
+
+        metrics.setProperty('StartSeq', updatedMarker);
         const startTime = Date.now();
         try {
           console.log(`Received a batch of ${batch.length} element(s)`);
-          metrics.putMetric('BatchSize', batch.length, Unit.Count);
+          metrics.putMetric(MetricName.CHANGE_COUNT, batch.length, Unit.Count);
           const lastSeq = Math.max(...batch.map((change) => change.seq));
+          metrics.setProperty('EndSeq', updatedMarker);
 
           // Obtain the modified package version from the update event, and filter
           // out packages that are not of interest to us (not construct libraries).
           const versionInfos = getRelevantVersionInfos(batch, metrics);
           console.log(`Identified ${versionInfos.length} relevant package version update(s)`);
-          metrics.putMetric('RelevantPackageVersions', versionInfos.length, Unit.Count);
+          metrics.putMetric(MetricName.RELEVANT_PACKAGE_VERSIONS, versionInfos.length, Unit.Count);
 
           // Process all remaining updates
           await Promise.all(versionInfos.map(async (infos) => {
             const before = Date.now();
-            await processUpdatedVersion(infos);
-            metrics.putMetric('StagingTime', Date.now() - before, Unit.Milliseconds);
+            await processUpdatedVersion(infos, metrics);
+            metrics.putMetric(MetricName.STAGING_TIME, Date.now() - before, Unit.Milliseconds);
           }));
 
           // Update the transaction marker in S3.
@@ -96,7 +105,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
           } else {
             console.log('We are almost out of time, so stopping here.');
             db.changesReader.stop();
-            metrics.putMetric('RemainingTime', context.getRemainingTimeInMillis(), Unit.Milliseconds);
+            metrics.putMetric(MetricName.REMAINING_TIME, context.getRemainingTimeInMillis(), Unit.Milliseconds);
             ok({ initialMarker, updatedMarker });
           }
         } catch (err) {
@@ -105,7 +114,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
           db.changesReader.stop();
           ko(err);
         } finally {
-          metrics.putMetric('BatchProcessingTime', Date.now() - startTime, Unit.Milliseconds);
+          metrics.putMetric(MetricName.BATCH_PROCESSING_TIME, Date.now() - startTime, Unit.Milliseconds);
         }
       }))
       .once('end', () => {
@@ -152,7 +161,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
   //#endregion
 
   //#region Business Logic
-  async function processUpdatedVersion({ infos, modified, seq }: UpdatedVersion): Promise<void> {
+  async function processUpdatedVersion({ infos, modified, seq }: UpdatedVersion, metrics: MetricsLogger): Promise<void> {
     try {
       // Download the tarball
       const tarball = await httpGet(infos.dist.tarball);
@@ -160,7 +169,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
       // Store the tarball into the staging bucket
       // - infos.dist.tarball => https://registry.npmjs.org/<@scope>/<name>/-/<name>-<version>.tgz
       // - stagingKey         =>                     staged/<@scope>/<name>/-/<name>-<version>.tgz
-      const stagingKey = `${constants.STAGED_KEY_PREFIX}${new URL(infos.dist.tarball).pathname}`.replace(/\/{2,}/g, '/');
+      const stagingKey = `${S3KeyPrefix.STAGED_KEY_PREFIX}${new URL(infos.dist.tarball).pathname}`.replace(/\/{2,}/g, '/');
       await putObject(stagingKey, tarball, {
         ContentType: 'application/x-gtar',
         Metadata: {
@@ -190,10 +199,13 @@ export async function handler(event: ScheduledEvent, context: Context) {
         MessageBody: JSON.stringify(message, null, 2),
         QueueUrl: queueUrl,
       }).promise();
+
+      metrics.putMetric(MetricName.STAGING_FAILURE_COUNT, 0, Unit.Count);
     } catch (err) {
       // Something failed, store the payload in the problem prefix, and move on.
       console.error(`[${seq}] Failed processing, logging error to S3 and resuming work. ${infos.name}@${infos.version}: ${err}`);
-      await putObject(`${constants.FAILED_KEY_PREFIX}${seq}`, JSON.stringify({ ...infos, _construct_hub_failure_reason: err }, null, 2), {
+      metrics.putMetric(MetricName.STAGING_FAILURE_COUNT, 1, Unit.Count);
+      await putObject(`${S3KeyPrefix.FAILED_KEY_PREFIX}${seq}`, JSON.stringify({ ...infos, _construct_hub_failure_reason: err }, null, 2), {
         ContentType: 'text/json',
         Metadata: {
           'Modified-At': modified.toISOString(),
@@ -269,28 +281,28 @@ function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLog
     // these are schemas, which are not relevant to our business here.
     if (change.doc.name === undefined) {
       console.error(`[${change.seq}] Changed document contains no 'name': ${change.id}`);
-      metrics.putMetric('UnprocessableEntity', 1, Unit.Count);
+      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
       continue;
     }
 
     // The normalize function change the object in place, if the doc object is invalid it will return undefined
     if (normalizeNPMMetadata(change.doc) === undefined) {
       console.error(`[${change.seq}] Changed document invalid, npm normalize returned undefined: ${change.id}`);
-      metrics.putMetric('UnprocessableEntity', 1, Unit.Count);
+      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
       continue;
     }
 
     // Sometimes, there are no versions in the document. We skip those.
     if (change.doc.versions == null) {
       console.error(`[${change.seq}] Changed document contains no 'versions': ${change.id}`);
-      metrics.putMetric('UnprocessableEntity', 1, Unit.Count);
+      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
       continue;
     }
 
     // Sometimes, there is no 'time' entry in the document. We skip those.
     if (change.doc.time == null) {
       console.error(`[${change.seq}] Changed document contains no 'time': ${change.id}`);
-      metrics.putMetric('UnprocessableEntity', 1, Unit.Count);
+      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
       continue;
     }
 
@@ -302,6 +314,7 @@ function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLog
       .map(([version, isoDate]) => [version, new Date(isoDate)] as const)
       // Sort by date, descending
       .sort(([, l], [, r]) => r.getTime() - l.getTime());
+    metrics.putMetric(MetricName.PACKAGE_VERSION_COUNT, sortedUpdates.length, Unit.Count);
 
     let latestModified: Date | undefined;
     for (const [version, modified] of sortedUpdates) {
@@ -311,7 +324,7 @@ function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLog
           // Could be the version in question was un-published.
           console.log(`[${change.seq}] Could not find info for "${change.doc.name}@${version}". Was it un-published?`);
         } else if (isRelevantPackageVersion(infos)) {
-          metrics.putMetric('PackageVersionAge', Date.now() - modified.getTime(), Unit.Milliseconds);
+          metrics.putMetric(MetricName.PACKAGE_VERSION_AGE, Date.now() - modified.getTime(), Unit.Milliseconds);
           result.push({ infos, modified, seq: change.seq });
         } else {
           console.log(`[${change.seq}] Ignoring "${change.doc.name}@${version}" as it is not a construct library.`);

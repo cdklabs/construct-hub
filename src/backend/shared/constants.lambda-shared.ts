@@ -30,7 +30,7 @@ export const ASSEMBLY_KEY_SUFFIX = '/assembly.json';
  * The key suffix for assemblies in the provided language. This should NOT be
  * used for the TypeScript/JavaScript assembly however.
  */
-export function assemblyKeySuffix(lang: TargetLanguage) {
+export function assemblyKeySuffix(lang: TargetLanguage | '*') {
   return `/assembly-${lang}.json`;
 }
 
@@ -38,16 +38,6 @@ export function assemblyKeySuffix(lang: TargetLanguage) {
  * The key for the catalog document.
  */
 export const CATALOG_KEY = 'catalog.json';
-
-/**
- * Key prefix used by the built-in discovery function to store failed records.
- */
-export const FAILED_KEY_PREFIX = 'failed/';
-
-/**
- * Key prefix used by the built-in discovery function to stage tarballs.
- */
-export const STAGED_KEY_PREFIX = 'staged/';
 
 /**
  * A regular expression that can be used to parse out a storage key.
