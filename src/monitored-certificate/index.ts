@@ -109,7 +109,7 @@ export class MonitoredCertificate extends Construct {
    */
   public metricAcmCertificateDaysToExpiry(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.hours(1),
+      period: Duration.days(1),
       statistic: Statistic.MINIMUM,
       ...opts,
       dimensions: { CertificateArn: this.props.certificate.certificateArn },
@@ -126,7 +126,7 @@ export class MonitoredCertificate extends Construct {
    */
   public metricEndpointCertificateDaysToExpiry(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.hours(1),
+      period: Duration.days(1),
       statistic: Statistic.MINIMUM,
       ...opts,
       dimensions: { DomainName: this.props.domainName },
