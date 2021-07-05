@@ -68,7 +68,16 @@ function tlsValidDaysRemaining(endpoint: string, now: Date): Promise<number> {
     port: 443,
     servername: endpoint,
   });
-  return new Promise<number>((ok, ko) => {
+  // "Cleanly" terminates the socket connection, so it does not leak
+  const closeThen = (cb: () => void) => sock.end(() => {
+    sock.destroy();
+    sock.unref();
+    cb();
+  });
+  return new Promise<number>((resolve, reject) => {
+    const ok = (val: number) => closeThen(() => resolve(val));
+    const ko = (reason: any) => closeThen(() => reject(reason));
+
     try {
       sock.once('error', (err) => err.code === 'CERT_HAS_EXPIRED' ? ok(0) : ko(err));
       sock.once('secureConnect', () => {
@@ -85,5 +94,5 @@ function tlsValidDaysRemaining(endpoint: string, now: Date): Promise<number> {
     } catch (e) {
       ko(e);
     }
-  }).finally(() => sock.destroy());
+  });
 }
