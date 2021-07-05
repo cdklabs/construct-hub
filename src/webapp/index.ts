@@ -76,6 +76,11 @@ export class WebApp extends Construct {
         target: r53.RecordTarget.fromAlias(new r53targets.CloudFrontTarget(this.distribution)),
         comment: 'Created by the AWS CDK',
       });
+
+      // Monitor certificate expiration
+      if (props.domain.monitorCertificateExpiration ?? true) {
+        props.monitoring.addMonitoredCertificate(props.domain.cert, props.domain.zone.zoneName);
+      }
     }
 
     // "website" contains the static react app

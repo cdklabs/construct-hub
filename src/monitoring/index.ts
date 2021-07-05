@@ -1,7 +1,10 @@
+import * as acm from '@aws-cdk/aws-certificatemanager';
 import * as cw from '@aws-cdk/aws-cloudwatch';
-import { Construct } from '@aws-cdk/core';
+import { Metric, MetricOptions } from '@aws-cdk/aws-cloudwatch';
+import { Construct, IConstruct } from '@aws-cdk/core';
 import { Watchful } from 'cdk-watchful';
 import { AlarmActions } from '../api';
+import { MonitoredCertificate } from './monitored-certificate';
 import { WebCanary } from './web-canary';
 
 /**
@@ -75,6 +78,23 @@ export class Monitoring extends Construct {
   }
 
   /**
+   * Monitors a certificate for expiration. Will alarm if the certificate is
+   * within 45 days of expiring, as ACM would have renewed it between 60 and 45
+   * days prior to expiration.
+   *
+   * This evaluates both the metric of the ACM certificate, and the expiration
+   * date of the certificate used by the provided HTTPS endpoint.
+   *
+   * @param certificate the certificate to monitor
+   * @param domainName  the endpoint to monitor
+   *
+   * @returns the `MonitoredCertificate` instance.
+   */
+  public addMonitoredCertificate(certificate: acm.ICertificate, domainName: string, opts: MonitoredCertificateOptions = {}): IMonitoredCertificate {
+    return new MonitoredCertificate(this, `${certificate.node.addr}::${domainName}`, { ...opts, certificate, domainName, monitoring: this });
+  }
+
+  /**
    * Adds a canary that pings a certain URL and raises an alarm in case the URL
    * responds with an error over 80% of the times.
    *
@@ -91,4 +111,36 @@ export class Monitoring extends Construct {
 
     this.addHighSeverityAlarm(`${name} Canary`, canary.alarm);
   }
+}
+
+export interface MonitoredCertificateOptions {
+  /**
+   * The namespace within which to emit the metric.
+   *
+   * @default Stack.of(this).stackName
+   */
+  readonly metricNamespace?: string;
+
+  /**
+   * The name of the CloudWatch metric to be emitted.
+   *
+   * @default 'DaysToExpiry'
+   */
+  readonly metricName?: string;
+}
+
+export interface IMonitoredCertificate extends IConstruct {
+  /**
+   * The remaining days before the monitored certificate expires, as far as ACM
+   * is concerned. This metric is no longer emitted after the certificate has
+   * expired (alarms should treat missing data as `<= 0`).
+   */
+  metricAcmCertificateDaysToExpiry(opts?: MetricOptions): Metric;
+
+  /**
+   * The remaining days before the certificate served by the configured
+   * `domainName` expires. This metric is published as 0 if the certificate has
+   * already expired.
+   */
+  metricEndpointCertificateDaysToExpiry(opts?: MetricOptions): Metric;
 }

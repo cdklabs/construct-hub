@@ -19,6 +19,14 @@ export interface Domain {
     *            provided `hostedZone`.
     */
   readonly cert: certificatemanager.ICertificate;
+
+  /**
+   * Whether the certificate should be monitored for expiration, meaning high
+   * severity alarms will be raised if it is due to expire in less than 45 days.
+   *
+   * @default true
+   */
+  readonly monitorCertificateExpiration?: boolean;
 }
 
 /**

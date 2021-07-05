@@ -105,6 +105,18 @@ Object {
       "Description": "S3 key for asset version \\"7f13b9a72d65559876670be18db0b859eb449e5dfde2e4c2d7ba74351b15f9cd\\"",
       "Type": "String",
     },
+    "AssetParametersbe1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1ArtifactHash25FA0091": Object {
+      "Description": "Artifact hash for asset \\"be1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1\\"",
+      "Type": "String",
+    },
+    "AssetParametersbe1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1S3BucketF288BC18": Object {
+      "Description": "S3 bucket for asset \\"be1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1\\"",
+      "Type": "String",
+    },
+    "AssetParametersbe1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1S3VersionKeyF1F97C53": Object {
+      "Description": "S3 key for asset version \\"be1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1\\"",
+      "Type": "String",
+    },
     "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfArtifactHash85F58E48": Object {
       "Description": "Artifact hash for asset \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
       "Type": "String",
@@ -127,18 +139,6 @@ Object {
     },
     "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F": Object {
       "Description": "S3 key for asset version \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
-      "Type": "String",
-    },
-    "AssetParametersec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271ArtifactHash49E0474B": Object {
-      "Description": "Artifact hash for asset \\"ec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271\\"",
-      "Type": "String",
-    },
-    "AssetParametersec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271S3Bucket6BF7E20A": Object {
-      "Description": "S3 bucket for asset \\"ec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271\\"",
-      "Type": "String",
-    },
-    "AssetParametersec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271S3VersionKey78659F17": Object {
-      "Description": "S3 key for asset version \\"ec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271\\"",
       "Type": "String",
     },
   },
@@ -2317,7 +2317,7 @@ Object {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParametersec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271S3Bucket6BF7E20A",
+            "Ref": "AssetParametersbe1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1S3BucketF288BC18",
           },
         ],
         "SourceObjectKeys": Array [
@@ -2332,7 +2332,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271S3VersionKey78659F17",
+                          "Ref": "AssetParametersbe1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1S3VersionKeyF1F97C53",
                         },
                       ],
                     },
@@ -2345,7 +2345,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271S3VersionKey78659F17",
+                          "Ref": "AssetParametersbe1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1S3VersionKeyF1F97C53",
                         },
                       ],
                     },
@@ -2710,7 +2710,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271S3Bucket6BF7E20A",
+                        "Ref": "AssetParametersbe1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1S3BucketF288BC18",
                       },
                     ],
                   ],
@@ -2725,7 +2725,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271S3Bucket6BF7E20A",
+                        "Ref": "AssetParametersbe1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1S3BucketF288BC18",
                       },
                       "/*",
                     ],
@@ -3027,6 +3027,30 @@ Object {
       "Description": "S3 key for asset version \\"7f13b9a72d65559876670be18db0b859eb449e5dfde2e4c2d7ba74351b15f9cd\\"",
       "Type": "String",
     },
+    "AssetParametersbe1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1ArtifactHash25FA0091": Object {
+      "Description": "Artifact hash for asset \\"be1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1\\"",
+      "Type": "String",
+    },
+    "AssetParametersbe1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1S3BucketF288BC18": Object {
+      "Description": "S3 bucket for asset \\"be1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1\\"",
+      "Type": "String",
+    },
+    "AssetParametersbe1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1S3VersionKeyF1F97C53": Object {
+      "Description": "S3 key for asset version \\"be1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b14a5f8c496c96f39c927f8d75a5b9f5ed15c81845fba5a73fc9ab3618d9dArtifactHashA0F952B7": Object {
+      "Description": "Artifact hash for asset \\"c24b14a5f8c496c96f39c927f8d75a5b9f5ed15c81845fba5a73fc9ab3618d9d\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b14a5f8c496c96f39c927f8d75a5b9f5ed15c81845fba5a73fc9ab3618d9dS3Bucket9AFA52D9": Object {
+      "Description": "S3 bucket for asset \\"c24b14a5f8c496c96f39c927f8d75a5b9f5ed15c81845fba5a73fc9ab3618d9d\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b14a5f8c496c96f39c927f8d75a5b9f5ed15c81845fba5a73fc9ab3618d9dS3VersionKey92D78901": Object {
+      "Description": "S3 key for asset version \\"c24b14a5f8c496c96f39c927f8d75a5b9f5ed15c81845fba5a73fc9ab3618d9d\\"",
+      "Type": "String",
+    },
     "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfArtifactHash85F58E48": Object {
       "Description": "Artifact hash for asset \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
       "Type": "String",
@@ -3049,18 +3073,6 @@ Object {
     },
     "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F": Object {
       "Description": "S3 key for asset version \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
-      "Type": "String",
-    },
-    "AssetParametersec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271ArtifactHash49E0474B": Object {
-      "Description": "Artifact hash for asset \\"ec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271\\"",
-      "Type": "String",
-    },
-    "AssetParametersec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271S3Bucket6BF7E20A": Object {
-      "Description": "S3 bucket for asset \\"ec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271\\"",
-      "Type": "String",
-    },
-    "AssetParametersec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271S3VersionKey78659F17": Object {
-      "Description": "S3 key for asset version \\"ec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271\\"",
       "Type": "String",
     },
   },
@@ -4123,7 +4135,29 @@ Object {
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"widgets\\":[{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":0,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
+              "{\\"widgets\\":[{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":0,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"ACM Certificate will expire soon!\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubMonitoringc8e8e5f6587203368902fd9726aec8b6f4226afca2myconstructhubACMAlarmC38373CB",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":6,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Endpoint certificate will expire soon!\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubMonitoringc8e8e5f6587203368902fd9726aec8b6f4226afca2myconstructhubEndpointAlarm34E3DDD8",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":12,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -4875,6 +4909,170 @@ Object {
       },
       "Type": "AWS::Events::Rule",
     },
+    "ConstructHubMonitoringc8e8e5f6587203368902fd9726aec8b6f4226afca2myconstructhubACMAlarmC38373CB": Object {
+      "Properties": Object {
+        "AlarmActions": Array [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The ACM certificate ",
+              Object {
+                "Fn::GetAtt": Array [
+                  "CertCertificateRequestorResource9D0836FD",
+                  "Arn",
+                ],
+              },
+              " will expire in less than 45 days!",
+            ],
+          ],
+        },
+        "ComparisonOperator": "LessThanThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "CertificateArn",
+            "Value": Object {
+              "Fn::GetAtt": Array [
+                "CertCertificateRequestorResource9D0836FD",
+                "Arn",
+              ],
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "DaysToExpiry",
+        "Namespace": "AWS/CertificateManager",
+        "Period": 3600,
+        "Statistic": "Minimum",
+        "Threshold": 45,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubMonitoringc8e8e5f6587203368902fd9726aec8b6f4226afca2myconstructhubEndpointAlarm34E3DDD8": Object {
+      "DependsOn": Array [
+        "ConstructHubMonitoringc8e8e5f6587203368902fd9726aec8b6f4226afca2myconstructhubc8e8e5f6587203368902fd9726aec8b6f4226afca2MonitorB0BCB20F",
+        "ConstructHubMonitoringc8e8e5f6587203368902fd9726aec8b6f4226afca2myconstructhubc8e8e5f6587203368902fd9726aec8b6f4226afca2MonitorServiceRoleD11DD06D",
+      ],
+      "Properties": Object {
+        "AlarmActions": Array [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
+        "AlarmDescription": "The certificate used to serve my.construct.hub will expire in less than 45 days!",
+        "ComparisonOperator": "LessThanThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "DomainName",
+            "Value": "my.construct.hub",
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "DaysToExpiry",
+        "Namespace": "Test",
+        "Period": 3600,
+        "Statistic": "Minimum",
+        "Threshold": 45,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubMonitoringc8e8e5f6587203368902fd9726aec8b6f4226afca2myconstructhubc8e8e5f6587203368902fd9726aec8b6f4226afca2MonitorB0BCB20F": Object {
+      "DependsOn": Array [
+        "ConstructHubMonitoringc8e8e5f6587203368902fd9726aec8b6f4226afca2myconstructhubc8e8e5f6587203368902fd9726aec8b6f4226afca2MonitorServiceRoleD11DD06D",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersc24b14a5f8c496c96f39c927f8d75a5b9f5ed15c81845fba5a73fc9ab3618d9dS3Bucket9AFA52D9",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersc24b14a5f8c496c96f39c927f8d75a5b9f5ed15c81845fba5a73fc9ab3618d9dS3VersionKey92D78901",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersc24b14a5f8c496c96f39c927f8d75a5b9f5ed15c81845fba5a73fc9ab3618d9dS3VersionKey92D78901",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Monitors the days to expiry of the certificate used to serve my.construct.hub",
+        "Environment": Object {
+          "Variables": Object {
+            "HTTPS_ENDPOINT": "my.construct.hub",
+            "METRIC_NAME": "DaysToExpiry",
+            "METRIC_NAMESPACE": "Test",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubMonitoringc8e8e5f6587203368902fd9726aec8b6f4226afca2myconstructhubc8e8e5f6587203368902fd9726aec8b6f4226afca2MonitorServiceRoleD11DD06D",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 1800,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubMonitoringc8e8e5f6587203368902fd9726aec8b6f4226afca2myconstructhubc8e8e5f6587203368902fd9726aec8b6f4226afca2MonitorServiceRoleD11DD06D": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
     "ConstructHubPackageDataAllowBucketNotificationsToTestConstructHubCatalogBuilderC9A41048952FCDC8": Object {
       "Properties": Object {
         "Action": "lambda:InvokeFunction",
@@ -5440,7 +5638,7 @@ Object {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParametersec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271S3Bucket6BF7E20A",
+            "Ref": "AssetParametersbe1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1S3BucketF288BC18",
           },
         ],
         "SourceObjectKeys": Array [
@@ -5455,7 +5653,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271S3VersionKey78659F17",
+                          "Ref": "AssetParametersbe1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1S3VersionKeyF1F97C53",
                         },
                       ],
                     },
@@ -5468,7 +5666,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271S3VersionKey78659F17",
+                          "Ref": "AssetParametersbe1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1S3VersionKeyF1F97C53",
                         },
                       ],
                     },
@@ -5846,7 +6044,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271S3Bucket6BF7E20A",
+                        "Ref": "AssetParametersbe1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1S3BucketF288BC18",
                       },
                     ],
                   ],
@@ -5861,7 +6059,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersec2edcafd50beaf4d4a0a66a3013d96bd722eb210653b17993f3c42e7e77a271S3Bucket6BF7E20A",
+                        "Ref": "AssetParametersbe1d65ce9ad73a51bd3abc174d42e7842a37bf3fe7f6ca1751a3586850c193f1S3BucketF288BC18",
                       },
                       "/*",
                     ],
