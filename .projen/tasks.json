@@ -63,6 +63,9 @@
           "spawn": "bundle:ingestion"
         },
         {
+          "spawn": "bundle:certificate-monitor"
+        },
+        {
           "spawn": "bundle:http-get-function"
         }
       ]
@@ -252,6 +255,9 @@
           "spawn": "bundle:ingestion"
         },
         {
+          "spawn": "bundle:certificate-monitor"
+        },
+        {
           "spawn": "bundle:http-get-function"
         }
       ]
@@ -329,6 +335,15 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/backend/ingestion/ingestion.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/ingestion.bundle/index.js\" --external:aws-sdk"
+        }
+      ]
+    },
+    "bundle:certificate-monitor": {
+      "name": "bundle:certificate-monitor",
+      "description": "Create an AWS Lambda bundle from src/monitored-certificate/certificate-monitor.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/monitored-certificate/certificate-monitor.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitored-certificate/certificate-monitor.bundle/index.js\" --external:aws-sdk"
         }
       ]
     },
