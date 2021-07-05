@@ -161,5 +161,14 @@ The root domain name where this instance of Construct Hub will be served.
 
 ---
 
+##### `monitorCertificateExpiration`<sup>Optional</sup> <a name="construct-hub.Domain.monitorCertificateExpiration"></a>
+
+- *Type:* `boolean`
+- *Default:* true
+
+Whether the certificate should be monitored for expiration, meaning high severity alarms will be raised if it is due to expire in less than 45 days.
+
+---
+
 
 

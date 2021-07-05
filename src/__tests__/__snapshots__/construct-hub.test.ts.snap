@@ -2943,6 +2943,18 @@ Object {
     },
   },
   "Parameters": Object {
+    "AssetParameters1ba28ce93db643201d8613eed4b49e8bfdbb812137021b400028887aa6cbfc21ArtifactHashCD81A433": Object {
+      "Description": "Artifact hash for asset \\"1ba28ce93db643201d8613eed4b49e8bfdbb812137021b400028887aa6cbfc21\\"",
+      "Type": "String",
+    },
+    "AssetParameters1ba28ce93db643201d8613eed4b49e8bfdbb812137021b400028887aa6cbfc21S3Bucket06D21812": Object {
+      "Description": "S3 bucket for asset \\"1ba28ce93db643201d8613eed4b49e8bfdbb812137021b400028887aa6cbfc21\\"",
+      "Type": "String",
+    },
+    "AssetParameters1ba28ce93db643201d8613eed4b49e8bfdbb812137021b400028887aa6cbfc21S3VersionKey1BCE3833": Object {
+      "Description": "S3 key for asset version \\"1ba28ce93db643201d8613eed4b49e8bfdbb812137021b400028887aa6cbfc21\\"",
+      "Type": "String",
+    },
     "AssetParameters4a8d8c6492481fded6cf033dd1a08b28f4a4d6d8458d3afdd41e09504f0df0deArtifactHash392604A6": Object {
       "Description": "Artifact hash for asset \\"4a8d8c6492481fded6cf033dd1a08b28f4a4d6d8458d3afdd41e09504f0df0de\\"",
       "Type": "String",
@@ -4123,7 +4135,29 @@ Object {
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"widgets\\":[{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":0,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
+              "{\\"widgets\\":[{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":0,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"ACM Certificate Expiry\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubWebAppExpirationMonitorACMAlarm0B479A12",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":6,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Endpoint Certificate Expiry\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubWebAppExpirationMonitorEndpointAlarmAA7AF160",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":12,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -5634,6 +5668,219 @@ Object {
         },
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+    },
+    "ConstructHubWebAppExpirationMonitorACMAlarm0B479A12": Object {
+      "Properties": Object {
+        "AlarmActions": Array [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The ACM certificate ",
+              Object {
+                "Fn::GetAtt": Array [
+                  "CertCertificateRequestorResource9D0836FD",
+                  "Arn",
+                ],
+              },
+              " will expire in less than 45 days!",
+            ],
+          ],
+        },
+        "ComparisonOperator": "LessThanThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "CertificateArn",
+            "Value": Object {
+              "Fn::GetAtt": Array [
+                "CertCertificateRequestorResource9D0836FD",
+                "Arn",
+              ],
+            },
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "DaysToExpiry",
+        "Namespace": "AWS/CertificateManager",
+        "Period": 3600,
+        "Statistic": "Minimum",
+        "Threshold": 45,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubWebAppExpirationMonitorC375584C": Object {
+      "DependsOn": Array [
+        "ConstructHubWebAppExpirationMonitorServiceRoleCA4166B2",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters1ba28ce93db643201d8613eed4b49e8bfdbb812137021b400028887aa6cbfc21S3Bucket06D21812",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters1ba28ce93db643201d8613eed4b49e8bfdbb812137021b400028887aa6cbfc21S3VersionKey1BCE3833",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters1ba28ce93db643201d8613eed4b49e8bfdbb812137021b400028887aa6cbfc21S3VersionKey1BCE3833",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Monitors the days to expiry of the certificate used to serve my.construct.hub",
+        "Environment": Object {
+          "Variables": Object {
+            "HTTPS_ENDPOINT": "my.construct.hub",
+            "METRIC_NAME": "DaysToExpiry",
+            "METRIC_NAMESPACE": "Test",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubWebAppExpirationMonitorServiceRoleCA4166B2",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 300,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubWebAppExpirationMonitorEndpointAlarmAA7AF160": Object {
+      "DependsOn": Array [
+        "ConstructHubWebAppExpirationMonitorScheduleAllowEventRuleTestConstructHubWebAppExpirationMonitorA4C6D17539763086",
+        "ConstructHubWebAppExpirationMonitorSchedule6EC6E0EA",
+      ],
+      "Properties": Object {
+        "AlarmActions": Array [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
+        "AlarmDescription": "The certificate used to serve my.construct.hub will expire in less than 45 days!",
+        "ComparisonOperator": "LessThanThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "DomainName",
+            "Value": "my.construct.hub",
+          },
+        ],
+        "EvaluationPeriods": 1,
+        "MetricName": "DaysToExpiry",
+        "Namespace": "Test",
+        "Period": 3600,
+        "Statistic": "Minimum",
+        "Threshold": 45,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubWebAppExpirationMonitorSchedule6EC6E0EA": Object {
+      "Properties": Object {
+        "Description": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "Executes the ",
+              Object {
+                "Ref": "ConstructHubWebAppExpirationMonitorC375584C",
+              },
+              " function every 30 minutes",
+            ],
+          ],
+        },
+        "ScheduleExpression": "rate(30 minutes)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubWebAppExpirationMonitorC375584C",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubWebAppExpirationMonitorScheduleAllowEventRuleTestConstructHubWebAppExpirationMonitorA4C6D17539763086": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubWebAppExpirationMonitorC375584C",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubWebAppExpirationMonitorSchedule6EC6E0EA",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ConstructHubWebAppExpirationMonitorServiceRoleCA4166B2": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
     },
     "ConstructHubWebAppResponseFunction4C2BF3E9": Object {
       "Properties": Object {
