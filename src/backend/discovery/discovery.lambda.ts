@@ -9,6 +9,7 @@ import type { Context, ScheduledEvent } from 'aws-lambda';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import Nano = require('nano');
 import * as aws from '../shared/aws.lambda-shared';
+import { ELIGIBLE_LICENSES } from '../shared/constants.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
@@ -326,7 +327,13 @@ function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLog
           console.log(`[${change.seq}] Could not find info for "${change.doc.name}@${version}". Was it un-published?`);
         } else if (isRelevantPackageVersion(infos)) {
           metrics.putMetric(MetricName.PACKAGE_VERSION_AGE, Date.now() - modified.getTime(), Unit.Milliseconds);
-          result.push({ infos, modified, seq: change.seq });
+          const isEligible = usesEligibleLicenses(infos);
+          metrics.putMetric(MetricName.INELIGIBLE_LICENSE, isEligible ? 0 : 1, Unit.Count);
+          if (usesEligibleLicenses(infos)) {
+            result.push({ infos, modified, seq: change.seq });
+          } else {
+            console.log(`[${change.seq}] Package "${change.doc.name}@${version}" does not use allow-listed license: ${infos.license ?? 'UNLICENSED'}`);
+          }
         } else {
           console.log(`[${change.seq}] Ignoring "${change.doc.name}@${version}" as it is not a construct library.`);
         }
@@ -345,6 +352,10 @@ function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLog
       || infos.name.startsWith('@aws-cdk')
       || infos.keywords?.some((kw) => CONSTRUCT_KEYWORDS.has(kw));
   }
+
+  function usesEligibleLicenses({ license }: VersionInfo): boolean {
+    return ELIGIBLE_LICENSES.has(license?.toUpperCase() ?? 'UNLICENSED');
+  }
 }
 
 /**
@@ -355,6 +366,7 @@ interface VersionInfo {
   readonly devDependencies: { readonly [name: string]: string };
   readonly dependencies: { readonly [name: string]: string };
   readonly jsii: unknown;
+  readonly license?: string;
   readonly name: string;
   readonly [key: string]: unknown;
   readonly keywords: string[];

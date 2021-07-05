@@ -39,33 +39,59 @@ export async function handler(event: SQSEvent, context: Context) {
     }
 
     const tar = await gunzip(Buffer.from(tarball.Body!));
-    const dotJsii = await new Promise<Buffer>((ok, ko) => {
+    const { dotJsii, licenseText } = await new Promise<{ dotJsii: Buffer; licenseText?: Buffer }>((ok, ko) => {
+      let dotJsiiBuffer: Buffer | undefined;
+      let licenseTextBuffer: Buffer | undefined;
       extract()
         .on('entry', (headers, stream, next) => {
-          if (headers.name !== 'package/.jsii') {
-            // Skip on next runLoop iteration so we avoid filling the stack.
-            return setImmediate(next);
-          }
           const chunks = new Array<Buffer>();
-          return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
-            .once('error', ko)
-            .once('end', () => {
-              ok(Buffer.concat(chunks));
-              next();
-            })
-            .resume();
+          switch (headers.name) {
+            case 'package/.jsii':
+              return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
+                .once('error', ko)
+                .once('end', () => {
+                  dotJsiiBuffer = Buffer.concat(chunks);
+                  // Skip on next runLoop iteration so we avoid filling the stack.
+                  setImmediate(next);
+                })
+                .resume();
+            case 'package/LICENSE':
+            case 'package/LICENSE.md':
+            case 'package/LICENSE.txt':
+              return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
+                .once('error', ko)
+                .once('end', () => {
+                  licenseTextBuffer = Buffer.concat(chunks);
+                  // Skip on next runLoop iteration so we avoid filling the stack.
+                  setImmediate(next);
+                })
+                .resume();
+          }
+          // Skip on next runLoop iteration so we avoid filling the stack.
+          return setImmediate(next);
         })
         .once('error', ko)
-        .once('close', () => ko(new Error('No .jsii file found in tarball!')))
+        .once('close', () => {
+          if (dotJsiiBuffer == null) {
+            ko(new Error('No .jsii file found in tarball!'));
+          } else {
+            ok({ dotJsii: dotJsiiBuffer, licenseText: licenseTextBuffer });
+          }
+        })
         .write(tar, (err) => {
           if (err != null) {
             ko(err);
           }
         });
     });
-    const metadata = { date: payload.time };
+    const metadata = { date: payload.time, licenseText: licenseText?.toString('utf-8') };
 
-    const { name: packageName, version: packageVersion } = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
+    const { license, name: packageName, version: packageVersion } = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
+    // Re-check that the license in `.jsii` is eligible. We don't blindly expect it matches that in package.json!
+    if (!constants.ELIGIBLE_LICENSES.has(license.toUpperCase())) {
+      console.log(`Ignoring package with ineligible license (SPDX identifier "${license}")`);
+      continue;
+    }
 
     const assemblyKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`;
     console.log(`Writing assembly at ${assemblyKey}`);
