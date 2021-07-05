@@ -337,10 +337,10 @@
     },
     "bundle:certificate-monitor": {
       "name": "bundle:certificate-monitor",
-      "description": "Create an AWS Lambda bundle from src/monitoring/certificate-monitor.lambda.ts",
+      "description": "Create an AWS Lambda bundle from src/monitored-certificate/certificate-monitor.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/monitoring/certificate-monitor.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitoring/certificate-monitor.bundle/index.js\" --external:aws-sdk"
+          "exec": "esbuild --bundle src/monitored-certificate/certificate-monitor.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitored-certificate/certificate-monitor.bundle/index.js\" --external:aws-sdk"
         }
       ]
     },

@@ -1,6 +1,7 @@
 import * as process from 'process';
 import * as tls from 'tls';
 
+// eslint-disable-next-line import/no-unresolved
 import type { Context, ScheduledEvent } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 
