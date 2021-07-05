@@ -55,32 +55,42 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
     }
 
     const assembly = JSON.parse(assemblyResponse.Body.toString('utf-8'));
+    const submodules = Object.keys(assembly.submodules ?? {}).map(s => s.split('.')[1]);
     const targetLanguages = [...Object.keys(assembly.targets), 'ts'];
 
     async function docgen(language: string) {
-      console.log(`Generating documentation in ${language} for ${packageFqn}`);
       const docs = await Documentation.forRemotePackage(packageName, packageVersion, { language });
-      const page = docs.render().render();
-      const key = inputKey.replace(/\/[^/]+$/, constants.docsKeySuffix(language));
-      console.log(`Succesfully created documentation in ${language} for ${packageFqn}. Uploading ${key}`);
-      const response = await client.putObject({
-        Bucket: record.s3.bucket.name,
-        Key: key,
-        Body: page,
-        ContentType: 'text/html',
-        Metadata: {
-          'Origin-Version-Id': record.s3.object.versionId ?? 'N/A',
-          'Lambda-Log-Group': context.logGroupName,
-          'Lambda-Log-Stream': context.logStreamName,
-          'Lambda-Run-Id': context.awsRequestId,
-        },
-      }).promise();
-      console.log(`Finished uploading ${key}`);
-      created.push({
-        bucket: record.s3.bucket.name,
-        key,
-        versionId: response.VersionId,
-      });
+      async function render(submodule?: string) {
+        const page = docs.render({ submodule }).render();
+        const key = inputKey.replace(/\/[^/]+$/, constants.docsKeySuffix(language, submodule));
+        const response = await client.putObject({
+          Bucket: record.s3.bucket.name,
+          Key: key,
+          Body: page,
+          ContentType: 'text/html',
+          Metadata: {
+            'Origin-Version-Id': record.s3.object.versionId ?? 'N/A',
+            'Lambda-Log-Group': context.logGroupName,
+            'Lambda-Log-Stream': context.logStreamName,
+            'Lambda-Run-Id': context.awsRequestId,
+          },
+        }).promise();
+        console.log(`Finished uploading ${key}`);
+        created.push({
+          bucket: record.s3.bucket.name,
+          key,
+          versionId: response.VersionId,
+        });
+      }
+
+      console.log(`Generating documentation in ${language} for ${packageFqn}`);
+      await render();
+      for (const submodule of submodules) {
+        console.log(`Generating documentation in ${language} for ${packageFqn}.${submodule}`);
+        await render(submodule);
+        console.log(`Succesfully created documentation in ${language} for ${packageFqn}.${submodule}`);
+      }
+
     }
 
     for (const language of targetLanguages) {

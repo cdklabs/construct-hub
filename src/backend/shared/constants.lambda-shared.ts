@@ -27,8 +27,8 @@ export const ASSEMBLY_KEY_SUFFIX = '/assembly.json';
 /**
  * The key suffix for documentation artifacts in a specific target language.
  */
-export function docsKeySuffix(lang: string) {
-  return `/docs-${lang}.md`;
+export function docsKeySuffix(lang: string, submodule?: string) {
+  return `/docs-${submodule ? `${submodule}-` : ''}${lang}.md`;
 }
 
 /**
