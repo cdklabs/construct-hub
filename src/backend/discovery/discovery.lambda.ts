@@ -4,12 +4,11 @@ import { URL } from 'url';
 
 import { metricScope, Configuration, MetricsLogger, Unit } from 'aws-embedded-metrics';
 import Environments from 'aws-embedded-metrics/lib/environment/Environments';
-// eslint-disable-next-line import/no-unresolved
 import type { Context, ScheduledEvent } from 'aws-lambda';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import Nano = require('nano');
 import * as aws from '../shared/aws.lambda-shared';
-import { ELIGIBLE_LICENSES } from '../shared/constants.lambda-shared';
+import { ELIGIBLE_LICENSES } from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';

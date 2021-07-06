@@ -2,7 +2,6 @@ import { randomBytes } from 'crypto';
 import { PassThrough } from 'stream';
 import * as zip from 'zlib';
 
-// eslint-disable-next-line import/no-unresolved
 import type { S3Event, S3EventRecord } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
@@ -10,7 +9,7 @@ import * as tar from 'tar-stream';
 
 import { handler } from '../../../backend/catalog-builder/catalog-builder.lambda';
 import * as aws from '../../../backend/shared/aws.lambda-shared';
-import * as constants from '../../../backend/shared/constants.lambda-shared';
+import * as constants from '../../../backend/shared/constants';
 
 let mockBucketName: string | undefined;
 

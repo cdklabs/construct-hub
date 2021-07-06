@@ -40,6 +40,12 @@ export function assemblyKeySuffix(lang: TargetLanguage | '*') {
 export const CATALOG_KEY = 'catalog.json';
 
 /**
+ * A regular expression that can be used to parse out a storage key.
+ */
+export const STORAGE_KEY_FORMAT_REGEX = new RegExp(`^${STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`);
+// Capture groups:                                                        ┗━━━━━━━━1━━━━━━━━┛  ┗━━2━━┛
+
+/**
  * A list of case-normalized (upper) SPDX license identifiers that are deemed
  * eligible for listing on the Construct Hub.
  *
