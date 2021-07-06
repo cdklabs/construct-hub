@@ -10,7 +10,7 @@ import * as fs from 'fs-extra';
 import { TargetLanguage } from 'jsii-rosetta';
 import { transliterateAssembly } from 'jsii-rosetta/lib/commands/transliterate';
 
-import * as constants from '../shared/constants.lambda-shared';
+import * as constants from '../shared/constants';
 
 const clients = new Map<string, S3>();
 

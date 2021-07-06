@@ -9,7 +9,7 @@ import * as tar from 'tar-stream';
 
 import { handler } from '../../../backend/catalog-builder/catalog-builder.lambda';
 import * as aws from '../../../backend/shared/aws.lambda-shared';
-import * as constants from '../../../backend/shared/constants.lambda-shared';
+import * as constants from '../../../backend/shared/constants';
 
 let mockBucketName: string | undefined;
 

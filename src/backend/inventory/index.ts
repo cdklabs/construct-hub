@@ -6,7 +6,7 @@ import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
 import { Canary } from './canary';
-import { METRICS_NAMESPACE, MetricName } from './constants.lambda-shared';
+import { METRICS_NAMESPACE, MetricName } from './constants';
 
 export interface InventoryProps {
   /**

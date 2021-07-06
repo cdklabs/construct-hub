@@ -7,7 +7,7 @@ import { AWSError, S3 } from 'aws-sdk';
 import { SemVer } from 'semver';
 import { extract } from 'tar-stream';
 import * as aws from '../shared/aws.lambda-shared';
-import * as constants from '../shared/constants.lambda-shared';
+import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 
 const METRICS_NAMESPACE = 'ConstructHub/CatalogBuilder';

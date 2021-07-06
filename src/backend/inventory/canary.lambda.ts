@@ -3,9 +3,9 @@ import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, ScheduledEvent } from 'aws-lambda';
 import { TargetLanguage } from 'jsii-rosetta';
 import * as aws from '../shared/aws.lambda-shared';
-import * as constants from '../shared/constants.lambda-shared';
+import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
-import { METRICS_NAMESPACE, MetricName } from './constants.lambda-shared';
+import { METRICS_NAMESPACE, MetricName } from './constants';
 
 Configuration.environmentOverride = Environments.Lambda;
 Configuration.namespace = METRICS_NAMESPACE;

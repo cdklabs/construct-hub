@@ -10,7 +10,7 @@ import * as AWSMock from 'aws-sdk-mock';
 import { TargetLanguage } from 'jsii-rosetta';
 import type { transliterateAssembly } from 'jsii-rosetta/lib/commands/transliterate';
 
-import * as constants from '../../../backend/shared/constants.lambda-shared';
+import * as constants from '../../../backend/shared/constants';
 import { handler, reset } from '../../../backend/transliterator/transliterator.lambda';
 
 jest.mock('child_process');
