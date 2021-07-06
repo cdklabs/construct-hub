@@ -7,6 +7,7 @@ import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
 import { CfnOutput, Construct } from '@aws-cdk/core';
 import { Domain } from '../api';
+import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
 import { ResponseFunction } from './response-function';
 
@@ -77,6 +78,16 @@ export class WebApp extends Construct {
         target: r53.RecordTarget.fromAlias(new r53targets.CloudFrontTarget(this.distribution)),
         comment: 'Created by the AWS CDK',
       });
+
+      // Monitor certificate expiration
+      if (props.domain.monitorCertificateExpiration ?? true) {
+        const monitored = new MonitoredCertificate(this, 'ExpirationMonitor', {
+          certificate: props.domain.cert,
+          domainName: props.domain.zone.zoneName,
+        });
+        props.monitoring.addHighSeverityAlarm('ACM Certificate Expiry', monitored.alarmAcmCertificateExpiresSoon);
+        props.monitoring.addHighSeverityAlarm('Endpoint Certificate Expiry', monitored.alarmEndpointCertificateExpiresSoon);
+      }
     }
 
     // "website" contains the static react app

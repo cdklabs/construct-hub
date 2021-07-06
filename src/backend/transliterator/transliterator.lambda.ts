@@ -4,14 +4,13 @@ import * as os from 'os';
 import * as path from 'path';
 import * as process from 'process';
 
-// eslint-disable-next-line import/no-unresolved
 import type { Context, S3Event } from 'aws-lambda';
 import { S3 } from 'aws-sdk';
 import * as fs from 'fs-extra';
 import { TargetLanguage } from 'jsii-rosetta';
 import { transliterateAssembly } from 'jsii-rosetta/lib/commands/transliterate';
 
-import * as constants from '../shared/constants.lambda-shared';
+import * as constants from '../shared/constants';
 
 const clients = new Map<string, S3>();
 
