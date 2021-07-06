@@ -6,6 +6,7 @@ import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { AlarmActions, Domain } from './api';
 import { CatalogBuilder, Discovery, Ingestion, Transliterator } from './backend';
+import { Inventory } from './backend/inventory';
 import { Monitoring } from './monitoring';
 import { WebApp } from './webapp';
 
@@ -68,6 +69,8 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     new Transliterator(this, 'Transliterator', { bucket: packageData, monitoring });
     new CatalogBuilder(this, 'CatalogBuilder', { bucket: packageData, monitoring });
+
+    new Inventory(this, 'InventoryCanary', { bucket: packageData, monitoring });
 
     new WebApp(this, 'WebApp', {
       domain: props.domain,

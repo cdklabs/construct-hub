@@ -2,11 +2,10 @@ import { URL } from 'url';
 import { createGunzip } from 'zlib';
 
 import { validateAssembly } from '@jsii/spec';
-// eslint-disable-next-line import/no-unresolved
-import { Context, SQSEvent } from 'aws-lambda';
+import type { Context, SQSEvent } from 'aws-lambda';
 import { extract } from 'tar-stream';
 import * as aws from '../shared/aws.lambda-shared';
-import * as constants from '../shared/constants.lambda-shared';
+import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';

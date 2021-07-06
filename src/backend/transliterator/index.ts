@@ -5,7 +5,7 @@ import { Bucket, EventType } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
 
-import * as constants from '../shared/constants.lambda-shared';
+import * as constants from '../shared/constants';
 import { Transliterator as Handler } from './transliterator';
 
 export interface TransliteratorProps {

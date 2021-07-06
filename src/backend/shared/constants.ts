@@ -38,3 +38,9 @@ export function assemblyKeySuffix(lang: TargetLanguage | '*') {
  * The key for the catalog document.
  */
 export const CATALOG_KEY = 'catalog.json';
+
+/**
+ * A regular expression that can be used to parse out a storage key.
+ */
+export const STORAGE_KEY_FORMAT_REGEX = new RegExp(`^${STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`);
+// Capture groups:                                                        ┗━━━━━━━━1━━━━━━━━┛  ┗━━2━━┛

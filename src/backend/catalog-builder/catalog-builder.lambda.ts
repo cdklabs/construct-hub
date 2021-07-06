@@ -2,18 +2,15 @@ import { gunzip } from 'zlib';
 
 import type { AssemblyTargets } from '@jsii/spec';
 import { metricScope, Unit } from 'aws-embedded-metrics';
-// eslint-disable-next-line import/no-unresolved
 import type { Context, S3Event } from 'aws-lambda';
 import { AWSError, S3 } from 'aws-sdk';
 import { SemVer } from 'semver';
 import { extract } from 'tar-stream';
 import * as aws from '../shared/aws.lambda-shared';
-import * as constants from '../shared/constants.lambda-shared';
+import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 
 const METRICS_NAMESPACE = 'ConstructHub/CatalogBuilder';
-const KEY_FORMAT_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`);
-// Capture groups:                                                   ┗━━━━━━━━1━━━━━━━━┛  ┗━━2━━┛
 
 /**
  * Regenerates the `catalog.json` object in the configured S3 bucket.
@@ -138,7 +135,7 @@ async function* relevantObjects(bucket: string) {
 async function appendPackage(packages: any, assemblyKey: string, bucketName: string) {
   console.log(`Processing key: ${assemblyKey}`);
   const pkgKey = assemblyKey.replace(constants.ASSEMBLY_KEY_SUFFIX, constants.PACKAGE_KEY_SUFFIX);
-  const [, packageName, versionStr] = pkgKey.match(KEY_FORMAT_REGEX)!;
+  const [, packageName, versionStr] = constants.STORAGE_KEY_FORMAT_REGEX.exec(pkgKey)!;
   const version = new SemVer(versionStr);
   const found = packages.get(packageName)?.get(version.major);
   if (found != null && version.compare(found.version) <= 0) {

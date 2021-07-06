@@ -57,6 +57,9 @@
           "spawn": "bundle:ingestion"
         },
         {
+          "spawn": "bundle:canary"
+        },
+        {
           "spawn": "bundle:transliterator"
         },
         {
@@ -249,6 +252,9 @@
           "spawn": "bundle:ingestion"
         },
         {
+          "spawn": "bundle:canary"
+        },
+        {
           "spawn": "bundle:transliterator"
         },
         {
@@ -323,6 +329,15 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/backend/ingestion/ingestion.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/ingestion.bundle/index.js\" --external:aws-sdk"
+        }
+      ]
+    },
+    "bundle:canary": {
+      "name": "bundle:canary",
+      "description": "Create an AWS Lambda bundle from src/backend/inventory/canary.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/inventory/canary.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/canary.bundle/index.js\" --external:aws-sdk"
         }
       ]
     },
