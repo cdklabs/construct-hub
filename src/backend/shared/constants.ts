@@ -44,3 +44,47 @@ export const CATALOG_KEY = 'catalog.json';
  */
 export const STORAGE_KEY_FORMAT_REGEX = new RegExp(`^${STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`);
 // Capture groups:                                                        ┗━━━━━━━━1━━━━━━━━┛  ┗━━2━━┛
+
+/**
+ * A list of case-normalized (upper) SPDX license identifiers that are deemed
+ * eligible for listing on the Construct Hub.
+ *
+ * @see https://github.com/cdklabs/construct-hub/issues/145
+ */
+export const ELIGIBLE_LICENSES: ReadonlySet<string> = new Set([
+  // Apache Licenses
+  'Apache-1.0',
+  'Apache-1.1',
+  'Apache-2.0',
+  // BSD Licenses
+  '0BSD',
+  'BSD-1-Clause',
+  'BSD-2-Clause',
+  'BSD-2-Clause-Patent',
+  'BSD-2-Clause-Views',
+  'BSD-3-Clause',
+  'BSD-3-Clause-Attribution',
+  'BSD-3-Clause-Clear',
+  'BSD-3-Clause-LBNL',
+  'BSD-3-Clause-Modification',
+  'BSD-3-Clause-No-Military-License',
+  'BSD-3-Clause-No-Nuclear-License',
+  'BSD-3-Clause-No-Nuclear-License-2014',
+  'BSD-3-Clause-No-Nuclear-Warranty',
+  'BSD-3-Clause-Open-MPI',
+  'BSD-4-Clause',
+  'BSD-4-Clause-Shortened',
+  'BSD-4-Clause-UC',
+  'BSD-Protection',
+  'BSD-Source-Code',
+  // MIT Licenses
+  'MIT',
+  'MIT-0',
+  'MIT-advertising',
+  'MIT-CMU',
+  'MIT-enna',
+  'MIT-feh',
+  'MIT-Modern-Variant',
+  'MIT-open-group',
+  'MITNFA',
+].map((s) => s.toUpperCase()));
