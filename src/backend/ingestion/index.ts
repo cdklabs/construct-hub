@@ -1,11 +1,11 @@
-import { ComparisonOperator, IAlarm } from '@aws-cdk/aws-cloudwatch';
+import { ComparisonOperator, IAlarm, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
 import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
-
+import { MetricName, METRICS_NAMESPACE } from './constants';
 import { Ingestion as Handler } from './ingestion';
 
 export interface IngestionProps {
@@ -75,5 +75,35 @@ export class Ingestion extends Construct implements IGrantable {
         evaluationPeriods: 1,
         threshold: 1,
       });
+  }
+
+  public metricFoundLicenseFile(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.SUM,
+      ...opts,
+      metricName: MetricName.FOUND_LICENSE_FILE,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  public metricIneligibleLicense(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.SUM,
+      ...opts,
+      metricName: MetricName.INELIGIBLE_LICENSE,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  public metricMismatchedNameOrVersion(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.SUM,
+      ...opts,
+      metricName: MetricName.MISMATCHED_NAME_OR_VERSION,
+      namespace: METRICS_NAMESPACE,
+    });
   }
 }
