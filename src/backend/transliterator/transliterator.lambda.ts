@@ -2,6 +2,7 @@
 import type { Context, S3Event } from 'aws-lambda';
 import { S3 } from 'aws-sdk';
 import { Documentation } from 'jsii-docgen';
+import { Language, UnsupportedLanguageError } from '../../../../jsii-docgen/lib/docgen/transpile/transpile';
 import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants.lambda-shared';
 
@@ -9,8 +10,6 @@ const clients = new Map<string, S3>();
 
 const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)${constants.ASSEMBLY_KEY_SUFFIX}$`);
 // Capture groups:                                                    ┗━━━━━━━━━1━━━━━━━┛  ┗━━2━━┛
-
-const SUPPORTED_LANGUAGES = ['python', 'ts'];
 
 /**
  * This function receives an S3 event, and for each record, proceeds to download
@@ -56,13 +55,14 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
 
     const assembly = JSON.parse(assemblyResponse.Body.toString('utf-8'));
     const submodules = Object.keys(assembly.submodules ?? {}).map(s => s.split('.')[1]);
-    const targetLanguages = [...Object.keys(assembly.targets), 'ts'];
+    const targetLanguages = Object.keys(assembly.targets);
 
-    async function docgen(language: string) {
-      const docs = await Documentation.forRemotePackage(packageName, packageVersion, { language });
+    async function docgen(lang: string) {
+      const language = Language.fromLiteral(lang);
+      const docs = await Documentation.forPackage(`${packageName}@${packageVersion}`, { language });
       async function render(submodule?: string) {
         const page = docs.render({ submodule }).render();
-        const key = inputKey.replace(/\/[^/]+$/, constants.docsKeySuffix(language, submodule));
+        const key = inputKey.replace(/\/[^/]+$/, constants.docsKeySuffix(language.toString(), submodule));
         const response = await client.putObject({
           Bucket: record.s3.bucket.name,
           Key: key,
@@ -83,7 +83,7 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
         });
       }
 
-      console.log(`Generating documentation in ${language} for ${packageFqn}`);
+      console.log(`Generating documentation in ${language} for ${packageFqn} root module`);
       await render();
       for (const submodule of submodules) {
         console.log(`Generating documentation in ${language} for ${packageFqn}.${submodule}`);
@@ -93,18 +93,15 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
 
     }
 
-    for (const language of targetLanguages) {
-      // TODO: Move every language to a separate function that triggers on the same event (requires SNS topic probably)
-      if (SUPPORTED_LANGUAGES.includes(language)) {
-        try {
-          await docgen(language);
-        } catch (e) {
-          // TODO: Maybe put in a metric?
+    for (const language of [...targetLanguages, 'typescript']) {
+      try {
+        await docgen(language);
+      } catch (e) {
+        if (e instanceof UnsupportedLanguageError) {
+          console.log(`Skipping '${language}' for ${packageFqn} since it is not yet supported`);
+        } else {
           console.log(`Failed generating ${language} documentation for ${packageFqn}: ${e}`);
         }
-      } else {
-        // TODO: Maybe put in a metric?
-        console.log(`Skipping '${language}' for ${packageFqn} since it is not yet supported`);
       }
     }
 
