@@ -104,24 +104,16 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
     });
     const metadata = { date: payload.time, licenseText: licenseText?.toString('utf-8') };
 
-    const { license, name: packageName, version: packageVersion } = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
-    // Re-check that the license in `.jsii` is eligible. We don't blindly expect it matches that in package.json!
-    if (!constants.ELIGIBLE_LICENSES.has(license.toUpperCase())) {
-      console.log(`Ignoring package with ineligible license (SPDX identifier "${license}")`);
-      metrics.putMetric(MetricName.INELIGIBLE_LICENSE, 1, Unit.Count);
-      metrics.setProperty('rejectedLicense', license);
-      continue;
-    }
-    metrics.putMetric(MetricName.INELIGIBLE_LICENSE, 0, Unit.Count);
+    const { license: packageLicense, name: packageName, version: packageVersion } = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
 
-    // Ensure the `.jsii` name & version corresponds to those in `package.json`
-    const { name: packageJsonName, version: packageJsonVersion } = JSON.parse(packageJson.toString('utf-8'));
-    if (packageJsonName !== packageName || packageJsonVersion !== packageVersion) {
-      console.log(`Ignoring package with mismatched name and/or version (${packageJsonName}@${packageJsonVersion} !== ${packageName}@${packageVersion})`);
-      metrics.putMetric(MetricName.MISMATCHED_NAME_OR_VERSION, 1, Unit.Count);
+    // Ensure the `.jsii` name, version & license corresponds to those in `package.json`
+    const { name: packageJsonName, version: packageJsonVersion, license: packageJsonLicense } = JSON.parse(packageJson.toString('utf-8'));
+    if (packageJsonName !== packageName || packageJsonVersion !== packageVersion || packageJsonLicense !== packageLicense) {
+      console.log(`Ignoring package with mismatched name, version, and/or license (${packageJsonName}@${packageJsonVersion} is ${packageJsonLicense} !== ${packageName}@${packageVersion} is ${packageLicense})`);
+      metrics.putMetric(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 1, Unit.Count);
       continue;
     }
-    metrics.putMetric(MetricName.MISMATCHED_NAME_OR_VERSION, 0, Unit.Count);
+    metrics.putMetric(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 0, Unit.Count);
 
     // Did we identify a license file or not?
     metrics.putMetric(MetricName.FOUND_LICENSE_FILE, licenseText != null ? 1 : 0, Unit.Count);

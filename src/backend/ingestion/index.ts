@@ -97,12 +97,17 @@ export class Ingestion extends Construct implements IGrantable {
     });
   }
 
-  public metricMismatchedNameOrVersion(opts?: MetricOptions): Metric {
+  /**
+   * This metrics is the total count of packages that were rejected due to
+   * mismatched identity (name, version, license) between the `package.json`
+   * file and te `.jsii` attribute.
+   */
+  public metricMismatchedIdentityRejections(opts?: MetricOptions): Metric {
     return new Metric({
       period: Duration.minutes(5),
       statistic: Statistic.SUM,
       ...opts,
-      metricName: MetricName.MISMATCHED_NAME_OR_VERSION,
+      metricName: MetricName.MISMATCHED_IDENTITY_REJECTIONS,
       namespace: METRICS_NAMESPACE,
     });
   }
