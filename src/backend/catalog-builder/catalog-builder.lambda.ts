@@ -123,7 +123,7 @@ async function* relevantObjects(bucket: string) {
   do {
     const result = await aws.s3().listObjectsV2(request).promise();
     for (const object of result.Contents ?? []) {
-      if (!object.Key?.endsWith(constants.docsKeySuffix('ts'))) {
+      if (!object.Key?.endsWith(constants.TYPESCRIPT_DOCS_KEY_SUFFIX)) {
         continue;
       }
       yield object;
@@ -134,7 +134,7 @@ async function* relevantObjects(bucket: string) {
 
 async function appendPackage(packages: any, docsKey: string, bucketName: string) {
   console.log(`Processing key: ${docsKey}`);
-  const pkgKey = docsKey.replace(constants.docsKeySuffix('ts'), constants.PACKAGE_KEY_SUFFIX);
+  const pkgKey = docsKey.replace(constants.TYPESCRIPT_DOCS_KEY_SUFFIX, constants.PACKAGE_KEY_SUFFIX);
   const [, packageName, versionStr] = constants.STORAGE_KEY_FORMAT_REGEX.exec(pkgKey)!;
   const version = new SemVer(versionStr);
   const found = packages.get(packageName)?.get(version.major);

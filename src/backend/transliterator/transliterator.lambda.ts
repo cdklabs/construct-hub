@@ -1,11 +1,11 @@
 // eslint-disable-next-line import/no-unresolved
 import type { Context, S3Event } from 'aws-lambda';
 import { S3 } from 'aws-sdk';
-import { Documentation } from 'jsii-docgen';
-import { Language, UnsupportedLanguageError } from '../../../../jsii-docgen/lib/docgen/transpile/transpile';
+import * as docgen from 'jsii-docgen';
 import * as aws from '../shared/aws.lambda-shared';
 
 import * as constants from '../shared/constants';
+import { DocumentationLanguage, UnsupportedLanguageError } from '../shared/language';
 
 const clients = new Map<string, S3>();
 
@@ -58,12 +58,11 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
     const submodules = Object.keys(assembly.submodules ?? {}).map(s => s.split('.')[1]);
     const targetLanguages = Object.keys(assembly.targets);
 
-    async function docgen(lang: string) {
-      const language = Language.fromLiteral(lang);
-      const docs = await Documentation.forPackage(`${packageName}@${packageVersion}`, { language });
+    async function generateDocs(lang: string) {
+      const docs = await docgen.Documentation.forPackage(`${packageName}@${packageVersion}`, { language: docgen.Language.fromLiteral(lang) });
       async function render(submodule?: string) {
         const page = docs.render({ submodule }).render();
-        const key = inputKey.replace(/\/[^/]+$/, constants.docsKeySuffix(language.toString(), submodule));
+        const key = inputKey.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromLiteral(lang), submodule));
         const response = await client.putObject({
           Bucket: record.s3.bucket.name,
           Key: key,
@@ -84,22 +83,24 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
         });
       }
 
-      console.log(`Generating documentation in ${language} for ${packageFqn} root module`);
+      console.log(`Generating documentation in ${lang} for ${packageFqn} root module`);
       await render();
       for (const submodule of submodules) {
-        console.log(`Generating documentation in ${language} for ${packageFqn}.${submodule}`);
+        console.log(`Generating documentation in ${lang} for ${packageFqn}.${submodule}`);
         await render(submodule);
-        console.log(`Succesfully created documentation in ${language} for ${packageFqn}.${submodule}`);
+        console.log(`Succesfully created documentation in ${lang} for ${packageFqn}.${submodule}`);
       }
 
     }
 
     for (const language of [...targetLanguages, 'typescript']) {
       try {
-        await docgen(language);
+        await generateDocs(language);
       } catch (e) {
-        if (e instanceof UnsupportedLanguageError) {
-          console.log(`Skipping '${language}' for ${packageFqn} since it is not yet supported`);
+        if (e instanceof docgen.UnsupportedLanguageError) {
+          console.log(`Skipping '${language}' for ${packageFqn} since it is not yet supported by jsii-docgen`);
+        } else if (e instanceof UnsupportedLanguageError) {
+          console.log(`Skipping '${language}' for ${packageFqn} since it is not yet supported by construct-hub`);
         } else {
           console.log(`Failed generating ${language} documentation for ${packageFqn}: ${e}`);
         }

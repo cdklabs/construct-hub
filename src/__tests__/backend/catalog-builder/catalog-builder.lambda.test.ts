@@ -94,21 +94,22 @@ test('initial build', () => {
       return cb(new NoSuchKeyError());
     }
   });
+  const docsSuffix = constants.TYPESCRIPT_DOCS_KEY_SUFFIX;
   const mockFirstPage: AWS.S3.ObjectList = [
     { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.3${constants.ASSEMBLY_KEY_SUFFIX}` },
     { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.3${constants.PACKAGE_KEY_SUFFIX}` },
-    { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.3${constants.docsKeySuffix('ts')}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.3${docsSuffix}` },
     { Key: `${constants.STORAGE_KEY_PREFIX}name/v1.2.3${constants.ASSEMBLY_KEY_SUFFIX}` },
     { Key: `${constants.STORAGE_KEY_PREFIX}name/v1.2.3${constants.PACKAGE_KEY_SUFFIX}` },
-    { Key: `${constants.STORAGE_KEY_PREFIX}name/v1.2.3${constants.docsKeySuffix('ts')}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}name/v1.2.3${docsSuffix}` },
   ];
   const mockSecondPage: AWS.S3.ObjectList = [
     { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.0.0${constants.ASSEMBLY_KEY_SUFFIX}` },
     { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.0.0${constants.PACKAGE_KEY_SUFFIX}` },
-    { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.0.0${constants.docsKeySuffix('ts')}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.0.0${docsSuffix}` },
     { Key: `${constants.STORAGE_KEY_PREFIX}name/v2.0.0-pre${constants.ASSEMBLY_KEY_SUFFIX}` },
     { Key: `${constants.STORAGE_KEY_PREFIX}name/v2.0.0-pre${constants.PACKAGE_KEY_SUFFIX}` },
-    { Key: `${constants.STORAGE_KEY_PREFIX}name/v2.0.0-pre${constants.docsKeySuffix('ts')}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}name/v2.0.0-pre${docsSuffix}` },
   ];
   AWSMock.mock('S3', 'listObjectsV2', (req: AWS.S3.ListObjectsV2Request, cb: Response<AWS.S3.ListObjectsV2Output>) => {
     try {

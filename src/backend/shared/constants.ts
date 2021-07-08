@@ -4,6 +4,7 @@
  * not part of the package's `dependencies`, such as the `aws-sdk`.
  */
 
+import { DocumentationLanguage } from './language';
 
 /**
  * Key prefix for the package data storage.
@@ -26,9 +27,19 @@ export const METADATA_KEY_SUFFIX = '/metadata.json';
 export const ASSEMBLY_KEY_SUFFIX = '/assembly.json';
 
 /**
- * The key suffix for documentation artifacts in a specific target language.
+ * The key suffix for a TypeScript doc artifact (root module).
  */
-export function docsKeySuffix(lang: string, submodule?: string) {
+export const TYPESCRIPT_DOCS_KEY_SUFFIX = docsKeySuffix(DocumentationLanguage.TYPESCRIPT);
+
+/**
+ * The key suffix for a Python doc artifact (root module).
+ */
+export const PYTHON_DOCS_KEY_SUFFIX = docsKeySuffix(DocumentationLanguage.PYTHON);
+
+/**
+ * The key suffix for documentation artifacts by language and submodule.
+ */
+export function docsKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string) {
   return `/docs-${submodule ? `${submodule}-` : ''}${lang}.md`;
 }
 
