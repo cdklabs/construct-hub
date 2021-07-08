@@ -4,7 +4,8 @@ import { S3 } from 'aws-sdk';
 import { Documentation } from 'jsii-docgen';
 import { Language, UnsupportedLanguageError } from '../../../../jsii-docgen/lib/docgen/transpile/transpile';
 import * as aws from '../shared/aws.lambda-shared';
-import * as constants from '../shared/constants.lambda-shared';
+
+import * as constants from '../shared/constants';
 
 const clients = new Map<string, S3>();
 

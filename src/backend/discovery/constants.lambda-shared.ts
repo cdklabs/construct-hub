@@ -3,6 +3,7 @@ export const METRIC_NAMESPACE = 'ConstructHub/Discovery';
 export const enum MetricName {
   BATCH_PROCESSING_TIME = 'BatchProcessingTime',
   CHANGE_COUNT = 'ChangeCount',
+  INELIGIBLE_LICENSE = 'IneligibleLicense',
   PACKAGE_VERSION_AGE = 'PackageVersionAge',
   PACKAGE_VERSION_COUNT = 'PackageVersionCount',
   RELEVANT_PACKAGE_VERSIONS = 'RelevantPackageVersions',
