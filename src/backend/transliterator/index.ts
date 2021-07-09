@@ -1,12 +1,14 @@
 import { ComparisonOperator, IAlarm } from '@aws-cdk/aws-cloudwatch';
+import { GatewayVpcEndpoint, InterfaceVpcEndpoint, IVpc, SubnetType } from '@aws-cdk/aws-ec2';
 import { S3EventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { Bucket, EventType } from '@aws-cdk/aws-s3';
-import { Construct, Duration } from '@aws-cdk/core';
+import { Construct, Duration, Fn } from '@aws-cdk/core';
+import { Repository } from '../../codeartifact/repository';
 import { Monitoring } from '../../monitoring';
-
 import * as constants from '../shared/constants';
 import { Transliterator as Handler } from './transliterator';
+import * as s3 from '../../s3';
 
 export interface TransliteratorProps {
   /**
@@ -15,9 +17,21 @@ export interface TransliteratorProps {
   readonly bucket: Bucket;
 
   /**
+   * The CodeArtifact registry to use for regular operations.
+   */
+  readonly codeArtifact: Repository;
+
+  /**
    * The monitoring handler to register alarms with.
    */
   readonly monitoring: Monitoring;
+
+  /**
+   * The VPC in which isolated lambda functions will reside.
+   */
+  readonly vpc: IVpc;
+
+  readonly vpcEndpoints: TransliteratorVpcEndpoints;
 
   /**
    * How long should execution logs be retained?
@@ -25,6 +39,12 @@ export interface TransliteratorProps {
    * @default RetentionDays.TEN_YEARS
    */
   readonly logRetention?: RetentionDays;
+}
+
+export interface TransliteratorVpcEndpoints {
+  readonly codeArtifactApi: InterfaceVpcEndpoint;
+  readonly codeArtifact: InterfaceVpcEndpoint;
+  readonly s3: GatewayVpcEndpoint;
 }
 
 /**
@@ -44,15 +64,34 @@ export class Transliterator extends Construct {
     const lambda = new Handler(this, 'Default', {
       deadLetterQueueEnabled: true,
       description: 'Creates transliterated assemblies from jsii-enabled npm packages',
+      environment: {
+        // Those are returned as an array of HOSTED_ZONE_ID:DNS_NAME... We care
+        // only about the DNS_NAME of the first entry in that array (which is
+        // the AZ-agnostic DNS name).
+        CODE_ARTIFACT_API_ENDPOINT: Fn.select(1,
+          Fn.split(':',
+            Fn.select(0, props.vpcEndpoints.codeArtifactApi.vpcEndpointDnsEntries),
+          ),
+        ),
+        CODE_ARTIFACT_DOMAIN_NAME: props.codeArtifact.domainName,
+        CODE_ARTIFACT_DOMAIN_OWNER: props.codeArtifact.domainOwner,
+        CODE_ARTIFACT_REPOSITORY_ENDPOINT: props.codeArtifact.npmRepositoryEndpoint,
+      },
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 10_240, // Currently the maximum possible setting
       retryAttempts: 2,
       timeout: Duration.minutes(15),
+      vpc: props.vpc,
+      vpcSubnets: { subnetType: SubnetType.ISOLATED },
     });
 
+    props.codeArtifact.throughVpcEndpoint(props.vpcEndpoints.codeArtifactApi, props.vpcEndpoints.codeArtifact)
+      .grantReadFromRepository(lambda);
+
+    const bucket = s3.throughVpcEndpoint(props.bucket, props.vpcEndpoints.s3);
     // The handler reads & writes to this bucket.
-    props.bucket.grantRead(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.PACKAGE_KEY_SUFFIX}`);
-    props.bucket.grantWrite(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.assemblyKeySuffix('*')}`);
+    bucket.grantRead(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.PACKAGE_KEY_SUFFIX}`);
+    bucket.grantWrite(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.assemblyKeySuffix('*')}`);
 
     // Creating the event chaining
     lambda.addEventSource(new S3EventSource(props.bucket, {
