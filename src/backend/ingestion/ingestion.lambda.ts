@@ -44,7 +44,17 @@ export async function handler(event: SQSEvent, context: Context) {
     const { dotJsii, licenseText } = await new Promise<{ dotJsii: Buffer; licenseText?: Buffer }>((ok, ko) => {
       let dotJsiiBuffer: Buffer | undefined;
       let licenseTextBuffer: Buffer | undefined;
-      extract()
+      const extractor = extract({ filenameEncoding: 'utf-8' })
+        .once('error', (reason) => {
+          ko(reason);
+        })
+        .once('finish', () => {
+          if (dotJsiiBuffer == null) {
+            ko(new Error('No .jsii file found in tarball!'));
+          } else {
+            ok({ dotJsii: dotJsiiBuffer, licenseText: licenseTextBuffer });
+          }
+        })
         .on('entry', (headers, stream, next) => {
           const chunks = new Array<Buffer>();
           if (headers.name === 'package/.jsii') {
@@ -68,19 +78,12 @@ export async function handler(event: SQSEvent, context: Context) {
           }
           // Skip on next runLoop iteration so we avoid filling the stack.
           return setImmediate(next);
-        })
-        .once('error', ko)
-        .once('close', () => {
-          if (dotJsiiBuffer == null) {
-            ko(new Error('No .jsii file found in tarball!'));
-          } else {
-            ok({ dotJsii: dotJsiiBuffer, licenseText: licenseTextBuffer });
-          }
-        })
-        .write(tar, (err) => {
+        });
+        extractor.write(tar, (err) => {
           if (err != null) {
             ko(err);
           }
+          extractor.end();
         });
     });
     const metadata = { date: payload.time, licenseText: licenseText?.toString('utf-8') };
