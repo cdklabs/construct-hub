@@ -79,12 +79,12 @@ export async function handler(event: SQSEvent, context: Context) {
           // Skip on next runLoop iteration so we avoid filling the stack.
           return setImmediate(next);
         });
-        extractor.write(tar, (err) => {
-          if (err != null) {
-            ko(err);
-          }
-          extractor.end();
-        });
+      extractor.write(tar, (err) => {
+        if (err != null) {
+          ko(err);
+        }
+        extractor.end();
+      });
     });
     const metadata = { date: payload.time, licenseText: licenseText?.toString('utf-8') };
 
