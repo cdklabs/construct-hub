@@ -59,7 +59,7 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
     const targetLanguages = Object.keys(assembly.targets);
 
     async function generateDocs(lang: string) {
-      const docs = await docgen.Documentation.forPackage(`${packageName}@${packageVersion}`, { language: docgen.Language.fromLiteral(lang) });
+      const docs = await docgen.Documentation.forPackage(`${packageName}@${packageVersion}`, { language: docgen.Language.fromString(lang) });
       async function render(submodule?: string) {
         const page = docs.render({ submodule }).render();
         const key = inputKey.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromLiteral(lang), submodule));
