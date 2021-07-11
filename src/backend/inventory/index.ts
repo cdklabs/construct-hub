@@ -71,10 +71,10 @@ export class Inventory extends Construct {
     });
   }
 
-  public metricMissingOriginalAssemblyCount(opts?: MetricProps): IMetric {
+  public metricMissingAssemblyCount(opts?: MetricProps): IMetric {
     return new Metric({
       namespace: METRICS_NAMESPACE,
-      metricName: MetricName.MISSING_ORIGINAL_ASSEMBLY_COUNT,
+      metricName: MetricName.MISSING_ASSEMBLY_COUNT,
       period: Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
       ...opts,
@@ -91,10 +91,20 @@ export class Inventory extends Construct {
     });
   }
 
-  public metricMissingPythonAssemblyCount(opts?: MetricProps): IMetric {
+  public metricMissingPythonDocsCount(opts?: MetricProps): IMetric {
     return new Metric({
       namespace: METRICS_NAMESPACE,
-      metricName: MetricName.MISSING_PYTHON_ASSEMBLY_COUNT,
+      metricName: MetricName.MISSING_PYTHON_DOCS_COUNT,
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+    });
+  }
+
+  public metricMissingTypeScriptDocsCount(opts?: MetricProps): IMetric {
+    return new Metric({
+      namespace: METRICS_NAMESPACE,
+      metricName: MetricName.MISSING_PYTHON_DOCS_COUNT,
       period: Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
       ...opts,

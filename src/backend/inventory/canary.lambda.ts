@@ -73,8 +73,9 @@ export async function handler(event: ScheduledEvent, _context: Context) {
     metrics.setProperty('detail', { missingMetadata, missingOriginalAssembly: missingAssembly, missingPythonAssembly: missingPythonDocs, missingTarball, unknownObjects });
 
     metrics.putMetric(MetricName.MISSING_METADATA_COUNT, missingMetadata.length, Unit.Count);
-    metrics.putMetric(MetricName.MISSING_ORIGINAL_ASSEMBLY_COUNT, missingAssembly.length, Unit.Count);
-    metrics.putMetric(MetricName.MISSING_PYTHON_ASSEMBLY_COUNT, missingPythonDocs.length, Unit.Count);
+    metrics.putMetric(MetricName.MISSING_ASSEMBLY_COUNT, missingAssembly.length, Unit.Count);
+    metrics.putMetric(MetricName.MISSING_PYTHON_DOCS_COUNT, missingPythonDocs.length, Unit.Count);
+    metrics.putMetric(MetricName.MISSING_TYPESCRIPT_DOCS_COUNT, missingTsDocs.length, Unit.Count);
     metrics.putMetric(MetricName.MISSING_TARBALL_COUNT, missingTarball.length, Unit.Count);
     metrics.putMetric(MetricName.PACKAGE_VERSION_COUNT, indexedPackages.size, Unit.Count);
     metrics.putMetric(MetricName.UNKNOWN_OBJECT_COUNT, unknownObjects.length, Unit.Count);
