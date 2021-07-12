@@ -59,8 +59,11 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
     const targetLanguages = Object.keys(assembly.targets);
 
     async function generateDocs(lang: string) {
+
       const docs = await docgen.Documentation.forPackage(`${packageName}@${packageVersion}`, { language: docgen.Language.fromString(lang) });
+
       async function render(submodule?: string) {
+        console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
         const page = docs.render({ submodule }).render();
         const key = inputKey.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(lang), submodule));
         const response = await client.putObject({
@@ -83,12 +86,9 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
         });
       }
 
-      console.log(`Generating documentation in ${lang} for ${packageFqn} root module`);
       await render();
       for (const submodule of submodules) {
-        console.log(`Generating documentation in ${lang} for ${packageFqn}.${submodule}`);
         await render(submodule);
-        console.log(`Succesfully created documentation in ${lang} for ${packageFqn}.${submodule}`);
       }
 
     }
