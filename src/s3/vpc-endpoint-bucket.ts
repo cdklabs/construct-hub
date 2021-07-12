@@ -51,7 +51,7 @@ export function throughVpcEndpoint(bucket: IBucket, vpcEndpoint: GatewayVpcEndpo
           }
           return realDescriptor;
       }
-    }
+    },
   });
 
   function decoratedGrantRead(this: IBucket, identity: IGrantable, objectsKeyPattern: any = '*'): Grant {

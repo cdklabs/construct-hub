@@ -6,9 +6,9 @@ import { Bucket, EventType } from '@aws-cdk/aws-s3';
 import { Construct, Duration, Fn } from '@aws-cdk/core';
 import { Repository } from '../../codeartifact/repository';
 import { Monitoring } from '../../monitoring';
+import * as s3 from '../../s3';
 import * as constants from '../shared/constants';
 import { Transliterator as Handler } from './transliterator';
-import * as s3 from '../../s3';
 
 export interface TransliteratorProps {
   /**

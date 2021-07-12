@@ -205,7 +205,7 @@ export class Repository extends Construct implements IRepository {
           };
         }
         return realDescriptor;
-      }
+      },
     });
 
     function decoratedGrantReadFromRepository(this: Repository, grantee: IGrantable): Grant {
