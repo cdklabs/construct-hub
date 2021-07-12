@@ -80,7 +80,7 @@ test('custom repository name', () => {
   const stack = new Stack();
 
   // WHEN
-  new Repository(stack, 'Repo', { registryname: 'custom-repo' });
+  new Repository(stack, 'Repo', { repositoryName: 'custom-repo' });
 
   // THEN
   expect(stack).toMatchTemplate({
@@ -115,7 +115,7 @@ test('custom domain & repository name', () => {
   const stack = new Stack();
 
   // WHEN
-  new Repository(stack, 'Repo', { domainName: 'custom-domain', registryname: 'custom-repo' });
+  new Repository(stack, 'Repo', { domainName: 'custom-domain', repositoryName: 'custom-repo' });
 
   // THEN
   expect(stack).toMatchTemplate({

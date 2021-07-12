@@ -18,11 +18,11 @@ export interface RepositoryProps {
   readonly domainName?: string;
 
   /**
-   * The name of the Registry.
+   * The name of the Repository.
    *
    * @default domainName
    */
-  readonly registryName?: string;
+  readonly repositoryName?: string;
 }
 
 export interface IRepository extends IConstruct {
@@ -96,7 +96,7 @@ export class Repository extends Construct implements IRepository {
       description: props?.description,
       domainName: domain.attrName,
       externalConnections: ['public:npmjs'],
-      repositoryName: props?.registryname ?? domainName,
+      repositoryName: props?.repositoryName ?? domainName,
     });
 
     this.repositoryDomainArn = domain.attrArn;
