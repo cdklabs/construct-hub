@@ -31,6 +31,9 @@ export interface TransliteratorProps {
    */
   readonly vpc: IVpc;
 
+  /**
+   * VPC endpoints to use for interacting with CodeArtifact and S3.
+   */
   readonly vpcEndpoints: TransliteratorVpcEndpoints;
 
   /**
@@ -42,8 +45,19 @@ export interface TransliteratorProps {
 }
 
 export interface TransliteratorVpcEndpoints {
+  /**
+   * The VPC endpoint for the CodeArtifact API (service: 'codeartifact.api')
+   */
   readonly codeArtifactApi: InterfaceVpcEndpoint;
+
+  /**
+   * The VPC endpoint for the CodeArtifact repositories (service: 'codeartifact.repositories')
+   */
   readonly codeArtifact: InterfaceVpcEndpoint;
+
+  /**
+   * The VPC endpoint for the S3
+   */
   readonly s3: GatewayVpcEndpoint;
 }
 
