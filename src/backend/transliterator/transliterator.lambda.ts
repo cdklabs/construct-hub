@@ -36,7 +36,7 @@ export function handler(event: S3Event, context: Context): Promise<readonly S3Ob
   // and that'll bail out on EROFS if that fails.
   return withFakeHome(async () => {
     const endpoint = process.env.CODE_ARTIFACT_REPOSITORY_ENDPOINT;
-    if (endpoint == null) {
+    if (!endpoint) {
       console.log('No CodeArtifact endpoint configured - using npm\'s default registry');
     } else {
       console.log(`Using CodeArtifact registry: ${endpoint}`);
