@@ -22,7 +22,7 @@ export interface RepositoryProps {
    *
    * @default domainName
    */
-  readonly registryname?: string;
+  readonly registryName?: string;
 }
 
 export interface IRepository extends IConstruct {
