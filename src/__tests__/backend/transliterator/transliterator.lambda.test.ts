@@ -14,13 +14,6 @@ jest.mock('jsii-docgen');
 
 beforeEach((done) => {
   AWSMock.setSDKInstance(AWS);
-  AWSMock.mock('S3', 'putObject', (request: AWS.S3.PutObjectRequest, callback: Response<AWS.S3.PutObjectOutput>) => {
-    if (request.Key.endsWith('.md')) {
-      callback(null, { VersionId: 'versionId' });
-    } else {
-      throw new Error(`Unexpected PUT request: ${request.Key}`);
-    }
-  });
   done();
 });
 
@@ -64,6 +57,9 @@ test('uploads a file per language', async () => {
   // mock the assembly request
   mockFetchAssembly(assembly);
 
+  // mock the file uploads
+  mockPutDocs('/docs-python.md', '/docs-typescript.md');
+
   const created = await handler(event, {} as any);
   expect(created.length).toEqual(2);
   expect(created[0].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-python.md`);
@@ -106,6 +102,16 @@ test('uploads a file per submodule', async () => {
   // mock the assembly request
   mockFetchAssembly(assembly);
 
+  // mock the file uploads
+  mockPutDocs(
+    '/docs-python.md',
+    '/docs-sub1-python.md',
+    '/docs-sub2-python.md',
+    '/docs-typescript.md',
+    '/docs-sub1-typescript.md',
+    '/docs-sub2-typescript.md',
+  );
+
   const created = await handler(event, {} as any);
   expect(created.length).toEqual(6);
   expect(created[0].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-python.md`);
@@ -136,5 +142,17 @@ function mockFetchAssembly(response: spec.Assembly) {
       throw new Error(`Unexpected GET request: ${request.Key}`);
     }
   });
+}
+
+function mockPutDocs(...suffixes: string[]) {
+
+  AWSMock.mock('S3', 'putObject', (request: AWS.S3.PutObjectRequest, callback: Response<AWS.S3.PutObjectOutput>) => {
+    if (suffixes.filter(s => request.Key.endsWith(s)).length > 0) {
+      callback(null, { VersionId: `versionId-${request.Key}` });
+    } else {
+      throw new Error(`Unexpected PUT request: ${request.Key}`);
+    }
+  });
+
 }
 
