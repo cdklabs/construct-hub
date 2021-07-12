@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-unresolved
 import type { Context, S3Event } from 'aws-lambda';
 import { S3 } from 'aws-sdk';
+import { PromiseResult } from 'aws-sdk/lib/request';
 import * as docgen from 'jsii-docgen';
 
 import * as constants from '../shared/constants';
@@ -60,13 +61,15 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
 
     async function generateDocs(lang: string) {
 
+      const uploads = new Map<string, Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>>();
       const docs = await docgen.Documentation.forPackage(`${packageName}@${packageVersion}`, { language: docgen.Language.fromString(lang) });
 
-      async function render(submodule?: string) {
+      function renderAndDispatch(submodule?: string) {
         console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
         const page = docs.render({ submodule }).render();
         const key = inputKey.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(lang), submodule));
-        const response = await client.putObject({
+        console.log(`Uploading ${key}`);
+        const upload = client.putObject({
           Bucket: record.s3.bucket.name,
           Key: key,
           Body: page,
@@ -78,6 +81,16 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
             'Lambda-Run-Id': context.awsRequestId,
           },
         }).promise();
+        uploads.set(key, upload);
+      }
+
+      renderAndDispatch();
+      for (const submodule of submodules) {
+        renderAndDispatch(submodule);
+      }
+
+      for (const [key, upload] of uploads.entries()) {
+        const response = await upload;
         console.log(`Finished uploading ${key}`);
         created.push({
           bucket: record.s3.bucket.name,
@@ -86,15 +99,12 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
         });
       }
 
-      await render();
-      for (const submodule of submodules) {
-        await render(submodule);
-      }
-
     }
 
     for (const language of [...targetLanguages, DocumentationLanguage.TYPESCRIPT.toString()]) {
       try {
+        // we await per language here because every language will eventually be moved to
+        // a separate function.
         await generateDocs(language);
       } catch (e) {
         if (e instanceof docgen.UnsupportedLanguageError) {
