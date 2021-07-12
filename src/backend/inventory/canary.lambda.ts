@@ -70,7 +70,7 @@ export async function handler(event: ScheduledEvent, _context: Context) {
       }
     }
 
-    metrics.setProperty('detail', { missingMetadata, missingOriginalAssembly: missingAssembly, missingPythonAssembly: missingPythonDocs, missingTarball, unknownObjects });
+    metrics.setProperty('detail', { missingMetadata, missingAssembly, missingPythonDocs, missingTsDocs, missingTarball, unknownObjects });
 
     metrics.putMetric(MetricName.MISSING_METADATA_COUNT, missingMetadata.length, Unit.Count);
     metrics.putMetric(MetricName.MISSING_ASSEMBLY_COUNT, missingAssembly.length, Unit.Count);

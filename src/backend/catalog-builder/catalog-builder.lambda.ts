@@ -132,9 +132,9 @@ async function* relevantObjects(bucket: string) {
   } while (request.ContinuationToken != null);
 }
 
-async function appendPackage(packages: any, assmblyKey: string, bucketName: string) {
-  console.log(`Processing key: ${assmblyKey}`);
-  const pkgKey = assmblyKey.replace(constants.ASSEMBLY_KEY_SUFFIX, constants.PACKAGE_KEY_SUFFIX);
+async function appendPackage(packages: any, assemblyKey: string, bucketName: string) {
+  console.log(`Processing key: ${assemblyKey}`);
+  const pkgKey = assemblyKey.replace(constants.ASSEMBLY_KEY_SUFFIX, constants.PACKAGE_KEY_SUFFIX);
   const [, packageName, versionStr] = constants.STORAGE_KEY_FORMAT_REGEX.exec(pkgKey)!;
   const version = new SemVer(versionStr);
   const found = packages.get(packageName)?.get(version.major);
