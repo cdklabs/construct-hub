@@ -73,9 +73,9 @@ export class Transliterator extends Construct {
             Fn.select(0, props.vpcEndpoints.codeArtifactApi.vpcEndpointDnsEntries),
           ),
         ),
-        CODE_ARTIFACT_DOMAIN_NAME: props.codeArtifact.domainName,
-        CODE_ARTIFACT_DOMAIN_OWNER: props.codeArtifact.domainOwner,
-        CODE_ARTIFACT_REPOSITORY_ENDPOINT: props.codeArtifact.npmRepositoryEndpoint,
+        CODE_ARTIFACT_DOMAIN_NAME: props.codeArtifact.repositoryDomainName,
+        CODE_ARTIFACT_DOMAIN_OWNER: props.codeArtifact.repositoryDomainOwner,
+        CODE_ARTIFACT_REPOSITORY_ENDPOINT: props.codeArtifact.repositoryNpmEndpoint,
       },
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 10_240, // Currently the maximum possible setting

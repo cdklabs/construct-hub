@@ -27,13 +27,13 @@ export interface RepositoryProps {
 
 export interface IRepository extends IConstruct {
   /** The ARN of the CodeArtifact Domain that contains the repository. */
-  readonly domainArn: string;
+  readonly repositoryDomainArn: string;
 
   /** The effective name of the CodeArtifact Domain. */
-  readonly domainName: string;
+  readonly repositoryDomainName: string;
 
   /** The owner account of the CodeArtifact Domain. */
-  readonly domainOwner: string;
+  readonly repositoryDomainOwner: string;
 
   /** The ARN of the CodeArtifact Repository. */
   readonly repositoryArn: string;
@@ -42,7 +42,7 @@ export interface IRepository extends IConstruct {
   readonly repositoryName: string;
 
   /** The URL to the endpoint of the CodeArtifact Repository for use with NPM. */
-  readonly npmRepositoryEndpoint: string;
+  readonly repositoryNpmEndpoint: string;
 
   /**
    * Grants read-only access to the repository, for use with NPM.
@@ -61,17 +61,17 @@ export class Repository extends Construct implements IRepository {
   /**
    * The ARN of the CodeArtifact Domain that contains the repository.
    */
-  public readonly domainArn: string;
+  public readonly repositoryDomainArn: string;
 
   /**
    * The name of the CodeArtifact Domain that contains the repository.
    */
-  public readonly domainName: string;
+  public readonly repositoryDomainName: string;
 
   /**
    * The account ID that owns the CodeArtifact Domain that contains the repository.
    */
-  public readonly domainOwner: string;
+  public readonly repositoryDomainOwner: string;
 
   /**
    * The ARN of the CodeArtifact Repository.
@@ -83,14 +83,8 @@ export class Repository extends Construct implements IRepository {
    */
   public readonly repositoryName: string;
 
-  #npmRepositoryEndpoint?: string;
-
-  /**
-   * The S3 bucket in which CodeArtifact stores the package data. When using
-   * VPC Endpoints for CodeArtifact, an S3 Gateway Endpoint must also be
-   * available, which allows reading from this bucket.
-   */
-  public readonly s3BucketArn: string;
+  #repositoryNpmEndpoint?: string;
+  #s3BucketArn?: string;
 
   public constructor(scope: Construct, id: string, props?: RepositoryProps) {
     super(scope, id);
@@ -105,38 +99,24 @@ export class Repository extends Construct implements IRepository {
       repositoryName: props?.registryname ?? domainName,
     });
 
-    const domainDescription = new AwsCustomResource(this, 'DescribeDomain', {
-      onCreate: {
-        service: 'CodeArtifact',
-        action: 'describeDomain',
-        parameters: {
-          domain: domain.attrName,
-          domainOwner: domain.attrOwner,
-        },
-        physicalResourceId: PhysicalResourceId.fromResponse('domain.s3BucketArn'),
-      },
-      policy: AwsCustomResourcePolicy.fromSdkCalls({ resources: [domain.attrArn] }),
-    });
-
-    this.domainArn = domain.attrArn;
-    this.domainName = repository.attrDomainName;
-    this.domainOwner = repository.attrDomainOwner;
+    this.repositoryDomainArn = domain.attrArn;
+    this.repositoryDomainName = repository.attrDomainName;
+    this.repositoryDomainOwner = repository.attrDomainOwner;
     this.repositoryArn = repository.attrArn;
     this.repositoryName = repository.attrName;
-    this.s3BucketArn = domainDescription.getResponseField('domain.s3BucketArn');
   }
 
   /**
    * The npm repository endpoint to use for interacting with this repository.
    */
-  public get npmRepositoryEndpoint(): string {
-    if (this.#npmRepositoryEndpoint == null) {
+  public get repositoryNpmEndpoint(): string {
+    if (this.#repositoryNpmEndpoint == null) {
       const serviceCall = {
         service: 'CodeArtifact',
         action: 'getRepositoryEndpoint',
         parameters: {
-          domain: this.domainName,
-          domainOwner: this.domainOwner,
+          domain: this.repositoryDomainName,
+          domainOwner: this.repositoryDomainOwner,
           format: 'npm',
           repository: this.repositoryName,
         },
@@ -146,10 +126,36 @@ export class Repository extends Construct implements IRepository {
         onCreate: serviceCall,
         onUpdate: serviceCall,
         policy: AwsCustomResourcePolicy.fromSdkCalls({ resources: [this.repositoryArn] }),
+        resourceType: 'Custom::CodeArtifactNpmRepositoryEndpoint',
       });
-      this.#npmRepositoryEndpoint = endpoint.getResponseField('repositoryEndpoint');
+      this.#repositoryNpmEndpoint = endpoint.getResponseField('repositoryEndpoint');
     }
-    return this.#npmRepositoryEndpoint;
+    return this.#repositoryNpmEndpoint;
+  }
+
+  /**
+   * The S3 bucket in which CodeArtifact stores the package data. When using
+   * VPC Endpoints for CodeArtifact, an S3 Gateway Endpoint must also be
+   * available, which allows reading from this bucket.
+   */
+  public get s3BucketArn(): string {
+    if (this.#s3BucketArn == null) {
+      const domainDescription = new AwsCustomResource(this, 'DescribeDomain', {
+        onCreate: {
+          service: 'CodeArtifact',
+          action: 'describeDomain',
+          parameters: {
+            domain: this.repositoryDomainName,
+            domainOwner: this.repositoryDomainOwner,
+          },
+          physicalResourceId: PhysicalResourceId.fromResponse('domain.s3BucketArn'),
+        },
+        policy: AwsCustomResourcePolicy.fromSdkCalls({ resources: [this.repositoryDomainArn] }),
+        resourceType: 'Custom::CoreArtifactDomainDescription',
+      });
+      this.#s3BucketArn = domainDescription.getResponseField('domain.s3BucketArn');
+    }
+    return this.#s3BucketArn;
   }
 
   public grantReadFromRepository(grantee: IGrantable): Grant {
@@ -170,7 +176,7 @@ export class Repository extends Construct implements IRepository {
         'codeartifact:GetRepositoryEndpoint',
         'codeartifact:ReadFromRepository',
       ],
-      resourceArns: [this.domainArn, this.repositoryArn],
+      resourceArns: [this.repositoryDomainArn, this.repositoryArn],
     });
   }
 
@@ -199,7 +205,7 @@ export class Repository extends Construct implements IRepository {
         if (property === 'grantReadFromRepository') {
           return {
             ...realDescriptor,
-            value: decoratedGrantReadFromRepository.bind(target),
+            value: decoratedGrantReadFromRepository,
             get: undefined,
             set: undefined,
           };
@@ -221,7 +227,7 @@ export class Repository extends Construct implements IRepository {
         api.addToPolicy(new PolicyStatement({
           effect: Effect.ALLOW,
           actions: ['codeartifact:GetAuthorizationToken', 'codeartifact:GetRepositoryEndpoint'],
-          resources: [this.domainArn, this.repositoryArn],
+          resources: [this.repositoryDomainArn, this.repositoryArn],
           principals: [grantee.grantPrincipal],
         }));
         repositories.addToPolicy(new PolicyStatement({
