@@ -686,15 +686,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"describeDomain\\",\\"parameters\\":{\\"domain\\":\\"",
               Object {
                 "Fn::GetAtt": Array [
-                  "ConstructHubCodeArtifactDomainFC30B796",
-                  "Name",
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainName",
                 ],
               },
               "\\",\\"domainOwner\\":\\"",
               Object {
                 "Fn::GetAtt": Array [
-                  "ConstructHubCodeArtifactDomainFC30B796",
-                  "Owner",
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainOwner",
                 ],
               },
               "\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"domain.s3BucketArn\\"}}",
@@ -709,7 +709,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
         },
       },
-      "Type": "Custom::AWS",
+      "Type": "Custom::CoreArtifactDomainDescription",
       "UpdateReplacePolicy": "Delete",
     },
     "ConstructHubCodeArtifactDescribeDomainCustomResourcePolicy1A93C60C": Object {
@@ -816,7 +816,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
         },
       },
-      "Type": "Custom::AWS",
+      "Type": "Custom::CodeArtifactNpmRepositoryEndpoint",
       "UpdateReplacePolicy": "Delete",
     },
     "ConstructHubCodeArtifactGetEndpointCustomResourcePolicy4FC951E9": Object {
@@ -5032,15 +5032,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"describeDomain\\",\\"parameters\\":{\\"domain\\":\\"",
               Object {
                 "Fn::GetAtt": Array [
-                  "ConstructHubCodeArtifactDomainFC30B796",
-                  "Name",
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainName",
                 ],
               },
               "\\",\\"domainOwner\\":\\"",
               Object {
                 "Fn::GetAtt": Array [
-                  "ConstructHubCodeArtifactDomainFC30B796",
-                  "Owner",
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainOwner",
                 ],
               },
               "\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"domain.s3BucketArn\\"}}",
@@ -5055,7 +5055,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
         },
       },
-      "Type": "Custom::AWS",
+      "Type": "Custom::CoreArtifactDomainDescription",
       "UpdateReplacePolicy": "Delete",
     },
     "ConstructHubCodeArtifactDescribeDomainCustomResourcePolicy1A93C60C": Object {
@@ -5162,7 +5162,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
         },
       },
-      "Type": "Custom::AWS",
+      "Type": "Custom::CodeArtifactNpmRepositoryEndpoint",
       "UpdateReplacePolicy": "Delete",
     },
     "ConstructHubCodeArtifactGetEndpointCustomResourcePolicy4FC951E9": Object {
