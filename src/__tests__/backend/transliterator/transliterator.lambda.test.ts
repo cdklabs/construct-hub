@@ -71,7 +71,7 @@ test('scoped package', async () => {
     try {
       expect(request.Bucket).toBe(payload.Records[0].s3.bucket.name);
       expect(request.Key).toBe(payload.Records[0].s3.object.key.split('/').map((comp) => decodeURIComponent(comp)).join('/'));
-      expect(request.VersionId).toBe(payload.Records[0].s3.object.versionId);
+      expect(request.VersionId).toBeUndefined(); // Always get the latest version!
     } catch (e) {
       callback(e);
     }
@@ -177,7 +177,7 @@ test('unscoped package', async () => {
     try {
       expect(request.Bucket).toBe(payload.Records[0].s3.bucket.name);
       expect(request.Key).toBe(payload.Records[0].s3.object.key);
-      expect(request.VersionId).toBe(payload.Records[0].s3.object.versionId);
+      expect(request.VersionId).toBeUndefined(); // Always get the latest version!
     } catch (e) {
       callback(e);
     }
