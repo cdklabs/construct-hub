@@ -2,7 +2,6 @@
 import type { Context, S3Event } from 'aws-lambda';
 import { S3 } from 'aws-sdk';
 import * as docgen from 'jsii-docgen';
-import * as aws from '../shared/aws.lambda-shared';
 
 import * as constants from '../shared/constants';
 import { DocumentationLanguage, UnsupportedLanguageError } from '../shared/language';
@@ -49,7 +48,8 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
     console.log(`Source Key:     ${inputKey}`);
     console.log(`Source Version: ${record.s3.object.versionId}`);
 
-    const assemblyResponse = await aws.s3().getObject({ Bucket: record.s3.bucket.name, Key: inputKey }).promise();
+    console.log(`Fetching assembly: ${inputKey}`);
+    const assemblyResponse = await client.getObject({ Bucket: record.s3.bucket.name, Key: inputKey }).promise();
     if (!assemblyResponse.Body) {
       throw new Error(`Response body for assembly at key ${inputKey} is empty`);
     }
@@ -62,7 +62,7 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
       const docs = await docgen.Documentation.forPackage(`${packageName}@${packageVersion}`, { language: docgen.Language.fromString(lang) });
       async function render(submodule?: string) {
         const page = docs.render({ submodule }).render();
-        const key = inputKey.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromLiteral(lang), submodule));
+        const key = inputKey.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(lang), submodule));
         const response = await client.putObject({
           Bucket: record.s3.bucket.name,
           Key: key,
@@ -93,7 +93,7 @@ export async function handler(event: S3Event, context: Context): Promise<readonl
 
     }
 
-    for (const language of [...targetLanguages, 'typescript']) {
+    for (const language of [...targetLanguages, DocumentationLanguage.TYPESCRIPT.toString()]) {
       try {
         await generateDocs(language);
       } catch (e) {

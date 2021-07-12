@@ -17,7 +17,7 @@ export class DocumentationLanguage {
    *
    * Throws an `UnsupportedLanguageError` if the language is not supported.
    */
-  public static fromLiteral(lang: string) {
+  public static fromString(lang: string) {
     switch (lang) {
       case DocumentationLanguage.TYPESCRIPT.toString():
         return DocumentationLanguage.TYPESCRIPT;
