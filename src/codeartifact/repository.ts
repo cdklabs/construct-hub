@@ -2,7 +2,7 @@ import { CfnDomain, CfnRepository } from '@aws-cdk/aws-codeartifact';
 import { InterfaceVpcEndpoint } from '@aws-cdk/aws-ec2';
 import { Effect, Grant, IGrantable, PolicyStatement } from '@aws-cdk/aws-iam';
 import { Construct, IConstruct } from '@aws-cdk/core';
-import { AwsCustomResource, PhysicalResourceId } from '@aws-cdk/custom-resources';
+import { AwsCustomResource, AwsCustomResourcePolicy, PhysicalResourceId } from '@aws-cdk/custom-resources';
 
 export interface RepositoryProps {
   /**
@@ -54,15 +54,42 @@ export interface IRepository extends IConstruct {
   grantReadFromRepository(grantee: IGrantable): Grant;
 }
 
+/**
+ * A CodeArtifact repository with an npmjs.com upstream connection.
+ */
 export class Repository extends Construct implements IRepository {
+  /**
+   * The ARN of the CodeArtifact Domain that contains the repository.
+   */
   public readonly domainArn: string;
+
+  /**
+   * The name of the CodeArtifact Domain that contains the repository.
+   */
   public readonly domainName: string;
+
+  /**
+   * The account ID that owns the CodeArtifact Domain that contains the repository.
+   */
   public readonly domainOwner: string;
+
+  /**
+   * The ARN of the CodeArtifact Repository.
+   */
   public readonly repositoryArn: string;
+
+  /**
+   * The name of the CodeArtifact Repository.
+   */
   public readonly repositoryName: string;
 
   #npmRepositoryEndpoint?: string;
 
+  /**
+   * The S3 bucket in which CodeArtifact stores the package data. When using
+   * VPC Endpoints for CodeArtifact, an S3 Gateway Endpoint must also be
+   * available, which allows reading from this bucket.
+   */
   public readonly s3BucketArn: string;
 
   public constructor(scope: Construct, id: string, props?: RepositoryProps) {
@@ -88,13 +115,7 @@ export class Repository extends Construct implements IRepository {
         },
         physicalResourceId: PhysicalResourceId.fromResponse('domain.s3BucketArn'),
       },
-      policy: {
-        statements: [new PolicyStatement({
-          effect: Effect.ALLOW,
-          actions: ['codeartifact:DescribeDomain'],
-          resources: [domain.attrArn],
-        })],
-      },
+      policy: AwsCustomResourcePolicy.fromSdkCalls({ resources: [domain.attrArn] }),
     });
 
     this.domainArn = domain.attrArn;
@@ -105,6 +126,9 @@ export class Repository extends Construct implements IRepository {
     this.s3BucketArn = domainDescription.getResponseField('domain.s3BucketArn');
   }
 
+  /**
+   * The npm repository endpoint to use for interacting with this repository.
+   */
   public get npmRepositoryEndpoint(): string {
     if (this.#npmRepositoryEndpoint == null) {
       const serviceCall = {
@@ -121,13 +145,7 @@ export class Repository extends Construct implements IRepository {
       const endpoint = new AwsCustomResource(this, 'GetEndpoint', {
         onCreate: serviceCall,
         onUpdate: serviceCall,
-        policy: {
-          statements: [new PolicyStatement({
-            effect: Effect.ALLOW,
-            actions: ['codeartifact:GetRepositoryEndpoint'],
-            resources: [this.repositoryArn],
-          })],
-        },
+        policy: AwsCustomResourcePolicy.fromSdkCalls({ resources: [this.repositoryArn] }),
       });
       this.#npmRepositoryEndpoint = endpoint.getResponseField('repositoryEndpoint');
     }

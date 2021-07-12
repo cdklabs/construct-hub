@@ -1,1 +1,1 @@
-export * from './vpc_endpoint_bucket';
+export * from './vpc-endpoint-bucket';
