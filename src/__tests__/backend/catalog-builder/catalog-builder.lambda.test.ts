@@ -95,7 +95,7 @@ test('initial build', () => {
     }
   });
   // this is the suffix that triggers the catalog builder.
-  const docsSuffix = constants.TYPESCRIPT_DOCS_KEY_SUFFIX;
+  const docsSuffix = constants.DOCS_KEY_SUFFIX_TYPESCRIPT;
   const mockFirstPage: AWS.S3.ObjectList = [
     { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.3${constants.ASSEMBLY_KEY_SUFFIX}` },
     { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.3${constants.PACKAGE_KEY_SUFFIX}` },

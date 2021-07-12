@@ -29,9 +29,9 @@ export async function handler(event: ScheduledEvent, _context: Context) {
       status.tarballPresent = true;
     } else if (key.endsWith(constants.ASSEMBLY_KEY_SUFFIX)) {
       status.assemblyPresent = true;
-    } else if (key.endsWith(constants.PYTHON_DOCS_KEY_SUFFIX)) {
+    } else if (key.endsWith(constants.DOCS_KEY_SUFFIX_PYTHON)) {
       status.pythonDocsPresent = true;
-    } else if (key.endsWith(constants.TYPESCRIPT_DOCS_KEY_SUFFIX)) {
+    } else if (key.endsWith(constants.DOCS_KEY_SUFFIX_TYPESCRIPT)) {
       status.tsDocsPresent = true;
     } else {
       status.unknownObjects = status.unknownObjects ?? [];

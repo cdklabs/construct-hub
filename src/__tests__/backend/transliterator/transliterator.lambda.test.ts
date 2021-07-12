@@ -112,13 +112,15 @@ test('uploads a file per submodule (unscoped package)', async () => {
   );
 
   const created = await handler(event, {} as any);
-  expect(created.length).toEqual(6);
-  expect(created[0].key).toEqual(`data/${packageName}/v${packageVersion}/docs-python.md`);
-  expect(created[1].key).toEqual(`data/${packageName}/v${packageVersion}/docs-sub1-python.md`);
-  expect(created[2].key).toEqual(`data/${packageName}/v${packageVersion}/docs-sub2-python.md`);
-  expect(created[3].key).toEqual(`data/${packageName}/v${packageVersion}/docs-typescript.md`);
-  expect(created[4].key).toEqual(`data/${packageName}/v${packageVersion}/docs-sub1-typescript.md`);
-  expect(created[5].key).toEqual(`data/${packageName}/v${packageVersion}/docs-sub2-typescript.md`);
+
+  expect(created.map(({ key }) => key)).toEqual([
+    `data/${packageName}/v${packageVersion}/docs-python.md`,
+    `data/${packageName}/v${packageVersion}/docs-sub1-python.md`,
+    `data/${packageName}/v${packageVersion}/docs-sub2-python.md`,
+    `data/${packageName}/v${packageVersion}/docs-typescript.md`,
+    `data/${packageName}/v${packageVersion}/docs-sub1-typescript.md`,
+    `data/${packageName}/v${packageVersion}/docs-sub2-typescript.md`,
+  ]);
 
 });
 

@@ -29,17 +29,17 @@ export const ASSEMBLY_KEY_SUFFIX = '/assembly.json';
 /**
  * The key suffix for a TypeScript doc artifact (root module).
  */
-export const TYPESCRIPT_DOCS_KEY_SUFFIX = docsKeySuffix(DocumentationLanguage.TYPESCRIPT);
+export const DOCS_KEY_SUFFIX_TYPESCRIPT = docsKeySuffix(DocumentationLanguage.TYPESCRIPT);
 
 /**
  * The key suffix for a Python doc artifact (root module).
  */
-export const PYTHON_DOCS_KEY_SUFFIX = docsKeySuffix(DocumentationLanguage.PYTHON);
+export const DOCS_KEY_SUFFIX_PYTHON = docsKeySuffix(DocumentationLanguage.PYTHON);
 
 /**
  * The key suffix matching any documentation artifact.
  */
-export const ANY_DOCS_KEY_SUFFIX = docsKeySuffix('*');
+export const DOCS_KEY_SUFFIX_ANY = docsKeySuffix('*');
 
 /**
  * The key suffix for documentation artifacts by language and submodule.
