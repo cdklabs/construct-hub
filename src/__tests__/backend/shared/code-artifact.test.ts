@@ -1,11 +1,11 @@
 import type * as child_process from 'child_process';
 import { randomBytes } from 'crypto';
 
+import { EventEmitter } from 'stream';
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 
 import { logInWithCodeArtifact } from '../../../backend/shared/code-artifact.lambda-shared';
-import { EventEmitter } from 'stream';
 
 jest.mock('child_process');
 
@@ -39,6 +39,7 @@ test('logInWithCodeArtifact', async () => {
     cb(null, { authorizationToken });
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockSpawn = require('child_process').spawn as jest.MockedFunction<typeof child_process.spawn>;
   const configToSet = new Set([
     `registry=${endpoint}`,
