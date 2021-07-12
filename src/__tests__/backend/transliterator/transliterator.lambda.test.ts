@@ -23,7 +23,7 @@ afterEach((done) => {
   done();
 });
 
-test('uploads a file per language', async () => {
+test('uploads a file per language (scoped package)', async () => {
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
@@ -67,7 +67,7 @@ test('uploads a file per language', async () => {
 
 });
 
-test('uploads a file per submodule', async () => {
+test('uploads a file per submodule (unscoped package)', async () => {
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
@@ -76,7 +76,6 @@ test('uploads a file per submodule', async () => {
   });
 
   // GIVEN
-  const packageScope = 'scope';
   const packageName = 'package-name';
   const packageVersion = '1.2.3-dev.4';
   const event: S3Event = {
@@ -87,7 +86,7 @@ test('uploads a file per submodule', async () => {
           name: 'dummy-bucket',
         },
         object: {
-          key: `${constants.STORAGE_KEY_PREFIX}%40${packageScope}/${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
+          key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
           versionId: 'VersionId',
         },
       },
@@ -114,12 +113,12 @@ test('uploads a file per submodule', async () => {
 
   const created = await handler(event, {} as any);
   expect(created.length).toEqual(6);
-  expect(created[0].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-python.md`);
-  expect(created[1].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-sub1-python.md`);
-  expect(created[2].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-sub2-python.md`);
-  expect(created[3].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-typescript.md`);
-  expect(created[4].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-sub1-typescript.md`);
-  expect(created[5].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-sub2-typescript.md`);
+  expect(created[0].key).toEqual(`data/${packageName}/v${packageVersion}/docs-python.md`);
+  expect(created[1].key).toEqual(`data/${packageName}/v${packageVersion}/docs-sub1-python.md`);
+  expect(created[2].key).toEqual(`data/${packageName}/v${packageVersion}/docs-sub2-python.md`);
+  expect(created[3].key).toEqual(`data/${packageName}/v${packageVersion}/docs-typescript.md`);
+  expect(created[4].key).toEqual(`data/${packageName}/v${packageVersion}/docs-sub1-typescript.md`);
+  expect(created[5].key).toEqual(`data/${packageName}/v${packageVersion}/docs-sub2-typescript.md`);
 
 });
 
