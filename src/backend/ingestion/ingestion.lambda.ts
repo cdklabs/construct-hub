@@ -47,13 +47,11 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
       throw new Error(`Integrity check failed: ${payload.integrity} !== ${integrityCheck}`);
     }
 
-    debugger;
     const tar = await gunzip(Buffer.from(tarball.Body!));
     const { dotJsii, licenseText, packageJson } = await new Promise<{ dotJsii: Buffer; licenseText?: Buffer; packageJson: Buffer }>((ok, ko) => {
       let dotJsiiBuffer: Buffer | undefined;
       let licenseTextBuffer: Buffer | undefined;
       let packageJsonData: Buffer | undefined;
-      extract()
       const extractor = extract({ filenameEncoding: 'utf-8' })
         .once('error', (reason) => {
           ko(reason);
