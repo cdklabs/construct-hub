@@ -36,14 +36,16 @@ export class WebApp extends Construct {
     super(scope, id);
 
     this.bucket = new s3.Bucket(this, 'WebsiteBucket', { blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL });
+    const functionId = 'ResponseFunction';
+    const functionName = `${Names.uniqueId(this)}${functionId}`;
 
     const behaviorOptions = {
       compress: true,
       cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
       functionAssociations: [{
-        function: new ResponseFunction(this, 'ResponseFunction', {
+        function: new ResponseFunction(this, functionId, {
           // see https://github.com/aws/aws-cdk/issues/15523
-          functionName: `${Names.uniqueId(this)}ResponseFunction`,
+          functionName: functionName.substring(0, Math.min(64, functionName.length)),
         }),
         eventType: cloudfront.FunctionEventType.VIEWER_RESPONSE,
       }],
