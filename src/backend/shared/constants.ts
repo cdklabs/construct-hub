@@ -4,7 +4,7 @@
  * not part of the package's `dependencies`, such as the `aws-sdk`.
  */
 
-import type { TargetLanguage } from 'jsii-rosetta';
+import { DocumentationLanguage } from './language';
 
 /**
  * Key prefix for the package data storage.
@@ -27,11 +27,25 @@ export const METADATA_KEY_SUFFIX = '/metadata.json';
 export const ASSEMBLY_KEY_SUFFIX = '/assembly.json';
 
 /**
- * The key suffix for assemblies in the provided language. This should NOT be
- * used for the TypeScript/JavaScript assembly however.
+ * The key suffix for a TypeScript doc artifact (root module).
  */
-export function assemblyKeySuffix(lang: TargetLanguage | '*') {
-  return `/assembly-${lang}.json`;
+export const DOCS_KEY_SUFFIX_TYPESCRIPT = docsKeySuffix(DocumentationLanguage.TYPESCRIPT);
+
+/**
+ * The key suffix for a Python doc artifact (root module).
+ */
+export const DOCS_KEY_SUFFIX_PYTHON = docsKeySuffix(DocumentationLanguage.PYTHON);
+
+/**
+ * The key suffix matching any documentation artifact.
+ */
+export const DOCS_KEY_SUFFIX_ANY = docsKeySuffix('*');
+
+/**
+ * The key suffix for documentation artifacts by language and submodule.
+ */
+export function docsKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string) {
+  return `/docs-${submodule ? `${submodule}-` : ''}${lang}.md`;
 }
 
 /**

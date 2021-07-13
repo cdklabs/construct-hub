@@ -48,16 +48,23 @@ export class Transliterator extends Construct {
       memorySize: 10_240, // Currently the maximum possible setting
       retryAttempts: 2,
       timeout: Duration.minutes(15),
+      environment: {
+        // temporaty hack to generate construct-hub compliant markdown.
+        // see https://github.com/cdklabs/jsii-docgen/blob/master/src/docgen/render/markdown.ts#L172
+        HEADER_SPAN: 'true',
+      },
     });
 
-    // The handler reads & writes to this bucket.
-    props.bucket.grantRead(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.PACKAGE_KEY_SUFFIX}`);
-    props.bucket.grantWrite(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.assemblyKeySuffix('*')}`);
+    // the handler fetches the assembly to read the target languages of the package
+    props.bucket.grantRead(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.ASSEMBLY_KEY_SUFFIX}`);
+
+    // the handler writes a file for each target language
+    props.bucket.grantWrite(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.DOCS_KEY_SUFFIX_ANY}`);
 
     // Creating the event chaining
     lambda.addEventSource(new S3EventSource(props.bucket, {
       events: [EventType.OBJECT_CREATED],
-      filters: [{ prefix: constants.STORAGE_KEY_PREFIX, suffix: constants.PACKAGE_KEY_SUFFIX }],
+      filters: [{ prefix: constants.STORAGE_KEY_PREFIX, suffix: constants.ASSEMBLY_KEY_SUFFIX }],
     }));
 
     props.monitoring.watchful.watchLambdaFunction('Transliterator Function', lambda);
