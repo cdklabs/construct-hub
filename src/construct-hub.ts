@@ -35,6 +35,20 @@ export interface ConstructHubProps {
    * Actions to perform when alarms are set.
    */
   readonly alarmActions: AlarmActions;
+
+  /**
+   * Whether sensitive Lambda functions (which operate on un-trusted complex
+   * data, such as the transliterator, which operates with externally-sourced
+   * npm package tarballs) should run in network-isolated environments. This
+   * implies the creation of additonal resources, including:
+   *
+   * - A VPC with only isolated subnets.
+   * - VPC Endpoints (CodeArtifact, CodeArtifact API, S3)
+   * - A CodeArtifact Repository with an external connection to npmjs.com
+   *
+   * @default true
+   */
+  readonly isolateLambdas?: boolean;
 }
 
 /**
@@ -67,13 +81,15 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     const codeArtifact = new Repository(this, 'CodeArtifact', { description: 'Proxy to npmjs.com for ConstructHub' });
 
-    const vpc = new ec2.Vpc(this, 'VPC', {
-      enableDnsHostnames: true,
-      enableDnsSupport: true,
-      natGateways: 0,
-      subnetConfiguration: [{ name: 'Isolated', subnetType: ec2.SubnetType.ISOLATED }],
-    });
-    const vpcEndpoints = {
+    const vpc = (props.isolateLambdas ?? true)
+      ? new ec2.Vpc(this, 'VPC', {
+        enableDnsHostnames: true,
+        enableDnsSupport: true,
+        natGateways: 0,
+        subnetConfiguration: [{ name: 'Isolated', subnetType: ec2.SubnetType.ISOLATED }],
+      })
+      : undefined;
+    const vpcEndpoints = vpc && {
       codeArtifactApi: vpc.addInterfaceEndpoint('CodeArtifact.API', {
         privateDnsEnabled: false,
         service: new ec2.InterfaceVpcEndpointAwsService('codeartifact.api'),
@@ -90,7 +106,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       }),
     };
     // The S3 access is necessary for the CodeArtifact VPC endpoint to be used.
-    vpcEndpoints.s3.addToPolicy(new PolicyStatement({
+    vpcEndpoints?.s3.addToPolicy(new PolicyStatement({
       effect: Effect.ALLOW,
       actions: ['s3:GetObject'],
       resources: [`${codeArtifact.s3BucketArn}/*`],
