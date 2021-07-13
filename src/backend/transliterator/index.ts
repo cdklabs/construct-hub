@@ -82,7 +82,11 @@ export class Transliterator extends Construct {
   public constructor(scope: Construct, id: string, props: TransliteratorProps) {
     super(scope, id);
 
-    const environment: Record<string, string> = {};
+    const environment: Record<string, string> = {
+      // temporaty hack to generate construct-hub compliant markdown.
+      // see https://github.com/cdklabs/jsii-docgen/blob/master/src/docgen/render/markdown.ts#L172
+      HEADER_SPAN: 'true',
+    };
     if (props.vpcEndpoints) {
       // Those are returned as an array of HOSTED_ZONE_ID:DNS_NAME... We care
       // only about the DNS_NAME of the first entry in that array (which is
@@ -120,13 +124,13 @@ export class Transliterator extends Construct {
       ? s3.throughVpcEndpoint(props.bucket, props.vpcEndpoints.s3)
       : props.bucket;
     // The handler reads & writes to this bucket.
-    bucket.grantRead(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.PACKAGE_KEY_SUFFIX}`);
-    bucket.grantWrite(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.assemblyKeySuffix('*')}`);
+    bucket.grantRead(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.ASSEMBLY_KEY_SUFFIX}`);
+    bucket.grantWrite(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.DOCS_KEY_SUFFIX_ANY}`);
 
     // Creating the event chaining
     lambda.addEventSource(new S3EventSource(props.bucket, {
       events: [EventType.OBJECT_CREATED],
-      filters: [{ prefix: constants.STORAGE_KEY_PREFIX, suffix: constants.PACKAGE_KEY_SUFFIX }],
+      filters: [{ prefix: constants.STORAGE_KEY_PREFIX, suffix: constants.ASSEMBLY_KEY_SUFFIX }],
     }));
 
     props.monitoring.watchful.watchLambdaFunction('Transliterator Function', lambda);
