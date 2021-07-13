@@ -8,9 +8,12 @@ import { Documentation } from 'jsii-docgen';
 import * as constants from '../../../backend/shared/constants';
 import { handler, reset } from '../../../backend/transliterator/transliterator.lambda';
 
-type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
-
+jest.mock('child_process');
 jest.mock('jsii-docgen');
+jest.mock('jsii-rosetta/lib/commands/transliterate');
+jest.mock('../../../backend/shared/code-artifact.lambda-shared');
+
+type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
 
 beforeEach((done) => {
   AWSMock.setSDKInstance(AWS);
@@ -21,6 +24,77 @@ afterEach((done) => {
   AWSMock.restore();
   reset();
   done();
+});
+
+describe('VPC Endpoints', () => {
+  const previousEnv = process.env;
+  const endpoint = 'codeartifact.d.bermuda-triangle-1.amazonaws.com';
+  const apiEndpoint = 'codeartifact.api.bermuda-triangle-1.amazonaws.com';
+  const domain = 'domain-name';
+  const domainOwner = '123456789012';
+
+  beforeAll(() => {
+    process.env = {
+      ...previousEnv,
+      CODE_ARTIFACT_REPOSITORY_ENDPOINT: endpoint,
+      CODE_ARTIFACT_DOMAIN_NAME: domain,
+      CODE_ARTIFACT_DOMAIN_OWNER: domainOwner,
+      CODE_ARTIFACT_API_ENDPOINT: apiEndpoint,
+    };
+  });
+
+  afterAll(() => {
+    process.env = { ...previousEnv };
+  });
+
+  test('happy path', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
+    forPackage.mockImplementation(async (target: string) => {
+      return new MockDocumentation(target) as unknown as Documentation;
+    });
+
+    // GIVEN
+    const packageScope = 'scope';
+    const packageName = 'package-name';
+    const packageVersion = '1.2.3-dev.4';
+    const event: S3Event = {
+      Records: [{
+        awsRegion: 'bemuda-triangle-1',
+        s3: {
+          bucket: {
+            name: 'dummy-bucket',
+          },
+          object: {
+            key: `${constants.STORAGE_KEY_PREFIX}%40${packageScope}/${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
+            versionId: 'VersionId',
+          },
+        },
+      }],
+    } as any;
+
+    const assembly: spec.Assembly = {
+      targets: { python: {} },
+    } as any;
+
+    // mock the assembly request
+    mockFetchAssembly(assembly);
+
+    // mock the file uploads
+    mockPutDocs('/docs-python.md', '/docs-typescript.md');
+
+    const created = await handler(event, {} as any);
+    expect(created.length).toEqual(2);
+    expect(created[0].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-python.md`);
+    expect(created[1].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-typescript.md`);
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    expect(require('../../../backend/shared/code-artifact.lambda-shared').logInWithCodeArtifact).toHaveBeenCalledWith({
+      endpoint,
+      domain,
+      domainOwner,
+      apiEndpoint,
+    });
+  });
 });
 
 test('uploads a file per language (scoped package)', async () => {

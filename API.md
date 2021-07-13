@@ -131,6 +131,22 @@ Connect the hub to a domain (requires a hosted zone and a certificate).
 
 ---
 
+##### `isolateLambdas`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.isolateLambdas"></a>
+
+- *Type:* `boolean`
+- *Default:* true
+
+Whether sensitive Lambda functions (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments.
+
+This
+implies the creation of additonal resources, including:
+
+- A VPC with only isolated subnets.
+- VPC Endpoints (CodeArtifact, CodeArtifact API, S3)
+- A CodeArtifact Repository with an external connection to npmjs.com
+
+---
+
 ### Domain <a name="construct-hub.Domain"></a>
 
 Domain configuration for the website.
