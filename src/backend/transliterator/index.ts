@@ -1,14 +1,19 @@
 import { ComparisonOperator, IAlarm } from '@aws-cdk/aws-cloudwatch';
 import { GatewayVpcEndpoint, InterfaceVpcEndpoint, IVpc, SubnetSelection, SubnetType } from '@aws-cdk/aws-ec2';
-import { S3EventSource } from '@aws-cdk/aws-lambda-event-sources';
+import { SnsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { Bucket, EventType } from '@aws-cdk/aws-s3';
+import * as s3n from '@aws-cdk/aws-s3-notifications';
+import * as sns from '@aws-cdk/aws-sns';
 import { Construct, Duration, Fn } from '@aws-cdk/core';
 import { Repository } from '../../codeartifact/repository';
 import { Monitoring } from '../../monitoring';
 import * as s3 from '../../s3';
 import * as constants from '../shared/constants';
+import { DocumentationLanguage } from '../shared/language';
 import { Transliterator as Handler } from './transliterator';
+
+const SUPPORTED_LANGUAGES = [DocumentationLanguage.PYTHON, DocumentationLanguage.TYPESCRIPT];
 
 export interface TransliteratorProps {
   /**
@@ -77,10 +82,19 @@ export class Transliterator extends Construct {
    * is not empty, meaning some packages failed transliteration and require
    * operator attention.
    */
-  public readonly alarmDeadLetterQueueNotEmpty: IAlarm;
+  public readonly alarmsDeadLetterQueueNotEmpty: Map<DocumentationLanguage, IAlarm>;
 
   public constructor(scope: Construct, id: string, props: TransliteratorProps) {
     super(scope, id);
+    this.alarmsDeadLetterQueueNotEmpty = new Map();
+
+    const repository = props.vpcEndpoints
+      ? props.codeArtifact?.throughVpcEndpoint(props.vpcEndpoints.codeArtifactApi, props.vpcEndpoints.codeArtifact)
+      : props.codeArtifact;
+
+    const bucket = props.vpcEndpoints
+      ? s3.throughVpcEndpoint(props.bucket, props.vpcEndpoints.s3)
+      : props.bucket;
 
     const environment: Record<string, string> = {
       // temporaty hack to generate construct-hub compliant markdown.
@@ -103,43 +117,47 @@ export class Transliterator extends Construct {
       environment.CODE_ARTIFACT_REPOSITORY_ENDPOINT = props.codeArtifact.repositoryNpmEndpoint;
     }
 
-    const lambda = new Handler(this, 'Default', {
-      deadLetterQueueEnabled: true,
-      description: 'Creates transliterated assemblies from jsii-enabled npm packages',
-      environment,
-      logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
-      memorySize: 10_240, // Currently the maximum possible setting
-      retryAttempts: 2,
-      timeout: Duration.minutes(15),
-      vpc: props.vpc,
-      vpcSubnets: props.vpcSubnets ?? { subnetType: SubnetType.ISOLATED },
+    const topic = new sns.Topic(this, 'Topic');
+
+    // multiplex the event via an sns topic so that all functions get it
+    bucket.addEventNotification(EventType.OBJECT_CREATED, new s3n.SnsDestination(topic), {
+      prefix: constants.STORAGE_KEY_PREFIX,
+      suffix: constants.ASSEMBLY_KEY_SUFFIX,
     });
 
-    const repository = props.vpcEndpoints
-      ? props.codeArtifact?.throughVpcEndpoint(props.vpcEndpoints.codeArtifactApi, props.vpcEndpoints.codeArtifact)
-      : props.codeArtifact;
-    repository?.grantReadFromRepository(lambda);
+    for (const lang of SUPPORTED_LANGUAGES) {
 
-    const bucket = props.vpcEndpoints
-      ? s3.throughVpcEndpoint(props.bucket, props.vpcEndpoints.s3)
-      : props.bucket;
-    // The handler reads & writes to this bucket.
-    bucket.grantRead(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.ASSEMBLY_KEY_SUFFIX}`);
-    bucket.grantWrite(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.DOCS_KEY_SUFFIX_ANY}`);
-
-    // Creating the event chaining
-    lambda.addEventSource(new S3EventSource(props.bucket, {
-      events: [EventType.OBJECT_CREATED],
-      filters: [{ prefix: constants.STORAGE_KEY_PREFIX, suffix: constants.ASSEMBLY_KEY_SUFFIX }],
-    }));
-
-    props.monitoring.watchful.watchLambdaFunction('Transliterator Function', lambda);
-    this.alarmDeadLetterQueueNotEmpty = lambda.deadLetterQueue!.metricApproximateNumberOfMessagesVisible()
-      .createAlarm(this, 'DLQAlarm', {
-        alarmDescription: 'The transliteration function failed for one or more packages',
-        comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-        evaluationPeriods: 1,
-        threshold: 1,
+      const lambda = new Handler(this, 'Default', {
+        deadLetterQueueEnabled: true,
+        description: 'Creates transliterated assemblies from jsii-enabled npm packages',
+        environment: { ...environment, language: lang.toString() },
+        logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
+        memorySize: 10_240, // Currently the maximum possible setting
+        retryAttempts: 2,
+        timeout: Duration.minutes(15),
+        vpc: props.vpc,
+        vpcSubnets: props.vpcSubnets ?? { subnetType: SubnetType.ISOLATED },
       });
+
+      repository?.grantReadFromRepository(lambda);
+
+      // The handler reads & writes to this bucket.
+      bucket.grantRead(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.ASSEMBLY_KEY_SUFFIX}`);
+      bucket.grantWrite(lambda, `${constants.STORAGE_KEY_PREFIX}*${constants.DOCS_KEY_SUFFIX_ANY}`);
+
+      // subscribe to the topic
+      lambda.addEventSource(new SnsEventSource(topic, { deadLetterQueue: lambda.deadLetterQueue }));
+
+      props.monitoring.watchful.watchLambdaFunction('Transliterator Function', lambda);
+      this.alarmsDeadLetterQueueNotEmpty.set(lang, lambda.deadLetterQueue!.metricApproximateNumberOfMessagesVisible()
+        .createAlarm(this, 'DLQAlarm', {
+          alarmDescription: 'The transliteration function failed for one or more packages',
+          comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+          evaluationPeriods: 1,
+          threshold: 1,
+        }));
+    }
+
   }
+
 }
