@@ -1,7 +1,7 @@
 import * as os from 'os';
 import * as path from 'path';
 // eslint-disable-next-line import/no-unresolved
-import type { Context, S3Event } from 'aws-lambda';
+import type { Context, S3Event, SNSEvent } from 'aws-lambda';
 import { S3 } from 'aws-sdk';
 import { PromiseResult } from 'aws-sdk/lib/request';
 import * as fs from 'fs-extra';
@@ -10,7 +10,7 @@ import * as docgen from 'jsii-docgen';
 import { logInWithCodeArtifact } from '../shared/code-artifact.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
-import { DocumentationLanguage, UnsupportedLanguageError } from '../shared/language';
+import { DocumentationLanguage } from '../shared/language';
 
 const clients = new Map<string, S3>();
 
@@ -27,7 +27,7 @@ const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]
  *
  * @returns nothing
  */
-export function handler(event: S3Event, context: Context): Promise<readonly S3Object[]> {
+export function handler(event: SNSEvent, context: Context): Promise<readonly S3Object[]> {
   console.log(JSON.stringify(event, null, 2));
   // We'll need a writable $HOME directory, or this won't work well, because
   // npm will try to write stuff like the `.npmrc` or package caches in there
@@ -44,92 +44,85 @@ export function handler(event: S3Event, context: Context): Promise<readonly S3Ob
       await logInWithCodeArtifact({ endpoint, domain, domainOwner, apiEndpoint });
     }
 
+    const language = requireEnv('TARGET_LANGUAGE');
+
     const created = new Array<S3Object>();
-    for (const record of event.Records) {
-      // Key names are escaped (`@` as `%40`) in the input payload... Decode it here... We cannot use
-      // `decodeURI` here because it does not undo encoding that `encodeURI` would not have done, and
-      // that would not replace `@` in the position where it is in the keys... So we have to work on
-      // the URI components instead.
-      const inputKey = record.s3.object.key.split('/').map((comp) => decodeURIComponent(comp)).join('/');
-      const [, packageName, packageVersion] = inputKey.match(ASSEMBLY_KEY_REGEX) ?? [];
-      if (packageName == null) {
-        throw new Error(`Invalid object key: "${inputKey}". It was expected to match ${ASSEMBLY_KEY_REGEX}!`);
-      }
+    for (const snsRecord of event.Records) {
 
-      const packageFqn = `${packageName}@${packageVersion}`;
+      const s3Event: S3Event = JSON.parse(snsRecord.Sns.Message);
 
-      const client = (clients.has(record.awsRegion)
-        ? clients
-        : clients.set(record.awsRegion, new S3({ region: record.awsRegion }))
-      ).get(record.awsRegion)!;
+      for (const record of s3Event.Records) {
 
-      console.log(`Source Bucket:  ${record.s3.bucket.name}`);
-      console.log(`Source Key:     ${inputKey}`);
-      console.log(`Source Version: ${record.s3.object.versionId}`);
-
-      console.log(`Fetching assembly: ${inputKey}`);
-      const assemblyResponse = await client.getObject({ Bucket: record.s3.bucket.name, Key: inputKey }).promise();
-      if (!assemblyResponse.Body) {
-        throw new Error(`Response body for assembly at key ${inputKey} is empty`);
-      }
-
-      const assembly = JSON.parse(assemblyResponse.Body.toString('utf-8'));
-      const submodules = Object.keys(assembly.submodules ?? {}).map(s => s.split('.')[1]);
-      const targetLanguages = Object.keys(assembly.targets);
-
-      async function generateDocs(lang: string) {
-
-        const uploads = new Map<string, Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>>();
-        const docs = await docgen.Documentation.forPackage(packageFqn, { language: docgen.Language.fromString(lang) });
-
-        function renderAndDispatch(submodule?: string) {
-          console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
-          const page = docs.render({ submodule, linkFormatter: linkFormatter(docs) }).render();
-          const key = inputKey.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(lang), submodule));
-          console.log(`Uploading ${key}`);
-          const upload = client.putObject({
-            Bucket: record.s3.bucket.name,
-            Key: key,
-            Body: page,
-            ContentType: 'text/html',
-            Metadata: {
-              'Origin-Version-Id': record.s3.object.versionId ?? 'N/A',
-              'Lambda-Log-Group': context.logGroupName,
-              'Lambda-Log-Stream': context.logStreamName,
-              'Lambda-Run-Id': context.awsRequestId,
-            },
-          }).promise();
-          uploads.set(key, upload);
+        // Key names are escaped (`@` as `%40`) in the input payload... Decode it here... We cannot use
+        // `decodeURI` here because it does not undo encoding that `encodeURI` would not have done, and
+        // that would not replace `@` in the position where it is in the keys... So we have to work on
+        // the URI components instead.
+        const inputKey = record.s3.object.key.split('/').map((comp) => decodeURIComponent(comp)).join('/');
+        const [, packageName, packageVersion] = inputKey.match(ASSEMBLY_KEY_REGEX) ?? [];
+        if (packageName == null) {
+          throw new Error(`Invalid object key: "${inputKey}". It was expected to match ${ASSEMBLY_KEY_REGEX}!`);
         }
 
-        renderAndDispatch();
-        for (const submodule of submodules) {
-          renderAndDispatch(submodule);
+        const packageFqn = `${packageName}@${packageVersion}`;
+
+        const client = (clients.has(record.awsRegion)
+          ? clients
+          : clients.set(record.awsRegion, new S3({ region: record.awsRegion }))
+        ).get(record.awsRegion)!;
+
+        console.log(`Source Bucket:  ${record.s3.bucket.name}`);
+        console.log(`Source Key:     ${inputKey}`);
+        console.log(`Source Version: ${record.s3.object.versionId}`);
+
+        console.log(`Fetching assembly: ${inputKey}`);
+        const assemblyResponse = await client.getObject({ Bucket: record.s3.bucket.name, Key: inputKey }).promise();
+        if (!assemblyResponse.Body) {
+          throw new Error(`Response body for assembly at key ${inputKey} is empty`);
         }
 
-        for (const [key, upload] of uploads.entries()) {
-          const response = await upload;
-          created.push({ bucket: record.s3.bucket.name, key: key, versionId: response.VersionId });
-          console.log(`Finished uploading ${key} (Version ID: ${response.VersionId})`);
-        }
+        const assembly = JSON.parse(assemblyResponse.Body.toString('utf-8'));
+        const submodules = Object.keys(assembly.submodules ?? {}).map(s => s.split('.')[1]);
 
-      }
+        async function generateDocs(lang: string) {
 
-      for (const language of [...targetLanguages, DocumentationLanguage.TYPESCRIPT.toString()]) {
-        try {
-          // we await per language here because every language will eventually be moved to
-          // a separate function.
-          await generateDocs(language);
-        } catch (e) {
-          if (e instanceof docgen.UnsupportedLanguageError) {
-            console.warn(`Skipping '${language}' for ${packageFqn} since it is not yet supported by jsii-docgen`);
-          } else if (e instanceof UnsupportedLanguageError) {
-            console.warn(`Skipping '${language}' for ${packageFqn} since it is not yet supported by construct-hub`);
-          } else {
-            console.error(`Failed generating ${language} documentation for ${packageFqn}: ${e}`);
+          const uploads = new Map<string, Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>>();
+          const docs = await docgen.Documentation.forPackage(packageFqn, { language: docgen.Language.fromString(lang) });
+
+          function renderAndDispatch(submodule?: string) {
+            console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
+            const page = docs.render({ submodule, linkFormatter: linkFormatter(docs) }).render();
+            const key = inputKey.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(lang), submodule));
+            console.log(`Uploading ${key}`);
+            const upload = client.putObject({
+              Bucket: record.s3.bucket.name,
+              Key: key,
+              Body: page,
+              ContentType: 'text/html',
+              Metadata: {
+                'Origin-Version-Id': record.s3.object.versionId ?? 'N/A',
+                'Lambda-Log-Group': context.logGroupName,
+                'Lambda-Log-Stream': context.logStreamName,
+                'Lambda-Run-Id': context.awsRequestId,
+              },
+            }).promise();
+            uploads.set(key, upload);
           }
+
+          renderAndDispatch();
+          for (const submodule of submodules) {
+            renderAndDispatch(submodule);
+          }
+
+          for (const [key, upload] of uploads.entries()) {
+            const response = await upload;
+            created.push({ bucket: record.s3.bucket.name, key: key, versionId: response.VersionId });
+            console.log(`Finished uploading ${key} (Version ID: ${response.VersionId})`);
+          }
+
         }
+        await generateDocs(language);
       }
+
     }
     return created;
   });
