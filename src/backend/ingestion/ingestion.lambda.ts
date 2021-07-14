@@ -3,7 +3,8 @@ import { URL } from 'url';
 import { createGunzip } from 'zlib';
 
 import { validateAssembly } from '@jsii/spec';
-import { metricScope, Unit } from 'aws-embedded-metrics';
+import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
+import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, SQSEvent } from 'aws-lambda';
 import { extract } from 'tar-stream';
 import * as aws from '../shared/aws.lambda-shared';
@@ -11,10 +12,16 @@ import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
-import { MetricName } from './constants.lambda-shared';
+import { MetricName, METRICS_NAMESPACE } from './constants';
 
-export async function handler(event: SQSEvent, context: Context) {
+Configuration.environmentOverride = Environments.Lambda;
+Configuration.namespace = METRICS_NAMESPACE;
+
+export const handler = metricScope((metrics) => async (event: SQSEvent, context: Context) => {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
+
+  // Clear out the default dimensions, we won't need them.
+  metrics.setDimensions();
 
   const BUCKET_NAME = requireEnv('BUCKET_NAME');
 
@@ -41,9 +48,10 @@ export async function handler(event: SQSEvent, context: Context) {
     }
 
     const tar = await gunzip(Buffer.from(tarball.Body!));
-    const { dotJsii, licenseText } = await new Promise<{ dotJsii: Buffer; licenseText?: Buffer }>((ok, ko) => {
+    const { dotJsii, licenseText, packageJson } = await new Promise<{ dotJsii: Buffer; licenseText?: Buffer; packageJson: Buffer }>((ok, ko) => {
       let dotJsiiBuffer: Buffer | undefined;
       let licenseTextBuffer: Buffer | undefined;
+      let packageJsonData: Buffer | undefined;
       const extractor = extract({ filenameEncoding: 'utf-8' })
         .once('error', (reason) => {
           ko(reason);
@@ -51,8 +59,10 @@ export async function handler(event: SQSEvent, context: Context) {
         .once('finish', () => {
           if (dotJsiiBuffer == null) {
             ko(new Error('No .jsii file found in tarball!'));
+          } else if (packageJsonData == null) {
+            ko(new Error('No package.json file found in tarball!'));
           } else {
-            ok({ dotJsii: dotJsiiBuffer, licenseText: licenseTextBuffer });
+            ok({ dotJsii: dotJsiiBuffer, licenseText: licenseTextBuffer, packageJson: packageJsonData });
           }
         })
         .on('entry', (headers, stream, next) => {
@@ -62,6 +72,15 @@ export async function handler(event: SQSEvent, context: Context) {
               .once('error', ko)
               .once('end', () => {
                 dotJsiiBuffer = Buffer.concat(chunks);
+                // Skip on next runLoop iteration so we avoid filling the stack.
+                setImmediate(next);
+              })
+              .resume();
+          } else if (headers.name === 'package/package.json') {
+            return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
+              .once('error', ko)
+              .once('end', () => {
+                packageJsonData = Buffer.concat(chunks);
                 // Skip on next runLoop iteration so we avoid filling the stack.
                 setImmediate(next);
               })
@@ -88,16 +107,19 @@ export async function handler(event: SQSEvent, context: Context) {
     });
     const metadata = { date: payload.time, licenseText: licenseText?.toString('utf-8') };
 
-    const { license, name: packageName, version: packageVersion } = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
-    // Re-check that the license in `.jsii` is eligible. We don't blindly expect it matches that in package.json!
-    if (!constants.ELIGIBLE_LICENSES.has(license.toUpperCase())) {
-      console.log(`Ignoring package with ineligible license (SPDX identifier "${license}")`);
+    const { license: packageLicense, name: packageName, version: packageVersion } = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
+
+    // Ensure the `.jsii` name, version & license corresponds to those in `package.json`
+    const { name: packageJsonName, version: packageJsonVersion, license: packageJsonLicense } = JSON.parse(packageJson.toString('utf-8'));
+    if (packageJsonName !== packageName || packageJsonVersion !== packageVersion || packageJsonLicense !== packageLicense) {
+      console.log(`Ignoring package with mismatched name, version, and/or license (${packageJsonName}@${packageJsonVersion} is ${packageJsonLicense} !== ${packageName}@${packageVersion} is ${packageLicense})`);
+      metrics.putMetric(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 1, Unit.Count);
       continue;
     }
+    metrics.putMetric(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 0, Unit.Count);
 
-    await metricScope((metrics) => () => {
-      metrics.putMetric(MetricName.FOUND_LICENSE_FILE, licenseText != null ? 1 : 0, Unit.Count);
-    })();
+    // Did we identify a license file or not?
+    metrics.putMetric(MetricName.FOUND_LICENSE_FILE, licenseText != null ? 1 : 0, Unit.Count);
 
     const assemblyKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`;
     console.log(`Writing assembly at ${assemblyKey}`);
@@ -168,7 +190,7 @@ export async function handler(event: SQSEvent, context: Context) {
   }
 
   return result;
-}
+});
 
 function gunzip(data: Buffer): Promise<Buffer> {
   const chunks = new Array<Buffer>();
