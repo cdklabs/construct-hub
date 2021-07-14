@@ -105,6 +105,18 @@ Object {
       "Description": "S3 key for asset version \\"8625a217e0e7f0586edd183190019d9970344fa75c829365a84a47531a60a32e\\"",
       "Type": "String",
     },
+    "AssetParameters91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bffArtifactHash12102562": Object {
+      "Description": "Artifact hash for asset \\"91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bff\\"",
+      "Type": "String",
+    },
+    "AssetParameters91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bffS3Bucket89C755A8": Object {
+      "Description": "S3 bucket for asset \\"91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bff\\"",
+      "Type": "String",
+    },
+    "AssetParameters91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bffS3VersionKeyB74B99C5": Object {
+      "Description": "S3 key for asset version \\"91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bff\\"",
+      "Type": "String",
+    },
     "AssetParametersa2a420a4715fb0cfd6bc2d00c13a5a70fa1c434d6e6936185021c8fb397fd2caArtifactHashE3F0EDDF": Object {
       "Description": "Artifact hash for asset \\"a2a420a4715fb0cfd6bc2d00c13a5a70fa1c434d6e6936185021c8fb397fd2ca\\"",
       "Type": "String",
@@ -115,18 +127,6 @@ Object {
     },
     "AssetParametersa2a420a4715fb0cfd6bc2d00c13a5a70fa1c434d6e6936185021c8fb397fd2caS3VersionKeyD47D75B1": Object {
       "Description": "S3 key for asset version \\"a2a420a4715fb0cfd6bc2d00c13a5a70fa1c434d6e6936185021c8fb397fd2ca\\"",
-      "Type": "String",
-    },
-    "AssetParametersc09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1ArtifactHashC98BDEDF": Object {
-      "Description": "Artifact hash for asset \\"c09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1\\"",
-      "Type": "String",
-    },
-    "AssetParametersc09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1S3BucketAE1B0322": Object {
-      "Description": "S3 bucket for asset \\"c09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1\\"",
-      "Type": "String",
-    },
-    "AssetParametersc09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1S3VersionKey3AFEC569": Object {
-      "Description": "S3 key for asset version \\"c09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1\\"",
       "Type": "String",
     },
     "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfArtifactHash85F58E48": Object {
@@ -853,7 +853,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersc09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1S3BucketAE1B0322",
+            "Ref": "AssetParameters91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bffS3Bucket89C755A8",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -866,7 +866,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersc09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1S3VersionKey3AFEC569",
+                          "Ref": "AssetParameters91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bffS3VersionKeyB74B99C5",
                         },
                       ],
                     },
@@ -879,7 +879,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersc09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1S3VersionKey3AFEC569",
+                          "Ref": "AssetParameters91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bffS3VersionKeyB74B99C5",
                         },
                       ],
                     },
@@ -4515,7 +4515,7 @@ function handler(event) {
                 Object {
                   "Ref": "AWS::Region",
                 },
-                "TestConstrubWebAppResponseFunction1F387BCC",
+                "TestConstubWebAppResponseFunction1F387BCC",
               ],
             ],
           },
@@ -4528,7 +4528,7 @@ function handler(event) {
               Object {
                 "Ref": "AWS::Region",
               },
-              "TestConstrubWebAppResponseFunction1F387BCC",
+              "TestConstubWebAppResponseFunction1F387BCC",
             ],
           ],
         },
@@ -5030,6 +5030,18 @@ Object {
       "Description": "S3 key for asset version \\"8625a217e0e7f0586edd183190019d9970344fa75c829365a84a47531a60a32e\\"",
       "Type": "String",
     },
+    "AssetParameters91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bffArtifactHash12102562": Object {
+      "Description": "Artifact hash for asset \\"91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bff\\"",
+      "Type": "String",
+    },
+    "AssetParameters91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bffS3Bucket89C755A8": Object {
+      "Description": "S3 bucket for asset \\"91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bff\\"",
+      "Type": "String",
+    },
+    "AssetParameters91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bffS3VersionKeyB74B99C5": Object {
+      "Description": "S3 key for asset version \\"91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bff\\"",
+      "Type": "String",
+    },
     "AssetParametersa2a420a4715fb0cfd6bc2d00c13a5a70fa1c434d6e6936185021c8fb397fd2caArtifactHashE3F0EDDF": Object {
       "Description": "Artifact hash for asset \\"a2a420a4715fb0cfd6bc2d00c13a5a70fa1c434d6e6936185021c8fb397fd2ca\\"",
       "Type": "String",
@@ -5040,18 +5052,6 @@ Object {
     },
     "AssetParametersa2a420a4715fb0cfd6bc2d00c13a5a70fa1c434d6e6936185021c8fb397fd2caS3VersionKeyD47D75B1": Object {
       "Description": "S3 key for asset version \\"a2a420a4715fb0cfd6bc2d00c13a5a70fa1c434d6e6936185021c8fb397fd2ca\\"",
-      "Type": "String",
-    },
-    "AssetParametersc09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1ArtifactHashC98BDEDF": Object {
-      "Description": "Artifact hash for asset \\"c09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1\\"",
-      "Type": "String",
-    },
-    "AssetParametersc09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1S3BucketAE1B0322": Object {
-      "Description": "S3 bucket for asset \\"c09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1\\"",
-      "Type": "String",
-    },
-    "AssetParametersc09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1S3VersionKey3AFEC569": Object {
-      "Description": "S3 key for asset version \\"c09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1\\"",
       "Type": "String",
     },
     "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfArtifactHash85F58E48": Object {
@@ -5927,7 +5927,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersc09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1S3BucketAE1B0322",
+            "Ref": "AssetParameters91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bffS3Bucket89C755A8",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -5940,7 +5940,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersc09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1S3VersionKey3AFEC569",
+                          "Ref": "AssetParameters91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bffS3VersionKeyB74B99C5",
                         },
                       ],
                     },
@@ -5953,7 +5953,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersc09dfbbee2b53fa7119544459431161978d2f6cbf9f18cfcabe208bf14028ca1S3VersionKey3AFEC569",
+                          "Ref": "AssetParameters91ab8fa94a11a569cdac879accf050ca99d3ac9249073b166f01519c23420bffS3VersionKeyB74B99C5",
                         },
                       ],
                     },
@@ -9889,7 +9889,7 @@ function handler(event) {
                 Object {
                   "Ref": "AWS::Region",
                 },
-                "TestConstrubWebAppResponseFunction1F387BCC",
+                "TestConstubWebAppResponseFunction1F387BCC",
               ],
             ],
           },
@@ -9902,7 +9902,7 @@ function handler(event) {
               Object {
                 "Ref": "AWS::Region",
               },
-              "TestConstrubWebAppResponseFunction1F387BCC",
+              "TestConstubWebAppResponseFunction1F387BCC",
             ],
           ],
         },
