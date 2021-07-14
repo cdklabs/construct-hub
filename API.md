@@ -123,11 +123,60 @@ Must only contain alphanumerics, dash (-) and underscore (_).
 
 ---
 
+##### `denyList`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.denyList"></a>
+
+- *Type:* [`construct-hub.DenyListEntry`](#construct-hub.DenyListEntry)[]
+- *Default:* []
+
+A list of packages to block from the construct hub.
+
+---
+
 ##### `domain`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.domain"></a>
 
 - *Type:* [`construct-hub.Domain`](#construct-hub.Domain)
 
 Connect the hub to a domain (requires a hosted zone and a certificate).
+
+---
+
+### DenyListEntry <a name="construct-hub.DenyListEntry"></a>
+
+An entry in the list of packages blocked from display in the construct hub.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { DenyListEntry } from 'construct-hub'
+
+const denyListEntry: DenyListEntry = { ... }
+```
+
+##### `packageName`<sup>Required</sup> <a name="construct-hub.DenyListEntry.packageName"></a>
+
+- *Type:* `string`
+
+The name of the package to block (npm).
+
+---
+
+##### `reason`<sup>Required</sup> <a name="construct-hub.DenyListEntry.reason"></a>
+
+- *Type:* `string`
+
+The reason why this package/version is denied.
+
+This information will be
+emitted to the construct hub logs.
+
+---
+
+##### `packageVersion`<sup>Optional</sup> <a name="construct-hub.DenyListEntry.packageVersion"></a>
+
+- *Type:* `string`
+- *Default:* all versions of this package are blocked.
+
+The package version to block (must be a valid version such as "1.0.3").
 
 ---
 

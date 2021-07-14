@@ -5,7 +5,8 @@ import * as sqs from '@aws-cdk/aws-sqs';
 import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { AlarmActions, Domain } from './api';
-import { CatalogBuilder, Discovery, Ingestion, Transliterator } from './backend';
+import { CatalogBuilder, DenyList, Discovery, Ingestion, Transliterator } from './backend';
+import { DenyListRule } from './backend/deny-list/api';
 import { Inventory } from './backend/inventory';
 import { Monitoring } from './monitoring';
 import { WebApp } from './webapp';
@@ -32,6 +33,13 @@ export interface ConstructHubProps {
    * Actions to perform when alarms are set.
    */
   readonly alarmActions: AlarmActions;
+
+  /**
+   * A list of packages to block from the construct hub.
+   *
+   * @default []
+   */
+  readonly denyList?: DenyListRule[];
 }
 
 /**
@@ -62,9 +70,13 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       versioned: true,
     });
 
+    const denyList = new DenyList(this, 'DenyList', {
+      rules: props.denyList,
+    });
+
     this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData, monitoring });
 
-    const discovery = new Discovery(this, 'Discovery', { queue: this.ingestion.queue, monitoring });
+    const discovery = new Discovery(this, 'Discovery', { queue: this.ingestion.queue, monitoring, denyList });
     discovery.bucket.grantRead(this.ingestion);
 
     new Transliterator(this, 'Transliterator', { bucket: packageData, monitoring });

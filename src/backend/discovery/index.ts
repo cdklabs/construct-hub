@@ -7,6 +7,7 @@ import { IQueue } from '@aws-cdk/aws-sqs';
 
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
+import { DenyList } from '../deny-list';
 import { MetricName, METRIC_NAMESPACE, S3KeyPrefix } from './constants.lambda-shared';
 import { Discovery as Handler } from './discovery';
 
@@ -27,6 +28,11 @@ export interface DiscoveryProps {
    * @default RetentionDays.TEN_YEARS
    */
   readonly logRetention?: RetentionDays;
+
+  /**
+   * The deny list construct.
+   */
+  readonly denyList: DenyList;
 }
 
 /**
@@ -79,6 +85,7 @@ export class Discovery extends Construct {
 
     this.bucket.grantReadWrite(lambda);
     props.queue.grantSendMessages(lambda);
+    props.denyList.grantRead(lambda);
 
     new Rule(this, 'ScheduleRule', {
       schedule: Schedule.rate(this.timeout),
