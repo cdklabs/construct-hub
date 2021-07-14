@@ -1,0 +1,229 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`S3 bucket ARN 1`] = `
+Object {
+  "Outputs": Object {
+    "S3BucketArn": Object {
+      "Value": Object {
+        "Fn::GetAtt": Array [
+          "RepoDescribeDomainBFB922C1",
+          "domain.s3BucketArn",
+        ],
+      },
+    },
+  },
+  "Parameters": Anything,
+  "Resources": Object {
+    "AWS679f53fac002430cb0da5b7982bd22872D164C4C": Object {
+      "DependsOn": Array [
+        "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+      ],
+      "Properties": Anything,
+      "Type": "AWS::Lambda::Function",
+    },
+    "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2": Object {
+      "Properties": Anything,
+      "Type": "AWS::IAM::Role",
+    },
+    "Repo": Anything,
+    "RepoDescribeDomainBFB922C1": Object {
+      "DeletionPolicy": "Delete",
+      "DependsOn": Array [
+        "RepoDescribeDomainCustomResourcePolicy66761D14",
+      ],
+      "Properties": Object {
+        "Create": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"describeDomain\\",\\"parameters\\":{\\"domain\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "Repo",
+                  "DomainName",
+                ],
+              },
+              "\\",\\"domainOwner\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "Repo",
+                  "DomainOwner",
+                ],
+              },
+              "\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"domain.s3BucketArn\\"}}",
+            ],
+          ],
+        },
+        "InstallLatestAwsSdk": true,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::CoreArtifactDomainDescription",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "RepoDescribeDomainCustomResourcePolicy66761D14": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "codeartifact:DescribeDomain",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "RepoDomainC79FB030",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "RepoDescribeDomainCustomResourcePolicy66761D14",
+        "Roles": Array [
+          Object {
+            "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "RepoDomainC79FB030": Anything,
+  },
+}
+`;
+
+exports[`npm repository endpoint 1`] = `
+Object {
+  "Outputs": Object {
+    "NpmRepositoryEndpoint": Object {
+      "Value": Object {
+        "Fn::GetAtt": Array [
+          "RepoGetEndpoint5034567A",
+          "repositoryEndpoint",
+        ],
+      },
+    },
+  },
+  "Parameters": Anything,
+  "Resources": Object {
+    "AWS679f53fac002430cb0da5b7982bd22872D164C4C": Object {
+      "DependsOn": Array [
+        "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+      ],
+      "Properties": Anything,
+      "Type": "AWS::Lambda::Function",
+    },
+    "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2": Object {
+      "Properties": Anything,
+      "Type": "AWS::IAM::Role",
+    },
+    "Repo": Anything,
+    "RepoDomainC79FB030": Anything,
+    "RepoGetEndpoint5034567A": Object {
+      "DeletionPolicy": "Delete",
+      "DependsOn": Array [
+        "RepoGetEndpointCustomResourcePolicy40405D0D",
+      ],
+      "Properties": Object {
+        "Create": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"getRepositoryEndpoint\\",\\"parameters\\":{\\"domain\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "Repo",
+                  "DomainName",
+                ],
+              },
+              "\\",\\"domainOwner\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "Repo",
+                  "DomainOwner",
+                ],
+              },
+              "\\",\\"format\\":\\"npm\\",\\"repository\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "Repo",
+                  "Name",
+                ],
+              },
+              "\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"repositoryEndpoint\\"}}",
+            ],
+          ],
+        },
+        "InstallLatestAwsSdk": true,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+            "Arn",
+          ],
+        },
+        "Update": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"getRepositoryEndpoint\\",\\"parameters\\":{\\"domain\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "Repo",
+                  "DomainName",
+                ],
+              },
+              "\\",\\"domainOwner\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "Repo",
+                  "DomainOwner",
+                ],
+              },
+              "\\",\\"format\\":\\"npm\\",\\"repository\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "Repo",
+                  "Name",
+                ],
+              },
+              "\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"repositoryEndpoint\\"}}",
+            ],
+          ],
+        },
+      },
+      "Type": "Custom::CodeArtifactNpmRepositoryEndpoint",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "RepoGetEndpointCustomResourcePolicy40405D0D": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "codeartifact:GetRepositoryEndpoint",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "Repo",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "RepoGetEndpointCustomResourcePolicy40405D0D",
+        "Roles": Array [
+          Object {
+            "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+}
+`;

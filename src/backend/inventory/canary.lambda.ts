@@ -1,7 +1,6 @@
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, ScheduledEvent } from 'aws-lambda';
-import { TargetLanguage } from 'jsii-rosetta';
 import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
@@ -29,9 +28,11 @@ export async function handler(event: ScheduledEvent, _context: Context) {
     } else if (key.endsWith(constants.PACKAGE_KEY_SUFFIX)) {
       status.tarballPresent = true;
     } else if (key.endsWith(constants.ASSEMBLY_KEY_SUFFIX)) {
-      status.originalAssemblyPresent = true;
-    } else if (key.endsWith(constants.assemblyKeySuffix(TargetLanguage.PYTHON))) {
-      status.pythonAssemblyPresent = true;
+      status.assemblyPresent = true;
+    } else if (key.endsWith(constants.DOCS_KEY_SUFFIX_PYTHON)) {
+      status.pythonDocsPresent = true;
+    } else if (key.endsWith(constants.DOCS_KEY_SUFFIX_TYPESCRIPT)) {
+      status.tsDocsPresent = true;
     } else {
       status.unknownObjects = status.unknownObjects ?? [];
       status.unknownObjects.push(key);
@@ -43,19 +44,23 @@ export async function handler(event: ScheduledEvent, _context: Context) {
     metrics.setDimensions();
 
     const missingMetadata = new Array<string>();
-    const missingOriginalAssembly = new Array<string>();
-    const missingPythonAssembly = new Array<string>();
+    const missingAssembly = new Array<string>();
+    const missingPythonDocs = new Array<string>();
+    const missingTsDocs = new Array<string>();
     const missingTarball = new Array<string>();
     const unknownObjects = new Array<string>();
     for (const [name, status] of indexedPackages.entries()) {
       if (!status.metadataPresent) {
         missingMetadata.push(name);
       }
-      if (!status.originalAssemblyPresent) {
-        missingOriginalAssembly.push(name);
+      if (!status.assemblyPresent) {
+        missingAssembly.push(name);
       }
-      if (!status.pythonAssemblyPresent) {
-        missingPythonAssembly.push(name);
+      if (!status.pythonDocsPresent) {
+        missingPythonDocs.push(name);
+      }
+      if (!status.tsDocsPresent) {
+        missingTsDocs.push(name);
       }
       if (!status.tarballPresent) {
         missingTarball.push(name);
@@ -65,11 +70,12 @@ export async function handler(event: ScheduledEvent, _context: Context) {
       }
     }
 
-    metrics.setProperty('detail', { missingMetadata, missingOriginalAssembly, missingPythonAssembly, missingTarball, unknownObjects });
+    metrics.setProperty('detail', { missingMetadata, missingAssembly, missingPythonDocs, missingTsDocs, missingTarball, unknownObjects });
 
     metrics.putMetric(MetricName.MISSING_METADATA_COUNT, missingMetadata.length, Unit.Count);
-    metrics.putMetric(MetricName.MISSING_ORIGINAL_ASSEMBLY_COUNT, missingOriginalAssembly.length, Unit.Count);
-    metrics.putMetric(MetricName.MISSING_PYTHON_ASSEMBLY_COUNT, missingPythonAssembly.length, Unit.Count);
+    metrics.putMetric(MetricName.MISSING_ASSEMBLY_COUNT, missingAssembly.length, Unit.Count);
+    metrics.putMetric(MetricName.MISSING_PYTHON_DOCS_COUNT, missingPythonDocs.length, Unit.Count);
+    metrics.putMetric(MetricName.MISSING_TYPESCRIPT_DOCS_COUNT, missingTsDocs.length, Unit.Count);
     metrics.putMetric(MetricName.MISSING_TARBALL_COUNT, missingTarball.length, Unit.Count);
     metrics.putMetric(MetricName.PACKAGE_VERSION_COUNT, indexedPackages.size, Unit.Count);
     metrics.putMetric(MetricName.UNKNOWN_OBJECT_COUNT, unknownObjects.length, Unit.Count);
@@ -93,8 +99,9 @@ async function* relevantObjectKeys(bucket: string): AsyncGenerator<string, void,
 
 interface IndexedPackageStatus {
   metadataPresent?: boolean;
-  originalAssemblyPresent?: boolean;
-  pythonAssemblyPresent?: boolean;
+  assemblyPresent?: boolean;
+  pythonDocsPresent?: boolean;
+  tsDocsPresent?: boolean;
   tarballPresent?: boolean;
   unknownObjects?: string[];
 }

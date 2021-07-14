@@ -1,20 +1,19 @@
-import type * as child_process from 'child_process';
-import { randomBytes } from 'crypto';
-import { EventEmitter } from 'events';
-import { promises as fs } from 'fs';
-import * as path from 'path';
+import * as spec from '@jsii/spec';
 
 import type { S3Event } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
-import { TargetLanguage } from 'jsii-rosetta';
-import type { transliterateAssembly } from 'jsii-rosetta/lib/commands/transliterate';
+import { Documentation } from 'jsii-docgen';
 
 import * as constants from '../../../backend/shared/constants';
 import { handler, reset } from '../../../backend/transliterator/transliterator.lambda';
 
 jest.mock('child_process');
+jest.mock('jsii-docgen');
 jest.mock('jsii-rosetta/lib/commands/transliterate');
+jest.mock('../../../backend/shared/code-artifact.lambda-shared');
+
+type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
 
 beforeEach((done) => {
   AWSMock.setSDKInstance(AWS);
@@ -27,260 +26,208 @@ afterEach((done) => {
   done();
 });
 
-test('scoped package', async () => {
+describe('VPC Endpoints', () => {
+  const previousEnv = process.env;
+  const endpoint = 'codeartifact.d.bermuda-triangle-1.amazonaws.com';
+  const apiEndpoint = 'codeartifact.api.bermuda-triangle-1.amazonaws.com';
+  const domain = 'domain-name';
+  const domainOwner = '123456789012';
+
+  beforeAll(() => {
+    process.env = {
+      ...previousEnv,
+      CODE_ARTIFACT_REPOSITORY_ENDPOINT: endpoint,
+      CODE_ARTIFACT_DOMAIN_NAME: domain,
+      CODE_ARTIFACT_DOMAIN_OWNER: domainOwner,
+      CODE_ARTIFACT_API_ENDPOINT: apiEndpoint,
+    };
+  });
+
+  afterAll(() => {
+    process.env = { ...previousEnv };
+  });
+
+  test('happy path', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
+    forPackage.mockImplementation(async (target: string) => {
+      return new MockDocumentation(target) as unknown as Documentation;
+    });
+
+    // GIVEN
+    const packageScope = 'scope';
+    const packageName = 'package-name';
+    const packageVersion = '1.2.3-dev.4';
+    const event: S3Event = {
+      Records: [{
+        awsRegion: 'bemuda-triangle-1',
+        s3: {
+          bucket: {
+            name: 'dummy-bucket',
+          },
+          object: {
+            key: `${constants.STORAGE_KEY_PREFIX}%40${packageScope}/${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
+            versionId: 'VersionId',
+          },
+        },
+      }],
+    } as any;
+
+    const assembly: spec.Assembly = {
+      targets: { python: {} },
+    } as any;
+
+    // mock the assembly request
+    mockFetchAssembly(assembly);
+
+    // mock the file uploads
+    mockPutDocs('/docs-python.md', '/docs-typescript.md');
+
+    const created = await handler(event, {} as any);
+    expect(created.length).toEqual(2);
+    expect(created[0].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-python.md`);
+    expect(created[1].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-typescript.md`);
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    expect(require('../../../backend/shared/code-artifact.lambda-shared').logInWithCodeArtifact).toHaveBeenCalledWith({
+      endpoint,
+      domain,
+      domainOwner,
+      apiEndpoint,
+    });
+  });
+});
+
+test('uploads a file per language (scoped package)', async () => {
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
+  forPackage.mockImplementation(async (target: string) => {
+    return new MockDocumentation(target) as unknown as Documentation;
+  });
+
   // GIVEN
   const packageScope = 'scope';
   const packageName = 'package-name';
   const packageVersion = '1.2.3-dev.4';
-  const payload: S3Event = {
+  const event: S3Event = {
     Records: [{
       awsRegion: 'bemuda-triangle-1',
-      eventVersion: '1337',
-      eventSource: 's3:DummySource',
-      eventName: 's3:DummyEvent',
-      eventTime: '1789-07-14T00:00:00+02:00',
-      userIdentity: { principalId: 'aws::principal::id' },
-      requestParameters: { sourceIPAddress: '127.0.0.1' },
-      responseElements: {
-        'x-amz-id-2': '456',
-        'x-amz-request-id': '123',
-      },
       s3: {
         bucket: {
           name: 'dummy-bucket',
-          arn: 'arn:aws:s3:::dummy-bucket',
-          ownerIdentity: { principalId: 'aws::principal::id' },
         },
-        configurationId: '42',
         object: {
-          eTag: 'eTag',
-          key: `${constants.STORAGE_KEY_PREFIX}%40${packageScope}/${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`,
-          sequencer: 'Seq',
-          size: 1337,
+          key: `${constants.STORAGE_KEY_PREFIX}%40${packageScope}/${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
           versionId: 'VersionId',
         },
-        s3SchemaVersion: '1',
       },
     }],
-  };
-  const mockContext = {} as any;
-  const mockTarballBytes = randomBytes(128);
-  const mockOutputAssembly = randomBytes(128);
+  } as any;
 
-  AWSMock.mock('S3', 'getObject', (request: AWS.S3.GetObjectRequest, callback: Response<AWS.S3.GetObjectOutput>) => {
-    try {
-      expect(request.Bucket).toBe(payload.Records[0].s3.bucket.name);
-      expect(request.Key).toBe(payload.Records[0].s3.object.key.split('/').map((comp) => decodeURIComponent(comp)).join('/'));
-      expect(request.VersionId).toBe(payload.Records[0].s3.object.versionId);
-    } catch (e) {
-      callback(e);
-    }
+  const assembly: spec.Assembly = {
+    targets: { python: {} },
+  } as any;
 
-    callback(null, {
-      Body: mockTarballBytes,
-    });
-  });
+  // mock the assembly request
+  mockFetchAssembly(assembly);
 
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockSpawn = require('child_process').spawn as jest.MockedFunction<typeof child_process.spawn>;
-  mockSpawn.mockImplementation((cmd: string, args: readonly string[], opts: child_process.SpawnOptions) => {
-    expect(cmd).toBe('npm');
-    expect(args).toContain('install');
-    expect(args).toContain('--ignore-scripts'); // Ensures lifecycle hooks don't run
-    expect(args).toContain('--no-bin-links'); // Ensures we don't attempt to add bin-links to $PATH
-    expect(opts.cwd).toBeDefined();
-    expect(opts.stdio).toEqual(['ignore', 'inherit', 'inherit']);
+  // mock the file uploads
+  mockPutDocs('/docs-python.md', '/docs-typescript.md');
 
-    const tarballPath = args[args.length - 1];
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    expect(require('fs').readFileSync(tarballPath)).toEqual(mockTarballBytes);
+  const created = await handler(event, {} as any);
+  expect(created.length).toEqual(2);
+  expect(created[0].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-python.md`);
+  expect(created[1].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-typescript.md`);
 
-    return new MockChildProcess(cmd, Array.from(args), fs.mkdir(path.join(opts.cwd!, 'node_modules', `@${packageScope}`, packageName), { recursive: true }));
-  });
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockTransliterateAssembly = require('jsii-rosetta/lib/commands/transliterate').transliterateAssembly as jest.MockedFunction<typeof transliterateAssembly>;
-  mockTransliterateAssembly.mockImplementation(async ([dir, ...otherDirs], languages) => {
-    expect(languages).toEqual([TargetLanguage.PYTHON]);
-    expect(dir).toMatch(new RegExp(path.join('', 'node_modules', `@${packageScope}`, packageName) + '$'));
-    expect(otherDirs).toEqual([]);
-
-    return fs.writeFile(path.resolve(dir, '.jsii.python'), mockOutputAssembly);
-  });
-
-  const key = payload.Records[0].s3.object.key
-    // The key is not URI-encoded when it's sent to the S3 SDK...
-    .split('/').map((comp) => decodeURIComponent(comp)).join('/')
-    .replace(/\/package\.tgz$/, '/assembly-python.json');
-  AWSMock.mock('S3', 'putObject', (request: AWS.S3.PutObjectRequest, callback: Response<AWS.S3.PutObjectOutput>) => {
-    try {
-      expect(request.Bucket).toBe(payload.Records[0].s3.bucket.name);
-      expect(request.Key).toBe(key);
-      expect(request.Body).toEqual(mockOutputAssembly);
-    } catch (e) {
-      return callback(e);
-    }
-
-    callback(null, { VersionId: 'New-VersionID' });
-  });
-
-  // WHEN
-  const result = handler(payload, mockContext);
-
-  // THEN
-  await expect(result).resolves.toEqual([{ bucket: payload.Records[0].s3.bucket.name, key, versionId: 'New-VersionID' }]);
-
-  expect(mockSpawn).toHaveBeenCalled();
-  expect(mockTransliterateAssembly).toHaveBeenCalled();
 });
 
-test('unscoped package', async () => {
+test('uploads a file per submodule (unscoped package)', async () => {
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
+  forPackage.mockImplementation(async (target: string) => {
+    return new MockDocumentation(target) as unknown as Documentation;
+  });
+
   // GIVEN
   const packageName = 'package-name';
   const packageVersion = '1.2.3-dev.4';
-  const payload: S3Event = {
+  const event: S3Event = {
     Records: [{
       awsRegion: 'bemuda-triangle-1',
-      eventVersion: '1337',
-      eventSource: 's3:DummySource',
-      eventName: 's3:DummyEvent',
-      eventTime: '1789-07-14T00:00:00+02:00',
-      userIdentity: { principalId: 'aws::principal::id' },
-      requestParameters: { sourceIPAddress: '127.0.0.1' },
-      responseElements: {
-        'x-amz-id-2': '456',
-        'x-amz-request-id': '123',
-      },
       s3: {
         bucket: {
           name: 'dummy-bucket',
-          arn: 'arn:aws:s3:::dummy-bucket',
-          ownerIdentity: { principalId: 'aws::principal::id' },
         },
-        configurationId: '42',
         object: {
-          eTag: 'eTag',
-          key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`,
-          sequencer: 'Seq',
-          size: 1337,
+          key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
           versionId: 'VersionId',
         },
-        s3SchemaVersion: '1',
       },
     }],
-  };
-  const mockContext = {} as any;
-  const mockTarballBytes = randomBytes(128);
-  const mockOutputAssembly = randomBytes(128);
+  } as any;
 
-  AWSMock.mock('S3', 'getObject', (request: AWS.S3.GetObjectRequest, callback: Response<AWS.S3.GetObjectOutput>) => {
-    try {
-      expect(request.Bucket).toBe(payload.Records[0].s3.bucket.name);
-      expect(request.Key).toBe(payload.Records[0].s3.object.key);
-      expect(request.VersionId).toBe(payload.Records[0].s3.object.versionId);
-    } catch (e) {
-      callback(e);
-    }
+  const assembly: spec.Assembly = {
+    targets: { python: {} },
+    submodules: { '@scope/package-name.sub1': {}, '@scope/package-name.sub2': {} },
+  } as any;
 
-    callback(null, {
-      Body: mockTarballBytes,
-    });
-  });
+  // mock the assembly request
+  mockFetchAssembly(assembly);
 
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockSpawn = require('child_process').spawn as jest.MockedFunction<typeof child_process.spawn>;
-  mockSpawn.mockImplementation((cmd: string, args: readonly string[], opts: child_process.SpawnOptions) => {
-    expect(cmd).toBe('npm');
-    expect(args).toContain('install');
-    expect(args).toContain('--ignore-scripts'); // Ensures lifecycle hooks don't run
-    expect(args).toContain('--no-bin-links'); // Ensures we don't attempt to add bin-links to $PATH
-    expect(opts.cwd).toBeDefined();
-    expect(opts.stdio).toEqual(['ignore', 'inherit', 'inherit']);
+  // mock the file uploads
+  mockPutDocs(
+    '/docs-python.md',
+    '/docs-sub1-python.md',
+    '/docs-sub2-python.md',
+    '/docs-typescript.md',
+    '/docs-sub1-typescript.md',
+    '/docs-sub2-typescript.md',
+  );
 
-    const tarballPath = args[args.length - 1];
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    expect(require('fs').readFileSync(tarballPath)).toEqual(mockTarballBytes);
+  const created = await handler(event, {} as any);
 
-    return new MockChildProcess(cmd, Array.from(args), fs.mkdir(path.join(opts.cwd!, 'node_modules', packageName), { recursive: true }));
-  });
+  expect(created.map(({ key }) => key)).toEqual([
+    `data/${packageName}/v${packageVersion}/docs-python.md`,
+    `data/${packageName}/v${packageVersion}/docs-sub1-python.md`,
+    `data/${packageName}/v${packageVersion}/docs-sub2-python.md`,
+    `data/${packageName}/v${packageVersion}/docs-typescript.md`,
+    `data/${packageName}/v${packageVersion}/docs-sub1-typescript.md`,
+    `data/${packageName}/v${packageVersion}/docs-sub2-typescript.md`,
+  ]);
 
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockTransliterateAssembly = require('jsii-rosetta/lib/commands/transliterate').transliterateAssembly as jest.MockedFunction<typeof transliterateAssembly>;
-  mockTransliterateAssembly.mockImplementation(async ([dir, ...otherDirs], languages) => {
-    expect(languages).toEqual([TargetLanguage.PYTHON]);
-    expect(dir).toMatch(new RegExp(path.join('', 'node_modules', packageName) + '$'));
-    expect(otherDirs).toEqual([]);
-
-    return fs.writeFile(path.resolve(dir, '.jsii.python'), mockOutputAssembly);
-  });
-
-  const key = payload.Records[0].s3.object.key.replace(/\/package\.tgz$/, '/assembly-python.json');
-  AWSMock.mock('S3', 'putObject', (request: AWS.S3.PutObjectRequest, callback: Response<AWS.S3.PutObjectOutput>) => {
-    try {
-      expect(request.Bucket).toBe(payload.Records[0].s3.bucket.name);
-      expect(request.Key).toBe(key);
-      expect(request.Body).toEqual(mockOutputAssembly);
-    } catch (e) {
-      return callback(e);
-    }
-
-    callback(null, { VersionId: 'New-VersionID' });
-  });
-
-  // WHEN
-  const result = handler(payload, mockContext);
-
-  // THEN
-  await expect(result).resolves.toEqual([{ bucket: payload.Records[0].s3.bucket.name, key, versionId: 'New-VersionID' }]);
-
-  expect(mockSpawn).toHaveBeenCalled();
-  expect(mockTransliterateAssembly).toHaveBeenCalled();
 });
 
-type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
-
-class MockChildProcess extends EventEmitter implements child_process.ChildProcess {
-  public readonly stdin = null;
-  public readonly stdout = null;
-  public readonly stderr = null;
-  public readonly stdio = [this.stdin, this.stdout, this.stderr, null, null] as child_process.ChildProcess['stdio'];
-
-  public readonly exitCode = 0;
-  public readonly killed = false;
-  public readonly signalCode = null;
-
-  public readonly pid = -1; // Obviously fake
-
-  public constructor(public readonly spawnfile: string, public readonly spawnargs: string[], promise: Promise<unknown>) {
-    super();
-
-    promise.then(
-      () => this.emit('close', this.exitCode, this.signalCode),
-      (err) => this.emit('error', err),
-    );
-  }
-
-  public get connected(): never {
-    throw new Error('Not Implemented');
-  }
-
-  public disconnect(): never {
-    throw new Error('Not Implemented');
-  }
-
-  public kill(): never {
-    throw new Error('Not Implemented');
-  }
-
-  public ref(): never {
-    throw new Error('Not Implemented');
-  }
-
-  public send(): never {
-    throw new Error('Not Implemented');
-  }
-
-  public unref(): never {
-    throw new Error('Not Implemented');
+class MockDocumentation {
+  public constructor(private readonly target: string) {}
+  public render() {
+    return {
+      render: () => `docs for ${this.target}`,
+    };
   }
 }
+
+function mockFetchAssembly(response: spec.Assembly) {
+  AWSMock.mock('S3', 'getObject', (request: AWS.S3.GetObjectRequest, callback: Response<AWS.S3.GetObjectOutput>) => {
+    if (request.Key.endsWith(constants.ASSEMBLY_KEY_SUFFIX)) {
+      callback(null, {
+        Body: JSON.stringify(response),
+      });
+    } else {
+      throw new Error(`Unexpected GET request: ${request.Key}`);
+    }
+  });
+}
+
+function mockPutDocs(...suffixes: string[]) {
+
+  AWSMock.mock('S3', 'putObject', (request: AWS.S3.PutObjectRequest, callback: Response<AWS.S3.PutObjectOutput>) => {
+    if (suffixes.filter(s => request.Key.endsWith(s)).length > 0) {
+      callback(null, { VersionId: `versionId-${request.Key}` });
+    } else {
+      throw new Error(`Unexpected PUT request: ${request.Key}`);
+    }
+  });
+
+}
+

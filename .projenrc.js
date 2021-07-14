@@ -9,6 +9,8 @@ const peerDeps = [
   '@aws-cdk/aws-cloudfront',
   '@aws-cdk/aws-cloudwatch-actions',
   '@aws-cdk/aws-cloudwatch',
+  '@aws-cdk/aws-codeartifact',
+  '@aws-cdk/aws-ec2',
   '@aws-cdk/aws-events-targets',
   '@aws-cdk/aws-events',
   '@aws-cdk/aws-iam',
@@ -19,10 +21,11 @@ const peerDeps = [
   '@aws-cdk/aws-route53',
   '@aws-cdk/aws-s3-deployment',
   '@aws-cdk/aws-s3',
-  '@aws-cdk/aws-sqs',
   '@aws-cdk/aws-sns',
-  '@aws-cdk/core',
   '@aws-cdk/aws-sqs',
+  '@aws-cdk/aws-sqs',
+  '@aws-cdk/core',
+  '@aws-cdk/custom-resources',
   '@aws-cdk/cx-api',
   'cdk-watchful',
   'constructs',
@@ -270,6 +273,7 @@ function discoverLambdas() {
 // dev-dependency on the webapp instead of a normal/bundled dependency.
 project.addDevDeps('construct-hub-webapp');
 project.compileTask.prependExec('cp -r ./node_modules/construct-hub-webapp/build ./website');
+project.compileTask.prependExec('rm -rf ./website');
 project.npmignore.addPatterns('!/website'); // <-- include in tarball
 project.gitignore.addPatterns('/website'); // <-- don't commit
 

@@ -57,7 +57,7 @@ export class CatalogBuilder extends Construct {
 
     handler.addEventSource(new S3EventSource(props.bucket, {
       events: [EventType.OBJECT_CREATED],
-      filters: [{ prefix: constants.STORAGE_KEY_PREFIX, suffix: constants.ASSEMBLY_KEY_SUFFIX }],
+      filters: [{ prefix: constants.STORAGE_KEY_PREFIX, suffix: constants.DOCS_KEY_SUFFIX_TYPESCRIPT }],
     }));
 
     props.monitoring.watchful.watchLambdaFunction('Catalog Builder Function', handler);
