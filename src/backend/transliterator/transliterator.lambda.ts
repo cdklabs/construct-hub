@@ -80,11 +80,11 @@ export function handler(event: S3Event, context: Context): Promise<readonly S3Ob
       async function generateDocs(lang: string) {
 
         const uploads = new Map<string, Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>>();
-        const docs = await docgen.Documentation.forPackage(`${packageName}@${packageVersion}`, { language: docgen.Language.fromString(lang) });
+        const docs = await docgen.Documentation.forPackage(packageFqn, { language: docgen.Language.fromString(lang) });
 
         function renderAndDispatch(submodule?: string) {
           console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
-          const page = docs.render({ submodule }).render();
+          const page = docs.render({ submodule, linkFormatter: linkFormatter(docs) }).render();
           const key = inputKey.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(lang), submodule));
           console.log(`Uploading ${key}`);
           const upload = client.putObject({
@@ -146,6 +146,41 @@ async function withFakeHome<T>(cb: () => Promise<T>): Promise<T> {
     await fs.remove(fakeHome);
   }
 }
+
+/**
+ * A link formatter to make sure type links redirect to the appropriate package
+ * page in the webapp.
+ */
+function linkFormatter(docs: docgen.Documentation): (type: docgen.TranspiledType) => string {
+
+  function _formatter(type: docgen.TranspiledType): string {
+
+    const packageName = type.source.assembly.name;
+    const packageVersion = type.source.assembly.version;
+
+    // the webapp sanitizes anchors - so we need to as well when
+    // linking to them.
+    const hash = sanitize(type.fqn);
+
+    if (docs.assembly.name === packageName) {
+      // link to the same package - just add the hash
+      return `#${hash}`;
+    }
+
+    // cross link to another package
+    return `/packages/${packageName}/v/${packageVersion}?lang=${type.language.toString()}${type.submodule ? `&submodule=${type.submodule}` : ''}#${hash}`;
+  }
+
+  return _formatter;
+}
+
+function sanitize(input: string): string {
+  return input
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9 ]/g, '')
+    .replace(/ /g, '-');
+};
+
 
 /**
  * Visible for testing. Clears the caches so that the next execution runs clean.
