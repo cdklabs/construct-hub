@@ -127,10 +127,10 @@ export class Transliterator extends Construct {
 
     for (const lang of SUPPORTED_LANGUAGES) {
 
-      const lambda = new Handler(this, 'Default', {
+      const lambda = new Handler(this, `${lang.toString()}Handler`, {
         deadLetterQueueEnabled: true,
-        description: 'Creates transliterated assemblies from jsii-enabled npm packages',
-        environment: { ...environment, language: lang.toString() },
+        description: `Creates ${lang} documentation from jsii-enabled npm packages`,
+        environment: { ...environment, TARGET_LANGUAGE: lang.toString() },
         logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
         memorySize: 10_240, // Currently the maximum possible setting
         retryAttempts: 2,
@@ -150,8 +150,8 @@ export class Transliterator extends Construct {
 
       props.monitoring.watchful.watchLambdaFunction('Transliterator Function', lambda);
       this.alarmsDeadLetterQueueNotEmpty.set(lang, lambda.deadLetterQueue!.metricApproximateNumberOfMessagesVisible()
-        .createAlarm(this, 'DLQAlarm', {
-          alarmDescription: 'The transliteration function failed for one or more packages',
+        .createAlarm(this, `${lang}DLQAlarm`, {
+          alarmDescription: `The ${lang} transliteration function failed for one or more packages`,
           comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
           evaluationPeriods: 1,
           threshold: 1,

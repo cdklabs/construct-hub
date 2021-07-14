@@ -44,7 +44,7 @@ export function handler(event: SNSEvent, context: Context): Promise<readonly S3O
       await logInWithCodeArtifact({ endpoint, domain, domainOwner, apiEndpoint });
     }
 
-    const language = requireEnv('LANGUAGE');
+    const language = requireEnv('TARGET_LANGUAGE');
 
     const created = new Array<S3Object>();
     for (const snsRecord of event.Records) {
