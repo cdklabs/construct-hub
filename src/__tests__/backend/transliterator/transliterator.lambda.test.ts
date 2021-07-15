@@ -1,6 +1,6 @@
 import * as spec from '@jsii/spec';
 
-import type { S3Event } from 'aws-lambda';
+import type { S3Event, SNSEvent } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import { Documentation } from 'jsii-docgen';
@@ -17,11 +17,13 @@ type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
 
 beforeEach((done) => {
   AWSMock.setSDKInstance(AWS);
+  process.env.TARGET_LANGUAGE = 'typescript';
   done();
 });
 
 afterEach((done) => {
   AWSMock.restore();
+  delete process.env.TARGET_LANGUAGE;
   reset();
   done();
 });
@@ -58,7 +60,7 @@ describe('VPC Endpoints', () => {
     const packageScope = 'scope';
     const packageName = 'package-name';
     const packageVersion = '1.2.3-dev.4';
-    const event: S3Event = {
+    const s3Event: S3Event = {
       Records: [{
         awsRegion: 'bemuda-triangle-1',
         s3: {
@@ -72,6 +74,13 @@ describe('VPC Endpoints', () => {
         },
       }],
     } as any;
+    const event: SNSEvent = {
+      Records: [{
+        Sns: {
+          Message: JSON.stringify(s3Event),
+        },
+      }],
+    } as any;
 
     const assembly: spec.Assembly = {
       targets: { python: {} },
@@ -81,12 +90,11 @@ describe('VPC Endpoints', () => {
     mockFetchAssembly(assembly);
 
     // mock the file uploads
-    mockPutDocs('/docs-python.md', '/docs-typescript.md');
+    mockPutDocs('/docs-typescript.md');
 
     const created = await handler(event, {} as any);
-    expect(created.length).toEqual(2);
-    expect(created[0].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-python.md`);
-    expect(created[1].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-typescript.md`);
+    expect(created.length).toEqual(1);
+    expect(created[0].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-typescript.md`);
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     expect(require('../../../backend/shared/code-artifact.lambda-shared').logInWithCodeArtifact).toHaveBeenCalledWith({
       endpoint,
@@ -109,7 +117,7 @@ test('uploads a file per language (scoped package)', async () => {
   const packageScope = 'scope';
   const packageName = 'package-name';
   const packageVersion = '1.2.3-dev.4';
-  const event: S3Event = {
+  const s3Event: S3Event = {
     Records: [{
       awsRegion: 'bemuda-triangle-1',
       s3: {
@@ -123,6 +131,13 @@ test('uploads a file per language (scoped package)', async () => {
       },
     }],
   } as any;
+  const event: SNSEvent = {
+    Records: [{
+      Sns: {
+        Message: JSON.stringify(s3Event),
+      },
+    }],
+  } as any;
 
   const assembly: spec.Assembly = {
     targets: { python: {} },
@@ -132,12 +147,11 @@ test('uploads a file per language (scoped package)', async () => {
   mockFetchAssembly(assembly);
 
   // mock the file uploads
-  mockPutDocs('/docs-python.md', '/docs-typescript.md');
+  mockPutDocs('/docs-typescript.md');
 
   const created = await handler(event, {} as any);
-  expect(created.length).toEqual(2);
-  expect(created[0].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-python.md`);
-  expect(created[1].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-typescript.md`);
+  expect(created.length).toEqual(1);
+  expect(created[0].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-typescript.md`);
 
 });
 
@@ -152,7 +166,7 @@ test('uploads a file per submodule (unscoped package)', async () => {
   // GIVEN
   const packageName = 'package-name';
   const packageVersion = '1.2.3-dev.4';
-  const event: S3Event = {
+  const s3Event: S3Event = {
     Records: [{
       awsRegion: 'bemuda-triangle-1',
       s3: {
@@ -163,6 +177,13 @@ test('uploads a file per submodule (unscoped package)', async () => {
           key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
           versionId: 'VersionId',
         },
+      },
+    }],
+  } as any;
+  const event: SNSEvent = {
+    Records: [{
+      Sns: {
+        Message: JSON.stringify(s3Event),
       },
     }],
   } as any;
@@ -177,9 +198,6 @@ test('uploads a file per submodule (unscoped package)', async () => {
 
   // mock the file uploads
   mockPutDocs(
-    '/docs-python.md',
-    '/docs-sub1-python.md',
-    '/docs-sub2-python.md',
     '/docs-typescript.md',
     '/docs-sub1-typescript.md',
     '/docs-sub2-typescript.md',
@@ -188,9 +206,6 @@ test('uploads a file per submodule (unscoped package)', async () => {
   const created = await handler(event, {} as any);
 
   expect(created.map(({ key }) => key)).toEqual([
-    `data/${packageName}/v${packageVersion}/docs-python.md`,
-    `data/${packageName}/v${packageVersion}/docs-sub1-python.md`,
-    `data/${packageName}/v${packageVersion}/docs-sub2-python.md`,
     `data/${packageName}/v${packageVersion}/docs-typescript.md`,
     `data/${packageName}/v${packageVersion}/docs-sub1-typescript.md`,
     `data/${packageName}/v${packageVersion}/docs-sub2-typescript.md`,
