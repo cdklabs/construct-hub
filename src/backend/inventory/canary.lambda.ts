@@ -21,7 +21,7 @@ export async function handler(event: ScheduledEvent, _context: Context) {
   const submoduleRegexes: Record<keyof SubmoduleStatus, RegExp> = {
     tsDocsPresent: submoduleKeyRegexp(DocumentationLanguage.TYPESCRIPT),
     pythonDocsPresent: submoduleKeyRegexp(DocumentationLanguage.PYTHON),
-  }
+  };
 
   const bucket = requireEnv('BUCKET_NAME');
   for await (const key of relevantObjectKeys(bucket)) {
