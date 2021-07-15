@@ -7,5 +7,7 @@ export const enum MetricName {
   MISSING_TYPESCRIPT_DOCS_COUNT = 'MissingTypeScriptDocsCount',
   MISSING_TARBALL_COUNT = 'MissingPackageTarballCount',
   PACKAGE_VERSION_COUNT = 'PackageVersionCount',
+  PACKAGE_MAJOR_COUNT = 'PackageMajorVersionCount',
+  PACKAGE_COUNT = 'PackageCount',
   UNKNOWN_OBJECT_COUNT = 'UnknownObjectCount',
 }

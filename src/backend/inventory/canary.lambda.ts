@@ -1,6 +1,7 @@
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, ScheduledEvent } from 'aws-lambda';
+import { SemVer } from 'semver';
 import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
@@ -13,10 +14,16 @@ export async function handler(event: ScheduledEvent, _context: Context) {
   console.log('Event:', JSON.stringify(event, null, 2));
 
   const indexedPackages = new Map<string, IndexedPackageStatus>();
+  const packageNames = new Set<string>();
+  const packageMajorVersions = new Set<string>();
 
   const bucket = requireEnv('BUCKET_NAME');
   for await (const key of relevantObjectKeys(bucket)) {
     const [, name, version] = constants.STORAGE_KEY_FORMAT_REGEX.exec(key)!;
+
+    packageNames.add(name);
+    packageMajorVersions.add(`${name}@${new SemVer(version).major}`);
+
     const fullName = `${name}@${version}`;
     if (!indexedPackages.has(fullName)) {
       indexedPackages.set(fullName, {});
@@ -77,6 +84,8 @@ export async function handler(event: ScheduledEvent, _context: Context) {
     metrics.putMetric(MetricName.MISSING_PYTHON_DOCS_COUNT, missingPythonDocs.length, Unit.Count);
     metrics.putMetric(MetricName.MISSING_TYPESCRIPT_DOCS_COUNT, missingTsDocs.length, Unit.Count);
     metrics.putMetric(MetricName.MISSING_TARBALL_COUNT, missingTarball.length, Unit.Count);
+    metrics.putMetric(MetricName.PACKAGE_COUNT, packageNames.size, Unit.Count);
+    metrics.putMetric(MetricName.PACKAGE_MAJOR_COUNT, packageMajorVersions.size, Unit.Count);
     metrics.putMetric(MetricName.PACKAGE_VERSION_COUNT, indexedPackages.size, Unit.Count);
     metrics.putMetric(MetricName.UNKNOWN_OBJECT_COUNT, unknownObjects.length, Unit.Count);
   })();
