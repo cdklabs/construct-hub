@@ -37,12 +37,18 @@ export class WebApp extends Construct {
 
     this.bucket = new s3.Bucket(this, 'WebsiteBucket', { blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL });
 
+    // generate a stable unique id for the cloudfront function and use it
+    // both for the function name and the logical id of the function so if
+    // it is changed the function will be recreated.
+    // see https://github.com/aws/aws-cdk/issues/15523
+    const functionId = `AddHeadersFunction${this.node.addr}`;
+
     const behaviorOptions = {
       compress: true,
       cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
       functionAssociations: [{
-        function: new ResponseFunction(this, 'AddResponseHeadersFunction', {
-          functionName: this.node.addr, // see https://github.com/aws/aws-cdk/issues/15523
+        function: new ResponseFunction(this, functionId, {
+          functionName: functionId,
         }),
         eventType: cloudfront.FunctionEventType.VIEWER_RESPONSE,
       }],
