@@ -15,9 +15,9 @@ const METRICS_NAMESPACE = 'ConstructHub/CatalogBuilder';
 /**
  * Regenerates the `catalog.json` object in the configured S3 bucket.
  *
- * @param event configuration for the rebuild job. In particular, the `rebuild`
- *              property can be set to `true` in order to trigger a full (i.e:
- *              non-incremental) rebuild of the object.
+ * @param event the S3 event that triggered the update. If there are no records
+ *              in the event, this function will re-generate the catalog.json
+ *              from scratch instead of performing an incremental update.
  * @param context the lambda context in which this execution runs.
  *
  * @returns the information about the updated S3 object.
@@ -30,11 +30,17 @@ export async function handler(event: S3Event, context: Context) {
 
   const packages = new Map<string, Map<number, PackageInfo>>();
 
-  console.log('Loading existing catalog...');
-  const data = await aws.s3().getObject({ Bucket: BUCKET_NAME, Key: constants.CATALOG_KEY }).promise()
-    .catch((err: AWSError) => err.code !== 'NoSuchKey'
-      ? Promise.reject(err)
-      : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
+  let data: AWS.S3.GetObjectOutput;
+  if (event.Records == null || event.Records.length === 0) {
+    console.log('Event contains no records, re-creating the catalog from scratch');
+    data = {};
+  } else {
+    console.log('Attempting to load the existing catalog...');
+    data = await aws.s3().getObject({ Bucket: BUCKET_NAME, Key: constants.CATALOG_KEY }).promise()
+      .catch((err: AWSError) => err.code !== 'NoSuchKey'
+        ? Promise.reject(err)
+        : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
+  }
 
   if (!data.Body) {
     console.log('Catalog not found. Recreating...');
