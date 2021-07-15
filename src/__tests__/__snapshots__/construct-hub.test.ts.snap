@@ -4246,6 +4246,31 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::EC2::VPCEndpoint",
     },
+    "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B": Object {
+      "Properties": Object {
+        "AutoPublish": true,
+        "FunctionCode": "\\"use strict\\";
+function handler(event) {
+    var response = event.response;
+    var headers = response.headers;
+    headers['x-frame-options'] = { value: 'deny' };
+    headers['x-xss-protection'] = { value: '1; mode=block' };
+    headers['x-content-type-options'] = { value: 'nosniff' };
+    headers['strict-transport-security'] = { value: 'max-age=47304000; includeSubDomains' };
+    headers['content-security-policy'] = {
+        value: 'default-src \\\\'none\\\\'; img-src \\\\'self\\\\' https://img.shields.io; script-src \\\\'self\\\\'; style-src \\\\'unsafe-inline\\\\' \\\\'self\\\\'; object-src \\\\'none\\\\'; connect-src \\\\'self\\\\'; manifest-src \\\\'self\\\\'; font-src \\\\'self\\\\'; frame-src \\\\'none\\\\'',
+    };
+    return response;
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxTQUFTLE9BQU8sQ0FBQyxLQUF5QjtJQUN4QyxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0gsbU9BQW1PO0tBQ3RPLENBQUM7SUFFRixPQUFPLFFBQVEsQ0FBQztBQUNsQixDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiaW50ZXJmYWNlIENsb3VkRnJvbnRSZXNwb25zZSB7XG4gIHJlc3BvbnNlOiBhbnk7XG4gIGhlYWRlcnM6IHtcbiAgICBba2V5OiBzdHJpbmddOiB7XG4gICAgICB2YWx1ZTogc3RyaW5nO1xuICAgIH07XG4gIH07XG59XG5cbmZ1bmN0aW9uIGhhbmRsZXIoZXZlbnQ6IENsb3VkRnJvbnRSZXNwb25zZSkge1xuICB2YXIgcmVzcG9uc2UgPSBldmVudC5yZXNwb25zZTtcbiAgdmFyIGhlYWRlcnMgPSByZXNwb25zZS5oZWFkZXJzO1xuXG4gIGhlYWRlcnNbJ3gtZnJhbWUtb3B0aW9ucyddID0geyB2YWx1ZTogJ2RlbnknIH07XG4gIGhlYWRlcnNbJ3gteHNzLXByb3RlY3Rpb24nXSA9IHsgdmFsdWU6ICcxOyBtb2RlPWJsb2NrJyB9O1xuICBoZWFkZXJzWyd4LWNvbnRlbnQtdHlwZS1vcHRpb25zJ10gPSB7IHZhbHVlOiAnbm9zbmlmZicgfTtcbiAgaGVhZGVyc1snc3RyaWN0LXRyYW5zcG9ydC1zZWN1cml0eSddID0geyB2YWx1ZTogJ21heC1hZ2U9NDczMDQwMDA7IGluY2x1ZGVTdWJEb21haW5zJyB9O1xuICBoZWFkZXJzWydjb250ZW50LXNlY3VyaXR5LXBvbGljeSddID0ge1xuICAgIHZhbHVlOlxuICAgICAgJ2RlZmF1bHQtc3JjIFxcJ25vbmVcXCc7IGltZy1zcmMgXFwnc2VsZlxcJyBodHRwczovL2ltZy5zaGllbGRzLmlvOyBzY3JpcHQtc3JjIFxcJ3NlbGZcXCc7IHN0eWxlLXNyYyBcXCd1bnNhZmUtaW5saW5lXFwnIFxcJ3NlbGZcXCc7IG9iamVjdC1zcmMgXFwnbm9uZVxcJzsgY29ubmVjdC1zcmMgXFwnc2VsZlxcJzsgbWFuaWZlc3Qtc3JjIFxcJ3NlbGZcXCc7IGZvbnQtc3JjIFxcJ3NlbGZcXCc7IGZyYW1lLXNyYyBcXCdub25lXFwnJyxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=",
+        "FunctionConfig": Object {
+          "Comment": "AddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9",
+          "Runtime": "cloudfront-js-1.0",
+        },
+        "Name": "AddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9",
+      },
+      "Type": "AWS::CloudFront::Function",
+    },
     "ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1": Object {
       "Properties": Object {
         "Content": Object {
@@ -4362,7 +4387,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "EventType": "viewer-response",
                   "FunctionARN": Object {
                     "Fn::GetAtt": Array [
-                      "ConstructHubWebAppResponseFunction4C2BF3E9",
+                      "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B",
                       "FunctionARN",
                     ],
                   },
@@ -4380,7 +4405,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "EventType": "viewer-response",
                   "FunctionARN": Object {
                     "Fn::GetAtt": Array [
-                      "ConstructHubWebAppResponseFunction4C2BF3E9",
+                      "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B",
                       "FunctionARN",
                     ],
                   },
@@ -4411,7 +4436,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                 "EventType": "viewer-response",
                 "FunctionARN": Object {
                   "Fn::GetAtt": Array [
-                    "ConstructHubWebAppResponseFunction4C2BF3E9",
+                    "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B",
                     "FunctionARN",
                   ],
                 },
@@ -4489,51 +4514,6 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
-    },
-    "ConstructHubWebAppResponseFunction4C2BF3E9": Object {
-      "Properties": Object {
-        "AutoPublish": true,
-        "FunctionCode": "\\"use strict\\";
-function handler(event) {
-    var response = event.response;
-    var headers = response.headers;
-    headers['x-frame-options'] = { value: 'deny' };
-    headers['x-xss-protection'] = { value: '1; mode=block' };
-    headers['x-content-type-options'] = { value: 'nosniff' };
-    headers['strict-transport-security'] = { value: 'max-age=47304000; includeSubDomains' };
-    headers['content-security-policy'] = {
-        value: 'default-src \\\\'none\\\\'; img-src \\\\'self\\\\' https://img.shields.io; script-src \\\\'self\\\\'; style-src \\\\'unsafe-inline\\\\' \\\\'self\\\\'; object-src \\\\'none\\\\'; connect-src \\\\'self\\\\'; manifest-src \\\\'self\\\\'; font-src \\\\'self\\\\'; frame-src \\\\'none\\\\'',
-    };
-    return response;
-}
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxTQUFTLE9BQU8sQ0FBQyxLQUF5QjtJQUN4QyxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0gsbU9BQW1PO0tBQ3RPLENBQUM7SUFFRixPQUFPLFFBQVEsQ0FBQztBQUNsQixDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiaW50ZXJmYWNlIENsb3VkRnJvbnRSZXNwb25zZSB7XG4gIHJlc3BvbnNlOiBhbnk7XG4gIGhlYWRlcnM6IHtcbiAgICBba2V5OiBzdHJpbmddOiB7XG4gICAgICB2YWx1ZTogc3RyaW5nO1xuICAgIH07XG4gIH07XG59XG5cbmZ1bmN0aW9uIGhhbmRsZXIoZXZlbnQ6IENsb3VkRnJvbnRSZXNwb25zZSkge1xuICB2YXIgcmVzcG9uc2UgPSBldmVudC5yZXNwb25zZTtcbiAgdmFyIGhlYWRlcnMgPSByZXNwb25zZS5oZWFkZXJzO1xuXG4gIGhlYWRlcnNbJ3gtZnJhbWUtb3B0aW9ucyddID0geyB2YWx1ZTogJ2RlbnknIH07XG4gIGhlYWRlcnNbJ3gteHNzLXByb3RlY3Rpb24nXSA9IHsgdmFsdWU6ICcxOyBtb2RlPWJsb2NrJyB9O1xuICBoZWFkZXJzWyd4LWNvbnRlbnQtdHlwZS1vcHRpb25zJ10gPSB7IHZhbHVlOiAnbm9zbmlmZicgfTtcbiAgaGVhZGVyc1snc3RyaWN0LXRyYW5zcG9ydC1zZWN1cml0eSddID0geyB2YWx1ZTogJ21heC1hZ2U9NDczMDQwMDA7IGluY2x1ZGVTdWJEb21haW5zJyB9O1xuICBoZWFkZXJzWydjb250ZW50LXNlY3VyaXR5LXBvbGljeSddID0ge1xuICAgIHZhbHVlOlxuICAgICAgJ2RlZmF1bHQtc3JjIFxcJ25vbmVcXCc7IGltZy1zcmMgXFwnc2VsZlxcJyBodHRwczovL2ltZy5zaGllbGRzLmlvOyBzY3JpcHQtc3JjIFxcJ3NlbGZcXCc7IHN0eWxlLXNyYyBcXCd1bnNhZmUtaW5saW5lXFwnIFxcJ3NlbGZcXCc7IG9iamVjdC1zcmMgXFwnbm9uZVxcJzsgY29ubmVjdC1zcmMgXFwnc2VsZlxcJzsgbWFuaWZlc3Qtc3JjIFxcJ3NlbGZcXCc7IGZvbnQtc3JjIFxcJ3NlbGZcXCc7IGZyYW1lLXNyYyBcXCdub25lXFwnJyxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=",
-        "FunctionConfig": Object {
-          "Comment": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Ref": "AWS::Region",
-                },
-                "TestConstrubWebAppResponseFunction1F387BCC",
-              ],
-            ],
-          },
-          "Runtime": "cloudfront-js-1.0",
-        },
-        "Name": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "TestConstrubWebAppResponseFunction1F387BCC",
-            ],
-          ],
-        },
-      },
-      "Type": "AWS::CloudFront::Function",
     },
     "ConstructHubWebAppWebsiteBucket4B2B9DB2": Object {
       "DeletionPolicy": "Retain",
@@ -9394,6 +9374,31 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Route53::RecordSet",
     },
+    "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B": Object {
+      "Properties": Object {
+        "AutoPublish": true,
+        "FunctionCode": "\\"use strict\\";
+function handler(event) {
+    var response = event.response;
+    var headers = response.headers;
+    headers['x-frame-options'] = { value: 'deny' };
+    headers['x-xss-protection'] = { value: '1; mode=block' };
+    headers['x-content-type-options'] = { value: 'nosniff' };
+    headers['strict-transport-security'] = { value: 'max-age=47304000; includeSubDomains' };
+    headers['content-security-policy'] = {
+        value: 'default-src \\\\'none\\\\'; img-src \\\\'self\\\\' https://img.shields.io; script-src \\\\'self\\\\'; style-src \\\\'unsafe-inline\\\\' \\\\'self\\\\'; object-src \\\\'none\\\\'; connect-src \\\\'self\\\\'; manifest-src \\\\'self\\\\'; font-src \\\\'self\\\\'; frame-src \\\\'none\\\\'',
+    };
+    return response;
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxTQUFTLE9BQU8sQ0FBQyxLQUF5QjtJQUN4QyxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0gsbU9BQW1PO0tBQ3RPLENBQUM7SUFFRixPQUFPLFFBQVEsQ0FBQztBQUNsQixDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiaW50ZXJmYWNlIENsb3VkRnJvbnRSZXNwb25zZSB7XG4gIHJlc3BvbnNlOiBhbnk7XG4gIGhlYWRlcnM6IHtcbiAgICBba2V5OiBzdHJpbmddOiB7XG4gICAgICB2YWx1ZTogc3RyaW5nO1xuICAgIH07XG4gIH07XG59XG5cbmZ1bmN0aW9uIGhhbmRsZXIoZXZlbnQ6IENsb3VkRnJvbnRSZXNwb25zZSkge1xuICB2YXIgcmVzcG9uc2UgPSBldmVudC5yZXNwb25zZTtcbiAgdmFyIGhlYWRlcnMgPSByZXNwb25zZS5oZWFkZXJzO1xuXG4gIGhlYWRlcnNbJ3gtZnJhbWUtb3B0aW9ucyddID0geyB2YWx1ZTogJ2RlbnknIH07XG4gIGhlYWRlcnNbJ3gteHNzLXByb3RlY3Rpb24nXSA9IHsgdmFsdWU6ICcxOyBtb2RlPWJsb2NrJyB9O1xuICBoZWFkZXJzWyd4LWNvbnRlbnQtdHlwZS1vcHRpb25zJ10gPSB7IHZhbHVlOiAnbm9zbmlmZicgfTtcbiAgaGVhZGVyc1snc3RyaWN0LXRyYW5zcG9ydC1zZWN1cml0eSddID0geyB2YWx1ZTogJ21heC1hZ2U9NDczMDQwMDA7IGluY2x1ZGVTdWJEb21haW5zJyB9O1xuICBoZWFkZXJzWydjb250ZW50LXNlY3VyaXR5LXBvbGljeSddID0ge1xuICAgIHZhbHVlOlxuICAgICAgJ2RlZmF1bHQtc3JjIFxcJ25vbmVcXCc7IGltZy1zcmMgXFwnc2VsZlxcJyBodHRwczovL2ltZy5zaGllbGRzLmlvOyBzY3JpcHQtc3JjIFxcJ3NlbGZcXCc7IHN0eWxlLXNyYyBcXCd1bnNhZmUtaW5saW5lXFwnIFxcJ3NlbGZcXCc7IG9iamVjdC1zcmMgXFwnbm9uZVxcJzsgY29ubmVjdC1zcmMgXFwnc2VsZlxcJzsgbWFuaWZlc3Qtc3JjIFxcJ3NlbGZcXCc7IGZvbnQtc3JjIFxcJ3NlbGZcXCc7IGZyYW1lLXNyYyBcXCdub25lXFwnJyxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=",
+        "FunctionConfig": Object {
+          "Comment": "AddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9",
+          "Runtime": "cloudfront-js-1.0",
+        },
+        "Name": "AddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9",
+      },
+      "Type": "AWS::CloudFront::Function",
+    },
     "ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1": Object {
       "Properties": Object {
         "Content": Object {
@@ -9513,7 +9518,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "EventType": "viewer-response",
                   "FunctionARN": Object {
                     "Fn::GetAtt": Array [
-                      "ConstructHubWebAppResponseFunction4C2BF3E9",
+                      "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B",
                       "FunctionARN",
                     ],
                   },
@@ -9531,7 +9536,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "EventType": "viewer-response",
                   "FunctionARN": Object {
                     "Fn::GetAtt": Array [
-                      "ConstructHubWebAppResponseFunction4C2BF3E9",
+                      "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B",
                       "FunctionARN",
                     ],
                   },
@@ -9562,7 +9567,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                 "EventType": "viewer-response",
                 "FunctionARN": Object {
                   "Fn::GetAtt": Array [
-                    "ConstructHubWebAppResponseFunction4C2BF3E9",
+                    "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B",
                     "FunctionARN",
                   ],
                 },
@@ -9863,51 +9868,6 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         ],
       },
       "Type": "AWS::IAM::Role",
-    },
-    "ConstructHubWebAppResponseFunction4C2BF3E9": Object {
-      "Properties": Object {
-        "AutoPublish": true,
-        "FunctionCode": "\\"use strict\\";
-function handler(event) {
-    var response = event.response;
-    var headers = response.headers;
-    headers['x-frame-options'] = { value: 'deny' };
-    headers['x-xss-protection'] = { value: '1; mode=block' };
-    headers['x-content-type-options'] = { value: 'nosniff' };
-    headers['strict-transport-security'] = { value: 'max-age=47304000; includeSubDomains' };
-    headers['content-security-policy'] = {
-        value: 'default-src \\\\'none\\\\'; img-src \\\\'self\\\\' https://img.shields.io; script-src \\\\'self\\\\'; style-src \\\\'unsafe-inline\\\\' \\\\'self\\\\'; object-src \\\\'none\\\\'; connect-src \\\\'self\\\\'; manifest-src \\\\'self\\\\'; font-src \\\\'self\\\\'; frame-src \\\\'none\\\\'',
-    };
-    return response;
-}
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxTQUFTLE9BQU8sQ0FBQyxLQUF5QjtJQUN4QyxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0gsbU9BQW1PO0tBQ3RPLENBQUM7SUFFRixPQUFPLFFBQVEsQ0FBQztBQUNsQixDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiaW50ZXJmYWNlIENsb3VkRnJvbnRSZXNwb25zZSB7XG4gIHJlc3BvbnNlOiBhbnk7XG4gIGhlYWRlcnM6IHtcbiAgICBba2V5OiBzdHJpbmddOiB7XG4gICAgICB2YWx1ZTogc3RyaW5nO1xuICAgIH07XG4gIH07XG59XG5cbmZ1bmN0aW9uIGhhbmRsZXIoZXZlbnQ6IENsb3VkRnJvbnRSZXNwb25zZSkge1xuICB2YXIgcmVzcG9uc2UgPSBldmVudC5yZXNwb25zZTtcbiAgdmFyIGhlYWRlcnMgPSByZXNwb25zZS5oZWFkZXJzO1xuXG4gIGhlYWRlcnNbJ3gtZnJhbWUtb3B0aW9ucyddID0geyB2YWx1ZTogJ2RlbnknIH07XG4gIGhlYWRlcnNbJ3gteHNzLXByb3RlY3Rpb24nXSA9IHsgdmFsdWU6ICcxOyBtb2RlPWJsb2NrJyB9O1xuICBoZWFkZXJzWyd4LWNvbnRlbnQtdHlwZS1vcHRpb25zJ10gPSB7IHZhbHVlOiAnbm9zbmlmZicgfTtcbiAgaGVhZGVyc1snc3RyaWN0LXRyYW5zcG9ydC1zZWN1cml0eSddID0geyB2YWx1ZTogJ21heC1hZ2U9NDczMDQwMDA7IGluY2x1ZGVTdWJEb21haW5zJyB9O1xuICBoZWFkZXJzWydjb250ZW50LXNlY3VyaXR5LXBvbGljeSddID0ge1xuICAgIHZhbHVlOlxuICAgICAgJ2RlZmF1bHQtc3JjIFxcJ25vbmVcXCc7IGltZy1zcmMgXFwnc2VsZlxcJyBodHRwczovL2ltZy5zaGllbGRzLmlvOyBzY3JpcHQtc3JjIFxcJ3NlbGZcXCc7IHN0eWxlLXNyYyBcXCd1bnNhZmUtaW5saW5lXFwnIFxcJ3NlbGZcXCc7IG9iamVjdC1zcmMgXFwnbm9uZVxcJzsgY29ubmVjdC1zcmMgXFwnc2VsZlxcJzsgbWFuaWZlc3Qtc3JjIFxcJ3NlbGZcXCc7IGZvbnQtc3JjIFxcJ3NlbGZcXCc7IGZyYW1lLXNyYyBcXCdub25lXFwnJyxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=",
-        "FunctionConfig": Object {
-          "Comment": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Ref": "AWS::Region",
-                },
-                "TestConstrubWebAppResponseFunction1F387BCC",
-              ],
-            ],
-          },
-          "Runtime": "cloudfront-js-1.0",
-        },
-        "Name": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "TestConstrubWebAppResponseFunction1F387BCC",
-            ],
-          ],
-        },
-      },
-      "Type": "AWS::CloudFront::Function",
     },
     "ConstructHubWebAppWebsiteBucket4B2B9DB2": Object {
       "DeletionPolicy": "Retain",

@@ -11,7 +11,7 @@ expect.addSnapshotSerializer({
   serialize: (val: cxapi.CloudFormationStackArtifact) => yaml(val.template),
 });
 
-test.skip('golden snapshot (Pending resolution of https://github.com/cdklabs/construct-hub/pull/171)', () => {
+test('golden snapshot', () => {
   const app = new App();
   const stack = new DevStack(app, 'dev');
   expect(app.synth().getStackByName(stack.stackName)).toMatchSnapshot();
