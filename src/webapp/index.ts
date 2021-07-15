@@ -5,7 +5,7 @@ import * as r53 from '@aws-cdk/aws-route53';
 import * as r53targets from '@aws-cdk/aws-route53-targets';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
-import { CfnOutput, Construct, Names } from '@aws-cdk/core';
+import { CfnOutput, Construct } from '@aws-cdk/core';
 import { Domain } from '../api';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
@@ -36,16 +36,13 @@ export class WebApp extends Construct {
     super(scope, id);
 
     this.bucket = new s3.Bucket(this, 'WebsiteBucket', { blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL });
-    const functionId = 'ResponseFunction';
-    const functionName = `${Names.uniqueId(this)}${functionId}`;
 
     const behaviorOptions = {
       compress: true,
       cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
       functionAssociations: [{
-        function: new ResponseFunction(this, functionId, {
-          // see https://github.com/aws/aws-cdk/issues/15523
-          functionName: functionName.substring(0, Math.min(64, functionName.length)),
+        function: new ResponseFunction(this, 'AddResponseHeadersFunction', {
+          functionName: this.node.addr, // see https://github.com/aws/aws-cdk/issues/15523
         }),
         eventType: cloudfront.FunctionEventType.VIEWER_RESPONSE,
       }],
