@@ -121,6 +121,16 @@ export class Inventory extends Construct {
     });
   }
 
+  public metricMissingSubmoduleCount(opts?: MetricProps): IMetric {
+    return new Metric({
+      namespace: METRICS_NAMESPACE,
+      metricName: MetricName.SUBMODULE_COUNT,
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+    });
+  }
+
   public metricUnknownObjectCount(opts?: MetricProps): IMetric {
     return new Metric({
       namespace: METRICS_NAMESPACE,
