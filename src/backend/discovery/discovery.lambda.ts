@@ -12,7 +12,7 @@ import { ELIGIBLE_LICENSES } from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
-import { MetricName, METRIC_NAMESPACE, S3KeyPrefix } from './constants.lambda-shared';
+import { MetricName, METRICS_NAMESPACE, S3KeyPrefix } from './constants.lambda-shared';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const normalizeNPMMetadata = require('normalize-registry-metadata');
 
@@ -23,7 +23,7 @@ const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
 
 // Configure embedded metrics format
 Configuration.environmentOverride = Environments.Lambda;
-Configuration.namespace = METRIC_NAMESPACE;
+Configuration.namespace = METRICS_NAMESPACE;
 
 /**
  * This function triggers on a fixed schedule and reads a stream of changes from npmjs couchdb _changes endpoint.
@@ -73,6 +73,18 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
         metrics.setProperty('StartSeq', updatedMarker);
         const startTime = Date.now();
+
+        // Emit npm.js replication lag
+        for (const { doc } of batch) {
+          if (doc?.time?.modified) {
+            metrics.putMetric(
+              MetricName.NPMJS_CHANGE_AGE,
+              startTime - new Date(doc.time.modified).getTime(),
+              Unit.Milliseconds,
+            );
+          }
+        }
+
         try {
           console.log(`Received a batch of ${batch.length} element(s)`);
           metrics.putMetric(MetricName.CHANGE_COUNT, batch.length, Unit.Count);
