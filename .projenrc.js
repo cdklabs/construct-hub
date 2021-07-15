@@ -21,6 +21,7 @@ const peerDeps = [
   '@aws-cdk/aws-route53',
   '@aws-cdk/aws-s3-deployment',
   '@aws-cdk/aws-s3',
+  '@aws-cdk/aws-s3-notifications',
   '@aws-cdk/aws-sns',
   '@aws-cdk/aws-sqs',
   '@aws-cdk/aws-sqs',

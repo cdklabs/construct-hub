@@ -16,19 +16,19 @@ import { ConstructHub } from 'construct-hub'
 new ConstructHub(scope: Construct, id: string, props: ConstructHubProps)
 ```
 
-##### `scope`<sup>Required</sup> <a name="construct-hub.ConstructHub.scope"></a>
+##### `scope`<sup>Required</sup> <a name="construct-hub.ConstructHub.parameter.scope"></a>
 
 - *Type:* [`constructs.Construct`](#constructs.Construct)
 
 ---
 
-##### `id`<sup>Required</sup> <a name="construct-hub.ConstructHub.id"></a>
+##### `id`<sup>Required</sup> <a name="construct-hub.ConstructHub.parameter.id"></a>
 
 - *Type:* `string`
 
 ---
 
-##### `props`<sup>Required</sup> <a name="construct-hub.ConstructHub.props"></a>
+##### `props`<sup>Required</sup> <a name="construct-hub.ConstructHub.parameter.props"></a>
 
 - *Type:* [`construct-hub.ConstructHubProps`](#construct-hub.ConstructHubProps)
 
@@ -38,7 +38,7 @@ new ConstructHub(scope: Construct, id: string, props: ConstructHubProps)
 
 #### Properties <a name="Properties"></a>
 
-##### `grantPrincipal`<sup>Required</sup> <a name="construct-hub.ConstructHub.grantPrincipal"></a>
+##### `grantPrincipal`<sup>Required</sup> <a name="construct-hub.ConstructHub.property.grantPrincipal"></a>
 
 - *Type:* [`@aws-cdk/aws-iam.IPrincipal`](#@aws-cdk/aws-iam.IPrincipal)
 
@@ -46,7 +46,7 @@ The principal to grant permissions to.
 
 ---
 
-##### `ingestionQueue`<sup>Required</sup> <a name="construct-hub.ConstructHub.ingestionQueue"></a>
+##### `ingestionQueue`<sup>Required</sup> <a name="construct-hub.ConstructHub.property.ingestionQueue"></a>
 
 - *Type:* [`@aws-cdk/aws-sqs.IQueue`](#@aws-cdk/aws-sqs.IQueue)
 
@@ -67,7 +67,7 @@ import { AlarmActions } from 'construct-hub'
 const alarmActions: AlarmActions = { ... }
 ```
 
-##### `highSeverity`<sup>Required</sup> <a name="construct-hub.AlarmActions.highSeverity"></a>
+##### `highSeverity`<sup>Required</sup> <a name="construct-hub.AlarmActions.property.highSeverity"></a>
 
 - *Type:* `string`
 
@@ -79,7 +79,7 @@ This must be an ARN that can be used with CloudWatch alarms.
 
 ---
 
-##### `normalSeverity`<sup>Optional</sup> <a name="construct-hub.AlarmActions.normalSeverity"></a>
+##### `normalSeverity`<sup>Optional</sup> <a name="construct-hub.AlarmActions.property.normalSeverity"></a>
 
 - *Type:* `string`
 - *Default:* no actions are taken in response to alarms of normal severity
@@ -104,7 +104,7 @@ import { ConstructHubProps } from 'construct-hub'
 const constructHubProps: ConstructHubProps = { ... }
 ```
 
-##### `alarmActions`<sup>Required</sup> <a name="construct-hub.ConstructHubProps.alarmActions"></a>
+##### `alarmActions`<sup>Required</sup> <a name="construct-hub.ConstructHubProps.property.alarmActions"></a>
 
 - *Type:* [`construct-hub.AlarmActions`](#construct-hub.AlarmActions)
 
@@ -112,7 +112,7 @@ Actions to perform when alarms are set.
 
 ---
 
-##### `dashboardName`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.dashboardName"></a>
+##### `dashboardName`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.dashboardName"></a>
 
 - *Type:* `string`
 - *Default:* "construct-hub"
@@ -123,6 +123,7 @@ Must only contain alphanumerics, dash (-) and underscore (_).
 
 ---
 
+<<<<<<< HEAD
 ##### `denyList`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.denyList"></a>
 
 - *Type:* [`construct-hub.DenyListEntry`](#construct-hub.DenyListEntry)[]
@@ -133,6 +134,9 @@ A list of packages to block from the construct hub.
 ---
 
 ##### `domain`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.domain"></a>
+=======
+##### `domain`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.domain"></a>
+>>>>>>> origin/main
 
 - *Type:* [`construct-hub.Domain`](#construct-hub.Domain)
 
@@ -140,6 +144,7 @@ Connect the hub to a domain (requires a hosted zone and a certificate).
 
 ---
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 ### DenyListEntry <a name="construct-hub.DenyListEntry"></a>
 
@@ -180,6 +185,9 @@ emitted to the construct hub logs.
 The package version to block (must be a valid version such as "1.0.3").
 =======
 ##### `isolateLambdas`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.isolateLambdas"></a>
+=======
+##### `isolateLambdas`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.isolateLambdas"></a>
+>>>>>>> origin/main
 
 - *Type:* `boolean`
 - *Default:* true
@@ -208,7 +216,7 @@ import { Domain } from 'construct-hub'
 const domain: Domain = { ... }
 ```
 
-##### `cert`<sup>Required</sup> <a name="construct-hub.Domain.cert"></a>
+##### `cert`<sup>Required</sup> <a name="construct-hub.Domain.property.cert"></a>
 
 - *Type:* [`@aws-cdk/aws-certificatemanager.ICertificate`](#@aws-cdk/aws-certificatemanager.ICertificate)
 - *Default:* a DNS-Validated certificate will be provisioned using the
@@ -218,7 +226,7 @@ The certificate to use for serving the Construct Hub over a custom domain.
 
 ---
 
-##### `zone`<sup>Required</sup> <a name="construct-hub.Domain.zone"></a>
+##### `zone`<sup>Required</sup> <a name="construct-hub.Domain.property.zone"></a>
 
 - *Type:* [`@aws-cdk/aws-route53.IHostedZone`](#@aws-cdk/aws-route53.IHostedZone)
 
@@ -226,7 +234,7 @@ The root domain name where this instance of Construct Hub will be served.
 
 ---
 
-##### `monitorCertificateExpiration`<sup>Optional</sup> <a name="construct-hub.Domain.monitorCertificateExpiration"></a>
+##### `monitorCertificateExpiration`<sup>Optional</sup> <a name="construct-hub.Domain.property.monitorCertificateExpiration"></a>
 
 - *Type:* `boolean`
 - *Default:* true

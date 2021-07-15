@@ -1,6 +1,16 @@
 import * as AWS from 'aws-sdk';
 import { requireEnv } from '../shared/env.lambda-shared';
-import { DenyListMap, DenyListRule, DENY_LIST_BUCKET_NAME_ENV, DENY_LIST_OBJECT_KEY_ENV } from './api';
+import { DenyListMap, DenyListRule } from './api';
+
+/**
+ * The name of an environment variable that contains the bucket name that includes the deny list.
+ */
+export const DENY_LIST_BUCKET_NAME_ENV = 'DENY_LIST_BUCKET_NAME';
+
+/**
+  * The object key of the deny list in the bucket.
+  */
+export const DENY_LIST_OBJECT_KEY_ENV = 'DENY_LIST_OBJECT_KEY';
 
 /**
  * Options for `DenyListClient`.
@@ -8,7 +18,7 @@ import { DenyListMap, DenyListRule, DENY_LIST_BUCKET_NAME_ENV, DENY_LIST_OBJECT_
 export interface DenyListClientOptions {
   /**
    * The name of the S3 bucket where the deny list is stored.
-   * @default process.env.DENY_LIST_BUCKET
+   * @default process.env.DENY_LIST_BUCKET_NAME
    */
   readonly bucketName?: string;
 

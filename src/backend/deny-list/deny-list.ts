@@ -6,7 +6,8 @@ import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
 import { Construct as CoreConstruct } from '@aws-cdk/core';
 import { Construct } from 'constructs';
-import { DenyListRule, DENY_LIST_BUCKET_NAME_ENV, DENY_LIST_OBJECT_KEY_ENV } from './api';
+import { DenyListRule } from './api';
+import { DENY_LIST_BUCKET_NAME_ENV, DENY_LIST_OBJECT_KEY_ENV } from './client.lambda-shared';
 
 /**
  * Props for `DenyList`.

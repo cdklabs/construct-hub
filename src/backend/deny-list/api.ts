@@ -1,12 +1,3 @@
-/**
- * The name of an environment variable that contains the bucket name that includes the deny list.
- */
-export const DENY_LIST_BUCKET_NAME_ENV = 'DENY_LIST_BUCKET_NAME';
-
-/**
- * The object key of the deny list in the bucket.
- */
-export const DENY_LIST_OBJECT_KEY_ENV = 'DENY_LIST_OBJECT_KEY';
 
 /**
  * An entry in the list of packages blocked from display in the construct hub.

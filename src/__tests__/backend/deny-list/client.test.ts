@@ -1,7 +1,7 @@
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
-import { DenyListRule, DENY_LIST_BUCKET_NAME_ENV, DENY_LIST_OBJECT_KEY_ENV } from '../../../backend/deny-list/api';
-import { DenyListClient } from '../../../backend/deny-list/client.lambda-shared';
+import { DenyListRule } from '../../../backend/deny-list/api';
+import { DenyListClient, DENY_LIST_BUCKET_NAME_ENV, DENY_LIST_OBJECT_KEY_ENV } from '../../../backend/deny-list/client.lambda-shared';
 
 const sample: Record<string, DenyListRule> = {
   'foo@1.2.3': {
