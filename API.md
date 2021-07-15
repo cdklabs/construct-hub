@@ -123,20 +123,16 @@ Must only contain alphanumerics, dash (-) and underscore (_).
 
 ---
 
-<<<<<<< HEAD
-##### `denyList`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.denyList"></a>
+##### `denyList`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.denyList"></a>
 
-- *Type:* [`construct-hub.DenyListEntry`](#construct-hub.DenyListEntry)[]
+- *Type:* [`construct-hub.DenyListRule`](#construct-hub.DenyListRule)[]
 - *Default:* []
 
 A list of packages to block from the construct hub.
 
 ---
 
-##### `domain`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.domain"></a>
-=======
 ##### `domain`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.domain"></a>
->>>>>>> origin/main
 
 - *Type:* [`construct-hub.Domain`](#construct-hub.Domain)
 
@@ -144,50 +140,7 @@ Connect the hub to a domain (requires a hosted zone and a certificate).
 
 ---
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-### DenyListEntry <a name="construct-hub.DenyListEntry"></a>
-
-An entry in the list of packages blocked from display in the construct hub.
-
-#### Initializer <a name="[object Object].Initializer"></a>
-
-```typescript
-import { DenyListEntry } from 'construct-hub'
-
-const denyListEntry: DenyListEntry = { ... }
-```
-
-##### `packageName`<sup>Required</sup> <a name="construct-hub.DenyListEntry.packageName"></a>
-
-- *Type:* `string`
-
-The name of the package to block (npm).
-
----
-
-##### `reason`<sup>Required</sup> <a name="construct-hub.DenyListEntry.reason"></a>
-
-- *Type:* `string`
-
-The reason why this package/version is denied.
-
-This information will be
-emitted to the construct hub logs.
-
----
-
-##### `packageVersion`<sup>Optional</sup> <a name="construct-hub.DenyListEntry.packageVersion"></a>
-
-- *Type:* `string`
-- *Default:* all versions of this package are blocked.
-
-The package version to block (must be a valid version such as "1.0.3").
-=======
-##### `isolateLambdas`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.isolateLambdas"></a>
-=======
 ##### `isolateLambdas`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.isolateLambdas"></a>
->>>>>>> origin/main
 
 - *Type:* `boolean`
 - *Default:* true
@@ -200,7 +153,58 @@ implies the creation of additonal resources, including:
 - A VPC with only isolated subnets.
 - VPC Endpoints (CodeArtifact, CodeArtifact API, S3)
 - A CodeArtifact Repository with an external connection to npmjs.com
->>>>>>> origin/main
+
+---
+
+### DenyListMap <a name="construct-hub.DenyListMap"></a>
+
+The contents of the deny list file in S3.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { DenyListMap } from 'construct-hub'
+
+const denyListMap: DenyListMap = { ... }
+```
+
+### DenyListRule <a name="construct-hub.DenyListRule"></a>
+
+An entry in the list of packages blocked from display in the construct hub.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { DenyListRule } from 'construct-hub'
+
+const denyListRule: DenyListRule = { ... }
+```
+
+##### `package`<sup>Required</sup> <a name="construct-hub.DenyListRule.property.package"></a>
+
+- *Type:* `string`
+
+The name of the package to block (npm).
+
+---
+
+##### `reason`<sup>Required</sup> <a name="construct-hub.DenyListRule.property.reason"></a>
+
+- *Type:* `string`
+
+The reason why this package/version is denied.
+
+This information will be
+emitted to the construct hub logs.
+
+---
+
+##### `version`<sup>Optional</sup> <a name="construct-hub.DenyListRule.property.version"></a>
+
+- *Type:* `string`
+- *Default:* all versions of this package are blocked.
+
+The package version to block (must be a valid version such as "1.0.3").
 
 ---
 
