@@ -1,4 +1,4 @@
-import { pseudoRandomBytes, randomInt } from 'crypto';
+import { pseudoRandomBytes } from 'crypto';
 import { S3Event } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
@@ -36,7 +36,7 @@ const mockEvent: S3Event = {
         bucket: { arn: 'arn:aws:s3:::phony-bucket-name', name: 'phony-bucket-name', ownerIdentity: { principalId: 'arn::test::principal' } },
         object: {
           key: pseudoRandomBytes(16).toString('base64'),
-          size: randomInt(1_024),
+          size: randomInt(0, 1_024),
           eTag: pseudoRandomBytes(16).toString('hex'),
           sequencer: `${index}-${pseudoRandomBytes(16).toString('hex')}`,
         },
@@ -68,3 +68,7 @@ test('creates the expected invalidation', async () => {
 });
 
 type Response<T> = (err: Error | null, data?: T) => void;
+
+function randomInt(min: number, max: number) {
+  return min + Math.ceil(Math.random() * (max - min));
+}
