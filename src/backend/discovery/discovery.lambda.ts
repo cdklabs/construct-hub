@@ -169,7 +169,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
    */
   async function saveLastTransactionMarker(sequence: Number) {
     console.log(`Updating last transaction marker to ${sequence}`);
-    return putObject(MARKER_FILE_NAME, sequence.toFixed(), { ContentType: 'text/plain' });
+    return putObject(MARKER_FILE_NAME, sequence.toFixed(), { ContentType: 'text/plain; charset=UTF-8' });
   }
   //#endregion
 
@@ -219,7 +219,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
       console.error(`[${seq}] Failed processing, logging error to S3 and resuming work. ${infos.name}@${infos.version}: ${err}`);
       metrics.putMetric(MetricName.STAGING_FAILURE_COUNT, 1, Unit.Count);
       await putObject(`${S3KeyPrefix.FAILED_KEY_PREFIX}${seq}`, JSON.stringify({ ...infos, _construct_hub_failure_reason: err }, null, 2), {
-        ContentType: 'text/json',
+        ContentType: 'text/json; charset=UTF-8',
         Metadata: {
           'Modified-At': modified.toISOString(),
         },

@@ -102,7 +102,7 @@ export async function handler(event: S3Event, context: Context) {
     Bucket: BUCKET_NAME,
     Key: constants.CATALOG_KEY,
     Body: JSON.stringify(catalog, null, 2),
-    ContentType: 'text/json',
+    ContentType: 'text/json; charset=UTF-8',
     Metadata: {
       'Lambda-Log-Group': context.logGroupName,
       'Lambda-Log-Stream': context.logStreamName,

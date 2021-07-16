@@ -213,6 +213,77 @@ test('uploads a file per submodule (unscoped package)', async () => {
 
 });
 
+describe('markers for un-supported languages', () => {
+  beforeEach((done) => {
+    // Switch language, as TypeScript is always supported 🙃
+    process.env.TARGET_LANGUAGE = 'python';
+    done();
+  });
+
+  afterEach((done) => {
+    delete process.env.TARGET_LANGUAGE;
+    done();
+  });
+
+  test('uploads ".not-supported" markers as relevant', async () => {
+
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
+    forPackage.mockImplementation(async (target: string) => {
+      return new MockDocumentation(target) as unknown as Documentation;
+    });
+
+    // GIVEN
+    const packageName = 'package-name';
+    const packageVersion = '1.2.3-dev.4';
+    const s3Event: S3Event = {
+      Records: [{
+        awsRegion: 'bemuda-triangle-1',
+        s3: {
+          bucket: {
+            name: 'dummy-bucket',
+          },
+          object: {
+            key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
+            versionId: 'VersionId',
+          },
+        },
+      }],
+    } as any;
+    const event: SNSEvent = {
+      Records: [{
+        Sns: {
+          Message: JSON.stringify(s3Event),
+        },
+      }],
+    } as any;
+
+    const assembly: spec.Assembly = {
+      targets: { phony: {} },
+      submodules: { '@scope/package-name.sub1': {}, '@scope/package-name.sub2': {} },
+    } as any;
+
+    // mock the assembly request
+    mockFetchAssembly(assembly);
+
+    // mock the file uploads
+    mockPutDocs(
+      `/docs-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
+      `/docs-sub1-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
+      `/docs-sub2-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
+    );
+
+    const created = await handler(event, {} as any);
+
+    expect(created.map(({ key }) => key)).toEqual([
+      `data/${packageName}/v${packageVersion}/docs-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
+      `data/${packageName}/v${packageVersion}/docs-sub1-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
+      `data/${packageName}/v${packageVersion}/docs-sub2-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
+    ]);
+
+  });
+});
+
 class MockDocumentation {
   public constructor(private readonly target: string) {}
   public render() {

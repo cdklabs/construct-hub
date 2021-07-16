@@ -83,6 +83,19 @@ export function handler(event: SNSEvent, context: Context): Promise<readonly S3O
         const assembly = JSON.parse(assemblyResponse.Body.toString('utf-8'));
         const submodules = Object.keys(assembly.submodules ?? {}).map(s => s.split('.')[1]);
 
+        if (language !== 'typescript' && assembly.targets[language] == null) {
+          console.error(`Package ${assembly.name}@${assembly.version} does not support ${language}, skipping!`);
+          console.log(`Assembly targets: ${JSON.stringify(assembly.targets, null, 2)}`);
+          for (const submodule of [undefined, ...submodules]) {
+            const key = inputKey.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(language), submodule)) + constants.NOT_SUPPORTED_SUFFIX;
+            const response = await uploadFile(client, context, record.s3.bucket.name, key, record.s3.object.versionId);
+            created.push({ bucket: record.s3.bucket.name, key, versionId: response.VersionId });
+          }
+          continue;
+        }
+
+        await generateDocs(language);
+
         async function generateDocs(lang: string) {
 
           const uploads = new Map<string, Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>>();
@@ -93,18 +106,9 @@ export function handler(event: SNSEvent, context: Context): Promise<readonly S3O
             const page = docs.render({ submodule, linkFormatter: linkFormatter(docs) }).render();
             const key = inputKey.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(lang), submodule));
             console.log(`Uploading ${key}`);
-            const upload = client.putObject({
-              Bucket: record.s3.bucket.name,
-              Key: key,
-              Body: page,
-              ContentType: 'text/html',
-              Metadata: {
-                'Origin-Version-Id': record.s3.object.versionId ?? 'N/A',
-                'Lambda-Log-Group': context.logGroupName,
-                'Lambda-Log-Stream': context.logStreamName,
-                'Lambda-Run-Id': context.awsRequestId,
-              },
-            }).promise();
+            const upload = uploadFile(
+              client, context, record.s3.bucket.name, key, record.s3.object.versionId, page,
+            );
             uploads.set(key, upload);
           }
 
@@ -120,7 +124,6 @@ export function handler(event: SNSEvent, context: Context): Promise<readonly S3O
           }
 
         }
-        await generateDocs(language);
       }
 
     }
@@ -138,6 +141,21 @@ async function withFakeHome<T>(cb: () => Promise<T>): Promise<T> {
     process.env.HOME = oldHome;
     await fs.remove(fakeHome);
   }
+}
+
+function uploadFile(s3: AWS.S3, context: Context, bucket: string, key: string, sourceVersionId?: string, body?: AWS.S3.Body) {
+  return s3.putObject({
+    Bucket: bucket,
+    Key: key,
+    Body: body,
+    ContentType: 'text/markdown; charset=UTF-8',
+    Metadata: {
+      'Origin-Version-Id': sourceVersionId ?? 'N/A',
+      'Lambda-Log-Group': context.logGroupName,
+      'Lambda-Log-Stream': context.logStreamName,
+      'Lambda-Run-Id': context.awsRequestId,
+    },
+  }).promise();
 }
 
 /**

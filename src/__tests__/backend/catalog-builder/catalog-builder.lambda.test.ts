@@ -52,7 +52,7 @@ test('no indexed packages', () => {
     try {
       expect(req.Bucket).toBe(mockBucketName);
       expect(req.Key).toBe(constants.CATALOG_KEY);
-      expect(req.ContentType).toBe('text/json');
+      expect(req.ContentType).toBe('text/json; charset=UTF-8');
       const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
       expect(body.packages).toEqual([]);
       expect(Date.parse(body.updatedAt)).toBeDefined();
@@ -134,7 +134,7 @@ test('initial build', () => {
     try {
       expect(req.Bucket).toBe(mockBucketName);
       expect(req.Key).toBe(constants.CATALOG_KEY);
-      expect(req.ContentType).toBe('text/json');
+      expect(req.ContentType).toBe('text/json; charset=UTF-8');
       expect(req.Metadata).toHaveProperty('Package-Count', '3');
       const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
       expect(body.packages).toEqual([
@@ -252,7 +252,7 @@ test('incremental build', () => {
     try {
       expect(req.Bucket).toBe(mockBucketName);
       expect(req.Key).toBe(constants.CATALOG_KEY);
-      expect(req.ContentType).toBe('text/json');
+      expect(req.ContentType).toBe('text/json; charset=UTF-8');
       expect(req.Metadata).toHaveProperty('Package-Count', '4');
       const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
       expect(body.packages).toEqual([
