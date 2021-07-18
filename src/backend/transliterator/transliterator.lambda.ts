@@ -97,6 +97,7 @@ export function handler(event: SNSEvent, context: Context): Promise<readonly S3O
               Bucket: record.s3.bucket.name,
               Key: key,
               Body: page,
+              CacheControl: 'public',
               ContentType: 'text/html',
               Metadata: {
                 'Origin-Version-Id': record.s3.object.versionId ?? 'N/A',

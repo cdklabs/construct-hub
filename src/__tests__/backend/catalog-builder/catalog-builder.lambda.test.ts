@@ -52,6 +52,7 @@ test('no indexed packages', () => {
     try {
       expect(req.Bucket).toBe(mockBucketName);
       expect(req.Key).toBe(constants.CATALOG_KEY);
+      expect(req.CacheControl).toBe('public, max-age=300');
       expect(req.ContentType).toBe('text/json');
       const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
       expect(body.packages).toEqual([]);
