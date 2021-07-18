@@ -68,6 +68,9 @@
         },
         {
           "spawn": "bundle:http-get-function"
+        },
+        {
+          "spawn": "bundle:handler"
         }
       ]
     },
@@ -282,6 +285,9 @@
         },
         {
           "spawn": "bundle:http-get-function"
+        },
+        {
+          "spawn": "bundle:handler"
         }
       ]
     },
@@ -385,6 +391,15 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/monitoring/http-get-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitoring/http-get-function.bundle/index.js\" --external:aws-sdk"
+        }
+      ]
+    },
+    "bundle:handler": {
+      "name": "bundle:handler",
+      "description": "Create an AWS Lambda bundle from src/webapp/cache-invalidator/handler.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/webapp/cache-invalidator/handler.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/webapp/cache-invalidator/handler.bundle/index.js\" --external:aws-sdk"
         }
       ]
     },

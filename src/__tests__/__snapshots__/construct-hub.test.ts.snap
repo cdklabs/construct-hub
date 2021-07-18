@@ -117,6 +117,18 @@ Object {
       "Description": "S3 key for asset version \\"a9b8491b2911a366c43cde5d94de41240e34839f322e57e4d080be304aa55777\\"",
       "Type": "String",
     },
+    "AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746ArtifactHashEEC36421": Object {
+      "Description": "Artifact hash for asset \\"ab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746\\"",
+      "Type": "String",
+    },
+    "AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746S3Bucket81575F72": Object {
+      "Description": "S3 bucket for asset \\"ab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746\\"",
+      "Type": "String",
+    },
+    "AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746S3VersionKey49943C8A": Object {
+      "Description": "S3 key for asset version \\"ab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746\\"",
+      "Type": "String",
+    },
     "AssetParametersbb31dd7084585d1239d34634d79cb11117606f8d55779e1e65f920fda26dd124ArtifactHashCB1B7577": Object {
       "Description": "Artifact hash for asset \\"bb31dd7084585d1239d34634d79cb11117606f8d55779e1e65f920fda26dd124\\"",
       "Type": "String",
@@ -2596,6 +2608,28 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::Permission",
     },
+    "ConstructHubPackageDataAllowBucketNotificationsToTestConstructHubWebAppCacheInvalidator7EE0E8FBBF40B7C8": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubWebAppCacheInvalidator07CDD78B",
+            "Arn",
+          ],
+        },
+        "Principal": "s3.amazonaws.com",
+        "SourceAccount": Object {
+          "Ref": "AWS::AccountId",
+        },
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubPackageDataDC5EF35E",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
     "ConstructHubPackageDataDC5EF35E": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
@@ -2647,6 +2681,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
     "ConstructHubPackageDataNotifications81B45141": Object {
       "DependsOn": Array [
         "ConstructHubPackageDataAllowBucketNotificationsToTestConstructHubCatalogBuilderC9A41048952FCDC8",
+        "ConstructHubPackageDataAllowBucketNotificationsToTestConstructHubWebAppCacheInvalidator7EE0E8FBBF40B7C8",
         "ConstructHubTransliteratorTopicPolicyF0F89ABE",
         "ConstructHubTransliteratorTopicE0461AB3",
       ],
@@ -2678,6 +2713,17 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "LambdaFunctionArn": Object {
                 "Fn::GetAtt": Array [
                   "ConstructHubCatalogBuilder5A9DE4AF",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Events": Array [
+                "s3:ObjectCreated:*",
+              ],
+              "LambdaFunctionArn": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubWebAppCacheInvalidator07CDD78B",
                   "Arn",
                 ],
               },
@@ -4271,6 +4317,134 @@ function handler(event) {
       },
       "Type": "AWS::CloudFront::Function",
     },
+    "ConstructHubWebAppCacheInvalidator07CDD78B": Object {
+      "DependsOn": Array [
+        "ConstructHubWebAppCacheInvalidatorServiceRoleDefaultPolicy6CB0D51E",
+        "ConstructHubWebAppCacheInvalidatorServiceRoleAABE9AE2",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746S3Bucket81575F72",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746S3VersionKey49943C8A",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746S3VersionKey49943C8A",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "Automated cache invalidation on CloudFront distribution ",
+              Object {
+                "Ref": "ConstructHubWebAppDistribution1F181DC9",
+              },
+            ],
+          ],
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "DISTRIBUTION_ID": Object {
+              "Ref": "ConstructHubWebAppDistribution1F181DC9",
+            },
+            "PATH_PREFIX": "/",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubWebAppCacheInvalidatorServiceRoleAABE9AE2",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 60,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubWebAppCacheInvalidatorServiceRoleAABE9AE2": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubWebAppCacheInvalidatorServiceRoleDefaultPolicy6CB0D51E": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "cloudfront:CreateInvalidation",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubWebAppCacheInvalidatorServiceRoleDefaultPolicy6CB0D51E",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubWebAppCacheInvalidatorServiceRoleAABE9AE2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1": Object {
       "Properties": Object {
         "Content": Object {
@@ -5020,6 +5194,18 @@ Object {
     },
     "AssetParametersa9b8491b2911a366c43cde5d94de41240e34839f322e57e4d080be304aa55777S3VersionKey8F8A2DB4": Object {
       "Description": "S3 key for asset version \\"a9b8491b2911a366c43cde5d94de41240e34839f322e57e4d080be304aa55777\\"",
+      "Type": "String",
+    },
+    "AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746ArtifactHashEEC36421": Object {
+      "Description": "Artifact hash for asset \\"ab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746\\"",
+      "Type": "String",
+    },
+    "AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746S3Bucket81575F72": Object {
+      "Description": "S3 bucket for asset \\"ab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746\\"",
+      "Type": "String",
+    },
+    "AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746S3VersionKey49943C8A": Object {
+      "Description": "S3 key for asset version \\"ab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746\\"",
       "Type": "String",
     },
     "AssetParametersbb31dd7084585d1239d34634d79cb11117606f8d55779e1e65f920fda26dd124ArtifactHashCB1B7577": Object {
@@ -7672,6 +7858,28 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::Permission",
     },
+    "ConstructHubPackageDataAllowBucketNotificationsToTestConstructHubWebAppCacheInvalidator7EE0E8FBBF40B7C8": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubWebAppCacheInvalidator07CDD78B",
+            "Arn",
+          ],
+        },
+        "Principal": "s3.amazonaws.com",
+        "SourceAccount": Object {
+          "Ref": "AWS::AccountId",
+        },
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubPackageDataDC5EF35E",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
     "ConstructHubPackageDataDC5EF35E": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
@@ -7723,6 +7931,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
     "ConstructHubPackageDataNotifications81B45141": Object {
       "DependsOn": Array [
         "ConstructHubPackageDataAllowBucketNotificationsToTestConstructHubCatalogBuilderC9A41048952FCDC8",
+        "ConstructHubPackageDataAllowBucketNotificationsToTestConstructHubWebAppCacheInvalidator7EE0E8FBBF40B7C8",
         "ConstructHubTransliteratorTopicPolicyF0F89ABE",
         "ConstructHubTransliteratorTopicE0461AB3",
       ],
@@ -7754,6 +7963,17 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "LambdaFunctionArn": Object {
                 "Fn::GetAtt": Array [
                   "ConstructHubCatalogBuilder5A9DE4AF",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Events": Array [
+                "s3:ObjectCreated:*",
+              ],
+              "LambdaFunctionArn": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubWebAppCacheInvalidator07CDD78B",
                   "Arn",
                 ],
               },
@@ -9398,6 +9618,134 @@ function handler(event) {
         "Name": "AddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9",
       },
       "Type": "AWS::CloudFront::Function",
+    },
+    "ConstructHubWebAppCacheInvalidator07CDD78B": Object {
+      "DependsOn": Array [
+        "ConstructHubWebAppCacheInvalidatorServiceRoleDefaultPolicy6CB0D51E",
+        "ConstructHubWebAppCacheInvalidatorServiceRoleAABE9AE2",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746S3Bucket81575F72",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746S3VersionKey49943C8A",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746S3VersionKey49943C8A",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "Automated cache invalidation on CloudFront distribution ",
+              Object {
+                "Ref": "ConstructHubWebAppDistribution1F181DC9",
+              },
+            ],
+          ],
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "DISTRIBUTION_ID": Object {
+              "Ref": "ConstructHubWebAppDistribution1F181DC9",
+            },
+            "PATH_PREFIX": "/",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubWebAppCacheInvalidatorServiceRoleAABE9AE2",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 60,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubWebAppCacheInvalidatorServiceRoleAABE9AE2": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubWebAppCacheInvalidatorServiceRoleDefaultPolicy6CB0D51E": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "cloudfront:CreateInvalidation",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubWebAppCacheInvalidatorServiceRoleDefaultPolicy6CB0D51E",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubWebAppCacheInvalidatorServiceRoleAABE9AE2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1": Object {
       "Properties": Object {
