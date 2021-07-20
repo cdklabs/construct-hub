@@ -8,7 +8,7 @@ import { IQueue } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
 import { DenyList } from '../deny-list';
-import { MetricName, METRIC_NAMESPACE, S3KeyPrefix } from './constants.lambda-shared';
+import { MetricName, METRICS_NAMESPACE, S3KeyPrefix } from './constants.lambda-shared';
 import { Discovery as Handler } from './discovery';
 
 export interface DiscoveryProps {
@@ -113,11 +113,11 @@ export class Discovery extends Construct {
    */
   public metricBatchProcessingTime(opts?: MetricOptions): IMetric {
     return new Metric({
-      metricName: MetricName.BATCH_PROCESSING_TIME,
-      namespace: METRIC_NAMESPACE,
       period: this.timeout,
       statistic: Statistic.AVERAGE,
       ...opts,
+      metricName: MetricName.BATCH_PROCESSING_TIME,
+      namespace: METRICS_NAMESPACE,
     });
   }
 
@@ -126,11 +126,21 @@ export class Discovery extends Construct {
    */
   public metricChangeCount(opts?: MetricOptions): IMetric {
     return new Metric({
-      metricName: MetricName.CHANGE_COUNT,
-      namespace: METRIC_NAMESPACE,
       period: this.timeout,
       statistic: Statistic.SUM,
       ...opts,
+      metricName: MetricName.CHANGE_COUNT,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  public metricNpmJsChangeAge(opts?: MetricOptions): IMetric {
+    return new Metric({
+      period: this.timeout,
+      statistic: Statistic.MINIMUM,
+      ...opts,
+      metricName: MetricName.NPMJS_CHANGE_AGE,
+      namespace: METRICS_NAMESPACE,
     });
   }
 
@@ -139,11 +149,11 @@ export class Discovery extends Construct {
    */
   public metricPackageVersionAge(opts?: MetricOptions): IMetric {
     return new Metric({
-      metricName: MetricName.PACKAGE_VERSION_AGE,
-      namespace: METRIC_NAMESPACE,
       period: this.timeout,
       statistic: Statistic.MAXIMUM,
       ...opts,
+      metricName: MetricName.PACKAGE_VERSION_AGE,
+      namespace: METRICS_NAMESPACE,
     });
   }
 
@@ -152,11 +162,11 @@ export class Discovery extends Construct {
    */
   public metricPackageVersionCount(opts?: MetricOptions): IMetric {
     return new Metric({
-      metricName: MetricName.PACKAGE_VERSION_COUNT,
-      namespace: METRIC_NAMESPACE,
       period: this.timeout,
       statistic: Statistic.SUM,
       ...opts,
+      metricName: MetricName.PACKAGE_VERSION_COUNT,
+      namespace: METRICS_NAMESPACE,
     });
   }
 
@@ -165,11 +175,11 @@ export class Discovery extends Construct {
    */
   public metricRelevantPackageVersions(opts?: MetricOptions): IMetric {
     return new Metric({
-      metricName: MetricName.RELEVANT_PACKAGE_VERSIONS,
-      namespace: METRIC_NAMESPACE,
       period: this.timeout,
       statistic: Statistic.SUM,
       ...opts,
+      metricName: MetricName.RELEVANT_PACKAGE_VERSIONS,
+      namespace: METRICS_NAMESPACE,
     });
   }
 
@@ -179,11 +189,11 @@ export class Discovery extends Construct {
    */
   public metricRemainingTime(opts?: MetricOptions): IMetric {
     return new Metric({
-      metricName: MetricName.REMAINING_TIME,
-      namespace: METRIC_NAMESPACE,
       period: this.timeout,
       statistic: Statistic.AVERAGE,
       ...opts,
+      metricName: MetricName.REMAINING_TIME,
+      namespace: METRICS_NAMESPACE,
     });
   }
 
@@ -192,11 +202,11 @@ export class Discovery extends Construct {
    */
   public metricStagingFailureCount(opts?: MetricOptions): IMetric {
     return new Metric({
-      metricName: MetricName.STAGING_FAILURE_COUNT,
-      namespace: METRIC_NAMESPACE,
       period: this.timeout,
       statistic: Statistic.SUM,
       ...opts,
+      metricName: MetricName.STAGING_FAILURE_COUNT,
+      namespace: METRICS_NAMESPACE,
     });
   }
 
@@ -205,11 +215,11 @@ export class Discovery extends Construct {
    */
   public metricStagingTime(opts?: MetricOptions): IMetric {
     return new Metric({
-      metricName: MetricName.STAGING_TIME,
-      namespace: METRIC_NAMESPACE,
       period: this.timeout,
       statistic: Statistic.AVERAGE,
       ...opts,
+      metricName: MetricName.STAGING_TIME,
+      namespace: METRICS_NAMESPACE,
     });
   }
 
@@ -219,11 +229,11 @@ export class Discovery extends Construct {
    */
   public metricUnprocessableEntity(opts?: MetricOptions): IMetric {
     return new Metric({
-      metricName: MetricName.UNPROCESSABLE_ENTITY,
-      namespace: METRIC_NAMESPACE,
       period: this.timeout,
       statistic: Statistic.SUM,
       ...opts,
+      metricName: MetricName.UNPROCESSABLE_ENTITY,
+      namespace: METRICS_NAMESPACE,
     });
   }
 

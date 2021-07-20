@@ -1,9 +1,11 @@
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, ScheduledEvent } from 'aws-lambda';
+import { SemVer } from 'semver';
 import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
+import { DocumentationLanguage } from '../shared/language';
 import { METRICS_NAMESPACE, MetricName } from './constants';
 
 Configuration.environmentOverride = Environments.Lambda;
@@ -13,10 +15,21 @@ export async function handler(event: ScheduledEvent, _context: Context) {
   console.log('Event:', JSON.stringify(event, null, 2));
 
   const indexedPackages = new Map<string, IndexedPackageStatus>();
+  const packageNames = new Set<string>();
+  const packageMajorVersions = new Set<string>();
+
+  const submoduleRegexes: Record<keyof SubmoduleStatus, RegExp> = {
+    tsDocsPresent: submoduleKeyRegexp(DocumentationLanguage.TYPESCRIPT),
+    pythonDocsPresent: submoduleKeyRegexp(DocumentationLanguage.PYTHON),
+  };
 
   const bucket = requireEnv('BUCKET_NAME');
   for await (const key of relevantObjectKeys(bucket)) {
     const [, name, version] = constants.STORAGE_KEY_FORMAT_REGEX.exec(key)!;
+
+    packageNames.add(name);
+    packageMajorVersions.add(`${name}@${new SemVer(version).major}`);
+
     const fullName = `${name}@${version}`;
     if (!indexedPackages.has(fullName)) {
       indexedPackages.set(fullName, {});
@@ -34,8 +47,30 @@ export async function handler(event: ScheduledEvent, _context: Context) {
     } else if (key.endsWith(constants.DOCS_KEY_SUFFIX_TYPESCRIPT)) {
       status.tsDocsPresent = true;
     } else {
-      status.unknownObjects = status.unknownObjects ?? [];
-      status.unknownObjects.push(key);
+      // If this is a submodule-doc key, add the relevant nested status entry.
+      const matching = Object.entries(submoduleRegexes)
+        .map(([statusKey, regexp]) => {
+          const match = regexp.exec(key);
+          if (match == null) {
+            return undefined;
+          }
+          return [statusKey, match[1]] as [keyof SubmoduleStatus, string];
+        })
+        .find((item) => item != null);
+      if (matching) {
+        const [statusKey, submoduleName] = matching;
+        const submoduleFqn = `${fullName}.${submoduleName}`;
+        if (status.submodules == null) {
+          status.submodules = {};
+        }
+        if (status.submodules[submoduleFqn] == null) {
+          status.submodules[submoduleFqn] = {};
+        }
+        status.submodules[submoduleFqn][statusKey] = true;
+      } else {
+        status.unknownObjects = status.unknownObjects ?? [];
+        status.unknownObjects.push(key);
+      }
     }
   }
 
@@ -49,6 +84,7 @@ export async function handler(event: ScheduledEvent, _context: Context) {
     const missingTsDocs = new Array<string>();
     const missingTarball = new Array<string>();
     const unknownObjects = new Array<string>();
+    const submodules = new Array<string>();
     for (const [name, status] of indexedPackages.entries()) {
       if (!status.metadataPresent) {
         missingMetadata.push(name);
@@ -68,6 +104,16 @@ export async function handler(event: ScheduledEvent, _context: Context) {
       if (status.unknownObjects?.length ?? 0 > 0) {
         unknownObjects.push(...status.unknownObjects!);
       }
+
+      for (const [submodule, subStatus] of Object.entries(status.submodules ?? {})) {
+        submodules.push(submodule);
+        if (!subStatus.tsDocsPresent) {
+          missingTsDocs.push(submodule);
+        }
+        if (!subStatus.pythonDocsPresent) {
+          missingPythonDocs.push(submodule);
+        }
+      }
     }
 
     metrics.setProperty('detail', { missingMetadata, missingAssembly, missingPythonDocs, missingTsDocs, missingTarball, unknownObjects });
@@ -77,7 +123,10 @@ export async function handler(event: ScheduledEvent, _context: Context) {
     metrics.putMetric(MetricName.MISSING_PYTHON_DOCS_COUNT, missingPythonDocs.length, Unit.Count);
     metrics.putMetric(MetricName.MISSING_TYPESCRIPT_DOCS_COUNT, missingTsDocs.length, Unit.Count);
     metrics.putMetric(MetricName.MISSING_TARBALL_COUNT, missingTarball.length, Unit.Count);
+    metrics.putMetric(MetricName.PACKAGE_COUNT, packageNames.size, Unit.Count);
+    metrics.putMetric(MetricName.PACKAGE_MAJOR_COUNT, packageMajorVersions.size, Unit.Count);
     metrics.putMetric(MetricName.PACKAGE_VERSION_COUNT, indexedPackages.size, Unit.Count);
+    metrics.putMetric(MetricName.SUBMODULE_COUNT, submodules.length, Unit.Count);
     metrics.putMetric(MetricName.UNKNOWN_OBJECT_COUNT, unknownObjects.length, Unit.Count);
   })();
 }
@@ -97,11 +146,35 @@ async function* relevantObjectKeys(bucket: string): AsyncGenerator<string, void,
   } while (request.ContinuationToken != null);
 }
 
+/**
+ * This function obtains a regular expression with a single capture group that
+ * allows determining the submodule name from a submodule documentation key.
+ */
+function submoduleKeyRegexp(language: DocumentationLanguage): RegExp {
+  // We use a placeholder to be able to insert the capture group once we have
+  // fully quoted the key prefix for Regex safety.
+  const placeholder = '<SUBMODULENAME>';
+
+  // We obtain the standard key prefix.
+  const keyPrefix = constants.docsKeySuffix(language, placeholder);
+  // Make it regex-safe by quoting all "special meaning" characters.
+  const regexpQuoted = keyPrefix.replace(/([+*.()?$[\]])/g, '\\$1');
+
+  // Finally, assemble the regular expression with the capture group.
+  return new RegExp(`.*${regexpQuoted.replace(placeholder, '(.+)')}$`);
+}
+
 interface IndexedPackageStatus {
   metadataPresent?: boolean;
   assemblyPresent?: boolean;
   pythonDocsPresent?: boolean;
+  submodules?: { [name: string]: SubmoduleStatus };
   tsDocsPresent?: boolean;
   tarballPresent?: boolean;
   unknownObjects?: string[];
+}
+
+interface SubmoduleStatus {
+  pythonDocsPresent?: boolean;
+  tsDocsPresent?: boolean;
 }
