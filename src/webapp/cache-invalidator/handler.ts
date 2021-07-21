@@ -9,10 +9,10 @@ export interface HandlerProps extends lambda.FunctionOptions {
 export class Handler extends lambda.Function {
   constructor(scope: Construct, id: string, props: HandlerProps = {}) {
     super(scope, id, {
+      ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/handler.bundle')),
-      ...props,
     });
   }
 }

@@ -24,7 +24,8 @@ const peerDeps = [
   '@aws-cdk/aws-s3-notifications',
   '@aws-cdk/aws-sns',
   '@aws-cdk/aws-sqs',
-  '@aws-cdk/aws-sqs',
+  '@aws-cdk/aws-stepfunctions',
+  '@aws-cdk/aws-stepfunctions-tasks',
   '@aws-cdk/core',
   '@aws-cdk/custom-resources',
   '@aws-cdk/cx-api',
@@ -221,10 +222,10 @@ function newLambdaHandler(entrypoint) {
   ts.open(`export class ${className} extends lambda.Function {`);
   ts.open(`constructor(scope: Construct, id: string, props: ${propsName} = {}) {`);
   ts.open('super(scope, id, {');
+  ts.line('...props,');
   ts.line('runtime: lambda.Runtime.NODEJS_14_X,');
   ts.line('handler: \'index.handler\',');
   ts.line(`code: lambda.Code.fromAsset(path.join(__dirname, '/${basename(outdir)}')),`);
-  ts.line('...props,');
   ts.close('});');
   ts.close('}');
   ts.close('}');

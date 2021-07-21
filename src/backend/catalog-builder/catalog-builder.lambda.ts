@@ -2,10 +2,11 @@ import { gunzip } from 'zlib';
 
 import type { AssemblyTargets } from '@jsii/spec';
 import { metricScope, Unit } from 'aws-embedded-metrics';
-import type { Context, S3Event } from 'aws-lambda';
+import type { Context } from 'aws-lambda';
 import { AWSError, S3 } from 'aws-sdk';
 import { SemVer } from 'semver';
 import { extract } from 'tar-stream';
+import type { CatalogBuilderInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
@@ -22,7 +23,7 @@ const METRICS_NAMESPACE = 'ConstructHub/CatalogBuilder';
  *
  * @returns the information about the updated S3 object.
  */
-export async function handler(event: S3Event, context: Context) {
+export async function handler(event: CatalogBuilderInput, context: Context) {
 
   console.log(JSON.stringify(event, null, 2));
 
@@ -39,12 +40,11 @@ export async function handler(event: S3Event, context: Context) {
   if (!data.Body) {
     console.log('Catalog not found. Recreating...');
     const failures: any = {};
-    for await (const object of relevantObjects(BUCKET_NAME)) {
-      const docsKey = object.Key!;
+    for await (const { Key: pkgKey } of relevantObjects(BUCKET_NAME)) {
       try {
-        await appendPackage(packages, docsKey, BUCKET_NAME);
+        await appendPackage(packages, pkgKey!, BUCKET_NAME);
       } catch (e) {
-        failures[docsKey] = e;
+        failures[pkgKey!] = e;
       }
     }
     for (const [key, error] of Object.entries(failures)) {
@@ -68,18 +68,9 @@ export async function handler(event: S3Event, context: Context) {
       packages.get(info.name)!.set(info.major, info);
     }
     console.log('Registering new packages...');
-    for (const record of event.Records) {
-
-      // Key names are escaped (`@` as `%40`) in the input payload... Decode it here... We cannot use
-      // `decodeURI` here because it does not undo encoding that `encodeURI` would not have done, and
-      // that would not replace `@` in the position where it is in the keys... So we have to work on
-      // the URI components instead.
-      const key = record.s3.object.key.split('/').map((comp) => decodeURIComponent(comp)).join('/');
-
-      // note that we intentionally don't catch errors here to let these
-      // event go to the DLQ for manual inspection.
-      await appendPackage(packages, key, BUCKET_NAME);
-    }
+    // note that we intentionally don't catch errors here to let these
+    // event go to the DLQ for manual inspection.
+    await appendPackage(packages, event.package.key, BUCKET_NAME);
   }
 
   // Build the final data package...
@@ -124,7 +115,7 @@ async function* relevantObjects(bucket: string) {
   do {
     const result = await aws.s3().listObjectsV2(request).promise();
     for (const object of result.Contents ?? []) {
-      if (!object.Key?.endsWith(constants.DOCS_KEY_SUFFIX_TYPESCRIPT)) {
+      if (!object.Key?.endsWith(constants.PACKAGE_KEY_SUFFIX)) {
         continue;
       }
       yield object;
@@ -133,9 +124,8 @@ async function* relevantObjects(bucket: string) {
   } while (request.ContinuationToken != null);
 }
 
-async function appendPackage(packages: any, docsKey: string, bucketName: string) {
-  console.log(`Processing key: ${docsKey}`);
-  const pkgKey = docsKey.replace(constants.DOCS_KEY_SUFFIX_TYPESCRIPT, constants.PACKAGE_KEY_SUFFIX);
+async function appendPackage(packages: any, pkgKey: string, bucketName: string) {
+  console.log(`Processing key: ${pkgKey}`);
   const [, packageName, versionStr] = constants.STORAGE_KEY_FORMAT_REGEX.exec(pkgKey)!;
   const version = new SemVer(versionStr);
   const found = packages.get(packageName)?.get(version.major);

@@ -92,182 +92,6 @@ Object {
       "Type": "AWS::IAM::Role",
     },
     "Bucket83908E77": Anything,
-    "BucketNotifications8F2E257D": Anything,
-    "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691": Object {
-      "DependsOn": Array [
-        "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
-        "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "ZipFile": "import boto3  # type: ignore
-import json
-import logging
-import urllib.request
-
-s3 = boto3.client(\\"s3\\")
-
-CONFIGURATION_TYPES = [\\"TopicConfigurations\\", \\"QueueConfigurations\\", \\"LambdaFunctionConfigurations\\"]
-
-def handler(event: dict, context):
-    response_status = \\"SUCCESS\\"
-    error_message = \\"\\"
-    try:
-        props = event[\\"ResourceProperties\\"]
-        bucket = props[\\"BucketName\\"]
-        notification_configuration = props[\\"NotificationConfiguration\\"]
-        request_type = event[\\"RequestType\\"]
-        managed = props.get('Managed', 'true').lower() == 'true'
-        stack_id = event['StackId']
-
-        if managed:
-          config = handle_managed(request_type, notification_configuration)
-        else:
-          config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
-
-        put_bucket_notification_configuration(bucket, config)
-    except Exception as e:
-        logging.exception(\\"Failed to put bucket notification configuration\\")
-        response_status = \\"FAILED\\"
-        error_message = f\\"Error: {str(e)}. \\"
-    finally:
-        submit_response(event, context, response_status, error_message)
-
-
-def handle_managed(request_type, notification_configuration):
-  if request_type == 'Delete':
-    return {}
-  return notification_configuration
-
-
-def handle_unmanaged(bucket, stack_id, request_type, notification_configuration):
-
-  # find external notifications
-  external_notifications = find_external_notifications(bucket, stack_id)
-
-  # if delete, that's all we need
-  if request_type == 'Delete':
-    return external_notifications
-
-  def with_id(notification):
-    notification['Id'] = f\\"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}\\"
-    return notification
-
-  # otherwise, merge external with incoming config and augment with id
-  notifications = {}
-  for t in CONFIGURATION_TYPES:
-    external = external_notifications.get(t, [])
-    incoming = [with_id(n) for n in notification_configuration.get(t, [])]
-    notifications[t] = external + incoming
-  return notifications
-
-
-def find_external_notifications(bucket, stack_id):
-  existing_notifications = get_bucket_notification_configuration(bucket)
-  external_notifications = {}
-  for t in CONFIGURATION_TYPES:
-    # if the notification was created by us, we know what id to expect
-    # so we can filter by it.
-    external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f\\"{stack_id}-\\")]
-
-  return external_notifications
-
-
-def get_bucket_notification_configuration(bucket):
-  return s3.get_bucket_notification_configuration(Bucket=bucket)
-
-
-def put_bucket_notification_configuration(bucket, notification_configuration):
-  s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)
-
-
-def submit_response(event: dict, context, response_status: str, error_message: str):
-    response_body = json.dumps(
-        {
-            \\"Status\\": response_status,
-            \\"Reason\\": f\\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\\",
-            \\"PhysicalResourceId\\": event.get(\\"PhysicalResourceId\\") or event[\\"LogicalResourceId\\"],
-            \\"StackId\\": event[\\"StackId\\"],
-            \\"RequestId\\": event[\\"RequestId\\"],
-            \\"LogicalResourceId\\": event[\\"LogicalResourceId\\"],
-            \\"NoEcho\\": False,
-        }
-    ).encode(\\"utf-8\\")
-    headers = {\\"content-type\\": \\"\\", \\"content-length\\": str(len(response_body))}
-    try:
-        req = urllib.request.Request(url=event[\\"ResponseURL\\"], headers=headers, data=response_body, method=\\"PUT\\")
-        with urllib.request.urlopen(req) as response:
-            print(response.read().decode(\\"utf-8\\"))
-        print(\\"Status code: \\" + response.reason)
-    except Exception as e:
-        print(\\"send(..) failed executing request.urlopen(..): \\" + str(e))
-",
-        },
-        "Description": "AWS CloudFormation handler for \\"Custom::S3BucketNotifications\\" resources (@aws-cdk/aws-s3)",
-        "Handler": "index.handler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
-            "Arn",
-          ],
-        },
-        "Runtime": "python3.8",
-        "Timeout": 300,
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "s3:PutBucketNotification",
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
-        "Roles": Array [
-          Object {
-            "Ref": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
     "CodeArtifact": Anything,
     "CodeArtifactDomainDB0947A4": Anything,
     "CodeArtifactGetEndpoint0223B4AF": Anything,
@@ -384,100 +208,18 @@ def submit_response(event: dict, context, response_status: str, error_message: s
     },
     "MonitoringDashboard0C3675C6": Anything,
     "MonitoringWatchfulDashboard9EB9FD4D": Anything,
-    "MonitoringWatchfulTestStackTransliteratorpythonHandler7F347BD3DurationAlarmC9C88AB8": Anything,
-    "MonitoringWatchfulTestStackTransliteratorpythonHandler7F347BD3ErrorsAlarmC875681C": Anything,
-    "MonitoringWatchfulTestStackTransliteratorpythonHandler7F347BD3ThrottlesAlarm78AA8EE9": Anything,
-    "MonitoringWatchfulTestStackTransliteratortypescriptHandler11043CD0DurationAlarm2D5C54C1": Anything,
-    "MonitoringWatchfulTestStackTransliteratortypescriptHandler11043CD0ErrorsAlarmB92EFD74": Anything,
-    "MonitoringWatchfulTestStackTransliteratortypescriptHandler11043CD0ThrottlesAlarmDB19F38F": Anything,
-    "TransliteratorTopic8F81CCE2": Object {
-      "Type": "AWS::SNS::Topic",
-    },
-    "TransliteratorTopicPolicyF3913C99": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sns:Publish",
-              "Condition": Object {
-                "ArnLike": Object {
-                  "aws:SourceArn": Object {
-                    "Fn::GetAtt": Array [
-                      "Bucket83908E77",
-                      "Arn",
-                    ],
-                  },
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "s3.amazonaws.com",
-              },
-              "Resource": Object {
-                "Ref": "TransliteratorTopic8F81CCE2",
-              },
-              "Sid": "0",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Topics": Array [
-          Object {
-            "Ref": "TransliteratorTopic8F81CCE2",
-          },
-        ],
-      },
-      "Type": "AWS::SNS::TopicPolicy",
-    },
-    "TransliteratorpythonDLQAlarm5201F4D8": Object {
-      "Properties": Object {
-        "AlarmDescription": "The python transliteration function failed for one or more packages",
-        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "Dimensions": Array [
-          Object {
-            "Name": "QueueName",
-            "Value": Object {
-              "Fn::GetAtt": Array [
-                "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-                "QueueName",
-              ],
-            },
-          },
-        ],
-        "EvaluationPeriods": 1,
-        "MetricName": "ApproximateNumberOfMessagesVisible",
-        "Namespace": "AWS/SQS",
-        "Period": 300,
-        "Statistic": "Maximum",
-        "Threshold": 1,
-      },
-      "Type": "AWS::CloudWatch::Alarm",
-    },
-    "TransliteratorpythonHandlerAllowInvokeTestStackTransliteratorTopic344FD88C25C91985": Object {
-      "Properties": Object {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratorpythonHandlerDE4D5CE8",
-            "Arn",
-          ],
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": Object {
-          "Ref": "TransliteratorTopic8F81CCE2",
-        },
-      },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "TransliteratorpythonHandlerDE4D5CE8": Object {
+    "MonitoringWatchfulTestStackTransliterator9D9D4864DurationAlarmC446DC83": Anything,
+    "MonitoringWatchfulTestStackTransliterator9D9D4864ErrorsAlarmFF1181A3": Anything,
+    "MonitoringWatchfulTestStackTransliterator9D9D4864ThrottlesAlarm80C36BF4": Anything,
+    "Transliterator6462E4D2": Object {
       "DependsOn": Array [
-        "TransliteratorpythonHandlerServiceRoleDefaultPolicy9B7DD360",
-        "TransliteratorpythonHandlerServiceRoleF23A0468",
+        "TransliteratorServiceRoleDefaultPolicy44A1392F",
+        "TransliteratorServiceRoleDE4FF5F3",
       ],
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3BucketF6181B90",
+            "Ref": "AssetParameters89ae89a92e2300fc66974e848f5b6dad9bd6c36e3d7a709ccf3bee5a25846e31S3BucketCD0FEB0D",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -490,7 +232,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3VersionKey87461909",
+                          "Ref": "AssetParameters89ae89a92e2300fc66974e848f5b6dad9bd6c36e3d7a709ccf3bee5a25846e31S3VersionKeyBFF2E215",
                         },
                       ],
                     },
@@ -503,21 +245,13 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3VersionKey87461909",
+                          "Ref": "AssetParameters89ae89a92e2300fc66974e848f5b6dad9bd6c36e3d7a709ccf3bee5a25846e31S3VersionKeyBFF2E215",
                         },
                       ],
                     },
                   ],
                 },
               ],
-            ],
-          },
-        },
-        "DeadLetterConfig": Object {
-          "TargetArn": Object {
-            "Fn::GetAtt": Array [
-              "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-              "Arn",
             ],
           },
         },
@@ -550,7 +284,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         "MemorySize": 10240,
         "Role": Object {
           "Fn::GetAtt": Array [
-            "TransliteratorpythonHandlerServiceRoleF23A0468",
+            "TransliteratorServiceRoleDE4FF5F3",
             "Arn",
           ],
         },
@@ -559,60 +293,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::Function",
     },
-    "TransliteratorpythonHandlerDeadLetterQueue01FC1735": Object {
-      "DeletionPolicy": "Delete",
-      "Properties": Object {
-        "MessageRetentionPeriod": 1209600,
-      },
-      "Type": "AWS::SQS::Queue",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "TransliteratorpythonHandlerDeadLetterQueuePolicy4C996289": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sqs:SendMessage",
-              "Condition": Object {
-                "ArnEquals": Object {
-                  "aws:SourceArn": Object {
-                    "Ref": "TransliteratorTopic8F81CCE2",
-                  },
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "sns.amazonaws.com",
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Queues": Array [
-          Object {
-            "Ref": "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-          },
-        ],
-      },
-      "Type": "AWS::SQS::QueuePolicy",
-    },
-    "TransliteratorpythonHandlerEventInvokeConfig95E194CE": Object {
-      "Properties": Object {
-        "FunctionName": Object {
-          "Ref": "TransliteratorpythonHandlerDE4D5CE8",
-        },
-        "MaximumRetryAttempts": 2,
-        "Qualifier": "$LATEST",
-      },
-      "Type": "AWS::Lambda::EventInvokeConfig",
-    },
-    "TransliteratorpythonHandlerLogRetention0A84F889": Object {
+    "TransliteratorLogRetention2FE858DC": Object {
       "Properties": Object {
         "LogGroupName": Object {
           "Fn::Join": Array [
@@ -620,7 +301,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             Array [
               "/aws/lambda/",
               Object {
-                "Ref": "TransliteratorpythonHandlerDE4D5CE8",
+                "Ref": "Transliterator6462E4D2",
               },
             ],
           ],
@@ -635,20 +316,41 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "Custom::LogRetention",
     },
-    "TransliteratorpythonHandlerServiceRoleDefaultPolicy9B7DD360": Object {
+    "TransliteratorServiceRoleDE4FF5F3": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "TransliteratorServiceRoleDefaultPolicy44A1392F": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
-            Object {
-              "Action": "sqs:SendMessage",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-                  "Arn",
-                ],
-              },
-            },
             Object {
               "Action": "sts:GetServiceBearerToken",
               "Condition": Object {
@@ -744,446 +446,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "TransliteratorpythonHandlerServiceRoleDefaultPolicy9B7DD360",
+        "PolicyName": "TransliteratorServiceRoleDefaultPolicy44A1392F",
         "Roles": Array [
           Object {
-            "Ref": "TransliteratorpythonHandlerServiceRoleF23A0468",
+            "Ref": "TransliteratorServiceRoleDE4FF5F3",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
-    },
-    "TransliteratorpythonHandlerServiceRoleF23A0468": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "TransliteratorpythonHandlerTopic0B319829": Object {
-      "Properties": Object {
-        "Endpoint": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratorpythonHandlerDE4D5CE8",
-            "Arn",
-          ],
-        },
-        "Protocol": "lambda",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-              "Arn",
-            ],
-          },
-        },
-        "TopicArn": Object {
-          "Ref": "TransliteratorTopic8F81CCE2",
-        },
-      },
-      "Type": "AWS::SNS::Subscription",
-    },
-    "TransliteratortypescriptDLQAlarm62087C13": Object {
-      "Properties": Object {
-        "AlarmDescription": "The typescript transliteration function failed for one or more packages",
-        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "Dimensions": Array [
-          Object {
-            "Name": "QueueName",
-            "Value": Object {
-              "Fn::GetAtt": Array [
-                "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-                "QueueName",
-              ],
-            },
-          },
-        ],
-        "EvaluationPeriods": 1,
-        "MetricName": "ApproximateNumberOfMessagesVisible",
-        "Namespace": "AWS/SQS",
-        "Period": 300,
-        "Statistic": "Maximum",
-        "Threshold": 1,
-      },
-      "Type": "AWS::CloudWatch::Alarm",
-    },
-    "TransliteratortypescriptHandler5C709988": Object {
-      "DependsOn": Array [
-        "TransliteratortypescriptHandlerServiceRoleDefaultPolicy2A8A4837",
-        "TransliteratortypescriptHandlerServiceRoleB180F29C",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3BucketF6181B90",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3VersionKey87461909",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3VersionKey87461909",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "DeadLetterConfig": Object {
-          "TargetArn": Object {
-            "Fn::GetAtt": Array [
-              "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-              "Arn",
-            ],
-          },
-        },
-        "Description": "Creates typescript documentation from jsii-enabled npm packages",
-        "Environment": Object {
-          "Variables": Object {
-            "CODE_ARTIFACT_DOMAIN_NAME": Object {
-              "Fn::GetAtt": Array [
-                "CodeArtifact",
-                "DomainName",
-              ],
-            },
-            "CODE_ARTIFACT_DOMAIN_OWNER": Object {
-              "Fn::GetAtt": Array [
-                "CodeArtifact",
-                "DomainOwner",
-              ],
-            },
-            "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
-              "Fn::GetAtt": Array [
-                "CodeArtifactGetEndpoint0223B4AF",
-                "repositoryEndpoint",
-              ],
-            },
-            "HEADER_SPAN": "true",
-            "TARGET_LANGUAGE": "typescript",
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 10240,
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratortypescriptHandlerServiceRoleB180F29C",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "TransliteratortypescriptHandlerAllowInvokeTestStackTransliteratorTopic344FD88C2764BD36": Object {
-      "Properties": Object {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratortypescriptHandler5C709988",
-            "Arn",
-          ],
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": Object {
-          "Ref": "TransliteratorTopic8F81CCE2",
-        },
-      },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "TransliteratortypescriptHandlerDeadLetterQueue82915897": Object {
-      "DeletionPolicy": "Delete",
-      "Properties": Object {
-        "MessageRetentionPeriod": 1209600,
-      },
-      "Type": "AWS::SQS::Queue",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "TransliteratortypescriptHandlerDeadLetterQueuePolicyF9083E62": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sqs:SendMessage",
-              "Condition": Object {
-                "ArnEquals": Object {
-                  "aws:SourceArn": Object {
-                    "Ref": "TransliteratorTopic8F81CCE2",
-                  },
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "sns.amazonaws.com",
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Queues": Array [
-          Object {
-            "Ref": "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-          },
-        ],
-      },
-      "Type": "AWS::SQS::QueuePolicy",
-    },
-    "TransliteratortypescriptHandlerEventInvokeConfig2D3025F8": Object {
-      "Properties": Object {
-        "FunctionName": Object {
-          "Ref": "TransliteratortypescriptHandler5C709988",
-        },
-        "MaximumRetryAttempts": 2,
-        "Qualifier": "$LATEST",
-      },
-      "Type": "AWS::Lambda::EventInvokeConfig",
-    },
-    "TransliteratortypescriptHandlerLogRetention77FD0D93": Object {
-      "Properties": Object {
-        "LogGroupName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "/aws/lambda/",
-              Object {
-                "Ref": "TransliteratortypescriptHandler5C709988",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 3653,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-    },
-    "TransliteratortypescriptHandlerServiceRoleB180F29C": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "TransliteratortypescriptHandlerServiceRoleDefaultPolicy2A8A4837": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sqs:SendMessage",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-                  "Arn",
-                ],
-              },
-            },
-            Object {
-              "Action": "sts:GetServiceBearerToken",
-              "Condition": Object {
-                "StringEquals": Object {
-                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
-                },
-              },
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-            Object {
-              "Action": Array [
-                "codeartifact:GetAuthorizationToken",
-                "codeartifact:GetRepositoryEndpoint",
-                "codeartifact:ReadFromRepository",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "CodeArtifactDomainDB0947A4",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::GetAtt": Array [
-                    "CodeArtifact",
-                    "Arn",
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "Bucket83908E77",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "Bucket83908E77",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/assembly.json",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "Bucket83908E77",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "Bucket83908E77",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*.md",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "TransliteratortypescriptHandlerServiceRoleDefaultPolicy2A8A4837",
-        "Roles": Array [
-          Object {
-            "Ref": "TransliteratortypescriptHandlerServiceRoleB180F29C",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
-    "TransliteratortypescriptHandlerTopicC920155D": Object {
-      "Properties": Object {
-        "Endpoint": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratortypescriptHandler5C709988",
-            "Arn",
-          ],
-        },
-        "Protocol": "lambda",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-              "Arn",
-            ],
-          },
-        },
-        "TopicArn": Object {
-          "Ref": "TransliteratorTopic8F81CCE2",
-        },
-      },
-      "Type": "AWS::SNS::Subscription",
     },
   },
 }
@@ -1195,182 +465,6 @@ Object {
   "Parameters": Anything,
   "Resources": Object {
     "Bucket83908E77": Anything,
-    "BucketNotifications8F2E257D": Anything,
-    "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691": Object {
-      "DependsOn": Array [
-        "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
-        "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "ZipFile": "import boto3  # type: ignore
-import json
-import logging
-import urllib.request
-
-s3 = boto3.client(\\"s3\\")
-
-CONFIGURATION_TYPES = [\\"TopicConfigurations\\", \\"QueueConfigurations\\", \\"LambdaFunctionConfigurations\\"]
-
-def handler(event: dict, context):
-    response_status = \\"SUCCESS\\"
-    error_message = \\"\\"
-    try:
-        props = event[\\"ResourceProperties\\"]
-        bucket = props[\\"BucketName\\"]
-        notification_configuration = props[\\"NotificationConfiguration\\"]
-        request_type = event[\\"RequestType\\"]
-        managed = props.get('Managed', 'true').lower() == 'true'
-        stack_id = event['StackId']
-
-        if managed:
-          config = handle_managed(request_type, notification_configuration)
-        else:
-          config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
-
-        put_bucket_notification_configuration(bucket, config)
-    except Exception as e:
-        logging.exception(\\"Failed to put bucket notification configuration\\")
-        response_status = \\"FAILED\\"
-        error_message = f\\"Error: {str(e)}. \\"
-    finally:
-        submit_response(event, context, response_status, error_message)
-
-
-def handle_managed(request_type, notification_configuration):
-  if request_type == 'Delete':
-    return {}
-  return notification_configuration
-
-
-def handle_unmanaged(bucket, stack_id, request_type, notification_configuration):
-
-  # find external notifications
-  external_notifications = find_external_notifications(bucket, stack_id)
-
-  # if delete, that's all we need
-  if request_type == 'Delete':
-    return external_notifications
-
-  def with_id(notification):
-    notification['Id'] = f\\"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}\\"
-    return notification
-
-  # otherwise, merge external with incoming config and augment with id
-  notifications = {}
-  for t in CONFIGURATION_TYPES:
-    external = external_notifications.get(t, [])
-    incoming = [with_id(n) for n in notification_configuration.get(t, [])]
-    notifications[t] = external + incoming
-  return notifications
-
-
-def find_external_notifications(bucket, stack_id):
-  existing_notifications = get_bucket_notification_configuration(bucket)
-  external_notifications = {}
-  for t in CONFIGURATION_TYPES:
-    # if the notification was created by us, we know what id to expect
-    # so we can filter by it.
-    external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f\\"{stack_id}-\\")]
-
-  return external_notifications
-
-
-def get_bucket_notification_configuration(bucket):
-  return s3.get_bucket_notification_configuration(Bucket=bucket)
-
-
-def put_bucket_notification_configuration(bucket, notification_configuration):
-  s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)
-
-
-def submit_response(event: dict, context, response_status: str, error_message: str):
-    response_body = json.dumps(
-        {
-            \\"Status\\": response_status,
-            \\"Reason\\": f\\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\\",
-            \\"PhysicalResourceId\\": event.get(\\"PhysicalResourceId\\") or event[\\"LogicalResourceId\\"],
-            \\"StackId\\": event[\\"StackId\\"],
-            \\"RequestId\\": event[\\"RequestId\\"],
-            \\"LogicalResourceId\\": event[\\"LogicalResourceId\\"],
-            \\"NoEcho\\": False,
-        }
-    ).encode(\\"utf-8\\")
-    headers = {\\"content-type\\": \\"\\", \\"content-length\\": str(len(response_body))}
-    try:
-        req = urllib.request.Request(url=event[\\"ResponseURL\\"], headers=headers, data=response_body, method=\\"PUT\\")
-        with urllib.request.urlopen(req) as response:
-            print(response.read().decode(\\"utf-8\\"))
-        print(\\"Status code: \\" + response.reason)
-    except Exception as e:
-        print(\\"send(..) failed executing request.urlopen(..): \\" + str(e))
-",
-        },
-        "Description": "AWS CloudFormation handler for \\"Custom::S3BucketNotifications\\" resources (@aws-cdk/aws-s3)",
-        "Handler": "index.handler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
-            "Arn",
-          ],
-        },
-        "Runtime": "python3.8",
-        "Timeout": 300,
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "s3:PutBucketNotification",
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
-        "Roles": Array [
-          Object {
-            "Ref": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
     "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": Object {
       "DependsOn": Array [
         "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
@@ -1483,100 +577,18 @@ def submit_response(event: dict, context, response_status: str, error_message: s
     },
     "MonitoringDashboard0C3675C6": Anything,
     "MonitoringWatchfulDashboard9EB9FD4D": Anything,
-    "MonitoringWatchfulTestStackTransliteratorpythonHandler7F347BD3DurationAlarmC9C88AB8": Anything,
-    "MonitoringWatchfulTestStackTransliteratorpythonHandler7F347BD3ErrorsAlarmC875681C": Anything,
-    "MonitoringWatchfulTestStackTransliteratorpythonHandler7F347BD3ThrottlesAlarm78AA8EE9": Anything,
-    "MonitoringWatchfulTestStackTransliteratortypescriptHandler11043CD0DurationAlarm2D5C54C1": Anything,
-    "MonitoringWatchfulTestStackTransliteratortypescriptHandler11043CD0ErrorsAlarmB92EFD74": Anything,
-    "MonitoringWatchfulTestStackTransliteratortypescriptHandler11043CD0ThrottlesAlarmDB19F38F": Anything,
-    "TransliteratorTopic8F81CCE2": Object {
-      "Type": "AWS::SNS::Topic",
-    },
-    "TransliteratorTopicPolicyF3913C99": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sns:Publish",
-              "Condition": Object {
-                "ArnLike": Object {
-                  "aws:SourceArn": Object {
-                    "Fn::GetAtt": Array [
-                      "Bucket83908E77",
-                      "Arn",
-                    ],
-                  },
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "s3.amazonaws.com",
-              },
-              "Resource": Object {
-                "Ref": "TransliteratorTopic8F81CCE2",
-              },
-              "Sid": "0",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Topics": Array [
-          Object {
-            "Ref": "TransliteratorTopic8F81CCE2",
-          },
-        ],
-      },
-      "Type": "AWS::SNS::TopicPolicy",
-    },
-    "TransliteratorpythonDLQAlarm5201F4D8": Object {
-      "Properties": Object {
-        "AlarmDescription": "The python transliteration function failed for one or more packages",
-        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "Dimensions": Array [
-          Object {
-            "Name": "QueueName",
-            "Value": Object {
-              "Fn::GetAtt": Array [
-                "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-                "QueueName",
-              ],
-            },
-          },
-        ],
-        "EvaluationPeriods": 1,
-        "MetricName": "ApproximateNumberOfMessagesVisible",
-        "Namespace": "AWS/SQS",
-        "Period": 300,
-        "Statistic": "Maximum",
-        "Threshold": 1,
-      },
-      "Type": "AWS::CloudWatch::Alarm",
-    },
-    "TransliteratorpythonHandlerAllowInvokeTestStackTransliteratorTopic344FD88C25C91985": Object {
-      "Properties": Object {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratorpythonHandlerDE4D5CE8",
-            "Arn",
-          ],
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": Object {
-          "Ref": "TransliteratorTopic8F81CCE2",
-        },
-      },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "TransliteratorpythonHandlerDE4D5CE8": Object {
+    "MonitoringWatchfulTestStackTransliterator9D9D4864DurationAlarmC446DC83": Anything,
+    "MonitoringWatchfulTestStackTransliterator9D9D4864ErrorsAlarmFF1181A3": Anything,
+    "MonitoringWatchfulTestStackTransliterator9D9D4864ThrottlesAlarm80C36BF4": Anything,
+    "Transliterator6462E4D2": Object {
       "DependsOn": Array [
-        "TransliteratorpythonHandlerServiceRoleDefaultPolicy9B7DD360",
-        "TransliteratorpythonHandlerServiceRoleF23A0468",
+        "TransliteratorServiceRoleDefaultPolicy44A1392F",
+        "TransliteratorServiceRoleDE4FF5F3",
       ],
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3BucketF6181B90",
+            "Ref": "AssetParameters89ae89a92e2300fc66974e848f5b6dad9bd6c36e3d7a709ccf3bee5a25846e31S3BucketCD0FEB0D",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -1589,7 +601,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3VersionKey87461909",
+                          "Ref": "AssetParameters89ae89a92e2300fc66974e848f5b6dad9bd6c36e3d7a709ccf3bee5a25846e31S3VersionKeyBFF2E215",
                         },
                       ],
                     },
@@ -1602,21 +614,13 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3VersionKey87461909",
+                          "Ref": "AssetParameters89ae89a92e2300fc66974e848f5b6dad9bd6c36e3d7a709ccf3bee5a25846e31S3VersionKeyBFF2E215",
                         },
                       ],
                     },
                   ],
                 },
               ],
-            ],
-          },
-        },
-        "DeadLetterConfig": Object {
-          "TargetArn": Object {
-            "Fn::GetAtt": Array [
-              "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-              "Arn",
             ],
           },
         },
@@ -1652,7 +656,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         "MemorySize": 10240,
         "Role": Object {
           "Fn::GetAtt": Array [
-            "TransliteratorpythonHandlerServiceRoleF23A0468",
+            "TransliteratorServiceRoleDE4FF5F3",
             "Arn",
           ],
         },
@@ -1662,7 +666,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "SecurityGroupIds": Array [
             Object {
               "Fn::GetAtt": Array [
-                "TransliteratorpythonHandlerSecurityGroup7B9A554E",
+                "TransliteratorSecurityGroup52541706",
                 "GroupId",
               ],
             },
@@ -1679,60 +683,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::Function",
     },
-    "TransliteratorpythonHandlerDeadLetterQueue01FC1735": Object {
-      "DeletionPolicy": "Delete",
-      "Properties": Object {
-        "MessageRetentionPeriod": 1209600,
-      },
-      "Type": "AWS::SQS::Queue",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "TransliteratorpythonHandlerDeadLetterQueuePolicy4C996289": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sqs:SendMessage",
-              "Condition": Object {
-                "ArnEquals": Object {
-                  "aws:SourceArn": Object {
-                    "Ref": "TransliteratorTopic8F81CCE2",
-                  },
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "sns.amazonaws.com",
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Queues": Array [
-          Object {
-            "Ref": "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-          },
-        ],
-      },
-      "Type": "AWS::SQS::QueuePolicy",
-    },
-    "TransliteratorpythonHandlerEventInvokeConfig95E194CE": Object {
-      "Properties": Object {
-        "FunctionName": Object {
-          "Ref": "TransliteratorpythonHandlerDE4D5CE8",
-        },
-        "MaximumRetryAttempts": 2,
-        "Qualifier": "$LATEST",
-      },
-      "Type": "AWS::Lambda::EventInvokeConfig",
-    },
-    "TransliteratorpythonHandlerLogRetention0A84F889": Object {
+    "TransliteratorLogRetention2FE858DC": Object {
       "Properties": Object {
         "LogGroupName": Object {
           "Fn::Join": Array [
@@ -1740,7 +691,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             Array [
               "/aws/lambda/",
               Object {
-                "Ref": "TransliteratorpythonHandlerDE4D5CE8",
+                "Ref": "Transliterator6462E4D2",
               },
             ],
           ],
@@ -1755,9 +706,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "Custom::LogRetention",
     },
-    "TransliteratorpythonHandlerSecurityGroup7B9A554E": Object {
+    "TransliteratorSecurityGroup52541706": Object {
       "Properties": Object {
-        "GroupDescription": "Automatic security group for Lambda Function TestStackTransliteratorpythonHandler7F347BD3",
+        "GroupDescription": "Automatic security group for Lambda Function TestStackTransliterator9D9D4864",
         "SecurityGroupEgress": Array [
           Object {
             "CidrIp": "0.0.0.0/0",
@@ -1771,20 +722,53 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "TransliteratorpythonHandlerServiceRoleDefaultPolicy9B7DD360": Object {
+    "TransliteratorServiceRoleDE4FF5F3": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "TransliteratorServiceRoleDefaultPolicy44A1392F": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
-            Object {
-              "Action": "sqs:SendMessage",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-                  "Arn",
-                ],
-              },
-            },
             Object {
               "Action": Array [
                 "s3:GetObject*",
@@ -1848,475 +832,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "TransliteratorpythonHandlerServiceRoleDefaultPolicy9B7DD360",
+        "PolicyName": "TransliteratorServiceRoleDefaultPolicy44A1392F",
         "Roles": Array [
           Object {
-            "Ref": "TransliteratorpythonHandlerServiceRoleF23A0468",
+            "Ref": "TransliteratorServiceRoleDE4FF5F3",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
-    },
-    "TransliteratorpythonHandlerServiceRoleF23A0468": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "TransliteratorpythonHandlerTopic0B319829": Object {
-      "Properties": Object {
-        "Endpoint": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratorpythonHandlerDE4D5CE8",
-            "Arn",
-          ],
-        },
-        "Protocol": "lambda",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-              "Arn",
-            ],
-          },
-        },
-        "TopicArn": Object {
-          "Ref": "TransliteratorTopic8F81CCE2",
-        },
-      },
-      "Type": "AWS::SNS::Subscription",
-    },
-    "TransliteratortypescriptDLQAlarm62087C13": Object {
-      "Properties": Object {
-        "AlarmDescription": "The typescript transliteration function failed for one or more packages",
-        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "Dimensions": Array [
-          Object {
-            "Name": "QueueName",
-            "Value": Object {
-              "Fn::GetAtt": Array [
-                "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-                "QueueName",
-              ],
-            },
-          },
-        ],
-        "EvaluationPeriods": 1,
-        "MetricName": "ApproximateNumberOfMessagesVisible",
-        "Namespace": "AWS/SQS",
-        "Period": 300,
-        "Statistic": "Maximum",
-        "Threshold": 1,
-      },
-      "Type": "AWS::CloudWatch::Alarm",
-    },
-    "TransliteratortypescriptHandler5C709988": Object {
-      "DependsOn": Array [
-        "TransliteratortypescriptHandlerServiceRoleDefaultPolicy2A8A4837",
-        "TransliteratortypescriptHandlerServiceRoleB180F29C",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3BucketF6181B90",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3VersionKey87461909",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3VersionKey87461909",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "DeadLetterConfig": Object {
-          "TargetArn": Object {
-            "Fn::GetAtt": Array [
-              "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-              "Arn",
-            ],
-          },
-        },
-        "Description": "Creates typescript documentation from jsii-enabled npm packages",
-        "Environment": Object {
-          "Variables": Object {
-            "CODE_ARTIFACT_API_ENDPOINT": Object {
-              "Fn::Select": Array [
-                1,
-                Object {
-                  "Fn::Split": Array [
-                    ":",
-                    Object {
-                      "Fn::Select": Array [
-                        0,
-                        Object {
-                          "Fn::GetAtt": Array [
-                            "VPCCodeArtifactAPIA2ABC3E9",
-                            "DnsEntries",
-                          ],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-            "HEADER_SPAN": "true",
-            "TARGET_LANGUAGE": "typescript",
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 10240,
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratortypescriptHandlerServiceRoleB180F29C",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "VpcConfig": Object {
-          "SecurityGroupIds": Array [
-            Object {
-              "Fn::GetAtt": Array [
-                "TransliteratortypescriptHandlerSecurityGroup150F39D3",
-                "GroupId",
-              ],
-            },
-          ],
-          "SubnetIds": Array [
-            Object {
-              "Ref": "VPCIsolatedSubnet1SubnetEBD00FC6",
-            },
-            Object {
-              "Ref": "VPCIsolatedSubnet2Subnet4B1C8CAA",
-            },
-          ],
-        },
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "TransliteratortypescriptHandlerAllowInvokeTestStackTransliteratorTopic344FD88C2764BD36": Object {
-      "Properties": Object {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratortypescriptHandler5C709988",
-            "Arn",
-          ],
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": Object {
-          "Ref": "TransliteratorTopic8F81CCE2",
-        },
-      },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "TransliteratortypescriptHandlerDeadLetterQueue82915897": Object {
-      "DeletionPolicy": "Delete",
-      "Properties": Object {
-        "MessageRetentionPeriod": 1209600,
-      },
-      "Type": "AWS::SQS::Queue",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "TransliteratortypescriptHandlerDeadLetterQueuePolicyF9083E62": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sqs:SendMessage",
-              "Condition": Object {
-                "ArnEquals": Object {
-                  "aws:SourceArn": Object {
-                    "Ref": "TransliteratorTopic8F81CCE2",
-                  },
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "sns.amazonaws.com",
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Queues": Array [
-          Object {
-            "Ref": "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-          },
-        ],
-      },
-      "Type": "AWS::SQS::QueuePolicy",
-    },
-    "TransliteratortypescriptHandlerEventInvokeConfig2D3025F8": Object {
-      "Properties": Object {
-        "FunctionName": Object {
-          "Ref": "TransliteratortypescriptHandler5C709988",
-        },
-        "MaximumRetryAttempts": 2,
-        "Qualifier": "$LATEST",
-      },
-      "Type": "AWS::Lambda::EventInvokeConfig",
-    },
-    "TransliteratortypescriptHandlerLogRetention77FD0D93": Object {
-      "Properties": Object {
-        "LogGroupName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "/aws/lambda/",
-              Object {
-                "Ref": "TransliteratortypescriptHandler5C709988",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 3653,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-    },
-    "TransliteratortypescriptHandlerSecurityGroup150F39D3": Object {
-      "Properties": Object {
-        "GroupDescription": "Automatic security group for Lambda Function TestStackTransliteratortypescriptHandler11043CD0",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "VPCB9E5F0B4",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "TransliteratortypescriptHandlerServiceRoleB180F29C": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "TransliteratortypescriptHandlerServiceRoleDefaultPolicy2A8A4837": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sqs:SendMessage",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-                  "Arn",
-                ],
-              },
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "Bucket83908E77",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "Bucket83908E77",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/assembly.json",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "Bucket83908E77",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "Bucket83908E77",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*.md",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "TransliteratortypescriptHandlerServiceRoleDefaultPolicy2A8A4837",
-        "Roles": Array [
-          Object {
-            "Ref": "TransliteratortypescriptHandlerServiceRoleB180F29C",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
-    "TransliteratortypescriptHandlerTopicC920155D": Object {
-      "Properties": Object {
-        "Endpoint": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratortypescriptHandler5C709988",
-            "Arn",
-          ],
-        },
-        "Protocol": "lambda",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-              "Arn",
-            ],
-          },
-        },
-        "TopicArn": Object {
-          "Ref": "TransliteratorTopic8F81CCE2",
-        },
-      },
-      "Type": "AWS::SNS::Subscription",
     },
     "VPCB9E5F0B4": Anything,
     "VPCCodeArtifactAPIA2ABC3E9": Anything,
@@ -2426,182 +949,6 @@ Object {
       "Type": "AWS::IAM::Role",
     },
     "Bucket83908E77": Anything,
-    "BucketNotifications8F2E257D": Anything,
-    "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691": Object {
-      "DependsOn": Array [
-        "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
-        "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "ZipFile": "import boto3  # type: ignore
-import json
-import logging
-import urllib.request
-
-s3 = boto3.client(\\"s3\\")
-
-CONFIGURATION_TYPES = [\\"TopicConfigurations\\", \\"QueueConfigurations\\", \\"LambdaFunctionConfigurations\\"]
-
-def handler(event: dict, context):
-    response_status = \\"SUCCESS\\"
-    error_message = \\"\\"
-    try:
-        props = event[\\"ResourceProperties\\"]
-        bucket = props[\\"BucketName\\"]
-        notification_configuration = props[\\"NotificationConfiguration\\"]
-        request_type = event[\\"RequestType\\"]
-        managed = props.get('Managed', 'true').lower() == 'true'
-        stack_id = event['StackId']
-
-        if managed:
-          config = handle_managed(request_type, notification_configuration)
-        else:
-          config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
-
-        put_bucket_notification_configuration(bucket, config)
-    except Exception as e:
-        logging.exception(\\"Failed to put bucket notification configuration\\")
-        response_status = \\"FAILED\\"
-        error_message = f\\"Error: {str(e)}. \\"
-    finally:
-        submit_response(event, context, response_status, error_message)
-
-
-def handle_managed(request_type, notification_configuration):
-  if request_type == 'Delete':
-    return {}
-  return notification_configuration
-
-
-def handle_unmanaged(bucket, stack_id, request_type, notification_configuration):
-
-  # find external notifications
-  external_notifications = find_external_notifications(bucket, stack_id)
-
-  # if delete, that's all we need
-  if request_type == 'Delete':
-    return external_notifications
-
-  def with_id(notification):
-    notification['Id'] = f\\"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}\\"
-    return notification
-
-  # otherwise, merge external with incoming config and augment with id
-  notifications = {}
-  for t in CONFIGURATION_TYPES:
-    external = external_notifications.get(t, [])
-    incoming = [with_id(n) for n in notification_configuration.get(t, [])]
-    notifications[t] = external + incoming
-  return notifications
-
-
-def find_external_notifications(bucket, stack_id):
-  existing_notifications = get_bucket_notification_configuration(bucket)
-  external_notifications = {}
-  for t in CONFIGURATION_TYPES:
-    # if the notification was created by us, we know what id to expect
-    # so we can filter by it.
-    external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f\\"{stack_id}-\\")]
-
-  return external_notifications
-
-
-def get_bucket_notification_configuration(bucket):
-  return s3.get_bucket_notification_configuration(Bucket=bucket)
-
-
-def put_bucket_notification_configuration(bucket, notification_configuration):
-  s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)
-
-
-def submit_response(event: dict, context, response_status: str, error_message: str):
-    response_body = json.dumps(
-        {
-            \\"Status\\": response_status,
-            \\"Reason\\": f\\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\\",
-            \\"PhysicalResourceId\\": event.get(\\"PhysicalResourceId\\") or event[\\"LogicalResourceId\\"],
-            \\"StackId\\": event[\\"StackId\\"],
-            \\"RequestId\\": event[\\"RequestId\\"],
-            \\"LogicalResourceId\\": event[\\"LogicalResourceId\\"],
-            \\"NoEcho\\": False,
-        }
-    ).encode(\\"utf-8\\")
-    headers = {\\"content-type\\": \\"\\", \\"content-length\\": str(len(response_body))}
-    try:
-        req = urllib.request.Request(url=event[\\"ResponseURL\\"], headers=headers, data=response_body, method=\\"PUT\\")
-        with urllib.request.urlopen(req) as response:
-            print(response.read().decode(\\"utf-8\\"))
-        print(\\"Status code: \\" + response.reason)
-    except Exception as e:
-        print(\\"send(..) failed executing request.urlopen(..): \\" + str(e))
-",
-        },
-        "Description": "AWS CloudFormation handler for \\"Custom::S3BucketNotifications\\" resources (@aws-cdk/aws-s3)",
-        "Handler": "index.handler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
-            "Arn",
-          ],
-        },
-        "Runtime": "python3.8",
-        "Timeout": 300,
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "s3:PutBucketNotification",
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
-        "Roles": Array [
-          Object {
-            "Ref": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
     "CodeArtifact": Anything,
     "CodeArtifactDomainDB0947A4": Anything,
     "CodeArtifactGetEndpoint0223B4AF": Anything,
@@ -2718,100 +1065,18 @@ def submit_response(event: dict, context, response_status: str, error_message: s
     },
     "MonitoringDashboard0C3675C6": Anything,
     "MonitoringWatchfulDashboard9EB9FD4D": Anything,
-    "MonitoringWatchfulTestStackTransliteratorpythonHandler7F347BD3DurationAlarmC9C88AB8": Anything,
-    "MonitoringWatchfulTestStackTransliteratorpythonHandler7F347BD3ErrorsAlarmC875681C": Anything,
-    "MonitoringWatchfulTestStackTransliteratorpythonHandler7F347BD3ThrottlesAlarm78AA8EE9": Anything,
-    "MonitoringWatchfulTestStackTransliteratortypescriptHandler11043CD0DurationAlarm2D5C54C1": Anything,
-    "MonitoringWatchfulTestStackTransliteratortypescriptHandler11043CD0ErrorsAlarmB92EFD74": Anything,
-    "MonitoringWatchfulTestStackTransliteratortypescriptHandler11043CD0ThrottlesAlarmDB19F38F": Anything,
-    "TransliteratorTopic8F81CCE2": Object {
-      "Type": "AWS::SNS::Topic",
-    },
-    "TransliteratorTopicPolicyF3913C99": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sns:Publish",
-              "Condition": Object {
-                "ArnLike": Object {
-                  "aws:SourceArn": Object {
-                    "Fn::GetAtt": Array [
-                      "Bucket83908E77",
-                      "Arn",
-                    ],
-                  },
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "s3.amazonaws.com",
-              },
-              "Resource": Object {
-                "Ref": "TransliteratorTopic8F81CCE2",
-              },
-              "Sid": "0",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Topics": Array [
-          Object {
-            "Ref": "TransliteratorTopic8F81CCE2",
-          },
-        ],
-      },
-      "Type": "AWS::SNS::TopicPolicy",
-    },
-    "TransliteratorpythonDLQAlarm5201F4D8": Object {
-      "Properties": Object {
-        "AlarmDescription": "The python transliteration function failed for one or more packages",
-        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "Dimensions": Array [
-          Object {
-            "Name": "QueueName",
-            "Value": Object {
-              "Fn::GetAtt": Array [
-                "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-                "QueueName",
-              ],
-            },
-          },
-        ],
-        "EvaluationPeriods": 1,
-        "MetricName": "ApproximateNumberOfMessagesVisible",
-        "Namespace": "AWS/SQS",
-        "Period": 300,
-        "Statistic": "Maximum",
-        "Threshold": 1,
-      },
-      "Type": "AWS::CloudWatch::Alarm",
-    },
-    "TransliteratorpythonHandlerAllowInvokeTestStackTransliteratorTopic344FD88C25C91985": Object {
-      "Properties": Object {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratorpythonHandlerDE4D5CE8",
-            "Arn",
-          ],
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": Object {
-          "Ref": "TransliteratorTopic8F81CCE2",
-        },
-      },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "TransliteratorpythonHandlerDE4D5CE8": Object {
+    "MonitoringWatchfulTestStackTransliterator9D9D4864DurationAlarmC446DC83": Anything,
+    "MonitoringWatchfulTestStackTransliterator9D9D4864ErrorsAlarmFF1181A3": Anything,
+    "MonitoringWatchfulTestStackTransliterator9D9D4864ThrottlesAlarm80C36BF4": Anything,
+    "Transliterator6462E4D2": Object {
       "DependsOn": Array [
-        "TransliteratorpythonHandlerServiceRoleDefaultPolicy9B7DD360",
-        "TransliteratorpythonHandlerServiceRoleF23A0468",
+        "TransliteratorServiceRoleDefaultPolicy44A1392F",
+        "TransliteratorServiceRoleDE4FF5F3",
       ],
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3BucketF6181B90",
+            "Ref": "AssetParameters89ae89a92e2300fc66974e848f5b6dad9bd6c36e3d7a709ccf3bee5a25846e31S3BucketCD0FEB0D",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -2824,7 +1089,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3VersionKey87461909",
+                          "Ref": "AssetParameters89ae89a92e2300fc66974e848f5b6dad9bd6c36e3d7a709ccf3bee5a25846e31S3VersionKeyBFF2E215",
                         },
                       ],
                     },
@@ -2837,21 +1102,13 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3VersionKey87461909",
+                          "Ref": "AssetParameters89ae89a92e2300fc66974e848f5b6dad9bd6c36e3d7a709ccf3bee5a25846e31S3VersionKeyBFF2E215",
                         },
                       ],
                     },
                   ],
                 },
               ],
-            ],
-          },
-        },
-        "DeadLetterConfig": Object {
-          "TargetArn": Object {
-            "Fn::GetAtt": Array [
-              "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-              "Arn",
             ],
           },
         },
@@ -2905,7 +1162,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         "MemorySize": 10240,
         "Role": Object {
           "Fn::GetAtt": Array [
-            "TransliteratorpythonHandlerServiceRoleF23A0468",
+            "TransliteratorServiceRoleDE4FF5F3",
             "Arn",
           ],
         },
@@ -2915,7 +1172,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "SecurityGroupIds": Array [
             Object {
               "Fn::GetAtt": Array [
-                "TransliteratorpythonHandlerSecurityGroup7B9A554E",
+                "TransliteratorSecurityGroup52541706",
                 "GroupId",
               ],
             },
@@ -2932,60 +1189,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::Function",
     },
-    "TransliteratorpythonHandlerDeadLetterQueue01FC1735": Object {
-      "DeletionPolicy": "Delete",
-      "Properties": Object {
-        "MessageRetentionPeriod": 1209600,
-      },
-      "Type": "AWS::SQS::Queue",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "TransliteratorpythonHandlerDeadLetterQueuePolicy4C996289": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sqs:SendMessage",
-              "Condition": Object {
-                "ArnEquals": Object {
-                  "aws:SourceArn": Object {
-                    "Ref": "TransliteratorTopic8F81CCE2",
-                  },
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "sns.amazonaws.com",
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Queues": Array [
-          Object {
-            "Ref": "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-          },
-        ],
-      },
-      "Type": "AWS::SQS::QueuePolicy",
-    },
-    "TransliteratorpythonHandlerEventInvokeConfig95E194CE": Object {
-      "Properties": Object {
-        "FunctionName": Object {
-          "Ref": "TransliteratorpythonHandlerDE4D5CE8",
-        },
-        "MaximumRetryAttempts": 2,
-        "Qualifier": "$LATEST",
-      },
-      "Type": "AWS::Lambda::EventInvokeConfig",
-    },
-    "TransliteratorpythonHandlerLogRetention0A84F889": Object {
+    "TransliteratorLogRetention2FE858DC": Object {
       "Properties": Object {
         "LogGroupName": Object {
           "Fn::Join": Array [
@@ -2993,7 +1197,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             Array [
               "/aws/lambda/",
               Object {
-                "Ref": "TransliteratorpythonHandlerDE4D5CE8",
+                "Ref": "Transliterator6462E4D2",
               },
             ],
           ],
@@ -3008,9 +1212,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "Custom::LogRetention",
     },
-    "TransliteratorpythonHandlerSecurityGroup7B9A554E": Object {
+    "TransliteratorSecurityGroup52541706": Object {
       "Properties": Object {
-        "GroupDescription": "Automatic security group for Lambda Function TestStackTransliteratorpythonHandler7F347BD3",
+        "GroupDescription": "Automatic security group for Lambda Function TestStackTransliterator9D9D4864",
         "SecurityGroupEgress": Array [
           Object {
             "CidrIp": "0.0.0.0/0",
@@ -3024,20 +1228,53 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "TransliteratorpythonHandlerServiceRoleDefaultPolicy9B7DD360": Object {
+    "TransliteratorServiceRoleDE4FF5F3": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "TransliteratorServiceRoleDefaultPolicy44A1392F": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
-            Object {
-              "Action": "sqs:SendMessage",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-                  "Arn",
-                ],
-              },
-            },
             Object {
               "Action": "sts:GetServiceBearerToken",
               "Condition": Object {
@@ -3133,525 +1370,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "TransliteratorpythonHandlerServiceRoleDefaultPolicy9B7DD360",
+        "PolicyName": "TransliteratorServiceRoleDefaultPolicy44A1392F",
         "Roles": Array [
           Object {
-            "Ref": "TransliteratorpythonHandlerServiceRoleF23A0468",
+            "Ref": "TransliteratorServiceRoleDE4FF5F3",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
-    },
-    "TransliteratorpythonHandlerServiceRoleF23A0468": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "TransliteratorpythonHandlerTopic0B319829": Object {
-      "Properties": Object {
-        "Endpoint": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratorpythonHandlerDE4D5CE8",
-            "Arn",
-          ],
-        },
-        "Protocol": "lambda",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-              "Arn",
-            ],
-          },
-        },
-        "TopicArn": Object {
-          "Ref": "TransliteratorTopic8F81CCE2",
-        },
-      },
-      "Type": "AWS::SNS::Subscription",
-    },
-    "TransliteratortypescriptDLQAlarm62087C13": Object {
-      "Properties": Object {
-        "AlarmDescription": "The typescript transliteration function failed for one or more packages",
-        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "Dimensions": Array [
-          Object {
-            "Name": "QueueName",
-            "Value": Object {
-              "Fn::GetAtt": Array [
-                "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-                "QueueName",
-              ],
-            },
-          },
-        ],
-        "EvaluationPeriods": 1,
-        "MetricName": "ApproximateNumberOfMessagesVisible",
-        "Namespace": "AWS/SQS",
-        "Period": 300,
-        "Statistic": "Maximum",
-        "Threshold": 1,
-      },
-      "Type": "AWS::CloudWatch::Alarm",
-    },
-    "TransliteratortypescriptHandler5C709988": Object {
-      "DependsOn": Array [
-        "TransliteratortypescriptHandlerServiceRoleDefaultPolicy2A8A4837",
-        "TransliteratortypescriptHandlerServiceRoleB180F29C",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3BucketF6181B90",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3VersionKey87461909",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3VersionKey87461909",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "DeadLetterConfig": Object {
-          "TargetArn": Object {
-            "Fn::GetAtt": Array [
-              "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-              "Arn",
-            ],
-          },
-        },
-        "Description": "Creates typescript documentation from jsii-enabled npm packages",
-        "Environment": Object {
-          "Variables": Object {
-            "CODE_ARTIFACT_API_ENDPOINT": Object {
-              "Fn::Select": Array [
-                1,
-                Object {
-                  "Fn::Split": Array [
-                    ":",
-                    Object {
-                      "Fn::Select": Array [
-                        0,
-                        Object {
-                          "Fn::GetAtt": Array [
-                            "VPCCodeArtifactAPIA2ABC3E9",
-                            "DnsEntries",
-                          ],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-            "CODE_ARTIFACT_DOMAIN_NAME": Object {
-              "Fn::GetAtt": Array [
-                "CodeArtifact",
-                "DomainName",
-              ],
-            },
-            "CODE_ARTIFACT_DOMAIN_OWNER": Object {
-              "Fn::GetAtt": Array [
-                "CodeArtifact",
-                "DomainOwner",
-              ],
-            },
-            "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
-              "Fn::GetAtt": Array [
-                "CodeArtifactGetEndpoint0223B4AF",
-                "repositoryEndpoint",
-              ],
-            },
-            "HEADER_SPAN": "true",
-            "TARGET_LANGUAGE": "typescript",
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 10240,
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratortypescriptHandlerServiceRoleB180F29C",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "VpcConfig": Object {
-          "SecurityGroupIds": Array [
-            Object {
-              "Fn::GetAtt": Array [
-                "TransliteratortypescriptHandlerSecurityGroup150F39D3",
-                "GroupId",
-              ],
-            },
-          ],
-          "SubnetIds": Array [
-            Object {
-              "Ref": "VPCIsolatedSubnet1SubnetEBD00FC6",
-            },
-            Object {
-              "Ref": "VPCIsolatedSubnet2Subnet4B1C8CAA",
-            },
-          ],
-        },
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "TransliteratortypescriptHandlerAllowInvokeTestStackTransliteratorTopic344FD88C2764BD36": Object {
-      "Properties": Object {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratortypescriptHandler5C709988",
-            "Arn",
-          ],
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": Object {
-          "Ref": "TransliteratorTopic8F81CCE2",
-        },
-      },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "TransliteratortypescriptHandlerDeadLetterQueue82915897": Object {
-      "DeletionPolicy": "Delete",
-      "Properties": Object {
-        "MessageRetentionPeriod": 1209600,
-      },
-      "Type": "AWS::SQS::Queue",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "TransliteratortypescriptHandlerDeadLetterQueuePolicyF9083E62": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sqs:SendMessage",
-              "Condition": Object {
-                "ArnEquals": Object {
-                  "aws:SourceArn": Object {
-                    "Ref": "TransliteratorTopic8F81CCE2",
-                  },
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "sns.amazonaws.com",
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Queues": Array [
-          Object {
-            "Ref": "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-          },
-        ],
-      },
-      "Type": "AWS::SQS::QueuePolicy",
-    },
-    "TransliteratortypescriptHandlerEventInvokeConfig2D3025F8": Object {
-      "Properties": Object {
-        "FunctionName": Object {
-          "Ref": "TransliteratortypescriptHandler5C709988",
-        },
-        "MaximumRetryAttempts": 2,
-        "Qualifier": "$LATEST",
-      },
-      "Type": "AWS::Lambda::EventInvokeConfig",
-    },
-    "TransliteratortypescriptHandlerLogRetention77FD0D93": Object {
-      "Properties": Object {
-        "LogGroupName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "/aws/lambda/",
-              Object {
-                "Ref": "TransliteratortypescriptHandler5C709988",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 3653,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-    },
-    "TransliteratortypescriptHandlerSecurityGroup150F39D3": Object {
-      "Properties": Object {
-        "GroupDescription": "Automatic security group for Lambda Function TestStackTransliteratortypescriptHandler11043CD0",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "VPCB9E5F0B4",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "TransliteratortypescriptHandlerServiceRoleB180F29C": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "TransliteratortypescriptHandlerServiceRoleDefaultPolicy2A8A4837": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sqs:SendMessage",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-                  "Arn",
-                ],
-              },
-            },
-            Object {
-              "Action": "sts:GetServiceBearerToken",
-              "Condition": Object {
-                "StringEquals": Object {
-                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
-                },
-              },
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-            Object {
-              "Action": Array [
-                "codeartifact:GetAuthorizationToken",
-                "codeartifact:GetRepositoryEndpoint",
-                "codeartifact:ReadFromRepository",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "CodeArtifactDomainDB0947A4",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::GetAtt": Array [
-                    "CodeArtifact",
-                    "Arn",
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "Bucket83908E77",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "Bucket83908E77",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/assembly.json",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "Bucket83908E77",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "Bucket83908E77",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*.md",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "TransliteratortypescriptHandlerServiceRoleDefaultPolicy2A8A4837",
-        "Roles": Array [
-          Object {
-            "Ref": "TransliteratortypescriptHandlerServiceRoleB180F29C",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
-    "TransliteratortypescriptHandlerTopicC920155D": Object {
-      "Properties": Object {
-        "Endpoint": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratortypescriptHandler5C709988",
-            "Arn",
-          ],
-        },
-        "Protocol": "lambda",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-              "Arn",
-            ],
-          },
-        },
-        "TopicArn": Object {
-          "Ref": "TransliteratorTopic8F81CCE2",
-        },
-      },
-      "Type": "AWS::SNS::Subscription",
     },
     "VPCB9E5F0B4": Anything,
     "VPCCodeArtifactAPIA2ABC3E9": Anything,
@@ -3675,182 +1401,6 @@ Object {
   "Parameters": Anything,
   "Resources": Object {
     "Bucket83908E77": Anything,
-    "BucketNotifications8F2E257D": Anything,
-    "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691": Object {
-      "DependsOn": Array [
-        "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
-        "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "ZipFile": "import boto3  # type: ignore
-import json
-import logging
-import urllib.request
-
-s3 = boto3.client(\\"s3\\")
-
-CONFIGURATION_TYPES = [\\"TopicConfigurations\\", \\"QueueConfigurations\\", \\"LambdaFunctionConfigurations\\"]
-
-def handler(event: dict, context):
-    response_status = \\"SUCCESS\\"
-    error_message = \\"\\"
-    try:
-        props = event[\\"ResourceProperties\\"]
-        bucket = props[\\"BucketName\\"]
-        notification_configuration = props[\\"NotificationConfiguration\\"]
-        request_type = event[\\"RequestType\\"]
-        managed = props.get('Managed', 'true').lower() == 'true'
-        stack_id = event['StackId']
-
-        if managed:
-          config = handle_managed(request_type, notification_configuration)
-        else:
-          config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
-
-        put_bucket_notification_configuration(bucket, config)
-    except Exception as e:
-        logging.exception(\\"Failed to put bucket notification configuration\\")
-        response_status = \\"FAILED\\"
-        error_message = f\\"Error: {str(e)}. \\"
-    finally:
-        submit_response(event, context, response_status, error_message)
-
-
-def handle_managed(request_type, notification_configuration):
-  if request_type == 'Delete':
-    return {}
-  return notification_configuration
-
-
-def handle_unmanaged(bucket, stack_id, request_type, notification_configuration):
-
-  # find external notifications
-  external_notifications = find_external_notifications(bucket, stack_id)
-
-  # if delete, that's all we need
-  if request_type == 'Delete':
-    return external_notifications
-
-  def with_id(notification):
-    notification['Id'] = f\\"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}\\"
-    return notification
-
-  # otherwise, merge external with incoming config and augment with id
-  notifications = {}
-  for t in CONFIGURATION_TYPES:
-    external = external_notifications.get(t, [])
-    incoming = [with_id(n) for n in notification_configuration.get(t, [])]
-    notifications[t] = external + incoming
-  return notifications
-
-
-def find_external_notifications(bucket, stack_id):
-  existing_notifications = get_bucket_notification_configuration(bucket)
-  external_notifications = {}
-  for t in CONFIGURATION_TYPES:
-    # if the notification was created by us, we know what id to expect
-    # so we can filter by it.
-    external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f\\"{stack_id}-\\")]
-
-  return external_notifications
-
-
-def get_bucket_notification_configuration(bucket):
-  return s3.get_bucket_notification_configuration(Bucket=bucket)
-
-
-def put_bucket_notification_configuration(bucket, notification_configuration):
-  s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)
-
-
-def submit_response(event: dict, context, response_status: str, error_message: str):
-    response_body = json.dumps(
-        {
-            \\"Status\\": response_status,
-            \\"Reason\\": f\\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\\",
-            \\"PhysicalResourceId\\": event.get(\\"PhysicalResourceId\\") or event[\\"LogicalResourceId\\"],
-            \\"StackId\\": event[\\"StackId\\"],
-            \\"RequestId\\": event[\\"RequestId\\"],
-            \\"LogicalResourceId\\": event[\\"LogicalResourceId\\"],
-            \\"NoEcho\\": False,
-        }
-    ).encode(\\"utf-8\\")
-    headers = {\\"content-type\\": \\"\\", \\"content-length\\": str(len(response_body))}
-    try:
-        req = urllib.request.Request(url=event[\\"ResponseURL\\"], headers=headers, data=response_body, method=\\"PUT\\")
-        with urllib.request.urlopen(req) as response:
-            print(response.read().decode(\\"utf-8\\"))
-        print(\\"Status code: \\" + response.reason)
-    except Exception as e:
-        print(\\"send(..) failed executing request.urlopen(..): \\" + str(e))
-",
-        },
-        "Description": "AWS CloudFormation handler for \\"Custom::S3BucketNotifications\\" resources (@aws-cdk/aws-s3)",
-        "Handler": "index.handler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
-            "Arn",
-          ],
-        },
-        "Runtime": "python3.8",
-        "Timeout": 300,
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "s3:PutBucketNotification",
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
-        "Roles": Array [
-          Object {
-            "Ref": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
     "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": Object {
       "DependsOn": Array [
         "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
@@ -3963,100 +1513,18 @@ def submit_response(event: dict, context, response_status: str, error_message: s
     },
     "MonitoringDashboard0C3675C6": Anything,
     "MonitoringWatchfulDashboard9EB9FD4D": Anything,
-    "MonitoringWatchfulTestStackTransliteratorpythonHandler7F347BD3DurationAlarmC9C88AB8": Anything,
-    "MonitoringWatchfulTestStackTransliteratorpythonHandler7F347BD3ErrorsAlarmC875681C": Anything,
-    "MonitoringWatchfulTestStackTransliteratorpythonHandler7F347BD3ThrottlesAlarm78AA8EE9": Anything,
-    "MonitoringWatchfulTestStackTransliteratortypescriptHandler11043CD0DurationAlarm2D5C54C1": Anything,
-    "MonitoringWatchfulTestStackTransliteratortypescriptHandler11043CD0ErrorsAlarmB92EFD74": Anything,
-    "MonitoringWatchfulTestStackTransliteratortypescriptHandler11043CD0ThrottlesAlarmDB19F38F": Anything,
-    "TransliteratorTopic8F81CCE2": Object {
-      "Type": "AWS::SNS::Topic",
-    },
-    "TransliteratorTopicPolicyF3913C99": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sns:Publish",
-              "Condition": Object {
-                "ArnLike": Object {
-                  "aws:SourceArn": Object {
-                    "Fn::GetAtt": Array [
-                      "Bucket83908E77",
-                      "Arn",
-                    ],
-                  },
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "s3.amazonaws.com",
-              },
-              "Resource": Object {
-                "Ref": "TransliteratorTopic8F81CCE2",
-              },
-              "Sid": "0",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Topics": Array [
-          Object {
-            "Ref": "TransliteratorTopic8F81CCE2",
-          },
-        ],
-      },
-      "Type": "AWS::SNS::TopicPolicy",
-    },
-    "TransliteratorpythonDLQAlarm5201F4D8": Object {
-      "Properties": Object {
-        "AlarmDescription": "The python transliteration function failed for one or more packages",
-        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "Dimensions": Array [
-          Object {
-            "Name": "QueueName",
-            "Value": Object {
-              "Fn::GetAtt": Array [
-                "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-                "QueueName",
-              ],
-            },
-          },
-        ],
-        "EvaluationPeriods": 1,
-        "MetricName": "ApproximateNumberOfMessagesVisible",
-        "Namespace": "AWS/SQS",
-        "Period": 300,
-        "Statistic": "Maximum",
-        "Threshold": 1,
-      },
-      "Type": "AWS::CloudWatch::Alarm",
-    },
-    "TransliteratorpythonHandlerAllowInvokeTestStackTransliteratorTopic344FD88C25C91985": Object {
-      "Properties": Object {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratorpythonHandlerDE4D5CE8",
-            "Arn",
-          ],
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": Object {
-          "Ref": "TransliteratorTopic8F81CCE2",
-        },
-      },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "TransliteratorpythonHandlerDE4D5CE8": Object {
+    "MonitoringWatchfulTestStackTransliterator9D9D4864DurationAlarmC446DC83": Anything,
+    "MonitoringWatchfulTestStackTransliterator9D9D4864ErrorsAlarmFF1181A3": Anything,
+    "MonitoringWatchfulTestStackTransliterator9D9D4864ThrottlesAlarm80C36BF4": Anything,
+    "Transliterator6462E4D2": Object {
       "DependsOn": Array [
-        "TransliteratorpythonHandlerServiceRoleDefaultPolicy9B7DD360",
-        "TransliteratorpythonHandlerServiceRoleF23A0468",
+        "TransliteratorServiceRoleDefaultPolicy44A1392F",
+        "TransliteratorServiceRoleDE4FF5F3",
       ],
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3BucketF6181B90",
+            "Ref": "AssetParameters89ae89a92e2300fc66974e848f5b6dad9bd6c36e3d7a709ccf3bee5a25846e31S3BucketCD0FEB0D",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -4069,7 +1537,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3VersionKey87461909",
+                          "Ref": "AssetParameters89ae89a92e2300fc66974e848f5b6dad9bd6c36e3d7a709ccf3bee5a25846e31S3VersionKeyBFF2E215",
                         },
                       ],
                     },
@@ -4082,21 +1550,13 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3VersionKey87461909",
+                          "Ref": "AssetParameters89ae89a92e2300fc66974e848f5b6dad9bd6c36e3d7a709ccf3bee5a25846e31S3VersionKeyBFF2E215",
                         },
                       ],
                     },
                   ],
                 },
               ],
-            ],
-          },
-        },
-        "DeadLetterConfig": Object {
-          "TargetArn": Object {
-            "Fn::GetAtt": Array [
-              "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-              "Arn",
             ],
           },
         },
@@ -4111,7 +1571,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         "MemorySize": 10240,
         "Role": Object {
           "Fn::GetAtt": Array [
-            "TransliteratorpythonHandlerServiceRoleF23A0468",
+            "TransliteratorServiceRoleDE4FF5F3",
             "Arn",
           ],
         },
@@ -4120,60 +1580,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::Function",
     },
-    "TransliteratorpythonHandlerDeadLetterQueue01FC1735": Object {
-      "DeletionPolicy": "Delete",
-      "Properties": Object {
-        "MessageRetentionPeriod": 1209600,
-      },
-      "Type": "AWS::SQS::Queue",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "TransliteratorpythonHandlerDeadLetterQueuePolicy4C996289": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sqs:SendMessage",
-              "Condition": Object {
-                "ArnEquals": Object {
-                  "aws:SourceArn": Object {
-                    "Ref": "TransliteratorTopic8F81CCE2",
-                  },
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "sns.amazonaws.com",
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Queues": Array [
-          Object {
-            "Ref": "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-          },
-        ],
-      },
-      "Type": "AWS::SQS::QueuePolicy",
-    },
-    "TransliteratorpythonHandlerEventInvokeConfig95E194CE": Object {
-      "Properties": Object {
-        "FunctionName": Object {
-          "Ref": "TransliteratorpythonHandlerDE4D5CE8",
-        },
-        "MaximumRetryAttempts": 2,
-        "Qualifier": "$LATEST",
-      },
-      "Type": "AWS::Lambda::EventInvokeConfig",
-    },
-    "TransliteratorpythonHandlerLogRetention0A84F889": Object {
+    "TransliteratorLogRetention2FE858DC": Object {
       "Properties": Object {
         "LogGroupName": Object {
           "Fn::Join": Array [
@@ -4181,7 +1588,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             Array [
               "/aws/lambda/",
               Object {
-                "Ref": "TransliteratorpythonHandlerDE4D5CE8",
+                "Ref": "Transliterator6462E4D2",
               },
             ],
           ],
@@ -4196,20 +1603,41 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "Custom::LogRetention",
     },
-    "TransliteratorpythonHandlerServiceRoleDefaultPolicy9B7DD360": Object {
+    "TransliteratorServiceRoleDE4FF5F3": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "TransliteratorServiceRoleDefaultPolicy44A1392F": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
-            Object {
-              "Action": "sqs:SendMessage",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-                  "Arn",
-                ],
-              },
-            },
             Object {
               "Action": Array [
                 "s3:GetObject*",
@@ -4273,396 +1701,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "TransliteratorpythonHandlerServiceRoleDefaultPolicy9B7DD360",
+        "PolicyName": "TransliteratorServiceRoleDefaultPolicy44A1392F",
         "Roles": Array [
           Object {
-            "Ref": "TransliteratorpythonHandlerServiceRoleF23A0468",
+            "Ref": "TransliteratorServiceRoleDE4FF5F3",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
-    },
-    "TransliteratorpythonHandlerServiceRoleF23A0468": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "TransliteratorpythonHandlerTopic0B319829": Object {
-      "Properties": Object {
-        "Endpoint": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratorpythonHandlerDE4D5CE8",
-            "Arn",
-          ],
-        },
-        "Protocol": "lambda",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "TransliteratorpythonHandlerDeadLetterQueue01FC1735",
-              "Arn",
-            ],
-          },
-        },
-        "TopicArn": Object {
-          "Ref": "TransliteratorTopic8F81CCE2",
-        },
-      },
-      "Type": "AWS::SNS::Subscription",
-    },
-    "TransliteratortypescriptDLQAlarm62087C13": Object {
-      "Properties": Object {
-        "AlarmDescription": "The typescript transliteration function failed for one or more packages",
-        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "Dimensions": Array [
-          Object {
-            "Name": "QueueName",
-            "Value": Object {
-              "Fn::GetAtt": Array [
-                "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-                "QueueName",
-              ],
-            },
-          },
-        ],
-        "EvaluationPeriods": 1,
-        "MetricName": "ApproximateNumberOfMessagesVisible",
-        "Namespace": "AWS/SQS",
-        "Period": 300,
-        "Statistic": "Maximum",
-        "Threshold": 1,
-      },
-      "Type": "AWS::CloudWatch::Alarm",
-    },
-    "TransliteratortypescriptHandler5C709988": Object {
-      "DependsOn": Array [
-        "TransliteratortypescriptHandlerServiceRoleDefaultPolicy2A8A4837",
-        "TransliteratortypescriptHandlerServiceRoleB180F29C",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3BucketF6181B90",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3VersionKey87461909",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters6ddf168e2e40df6698c6d0205c5044630c15454958cfdc7e26833cf8e8b3714bS3VersionKey87461909",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "DeadLetterConfig": Object {
-          "TargetArn": Object {
-            "Fn::GetAtt": Array [
-              "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-              "Arn",
-            ],
-          },
-        },
-        "Description": "Creates typescript documentation from jsii-enabled npm packages",
-        "Environment": Object {
-          "Variables": Object {
-            "HEADER_SPAN": "true",
-            "TARGET_LANGUAGE": "typescript",
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 10240,
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratortypescriptHandlerServiceRoleB180F29C",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "TransliteratortypescriptHandlerAllowInvokeTestStackTransliteratorTopic344FD88C2764BD36": Object {
-      "Properties": Object {
-        "Action": "lambda:InvokeFunction",
-        "FunctionName": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratortypescriptHandler5C709988",
-            "Arn",
-          ],
-        },
-        "Principal": "sns.amazonaws.com",
-        "SourceArn": Object {
-          "Ref": "TransliteratorTopic8F81CCE2",
-        },
-      },
-      "Type": "AWS::Lambda::Permission",
-    },
-    "TransliteratortypescriptHandlerDeadLetterQueue82915897": Object {
-      "DeletionPolicy": "Delete",
-      "Properties": Object {
-        "MessageRetentionPeriod": 1209600,
-      },
-      "Type": "AWS::SQS::Queue",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "TransliteratortypescriptHandlerDeadLetterQueuePolicyF9083E62": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sqs:SendMessage",
-              "Condition": Object {
-                "ArnEquals": Object {
-                  "aws:SourceArn": Object {
-                    "Ref": "TransliteratorTopic8F81CCE2",
-                  },
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "sns.amazonaws.com",
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "Queues": Array [
-          Object {
-            "Ref": "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-          },
-        ],
-      },
-      "Type": "AWS::SQS::QueuePolicy",
-    },
-    "TransliteratortypescriptHandlerEventInvokeConfig2D3025F8": Object {
-      "Properties": Object {
-        "FunctionName": Object {
-          "Ref": "TransliteratortypescriptHandler5C709988",
-        },
-        "MaximumRetryAttempts": 2,
-        "Qualifier": "$LATEST",
-      },
-      "Type": "AWS::Lambda::EventInvokeConfig",
-    },
-    "TransliteratortypescriptHandlerLogRetention77FD0D93": Object {
-      "Properties": Object {
-        "LogGroupName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "/aws/lambda/",
-              Object {
-                "Ref": "TransliteratortypescriptHandler5C709988",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 3653,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-    },
-    "TransliteratortypescriptHandlerServiceRoleB180F29C": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "TransliteratortypescriptHandlerServiceRoleDefaultPolicy2A8A4837": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sqs:SendMessage",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-                  "Arn",
-                ],
-              },
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "Bucket83908E77",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "Bucket83908E77",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/assembly.json",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "Bucket83908E77",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "Bucket83908E77",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*.md",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "TransliteratortypescriptHandlerServiceRoleDefaultPolicy2A8A4837",
-        "Roles": Array [
-          Object {
-            "Ref": "TransliteratortypescriptHandlerServiceRoleB180F29C",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
-    "TransliteratortypescriptHandlerTopicC920155D": Object {
-      "Properties": Object {
-        "Endpoint": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratortypescriptHandler5C709988",
-            "Arn",
-          ],
-        },
-        "Protocol": "lambda",
-        "RedrivePolicy": Object {
-          "deadLetterTargetArn": Object {
-            "Fn::GetAtt": Array [
-              "TransliteratortypescriptHandlerDeadLetterQueue82915897",
-              "Arn",
-            ],
-          },
-        },
-        "TopicArn": Object {
-          "Ref": "TransliteratorTopic8F81CCE2",
-        },
-      },
-      "Type": "AWS::SNS::Subscription",
     },
   },
 }

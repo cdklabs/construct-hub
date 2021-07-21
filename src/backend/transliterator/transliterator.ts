@@ -9,10 +9,10 @@ export interface TransliteratorProps extends lambda.FunctionOptions {
 export class Transliterator extends lambda.Function {
   constructor(scope: Construct, id: string, props: TransliteratorProps = {}) {
     super(scope, id, {
+      ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/transliterator.bundle')),
-      ...props,
     });
   }
 }
