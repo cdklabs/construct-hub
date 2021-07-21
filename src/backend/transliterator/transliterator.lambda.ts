@@ -148,6 +148,7 @@ function uploadFile(s3: AWS.S3, context: Context, bucket: string, key: string, s
     Bucket: bucket,
     Key: key,
     Body: body,
+    CacheControl: 'public',
     ContentType: 'text/markdown; charset=UTF-8',
     Metadata: {
       'Origin-Version-Id': sourceVersionId ?? 'N/A',

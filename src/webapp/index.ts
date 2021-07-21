@@ -9,6 +9,7 @@ import { CfnOutput, Construct } from '@aws-cdk/core';
 import { Domain } from '../api';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
+import { CacheInvalidator } from './cache-invalidator';
 import { ResponseFunction } from './response-function';
 
 export interface WebAppProps {
@@ -26,7 +27,7 @@ export interface WebAppProps {
   /**
    * The bucket containing package data.
    */
-  readonly packageData: s3.IBucket;
+  readonly packageData: s3.Bucket;
 }
 
 export class WebApp extends Construct {
@@ -70,6 +71,8 @@ export class WebApp extends Construct {
     const jsiiObjOrigin = new origins.S3Origin(props.packageData);
     this.distribution.addBehavior('/data/*', jsiiObjOrigin, behaviorOptions);
     this.distribution.addBehavior('/catalog.json', jsiiObjOrigin, behaviorOptions);
+
+    new CacheInvalidator(this, 'CacheInvalidator', { bucket: props.packageData, distribution: this.distribution });
 
     // if we use a domain, and A records with a CloudFront alias
     if (props.domain) {

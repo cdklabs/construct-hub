@@ -184,7 +184,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
       // - stagingKey         =>                     staged/<@scope>/<name>/-/<name>-<version>.tgz
       const stagingKey = `${S3KeyPrefix.STAGED_KEY_PREFIX}${new URL(infos.dist.tarball).pathname}`.replace(/\/{2,}/g, '/');
       await putObject(stagingKey, tarball, {
-        ContentType: 'application/x-gtar',
+        ContentType: 'application/octet-stream',
         Metadata: {
           'Modified-At': modified.toISOString(),
           'Origin-Integrity': infos.dist.shasum,
@@ -219,7 +219,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
       console.error(`[${seq}] Failed processing, logging error to S3 and resuming work. ${infos.name}@${infos.version}: ${err}`);
       metrics.putMetric(MetricName.STAGING_FAILURE_COUNT, 1, Unit.Count);
       await putObject(`${S3KeyPrefix.FAILED_KEY_PREFIX}${seq}`, JSON.stringify({ ...infos, _construct_hub_failure_reason: err }, null, 2), {
-        ContentType: 'text/json; charset=UTF-8',
+        ContentType: 'application/json',
         Metadata: {
           'Modified-At': modified.toISOString(),
         },

@@ -136,7 +136,8 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
         Bucket: BUCKET_NAME,
         Key: packageKey,
         Body: tarball.Body,
-        ContentType: 'application/x-gtar',
+        CacheControl: 'public',
+        ContentType: 'application/octet-stream',
         Metadata: {
           'Lambda-Log-Group': context.logGroupName,
           'Lambda-Log-Stream': context.logStreamName,
@@ -147,6 +148,7 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
         Bucket: BUCKET_NAME,
         Key: metadataKey,
         Body: JSON.stringify(metadata),
+        CacheControl: 'public',
         ContentType: 'application/json',
         Metadata: {
           'Lambda-Log-Group': context.logGroupName,
@@ -162,6 +164,7 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
       Bucket: BUCKET_NAME,
       Key: assemblyKey,
       Body: dotJsii,
+      CacheControl: 'public',
       ContentType: 'application/json',
       Metadata: {
         'Lambda-Log-Group': context.logGroupName,
