@@ -1,7 +1,7 @@
 import { Context } from 'aws-lambda';
 import type * as AWS from 'aws-sdk';
-import { requireEnv } from '../shared/env.lambda-shared';
 import * as aws from '../shared/aws.lambda-shared';
+import { requireEnv } from '../shared/env.lambda-shared';
 
 export async function handler(event: unknown, context: Context): Promise<void> {
   const stateMachineArn = requireEnv('STATE_MACHINE_ARN');

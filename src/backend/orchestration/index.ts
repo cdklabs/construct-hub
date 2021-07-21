@@ -53,11 +53,11 @@ export class Orchestration extends Construct {
       resultPath: JsonPath.DISCARD,
     });
 
-    const definition = new Parallel(this, 'Transliterate')
+    const definition = new Parallel(this, 'DocGen')
       .branch(...SUPPORTED_LANGUAGES.map((language) => {
-        const task = new tasks.LambdaInvoke(this, `Transliterate to ${language}`, {
-          lambdaFunction: new Transliterator(this, `Transliterator-${language}`, { ...props, language }).function,
-          resultPath: `$.transliteratorOutput`,
+        const task = new tasks.LambdaInvoke(this, `Generate ${language} docs`, {
+          lambdaFunction: new Transliterator(this, `DocGen-${language}`, { ...props, language }).function,
+          resultPath: '$.docGenOutput',
           resultSelector: { [`${language}.$`]: '$.Payload' },
         }).addRetry({ interval: Duration.seconds(30) });
         // Add to catalog once the TypeScript transliteration result is ready.
