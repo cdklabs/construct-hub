@@ -75,8 +75,8 @@ export class BackendDashboard extends Construct {
             width: 12,
             title: 'Function Health',
             left: [
-              fillMetric(props.discovery.function.metricInvocations(), 'Invocations'),
-              fillMetric(props.discovery.function.metricErrors(), 'Errors'),
+              fillMetric(props.discovery.function.metricInvocations({ label: 'Invocations' })),
+              fillMetric(props.discovery.function.metricErrors({ label: 'Errors' })),
             ],
             leftYAxis: { min: 0 },
             right: [
@@ -95,8 +95,8 @@ export class BackendDashboard extends Construct {
             ],
             leftYAxis: { min: 0 },
             right: [
-              fillMetric(props.discovery.metricNpmJsChangeAge(), 'Lag to npmjs.com', 'REPEAT'),
-              fillMetric(props.discovery.metricPackageVersionAge(), 'Package Version Age', 'REPEAT'),
+              fillMetric(props.discovery.metricNpmJsChangeAge({ label: 'Lag to npmjs.com' }), 'REPEAT'),
+              fillMetric(props.discovery.metricPackageVersionAge({ label: 'Package Version Age' }), 'REPEAT'),
             ],
             rightYAxis: { min: 0 },
             period: Duration.minutes(15),
@@ -119,8 +119,8 @@ export class BackendDashboard extends Construct {
             width: 12,
             title: 'Function Health',
             left: [
-              fillMetric(props.ingestion.function.metricInvocations(), 'Invocations'),
-              fillMetric(props.ingestion.function.metricErrors(), 'Errors'),
+              fillMetric(props.ingestion.function.metricInvocations({ label: 'Invocations' })),
+              fillMetric(props.ingestion.function.metricErrors({ label: 'Errors' })),
             ],
             leftYAxis: { min: 0 },
             period: Duration.minutes(1),
@@ -152,14 +152,14 @@ export class BackendDashboard extends Construct {
             width: 12,
             title: 'Input Quality',
             left: [
-              props.ingestion.metricInvalidAssembly({ label: 'Invalid Assemblies' }),
-              props.ingestion.metricInvalidTarball({ label: 'Invalid Tarball' }),
-              props.ingestion.metricIneligibleLicense({ label: 'Ineligible License' }),
-              props.ingestion.metricMismatchedIdentityRejections({ label: 'Mismatched Identity' }),
+              fillMetric(props.ingestion.metricInvalidAssembly({ label: 'Invalid Assemblies' })),
+              fillMetric(props.ingestion.metricInvalidTarball({ label: 'Invalid Tarball' })),
+              fillMetric(props.ingestion.metricIneligibleLicense({ label: 'Ineligible License' })),
+              fillMetric(props.ingestion.metricMismatchedIdentityRejections({ label: 'Mismatched Identity' })),
             ],
             leftYAxis: { min: 0 },
             right: [
-              props.ingestion.metricFoundLicenseFile({ label: 'Found License file' }),
+              fillMetric(props.ingestion.metricFoundLicenseFile({ label: 'Found License file' })),
             ],
             rightYAxis: { min: 0 },
           }),
@@ -180,12 +180,12 @@ export class BackendDashboard extends Construct {
             width: 12,
             title: 'State Machine Executions',
             left: [
-              props.orchestration.stateMachine.metricStarted({ label: 'Started' }),
-              props.orchestration.stateMachine.metricSucceeded({ label: 'Succeeded' }),
-              props.orchestration.stateMachine.metricAborted({ label: 'Aborted' }),
-              props.orchestration.stateMachine.metricFailed({ label: 'Failed' }),
-              props.orchestration.stateMachine.metricThrottled({ label: 'Throttled' }),
-              props.orchestration.stateMachine.metricTimedOut({ label: 'Timed Out' }),
+              fillMetric(props.orchestration.stateMachine.metricStarted({ label: 'Started' })),
+              fillMetric(props.orchestration.stateMachine.metricSucceeded({ label: 'Succeeded' })),
+              fillMetric(props.orchestration.stateMachine.metricAborted({ label: 'Aborted' })),
+              fillMetric(props.orchestration.stateMachine.metricFailed({ label: 'Failed' })),
+              fillMetric(props.orchestration.stateMachine.metricThrottled({ label: 'Throttled' })),
+              fillMetric(props.orchestration.stateMachine.metricTimedOut({ label: 'Timed Out' })),
             ],
             leftYAxis: { min: 0 },
             right: [
@@ -222,14 +222,14 @@ function stateMachineUrl(stateMachine: IStateMachine): string {
   return `/states/home#/statemachines/view/${stateMachine.stateMachineArn}`;
 }
 
-function fillMetric(metric: Metric, label: string, value: number | 'REPEAT' = 0): MathExpression {
+function fillMetric(metric: Metric, value: number | 'REPEAT' = 0): MathExpression {
   const h = createHash('sha256')
     .update(JSON.stringify(metric.toMetricConfig()))
     .digest('hex');
   const metricName = `m${h}`;
   return new MathExpression({
     expression: `FILL(${metricName}, ${value})`,
-    label,
+    label: metric.label,
     usingMetrics: { [metricName]: metric },
   });
 }
