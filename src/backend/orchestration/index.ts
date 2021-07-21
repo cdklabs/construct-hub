@@ -68,9 +68,8 @@ export class Orchestration extends Construct {
       }))
       .addCatch(
         sendToDeadLetterQueue.next(new Fail(this, 'Fail', {
-          cause: '$._error.Cause',
-          comment: '"Input payload was sent to the Dead Letter Queue"',
-          error: '$._error.Error',
+          error: 'Failed',
+          cause: 'Input was submitted to dead letter queue',
         })),
         { resultPath: '$._error' },
       );
