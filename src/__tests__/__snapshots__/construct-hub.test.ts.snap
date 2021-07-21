@@ -45,6 +45,18 @@ Object {
       "Description": "S3 key for asset version \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
       "Type": "String",
     },
+    "AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0ArtifactHashE7494211": Object {
+      "Description": "Artifact hash for asset \\"6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0\\"",
+      "Type": "String",
+    },
+    "AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0S3BucketE303749C": Object {
+      "Description": "S3 bucket for asset \\"6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0\\"",
+      "Type": "String",
+    },
+    "AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0S3VersionKey1AAD9013": Object {
+      "Description": "S3 key for asset version \\"6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0\\"",
+      "Type": "String",
+    },
     "AssetParameters6b4a338b691490f1fd6351e29140684b4cc8c932fa8610251617ca4279b42c9fArtifactHash0F9EA6AA": Object {
       "Description": "Artifact hash for asset \\"6b4a338b691490f1fd6351e29140684b4cc8c932fa8610251617ca4279b42c9f\\"",
       "Type": "String",
@@ -139,18 +151,6 @@ Object {
     },
     "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70": Object {
       "Description": "S3 key for asset version \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
-      "Type": "String",
-    },
-    "AssetParametersc3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178ArtifactHash2EFE7865": Object {
-      "Description": "Artifact hash for asset \\"c3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178\\"",
-      "Type": "String",
-    },
-    "AssetParametersc3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178S3BucketD26C1238": Object {
-      "Description": "S3 bucket for asset \\"c3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178\\"",
-      "Type": "String",
-    },
-    "AssetParametersc3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178S3VersionKey107147BB": Object {
-      "Description": "S3 key for asset version \\"c3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178\\"",
       "Type": "String",
     },
     "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
@@ -474,15 +474,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[{\\"label\\":\\"Invocations\\",\\"expression\\":\\"FILL(mf0ce9d4972cc4e438eba73a6e8d3cc14f5e654cb5582dbcda94e26358b6c28ab, 0)\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Invocations\\",\\"expression\\":\\"FILL(m824640c81e84bb1ceb367405ec318fc2cdb76ac5c26cfa2d6d1ae235e5c7479c, 0)\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
               Object {
                 "Ref": "ConstructHubDiscoveryD6EEC2B8",
               },
-              "\\",{\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"mf0ce9d4972cc4e438eba73a6e8d3cc14f5e654cb5582dbcda94e26358b6c28ab\\"}],[{\\"label\\":\\"Errors\\",\\"expression\\":\\"FILL(m85c6eaed92c8bba391160e35d036d8fdae171e99ebac276b9292e506116a7271, 0)\\"}],[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
+              "\\",{\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m824640c81e84bb1ceb367405ec318fc2cdb76ac5c26cfa2d6d1ae235e5c7479c\\"}],[{\\"label\\":\\"Errors\\",\\"expression\\":\\"FILL(m2c0d30b33e83f51e39932367d36e9af0a8a00987dcffa3fb5f237783e259c7f2, 0)\\"}],[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
               Object {
                 "Ref": "ConstructHubDiscoveryD6EEC2B8",
               },
-              "\\",{\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m85c6eaed92c8bba391160e35d036d8fdae171e99ebac276b9292e506116a7271\\"}],[\\"ConstructHub/Discovery\\",\\"RemainingTime\\",{\\"label\\":\\"Remaining Time\\",\\"period\\":900,\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":900}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Follower\\",\\"region\\":\\"",
+              "\\",{\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m2c0d30b33e83f51e39932367d36e9af0a8a00987dcffa3fb5f237783e259c7f2\\"}],[\\"ConstructHub/Discovery\\",\\"RemainingTime\\",{\\"label\\":\\"Remaining Time\\",\\"period\\":900,\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":900}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Follower\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -494,15 +494,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[{\\"label\\":\\"Invocations\\",\\"expression\\":\\"FILL(mc805e1067382dae62256bb0e41682b688d16969f3c07bc0b581088309ec62765, 0)\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Invocations\\",\\"expression\\":\\"FILL(m56c2b384625b213390de66f2fa9b27a13243fda58128758b463ea79e30f5aa70, 0)\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "\\",{\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"mc805e1067382dae62256bb0e41682b688d16969f3c07bc0b581088309ec62765\\"}],[{\\"label\\":\\"Errors\\",\\"expression\\":\\"FILL(m391c2d74828158ac2cd27321ef3f53a09132ec2618eeb6d1422765938e2221ce, 0)\\"}],[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
+              "\\",{\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m56c2b384625b213390de66f2fa9b27a13243fda58128758b463ea79e30f5aa70\\"}],[{\\"label\\":\\"Errors\\",\\"expression\\":\\"FILL(m8001ca11895cd0d2b9c5830c8fff322c6c5c99cf4ed46edc3a257ce9472b5ce6, 0)\\"}],[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "\\",{\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m391c2d74828158ac2cd27321ef3f53a09132ec2618eeb6d1422765938e2221ce\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
+              "\\",{\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m8001ca11895cd0d2b9c5830c8fff322c6c5c99cf4ed46edc3a257ce9472b5ce6\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -1591,7 +1591,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "#/functions/",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                "Ref": "ConstructHubOrchestrationDocGenpython77179663",
               },
               "?tab=graph) [button:CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home?region=",
               Object {
@@ -1599,7 +1599,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "#logEventViewer:group=/aws/lambda/",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                "Ref": "ConstructHubOrchestrationDocGenpython77179663",
               },
               ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":0,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocations/5min\\",\\"region\\":\\"",
               Object {
@@ -1607,7 +1607,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                "Ref": "ConstructHubOrchestrationDocGenpython77179663",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":6,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Errors/5min\\",\\"region\\":\\"",
               Object {
@@ -1615,7 +1615,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                "Ref": "ConstructHubOrchestrationDocGenpython77179663",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Errors > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":12,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Throttles/5min\\",\\"region\\":\\"",
               Object {
@@ -1623,7 +1623,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Throttles\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                "Ref": "ConstructHubOrchestrationDocGenpython77179663",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Throttles > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":18,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Duration/5min\\",\\"region\\":\\"",
               Object {
@@ -1631,7 +1631,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Duration\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                "Ref": "ConstructHubOrchestrationDocGenpython77179663",
               },
               "\\",{\\"label\\":\\"p99\\",\\"stat\\":\\"p99\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"p99 > 720000 for 3 datapoints within 15 minutes\\",\\"value\\":720000,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":16,\\"properties\\":{\\"markdown\\":\\"# Transliterator Function\\\\n\\\\n[button:AWS Lambda Console](https://console.aws.amazon.com/lambda/home?region=",
               Object {
@@ -1639,7 +1639,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "#/functions/",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
               },
               "?tab=graph) [button:CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home?region=",
               Object {
@@ -1647,7 +1647,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "#logEventViewer:group=/aws/lambda/",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
               },
               ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":0,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocations/5min\\",\\"region\\":\\"",
               Object {
@@ -1655,7 +1655,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":6,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Errors/5min\\",\\"region\\":\\"",
               Object {
@@ -1663,7 +1663,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Errors > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":12,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Throttles/5min\\",\\"region\\":\\"",
               Object {
@@ -1671,7 +1671,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Throttles\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Throttles > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":18,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Duration/5min\\",\\"region\\":\\"",
               Object {
@@ -1679,7 +1679,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Duration\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
               },
               "\\",{\\"label\\":\\"p99\\",\\"stat\\":\\"p99\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"p99 > 720000 for 3 datapoints within 15 minutes\\",\\"value\\":720000,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":24,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:AWS Lambda Console](https://console.aws.amazon.com/lambda/home?region=",
               Object {
@@ -2141,7 +2141,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationTransliteratorpython9CD0D389DurationAlarm335D9268": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationDocGenpythonB1042824DurationAlarm88745261": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "p99 latency >= 720s (80%)",
@@ -2157,7 +2157,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   Object {
                     "Name": "FunctionName",
                     "Value": Object {
-                      "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                      "Ref": "ConstructHubOrchestrationDocGenpython77179663",
                     },
                   },
                 ],
@@ -2174,7 +2174,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationTransliteratorpython9CD0D389ErrorsAlarm7AEBFE47": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationDocGenpythonB1042824ErrorsAlarm953E29B8": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "Over 0 errors per minute",
@@ -2183,7 +2183,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+              "Ref": "ConstructHubOrchestrationDocGenpython77179663",
             },
           },
         ],
@@ -2196,7 +2196,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationTransliteratorpython9CD0D389ThrottlesAlarmEF086FC5": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationDocGenpythonB1042824ThrottlesAlarm7CA5AACB": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "Over 0 throttles per minute",
@@ -2205,7 +2205,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+              "Ref": "ConstructHubOrchestrationDocGenpython77179663",
             },
           },
         ],
@@ -2218,7 +2218,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationTransliteratortypescriptD08F8C3BDurationAlarmE1FD6BBA": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationDocGentypescriptF6589D0DDurationAlarm371C25E7": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "p99 latency >= 720s (80%)",
@@ -2234,7 +2234,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   Object {
                     "Name": "FunctionName",
                     "Value": Object {
-                      "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                      "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
                     },
                   },
                 ],
@@ -2251,7 +2251,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationTransliteratortypescriptD08F8C3BErrorsAlarm2CB688EE": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationDocGentypescriptF6589D0DErrorsAlarmCDDE8596": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "Over 0 errors per minute",
@@ -2260,7 +2260,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+              "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
             },
           },
         ],
@@ -2273,7 +2273,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationTransliteratortypescriptD08F8C3BThrottlesAlarmDA012C0E": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationDocGentypescriptF6589D0DThrottlesAlarmA2932C57": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "Over 0 throttles per minute",
@@ -2282,7 +2282,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+              "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
             },
           },
         ],
@@ -2524,25 +2524,25 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Transliterate\\",\\"States\\":{\\"Transliterate\\":{\\"Type\\":\\"Parallel\\",\\"End\\":true,\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$._error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Branches\\":[{\\"StartAt\\":\\"Transliterate to python\\",\\"States\\":{\\"Transliterate to python\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"IntervalSeconds\\":30}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.transliteratorOutput\\",\\"ResultSelector\\":{\\"python.$\\":\\"$.Payload\\"},\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"DocGen\\",\\"States\\":{\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"End\\":true,\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$._error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Branches\\":[{\\"StartAt\\":\\"Generate python docs\\",\\"States\\":{\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"IntervalSeconds\\":30}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.docGenOutput\\",\\"ResultSelector\\":{\\"python.$\\":\\"$.Payload\\"},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
               ":states:::lambda:invoke\\",\\"Parameters\\":{\\"FunctionName\\":\\"",
               Object {
                 "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                  "ConstructHubOrchestrationDocGenpython77179663",
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}}}},{\\"StartAt\\":\\"Transliterate to typescript\\",\\"States\\":{\\"Transliterate to typescript\\":{\\"Next\\":\\"Add to catalog.json\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"IntervalSeconds\\":30}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.transliteratorOutput\\",\\"ResultSelector\\":{\\"typescript.$\\":\\"$.Payload\\"},\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}}}},{\\"StartAt\\":\\"Generate typescript docs\\",\\"States\\":{\\"Generate typescript docs\\":{\\"Next\\":\\"Add to catalog.json\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"IntervalSeconds\\":30}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.docGenOutput\\",\\"ResultSelector\\":{\\"typescript.$\\":\\"$.Payload\\"},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
               ":states:::lambda:invoke\\",\\"Parameters\\":{\\"FunctionName\\":\\"",
               Object {
                 "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                  "ConstructHubOrchestrationDocGentypescriptF9C30384",
                   "Arn",
                 ],
               },
@@ -2768,15 +2768,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::SQS::Queue",
       "UpdateReplacePolicy": "Delete",
     },
-    "ConstructHubOrchestrationRedrive8DDBA67E": Object {
+    "ConstructHubOrchestrationDocGenpython77179663": Object {
       "DependsOn": Array [
-        "ConstructHubOrchestrationRedriveServiceRoleDefaultPolicyC018F436",
-        "ConstructHubOrchestrationRedriveServiceRoleB84EFF33",
+        "ConstructHubOrchestrationDocGenpythonServiceRoleDefaultPolicy7A9DA724",
+        "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
       ],
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersc3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178S3BucketD26C1238",
+            "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3BucketE8440598",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -2789,7 +2789,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersc3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178S3VersionKey107147BB",
+                          "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3VersionKeyF4CC8D6B",
                         },
                       ],
                     },
@@ -2802,7 +2802,629 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersc3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178S3VersionKey107147BB",
+                          "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3VersionKeyF4CC8D6B",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Creates python documentation from jsii-enabled npm packages",
+        "Environment": Object {
+          "Variables": Object {
+            "CODE_ARTIFACT_API_ENDPOINT": Object {
+              "Fn::Select": Array [
+                1,
+                Object {
+                  "Fn::Split": Array [
+                    ":",
+                    Object {
+                      "Fn::Select": Array [
+                        0,
+                        Object {
+                          "Fn::GetAtt": Array [
+                            "ConstructHubVPCCodeArtifactAPI954CFDE1",
+                            "DnsEntries",
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            "CODE_ARTIFACT_DOMAIN_NAME": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifact1188409E",
+                "DomainName",
+              ],
+            },
+            "CODE_ARTIFACT_DOMAIN_OWNER": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifact1188409E",
+                "DomainOwner",
+              ],
+            },
+            "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifactGetEndpoint9A458FEF",
+                "repositoryEndpoint",
+              ],
+            },
+            "HEADER_SPAN": "true",
+            "TARGET_LANGUAGE": "python",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 10240,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+        "VpcConfig": Object {
+          "SecurityGroupIds": Array [
+            Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubOrchestrationDocGenpythonSecurityGroup5820AD9B",
+                "GroupId",
+              ],
+            },
+          ],
+          "SubnetIds": Array [
+            Object {
+              "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
+            },
+            Object {
+              "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
+            },
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubOrchestrationDocGenpythonLogRetention31242A5D": Object {
+      "Properties": Object {
+        "LogGroupName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "/aws/lambda/",
+              Object {
+                "Ref": "ConstructHubOrchestrationDocGenpython77179663",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubOrchestrationDocGenpythonSecurityGroup5820AD9B": Object {
+      "Properties": Object {
+        "GroupDescription": "Automatic security group for Lambda Function TestConstructHubOrchestrationDocGenpythonB1042824",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubOrchestrationDocGenpythonServiceRoleDefaultPolicy7A9DA724": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:GetServiceBearerToken",
+              "Condition": Object {
+                "StringEquals": Object {
+                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
+                },
+              },
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "codeartifact:GetAuthorizationToken",
+                "codeartifact:GetRepositoryEndpoint",
+                "codeartifact:ReadFromRepository",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifactDomainFC30B796",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifact1188409E",
+                    "Arn",
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/assembly.json",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubOrchestrationDocGenpythonServiceRoleDefaultPolicy7A9DA724",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubOrchestrationDocGentypescriptF9C30384": Object {
+      "DependsOn": Array [
+        "ConstructHubOrchestrationDocGentypescriptServiceRoleDefaultPolicyEBA45F12",
+        "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3BucketE8440598",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3VersionKeyF4CC8D6B",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3VersionKeyF4CC8D6B",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Creates typescript documentation from jsii-enabled npm packages",
+        "Environment": Object {
+          "Variables": Object {
+            "CODE_ARTIFACT_API_ENDPOINT": Object {
+              "Fn::Select": Array [
+                1,
+                Object {
+                  "Fn::Split": Array [
+                    ":",
+                    Object {
+                      "Fn::Select": Array [
+                        0,
+                        Object {
+                          "Fn::GetAtt": Array [
+                            "ConstructHubVPCCodeArtifactAPI954CFDE1",
+                            "DnsEntries",
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            "CODE_ARTIFACT_DOMAIN_NAME": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifact1188409E",
+                "DomainName",
+              ],
+            },
+            "CODE_ARTIFACT_DOMAIN_OWNER": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifact1188409E",
+                "DomainOwner",
+              ],
+            },
+            "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifactGetEndpoint9A458FEF",
+                "repositoryEndpoint",
+              ],
+            },
+            "HEADER_SPAN": "true",
+            "TARGET_LANGUAGE": "typescript",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 10240,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+        "VpcConfig": Object {
+          "SecurityGroupIds": Array [
+            Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubOrchestrationDocGentypescriptSecurityGroupDD0CDD88",
+                "GroupId",
+              ],
+            },
+          ],
+          "SubnetIds": Array [
+            Object {
+              "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
+            },
+            Object {
+              "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
+            },
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubOrchestrationDocGentypescriptLogRetentionDB3B5194": Object {
+      "Properties": Object {
+        "LogGroupName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "/aws/lambda/",
+              Object {
+                "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubOrchestrationDocGentypescriptSecurityGroupDD0CDD88": Object {
+      "Properties": Object {
+        "GroupDescription": "Automatic security group for Lambda Function TestConstructHubOrchestrationDocGentypescriptF6589D0D",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubOrchestrationDocGentypescriptServiceRoleDefaultPolicyEBA45F12": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:GetServiceBearerToken",
+              "Condition": Object {
+                "StringEquals": Object {
+                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
+                },
+              },
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "codeartifact:GetAuthorizationToken",
+                "codeartifact:GetRepositoryEndpoint",
+                "codeartifact:ReadFromRepository",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifactDomainFC30B796",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifact1188409E",
+                    "Arn",
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/assembly.json",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubOrchestrationDocGentypescriptServiceRoleDefaultPolicyEBA45F12",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubOrchestrationRedrive8DDBA67E": Object {
+      "DependsOn": Array [
+        "ConstructHubOrchestrationRedriveServiceRoleDefaultPolicyC018F436",
+        "ConstructHubOrchestrationRedriveServiceRoleB84EFF33",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0S3BucketE303749C",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0S3VersionKey1AAD9013",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0S3VersionKey1AAD9013",
                         },
                       ],
                     },
@@ -2925,7 +3547,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Effect": "Allow",
               "Resource": Object {
                 "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                  "ConstructHubOrchestrationDocGenpython77179663",
                   "Arn",
                 ],
               },
@@ -2935,7 +3557,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Effect": "Allow",
               "Resource": Object {
                 "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                  "ConstructHubOrchestrationDocGentypescriptF9C30384",
                   "Arn",
                 ],
               },
@@ -2989,628 +3611,6 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "AWS::IAM::Role",
-    },
-    "ConstructHubOrchestrationTransliteratorpython27B6BEA2": Object {
-      "DependsOn": Array [
-        "ConstructHubOrchestrationTransliteratorpythonServiceRoleDefaultPolicy36F84438",
-        "ConstructHubOrchestrationTransliteratorpythonServiceRoleC336F7D0",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3BucketE8440598",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3VersionKeyF4CC8D6B",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3VersionKeyF4CC8D6B",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "Description": "Creates python documentation from jsii-enabled npm packages",
-        "Environment": Object {
-          "Variables": Object {
-            "CODE_ARTIFACT_API_ENDPOINT": Object {
-              "Fn::Select": Array [
-                1,
-                Object {
-                  "Fn::Split": Array [
-                    ":",
-                    Object {
-                      "Fn::Select": Array [
-                        0,
-                        Object {
-                          "Fn::GetAtt": Array [
-                            "ConstructHubVPCCodeArtifactAPI954CFDE1",
-                            "DnsEntries",
-                          ],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-            "CODE_ARTIFACT_DOMAIN_NAME": Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubCodeArtifact1188409E",
-                "DomainName",
-              ],
-            },
-            "CODE_ARTIFACT_DOMAIN_OWNER": Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubCodeArtifact1188409E",
-                "DomainOwner",
-              ],
-            },
-            "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubCodeArtifactGetEndpoint9A458FEF",
-                "repositoryEndpoint",
-              ],
-            },
-            "HEADER_SPAN": "true",
-            "TARGET_LANGUAGE": "python",
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 10240,
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "ConstructHubOrchestrationTransliteratorpythonServiceRoleC336F7D0",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "VpcConfig": Object {
-          "SecurityGroupIds": Array [
-            Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubOrchestrationTransliteratorpythonSecurityGroup75EF0EB4",
-                "GroupId",
-              ],
-            },
-          ],
-          "SubnetIds": Array [
-            Object {
-              "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
-            },
-            Object {
-              "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
-            },
-          ],
-        },
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "ConstructHubOrchestrationTransliteratorpythonLogRetention5E31F6B3": Object {
-      "Properties": Object {
-        "LogGroupName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "/aws/lambda/",
-              Object {
-                "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 3653,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-    },
-    "ConstructHubOrchestrationTransliteratorpythonSecurityGroup75EF0EB4": Object {
-      "Properties": Object {
-        "GroupDescription": "Automatic security group for Lambda Function TestConstructHubOrchestrationTransliteratorpython9CD0D389",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "ConstructHubOrchestrationTransliteratorpythonServiceRoleC336F7D0": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "ConstructHubOrchestrationTransliteratorpythonServiceRoleDefaultPolicy36F84438": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:GetServiceBearerToken",
-              "Condition": Object {
-                "StringEquals": Object {
-                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
-                },
-              },
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-            Object {
-              "Action": Array [
-                "codeartifact:GetAuthorizationToken",
-                "codeartifact:GetRepositoryEndpoint",
-                "codeartifact:ReadFromRepository",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubCodeArtifactDomainFC30B796",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubCodeArtifact1188409E",
-                    "Arn",
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/assembly.json",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*.md",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ConstructHubOrchestrationTransliteratorpythonServiceRoleDefaultPolicy36F84438",
-        "Roles": Array [
-          Object {
-            "Ref": "ConstructHubOrchestrationTransliteratorpythonServiceRoleC336F7D0",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
-    "ConstructHubOrchestrationTransliteratortypescript01D0FF4F": Object {
-      "DependsOn": Array [
-        "ConstructHubOrchestrationTransliteratortypescriptServiceRoleDefaultPolicy6B7C345E",
-        "ConstructHubOrchestrationTransliteratortypescriptServiceRole2BDF7A91",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3BucketE8440598",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3VersionKeyF4CC8D6B",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3VersionKeyF4CC8D6B",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "Description": "Creates typescript documentation from jsii-enabled npm packages",
-        "Environment": Object {
-          "Variables": Object {
-            "CODE_ARTIFACT_API_ENDPOINT": Object {
-              "Fn::Select": Array [
-                1,
-                Object {
-                  "Fn::Split": Array [
-                    ":",
-                    Object {
-                      "Fn::Select": Array [
-                        0,
-                        Object {
-                          "Fn::GetAtt": Array [
-                            "ConstructHubVPCCodeArtifactAPI954CFDE1",
-                            "DnsEntries",
-                          ],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-            "CODE_ARTIFACT_DOMAIN_NAME": Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubCodeArtifact1188409E",
-                "DomainName",
-              ],
-            },
-            "CODE_ARTIFACT_DOMAIN_OWNER": Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubCodeArtifact1188409E",
-                "DomainOwner",
-              ],
-            },
-            "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubCodeArtifactGetEndpoint9A458FEF",
-                "repositoryEndpoint",
-              ],
-            },
-            "HEADER_SPAN": "true",
-            "TARGET_LANGUAGE": "typescript",
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 10240,
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "ConstructHubOrchestrationTransliteratortypescriptServiceRole2BDF7A91",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "VpcConfig": Object {
-          "SecurityGroupIds": Array [
-            Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubOrchestrationTransliteratortypescriptSecurityGroup6B6C1777",
-                "GroupId",
-              ],
-            },
-          ],
-          "SubnetIds": Array [
-            Object {
-              "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
-            },
-            Object {
-              "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
-            },
-          ],
-        },
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "ConstructHubOrchestrationTransliteratortypescriptLogRetention7A601004": Object {
-      "Properties": Object {
-        "LogGroupName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "/aws/lambda/",
-              Object {
-                "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 3653,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-    },
-    "ConstructHubOrchestrationTransliteratortypescriptSecurityGroup6B6C1777": Object {
-      "Properties": Object {
-        "GroupDescription": "Automatic security group for Lambda Function TestConstructHubOrchestrationTransliteratortypescriptD08F8C3B",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "ConstructHubOrchestrationTransliteratortypescriptServiceRole2BDF7A91": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "ConstructHubOrchestrationTransliteratortypescriptServiceRoleDefaultPolicy6B7C345E": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:GetServiceBearerToken",
-              "Condition": Object {
-                "StringEquals": Object {
-                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
-                },
-              },
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-            Object {
-              "Action": Array [
-                "codeartifact:GetAuthorizationToken",
-                "codeartifact:GetRepositoryEndpoint",
-                "codeartifact:ReadFromRepository",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubCodeArtifactDomainFC30B796",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubCodeArtifact1188409E",
-                    "Arn",
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/assembly.json",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*.md",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ConstructHubOrchestrationTransliteratortypescriptServiceRoleDefaultPolicy6B7C345E",
-        "Roles": Array [
-          Object {
-            "Ref": "ConstructHubOrchestrationTransliteratortypescriptServiceRole2BDF7A91",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubPackageDataAllowBucketNotificationsToTestConstructHubWebAppCacheInvalidator7EE0E8FBBF40B7C8": Object {
       "Properties": Object {
@@ -3824,7 +3824,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Principal": Object {
                 "AWS": Object {
                   "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationTransliteratorpythonServiceRoleC336F7D0",
+                    "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
                     "Arn",
                   ],
                 },
@@ -3840,7 +3840,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Principal": Object {
                 "AWS": Object {
                   "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationTransliteratorpythonServiceRoleC336F7D0",
+                    "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
                     "Arn",
                   ],
                 },
@@ -3871,7 +3871,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Principal": Object {
                 "AWS": Object {
                   "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationTransliteratortypescriptServiceRole2BDF7A91",
+                    "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
                     "Arn",
                   ],
                 },
@@ -3887,7 +3887,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Principal": Object {
                 "AWS": Object {
                   "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationTransliteratortypescriptServiceRole2BDF7A91",
+                    "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
                     "Arn",
                   ],
                 },
@@ -4006,7 +4006,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Principal": Object {
                 "AWS": Object {
                   "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationTransliteratorpythonServiceRoleC336F7D0",
+                    "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
                     "Arn",
                   ],
                 },
@@ -4024,7 +4024,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Principal": Object {
                 "AWS": Object {
                   "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationTransliteratortypescriptServiceRole2BDF7A91",
+                    "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
                     "Arn",
                   ],
                 },
@@ -5215,6 +5215,18 @@ Object {
       "Description": "S3 key for asset version \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
       "Type": "String",
     },
+    "AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0ArtifactHashE7494211": Object {
+      "Description": "Artifact hash for asset \\"6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0\\"",
+      "Type": "String",
+    },
+    "AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0S3BucketE303749C": Object {
+      "Description": "S3 bucket for asset \\"6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0\\"",
+      "Type": "String",
+    },
+    "AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0S3VersionKey1AAD9013": Object {
+      "Description": "S3 key for asset version \\"6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0\\"",
+      "Type": "String",
+    },
     "AssetParameters6b4a338b691490f1fd6351e29140684b4cc8c932fa8610251617ca4279b42c9fArtifactHash0F9EA6AA": Object {
       "Description": "Artifact hash for asset \\"6b4a338b691490f1fd6351e29140684b4cc8c932fa8610251617ca4279b42c9f\\"",
       "Type": "String",
@@ -5321,18 +5333,6 @@ Object {
     },
     "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70": Object {
       "Description": "S3 key for asset version \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
-      "Type": "String",
-    },
-    "AssetParametersc3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178ArtifactHash2EFE7865": Object {
-      "Description": "Artifact hash for asset \\"c3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178\\"",
-      "Type": "String",
-    },
-    "AssetParametersc3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178S3BucketD26C1238": Object {
-      "Description": "S3 bucket for asset \\"c3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178\\"",
-      "Type": "String",
-    },
-    "AssetParametersc3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178S3VersionKey107147BB": Object {
-      "Description": "S3 key for asset version \\"c3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178\\"",
       "Type": "String",
     },
     "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
@@ -5805,15 +5805,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[{\\"label\\":\\"Invocations\\",\\"expression\\":\\"FILL(mdce0f7eba91facbf53a7ee672bc025731110cc7d6a09ae0296b1367093d70002, 0)\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Invocations\\",\\"expression\\":\\"FILL(mfb420ab4124f040a92b40629c6a6c3740fdfba8659fdb2515ed2b710e0af4256, 0)\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
               Object {
                 "Ref": "ConstructHubDiscoveryD6EEC2B8",
               },
-              "\\",{\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"mdce0f7eba91facbf53a7ee672bc025731110cc7d6a09ae0296b1367093d70002\\"}],[{\\"label\\":\\"Errors\\",\\"expression\\":\\"FILL(m1258315f4487d010a656001eacfebe1d912d39c524ec25d21408555c5d104fd8, 0)\\"}],[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
+              "\\",{\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"mfb420ab4124f040a92b40629c6a6c3740fdfba8659fdb2515ed2b710e0af4256\\"}],[{\\"label\\":\\"Errors\\",\\"expression\\":\\"FILL(m30391d36641bad4b3744b5529ccc996b47445cc9755961369e0e9a441afed0ce, 0)\\"}],[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
               Object {
                 "Ref": "ConstructHubDiscoveryD6EEC2B8",
               },
-              "\\",{\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m1258315f4487d010a656001eacfebe1d912d39c524ec25d21408555c5d104fd8\\"}],[\\"ConstructHub/Discovery\\",\\"RemainingTime\\",{\\"label\\":\\"Remaining Time\\",\\"period\\":900,\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":900}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Follower\\",\\"region\\":\\"",
+              "\\",{\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m30391d36641bad4b3744b5529ccc996b47445cc9755961369e0e9a441afed0ce\\"}],[\\"ConstructHub/Discovery\\",\\"RemainingTime\\",{\\"label\\":\\"Remaining Time\\",\\"period\\":900,\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":900}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Follower\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -5825,15 +5825,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[{\\"label\\":\\"Invocations\\",\\"expression\\":\\"FILL(mebfe689d914734cd510551f7baaea515aff98c25b6e59cf5d0604164bd69d78e, 0)\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Invocations\\",\\"expression\\":\\"FILL(mc52258ea2d03cb6ff9a291715456ec3374bb6266d7bdf540d159ac0eb9c8a6cf, 0)\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "\\",{\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"mebfe689d914734cd510551f7baaea515aff98c25b6e59cf5d0604164bd69d78e\\"}],[{\\"label\\":\\"Errors\\",\\"expression\\":\\"FILL(m34b88c37d742c0bed7266375ca02eec11849664af7b9e5cbc95e979c4508e5d9, 0)\\"}],[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
+              "\\",{\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"mc52258ea2d03cb6ff9a291715456ec3374bb6266d7bdf540d159ac0eb9c8a6cf\\"}],[{\\"label\\":\\"Errors\\",\\"expression\\":\\"FILL(ma4bf2a54cece0895b84c8de5587ac0dd744537cfef9788068a618e41203fb567, 0)\\"}],[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "\\",{\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m34b88c37d742c0bed7266375ca02eec11849664af7b9e5cbc95e979c4508e5d9\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
+              "\\",{\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"ma4bf2a54cece0895b84c8de5587ac0dd744537cfef9788068a618e41203fb567\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -6944,7 +6944,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "#/functions/",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                "Ref": "ConstructHubOrchestrationDocGenpython77179663",
               },
               "?tab=graph) [button:CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home?region=",
               Object {
@@ -6952,7 +6952,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "#logEventViewer:group=/aws/lambda/",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                "Ref": "ConstructHubOrchestrationDocGenpython77179663",
               },
               ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":0,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocations/5min\\",\\"region\\":\\"",
               Object {
@@ -6960,7 +6960,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                "Ref": "ConstructHubOrchestrationDocGenpython77179663",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":6,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Errors/5min\\",\\"region\\":\\"",
               Object {
@@ -6968,7 +6968,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                "Ref": "ConstructHubOrchestrationDocGenpython77179663",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Errors > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":12,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Throttles/5min\\",\\"region\\":\\"",
               Object {
@@ -6976,7 +6976,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Throttles\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                "Ref": "ConstructHubOrchestrationDocGenpython77179663",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Throttles > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":18,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Duration/5min\\",\\"region\\":\\"",
               Object {
@@ -6984,7 +6984,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Duration\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                "Ref": "ConstructHubOrchestrationDocGenpython77179663",
               },
               "\\",{\\"label\\":\\"p99\\",\\"stat\\":\\"p99\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"p99 > 720000 for 3 datapoints within 15 minutes\\",\\"value\\":720000,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":16,\\"properties\\":{\\"markdown\\":\\"# Transliterator Function\\\\n\\\\n[button:AWS Lambda Console](https://console.aws.amazon.com/lambda/home?region=",
               Object {
@@ -6992,7 +6992,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "#/functions/",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
               },
               "?tab=graph) [button:CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home?region=",
               Object {
@@ -7000,7 +7000,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "#logEventViewer:group=/aws/lambda/",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
               },
               ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":0,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocations/5min\\",\\"region\\":\\"",
               Object {
@@ -7008,7 +7008,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":6,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Errors/5min\\",\\"region\\":\\"",
               Object {
@@ -7016,7 +7016,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Errors > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":12,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Throttles/5min\\",\\"region\\":\\"",
               Object {
@@ -7024,7 +7024,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Throttles\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
               },
               "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Throttles > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":18,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Duration/5min\\",\\"region\\":\\"",
               Object {
@@ -7032,7 +7032,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Duration\\",\\"FunctionName\\",\\"",
               Object {
-                "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
               },
               "\\",{\\"label\\":\\"p99\\",\\"stat\\":\\"p99\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"p99 > 720000 for 3 datapoints within 15 minutes\\",\\"value\\":720000,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":24,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:AWS Lambda Console](https://console.aws.amazon.com/lambda/home?region=",
               Object {
@@ -7494,7 +7494,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationTransliteratorpython9CD0D389DurationAlarm335D9268": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationDocGenpythonB1042824DurationAlarm88745261": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "p99 latency >= 720s (80%)",
@@ -7510,7 +7510,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   Object {
                     "Name": "FunctionName",
                     "Value": Object {
-                      "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                      "Ref": "ConstructHubOrchestrationDocGenpython77179663",
                     },
                   },
                 ],
@@ -7527,7 +7527,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationTransliteratorpython9CD0D389ErrorsAlarm7AEBFE47": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationDocGenpythonB1042824ErrorsAlarm953E29B8": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "Over 0 errors per minute",
@@ -7536,7 +7536,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+              "Ref": "ConstructHubOrchestrationDocGenpython77179663",
             },
           },
         ],
@@ -7549,7 +7549,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationTransliteratorpython9CD0D389ThrottlesAlarmEF086FC5": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationDocGenpythonB1042824ThrottlesAlarm7CA5AACB": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "Over 0 throttles per minute",
@@ -7558,7 +7558,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+              "Ref": "ConstructHubOrchestrationDocGenpython77179663",
             },
           },
         ],
@@ -7571,7 +7571,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationTransliteratortypescriptD08F8C3BDurationAlarmE1FD6BBA": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationDocGentypescriptF6589D0DDurationAlarm371C25E7": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "p99 latency >= 720s (80%)",
@@ -7587,7 +7587,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   Object {
                     "Name": "FunctionName",
                     "Value": Object {
-                      "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                      "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
                     },
                   },
                 ],
@@ -7604,7 +7604,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationTransliteratortypescriptD08F8C3BErrorsAlarm2CB688EE": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationDocGentypescriptF6589D0DErrorsAlarmCDDE8596": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "Over 0 errors per minute",
@@ -7613,7 +7613,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+              "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
             },
           },
         ],
@@ -7626,7 +7626,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationTransliteratortypescriptD08F8C3BThrottlesAlarmDA012C0E": Object {
+    "ConstructHubMonitoringWatchfulTestConstructHubOrchestrationDocGentypescriptF6589D0DThrottlesAlarmA2932C57": Object {
       "Properties": Object {
         "AlarmActions": Array [],
         "AlarmDescription": "Over 0 throttles per minute",
@@ -7635,7 +7635,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           Object {
             "Name": "FunctionName",
             "Value": Object {
-              "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+              "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
             },
           },
         ],
@@ -7877,25 +7877,25 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Transliterate\\",\\"States\\":{\\"Transliterate\\":{\\"Type\\":\\"Parallel\\",\\"End\\":true,\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$._error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Branches\\":[{\\"StartAt\\":\\"Transliterate to python\\",\\"States\\":{\\"Transliterate to python\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"IntervalSeconds\\":30}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.transliteratorOutput\\",\\"ResultSelector\\":{\\"python.$\\":\\"$.Payload\\"},\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"DocGen\\",\\"States\\":{\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"End\\":true,\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$._error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Branches\\":[{\\"StartAt\\":\\"Generate python docs\\",\\"States\\":{\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"IntervalSeconds\\":30}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.docGenOutput\\",\\"ResultSelector\\":{\\"python.$\\":\\"$.Payload\\"},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
               ":states:::lambda:invoke\\",\\"Parameters\\":{\\"FunctionName\\":\\"",
               Object {
                 "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                  "ConstructHubOrchestrationDocGenpython77179663",
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}}}},{\\"StartAt\\":\\"Transliterate to typescript\\",\\"States\\":{\\"Transliterate to typescript\\":{\\"Next\\":\\"Add to catalog.json\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"IntervalSeconds\\":30}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.transliteratorOutput\\",\\"ResultSelector\\":{\\"typescript.$\\":\\"$.Payload\\"},\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}}}},{\\"StartAt\\":\\"Generate typescript docs\\",\\"States\\":{\\"Generate typescript docs\\":{\\"Next\\":\\"Add to catalog.json\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"IntervalSeconds\\":30}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.docGenOutput\\",\\"ResultSelector\\":{\\"typescript.$\\":\\"$.Payload\\"},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
               ":states:::lambda:invoke\\",\\"Parameters\\":{\\"FunctionName\\":\\"",
               Object {
                 "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                  "ConstructHubOrchestrationDocGentypescriptF9C30384",
                   "Arn",
                 ],
               },
@@ -8121,15 +8121,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::SQS::Queue",
       "UpdateReplacePolicy": "Delete",
     },
-    "ConstructHubOrchestrationRedrive8DDBA67E": Object {
+    "ConstructHubOrchestrationDocGenpython77179663": Object {
       "DependsOn": Array [
-        "ConstructHubOrchestrationRedriveServiceRoleDefaultPolicyC018F436",
-        "ConstructHubOrchestrationRedriveServiceRoleB84EFF33",
+        "ConstructHubOrchestrationDocGenpythonServiceRoleDefaultPolicy7A9DA724",
+        "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
       ],
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersc3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178S3BucketD26C1238",
+            "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3BucketE8440598",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -8142,7 +8142,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersc3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178S3VersionKey107147BB",
+                          "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3VersionKeyF4CC8D6B",
                         },
                       ],
                     },
@@ -8155,7 +8155,629 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersc3b4a3c02e3689231c8e82c0d70b84ad6462b7c2bcd156ab62f74015f2f47178S3VersionKey107147BB",
+                          "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3VersionKeyF4CC8D6B",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Creates python documentation from jsii-enabled npm packages",
+        "Environment": Object {
+          "Variables": Object {
+            "CODE_ARTIFACT_API_ENDPOINT": Object {
+              "Fn::Select": Array [
+                1,
+                Object {
+                  "Fn::Split": Array [
+                    ":",
+                    Object {
+                      "Fn::Select": Array [
+                        0,
+                        Object {
+                          "Fn::GetAtt": Array [
+                            "ConstructHubVPCCodeArtifactAPI954CFDE1",
+                            "DnsEntries",
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            "CODE_ARTIFACT_DOMAIN_NAME": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifact1188409E",
+                "DomainName",
+              ],
+            },
+            "CODE_ARTIFACT_DOMAIN_OWNER": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifact1188409E",
+                "DomainOwner",
+              ],
+            },
+            "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifactGetEndpoint9A458FEF",
+                "repositoryEndpoint",
+              ],
+            },
+            "HEADER_SPAN": "true",
+            "TARGET_LANGUAGE": "python",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 10240,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+        "VpcConfig": Object {
+          "SecurityGroupIds": Array [
+            Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubOrchestrationDocGenpythonSecurityGroup5820AD9B",
+                "GroupId",
+              ],
+            },
+          ],
+          "SubnetIds": Array [
+            Object {
+              "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
+            },
+            Object {
+              "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
+            },
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubOrchestrationDocGenpythonLogRetention31242A5D": Object {
+      "Properties": Object {
+        "LogGroupName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "/aws/lambda/",
+              Object {
+                "Ref": "ConstructHubOrchestrationDocGenpython77179663",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubOrchestrationDocGenpythonSecurityGroup5820AD9B": Object {
+      "Properties": Object {
+        "GroupDescription": "Automatic security group for Lambda Function TestConstructHubOrchestrationDocGenpythonB1042824",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubOrchestrationDocGenpythonServiceRoleDefaultPolicy7A9DA724": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:GetServiceBearerToken",
+              "Condition": Object {
+                "StringEquals": Object {
+                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
+                },
+              },
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "codeartifact:GetAuthorizationToken",
+                "codeartifact:GetRepositoryEndpoint",
+                "codeartifact:ReadFromRepository",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifactDomainFC30B796",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifact1188409E",
+                    "Arn",
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/assembly.json",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubOrchestrationDocGenpythonServiceRoleDefaultPolicy7A9DA724",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubOrchestrationDocGentypescriptF9C30384": Object {
+      "DependsOn": Array [
+        "ConstructHubOrchestrationDocGentypescriptServiceRoleDefaultPolicyEBA45F12",
+        "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3BucketE8440598",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3VersionKeyF4CC8D6B",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3VersionKeyF4CC8D6B",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Creates typescript documentation from jsii-enabled npm packages",
+        "Environment": Object {
+          "Variables": Object {
+            "CODE_ARTIFACT_API_ENDPOINT": Object {
+              "Fn::Select": Array [
+                1,
+                Object {
+                  "Fn::Split": Array [
+                    ":",
+                    Object {
+                      "Fn::Select": Array [
+                        0,
+                        Object {
+                          "Fn::GetAtt": Array [
+                            "ConstructHubVPCCodeArtifactAPI954CFDE1",
+                            "DnsEntries",
+                          ],
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            "CODE_ARTIFACT_DOMAIN_NAME": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifact1188409E",
+                "DomainName",
+              ],
+            },
+            "CODE_ARTIFACT_DOMAIN_OWNER": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifact1188409E",
+                "DomainOwner",
+              ],
+            },
+            "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifactGetEndpoint9A458FEF",
+                "repositoryEndpoint",
+              ],
+            },
+            "HEADER_SPAN": "true",
+            "TARGET_LANGUAGE": "typescript",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 10240,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+        "VpcConfig": Object {
+          "SecurityGroupIds": Array [
+            Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubOrchestrationDocGentypescriptSecurityGroupDD0CDD88",
+                "GroupId",
+              ],
+            },
+          ],
+          "SubnetIds": Array [
+            Object {
+              "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
+            },
+            Object {
+              "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
+            },
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubOrchestrationDocGentypescriptLogRetentionDB3B5194": Object {
+      "Properties": Object {
+        "LogGroupName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "/aws/lambda/",
+              Object {
+                "Ref": "ConstructHubOrchestrationDocGentypescriptF9C30384",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubOrchestrationDocGentypescriptSecurityGroupDD0CDD88": Object {
+      "Properties": Object {
+        "GroupDescription": "Automatic security group for Lambda Function TestConstructHubOrchestrationDocGentypescriptF6589D0D",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubOrchestrationDocGentypescriptServiceRoleDefaultPolicyEBA45F12": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:GetServiceBearerToken",
+              "Condition": Object {
+                "StringEquals": Object {
+                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
+                },
+              },
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "codeartifact:GetAuthorizationToken",
+                "codeartifact:GetRepositoryEndpoint",
+                "codeartifact:ReadFromRepository",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifactDomainFC30B796",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifact1188409E",
+                    "Arn",
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/assembly.json",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubOrchestrationDocGentypescriptServiceRoleDefaultPolicyEBA45F12",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubOrchestrationRedrive8DDBA67E": Object {
+      "DependsOn": Array [
+        "ConstructHubOrchestrationRedriveServiceRoleDefaultPolicyC018F436",
+        "ConstructHubOrchestrationRedriveServiceRoleB84EFF33",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0S3BucketE303749C",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0S3VersionKey1AAD9013",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0S3VersionKey1AAD9013",
                         },
                       ],
                     },
@@ -8278,7 +8900,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Effect": "Allow",
               "Resource": Object {
                 "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
+                  "ConstructHubOrchestrationDocGenpython77179663",
                   "Arn",
                 ],
               },
@@ -8288,7 +8910,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Effect": "Allow",
               "Resource": Object {
                 "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
+                  "ConstructHubOrchestrationDocGentypescriptF9C30384",
                   "Arn",
                 ],
               },
@@ -8342,628 +8964,6 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "AWS::IAM::Role",
-    },
-    "ConstructHubOrchestrationTransliteratorpython27B6BEA2": Object {
-      "DependsOn": Array [
-        "ConstructHubOrchestrationTransliteratorpythonServiceRoleDefaultPolicy36F84438",
-        "ConstructHubOrchestrationTransliteratorpythonServiceRoleC336F7D0",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3BucketE8440598",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3VersionKeyF4CC8D6B",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3VersionKeyF4CC8D6B",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "Description": "Creates python documentation from jsii-enabled npm packages",
-        "Environment": Object {
-          "Variables": Object {
-            "CODE_ARTIFACT_API_ENDPOINT": Object {
-              "Fn::Select": Array [
-                1,
-                Object {
-                  "Fn::Split": Array [
-                    ":",
-                    Object {
-                      "Fn::Select": Array [
-                        0,
-                        Object {
-                          "Fn::GetAtt": Array [
-                            "ConstructHubVPCCodeArtifactAPI954CFDE1",
-                            "DnsEntries",
-                          ],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-            "CODE_ARTIFACT_DOMAIN_NAME": Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubCodeArtifact1188409E",
-                "DomainName",
-              ],
-            },
-            "CODE_ARTIFACT_DOMAIN_OWNER": Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubCodeArtifact1188409E",
-                "DomainOwner",
-              ],
-            },
-            "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubCodeArtifactGetEndpoint9A458FEF",
-                "repositoryEndpoint",
-              ],
-            },
-            "HEADER_SPAN": "true",
-            "TARGET_LANGUAGE": "python",
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 10240,
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "ConstructHubOrchestrationTransliteratorpythonServiceRoleC336F7D0",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "VpcConfig": Object {
-          "SecurityGroupIds": Array [
-            Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubOrchestrationTransliteratorpythonSecurityGroup75EF0EB4",
-                "GroupId",
-              ],
-            },
-          ],
-          "SubnetIds": Array [
-            Object {
-              "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
-            },
-            Object {
-              "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
-            },
-          ],
-        },
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "ConstructHubOrchestrationTransliteratorpythonLogRetention5E31F6B3": Object {
-      "Properties": Object {
-        "LogGroupName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "/aws/lambda/",
-              Object {
-                "Ref": "ConstructHubOrchestrationTransliteratorpython27B6BEA2",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 3653,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-    },
-    "ConstructHubOrchestrationTransliteratorpythonSecurityGroup75EF0EB4": Object {
-      "Properties": Object {
-        "GroupDescription": "Automatic security group for Lambda Function TestConstructHubOrchestrationTransliteratorpython9CD0D389",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "ConstructHubOrchestrationTransliteratorpythonServiceRoleC336F7D0": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "ConstructHubOrchestrationTransliteratorpythonServiceRoleDefaultPolicy36F84438": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:GetServiceBearerToken",
-              "Condition": Object {
-                "StringEquals": Object {
-                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
-                },
-              },
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-            Object {
-              "Action": Array [
-                "codeartifact:GetAuthorizationToken",
-                "codeartifact:GetRepositoryEndpoint",
-                "codeartifact:ReadFromRepository",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubCodeArtifactDomainFC30B796",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubCodeArtifact1188409E",
-                    "Arn",
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/assembly.json",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*.md",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ConstructHubOrchestrationTransliteratorpythonServiceRoleDefaultPolicy36F84438",
-        "Roles": Array [
-          Object {
-            "Ref": "ConstructHubOrchestrationTransliteratorpythonServiceRoleC336F7D0",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
-    "ConstructHubOrchestrationTransliteratortypescript01D0FF4F": Object {
-      "DependsOn": Array [
-        "ConstructHubOrchestrationTransliteratortypescriptServiceRoleDefaultPolicy6B7C345E",
-        "ConstructHubOrchestrationTransliteratortypescriptServiceRole2BDF7A91",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3BucketE8440598",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3VersionKeyF4CC8D6B",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersbe3863d0480c96ebe4d7155f5f46c3901cd675e327e618b8e1a05561aa457a05S3VersionKeyF4CC8D6B",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "Description": "Creates typescript documentation from jsii-enabled npm packages",
-        "Environment": Object {
-          "Variables": Object {
-            "CODE_ARTIFACT_API_ENDPOINT": Object {
-              "Fn::Select": Array [
-                1,
-                Object {
-                  "Fn::Split": Array [
-                    ":",
-                    Object {
-                      "Fn::Select": Array [
-                        0,
-                        Object {
-                          "Fn::GetAtt": Array [
-                            "ConstructHubVPCCodeArtifactAPI954CFDE1",
-                            "DnsEntries",
-                          ],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-            "CODE_ARTIFACT_DOMAIN_NAME": Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubCodeArtifact1188409E",
-                "DomainName",
-              ],
-            },
-            "CODE_ARTIFACT_DOMAIN_OWNER": Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubCodeArtifact1188409E",
-                "DomainOwner",
-              ],
-            },
-            "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubCodeArtifactGetEndpoint9A458FEF",
-                "repositoryEndpoint",
-              ],
-            },
-            "HEADER_SPAN": "true",
-            "TARGET_LANGUAGE": "typescript",
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 10240,
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "ConstructHubOrchestrationTransliteratortypescriptServiceRole2BDF7A91",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "VpcConfig": Object {
-          "SecurityGroupIds": Array [
-            Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubOrchestrationTransliteratortypescriptSecurityGroup6B6C1777",
-                "GroupId",
-              ],
-            },
-          ],
-          "SubnetIds": Array [
-            Object {
-              "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
-            },
-            Object {
-              "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
-            },
-          ],
-        },
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "ConstructHubOrchestrationTransliteratortypescriptLogRetention7A601004": Object {
-      "Properties": Object {
-        "LogGroupName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "/aws/lambda/",
-              Object {
-                "Ref": "ConstructHubOrchestrationTransliteratortypescript01D0FF4F",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 3653,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-    },
-    "ConstructHubOrchestrationTransliteratortypescriptSecurityGroup6B6C1777": Object {
-      "Properties": Object {
-        "GroupDescription": "Automatic security group for Lambda Function TestConstructHubOrchestrationTransliteratortypescriptD08F8C3B",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "ConstructHubOrchestrationTransliteratortypescriptServiceRole2BDF7A91": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "ConstructHubOrchestrationTransliteratortypescriptServiceRoleDefaultPolicy6B7C345E": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:GetServiceBearerToken",
-              "Condition": Object {
-                "StringEquals": Object {
-                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
-                },
-              },
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-            Object {
-              "Action": Array [
-                "codeartifact:GetAuthorizationToken",
-                "codeartifact:GetRepositoryEndpoint",
-                "codeartifact:ReadFromRepository",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubCodeArtifactDomainFC30B796",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubCodeArtifact1188409E",
-                    "Arn",
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/assembly.json",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*.md",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ConstructHubOrchestrationTransliteratortypescriptServiceRoleDefaultPolicy6B7C345E",
-        "Roles": Array [
-          Object {
-            "Ref": "ConstructHubOrchestrationTransliteratortypescriptServiceRole2BDF7A91",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubPackageDataAllowBucketNotificationsToTestConstructHubWebAppCacheInvalidator7EE0E8FBBF40B7C8": Object {
       "Properties": Object {
@@ -9177,7 +9177,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Principal": Object {
                 "AWS": Object {
                   "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationTransliteratorpythonServiceRoleC336F7D0",
+                    "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
                     "Arn",
                   ],
                 },
@@ -9193,7 +9193,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Principal": Object {
                 "AWS": Object {
                   "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationTransliteratorpythonServiceRoleC336F7D0",
+                    "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
                     "Arn",
                   ],
                 },
@@ -9224,7 +9224,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Principal": Object {
                 "AWS": Object {
                   "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationTransliteratortypescriptServiceRole2BDF7A91",
+                    "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
                     "Arn",
                   ],
                 },
@@ -9240,7 +9240,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Principal": Object {
                 "AWS": Object {
                   "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationTransliteratortypescriptServiceRole2BDF7A91",
+                    "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
                     "Arn",
                   ],
                 },
@@ -9359,7 +9359,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Principal": Object {
                 "AWS": Object {
                   "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationTransliteratorpythonServiceRoleC336F7D0",
+                    "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
                     "Arn",
                   ],
                 },
@@ -9377,7 +9377,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Principal": Object {
                 "AWS": Object {
                   "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationTransliteratortypescriptServiceRole2BDF7A91",
+                    "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
                     "Arn",
                   ],
                 },
