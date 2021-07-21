@@ -91,7 +91,7 @@ test('initial build', () => {
     try {
       expect(req.Bucket).toBe(mockBucketName);
       expect(req.Key).toBe(constants.CATALOG_KEY);
-      expect(req.ContentType).toBe('text/json');
+      expect(req.ContentType).toBe('application/json');
       expect(req.Metadata).toHaveProperty('Package-Count', '3');
       const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
       expect(body.packages).toEqual([
@@ -213,7 +213,7 @@ describe('incremental build', () => {
       try {
         expect(req.Bucket).toBe(mockBucketName);
         expect(req.Key).toBe(constants.CATALOG_KEY);
-        expect(req.ContentType).toBe('text/json');
+        expect(req.ContentType).toBe('application/json');
         expect(req.Metadata).toHaveProperty('Package-Count', '4');
         const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
         expect(body.packages).toEqual([
@@ -281,7 +281,7 @@ describe('incremental build', () => {
       try {
         expect(req.Bucket).toBe(mockBucketName);
         expect(req.Key).toBe(constants.CATALOG_KEY);
-        expect(req.ContentType).toBe('text/json');
+        expect(req.ContentType).toBe('application/json');
         expect(req.Metadata).toHaveProperty('Package-Count', '3');
         const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
         expect(body.packages).toEqual([
@@ -341,7 +341,7 @@ describe('incremental build', () => {
       try {
         expect(req.Bucket).toBe(mockBucketName);
         expect(req.Key).toBe(constants.CATALOG_KEY);
-        expect(req.ContentType).toBe('text/json');
+        expect(req.ContentType).toBe('application/json');
         expect(req.Metadata).toHaveProperty('Package-Count', '3');
         const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
         expect(body.packages).toEqual(initialCatalog.packages);
@@ -397,7 +397,7 @@ describe('incremental build', () => {
       try {
         expect(req.Bucket).toBe(mockBucketName);
         expect(req.Key).toBe(constants.CATALOG_KEY);
-        expect(req.ContentType).toBe('text/json');
+        expect(req.ContentType).toBe('application/json');
         expect(req.Metadata).toHaveProperty('Package-Count', '3');
         const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
         expect(body.packages).toEqual(initialCatalog.packages);

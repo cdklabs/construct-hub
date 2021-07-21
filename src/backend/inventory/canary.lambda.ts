@@ -42,9 +42,11 @@ export async function handler(event: ScheduledEvent, _context: Context) {
       status.tarballPresent = true;
     } else if (key.endsWith(constants.ASSEMBLY_KEY_SUFFIX)) {
       status.assemblyPresent = true;
-    } else if (key.endsWith(constants.DOCS_KEY_SUFFIX_PYTHON)) {
+    } else if (key.endsWith(constants.DOCS_KEY_SUFFIX_PYTHON) ||
+      key.endsWith(constants.DOCS_KEY_SUFFIX_PYTHON + constants.NOT_SUPPORTED_SUFFIX)) {
       status.pythonDocsPresent = true;
-    } else if (key.endsWith(constants.DOCS_KEY_SUFFIX_TYPESCRIPT)) {
+    } else if (key.endsWith(constants.DOCS_KEY_SUFFIX_TYPESCRIPT) ||
+      key.endsWith(constants.DOCS_KEY_SUFFIX_TYPESCRIPT + constants.NOT_SUPPORTED_SUFFIX)) {
       status.tsDocsPresent = true;
     } else {
       // If this is a submodule-doc key, add the relevant nested status entry.
