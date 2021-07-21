@@ -137,7 +137,7 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
         Key: packageKey,
         Body: tarball.Body,
         CacheControl: 'public',
-        ContentType: 'application/x-gtar',
+        ContentType: 'application/octet-stream',
         Metadata: {
           'Lambda-Log-Group': context.logGroupName,
           'Lambda-Log-Stream': context.logStreamName,

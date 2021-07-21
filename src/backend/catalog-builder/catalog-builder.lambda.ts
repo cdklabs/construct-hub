@@ -102,8 +102,8 @@ export async function handler(event: S3Event, context: Context) {
     Bucket: BUCKET_NAME,
     Key: constants.CATALOG_KEY,
     Body: JSON.stringify(catalog, null, 2),
+    ContentType: 'application/json',
     CacheControl: 'public, max-age=300', // Expire from cache after 5 minutes
-    ContentType: 'text/json',
     Metadata: {
       'Lambda-Log-Group': context.logGroupName,
       'Lambda-Log-Stream': context.logStreamName,

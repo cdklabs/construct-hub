@@ -117,7 +117,7 @@ test('basic happy case', async () => {
           mockMetadataCreated = true;
           break;
         case packageKey:
-          expect(req.ContentType).toBe('application/x-gtar');
+          expect(req.ContentType).toBe('application/octet-stream');
           expect(req.Body).toEqual(fakeTarGz);
           mockTarballCreated = true;
           break;
@@ -240,7 +240,7 @@ test('basic happy case with license file', async () => {
           mockMetadataCreated = true;
           break;
         case packageKey:
-          expect(req.ContentType).toBe('application/x-gtar');
+          expect(req.ContentType).toBe('application/octet-stream');
           expect(req.Body).toEqual(fakeTarGz);
           mockTarballCreated = true;
           break;
