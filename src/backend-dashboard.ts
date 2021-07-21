@@ -230,8 +230,13 @@ function stateMachineUrl(stateMachine: IStateMachine): string {
 }
 
 function fillMetric(metric: Metric, value: number | 'REPEAT' = 0): MathExpression {
+  // We assume namespace + name is enough to uniquely identify a metric here.
+  // This is true locally at this time, but in case this ever changes, consider
+  // also processing dimensions and period.
   const h = createHash('sha256')
-    .update(JSON.stringify(metric.toMetricConfig()))
+    .update(metric.namespace)
+    .update('\0')
+    .update(metric.metricName)
     .digest('hex');
   const metricName = `m${h}`;
   return new MathExpression({
