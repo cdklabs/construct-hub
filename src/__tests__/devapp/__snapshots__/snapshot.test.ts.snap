@@ -1752,9 +1752,8 @@ Resources:
             - Ref: AWS::Partition
             - :states:::sqs:sendMessage","Parameters":{"QueueUrl":"
             - Ref: ConstructHubOrchestrationDLQ9C6D9BD4
-            - '","MessageBody.$":"$"}},"Fail":{"Type":"Fail","Comment":"\\"Input
-              payload was sent to the Dead Letter
-              Queue\\"","Error":"$._error.Error","Cause":"$._error.Cause"}},"TimeoutSeconds":3600}'
+            - '","MessageBody.$":"$"}},"Fail":{"Type":"Fail","Error":"Failed","Cause":"Input
+              was submitted to dead letter queue"}},"TimeoutSeconds":3600}'
       StateMachineType: STANDARD
     DependsOn:
       - ConstructHubOrchestrationRoleDefaultPolicyEACD181F
@@ -2277,13 +2276,13 @@ Resources:
             - /log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":10,"properties":{"view":"timeSeries","title":"Function
               Health","region":"
             - Ref: AWS::Region
-            - '","metrics":[[{"label":"Invocations","expression":"FILL(m25c4c3c0f3dab6f3cad6da0d8c7d891248abc23c87095416c125bc9ae3046974,
+            - '","metrics":[[{"label":"Invocations","expression":"FILL(mb889faffe439ed4a6cecc8d3705e7445725b3cbc707841d7af567de3607bd86c,
               0)"}],["AWS/Lambda","Invocations","FunctionName","'
             - Ref: ConstructHubDiscoveryD6EEC2B8
-            - '",{"stat":"Sum","visible":false,"id":"m25c4c3c0f3dab6f3cad6da0d8c7d891248abc23c87095416c125bc9ae3046974"}],[{"label":"Errors","expression":"FILL(m624a2a6baac381e97477ed484d9c17f9c35cf6583d697eaafb700bead0cdbb8e,
+            - '",{"stat":"Sum","visible":false,"id":"mb889faffe439ed4a6cecc8d3705e7445725b3cbc707841d7af567de3607bd86c"}],[{"label":"Errors","expression":"FILL(meff67953092a9dcb877673f38a8dec09020b681c625eacbcb20fa188966bb84f,
               0)"}],["AWS/Lambda","Errors","FunctionName","'
             - Ref: ConstructHubDiscoveryD6EEC2B8
-            - '",{"stat":"Sum","visible":false,"id":"m624a2a6baac381e97477ed484d9c17f9c35cf6583d697eaafb700bead0cdbb8e"}],["ConstructHub/Discovery","RemainingTime",{"label":"Remaining
+            - '",{"stat":"Sum","visible":false,"id":"meff67953092a9dcb877673f38a8dec09020b681c625eacbcb20fa188966bb84f"}],["ConstructHub/Discovery","RemainingTime",{"label":"Remaining
               Time","period":900,"yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":900}},{"type":"metric","width":12,"height":6,"x":12,"y":10,"properties":{"view":"timeSeries","title":"CouchDB
               Follower","region":"'
             - Ref: AWS::Region
@@ -2301,13 +2300,13 @@ Resources:
             - /log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Function
               Health","region":"
             - Ref: AWS::Region
-            - '","metrics":[[{"label":"Invocations","expression":"FILL(m0341b5b927779b1459b684ba3b4beaf091c5e3e55825be34e91fe4ffa97460e9,
+            - '","metrics":[[{"label":"Invocations","expression":"FILL(mcbebe08db73356750697ddaaa4ae5e3edde9eb585cb3790cfeefd970d010544b,
               0)"}],["AWS/Lambda","Invocations","FunctionName","'
             - Ref: ConstructHubIngestion407909CE
-            - '",{"stat":"Sum","visible":false,"id":"m0341b5b927779b1459b684ba3b4beaf091c5e3e55825be34e91fe4ffa97460e9"}],[{"label":"Errors","expression":"FILL(ma5d05b90aba1695fe2d034000cc69b6dbfd27a343e20c2a3047626d798194a62,
+            - '",{"stat":"Sum","visible":false,"id":"mcbebe08db73356750697ddaaa4ae5e3edde9eb585cb3790cfeefd970d010544b"}],[{"label":"Errors","expression":"FILL(mec5f5bc8e85a73d9555af9d6adf7e84253877d8762d4c28da8b7d24d160f88c8,
               0)"}],["AWS/Lambda","Errors","FunctionName","'
             - Ref: ConstructHubIngestion407909CE
-            - '",{"stat":"Sum","visible":false,"id":"ma5d05b90aba1695fe2d034000cc69b6dbfd27a343e20c2a3047626d798194a62"}]],"yAxis":{"left":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":12,"y":18,"properties":{"view":"timeSeries","title":"Input
+            - '",{"stat":"Sum","visible":false,"id":"mec5f5bc8e85a73d9555af9d6adf7e84253877d8762d4c28da8b7d24d160f88c8"}]],"yAxis":{"left":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":12,"y":18,"properties":{"view":"timeSeries","title":"Input
               Queue","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","'
