@@ -65,7 +65,7 @@ export class BackendDashboard extends Construct {
             markdown: [
               '# Discovery Function',
               '',
-              `[Search Log Group](${lambdaSearchLogGroupUrl(props.discovery.function)})`,
+              `[button:Search Log Group](${lambdaSearchLogGroupUrl(props.discovery.function)})`,
             ].join('\n'),
           }),
         ],
@@ -109,7 +109,7 @@ export class BackendDashboard extends Construct {
             markdown: [
               '# Ingestion Function',
               '',
-              `[Search Log Group](${lambdaSearchLogGroupUrl(props.ingestion.function)})`,
+              `[button:Search Log Group](${lambdaSearchLogGroupUrl(props.ingestion.function)})`,
             ].join('\n'),
           }),
         ],
@@ -169,9 +169,12 @@ export class BackendDashboard extends Construct {
             height: 2,
             width: 24,
             markdown:
-              ['# Orchestration',
+              [
+                '# Orchestration',
                 '',
-                `[State Machine](${stateMachineUrl(props.orchestration.stateMachine)})`].join('\n'),
+                `[button:State Machine](${stateMachineUrl(props.orchestration.stateMachine)})`,
+                `[button:Redrive](${lambdaFunctionUrl(props.orchestration.redriveFunction)})`,
+              ].join('\n'),
           }),
         ],
         [
@@ -212,6 +215,10 @@ export class BackendDashboard extends Construct {
       ],
     });
   }
+}
+
+function lambdaFunctionUrl(lambda: IFunction): string {
+  return `/lambda/home#/functions/${lambda.functionName}`;
 }
 
 function lambdaSearchLogGroupUrl(lambda: IFunction): string {

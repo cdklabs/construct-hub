@@ -1,3 +1,4 @@
+import { IFunction } from '@aws-cdk/aws-lambda';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Fail, IStateMachine, JsonPath, Parallel, StateMachine, StateMachineType, TaskInput } from '@aws-cdk/aws-stepfunctions';
 import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
@@ -26,6 +27,12 @@ export class Orchestration extends Construct {
    * there if the state machine fails.
    */
   public readonly deadLetterQueue: IQueue;
+
+  /**
+   * The function operators can use to redrive messages from the dead letter
+   * queue.
+   */
+  public readonly redriveFunction: IFunction;
 
   public constructor(scope: Construct, id: string, props: OrchestrationProps) {
     super(scope, id);
@@ -82,7 +89,7 @@ export class Orchestration extends Construct {
 
     // This function is intended to be manually triggered by an operrator to
     // attempt redriving messages from the DLQ.
-    const redrive = new RedriveStateMachine(this, 'Redrive', {
+    this.redriveFunction = new RedriveStateMachine(this, 'Redrive', {
       description: '[ConstructHub/Redrive] Manually redrives all messages from the backend dead letter queue',
       environment: {
         STATE_MACHINE_ARN: this.stateMachine.stateMachineArn,
@@ -91,7 +98,7 @@ export class Orchestration extends Construct {
       memorySize: 1_024,
       timeout: Duration.minutes(15),
     });
-    this.stateMachine.grantStartExecution(redrive);
-    this.deadLetterQueue.grantConsumeMessages(redrive);
+    this.stateMachine.grantStartExecution(this.redriveFunction);
+    this.deadLetterQueue.grantConsumeMessages(this.redriveFunction);
   }
 }
