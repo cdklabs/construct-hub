@@ -5,7 +5,7 @@ import { DenyListClient } from '../../../backend/deny-list/client.lambda-shared'
 import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY } from '../../../backend/deny-list/constants';
 
 const sample: Record<string, DenyListRule> = {
-  'foo@1.2.3': {
+  'foo/v1.2.3': {
     package: 'foo',
     version: '1.2.3',
     reason: 'bar',

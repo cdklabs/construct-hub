@@ -66,7 +66,7 @@ export class DenyListClient {
 
       this._map = data;
     } catch (e) {
-      console.log(`Error pasing deny list file ${this.bucketName}/${this.objectKey}: ${e}`);
+      console.log(`ERROR: Unable to parse deny list file ${this.bucketName}/${this.objectKey}: ${e}`);
     }
   }
 
