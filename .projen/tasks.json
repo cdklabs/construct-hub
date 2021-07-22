@@ -190,7 +190,7 @@
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock cdk-triggers construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak jsii-rosetta json-schema nano normalize-registry-metadata npm-check-updates pascal-case projen semver standard-version tar-stream typescript yaml"
+          "exec": "yarn upgrade @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock cdk-triggers construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak json-schema nano normalize-registry-metadata npm-check-updates pascal-case projen semver standard-version tar-stream typescript yaml"
         },
         {
           "exec": "npx projen"
@@ -496,7 +496,7 @@
       "description": "deploy integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
       "steps": [
         {
-          "exec": "cdk deploy --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --require-approval=never -o src/__tests__/backend/deny-list/integ/deny-list.integ.expected.cdkout"
+          "exec": "cdk deploy --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --require-approval=never -o src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout"
         }
       ]
     },
@@ -505,10 +505,10 @@
       "description": "synthesize integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
       "steps": [
         {
-          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" -o src/__tests__/backend/deny-list/integ/deny-list.integ.actual.cdkout > /dev/null"
+          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" -o src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout.actual > /dev/null"
         },
         {
-          "exec": "diff -r -x \"**/asset.*\" -x cdk.out src/__tests__/backend/deny-list/integ/deny-list.integ.expected.cdkout/ src/__tests__/backend/deny-list/integ/deny-list.integ.actual.cdkout/"
+          "exec": "diff -r -x \"**/asset.*\" -x cdk.out src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout/ src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout.actual/"
         }
       ]
     },

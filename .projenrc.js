@@ -65,7 +65,6 @@ const project = new JsiiProject({
     'esbuild',
     'fs-extra',
     'got',
-    'jsii-rosetta',
     'semver',
     'tar-stream',
     'yaml',
@@ -133,11 +132,6 @@ const project = new JsiiProject({
   }),
 });
 
-// Required while we vendor-in jsii-rosetta to a pre-release version
-project.addDevDeps('jsii-rosetta@./vendor/jsii-rosetta.tgz');
-project.addDevDeps('@jsii/spec@./vendor/jsii-spec.tgz');
-project.addFields({ resolutions: { '@jsii/spec': './vendor/jsii-spec.tgz' } });
-
 function addDevApp() {
   // add "dev:xxx" tasks for interacting with the dev stack
   const devapp = 'lib/__tests__/devapp';
@@ -189,8 +183,8 @@ function discoverIntegrationTests() {
     const libdir = join(project.libdir, dirname(entry));
     const srcdir = join(project.srcdir, dirname(entry));
 
-    const expecteddir = join(srcdir, `${name}.integ.expected.cdkout`);
-    const actualdir = join(srcdir, `${name}.integ.actual.cdkout`);
+    const expecteddir = join(srcdir, `${name}.integ.cdkout`);
+    const actualdir = join(srcdir, `${name}.integ.cdkout.actual`);
 
     const app = `"node ${join(libdir, basename(entry, '.ts'))}.js"`;
 

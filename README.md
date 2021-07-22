@@ -24,6 +24,21 @@ currently configured CLI account/region:
 * `yarn dev:deploy` - deploy to the current environment
 * `yarn dev:diff` - diff against the current environment
 
+## Testing
+
+To run all tests, run `yarn test`.
+
+Unit tests are implemented using [jest](https://jestjs.io/), and integration
+tests are implemented as small CDK applications under files called `.integ.ts`.
+
+For each integration test, we have two tasks:
+
+* `integ:xxx:deploy` - deploys the integration test to your personal development
+  account and stores the output under a `.cdkout` directory which is committed
+  to the repository.
+* `integ:xxx:assert` - runs during `yarn test` and compares the synthesized
+  output of the test to the one in `.cdkout`.
+
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more
