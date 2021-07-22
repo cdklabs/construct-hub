@@ -1942,6 +1942,34 @@ Resources:
             - - "arn:"
               - Ref: AWS::Partition
               - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /*
+          - Action: states:StartExecution
+            Effect: Allow
+            Resource:
+              Ref: ConstructHubOrchestration39161A46
+        Version: 2012-10-17
+      PolicyName: ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB
+      Roles:
+        - Ref: ConstructHubOrchestrationReprocessAllServiceRoleE23FF434
   ConstructHubOrchestrationReprocessAllFF2F2455:
     Type: AWS::Lambda::Function
     Properties:
@@ -1978,6 +2006,7 @@ Resources:
       Runtime: nodejs14.x
       Timeout: 900
     DependsOn:
+      - ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB
       - ConstructHubOrchestrationReprocessAllServiceRoleE23FF434
   ConstructHubIngestionDLQ3E96A5F2:
     Type: AWS::SQS::Queue
