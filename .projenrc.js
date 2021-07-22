@@ -189,12 +189,17 @@ function discoverIntegrationTests() {
 
     const app = `"node ${join(libdir, basename(entry, '.ts'))}.js"`;
 
+    const options = [
+      `--app ${app}`,
+      '--no-version-reporting',
+    ].join(' ');
+
     const deploy = project.addTask(`integ:${name}:deploy`, {
       description: `deploy integration test ${entry}`,
     });
 
     deploy.exec(`rm -fr ${deploydir}`);
-    deploy.exec(`cdk deploy --app ${app} --require-approval=never -o ${deploydir}`);
+    deploy.exec(`cdk deploy ${options} --require-approval=never -o ${deploydir}`);
 
     // if deployment was successful, copy the deploy dir to the expected dir
     deploy.exec(`rm -fr ${snapshotdir}`);
@@ -213,12 +218,12 @@ function discoverIntegrationTests() {
 
     const exclude = ['asset.*', 'cdk.out', 'manifest.json', 'tree.json'];
 
-    assert.exec(`cdk synth --app ${app} -o ${actualdir} > /dev/null`);
+    assert.exec(`cdk synth ${options} -o ${actualdir} > /dev/null`);
     assert.exec(`diff -r ${exclude.map(x => `-x ${x}`).join(' ')} ${snapshotdir}/ ${actualdir}/`);
 
     project.addTask(`integ:${name}:snapshot`, {
       description: `update snapshot for integration test ${entry}`,
-      exec: `cdk synth --app ${app} -o ${snapshotdir} > /dev/null`,
+      exec: `cdk synth ${options} -o ${snapshotdir} > /dev/null`,
     });
 
     // synth as part of our tests, which means that if outdir changes, anti-tamper will fail
