@@ -57,6 +57,18 @@ Object {
       "Description": "S3 key for asset version \\"562228c7e2d642e2706b637f38afaf962ace37fafcdad2538e27adbdfd3239fb\\"",
       "Type": "String",
     },
+    "AssetParameters59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1ArtifactHash30E1CB3E": Object {
+      "Description": "Artifact hash for asset \\"59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1\\"",
+      "Type": "String",
+    },
+    "AssetParameters59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1S3Bucket1FDE25A6": Object {
+      "Description": "S3 bucket for asset \\"59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1\\"",
+      "Type": "String",
+    },
+    "AssetParameters59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1S3VersionKeyBEFE590F": Object {
+      "Description": "S3 key for asset version \\"59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1\\"",
+      "Type": "String",
+    },
     "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24ArtifactHashBA91B77F": Object {
       "Description": "Artifact hash for asset \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
       "Type": "String",
@@ -3679,6 +3691,104 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::IAM::Policy",
     },
+    "ConstructHubOrchestrationReprocessAllFF2F2455": Object {
+      "DependsOn": Array [
+        "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1S3Bucket1FDE25A6",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1S3VersionKeyBEFE590F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1S3VersionKeyBEFE590F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "[ConstructHub/ReprocessAll] Reprocess all package versions through the backend",
+        "Environment": Object {
+          "Variables": Object {
+            "BUCKET_NAME": Object {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "STATE_MACHINE_ARN": Object {
+              "Ref": "ConstructHubOrchestration39161A46",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
     "ConstructHubOrchestrationRoleDefaultPolicyEACD181F": Object {
       "Properties": Object {
         "PolicyDocument": Object {
@@ -5475,6 +5585,18 @@ Object {
     },
     "AssetParameters562228c7e2d642e2706b637f38afaf962ace37fafcdad2538e27adbdfd3239fbS3VersionKey1F621C1B": Object {
       "Description": "S3 key for asset version \\"562228c7e2d642e2706b637f38afaf962ace37fafcdad2538e27adbdfd3239fb\\"",
+      "Type": "String",
+    },
+    "AssetParameters59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1ArtifactHash30E1CB3E": Object {
+      "Description": "Artifact hash for asset \\"59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1\\"",
+      "Type": "String",
+    },
+    "AssetParameters59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1S3Bucket1FDE25A6": Object {
+      "Description": "S3 bucket for asset \\"59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1\\"",
+      "Type": "String",
+    },
+    "AssetParameters59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1S3VersionKeyBEFE590F": Object {
+      "Description": "S3 key for asset version \\"59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1\\"",
       "Type": "String",
     },
     "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24ArtifactHashBA91B77F": Object {
@@ -9281,6 +9403,104 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubOrchestrationReprocessAllFF2F2455": Object {
+      "DependsOn": Array [
+        "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1S3Bucket1FDE25A6",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1S3VersionKeyBEFE590F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1S3VersionKeyBEFE590F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "[ConstructHub/ReprocessAll] Reprocess all package versions through the backend",
+        "Environment": Object {
+          "Variables": Object {
+            "BUCKET_NAME": Object {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "STATE_MACHINE_ARN": Object {
+              "Ref": "ConstructHubOrchestration39161A46",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
     },
     "ConstructHubOrchestrationRoleDefaultPolicyEACD181F": Object {
       "Properties": Object {
