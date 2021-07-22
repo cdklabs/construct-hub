@@ -67,11 +67,7 @@ export class Orchestration extends Construct {
           resultPath: '$.docGenOutput',
           resultSelector: { [`${language}.$`]: '$.Payload' },
         }).addRetry({ interval: Duration.seconds(30) });
-        // Add to catalog once the TypeScript transliteration result is ready.
-        if (language === DocumentationLanguage.TYPESCRIPT) {
-          return task.next(addToCatalog);
-        }
-        return task;
+        return task.next(addToCatalog);
       }))
       .addCatch(
         sendToDeadLetterQueue.next(new Fail(this, 'Fail', {
