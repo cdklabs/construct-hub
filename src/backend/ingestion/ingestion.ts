@@ -7,7 +7,7 @@ export interface IngestionProps extends lambda.FunctionOptions {
 }
 
 export class Ingestion extends lambda.Function {
-  constructor(scope: Construct, id: string, props: IngestionProps = {}) {
+  constructor(scope: Construct, id: string, props?: IngestionProps) {
     super(scope, id, {
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',

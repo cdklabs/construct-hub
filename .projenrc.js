@@ -24,7 +24,8 @@ const peerDeps = [
   '@aws-cdk/aws-s3-notifications',
   '@aws-cdk/aws-sns',
   '@aws-cdk/aws-sqs',
-  '@aws-cdk/aws-sqs',
+  '@aws-cdk/aws-stepfunctions',
+  '@aws-cdk/aws-stepfunctions-tasks',
   '@aws-cdk/core',
   '@aws-cdk/custom-resources',
   '@aws-cdk/cx-api',
@@ -246,7 +247,10 @@ function newLambdaHandler(entrypoint, trigger) {
   ts.close('}');
   ts.line();
   ts.open(`export class ${className} extends lambda.Function {`);
-  ts.open(`constructor(scope: Construct, id: string, props: ${propsName} = {}) {`);
+  // NOTE: unlike the array splat (`[...arr]`), the object splat (`{...obj}`) is
+  //       `undefined`-safe. We can hence save an unnecessary object allocation
+  //       by not specifying a default value for the `props` argument here.
+  ts.open(`constructor(scope: Construct, id: string, props?: ${propsName}) {`);
   ts.open('super(scope, id, {');
   ts.line('runtime: lambda.Runtime.NODEJS_14_X,');
   ts.line('handler: \'index.handler\',');
@@ -257,7 +261,7 @@ function newLambdaHandler(entrypoint, trigger) {
   if (trigger) {
     ts.open('new AfterCreate(this, \'Trigger\', {');
     ts.line('handler: this,');
-    ts.line('resources: props.after,');
+    ts.line('resources: props?.after,');
     ts.close('});');
   }
   ts.close('}');

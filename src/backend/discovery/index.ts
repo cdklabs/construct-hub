@@ -1,6 +1,7 @@
-import { ComparisonOperator, IAlarm, IMetric, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
+import { ComparisonOperator, IAlarm, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
+import { IFunction } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
 import { IQueue } from '@aws-cdk/aws-sqs';
@@ -56,6 +57,8 @@ export class Discovery extends Construct {
    */
   public readonly alarmNoInvocations: IAlarm;
 
+  public readonly function: IFunction;
+
   private readonly timeout = Duration.minutes(15);
 
   public constructor(scope: Construct, id: string, props: DiscoveryProps) {
@@ -63,6 +66,7 @@ export class Discovery extends Construct {
 
     this.bucket = new Bucket(this, 'StagingBucket', {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+      enforceSSL: true,
       lifecycleRules: [
         {
           prefix: S3KeyPrefix.STAGED_KEY_PREFIX, // delete the staged tarball after 30 days
@@ -72,7 +76,7 @@ export class Discovery extends Construct {
     });
 
     // Note: the handler is designed to stop processing more batches about 2 minutes ahead of the timeout.
-    const lambda = new Handler(this, 'Default', {
+    const handler = new Handler(this, 'Default', {
       description: 'Periodically query npm.js index for new construct libraries',
       memorySize: 10_240,
       reservedConcurrentExecutions: 1, // Only one execution (avoids race conditions on the S3 marker object)
@@ -83,23 +87,24 @@ export class Discovery extends Construct {
       },
     });
 
-    this.bucket.grantReadWrite(lambda);
-    props.queue.grantSendMessages(lambda);
-    props.denyList.grantRead(lambda);
+    this.function = handler;
+    this.bucket.grantReadWrite(this.function);
+    props.queue.grantSendMessages(this.function);
+    props.denyList.grantRead(handler);
 
     new Rule(this, 'ScheduleRule', {
       schedule: Schedule.rate(this.timeout),
-      targets: [new LambdaFunction(lambda)],
+      targets: [new LambdaFunction(this.function)],
     });
 
-    props.monitoring.watchful.watchLambdaFunction('Discovery Function', lambda);
-    this.alarmErrors = lambda.metricErrors({ period: Duration.minutes(15) }).createAlarm(this, 'ErrorsAlarm', {
+    props.monitoring.watchful.watchLambdaFunction('Discovery Function', this.function as Handler);
+    this.alarmErrors = this.function.metricErrors({ period: Duration.minutes(15) }).createAlarm(this, 'ErrorsAlarm', {
       alarmDescription: 'The discovery function (on npmjs.com) failed to run',
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
       evaluationPeriods: 1,
       threshold: 1,
     });
-    this.alarmNoInvocations = lambda.metricInvocations({ period: Duration.minutes(15) })
+    this.alarmNoInvocations = this.function.metricInvocations({ period: Duration.minutes(15) })
       .createAlarm(this, 'NoInvocationsAlarm', {
         alarmDescription: 'The discovery function (on npmjs.com) is not running as scheduled',
         comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
@@ -111,7 +116,7 @@ export class Discovery extends Construct {
   /**
    * The average time it took to process a changes batch.
    */
-  public metricBatchProcessingTime(opts?: MetricOptions): IMetric {
+  public metricBatchProcessingTime(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
       statistic: Statistic.AVERAGE,
@@ -124,7 +129,7 @@ export class Discovery extends Construct {
   /**
    * The total count of changes that were processed.
    */
-  public metricChangeCount(opts?: MetricOptions): IMetric {
+  public metricChangeCount(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
       statistic: Statistic.SUM,
@@ -134,7 +139,7 @@ export class Discovery extends Construct {
     });
   }
 
-  public metricNpmJsChangeAge(opts?: MetricOptions): IMetric {
+  public metricNpmJsChangeAge(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
       statistic: Statistic.MINIMUM,
@@ -147,7 +152,7 @@ export class Discovery extends Construct {
   /**
    * The age of the oldest package version that was processed.
    */
-  public metricPackageVersionAge(opts?: MetricOptions): IMetric {
+  public metricPackageVersionAge(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
       statistic: Statistic.MAXIMUM,
@@ -160,7 +165,7 @@ export class Discovery extends Construct {
   /**
    * The total count of package versions that were inspected.
    */
-  public metricPackageVersionCount(opts?: MetricOptions): IMetric {
+  public metricPackageVersionCount(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
       statistic: Statistic.SUM,
@@ -173,7 +178,7 @@ export class Discovery extends Construct {
   /**
    * The total count of package versions that were deemed relevant.
    */
-  public metricRelevantPackageVersions(opts?: MetricOptions): IMetric {
+  public metricRelevantPackageVersions(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
       statistic: Statistic.SUM,
@@ -187,7 +192,7 @@ export class Discovery extends Construct {
    * The amount of time that was remaining when the lambda returned in order to
    * avoid hitting a timeout.
    */
-  public metricRemainingTime(opts?: MetricOptions): IMetric {
+  public metricRemainingTime(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
       statistic: Statistic.AVERAGE,
@@ -200,7 +205,7 @@ export class Discovery extends Construct {
   /**
    * The total count of staging failures.
    */
-  public metricStagingFailureCount(opts?: MetricOptions): IMetric {
+  public metricStagingFailureCount(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
       statistic: Statistic.SUM,
@@ -213,7 +218,7 @@ export class Discovery extends Construct {
   /**
    * The average time it took to stage a package to S3.
    */
-  public metricStagingTime(opts?: MetricOptions): IMetric {
+  public metricStagingTime(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
       statistic: Statistic.AVERAGE,
@@ -227,7 +232,7 @@ export class Discovery extends Construct {
    * The amount of changes that were not processed due to having an invalid
    * format.
    */
-  public metricUnprocessableEntity(opts?: MetricOptions): IMetric {
+  public metricUnprocessableEntity(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
       statistic: Statistic.SUM,

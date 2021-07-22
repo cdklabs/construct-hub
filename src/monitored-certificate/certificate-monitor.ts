@@ -7,7 +7,7 @@ export interface CertificateMonitorProps extends lambda.FunctionOptions {
 }
 
 export class CertificateMonitor extends lambda.Function {
-  constructor(scope: Construct, id: string, props: CertificateMonitorProps = {}) {
+  constructor(scope: Construct, id: string, props?: CertificateMonitorProps) {
     super(scope, id, {
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',

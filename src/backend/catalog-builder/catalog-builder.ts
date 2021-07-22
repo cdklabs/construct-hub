@@ -7,7 +7,7 @@ export interface CatalogBuilderProps extends lambda.FunctionOptions {
 }
 
 export class CatalogBuilder extends lambda.Function {
-  constructor(scope: Construct, id: string, props: CatalogBuilderProps = {}) {
+  constructor(scope: Construct, id: string, props?: CatalogBuilderProps) {
     super(scope, id, {
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',

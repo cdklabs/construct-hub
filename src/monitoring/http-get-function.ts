@@ -7,7 +7,7 @@ export interface HttpGetFunctionProps extends lambda.FunctionOptions {
 }
 
 export class HttpGetFunction extends lambda.Function {
-  constructor(scope: Construct, id: string, props: HttpGetFunctionProps = {}) {
+  constructor(scope: Construct, id: string, props?: HttpGetFunctionProps) {
     super(scope, id, {
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',

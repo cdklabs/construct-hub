@@ -7,7 +7,7 @@ export interface HandlerProps extends lambda.FunctionOptions {
 }
 
 export class Handler extends lambda.Function {
-  constructor(scope: Construct, id: string, props: HandlerProps = {}) {
+  constructor(scope: Construct, id: string, props?: HandlerProps) {
     super(scope, id, {
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',

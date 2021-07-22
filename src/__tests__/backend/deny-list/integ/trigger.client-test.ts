@@ -13,7 +13,7 @@ export interface TriggerClientTestProps extends lambda.FunctionOptions {
 }
 
 export class TriggerClientTest extends lambda.Function {
-  constructor(scope: Construct, id: string, props: TriggerClientTestProps = {}) {
+  constructor(scope: Construct, id: string, props?: TriggerClientTestProps) {
     super(scope, id, {
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
@@ -23,7 +23,7 @@ export class TriggerClientTest extends lambda.Function {
     });
     new AfterCreate(this, 'Trigger', {
       handler: this,
-      resources: props.after,
+      resources: props?.after,
     });
   }
 }

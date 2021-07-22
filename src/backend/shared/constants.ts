@@ -75,6 +75,13 @@ export function docsKeySuffix(lang?: DocumentationLanguage | '*', submodule?: st
 }
 
 /**
+ * Key suffix for beacon files when a particular feature is not supported for
+ * the particular package (i.e: Python docs for a package that does not have a
+ * Python target configured).
+ */
+export const NOT_SUPPORTED_SUFFIX = '.not-supported';
+
+/**
  * The key for the catalog document.
  */
 export const CATALOG_KEY = 'catalog.json';

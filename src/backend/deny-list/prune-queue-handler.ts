@@ -7,7 +7,7 @@ export interface PruneQueueHandlerProps extends lambda.FunctionOptions {
 }
 
 export class PruneQueueHandler extends lambda.Function {
-  constructor(scope: Construct, id: string, props: PruneQueueHandlerProps = {}) {
+  constructor(scope: Construct, id: string, props?: PruneQueueHandlerProps) {
     super(scope, id, {
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
