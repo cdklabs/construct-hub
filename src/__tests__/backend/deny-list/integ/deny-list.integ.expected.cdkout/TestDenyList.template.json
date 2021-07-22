@@ -1,0 +1,2137 @@
+{
+  "Resources": {
+    "MockDataBucket4719A0C1": {
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/MockDataBucket/Resource"
+      }
+    },
+    "MockDataBucketPolicy6DD22337": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "MockDataBucket4719A0C1"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "MockDataBucket4719A0C1",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "MockDataBucket4719A0C1",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/MockDataBucket/Policy/Resource"
+      }
+    },
+    "MockDataBucketAutoDeleteObjectsCustomResourceCF89404C": {
+      "Type": "Custom::S3AutoDeleteObjects",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+            "Arn"
+          ]
+        },
+        "BucketName": {
+          "Ref": "MockDataBucket4719A0C1"
+        }
+      },
+      "DependsOn": [
+        "MockDataBucketPolicy6DD22337"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/MockDataBucket/AutoDeleteObjectsCustomResource/Default"
+      }
+    },
+    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role"
+      }
+    },
+    "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392S3BucketBF7A7F3F"
+          },
+          "S3Key": {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392S3VersionKeyFAF93626"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392S3VersionKeyFAF93626"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        },
+        "Timeout": 900,
+        "MemorySize": 128,
+        "Handler": "__entrypoint__.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs12.x",
+        "Description": {
+          "Fn::Join": [
+            "",
+            [
+              "Lambda function for auto-deleting objects in ",
+              {
+                "Ref": "MockDataBucket4719A0C1"
+              },
+              " S3 bucket."
+            ]
+          ]
+        }
+      },
+      "DependsOn": [
+        "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler"
+      }
+    },
+    "MockDataAwsCliLayerE631E742": {
+      "Type": "AWS::Lambda::LayerVersion",
+      "Properties": {
+        "Content": {
+          "S3Bucket": {
+            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7"
+          },
+          "S3Key": {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        },
+        "Description": "/opt/awscli/aws"
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/MockData/AwsCliLayer/Resource",
+        "aws:asset:path": "asset.e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68.zip",
+        "aws:asset:property": "Content"
+      }
+    },
+    "MockDataCustomResourceF4AE582D": {
+      "Type": "Custom::CDKBucketDeployment",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn"
+          ]
+        },
+        "SourceBucketNames": [
+          {
+            "Ref": "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3BucketA5253790"
+          }
+        ],
+        "SourceObjectKeys": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3VersionKeyDB67886F"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3VersionKeyDB67886F"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        ],
+        "DestinationBucketName": {
+          "Ref": "MockDataBucket4719A0C1"
+        },
+        "Prune": true
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/MockData/CustomResource/Default"
+      }
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource"
+      }
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3BucketA5253790"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3BucketA5253790"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "MockDataBucket4719A0C1",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "MockDataBucket4719A0C1",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "AssetParameters9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3S3BucketBC2DCE0D"
+                      }
+                    ]
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":s3:::",
+                      {
+                        "Ref": "AssetParameters9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3S3BucketBC2DCE0D"
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "DenyListBucketC1C9D3D9",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "DenyListBucketC1C9D3D9",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "Roles": [
+          {
+            "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource"
+      }
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C"
+          },
+          "S3Key": {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+            "Arn"
+          ]
+        },
+        "Handler": "index.handler",
+        "Layers": [
+          {
+            "Ref": "MockDataAwsCliLayerE631E742"
+          }
+        ],
+        "Runtime": "python3.6",
+        "Timeout": 900
+      },
+      "DependsOn": [
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource",
+        "aws:asset:path": "asset.c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf",
+        "aws:asset:property": "Code"
+      }
+    },
+    "DenyListBucketNotificationsEF0449EB": {
+      "Type": "Custom::S3BucketNotifications",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691",
+            "Arn"
+          ]
+        },
+        "BucketName": {
+          "Ref": "DenyListBucketC1C9D3D9"
+        },
+        "NotificationConfiguration": {
+          "LambdaFunctionConfigurations": [
+            {
+              "Events": [
+                "s3:ObjectCreated:*"
+              ],
+              "Filter": {
+                "Key": {
+                  "FilterRules": [
+                    {
+                      "Name": "prefix",
+                      "Value": "deny-list.json"
+                    }
+                  ]
+                }
+              },
+              "LambdaFunctionArn": {
+                "Fn::GetAtt": [
+                  "DenyListPrunePruneHandler5F946B07",
+                  "Arn"
+                ]
+              }
+            }
+          ]
+        },
+        "Managed": true
+      },
+      "DependsOn": [
+        "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/Bucket/Notifications/Resource"
+      }
+    },
+    "DenyListBucketC1C9D3D9": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "VersioningConfiguration": {
+          "Status": "Enabled"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/Bucket/Resource"
+      }
+    },
+    "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "DenyListPrunePruneHandler5F946B07",
+            "Arn"
+          ]
+        },
+        "Principal": "s3.amazonaws.com",
+        "SourceAccount": {
+          "Ref": "AWS::AccountId"
+        },
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "DenyListBucketC1C9D3D9",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/Bucket/AllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7"
+      }
+    },
+    "DenyListBucketDeploymentAwsCliLayer4F94CAE9": {
+      "Type": "AWS::Lambda::LayerVersion",
+      "Properties": {
+        "Content": {
+          "S3Bucket": {
+            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7"
+          },
+          "S3Key": {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        },
+        "Description": "/opt/awscli/aws"
+      },
+      "DependsOn": [
+        "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7",
+        "DenyListBucketNotificationsEF0449EB",
+        "DenyListBucketC1C9D3D9"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/BucketDeployment/AwsCliLayer/Resource",
+        "aws:asset:path": "asset.e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68.zip",
+        "aws:asset:property": "Content"
+      }
+    },
+    "DenyListBucketDeploymentCustomResource68E58740": {
+      "Type": "Custom::CDKBucketDeployment",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn"
+          ]
+        },
+        "SourceBucketNames": [
+          {
+            "Ref": "AssetParameters9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3S3BucketBC2DCE0D"
+          }
+        ],
+        "SourceObjectKeys": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3S3VersionKey9BAFCCF4"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3S3VersionKey9BAFCCF4"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        ],
+        "DestinationBucketName": {
+          "Ref": "DenyListBucketC1C9D3D9"
+        },
+        "Prune": true
+      },
+      "DependsOn": [
+        "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7",
+        "DenyListBucketNotificationsEF0449EB",
+        "DenyListBucketC1C9D3D9"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/BucketDeployment/CustomResource/Default"
+      }
+    },
+    "DenyListPruneDeleteQueueF9D9EBE3": {
+      "Type": "AWS::SQS::Queue",
+      "Properties": {
+        "VisibilityTimeout": 120
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/Prune/DeleteQueue/Resource"
+      }
+    },
+    "DenyListPrunePruneHandlerServiceRole234C8EF9": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneHandler/ServiceRole/Resource"
+      }
+    },
+    "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "DenyListPruneDeleteQueueF9D9EBE3",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "MockDataBucket4719A0C1",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "MockDataBucket4719A0C1",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "DenyListBucketC1C9D3D9",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "DenyListBucketC1C9D3D9",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E",
+        "Roles": [
+          {
+            "Ref": "DenyListPrunePruneHandlerServiceRole234C8EF9"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneHandler/ServiceRole/DefaultPolicy/Resource"
+      }
+    },
+    "DenyListPrunePruneHandler5F946B07": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "AssetParameters0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3S3BucketCEDB1B57"
+          },
+          "S3Key": {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3S3VersionKey50CC2679"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3S3VersionKey50CC2679"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "DenyListPrunePruneHandlerServiceRole234C8EF9",
+            "Arn"
+          ]
+        },
+        "Description": "backend/deny-list/prune-handler.lambda.ts",
+        "Environment": {
+          "Variables": {
+            "PACKAGE_DATA_BUCKET_NAME": {
+              "Ref": "MockDataBucket4719A0C1"
+            },
+            "PACKAGE_DATA_KEY_PREFIX": "data/",
+            "PRUNE_QUEUE_URL": {
+              "Ref": "DenyListPruneDeleteQueueF9D9EBE3"
+            },
+            "DENY_LIST_BUCKET_NAME": {
+              "Ref": "DenyListBucketC1C9D3D9"
+            },
+            "DENY_LIST_OBJECT_KEY": "deny-list.json"
+          }
+        },
+        "Handler": "index.handler",
+        "Runtime": "nodejs14.x",
+        "Timeout": 900
+      },
+      "DependsOn": [
+        "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E",
+        "DenyListPrunePruneHandlerServiceRole234C8EF9"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneHandler/Resource",
+        "aws:asset:path": "asset.0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3.bundle",
+        "aws:asset:property": "Code"
+      }
+    },
+    "DenyListPrunePruneQueueHandlerServiceRole9BB94361": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneQueueHandler/ServiceRole/Resource"
+      }
+    },
+    "DenyListPrunePruneQueueHandlerServiceRoleDefaultPolicy9ED3B9C8": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "MockDataBucket4719A0C1",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "MockDataBucket4719A0C1",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes"
+              ],
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "DenyListPruneDeleteQueueF9D9EBE3",
+                  "Arn"
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "DenyListPrunePruneQueueHandlerServiceRoleDefaultPolicy9ED3B9C8",
+        "Roles": [
+          {
+            "Ref": "DenyListPrunePruneQueueHandlerServiceRole9BB94361"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneQueueHandler/ServiceRole/DefaultPolicy/Resource"
+      }
+    },
+    "DenyListPrunePruneQueueHandler087D6B50": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "AssetParameterse68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42S3BucketF7434AEC"
+          },
+          "S3Key": {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameterse68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42S3VersionKeyA3D0543D"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameterse68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42S3VersionKeyA3D0543D"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "DenyListPrunePruneQueueHandlerServiceRole9BB94361",
+            "Arn"
+          ]
+        },
+        "Description": "backend/deny-list/prune-queue-handler.lambda.ts",
+        "Environment": {
+          "Variables": {
+            "PACKAGE_DATA_BUCKET_NAME": {
+              "Ref": "MockDataBucket4719A0C1"
+            }
+          }
+        },
+        "Handler": "index.handler",
+        "Runtime": "nodejs14.x",
+        "Timeout": 60
+      },
+      "DependsOn": [
+        "DenyListPrunePruneQueueHandlerServiceRoleDefaultPolicy9ED3B9C8",
+        "DenyListPrunePruneQueueHandlerServiceRole9BB94361"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneQueueHandler/Resource",
+        "aws:asset:path": "asset.e68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42.bundle",
+        "aws:asset:property": "Code"
+      }
+    },
+    "DenyListPrunePruneQueueHandlerSqsEventSourceTestDenyListPruneDeleteQueue888622B95BDFDCF8": {
+      "Type": "AWS::Lambda::EventSourceMapping",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "DenyListPrunePruneQueueHandler087D6B50"
+        },
+        "EventSourceArn": {
+          "Fn::GetAtt": [
+            "DenyListPruneDeleteQueueF9D9EBE3",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneQueueHandler/SqsEventSource:TestDenyListPruneDeleteQueue888622B9/Resource"
+      }
+    },
+    "DenyListPeriodicPruneC53BF9DB": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": "rate(5 minutes)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "DenyListPrunePruneHandler5F946B07",
+                "Arn"
+              ]
+            },
+            "Id": "Target0"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/PeriodicPrune/Resource"
+      }
+    },
+    "DenyListPeriodicPruneAllowEventRuleTestDenyListPrunePruneHandlerDB8102B7EA785278": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "DenyListPrunePruneHandler5F946B07",
+            "Arn"
+          ]
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "DenyListPeriodicPruneC53BF9DB",
+            "Arn"
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/PeriodicPrune/AllowEventRuleTestDenyListPrunePruneHandlerDB8102B7"
+      }
+    },
+    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/Resource"
+      }
+    },
+    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:PutBucketNotification",
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
+        "Roles": [
+          {
+            "Ref": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/DefaultPolicy/Resource"
+      }
+    },
+    "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Description": "AWS CloudFormation handler for \"Custom::S3BucketNotifications\" resources (@aws-cdk/aws-s3)",
+        "Code": {
+          "ZipFile": "import boto3  # type: ignore\nimport json\nimport logging\nimport urllib.request\n\ns3 = boto3.client(\"s3\")\n\nCONFIGURATION_TYPES = [\"TopicConfigurations\", \"QueueConfigurations\", \"LambdaFunctionConfigurations\"]\n\ndef handler(event: dict, context):\n    response_status = \"SUCCESS\"\n    error_message = \"\"\n    try:\n        props = event[\"ResourceProperties\"]\n        bucket = props[\"BucketName\"]\n        notification_configuration = props[\"NotificationConfiguration\"]\n        request_type = event[\"RequestType\"]\n        managed = props.get('Managed', 'true').lower() == 'true'\n        stack_id = event['StackId']\n\n        if managed:\n          config = handle_managed(request_type, notification_configuration)\n        else:\n          config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)\n\n        put_bucket_notification_configuration(bucket, config)\n    except Exception as e:\n        logging.exception(\"Failed to put bucket notification configuration\")\n        response_status = \"FAILED\"\n        error_message = f\"Error: {str(e)}. \"\n    finally:\n        submit_response(event, context, response_status, error_message)\n\n\ndef handle_managed(request_type, notification_configuration):\n  if request_type == 'Delete':\n    return {}\n  return notification_configuration\n\n\ndef handle_unmanaged(bucket, stack_id, request_type, notification_configuration):\n\n  # find external notifications\n  external_notifications = find_external_notifications(bucket, stack_id)\n\n  # if delete, that's all we need\n  if request_type == 'Delete':\n    return external_notifications\n\n  def with_id(notification):\n    notification['Id'] = f\"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}\"\n    return notification\n\n  # otherwise, merge external with incoming config and augment with id\n  notifications = {}\n  for t in CONFIGURATION_TYPES:\n    external = external_notifications.get(t, [])\n    incoming = [with_id(n) for n in notification_configuration.get(t, [])]\n    notifications[t] = external + incoming\n  return notifications\n\n\ndef find_external_notifications(bucket, stack_id):\n  existing_notifications = get_bucket_notification_configuration(bucket)\n  external_notifications = {}\n  for t in CONFIGURATION_TYPES:\n    # if the notification was created by us, we know what id to expect\n    # so we can filter by it.\n    external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f\"{stack_id}-\")]\n\n  return external_notifications\n\n\ndef get_bucket_notification_configuration(bucket):\n  return s3.get_bucket_notification_configuration(Bucket=bucket)\n\n\ndef put_bucket_notification_configuration(bucket, notification_configuration):\n  s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)\n\n\ndef submit_response(event: dict, context, response_status: str, error_message: str):\n    response_body = json.dumps(\n        {\n            \"Status\": response_status,\n            \"Reason\": f\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\",\n            \"PhysicalResourceId\": event.get(\"PhysicalResourceId\") or event[\"LogicalResourceId\"],\n            \"StackId\": event[\"StackId\"],\n            \"RequestId\": event[\"RequestId\"],\n            \"LogicalResourceId\": event[\"LogicalResourceId\"],\n            \"NoEcho\": False,\n        }\n    ).encode(\"utf-8\")\n    headers = {\"content-type\": \"\", \"content-length\": str(len(response_body))}\n    try:\n        req = urllib.request.Request(url=event[\"ResponseURL\"], headers=headers, data=response_body, method=\"PUT\")\n        with urllib.request.urlopen(req) as response:\n            print(response.read().decode(\"utf-8\"))\n        print(\"Status code: \" + response.reason)\n    except Exception as e:\n        print(\"send(..) failed executing request.urlopen(..): \" + str(e))\n"
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
+            "Arn"
+          ]
+        },
+        "Runtime": "python3.8",
+        "Timeout": 300
+      },
+      "DependsOn": [
+        "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
+        "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Resource"
+      }
+    },
+    "ClientTestServiceRole4F7802CF": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/ClientTest/ServiceRole/Resource"
+      }
+    },
+    "ClientTestServiceRoleDefaultPolicy3CB30A97": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "DenyListBucketC1C9D3D9",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "DenyListBucketC1C9D3D9",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "ClientTestServiceRoleDefaultPolicy3CB30A97",
+        "Roles": [
+          {
+            "Ref": "ClientTestServiceRole4F7802CF"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/ClientTest/ServiceRole/DefaultPolicy/Resource"
+      }
+    },
+    "ClientTestBE4CEC14": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "AssetParameters241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393dS3Bucket1D91468C"
+          },
+          "S3Key": {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393dS3VersionKey249EA831"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393dS3VersionKey249EA831"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "ClientTestServiceRole4F7802CF",
+            "Arn"
+          ]
+        },
+        "Description": "__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts",
+        "Environment": {
+          "Variables": {
+            "BUCKET_NAME": {
+              "Ref": "DenyListBucketC1C9D3D9"
+            },
+            "DENY_LIST_BUCKET_NAME": {
+              "Ref": "DenyListBucketC1C9D3D9"
+            },
+            "DENY_LIST_OBJECT_KEY": "deny-list.json",
+            "FILE_NAME": "deny-list.json"
+          }
+        },
+        "Handler": "index.handler",
+        "Runtime": "nodejs14.x"
+      },
+      "DependsOn": [
+        "ClientTestServiceRoleDefaultPolicy3CB30A97",
+        "ClientTestServiceRole4F7802CF"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/ClientTest/Resource",
+        "aws:asset:path": "asset.241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393d.bundle",
+        "aws:asset:property": "Code"
+      }
+    },
+    "ClientTestTrigger260D1687": {
+      "Type": "Custom::Trigger",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "AWSCDKTriggerCustomResourceProviderCustomResourceProviderHandler97BECD91",
+            "Arn"
+          ]
+        },
+        "HandlerArn": {
+          "Ref": "ClientTestCurrentVersionAB7E7F656db58f2638b05951597ef90f52ee9a0b"
+        }
+      },
+      "DependsOn": [
+        "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7",
+        "DenyListBucketNotificationsEF0449EB",
+        "DenyListBucketC1C9D3D9",
+        "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
+        "DenyListBucketDeploymentCustomResource68E58740",
+        "DenyListPeriodicPruneAllowEventRuleTestDenyListPrunePruneHandlerDB8102B7EA785278",
+        "DenyListPeriodicPruneC53BF9DB",
+        "DenyListPruneDeleteQueueF9D9EBE3",
+        "DenyListPrunePruneHandler5F946B07",
+        "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E",
+        "DenyListPrunePruneHandlerServiceRole234C8EF9",
+        "DenyListPrunePruneQueueHandler087D6B50",
+        "DenyListPrunePruneQueueHandlerServiceRoleDefaultPolicy9ED3B9C8",
+        "DenyListPrunePruneQueueHandlerServiceRole9BB94361",
+        "DenyListPrunePruneQueueHandlerSqsEventSourceTestDenyListPruneDeleteQueue888622B95BDFDCF8"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/ClientTest/Trigger/Resource/Default"
+      }
+    },
+    "ClientTestCurrentVersionAB7E7F656db58f2638b05951597ef90f52ee9a0b": {
+      "Type": "AWS::Lambda::Version",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "ClientTestBE4CEC14"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/ClientTest/CurrentVersion/Resource"
+      }
+    },
+    "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+          }
+        ],
+        "Policies": [
+          {
+            "PolicyName": "Inline",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "lambda:InvokeFunction"
+                  ],
+                  "Resource": [
+                    "*"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider/Role"
+      }
+    },
+    "AWSCDKTriggerCustomResourceProviderCustomResourceProviderHandler97BECD91": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34S3BucketD10E50CE"
+          },
+          "S3Key": {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34S3VersionKeyFF4DB90C"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34S3VersionKeyFF4DB90C"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        },
+        "Timeout": 900,
+        "MemorySize": 128,
+        "Handler": "__entrypoint__.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs14.x"
+      },
+      "DependsOn": [
+        "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider/Handler"
+      }
+    },
+    "PruneTestServiceRole91D2E3A2": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/PruneTest/ServiceRole/Resource"
+      }
+    },
+    "PruneTestServiceRoleDefaultPolicyBD33ABA2": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*"
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "MockDataBucket4719A0C1",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "MockDataBucket4719A0C1",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "PruneTestServiceRoleDefaultPolicyBD33ABA2",
+        "Roles": [
+          {
+            "Ref": "PruneTestServiceRole91D2E3A2"
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/PruneTest/ServiceRole/DefaultPolicy/Resource"
+      }
+    },
+    "PruneTest66C7D9FC": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "AssetParameters443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0adS3Bucket7DB01895"
+          },
+          "S3Key": {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0adS3VersionKey2D479791"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0adS3VersionKey2D479791"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "PruneTestServiceRole91D2E3A2",
+            "Arn"
+          ]
+        },
+        "Description": "__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts",
+        "Environment": {
+          "Variables": {
+            "BUCKET_NAME": {
+              "Ref": "MockDataBucket4719A0C1"
+            },
+            "EXPECTED_KEYS": "[\"data/your/v1.2.4/world.txt\",\"data/your/v1.2.4/hello.txt\"]",
+            "TIMEOUT_SEC": "120"
+          }
+        },
+        "Handler": "index.handler",
+        "Runtime": "nodejs14.x",
+        "Timeout": 300
+      },
+      "DependsOn": [
+        "PruneTestServiceRoleDefaultPolicyBD33ABA2",
+        "PruneTestServiceRole91D2E3A2"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/PruneTest/Resource",
+        "aws:asset:path": "asset.443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0ad.bundle",
+        "aws:asset:property": "Code"
+      }
+    },
+    "PruneTestTrigger1ECEFB65": {
+      "Type": "Custom::Trigger",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "AWSCDKTriggerCustomResourceProviderCustomResourceProviderHandler97BECD91",
+            "Arn"
+          ]
+        },
+        "HandlerArn": {
+          "Ref": "PruneTestCurrentVersion332993F858475878af9d0c677220171bb4c84099"
+        }
+      },
+      "DependsOn": [
+        "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7",
+        "DenyListBucketNotificationsEF0449EB",
+        "DenyListBucketC1C9D3D9",
+        "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
+        "DenyListBucketDeploymentCustomResource68E58740",
+        "DenyListPeriodicPruneAllowEventRuleTestDenyListPrunePruneHandlerDB8102B7EA785278",
+        "DenyListPeriodicPruneC53BF9DB",
+        "DenyListPruneDeleteQueueF9D9EBE3",
+        "DenyListPrunePruneHandler5F946B07",
+        "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E",
+        "DenyListPrunePruneHandlerServiceRole234C8EF9",
+        "DenyListPrunePruneQueueHandler087D6B50",
+        "DenyListPrunePruneQueueHandlerServiceRoleDefaultPolicy9ED3B9C8",
+        "DenyListPrunePruneQueueHandlerServiceRole9BB94361",
+        "DenyListPrunePruneQueueHandlerSqsEventSourceTestDenyListPruneDeleteQueue888622B95BDFDCF8"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/PruneTest/Trigger/Resource/Default"
+      }
+    },
+    "PruneTestCurrentVersion332993F858475878af9d0c677220171bb4c84099": {
+      "Type": "AWS::Lambda::Version",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "PruneTest66C7D9FC"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/PruneTest/CurrentVersion/Resource"
+      }
+    },
+    "CDKMetadata": {
+      "Type": "AWS::CDK::Metadata",
+      "Properties": {
+        "Analytics": "v2:deflate64:H4sIAAAAAAAAE21RTU/DMAz9LdzTjGpIXNnKOIFUOol7SM2UNR8jTjZNUf47TtttIHHys59jv+fUvK4f+P3dkzhhJfthkaTzwNM2CDmwxlkMPsrAmojBmQ7QRS+BNV/2hv9QrXdH1YNnK0QINGan7K70t8ILA4EYSmhwr4JyNrOyOOGSp3WUA4TCzmgKrdNKnm/lOZ+StUDIDJdV6uGg3dmADXyinq8FJooU5KOizLQwn73giSa+ijP4D/BIStiWhGoIzr5EK4s2dgXU+hu34I3C8dHmSAu2o/M3cTjMXv+pXrYQO8PMlDA8dU5P9yzxZnZC5O0beXqPEMemEWQGZT7Vuzi/pZgvzipdXFV0V6kVX52w0Wo0mpl1PfA9Lo705/Ujffselap8tEEZ4N0UfwCNMSMSEwIAAA=="
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/CDKMetadata/Default"
+      },
+      "Condition": "CDKMetadataAvailable"
+    }
+  },
+  "Parameters": {
+    "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392S3BucketBF7A7F3F": {
+      "Type": "String",
+      "Description": "S3 bucket for asset \"4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392\""
+    },
+    "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392S3VersionKeyFAF93626": {
+      "Type": "String",
+      "Description": "S3 key for asset version \"4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392\""
+    },
+    "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392ArtifactHashE56CD69A": {
+      "Type": "String",
+      "Description": "Artifact hash for asset \"4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392\""
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7": {
+      "Type": "String",
+      "Description": "S3 bucket for asset \"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\""
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F": {
+      "Type": "String",
+      "Description": "S3 key for asset version \"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\""
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": {
+      "Type": "String",
+      "Description": "Artifact hash for asset \"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\""
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C": {
+      "Type": "String",
+      "Description": "S3 bucket for asset \"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\""
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70": {
+      "Type": "String",
+      "Description": "S3 key for asset version \"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\""
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfArtifactHash85F58E48": {
+      "Type": "String",
+      "Description": "Artifact hash for asset \"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\""
+    },
+    "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3BucketA5253790": {
+      "Type": "String",
+      "Description": "S3 bucket for asset \"9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffd\""
+    },
+    "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3VersionKeyDB67886F": {
+      "Type": "String",
+      "Description": "S3 key for asset version \"9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffd\""
+    },
+    "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdArtifactHash704B15D5": {
+      "Type": "String",
+      "Description": "Artifact hash for asset \"9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffd\""
+    },
+    "AssetParameters9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3S3BucketBC2DCE0D": {
+      "Type": "String",
+      "Description": "S3 bucket for asset \"9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3\""
+    },
+    "AssetParameters9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3S3VersionKey9BAFCCF4": {
+      "Type": "String",
+      "Description": "S3 key for asset version \"9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3\""
+    },
+    "AssetParameters9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3ArtifactHashA74A476C": {
+      "Type": "String",
+      "Description": "Artifact hash for asset \"9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3\""
+    },
+    "AssetParameters0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3S3BucketCEDB1B57": {
+      "Type": "String",
+      "Description": "S3 bucket for asset \"0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3\""
+    },
+    "AssetParameters0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3S3VersionKey50CC2679": {
+      "Type": "String",
+      "Description": "S3 key for asset version \"0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3\""
+    },
+    "AssetParameters0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3ArtifactHash86046D32": {
+      "Type": "String",
+      "Description": "Artifact hash for asset \"0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3\""
+    },
+    "AssetParameterse68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42S3BucketF7434AEC": {
+      "Type": "String",
+      "Description": "S3 bucket for asset \"e68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42\""
+    },
+    "AssetParameterse68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42S3VersionKeyA3D0543D": {
+      "Type": "String",
+      "Description": "S3 key for asset version \"e68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42\""
+    },
+    "AssetParameterse68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42ArtifactHash4B4C9087": {
+      "Type": "String",
+      "Description": "Artifact hash for asset \"e68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42\""
+    },
+    "AssetParameters241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393dS3Bucket1D91468C": {
+      "Type": "String",
+      "Description": "S3 bucket for asset \"241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393d\""
+    },
+    "AssetParameters241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393dS3VersionKey249EA831": {
+      "Type": "String",
+      "Description": "S3 key for asset version \"241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393d\""
+    },
+    "AssetParameters241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393dArtifactHashCE758CC7": {
+      "Type": "String",
+      "Description": "Artifact hash for asset \"241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393d\""
+    },
+    "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34S3BucketD10E50CE": {
+      "Type": "String",
+      "Description": "S3 bucket for asset \"a442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34\""
+    },
+    "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34S3VersionKeyFF4DB90C": {
+      "Type": "String",
+      "Description": "S3 key for asset version \"a442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34\""
+    },
+    "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34ArtifactHash21CD70B6": {
+      "Type": "String",
+      "Description": "Artifact hash for asset \"a442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34\""
+    },
+    "AssetParameters443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0adS3Bucket7DB01895": {
+      "Type": "String",
+      "Description": "S3 bucket for asset \"443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0ad\""
+    },
+    "AssetParameters443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0adS3VersionKey2D479791": {
+      "Type": "String",
+      "Description": "S3 key for asset version \"443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0ad\""
+    },
+    "AssetParameters443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0adArtifactHashBDE1DBB8": {
+      "Type": "String",
+      "Description": "Artifact hash for asset \"443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0ad\""
+    }
+  },
+  "Conditions": {
+    "CDKMetadataAvailable": {
+      "Fn::Or": [
+        {
+          "Fn::Or": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "af-south-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-east-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-northeast-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-northeast-2"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-south-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-southeast-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ap-southeast-2"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "ca-central-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "cn-north-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "cn-northwest-1"
+              ]
+            }
+          ]
+        },
+        {
+          "Fn::Or": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-central-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-north-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-south-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-west-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-west-2"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "eu-west-3"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "me-south-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "sa-east-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "us-east-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "us-east-2"
+              ]
+            }
+          ]
+        },
+        {
+          "Fn::Or": [
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "us-west-1"
+              ]
+            },
+            {
+              "Fn::Equals": [
+                {
+                  "Ref": "AWS::Region"
+                },
+                "us-west-2"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

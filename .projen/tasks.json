@@ -105,6 +105,9 @@
         },
         {
           "spawn": "eslint"
+        },
+        {
+          "spawn": "integ:deny-list:assert"
         }
       ]
     },
@@ -488,15 +491,26 @@
         }
       ]
     },
-    "integ:deny-list": {
-      "name": "integ:deny-list",
+    "integ:deny-list:deploy": {
+      "name": "integ:deny-list:deploy",
       "description": "deploy integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
       "steps": [
         {
-          "exec": "npx cdk --app \"node deny-list.integ.js\" deploy --require-approval=never"
+          "exec": "cdk deploy --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --require-approval=never -o src/__tests__/backend/deny-list/integ/deny-list.integ.expected.cdkout"
         }
-      ],
-      "cwd": "lib/__tests__/backend/deny-list/integ"
+      ]
+    },
+    "integ:deny-list:assert": {
+      "name": "integ:deny-list:assert",
+      "description": "synthesize integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
+      "steps": [
+        {
+          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" -o src/__tests__/backend/deny-list/integ/deny-list.integ.actual.cdkout > /dev/null"
+        },
+        {
+          "exec": "diff -r -x \"**/asset.*\" -x cdk.out src/__tests__/backend/deny-list/integ/deny-list.integ.expected.cdkout/ src/__tests__/backend/deny-list/integ/deny-list.integ.actual.cdkout/"
+        }
+      ]
     },
     "release": {
       "name": "release",

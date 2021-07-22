@@ -173,17 +173,45 @@ function addDevApp() {
   });
 }
 
+/**
+ * Adds `integ:xxx` tasks for integration tests based on all files with the
+ * `.integ.ts` extension, which are used as CDK application entrypoints.
+ *
+ * To run an integration test, just run `yarn integ:xxx` (with your environment
+ * set up to your AWS development account).
+ */
 function discoverIntegrationTests() {
   const files = glob.sync('**/*.integ.ts', { cwd: project.srcdir });
   for (const entry of files) {
     console.log(`integration test: ${entry}`);
     const name = basename(entry, '.integ.ts');
+
     const libdir = join(project.libdir, dirname(entry));
-    const task = project.addTask(`integ:${name}`, {
+    const srcdir = join(project.srcdir, dirname(entry));
+
+    const expecteddir = join(srcdir, `${name}.integ.expected.cdkout`);
+    const actualdir = join(srcdir, `${name}.integ.actual.cdkout`);
+
+    const app = `"node ${join(libdir, basename(entry, '.ts'))}.js"`;
+
+    project.addTask(`integ:${name}:deploy`, {
       description: `deploy integration test ${entry}`,
-      cwd: libdir,
-      exec: `npx cdk --app "node ${basename(entry, '.ts')}.js" deploy --require-approval=never`,
+      exec: `cdk deploy --app ${app} --require-approval=never -o ${expecteddir}`,
     });
+
+    const assert = project.addTask(`integ:${name}:assert`, {
+      description: `synthesize integration test ${entry}`,
+    });
+    assert.exec(`cdk synth --app ${app} -o ${actualdir} > /dev/null`);
+    assert.exec(`diff -r -x "**/asset.*" -x cdk.out ${expecteddir}/ ${actualdir}/`);
+
+    // synth as part of our tests, which means that if outdir changes, anti-tamper will fail
+    project.testTask.spawn(assert);
+    project.addGitIgnore(`!${expecteddir}`); // commit outdir to git but not assets
+    project.addGitIgnore(`${expecteddir}/**/asset.*`); // commit outdir to git but not assets
+    project.addGitIgnore(`${expecteddir}/cdk.out`); // commit outdir to git but not assets
+
+    project.addGitIgnore(actualdir); // commit outdir to git
   }
 }
 

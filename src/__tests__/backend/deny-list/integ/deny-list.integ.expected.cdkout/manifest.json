@@ -1,0 +1,1923 @@
+{
+  "version": "12.0.0",
+  "artifacts": {
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    },
+    "TestDenyList": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "TestDenyList.template.json",
+        "validateOnSynth": false
+      },
+      "metadata": {
+        "/TestDenyList": [
+          {
+            "type": "aws:cdk:asset",
+            "data": {
+              "path": "asset.4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392",
+              "id": "4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392",
+              "packaging": "zip",
+              "sourceHash": "4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392",
+              "s3BucketParameter": "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392S3BucketBF7A7F3F",
+              "s3KeyParameter": "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392S3VersionKeyFAF93626",
+              "artifactHashParameter": "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392ArtifactHashE56CD69A"
+            },
+            "trace": [
+              "ConstructNode.addMetadata (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/construct-compat.js:405:62)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:175:29)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "new CustomResourceProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:59:29)",
+              "Function.getOrCreateProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:135:94)",
+              "Bucket.enableAutoDeleteObjects (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:1029:56)",
+              "new Bucket (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:627:18)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:15:21)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          },
+          {
+            "type": "aws:cdk:asset",
+            "data": {
+              "path": "asset.e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68.zip",
+              "id": "e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68",
+              "packaging": "file",
+              "sourceHash": "e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68",
+              "s3BucketParameter": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7",
+              "s3KeyParameter": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+              "artifactHashParameter": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3"
+            },
+            "trace": [
+              "ConstructNode.addMetadata (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/construct-compat.js:405:62)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:175:29)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new LayerVersion (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/layers.js:57:33)",
+              "new AwsCliLayer (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/lambda-layer-awscli/lib/awscli-layer.js:20:9)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:32:22)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:19:1)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          },
+          {
+            "type": "aws:cdk:asset",
+            "data": {
+              "path": "asset.c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf",
+              "id": "c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf",
+              "packaging": "zip",
+              "sourceHash": "c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf",
+              "s3BucketParameter": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C",
+              "s3KeyParameter": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70",
+              "artifactHashParameter": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfArtifactHash85F58E48"
+            },
+            "trace": [
+              "ConstructNode.addMetadata (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/construct-compat.js:405:62)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:175:29)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "SingletonFunction.ensureLambda (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/singleton-lambda.js:109:16)",
+              "new SingletonFunction (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/singleton-lambda.js:26:36)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:29:25)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:19:1)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          },
+          {
+            "type": "aws:cdk:asset",
+            "data": {
+              "path": "asset.9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffd",
+              "id": "9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffd",
+              "packaging": "zip",
+              "sourceHash": "9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffd",
+              "s3BucketParameter": "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3BucketA5253790",
+              "s3KeyParameter": "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3VersionKeyDB67886F",
+              "artifactHashParameter": "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdArtifactHash704B15D5"
+            },
+            "trace": [
+              "ConstructNode.addMetadata (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/construct-compat.js:405:62)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:175:29)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "Object.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/source.js:59:31)",
+              "/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:62",
+              "Array.map (<anonymous>)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:39)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:19:1)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          },
+          {
+            "type": "aws:cdk:asset",
+            "data": {
+              "path": "asset.9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3",
+              "id": "9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3",
+              "packaging": "zip",
+              "sourceHash": "9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3",
+              "s3BucketParameter": "AssetParameters9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3S3BucketBC2DCE0D",
+              "s3KeyParameter": "AssetParameters9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3S3VersionKey9BAFCCF4",
+              "artifactHashParameter": "AssetParameters9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3ArtifactHashA74A476C"
+            },
+            "trace": [
+              "ConstructNode.addMetadata (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/construct-compat.js:405:62)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:175:29)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "Object.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/source.js:59:31)",
+              "/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:62",
+              "Array.map (<anonymous>)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:39)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:30:24)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          },
+          {
+            "type": "aws:cdk:asset",
+            "data": {
+              "path": "asset.0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3.bundle",
+              "id": "0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3",
+              "packaging": "zip",
+              "sourceHash": "0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3",
+              "s3BucketParameter": "AssetParameters0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3S3BucketCEDB1B57",
+              "s3KeyParameter": "AssetParameters0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3S3VersionKey50CC2679",
+              "artifactHashParameter": "AssetParameters0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3ArtifactHash86046D32"
+            },
+            "trace": [
+              "ConstructNode.addMetadata (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/construct-compat.js:405:62)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:175:29)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new PruneHandler (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune-handler.js:9:9)",
+              "new Prune (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune.js:23:30)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:34:23)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          },
+          {
+            "type": "aws:cdk:asset",
+            "data": {
+              "path": "asset.e68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42.bundle",
+              "id": "e68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42",
+              "packaging": "zip",
+              "sourceHash": "e68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42",
+              "s3BucketParameter": "AssetParameterse68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42S3BucketF7434AEC",
+              "s3KeyParameter": "AssetParameterse68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42S3VersionKeyA3D0543D",
+              "artifactHashParameter": "AssetParameterse68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42ArtifactHash4B4C9087"
+            },
+            "trace": [
+              "ConstructNode.addMetadata (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/construct-compat.js:405:62)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:175:29)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new PruneQueueHandler (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune-queue-handler.js:9:9)",
+              "new Prune (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune.js:34:30)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:34:23)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          },
+          {
+            "type": "aws:cdk:asset",
+            "data": {
+              "path": "asset.241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393d.bundle",
+              "id": "241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393d",
+              "packaging": "zip",
+              "sourceHash": "241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393d",
+              "s3BucketParameter": "AssetParameters241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393dS3Bucket1D91468C",
+              "s3KeyParameter": "AssetParameters241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393dS3VersionKey249EA831",
+              "artifactHashParameter": "AssetParameters241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393dArtifactHashCE758CC7"
+            },
+            "trace": [
+              "ConstructNode.addMetadata (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/construct-compat.js:405:62)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:175:29)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new TriggerClientTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.client-test.js:10:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:31:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          },
+          {
+            "type": "aws:cdk:asset",
+            "data": {
+              "path": "asset.a442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34",
+              "id": "a442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34",
+              "packaging": "zip",
+              "sourceHash": "a442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34",
+              "s3BucketParameter": "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34S3BucketD10E50CE",
+              "s3KeyParameter": "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34S3VersionKeyFF4DB90C",
+              "artifactHashParameter": "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34ArtifactHash21CD70B6"
+            },
+            "trace": [
+              "ConstructNode.addMetadata (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/construct-compat.js:405:62)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:175:29)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "new CustomResourceProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:59:29)",
+              "Function.getOrCreateProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:135:94)",
+              "new AfterCreate (/Users/benisrae/code/construct-hub/node_modules/cdk-triggers/lib/triggers.js:18:56)",
+              "new TriggerClientTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.client-test.js:17:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:31:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          },
+          {
+            "type": "aws:cdk:asset",
+            "data": {
+              "path": "asset.443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0ad.bundle",
+              "id": "443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0ad",
+              "packaging": "zip",
+              "sourceHash": "443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0ad",
+              "s3BucketParameter": "AssetParameters443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0adS3Bucket7DB01895",
+              "s3KeyParameter": "AssetParameters443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0adS3VersionKey2D479791",
+              "artifactHashParameter": "AssetParameters443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0adArtifactHashBDE1DBB8"
+            },
+            "trace": [
+              "ConstructNode.addMetadata (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/construct-compat.js:405:62)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:175:29)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new TriggerPruneTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.prune-test.js:10:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:39:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/MockDataBucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MockDataBucket4719A0C1",
+            "trace": [
+              "new Bucket (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:573:26)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:15:21)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/MockDataBucket/Policy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MockDataBucketPolicy6DD22337",
+            "trace": [
+              "new BucketPolicy (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket-policy.js:32:25)",
+              "Bucket.addToResourcePolicy (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:142:27)",
+              "Bucket.enableAutoDeleteObjects (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:1036:14)",
+              "new Bucket (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:627:18)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:15:21)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/MockDataBucket/AutoDeleteObjectsCustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MockDataBucketAutoDeleteObjectsCustomResourceCF89404C",
+            "trace": [
+              "new CustomResource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource.js:30:25)",
+              "Bucket.enableAutoDeleteObjects (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:1048:32)",
+              "new Bucket (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:627:18)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:15:21)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/Custom::S3AutoDeleteObjectsCustomResourceProvider/Role": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+            "trace": [
+              "new CustomResourceProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:73:22)",
+              "Function.getOrCreateProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:135:94)",
+              "Bucket.enableAutoDeleteObjects (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:1029:56)",
+              "new Bucket (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:627:18)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:15:21)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+            "trace": [
+              "new CustomResourceProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:89:25)",
+              "Function.getOrCreateProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:135:94)",
+              "Bucket.enableAutoDeleteObjects (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:1029:56)",
+              "new Bucket (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:627:18)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:15:21)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392/S3Bucket": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392S3BucketBF7A7F3F",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:12:36)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "new CustomResourceProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:59:29)",
+              "Function.getOrCreateProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:135:94)",
+              "Bucket.enableAutoDeleteObjects (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:1029:56)",
+              "new Bucket (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:627:18)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:15:21)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392/S3VersionKey": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392S3VersionKeyFAF93626",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:16:35)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "new CustomResourceProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:59:29)",
+              "Function.getOrCreateProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:135:94)",
+              "Bucket.enableAutoDeleteObjects (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:1029:56)",
+              "new Bucket (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:627:18)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:15:21)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392/ArtifactHash": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters4cd61014b71160e8c66fe167e43710d5ba068b80b134e9bd84508cf9238b2392ArtifactHashE56CD69A",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:20:38)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "new CustomResourceProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:59:29)",
+              "Function.getOrCreateProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:135:94)",
+              "Bucket.enableAutoDeleteObjects (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:1029:56)",
+              "new Bucket (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:627:18)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:15:21)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68/S3Bucket": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:12:36)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new LayerVersion (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/layers.js:57:33)",
+              "new AwsCliLayer (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/lambda-layer-awscli/lib/awscli-layer.js:20:9)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:32:22)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:19:1)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68/S3VersionKey": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:16:35)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new LayerVersion (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/layers.js:57:33)",
+              "new AwsCliLayer (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/lambda-layer-awscli/lib/awscli-layer.js:20:9)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:32:22)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:19:1)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68/ArtifactHash": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:20:38)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new LayerVersion (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/layers.js:57:33)",
+              "new AwsCliLayer (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/lambda-layer-awscli/lib/awscli-layer.js:20:9)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:32:22)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:19:1)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf/S3Bucket": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:12:36)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "SingletonFunction.ensureLambda (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/singleton-lambda.js:109:16)",
+              "new SingletonFunction (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/singleton-lambda.js:26:36)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:29:25)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:19:1)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf/S3VersionKey": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:16:35)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "SingletonFunction.ensureLambda (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/singleton-lambda.js:109:16)",
+              "new SingletonFunction (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/singleton-lambda.js:26:36)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:29:25)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:19:1)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf/ArtifactHash": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfArtifactHash85F58E48",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:20:38)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "SingletonFunction.ensureLambda (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/singleton-lambda.js:109:16)",
+              "new SingletonFunction (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/singleton-lambda.js:26:36)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:29:25)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:19:1)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffd/S3Bucket": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3BucketA5253790",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:12:36)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "Object.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/source.js:59:31)",
+              "/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:62",
+              "Array.map (<anonymous>)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:39)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:19:1)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffd/S3VersionKey": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3VersionKeyDB67886F",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:16:35)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "Object.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/source.js:59:31)",
+              "/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:62",
+              "Array.map (<anonymous>)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:39)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:19:1)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffd/ArtifactHash": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdArtifactHash704B15D5",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:20:38)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "Object.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/source.js:59:31)",
+              "/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:62",
+              "Array.map (<anonymous>)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:39)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:19:1)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3/S3Bucket": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3S3BucketBC2DCE0D",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:12:36)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "Object.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/source.js:59:31)",
+              "/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:62",
+              "Array.map (<anonymous>)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:39)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:30:24)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3/S3VersionKey": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3S3VersionKey9BAFCCF4",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:16:35)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "Object.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/source.js:59:31)",
+              "/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:62",
+              "Array.map (<anonymous>)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:39)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:30:24)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3/ArtifactHash": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3ArtifactHashA74A476C",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:20:38)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "Object.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/source.js:59:31)",
+              "/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:62",
+              "Array.map (<anonymous>)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:39)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:30:24)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3/S3Bucket": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3S3BucketCEDB1B57",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:12:36)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new PruneHandler (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune-handler.js:9:9)",
+              "new Prune (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune.js:23:30)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:34:23)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3/S3VersionKey": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3S3VersionKey50CC2679",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:16:35)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new PruneHandler (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune-handler.js:9:9)",
+              "new Prune (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune.js:23:30)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:34:23)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3/ArtifactHash": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters0b97a47593cdbd232389d776f9222c8e3f4152c3ca7346e1af2ab56df529b5f3ArtifactHash86046D32",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:20:38)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new PruneHandler (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune-handler.js:9:9)",
+              "new Prune (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune.js:23:30)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:34:23)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/e68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42/S3Bucket": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameterse68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42S3BucketF7434AEC",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:12:36)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new PruneQueueHandler (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune-queue-handler.js:9:9)",
+              "new Prune (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune.js:34:30)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:34:23)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/e68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42/S3VersionKey": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameterse68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42S3VersionKeyA3D0543D",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:16:35)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new PruneQueueHandler (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune-queue-handler.js:9:9)",
+              "new Prune (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune.js:34:30)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:34:23)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/e68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42/ArtifactHash": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameterse68c350770659179afb113872bc2603b54f95dcf215a29774d619afb1524ad42ArtifactHash4B4C9087",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:20:38)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new PruneQueueHandler (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune-queue-handler.js:9:9)",
+              "new Prune (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune.js:34:30)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:34:23)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393d/S3Bucket": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393dS3Bucket1D91468C",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:12:36)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new TriggerClientTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.client-test.js:10:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:31:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393d/S3VersionKey": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393dS3VersionKey249EA831",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:16:35)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new TriggerClientTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.client-test.js:10:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:31:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393d/ArtifactHash": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters241bc203d1a6e1ce89445508772a7264efc5e7a074d3b684d2566d006700393dArtifactHashCE758CC7",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:20:38)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new TriggerClientTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.client-test.js:10:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:31:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/a442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34/S3Bucket": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34S3BucketD10E50CE",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:12:36)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "new CustomResourceProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:59:29)",
+              "Function.getOrCreateProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:135:94)",
+              "new AfterCreate (/Users/benisrae/code/construct-hub/node_modules/cdk-triggers/lib/triggers.js:18:56)",
+              "new TriggerClientTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.client-test.js:17:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:31:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/a442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34/S3VersionKey": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34S3VersionKeyFF4DB90C",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:16:35)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "new CustomResourceProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:59:29)",
+              "Function.getOrCreateProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:135:94)",
+              "new AfterCreate (/Users/benisrae/code/construct-hub/node_modules/cdk-triggers/lib/triggers.js:18:56)",
+              "new TriggerClientTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.client-test.js:17:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:31:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/a442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34/ArtifactHash": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34ArtifactHash21CD70B6",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:20:38)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "new CustomResourceProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:59:29)",
+              "Function.getOrCreateProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:135:94)",
+              "new AfterCreate (/Users/benisrae/code/construct-hub/node_modules/cdk-triggers/lib/triggers.js:18:56)",
+              "new TriggerClientTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.client-test.js:17:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:31:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0ad/S3Bucket": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0adS3Bucket7DB01895",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:12:36)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new TriggerPruneTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.prune-test.js:10:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:39:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0ad/S3VersionKey": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0adS3VersionKey2D479791",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:16:35)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new TriggerPruneTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.prune-test.js:10:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:39:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AssetParameters/443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0ad/ArtifactHash": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AssetParameters443aa919bdbd98a06945f71576be048032c6df9a9420bcd2afd1d5bc0d4bc0adArtifactHashBDE1DBB8",
+            "trace": [
+              "new FileAssetParameters (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/asset-parameters.js:20:38)",
+              "LegacyStackSynthesizer.doAddFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:162:22)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:83:25)",
+              "Stack.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack.js:425:33)",
+              "LegacyStackSynthesizer.addFileAsset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stack-synthesizers/legacy.js:87:31)",
+              "new Asset (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:40:44)",
+              "AssetCode.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/code.js:258:26)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:97:33)",
+              "new TriggerPruneTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.prune-test.js:10:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:39:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/MockData/AwsCliLayer/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MockDataAwsCliLayerE631E742",
+            "trace": [
+              "new LayerVersion (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/layers.js:64:26)",
+              "new AwsCliLayer (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/lambda-layer-awscli/lib/awscli-layer.js:20:9)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:32:22)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:19:1)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/MockData/CustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "MockDataCustomResourceF4AE582D",
+            "trace": [
+              "new CustomResource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource.js:30:25)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:55:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:19:1)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+            "trace": [
+              "new Role (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/role.js:72:22)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:79:35)",
+              "SingletonFunction.ensureLambda (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/singleton-lambda.js:109:16)",
+              "new SingletonFunction (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/singleton-lambda.js:26:36)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:29:25)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:19:1)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+            "trace": [
+              "new Policy (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/policy.js:56:26)",
+              "Role.addToPrincipalPolicy (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/role.js:209:34)",
+              "Function.addToPrincipal (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/grant.js:90:65)",
+              "Function.addToPrincipalOrResource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/grant.js:45:30)",
+              "Import.grant (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:429:31)",
+              "Import.grantRead (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:252:21)",
+              "Asset.grantRead (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-assets/lib/asset.js:93:21)",
+              "Object.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/source.js:66:23)",
+              "/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:62",
+              "Array.map (<anonymous>)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:46:39)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:19:1)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "trace": [
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:135:26)",
+              "SingletonFunction.ensureLambda (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/singleton-lambda.js:109:16)",
+              "new SingletonFunction (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/singleton-lambda.js:26:36)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:29:25)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:19:1)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/DenyList/Bucket/Notifications/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListBucketNotificationsEF0449EB",
+            "trace": [
+              "BucketNotifications.createResourceOnce (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/notifications-resource/notifications-resource.js:95:29)",
+              "BucketNotifications.addNotification (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/notifications-resource/notifications-resource.js:44:31)",
+              "Bucket.addEventNotification (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:377:28)",
+              "S3EventSource.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda-event-sources/lib/s3.js:28:25)",
+              "PruneHandler.addEventSource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function-base.js:168:16)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:42:27)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/DenyList/Bucket/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListBucketC1C9D3D9",
+            "trace": [
+              "new Bucket (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:573:26)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:22:23)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/DenyList/Bucket/AllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7",
+            "trace": [
+              "PruneHandler.addPermission (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function-base.js:42:9)",
+              "LambdaDestination.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-notifications/lib/lambda.js:40:21)",
+              "BucketNotifications.addNotification (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/notifications-resource/notifications-resource.js:47:36)",
+              "Bucket.addEventNotification (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:377:28)",
+              "S3EventSource.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda-event-sources/lib/s3.js:28:25)",
+              "PruneHandler.addEventSource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function-base.js:168:16)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:42:27)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/DenyList/BucketDeployment/AwsCliLayer/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
+            "trace": [
+              "new LayerVersion (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/layers.js:64:26)",
+              "new AwsCliLayer (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/lambda-layer-awscli/lib/awscli-layer.js:20:9)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:32:22)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:30:24)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/DenyList/BucketDeployment/CustomResource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListBucketDeploymentCustomResource68E58740",
+            "trace": [
+              "new CustomResource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource.js:30:25)",
+              "new BucketDeployment (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3-deployment/lib/bucket-deployment.js:55:9)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:30:24)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/DenyList/Prune/DeleteQueue/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPruneDeleteQueueF9D9EBE3",
+            "trace": [
+              "new Queue (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-sqs/lib/queue.js:74:23)",
+              "new Prune (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune.js:18:29)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:34:23)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/DenyList/Prune/PruneHandler/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPrunePruneHandlerServiceRole234C8EF9",
+            "trace": [
+              "new Role (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/role.js:72:22)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:79:35)",
+              "new PruneHandler (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune-handler.js:9:9)",
+              "new Prune (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune.js:23:30)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:34:23)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/DenyList/Prune/PruneHandler/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E",
+            "trace": [
+              "new Policy (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/policy.js:56:26)",
+              "Role.addToPrincipalPolicy (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/role.js:209:34)",
+              "Function.addToPrincipal (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/grant.js:90:65)",
+              "Function.addToPrincipalOrResource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/grant.js:45:30)",
+              "Queue.grant (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-sqs/lib/queue-base.js:112:26)",
+              "Queue.grantSendMessages (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-sqs/lib/queue-base.js:82:26)",
+              "new Prune (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune.js:31:21)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:34:23)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/DenyList/Prune/PruneHandler/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPrunePruneHandler5F946B07",
+            "trace": [
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:135:26)",
+              "new PruneHandler (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune-handler.js:9:9)",
+              "new Prune (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune.js:23:30)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:34:23)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/DenyList/Prune/PruneQueueHandler/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPrunePruneQueueHandlerServiceRole9BB94361",
+            "trace": [
+              "new Role (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/role.js:72:22)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:79:35)",
+              "new PruneQueueHandler (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune-queue-handler.js:9:9)",
+              "new Prune (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune.js:34:30)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:34:23)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/DenyList/Prune/PruneQueueHandler/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPrunePruneQueueHandlerServiceRoleDefaultPolicy9ED3B9C8",
+            "trace": [
+              "new Policy (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/policy.js:56:26)",
+              "Role.addToPrincipalPolicy (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/role.js:209:34)",
+              "Function.addToPrincipal (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/grant.js:90:65)",
+              "Function.addToPrincipalOrResource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/grant.js:45:30)",
+              "Bucket.grant (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:429:31)",
+              "Bucket.grantWrite (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:271:21)",
+              "new Prune (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune.js:40:33)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:34:23)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/DenyList/Prune/PruneQueueHandler/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPrunePruneQueueHandler087D6B50",
+            "trace": [
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:135:26)",
+              "new PruneQueueHandler (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune-queue-handler.js:9:9)",
+              "new Prune (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune.js:34:30)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:34:23)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/DenyList/Prune/PruneQueueHandler/SqsEventSource:TestDenyListPruneDeleteQueue888622B9/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPrunePruneQueueHandlerSqsEventSourceTestDenyListPruneDeleteQueue888622B95BDFDCF8",
+            "trace": [
+              "new EventSourceMapping (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/event-source-mapping.js:121:39)",
+              "PruneQueueHandler.addEventSourceMapping (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function-base.js:110:16)",
+              "SqsEventSource.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda-event-sources/lib/sqs.js:43:43)",
+              "PruneQueueHandler.addEventSource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function-base.js:168:16)",
+              "new Prune (/Users/benisrae/code/construct-hub/lib/backend/deny-list/prune.js:41:22)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:34:23)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/DenyList/PeriodicPrune/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPeriodicPruneC53BF9DB",
+            "trace": [
+              "new Rule (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-events/lib/rule.js:34:26)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:50:13)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/DenyList/PeriodicPrune/AllowEventRuleTestDenyListPrunePruneHandlerDB8102B7": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "DenyListPeriodicPruneAllowEventRuleTestDenyListPrunePruneHandlerDB8102B7EA785278",
+            "trace": [
+              "PruneHandler.addPermission (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function-base.js:42:9)",
+              "Object.addLambdaPermission (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-events-targets/lib/util.js:63:17)",
+              "LambdaFunction.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-events-targets/lib/lambda.js:27:16)",
+              "Rule.addTarget (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-events/lib/rule.js:87:36)",
+              "new Rule (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-events/lib/rule.js:51:18)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:50:13)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
+            "trace": [
+              "new Role (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/role.js:72:22)",
+              "new NotificationsResourceHandler (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/notifications-resource/notifications-resource-handler.js:31:21)",
+              "Function.singleton (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/notifications-resource/notifications-resource-handler.js:79:22)",
+              "BucketNotifications.createResourceOnce (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/notifications-resource/notifications-resource.js:87:91)",
+              "BucketNotifications.addNotification (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/notifications-resource/notifications-resource.js:44:31)",
+              "Bucket.addEventNotification (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:377:28)",
+              "S3EventSource.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda-event-sources/lib/s3.js:28:25)",
+              "PruneHandler.addEventSource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function-base.js:168:16)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:42:27)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Role/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
+            "trace": [
+              "new Policy (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/policy.js:56:26)",
+              "Role.addToPrincipalPolicy (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/role.js:209:34)",
+              "Role.addToPolicy (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/role.js:221:21)",
+              "new NotificationsResourceHandler (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/notifications-resource/notifications-resource-handler.js:37:19)",
+              "Function.singleton (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/notifications-resource/notifications-resource-handler.js:79:22)",
+              "BucketNotifications.createResourceOnce (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/notifications-resource/notifications-resource.js:87:91)",
+              "BucketNotifications.addNotification (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/notifications-resource/notifications-resource.js:44:31)",
+              "Bucket.addEventNotification (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:377:28)",
+              "S3EventSource.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda-event-sources/lib/s3.js:28:25)",
+              "PruneHandler.addEventSource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function-base.js:168:16)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:42:27)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691",
+            "trace": [
+              "new NotificationsResourceHandler (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/notifications-resource/notifications-resource-handler.js:53:26)",
+              "Function.singleton (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/notifications-resource/notifications-resource-handler.js:79:22)",
+              "BucketNotifications.createResourceOnce (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/notifications-resource/notifications-resource.js:87:91)",
+              "BucketNotifications.addNotification (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/notifications-resource/notifications-resource.js:44:31)",
+              "Bucket.addEventNotification (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:377:28)",
+              "S3EventSource.bind (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda-event-sources/lib/s3.js:28:25)",
+              "PruneHandler.addEventSource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function-base.js:168:16)",
+              "new DenyList (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:42:27)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:23:18)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/ClientTest/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ClientTestServiceRole4F7802CF",
+            "trace": [
+              "new Role (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/role.js:72:22)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:79:35)",
+              "new TriggerClientTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.client-test.js:10:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:31:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/ClientTest/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ClientTestServiceRoleDefaultPolicy3CB30A97",
+            "trace": [
+              "new Policy (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/policy.js:56:26)",
+              "Role.addToPrincipalPolicy (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/role.js:209:34)",
+              "Function.addToPrincipal (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/grant.js:90:65)",
+              "Function.addToPrincipalOrResource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/grant.js:45:30)",
+              "Bucket.grant (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:429:31)",
+              "Bucket.grantRead (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:252:21)",
+              "DenyList.grantRead (/Users/benisrae/code/construct-hub/lib/backend/deny-list/deny-list.js:66:21)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:38:10)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/ClientTest/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ClientTestBE4CEC14",
+            "trace": [
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:135:26)",
+              "new TriggerClientTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.client-test.js:10:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:31:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/ClientTest/Trigger/Resource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ClientTestTrigger260D1687",
+            "trace": [
+              "new CustomResource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource.js:30:25)",
+              "new AfterCreate (/Users/benisrae/code/construct-hub/node_modules/cdk-triggers/lib/triggers.js:29:26)",
+              "new TriggerClientTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.client-test.js:17:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:31:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/ClientTest/CurrentVersion/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "ClientTestCurrentVersionAB7E7F656db58f2638b05951597ef90f52ee9a0b",
+            "trace": [
+              "new Version (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/lambda-version.js:45:25)",
+              "TriggerClientTest.get currentVersion [as currentVersion] (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:245:32)",
+              "new AfterCreate (/Users/benisrae/code/construct-hub/node_modules/cdk-triggers/lib/triggers.js:36:43)",
+              "new TriggerClientTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.client-test.js:17:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:31:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider/Role": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A",
+            "trace": [
+              "new CustomResourceProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:73:22)",
+              "Function.getOrCreateProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:135:94)",
+              "new AfterCreate (/Users/benisrae/code/construct-hub/node_modules/cdk-triggers/lib/triggers.js:18:56)",
+              "new TriggerClientTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.client-test.js:17:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:31:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider/Handler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "AWSCDKTriggerCustomResourceProviderCustomResourceProviderHandler97BECD91",
+            "trace": [
+              "new CustomResourceProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:89:25)",
+              "Function.getOrCreateProvider (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource-provider/custom-resource-provider.js:135:94)",
+              "new AfterCreate (/Users/benisrae/code/construct-hub/node_modules/cdk-triggers/lib/triggers.js:18:56)",
+              "new TriggerClientTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.client-test.js:17:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:31:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/PruneTest/ServiceRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PruneTestServiceRole91D2E3A2",
+            "trace": [
+              "new Role (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/role.js:72:22)",
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:79:35)",
+              "new TriggerPruneTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.prune-test.js:10:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:39:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/PruneTest/ServiceRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PruneTestServiceRoleDefaultPolicyBD33ABA2",
+            "trace": [
+              "new Policy (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/policy.js:56:26)",
+              "Role.addToPrincipalPolicy (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/role.js:209:34)",
+              "Function.addToPrincipal (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/grant.js:90:65)",
+              "Function.addToPrincipalOrResource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-iam/lib/grant.js:45:30)",
+              "Bucket.grant (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:429:31)",
+              "Bucket.grantRead (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-s3/lib/bucket.js:252:21)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:51:13)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/PruneTest/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PruneTest66C7D9FC",
+            "trace": [
+              "new Function (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:135:26)",
+              "new TriggerPruneTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.prune-test.js:10:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:39:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/PruneTest/Trigger/Resource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PruneTestTrigger1ECEFB65",
+            "trace": [
+              "new CustomResource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/custom-resource.js:30:25)",
+              "new AfterCreate (/Users/benisrae/code/construct-hub/node_modules/cdk-triggers/lib/triggers.js:29:26)",
+              "new TriggerPruneTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.prune-test.js:17:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:39:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/PruneTest/CurrentVersion/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "PruneTestCurrentVersion332993F858475878af9d0c677220171bb4c84099",
+            "trace": [
+              "new Version (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/lambda-version.js:45:25)",
+              "TriggerPruneTest.get currentVersion [as currentVersion] (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/aws-lambda/lib/function.js:245:32)",
+              "new AfterCreate (/Users/benisrae/code/construct-hub/node_modules/cdk-triggers/lib/triggers.js:36:43)",
+              "new TriggerPruneTest (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/trigger.prune-test.js:17:9)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:39:15)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata",
+            "trace": [
+              "new MetadataResource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/metadata-resource.js:22:30)",
+              "/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/synthesis.js:139:9",
+              "visit (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/synthesis.js:200:9)",
+              "visit (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/synthesis.js:197:9)",
+              "injectMetadataResources (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/synthesis.js:128:5)",
+              "Object.synthesize (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/synthesis.js:17:5)",
+              "App.synth (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stage.js:100:41)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:52:5)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ],
+        "/TestDenyList/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable",
+            "trace": [
+              "new MetadataResource (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/metadata-resource.js:30:35)",
+              "/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/synthesis.js:139:9",
+              "visit (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/synthesis.js:200:9)",
+              "visit (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/synthesis.js:197:9)",
+              "injectMetadataResources (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/synthesis.js:128:5)",
+              "Object.synthesize (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/private/synthesis.js:17:5)",
+              "App.synth (/Users/benisrae/code/construct-hub/node_modules/@aws-cdk/core/lib/stage.js:100:41)",
+              "Object.<anonymous> (/Users/benisrae/code/construct-hub/lib/__tests__/backend/deny-list/integ/deny-list.integ.js:52:5)",
+              "Module._compile (internal/modules/cjs/loader.js:1068:30)",
+              "Object.Module._extensions..js (internal/modules/cjs/loader.js:1097:10)",
+              "Module.load (internal/modules/cjs/loader.js:933:32)",
+              "Function.Module._load (internal/modules/cjs/loader.js:774:14)",
+              "Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:72:12)",
+              "internal/main/run_main_module.js:17:47"
+            ]
+          }
+        ]
+      },
+      "displayName": "TestDenyList"
+    }
+  }
+}
