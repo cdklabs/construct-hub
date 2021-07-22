@@ -98,7 +98,7 @@ export class BackendDashboard extends Construct {
               fillMetric(props.discovery.metricNpmJsChangeAge({ label: 'Lag to npmjs.com' }), 'REPEAT'),
               fillMetric(props.discovery.metricPackageVersionAge({ label: 'Package Version Age' }), 'REPEAT'),
             ],
-            rightYAxis: { min: 0 },
+            rightYAxis: { label: 'Milliseconds', min: 0, showUnits: false },
             period: Duration.minutes(15),
           }),
         ],
