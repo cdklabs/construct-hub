@@ -227,9 +227,12 @@ function discoverIntegrationTests() {
 
     // do not commit all files we are excluding
     for (const x of exclude) {
-      const spec = `${snapshotdir}/${x}`;
-      project.addGitIgnore(spec);
-      project.addPackageIgnore(spec);
+      project.addGitIgnore(`${snapshotdir}/${x}`);
+      project.addPackageIgnore(`${snapshotdir}/${x}`);
+
+      // nested assemblies
+      project.addGitIgnore(`${snapshotdir}/**/${x}`);
+      project.addPackageIgnore(`${snapshotdir}/**/${x}`);
     }
 
     project.addGitIgnore(deploydir);
