@@ -101,7 +101,7 @@ export class Orchestration extends Construct {
 
     // This function is intended to be manually triggered by an operator to
     // reprocess all package versions currently in store through the back-end.
-    new ReprocessAll(this, 'ReprocessAll', {
+    const reprocessAll = new ReprocessAll(this, 'ReprocessAll', {
       description: '[ConstructHub/ReprocessAll] Reprocess all package versions through the backend',
       environment: {
         BUCKET_NAME: props.bucket.bucketName,
@@ -110,5 +110,7 @@ export class Orchestration extends Construct {
       memorySize: 1_024,
       timeout: Duration.minutes(15),
     });
+    props.bucket.grantRead(reprocessAll);
+    this.stateMachine.grantStartExecution(reprocessAll);
   }
 }

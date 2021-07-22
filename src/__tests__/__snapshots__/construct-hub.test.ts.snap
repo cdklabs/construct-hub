@@ -4373,6 +4373,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
     },
     "ConstructHubOrchestrationReprocessAllFF2F2455": Object {
       "DependsOn": Array [
+        "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB",
         "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
       ],
       "Properties": Object {
@@ -4437,6 +4438,59 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434": Object {
       "Properties": Object {
@@ -10840,6 +10894,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
     },
     "ConstructHubOrchestrationReprocessAllFF2F2455": Object {
       "DependsOn": Array [
+        "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB",
         "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
       ],
       "Properties": Object {
@@ -10904,6 +10959,59 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434": Object {
       "Properties": Object {
