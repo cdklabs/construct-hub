@@ -7,12 +7,12 @@ export interface CanaryProps extends lambda.FunctionOptions {
 }
 
 export class Canary extends lambda.Function {
-  constructor(scope: Construct, id: string, props: CanaryProps = {}) {
+  constructor(scope: Construct, id: string, props?: CanaryProps) {
     super(scope, id, {
+      ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/canary.bundle')),
-      ...props,
     });
   }
 }

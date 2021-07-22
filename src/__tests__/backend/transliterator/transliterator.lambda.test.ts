@@ -1,12 +1,13 @@
 import * as spec from '@jsii/spec';
 
-import type { S3Event, SNSEvent } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import { Documentation } from 'jsii-docgen';
 
+import type { TransliteratorInput } from '../../../backend/payload-schema';
+import { reset } from '../../../backend/shared/aws.lambda-shared';
 import * as constants from '../../../backend/shared/constants';
-import { handler, reset } from '../../../backend/transliterator/transliterator.lambda';
+import { handler } from '../../../backend/transliterator/transliterator.lambda';
 
 jest.mock('child_process');
 jest.mock('jsii-docgen');
@@ -59,27 +60,13 @@ describe('VPC Endpoints', () => {
     const packageScope = 'scope';
     const packageName = 'package-name';
     const packageVersion = '1.2.3-dev.4';
-    const s3Event: S3Event = {
-      Records: [{
-        awsRegion: 'bemuda-triangle-1',
-        s3: {
-          bucket: {
-            name: 'dummy-bucket',
-          },
-          object: {
-            key: `${constants.STORAGE_KEY_PREFIX}%40${packageScope}/${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
-            versionId: 'VersionId',
-          },
-        },
-      }],
-    } as any;
-    const event: SNSEvent = {
-      Records: [{
-        Sns: {
-          Message: JSON.stringify(s3Event),
-        },
-      }],
-    } as any;
+    const event: TransliteratorInput = {
+      bucket: 'dummy-bucket',
+      assembly: {
+        key: `${constants.STORAGE_KEY_PREFIX}@${packageScope}/${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
+        versionId: 'VersionId',
+      },
+    };
 
     const assembly: spec.Assembly = {
       targets: { python: {} },
@@ -116,27 +103,13 @@ test('uploads a file per language (scoped package)', async () => {
   const packageScope = 'scope';
   const packageName = 'package-name';
   const packageVersion = '1.2.3-dev.4';
-  const s3Event: S3Event = {
-    Records: [{
-      awsRegion: 'bemuda-triangle-1',
-      s3: {
-        bucket: {
-          name: 'dummy-bucket',
-        },
-        object: {
-          key: `${constants.STORAGE_KEY_PREFIX}%40${packageScope}/${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
-          versionId: 'VersionId',
-        },
-      },
-    }],
-  } as any;
-  const event: SNSEvent = {
-    Records: [{
-      Sns: {
-        Message: JSON.stringify(s3Event),
-      },
-    }],
-  } as any;
+  const event: TransliteratorInput = {
+    bucket: 'dummy-bucket',
+    assembly: {
+      key: `${constants.STORAGE_KEY_PREFIX}@${packageScope}/${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
+      versionId: 'VersionId',
+    },
+  };
 
   const assembly: spec.Assembly = {
     targets: { python: {} },
@@ -165,27 +138,13 @@ test('uploads a file per submodule (unscoped package)', async () => {
   // GIVEN
   const packageName = 'package-name';
   const packageVersion = '1.2.3-dev.4';
-  const s3Event: S3Event = {
-    Records: [{
-      awsRegion: 'bemuda-triangle-1',
-      s3: {
-        bucket: {
-          name: 'dummy-bucket',
-        },
-        object: {
-          key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
-          versionId: 'VersionId',
-        },
-      },
-    }],
-  } as any;
-  const event: SNSEvent = {
-    Records: [{
-      Sns: {
-        Message: JSON.stringify(s3Event),
-      },
-    }],
-  } as any;
+  const event: TransliteratorInput = {
+    bucket: 'dummy-bucket',
+    assembly: {
+      key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
+      versionId: 'VersionId',
+    },
+  };
 
   const assembly: spec.Assembly = {
     targets: { python: {} },
@@ -235,31 +194,18 @@ describe('markers for un-supported languages', () => {
     // GIVEN
     const packageName = 'package-name';
     const packageVersion = '1.2.3-dev.4';
-    const s3Event: S3Event = {
-      Records: [{
-        awsRegion: 'bemuda-triangle-1',
-        s3: {
-          bucket: {
-            name: 'dummy-bucket',
-          },
-          object: {
-            key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
-            versionId: 'VersionId',
-          },
-        },
-      }],
-    } as any;
-    const event: SNSEvent = {
-      Records: [{
-        Sns: {
-          Message: JSON.stringify(s3Event),
-        },
-      }],
-    } as any;
+
+    const event: TransliteratorInput = {
+      bucket: 'dummy-bucket',
+      assembly: {
+        key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
+        versionId: 'VersionId',
+      },
+    };
 
     const assembly: spec.Assembly = {
       targets: { phony: {} },
-      submodules: { '@scope/package-name.sub1': {}, '@scope/package-name.sub2': {} },
+      submodules: { 'package-name.sub1': {}, 'package-name.sub2': {} },
     } as any;
 
     // mock the assembly request
