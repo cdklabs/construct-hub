@@ -183,15 +183,22 @@ function discoverIntegrationTests() {
     const libdir = join(project.libdir, dirname(entry));
     const srcdir = join(project.srcdir, dirname(entry));
 
+    const deploydir = join(srcdir, `.${name}.integ.cdkout.deploy`);
     const expecteddir = join(srcdir, `${name}.integ.cdkout`);
-    const actualdir = join(srcdir, `${name}.integ.cdkout.actual`);
+    const actualdir = join(srcdir, `.${name}.integ.cdkout.actual`);
 
     const app = `"node ${join(libdir, basename(entry, '.ts'))}.js"`;
 
-    project.addTask(`integ:${name}:deploy`, {
+    const deploy = project.addTask(`integ:${name}:deploy`, {
       description: `deploy integration test ${entry}`,
-      exec: `cdk deploy --app ${app} --require-approval=never -o ${expecteddir}`,
     });
+
+    deploy.exec(`rm -fr ${deploydir}`);
+    deploy.exec(`cdk deploy --app ${app} --require-approval=never -o ${deploydir}`);
+
+    // if deployment was successful, copy the deploy dir to the expected dir
+    deploy.exec(`rm -fr ${expecteddir}`);
+    deploy.exec(`mv ${deploydir} ${expecteddir}`);
 
     const assert = project.addTask(`integ:${name}:assert`, {
       description: `synthesize integration test ${entry}`,

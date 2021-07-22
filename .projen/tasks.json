@@ -496,7 +496,16 @@
       "description": "deploy integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
       "steps": [
         {
-          "exec": "cdk deploy --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --require-approval=never -o src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout"
+          "exec": "rm -fr src/__tests__/backend/deny-list/integ/.deny-list.integ.cdkout.deploy"
+        },
+        {
+          "exec": "cdk deploy --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --require-approval=never -o src/__tests__/backend/deny-list/integ/.deny-list.integ.cdkout.deploy"
+        },
+        {
+          "exec": "rm -fr src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout"
+        },
+        {
+          "exec": "mv src/__tests__/backend/deny-list/integ/.deny-list.integ.cdkout.deploy src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout"
         }
       ]
     },
@@ -505,10 +514,10 @@
       "description": "synthesize integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
       "steps": [
         {
-          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" -o src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout.actual > /dev/null"
+          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" -o src/__tests__/backend/deny-list/integ/.deny-list.integ.cdkout.actual > /dev/null"
         },
         {
-          "exec": "diff -r -x \"**/asset.*\" -x cdk.out src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout/ src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout.actual/"
+          "exec": "diff -r -x \"**/asset.*\" -x cdk.out src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout/ src/__tests__/backend/deny-list/integ/.deny-list.integ.cdkout.actual/"
         }
       ]
     },
