@@ -1,6 +1,6 @@
 import { IFunction } from '@aws-cdk/aws-lambda';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
-import { Fail, IStateMachine, JsonPath, Parallel, StateMachine, StateMachineType, TaskInput } from '@aws-cdk/aws-stepfunctions';
+import { Choice, Condition, Fail, IStateMachine, JsonPath, Parallel, Pass, StateMachine, StateMachineType, Succeed, TaskInput } from '@aws-cdk/aws-stepfunctions';
 import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
 import { Construct, Duration } from '@aws-cdk/core';
 import { CatalogBuilder } from '../catalog-builder';
@@ -41,8 +41,8 @@ export class Orchestration extends Construct {
       lambdaFunction: new CatalogBuilder(this, 'CatalogBuilder', props).function,
       resultPath: '$.catalogBuilderOutput',
       resultSelector: {
-        'ETag.$': '$.Payload.ETag',
-        'VersionId.$': '$.Payload.VersionId',
+        'ETag': '$.Payload.Etag',
+        'VersionId': '$.Payload.VersionId',
       },
     })
       // This has a concurrency of 1, so we want to aggressively retry being throttled here.
@@ -59,26 +59,45 @@ export class Orchestration extends Construct {
       queue: this.deadLetterQueue,
       resultPath: JsonPath.DISCARD,
     });
+    const docGenResultsKey = 'DocGen';
+    const sendToDlqIfNeeded = new Choice(this, 'Any Failure?')
+      .when(
+        Condition.or(
+          ...SUPPORTED_LANGUAGES.map((_, i) => Condition.isPresent(`$.${docGenResultsKey}[${i}].error`)),
+        ),
+        sendToDeadLetterQueue.next(new Fail(this, 'Fail')),
+      )
+      .otherwise(new Succeed(this, 'Success'));
 
-    const definition = new Parallel(this, 'DocGen')
-      .branch(...SUPPORTED_LANGUAGES.map((language) => {
-        const task = new tasks.LambdaInvoke(this, `Generate ${language} docs`, {
+    const definition = new Parallel(this, 'DocGen', { resultPath: `$.${docGenResultsKey}` })
+      .branch(...SUPPORTED_LANGUAGES.map((language) =>
+        new tasks.LambdaInvoke(this, `Generate ${language} docs`, {
           lambdaFunction: new Transliterator(this, `DocGen-${language}`, { ...props, language }).function,
-          resultPath: '$.docGenOutput',
-          resultSelector: { [`${language}.$`]: '$.Payload' },
-        }).addRetry({ interval: Duration.seconds(30) });
-        // Add to catalog once the TypeScript transliteration result is ready.
-        if (language === DocumentationLanguage.TYPESCRIPT) {
-          return task.next(addToCatalog);
-        }
-        return task;
-      }))
-      .addCatch(
-        sendToDeadLetterQueue.next(new Fail(this, 'Fail', {
-          error: 'Failed',
-          cause: 'Input was submitted to dead letter queue',
-        })),
-        { resultPath: '$._error' },
+          outputPath: '$.result',
+          resultSelector: {
+            result: {
+              'language': language,
+              'success.$': '$.Payload',
+            },
+          },
+        }).addRetry({ interval: Duration.seconds(30) })
+          .addCatch(
+            new Pass(this, `Failed ${language}`, {
+              parameters: {
+                error: 'States.StringToJson($.Cause)',
+                language,
+              },
+            }),
+          ),
+      ))
+      .next(new Choice(this, 'Any Success?')
+        .when(
+          Condition.or(
+            ...SUPPORTED_LANGUAGES.map((_, i) => Condition.isNotPresent(`$.${docGenResultsKey}[${i}].error`)),
+          ),
+          addToCatalog.next(sendToDlqIfNeeded),
+        )
+        .otherwise(sendToDlqIfNeeded),
       );
 
     this.stateMachine = new StateMachine(this, 'Resource', {
