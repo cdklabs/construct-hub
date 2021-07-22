@@ -76,6 +76,9 @@
           "spawn": "bundle:redrive-state-machine"
         },
         {
+          "spawn": "bundle:reprocess-all"
+        },
+        {
           "spawn": "bundle:transliterator"
         },
         {
@@ -311,6 +314,9 @@
           "spawn": "bundle:redrive-state-machine"
         },
         {
+          "spawn": "bundle:reprocess-all"
+        },
+        {
           "spawn": "bundle:transliterator"
         },
         {
@@ -455,6 +461,15 @@
         }
       ]
     },
+    "bundle:reprocess-all": {
+      "name": "bundle:reprocess-all",
+      "description": "Create an AWS Lambda bundle from src/backend/orchestration/reprocess-all.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/orchestration/reprocess-all.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/orchestration/reprocess-all.bundle/index.js\" --external:aws-sdk"
+        }
+      ]
+    },
     "bundle:transliterator": {
       "name": "bundle:transliterator",
       "description": "Create an AWS Lambda bundle from src/backend/transliterator/transliterator.lambda.ts",
@@ -496,16 +511,16 @@
       "description": "deploy integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
       "steps": [
         {
-          "exec": "rm -fr src/__tests__/backend/deny-list/integ/.deny-list.integ.cdkout.deploy"
+          "exec": "rm -fr src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.deploy"
         },
         {
-          "exec": "cdk deploy --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --require-approval=never -o src/__tests__/backend/deny-list/integ/.deny-list.integ.cdkout.deploy"
+          "exec": "cdk deploy --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --require-approval=never -o src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.deploy"
         },
         {
           "exec": "rm -fr src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout"
         },
         {
-          "exec": "mv src/__tests__/backend/deny-list/integ/.deny-list.integ.cdkout.deploy src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout"
+          "exec": "mv src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.deploy src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout"
         },
         {
           "spawn": "integ:deny-list:destroy"
@@ -526,10 +541,19 @@
       "description": "synthesize integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
       "steps": [
         {
-          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" -o src/__tests__/backend/deny-list/integ/.deny-list.integ.cdkout.actual > /dev/null"
+          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" -o src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.actual > /dev/null"
         },
         {
-          "exec": "diff -r -x \"**/asset.*\" -x cdk.out src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout/ src/__tests__/backend/deny-list/integ/.deny-list.integ.cdkout.actual/"
+          "exec": "diff -r -x \"**/asset.*\" -x cdk.out src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout/ src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.actual/"
+        }
+      ]
+    },
+    "integ:deny-list:snapshot": {
+      "name": "integ:deny-list:snapshot",
+      "description": "update snapshot for integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
+      "steps": [
+        {
+          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" -o src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout > /dev/null"
         }
       ]
     },

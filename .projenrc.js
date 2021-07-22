@@ -183,9 +183,9 @@ function discoverIntegrationTests() {
     const libdir = join(project.libdir, dirname(entry));
     const srcdir = join(project.srcdir, dirname(entry));
 
-    const deploydir = join(srcdir, `.${name}.integ.cdkout.deploy`);
-    const expecteddir = join(srcdir, `${name}.integ.cdkout`);
-    const actualdir = join(srcdir, `.${name}.integ.cdkout.actual`);
+    const deploydir = join(srcdir, `.tmp.${name}.integ.cdkout.deploy`);
+    const actualdir = join(srcdir, `.tmp.${name}.integ.cdkout.actual`);
+    const snapshotdir = join(srcdir, `${name}.integ.cdkout`);
 
     const app = `"node ${join(libdir, basename(entry, '.ts'))}.js"`;
 
@@ -197,12 +197,12 @@ function discoverIntegrationTests() {
     deploy.exec(`cdk deploy --app ${app} --require-approval=never -o ${deploydir}`);
 
     // if deployment was successful, copy the deploy dir to the expected dir
-    deploy.exec(`rm -fr ${expecteddir}`);
-    deploy.exec(`mv ${deploydir} ${expecteddir}`);
+    deploy.exec(`rm -fr ${snapshotdir}`);
+    deploy.exec(`mv ${deploydir} ${snapshotdir}`);
 
     const destroy = project.addTask(`integ:${name}:destroy`, {
       description: `destroy integration test ${entry}`,
-      exec: `cdk destroy --app ${expecteddir}`,
+      exec: `cdk destroy --app ${snapshotdir}`,
     });
 
     deploy.spawn(destroy);
@@ -211,15 +211,22 @@ function discoverIntegrationTests() {
       description: `synthesize integration test ${entry}`,
     });
     assert.exec(`cdk synth --app ${app} -o ${actualdir} > /dev/null`);
-    assert.exec(`diff -r -x "**/asset.*" -x cdk.out ${expecteddir}/ ${actualdir}/`);
+    assert.exec(`diff -r -x "**/asset.*" -x cdk.out ${snapshotdir}/ ${actualdir}/`);
+
+    project.addTask(`integ:${name}:snapshot`, {
+      description: `update snapshot for integration test ${entry}`,
+      exec: `cdk synth --app ${app} -o ${snapshotdir} > /dev/null`,
+    });
 
     // synth as part of our tests, which means that if outdir changes, anti-tamper will fail
     project.testTask.spawn(assert);
-    project.addGitIgnore(`!${expecteddir}`); // commit outdir to git but not assets
-    project.addGitIgnore(`${expecteddir}/**/asset.*`); // commit outdir to git but not assets
-    project.addGitIgnore(`${expecteddir}/cdk.out`); // commit outdir to git but not assets
+    project.addGitIgnore(`!${snapshotdir}`); // commit outdir to git but not assets
+    project.addGitIgnore(`${snapshotdir}/**/asset.*`); // commit outdir to git but not assets
+    project.addGitIgnore(`${snapshotdir}/cdk.out`); // commit outdir to git but not assets
 
-    project.addGitIgnore(actualdir); // commit outdir to git
+    // do not commit these temporary dirs
+    project.addGitIgnore(actualdir);
+    project.addGitIgnore(deploydir);
   }
 }
 
