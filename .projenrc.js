@@ -24,7 +24,8 @@ const peerDeps = [
   '@aws-cdk/aws-s3-notifications',
   '@aws-cdk/aws-sns',
   '@aws-cdk/aws-sqs',
-  '@aws-cdk/aws-sqs',
+  '@aws-cdk/aws-stepfunctions',
+  '@aws-cdk/aws-stepfunctions-tasks',
   '@aws-cdk/core',
   '@aws-cdk/custom-resources',
   '@aws-cdk/cx-api',
@@ -219,12 +220,15 @@ function newLambdaHandler(entrypoint) {
   ts.close('}');
   ts.line();
   ts.open(`export class ${className} extends lambda.Function {`);
-  ts.open(`constructor(scope: Construct, id: string, props: ${propsName} = {}) {`);
+  // NOTE: unlike the array splat (`[...arr]`), the object splat (`{...obj}`) is
+  //       `undefined`-safe. We can hence save an unnecessary object allocation
+  //       by not specifying a default value for the `props` argument here.
+  ts.open(`constructor(scope: Construct, id: string, props?: ${propsName}) {`);
   ts.open('super(scope, id, {');
+  ts.line('...props,');
   ts.line('runtime: lambda.Runtime.NODEJS_14_X,');
   ts.line('handler: \'index.handler\',');
   ts.line(`code: lambda.Code.fromAsset(path.join(__dirname, '/${basename(outdir)}')),`);
-  ts.line('...props,');
   ts.close('});');
   ts.close('}');
   ts.close('}');

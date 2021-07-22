@@ -1,3 +1,4 @@
+import { createHash } from 'crypto';
 import { basename, extname } from 'path';
 import { URL } from 'url';
 import { createGunzip } from 'zlib';
@@ -7,6 +8,7 @@ import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, SQSEvent } from 'aws-lambda';
 import { extract } from 'tar-stream';
+import type { StateMachineInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
@@ -24,8 +26,9 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
   metrics.setDimensions();
 
   const BUCKET_NAME = requireEnv('BUCKET_NAME');
+  const STATE_MACHINE_ARN = requireEnv('STATE_MACHINE_ARN');
 
-  const result = new Array<CreatedObject>();
+  const result = new Array<string>();
 
   for (const record of event.Records ?? []) {
     const payload = JSON.parse(record.body) as IngestionInput;
@@ -48,66 +51,92 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
     }
 
     const tar = await gunzip(Buffer.from(tarball.Body!));
-    const { dotJsii, licenseText, packageJson } = await new Promise<{ dotJsii: Buffer; licenseText?: Buffer; packageJson: Buffer }>((ok, ko) => {
-      let dotJsiiBuffer: Buffer | undefined;
-      let licenseTextBuffer: Buffer | undefined;
-      let packageJsonData: Buffer | undefined;
-      const extractor = extract({ filenameEncoding: 'utf-8' })
-        .once('error', (reason) => {
-          ko(reason);
-        })
-        .once('finish', () => {
-          if (dotJsiiBuffer == null) {
-            ko(new Error('No .jsii file found in tarball!'));
-          } else if (packageJsonData == null) {
-            ko(new Error('No package.json file found in tarball!'));
-          } else {
-            ok({ dotJsii: dotJsiiBuffer, licenseText: licenseTextBuffer, packageJson: packageJsonData });
+    let dotJsii: Buffer;
+    let licenseText: Buffer | undefined;
+    let packageJson: Buffer;
+    try {
+      const extracted = await new Promise<{ dotJsii: Buffer; licenseText?: Buffer; packageJson: Buffer }>((ok, ko) => {
+        let dotJsiiBuffer: Buffer | undefined;
+        let licenseTextBuffer: Buffer | undefined;
+        let packageJsonData: Buffer | undefined;
+        const extractor = extract({ filenameEncoding: 'utf-8' })
+          .once('error', (reason) => {
+            ko(reason);
+          })
+          .once('finish', () => {
+            if (dotJsiiBuffer == null) {
+              ko(new Error('No .jsii file found in tarball!'));
+            } else if (packageJsonData == null) {
+              ko(new Error('No package.json file found in tarball!'));
+            } else {
+              ok({ dotJsii: dotJsiiBuffer, licenseText: licenseTextBuffer, packageJson: packageJsonData });
+            }
+          })
+          .on('entry', (headers, stream, next) => {
+            const chunks = new Array<Buffer>();
+            if (headers.name === 'package/.jsii') {
+              return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
+                .once('error', ko)
+                .once('end', () => {
+                  dotJsiiBuffer = Buffer.concat(chunks);
+                  // Skip on next runLoop iteration so we avoid filling the stack.
+                  setImmediate(next);
+                })
+                .resume();
+            } else if (headers.name === 'package/package.json') {
+              return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
+                .once('error', ko)
+                .once('end', () => {
+                  packageJsonData = Buffer.concat(chunks);
+                  // Skip on next runLoop iteration so we avoid filling the stack.
+                  setImmediate(next);
+                })
+                .resume();
+            } else if (isLicenseFile(headers.name)) {
+              return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
+                .once('error', ko)
+                .once('end', () => {
+                  licenseTextBuffer = Buffer.concat(chunks);
+                  // Skip on next runLoop iteration so we avoid filling the stack.
+                  setImmediate(next);
+                })
+                .resume();
+            }
+            // Skip on next runLoop iteration so we avoid filling the stack.
+            return setImmediate(next);
+          });
+        extractor.write(tar, (err) => {
+          if (err != null) {
+            ko(err);
           }
-        })
-        .on('entry', (headers, stream, next) => {
-          const chunks = new Array<Buffer>();
-          if (headers.name === 'package/.jsii') {
-            return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
-              .once('error', ko)
-              .once('end', () => {
-                dotJsiiBuffer = Buffer.concat(chunks);
-                // Skip on next runLoop iteration so we avoid filling the stack.
-                setImmediate(next);
-              })
-              .resume();
-          } else if (headers.name === 'package/package.json') {
-            return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
-              .once('error', ko)
-              .once('end', () => {
-                packageJsonData = Buffer.concat(chunks);
-                // Skip on next runLoop iteration so we avoid filling the stack.
-                setImmediate(next);
-              })
-              .resume();
-          } else if (isLicenseFile(headers.name)) {
-            return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
-              .once('error', ko)
-              .once('end', () => {
-                licenseTextBuffer = Buffer.concat(chunks);
-                // Skip on next runLoop iteration so we avoid filling the stack.
-                setImmediate(next);
-              })
-              .resume();
-          }
-          // Skip on next runLoop iteration so we avoid filling the stack.
-          return setImmediate(next);
+          extractor.end();
         });
-      extractor.write(tar, (err) => {
-        if (err != null) {
-          ko(err);
-        }
-        extractor.end();
       });
-    });
+      dotJsii = extracted.dotJsii;
+      licenseText = extracted.licenseText;
+      packageJson = extracted.packageJson;
+      metrics.putMetric(MetricName.INVALID_TARBALL, 0, Unit.Count);
+    } catch (err) {
+      console.error(`Invalid tarball content: ${err}`);
+      metrics.putMetric(MetricName.INVALID_TARBALL, 1, Unit.Count);
+      return;
+    }
     const metadata = { date: payload.time, licenseText: licenseText?.toString('utf-8') };
 
-    const { license: packageLicense, name: packageName, version: packageVersion } = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
+    let packageLicense: string;
+    let packageName: string;
+    let packageVersion: string;
+    try {
+      const { license, name, version } = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
+      packageLicense = license;
+      packageName = name;
+      packageVersion = version;
+      metrics.putMetric(MetricName.INVALID_ASSEMBLY, 0, Unit.Count);
+    } catch (ex) {
+      console.error(`Package does not contain a valid assembly -- ignoring: ${ex}`);
+      metrics.putMetric(MetricName.INVALID_ASSEMBLY, 1, Unit.Count);
+      return;
+    }
 
     // Ensure the `.jsii` name, version & license corresponds to those in `package.json`
     const { name: packageJsonName, version: packageJsonVersion, license: packageJsonLicense } = JSON.parse(packageJson.toString('utf-8'));
@@ -173,7 +202,7 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
       },
     }).promise();
 
-    const created = {
+    const created: StateMachineInput = {
       bucket: BUCKET_NAME,
       assembly: {
         key: assemblyKey,
@@ -189,7 +218,14 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
       },
     };
     console.log(`Created objects: ${JSON.stringify(created, null, 2)}`);
-    result.push(created);
+
+    const sfn = await aws.stepFunctions().startExecution({
+      input: JSON.stringify(created),
+      name: sfnExecutionNameFromParts(packageName, `v${packageVersion}`, context.awsRequestId),
+      stateMachineArn: STATE_MACHINE_ARN,
+    }).promise();
+    console.log(`Started StateMachine execution: ${sfn.executionArn}`);
+    result.push(sfn.executionArn);
   }
 
   return result;
@@ -220,13 +256,28 @@ function isLicenseFile(fileName: string): boolean {
     && basename(fileName, ext).toUpperCase() === 'LICENSE';
 }
 
-interface CreatedObject {
-  readonly bucket: string;
-  readonly assembly: KeyAndVersion;
-  readonly package: KeyAndVersion;
-}
 
-interface KeyAndVersion {
-  readonly key: string;
-  readonly versionId?: string;
+/**
+ * Creates a StepFunction execution request name based on the provided parts.
+ * The result is guaranteed to be 80 characters or less and to contain only
+ * characters that are valid for a StepFunction execution request name for which
+ * CloudWatch Logging can be enabled. The resulting name is very likely to
+ * be unique for a given input.
+ */
+function sfnExecutionNameFromParts(first: string, ...rest: readonly string[]): string {
+  const parts = [first, ...rest];
+  const name = parts
+    .map((part) => part.replace(/[^a-z0-9_-]+/ig, '_'))
+    .join('_')
+    .replace(/^_/g, '')
+    .replace(/_{2,}/g, '_');
+  if (name.length <= 80) {
+    return name;
+  }
+  const suffix = createHash('sha256')
+  // The hash is computed based on input arguments, to maximize unicity
+    .update(parts.join('_'))
+    .digest('hex')
+    .substring(0, 6);
+  return `${name.substring(0, 80 - suffix.length - 1)}_${suffix}`;
 }

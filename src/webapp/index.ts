@@ -36,7 +36,10 @@ export class WebApp extends Construct {
   public constructor(scope: Construct, id: string, props: WebAppProps) {
     super(scope, id);
 
-    this.bucket = new s3.Bucket(this, 'WebsiteBucket', { blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL });
+    this.bucket = new s3.Bucket(this, 'WebsiteBucket', {
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      enforceSSL: true,
+    });
 
     // generate a stable unique id for the cloudfront function and use it
     // both for the function name and the logical id of the function so if
@@ -60,7 +63,7 @@ export class WebApp extends Construct {
       domainNames: props.domain ? [props.domain.zone.zoneName] : undefined,
       certificate: props.domain ? props.domain.cert : undefined,
       defaultRootObject: 'index.html',
-      errorResponses: [404, 403].map(httpStatus => ( {
+      errorResponses: [404, 403].map(httpStatus => ({
         httpStatus,
         responseHttpStatus: 200,
         responsePagePath: '/index.html',

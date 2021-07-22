@@ -1,4 +1,4 @@
-import { IMetric, Metric, MetricProps, Statistic } from '@aws-cdk/aws-cloudwatch';
+import { Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { RetentionDays } from '@aws-cdk/aws-logs';
@@ -61,83 +61,103 @@ export class Inventory extends Construct {
     props.monitoring.watchful.watchLambdaFunction('Inventory Canary', this.canary);
   }
 
-  public metricMissingPackageMetadataCount(opts?: MetricProps): IMetric {
+  public metricMissingPackageMetadataCount(opts?: MetricOptions): Metric {
     return new Metric({
-      namespace: METRICS_NAMESPACE,
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
       metricName: MetricName.MISSING_METADATA_COUNT,
-      period: Duration.minutes(5),
-      statistic: Statistic.MAXIMUM,
-      ...opts,
+      namespace: METRICS_NAMESPACE,
     });
   }
 
-  public metricMissingAssemblyCount(opts?: MetricProps): IMetric {
+  public metricMissingAssemblyCount(opts?: MetricOptions): Metric {
     return new Metric({
-      namespace: METRICS_NAMESPACE,
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
       metricName: MetricName.MISSING_ASSEMBLY_COUNT,
-      period: Duration.minutes(5),
-      statistic: Statistic.MAXIMUM,
-      ...opts,
+      namespace: METRICS_NAMESPACE,
     });
   }
 
-  public metricPackageVersionCount(opts?: MetricProps): IMetric {
+  public metricPackageCount(opts?: MetricOptions): Metric {
     return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      metricName: MetricName.PACKAGE_COUNT,
       namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  public metricPackageMajorCount(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      metricName: MetricName.PACKAGE_MAJOR_COUNT,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  public metricPackageVersionCount(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
       metricName: MetricName.PACKAGE_VERSION_COUNT,
-      period: Duration.minutes(5),
-      statistic: Statistic.MAXIMUM,
-      ...opts,
+      namespace: METRICS_NAMESPACE,
     });
   }
 
-  public metricMissingPythonDocsCount(opts?: MetricProps): IMetric {
+  public metricMissingPythonDocsCount(opts?: MetricOptions): Metric {
     return new Metric({
-      namespace: METRICS_NAMESPACE,
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
       metricName: MetricName.MISSING_PYTHON_DOCS_COUNT,
-      period: Duration.minutes(5),
-      statistic: Statistic.MAXIMUM,
-      ...opts,
+      namespace: METRICS_NAMESPACE,
     });
   }
 
-  public metricMissingTypeScriptDocsCount(opts?: MetricProps): IMetric {
+  public metricMissingTypeScriptDocsCount(opts?: MetricOptions): Metric {
     return new Metric({
-      namespace: METRICS_NAMESPACE,
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
       metricName: MetricName.MISSING_PYTHON_DOCS_COUNT,
-      period: Duration.minutes(5),
-      statistic: Statistic.MAXIMUM,
-      ...opts,
+      namespace: METRICS_NAMESPACE,
     });
   }
 
-  public metricMissingPackageTarballCount(opts?: MetricProps): IMetric {
+  public metricMissingPackageTarballCount(opts?: MetricOptions): Metric {
     return new Metric({
-      namespace: METRICS_NAMESPACE,
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
       metricName: MetricName.MISSING_TARBALL_COUNT,
-      period: Duration.minutes(5),
-      statistic: Statistic.MAXIMUM,
-      ...opts,
+      namespace: METRICS_NAMESPACE,
     });
   }
 
-  public metricMissingSubmoduleCount(opts?: MetricProps): IMetric {
+  public metricSubmoduleCount(opts?: MetricOptions): Metric {
     return new Metric({
-      namespace: METRICS_NAMESPACE,
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
       metricName: MetricName.SUBMODULE_COUNT,
-      period: Duration.minutes(5),
-      statistic: Statistic.MAXIMUM,
-      ...opts,
+      namespace: METRICS_NAMESPACE,
     });
   }
 
-  public metricUnknownObjectCount(opts?: MetricProps): IMetric {
+  public metricUnknownObjectCount(opts?: MetricOptions): Metric {
     return new Metric({
-      namespace: METRICS_NAMESPACE,
-      metricName: MetricName.UNKNOWN_OBJECT_COUNT,
       period: Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
       ...opts,
+      metricName: MetricName.UNKNOWN_OBJECT_COUNT,
+      namespace: METRICS_NAMESPACE,
     });
   }
 }

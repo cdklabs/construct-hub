@@ -7,8 +7,11 @@ import * as sqs from '@aws-cdk/aws-sqs';
 import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { AlarmActions, Domain } from './api';
-import { CatalogBuilder, Discovery, Ingestion, Transliterator } from './backend';
+import { Discovery, Ingestion } from './backend';
+import { BackendDashboard } from './backend-dashboard';
 import { Inventory } from './backend/inventory';
+import { Orchestration } from './backend/orchestration';
+import { CATALOG_KEY } from './backend/shared/constants';
 import { Repository } from './codeartifact/repository';
 import { Monitoring } from './monitoring';
 import { WebApp } from './webapp';
@@ -67,6 +70,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     const packageData = new s3.Bucket(this, 'PackageData', {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+      enforceSSL: true,
       encryption: s3.BucketEncryption.S3_MANAGED,
       lifecycleRules: [
         // Abort multi-part uploads after 1 day
@@ -74,7 +78,9 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
         // Transition non-current object versions to IA after 1 month
         { noncurrentVersionTransitions: [{ storageClass: s3.StorageClass.INFREQUENT_ACCESS, transitionAfter: Duration.days(31) }] },
         // Permanently delete non-current object versions after 3 months
-        { noncurrentVersionExpiration: Duration.days(90) },
+        { noncurrentVersionExpiration: Duration.days(90), expiredObjectDeleteMarker: true },
+        // Permanently delete non-current versions of catalog.json earlier
+        { noncurrentVersionExpiration: Duration.days(7), prefix: CATALOG_KEY },
       ],
       versioned: true,
     });
@@ -114,15 +120,21 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       sid: 'Allow-CodeArtifact-Bucket',
     }));
 
-    this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData, monitoring });
+    const orchestration = new Orchestration(this, 'Orchestration', {
+      bucket: packageData,
+      codeArtifact,
+      monitoring,
+      vpc,
+      vpcEndpoints,
+    });
+    this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData, orchestration, monitoring });
 
     const discovery = new Discovery(this, 'Discovery', { queue: this.ingestion.queue, monitoring });
     discovery.bucket.grantRead(this.ingestion);
 
-    new Transliterator(this, 'Transliterator', { bucket: packageData, codeArtifact, monitoring, vpc, vpcEndpoints });
-    new CatalogBuilder(this, 'CatalogBuilder', { bucket: packageData, monitoring });
+    const inventory = new Inventory(this, 'InventoryCanary', { bucket: packageData, monitoring });
 
-    new Inventory(this, 'InventoryCanary', { bucket: packageData, monitoring });
+    new BackendDashboard(this, 'BackendDashboard', { discovery, ingestion: this.ingestion, inventory, orchestration });
 
     new WebApp(this, 'WebApp', {
       domain: props.domain,

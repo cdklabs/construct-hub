@@ -2,6 +2,7 @@ import '@aws-cdk/assert/jest';
 import { GatewayVpcEndpointAwsService, InterfaceVpcEndpointAwsService, SubnetType, Vpc } from '@aws-cdk/aws-ec2';
 import { Bucket } from '@aws-cdk/aws-s3';
 import { App, CfnResource, Construct, Fn, IConstruct, Stack } from '@aws-cdk/core';
+import { DocumentationLanguage } from '../../../backend/shared/language';
 import { Transliterator } from '../../../backend/transliterator';
 import { Repository } from '../../../codeartifact/repository';
 import { Monitoring } from '../../../monitoring';
@@ -19,6 +20,7 @@ test('basic use', () => {
   // WHEN
   new Transliterator(stack, 'Transliterator', {
     bucket,
+    language: DocumentationLanguage.PYTHON,
     monitoring,
   });
 
@@ -45,6 +47,7 @@ test('CodeArtifact repository', () => {
   new Transliterator(stack, 'Transliterator', {
     bucket,
     codeArtifact,
+    language: DocumentationLanguage.PYTHON,
     monitoring,
   });
 
@@ -88,6 +91,7 @@ test('VPC Endpoints', () => {
   // WHEN
   new Transliterator(stack, 'Transliterator', {
     bucket,
+    language: DocumentationLanguage.PYTHON,
     monitoring,
     vpc,
     vpcEndpoints: { codeArtifactApi, codeArtifact, s3 },
@@ -133,6 +137,7 @@ test('VPC Endpoints and CodeArtifact repository', () => {
   new Transliterator(stack, 'Transliterator', {
     bucket,
     codeArtifact: repository,
+    language: DocumentationLanguage.PYTHON,
     monitoring,
     vpc,
     vpcEndpoints: { codeArtifactApi, codeArtifact, s3 },
