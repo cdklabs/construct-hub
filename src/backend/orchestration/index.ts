@@ -7,6 +7,7 @@ import { CatalogBuilder } from '../catalog-builder';
 import { DocumentationLanguage } from '../shared/language';
 import { Transliterator, TransliteratorProps } from '../transliterator';
 import { RedriveStateMachine } from './redrive-state-machine';
+import { ReprocessAll } from './reprocess-all';
 
 const SUPPORTED_LANGUAGES = [DocumentationLanguage.PYTHON, DocumentationLanguage.TYPESCRIPT];
 
@@ -97,5 +98,17 @@ export class Orchestration extends Construct {
     });
     this.stateMachine.grantStartExecution(this.redriveFunction);
     this.deadLetterQueue.grantConsumeMessages(this.redriveFunction);
+
+    // This function is intended to be manually triggered by an operator to
+    // reprocess all package versions currently in store through the back-end.
+    new ReprocessAll(this, 'ReprocessAll', {
+      description: '[ConstructHub/ReprocessAll] Reprocess all package versions through the backend',
+      environment: {
+        BUCKET_NAME: props.bucket.bucketName,
+        STATE_MACHINE_ARN: this.stateMachine.stateMachineArn,
+      },
+      memorySize: 1_024,
+      timeout: Duration.minutes(15),
+    });
   }
 }
