@@ -211,7 +211,7 @@ function discoverIntegrationTests() {
       description: `synthesize integration test ${entry}`,
     });
     assert.exec(`cdk synth --app ${app} -o ${actualdir} > /dev/null`);
-    assert.exec(`diff -r -x "**/asset.*" -x cdk.out ${snapshotdir}/ ${actualdir}/`);
+    assert.exec(`diff -r -x asset.* -x cdk.out ${snapshotdir}/ ${actualdir}/`);
 
     project.addTask(`integ:${name}:snapshot`, {
       description: `update snapshot for integration test ${entry}`,
