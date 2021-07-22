@@ -514,7 +514,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"ConstructHub/Inventory\\",\\"UnknownObjectCount\\",{\\"label\\":\\"Unknown\\",\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/Inventory\\",\\"MissingAssemblyCount\\",{\\"label\\":\\"Missing Assembly\\",\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/Inventory\\",\\"MissingPackageMetadataCount\\",{\\"label\\":\\"Missing Metadata\\",\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/Inventory\\",\\"MissingPackageTarballCount\\",{\\"label\\":\\"Missing Tarball\\",\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/Inventory\\",\\"MissingPythonDocsCount\\",{\\"label\\":\\"Missing Py-Docs\\",\\"stat\\":\\"Maximum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":8,\\"properties\\":{\\"markdown\\":\\"# Discovery Function\\\\n\\\\n[button:Search Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              "\\",\\"metrics\\":[[\\"ConstructHub/Inventory\\",\\"UnknownObjectCount\\",{\\"label\\":\\"Unknown\\",\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/Inventory\\",\\"MissingAssemblyCount\\",{\\"label\\":\\"Missing Assembly\\",\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/Inventory\\",\\"MissingPackageMetadataCount\\",{\\"label\\":\\"Missing Metadata\\",\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/Inventory\\",\\"MissingPackageTarballCount\\",{\\"label\\":\\"Missing Tarball\\",\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/Inventory\\",\\"MissingPythonDocsCount\\",{\\"label\\":\\"Missing Py-Docs\\",\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/Inventory\\",\\"MissingTypeScriptDocsCount\\",{\\"label\\":\\"Missing Ts-Doc\\",\\"stat\\":\\"Maximum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":8,\\"properties\\":{\\"markdown\\":\\"# Discovery Function\\\\n\\\\n[button:Search Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
               Object {
                 "Ref": "ConstructHubDiscoveryD6EEC2B8",
               },
@@ -7526,6 +7526,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         "ConstructHubDenyListBucketAllowBucketNotificationsToTestConstructHubDenyListPrunePruneHandler03826FC4A79351A0",
       ],
       "Properties": Object {
+<<<<<<< HEAD
         "BucketName": Object {
           "Ref": "ConstructHubDenyListBucket1B3C2C2E",
         },
@@ -7545,6 +7546,167 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                     },
                   ],
                 },
+=======
+        "DashboardBody": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"periodOverride\\":\\"inherit\\",\\"widgets\\":[{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":0,\\"properties\\":{\\"markdown\\":\\"# Catalog Overview\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"ConstructHub/Inventory\\",\\"SubmoduleCount\\",{\\"label\\":\\"Submodules\\",\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/Inventory\\",\\"PackageVersionCount\\",{\\"label\\":\\"Package Versions\\",\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/Inventory\\",\\"PackageMajorVersionCount\\",{\\"label\\":\\"Package Majors\\",\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/Inventory\\",\\"PackageCount\\",{\\"label\\":\\"Packages\\",\\"stat\\":\\"Maximum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Issues\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"ConstructHub/Inventory\\",\\"UnknownObjectCount\\",{\\"label\\":\\"Unknown\\",\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/Inventory\\",\\"MissingAssemblyCount\\",{\\"label\\":\\"Missing Assembly\\",\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/Inventory\\",\\"MissingPackageMetadataCount\\",{\\"label\\":\\"Missing Metadata\\",\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/Inventory\\",\\"MissingPackageTarballCount\\",{\\"label\\":\\"Missing Tarball\\",\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/Inventory\\",\\"MissingPythonDocsCount\\",{\\"label\\":\\"Missing Py-Docs\\",\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/Inventory\\",\\"MissingTypeScriptDocsCount\\",{\\"label\\":\\"Missing Ts-Doc\\",\\"stat\\":\\"Maximum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":8,\\"properties\\":{\\"markdown\\":\\"# Discovery Function\\\\n\\\\n[button:Search Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              Object {
+                "Ref": "ConstructHubDiscoveryD6EEC2B8",
+              },
+              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Invocations\\",\\"expression\\":\\"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2, 0)\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "ConstructHubDiscoveryD6EEC2B8",
+              },
+              "\\",{\\"label\\":\\"Invocations\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2\\"}],[{\\"label\\":\\"Errors\\",\\"expression\\":\\"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)\\"}],[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "ConstructHubDiscoveryD6EEC2B8",
+              },
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}],[\\"ConstructHub/Discovery\\",\\"RemainingTime\\",{\\"label\\":\\"Remaining Time\\",\\"period\\":900,\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":900}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Follower\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"ConstructHub/Discovery\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"period\\":900,\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/Discovery\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"period\\":900,\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m05c5ec642d73a857f12fd69e89b37dc63ffdde9489117d2611e4e70cda0afcc2, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/Discovery\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m05c5ec642d73a857f12fd69e89b37dc63ffdde9489117d2611e4e70cda0afcc2\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mc9ede4f000f7b679b6015caddccdc7415653aefa753cad5e4de33b81877e8147, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/Discovery\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mc9ede4f000f7b679b6015caddccdc7415653aefa753cad5e4de33b81877e8147\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":16,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Search Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              Object {
+                "Ref": "ConstructHubIngestion407909CE",
+              },
+              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Invocations\\",\\"expression\\":\\"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2, 0)\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "ConstructHubIngestion407909CE",
+              },
+              "\\",{\\"label\\":\\"Invocations\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2\\"}],[{\\"label\\":\\"Errors\\",\\"expression\\":\\"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)\\"}],[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "ConstructHubIngestion407909CE",
+              },
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"AWS/SQS\\",\\"ApproximateNumberOfMessagesVisible\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionQueue1AD94CA3",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Visible Messages\\",\\"period\\":60,\\"stat\\":\\"Maximum\\"}],[\\"AWS/SQS\\",\\"ApproximateNumberOfMessagesNotVisible\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionQueue1AD94CA3",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Hidden Messages\\",\\"period\\":60,\\"stat\\":\\"Maximum\\"}],[\\"AWS/SQS\\",\\"ApproximateAgeOfOldestMessage\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionQueue1AD94CA3",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ffa500\\",\\"label\\":\\"10 Minutes\\",\\"value\\":600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":24,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Quality\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":24,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"AWS/SQS\\",\\"ApproximateNumberOfMessagesVisible\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionDLQ3E96A5F2",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Visible Messages\\",\\"stat\\":\\"Maximum\\"}],[\\"AWS/SQS\\",\\"ApproximateNumberOfMessagesNotVisible\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionDLQ3E96A5F2",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Invisible Messages\\",\\"stat\\":\\"Maximum\\"}],[\\"AWS/SQS\\",\\"ApproximateAgeOfOldestMessage\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionDLQ3E96A5F2",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:State Machine](/states/home#/statemachines/view/",
+              Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              ")\\\\n[button:Redrive](/lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubOrchestrationRedrive8DDBA67E",
+              },
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":32,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Started\\",\\"expression\\":\\"FILL(m392141ff4cfa3bbe1889b2db42bcf20599513e199a0b9fb8dc736cde893c1d7c, 0)\\"}],[\\"AWS/States\\",\\"ExecutionsStarted\\",\\"StateMachineArn\\",\\"",
+              Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              "\\",{\\"label\\":\\"Started\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m392141ff4cfa3bbe1889b2db42bcf20599513e199a0b9fb8dc736cde893c1d7c\\"}],[{\\"label\\":\\"Succeeded\\",\\"expression\\":\\"FILL(md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1, 0)\\"}],[\\"AWS/States\\",\\"ExecutionsSucceeded\\",\\"StateMachineArn\\",\\"",
+              Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              "\\",{\\"label\\":\\"Succeeded\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"md1b80634be6e2f057c84f44fab13979a6445395ea2dc357cd12d0ba9f504e6d1\\"}],[{\\"label\\":\\"Aborted\\",\\"expression\\":\\"FILL(m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08, 0)\\"}],[\\"AWS/States\\",\\"ExecutionsAborted\\",\\"StateMachineArn\\",\\"",
+              Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              "\\",{\\"label\\":\\"Aborted\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c13255adf2b6d90baaa9e4e952e72ce260730c93b662336d01e3342f6255e08\\"}],[{\\"label\\":\\"Failed\\",\\"expression\\":\\"FILL(m503cb5a7568675222eb2ac827982f88ad300c986505dabfafe1707080946e597, 0)\\"}],[\\"AWS/States\\",\\"ExecutionsFailed\\",\\"StateMachineArn\\",\\"",
+              Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              "\\",{\\"label\\":\\"Failed\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m503cb5a7568675222eb2ac827982f88ad300c986505dabfafe1707080946e597\\"}],[{\\"label\\":\\"Throttled\\",\\"expression\\":\\"FILL(m278670a6ffa3ce32fec8fcb73c1cfdc4c965389617e2387ab5852ebb00b2a81f, 0)\\"}],[\\"AWS/States\\",\\"ExecutionThrottled\\",\\"StateMachineArn\\",\\"",
+              Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              "\\",{\\"label\\":\\"Throttled\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m278670a6ffa3ce32fec8fcb73c1cfdc4c965389617e2387ab5852ebb00b2a81f\\"}],[{\\"label\\":\\"Timed Out\\",\\"expression\\":\\"FILL(m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21, 0)\\"}],[\\"AWS/States\\",\\"ExecutionsTimedOut\\",\\"StateMachineArn\\",\\"",
+              Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              "\\",{\\"label\\":\\"Timed Out\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21\\"}],[\\"AWS/States\\",\\"ExecutionTime\\",\\"StateMachineArn\\",\\"",
+              Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":32,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letter Queue\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"AWS/SQS\\",\\"ApproximateNumberOfMessagesVisible\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubOrchestrationDLQ9C6D9BD4",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Visible Messages\\",\\"stat\\":\\"Maximum\\"}],[\\"AWS/SQS\\",\\"ApproximateNumberOfMessagesNotVisible\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubOrchestrationDLQ9C6D9BD4",
+                  "QueueName",
+                ],
+>>>>>>> 0687388 (fix: wrong metric selected for 'missing ts-docs' on dashboard (#215))
               },
               "LambdaFunctionArn": Object {
                 "Fn::GetAtt": Array [
