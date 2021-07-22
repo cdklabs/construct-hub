@@ -118,6 +118,12 @@ async function* relevantObjects(bucket: string) {
       if (!object.Key?.endsWith(constants.PACKAGE_KEY_SUFFIX)) {
         continue;
       }
+      // We only register packages if they have AT LEAST Python or TypeScript docs.
+      const tsDocs = `${object.Key.substring(0, object.Key.length - constants.PACKAGE_KEY_SUFFIX.length)}${constants.DOCS_KEY_SUFFIX_TYPESCRIPT}`;
+      const pyDocs = `${object.Key.substring(0, object.Key.length - constants.PACKAGE_KEY_SUFFIX.length)}${constants.DOCS_KEY_SUFFIX_PYTHON}`;
+      if (!(await aws.s3ObjectExists(bucket, tsDocs)) && !(await aws.s3ObjectExists(bucket, pyDocs))) {
+        continue;
+      }
       yield object;
     }
     request.ContinuationToken = result.NextContinuationToken;

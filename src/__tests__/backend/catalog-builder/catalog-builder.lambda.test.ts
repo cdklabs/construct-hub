@@ -3,6 +3,7 @@ import { PassThrough } from 'stream';
 import * as zip from 'zlib';
 
 import * as AWS from 'aws-sdk';
+import { AWSError } from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import * as tar from 'tar-stream';
 
@@ -85,6 +86,18 @@ test('initial build', () => {
       return cb(e);
     }
     return cb(null, { Contents: mockSecondPage });
+  });
+  AWSMock.mock('S3', 'headObject', (req: AWS.S3.HeadObjectRequest, cb: Response<AWS.S3.HeadObjectOutput>) => {
+    const existingKeys = new Set([...mockFirstPage, ...mockSecondPage].map((obj) => obj.Key!));
+    if (req.Bucket === mockBucketName && existingKeys.has(req.Key)) {
+      return cb(null, {});
+    }
+    class NotFound extends Error implements AWSError {
+      public code = 'NotFound';
+      public message = 'Not Found';
+      public time = new Date();
+    }
+    return cb(new NotFound());
   });
   const mockPutObjectResult: AWS.S3.PutObjectOutput = {};
   AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
