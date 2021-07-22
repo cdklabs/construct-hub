@@ -1300,6 +1300,11 @@ Resources:
       PolicyDocument:
         Statement:
           - Action:
+              - xray:PutTraceSegments
+              - xray:PutTelemetryRecords
+            Effect: Allow
+            Resource: "*"
+          - Action:
               - s3:GetObject*
               - s3:GetBucket*
               - s3:List*
@@ -1358,6 +1363,8 @@ Resources:
       ReservedConcurrentExecutions: 1
       Runtime: nodejs14.x
       Timeout: 900
+      TracingConfig:
+        Mode: PassThrough
     DependsOn:
       - ConstructHubOrchestrationCatalogBuilderServiceRoleDefaultPolicyDA5D5AA5
       - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
@@ -1408,6 +1415,11 @@ Resources:
     Properties:
       PolicyDocument:
         Statement:
+          - Action:
+              - xray:PutTraceSegments
+              - xray:PutTelemetryRecords
+            Effect: Allow
+            Resource: "*"
           - Action: sts:GetServiceBearerToken
             Condition:
               StringEquals:
@@ -1540,6 +1552,8 @@ Resources:
       MemorySize: 10240
       Runtime: nodejs14.x
       Timeout: 900
+      TracingConfig:
+        Mode: PassThrough
       VpcConfig:
         SecurityGroupIds:
           - Fn::GetAtt:
@@ -1590,6 +1604,11 @@ Resources:
     Properties:
       PolicyDocument:
         Statement:
+          - Action:
+              - xray:PutTraceSegments
+              - xray:PutTelemetryRecords
+            Effect: Allow
+            Resource: "*"
           - Action: sts:GetServiceBearerToken
             Condition:
               StringEquals:
@@ -1722,6 +1741,8 @@ Resources:
       MemorySize: 10240
       Runtime: nodejs14.x
       Timeout: 900
+      TracingConfig:
+        Mode: PassThrough
       VpcConfig:
         SecurityGroupIds:
           - Fn::GetAtt:
@@ -1766,6 +1787,13 @@ Resources:
     Properties:
       PolicyDocument:
         Statement:
+          - Action:
+              - xray:PutTraceSegments
+              - xray:PutTelemetryRecords
+              - xray:GetSamplingRules
+              - xray:GetSamplingTargets
+            Effect: Allow
+            Resource: "*"
           - Action: sqs:SendMessage
             Effect: Allow
             Resource:
@@ -1845,6 +1873,8 @@ Resources:
             - '","MessageBody.$":"$"}},"Fail":{"Type":"Fail","Error":"Failed","Cause":"Input
               was submitted to dead letter queue"}},"TimeoutSeconds":3600}'
       StateMachineType: STANDARD
+      TracingConfiguration:
+        Enabled: true
     DependsOn:
       - ConstructHubOrchestrationRoleDefaultPolicyEACD181F
       - ConstructHubOrchestrationRoleF4CF6987
@@ -1869,6 +1899,11 @@ Resources:
     Properties:
       PolicyDocument:
         Statement:
+          - Action:
+              - xray:PutTraceSegments
+              - xray:PutTelemetryRecords
+            Effect: Allow
+            Resource: "*"
           - Action: states:StartExecution
             Effect: Allow
             Resource:
@@ -1923,6 +1958,8 @@ Resources:
       MemorySize: 1024
       Runtime: nodejs14.x
       Timeout: 900
+      TracingConfig:
+        Mode: Active
     DependsOn:
       - ConstructHubOrchestrationRedriveServiceRoleDefaultPolicyC018F436
       - ConstructHubOrchestrationRedriveServiceRoleB84EFF33
@@ -1969,6 +2006,11 @@ Resources:
     Properties:
       PolicyDocument:
         Statement:
+          - Action:
+              - xray:PutTraceSegments
+              - xray:PutTelemetryRecords
+            Effect: Allow
+            Resource: "*"
           - Action:
               - s3:DeleteObject*
               - s3:PutObject*
@@ -2052,7 +2094,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
           - Arn
-      Description: Ingests new package versions into the Construct Hub
+      Description: "[ConstructHub/Ingestion] Ingests new package versions into the
+        Construct Hub"
       Environment:
         Variables:
           BUCKET_NAME:
@@ -2063,6 +2106,8 @@ Resources:
       MemorySize: 10240
       Runtime: nodejs14.x
       Timeout: 900
+      TracingConfig:
+        Mode: Active
     DependsOn:
       - ConstructHubIngestionServiceRoleDefaultPolicyC0D2B6F2
       - ConstructHubIngestionServiceRole6380BAB6
@@ -2202,7 +2247,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubDiscoveryServiceRole1B3CFF96
           - Arn
-      Description: Periodically query npm.js index for new construct libraries
+      Description: "[ConstructHub/Discovery] Periodically query npm.js index for new
+        construct libraries"
       Environment:
         Variables:
           BUCKET_NAME:

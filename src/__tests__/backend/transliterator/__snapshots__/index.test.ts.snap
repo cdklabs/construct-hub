@@ -290,6 +290,9 @@ Object {
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -351,6 +354,14 @@ Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": "sts:GetServiceBearerToken",
               "Condition": Object {
@@ -692,6 +703,9 @@ Object {
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
         "VpcConfig": Object {
           "SecurityGroupIds": Array [
             Object {
@@ -799,6 +813,14 @@ Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": Array [
                 "s3:GetObject*",
@@ -1228,6 +1250,9 @@ Object {
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
         "VpcConfig": Object {
           "SecurityGroupIds": Array [
             Object {
@@ -1335,6 +1360,14 @@ Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": "sts:GetServiceBearerToken",
               "Condition": Object {
@@ -1667,6 +1700,9 @@ Object {
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -1728,6 +1764,14 @@ Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": Array [
                 "s3:GetObject*",

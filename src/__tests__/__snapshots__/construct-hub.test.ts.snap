@@ -860,7 +860,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             ],
           },
         },
-        "Description": "Periodically query npm.js index for new construct libraries",
+        "Description": "[ConstructHub/Discovery] Periodically query npm.js index for new construct libraries",
         "Environment": Object {
           "Variables": Object {
             "BUCKET_NAME": Object {
@@ -1171,7 +1171,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             ],
           },
         },
-        "Description": "Ingests new package versions into the Construct Hub",
+        "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": Object {
           "Variables": Object {
             "BUCKET_NAME": Object {
@@ -1192,6 +1192,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -1259,6 +1262,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": Array [
                 "s3:DeleteObject*",
@@ -2667,6 +2678,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
         },
         "StateMachineType": "STANDARD",
+        "TracingConfiguration": Object {
+          "Enabled": true,
+        },
       },
       "Type": "AWS::StepFunctions::StateMachine",
     },
@@ -2743,6 +2757,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -2804,6 +2821,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": Array [
                 "s3:GetObject*",
@@ -2959,6 +2984,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
         "VpcConfig": Object {
           "SecurityGroupIds": Array [
             Object {
@@ -3066,6 +3094,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": "sts:GetServiceBearerToken",
               "Condition": Object {
@@ -3300,6 +3336,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
         "VpcConfig": Object {
           "SecurityGroupIds": Array [
             Object {
@@ -3407,6 +3446,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": "sts:GetServiceBearerToken",
               "Condition": Object {
@@ -3606,6 +3653,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -3645,6 +3695,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         "PolicyDocument": Object {
           "Statement": Array [
             Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
               "Action": "states:StartExecution",
               "Effect": "Allow",
               "Resource": Object {
@@ -3683,6 +3741,16 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": "sqs:SendMessage",
               "Effect": "Allow",
@@ -6441,7 +6509,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             ],
           },
         },
-        "Description": "Periodically query npm.js index for new construct libraries",
+        "Description": "[ConstructHub/Discovery] Periodically query npm.js index for new construct libraries",
         "Environment": Object {
           "Variables": Object {
             "BUCKET_NAME": Object {
@@ -6752,7 +6820,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             ],
           },
         },
-        "Description": "Ingests new package versions into the Construct Hub",
+        "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": Object {
           "Variables": Object {
             "BUCKET_NAME": Object {
@@ -6773,6 +6841,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -6840,6 +6911,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": Array [
                 "s3:DeleteObject*",
@@ -8270,6 +8349,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
         },
         "StateMachineType": "STANDARD",
+        "TracingConfiguration": Object {
+          "Enabled": true,
+        },
       },
       "Type": "AWS::StepFunctions::StateMachine",
     },
@@ -8346,6 +8428,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -8407,6 +8492,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": Array [
                 "s3:GetObject*",
@@ -8562,6 +8655,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
         "VpcConfig": Object {
           "SecurityGroupIds": Array [
             Object {
@@ -8669,6 +8765,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": "sts:GetServiceBearerToken",
               "Condition": Object {
@@ -8903,6 +9007,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
         "VpcConfig": Object {
           "SecurityGroupIds": Array [
             Object {
@@ -9010,6 +9117,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": "sts:GetServiceBearerToken",
               "Condition": Object {
@@ -9209,6 +9324,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -9248,6 +9366,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         "PolicyDocument": Object {
           "Statement": Array [
             Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
               "Action": "states:StartExecution",
               "Effect": "Allow",
               "Resource": Object {
@@ -9286,6 +9412,16 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": "sqs:SendMessage",
               "Effect": "Allow",

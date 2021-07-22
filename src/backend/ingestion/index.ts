@@ -1,6 +1,6 @@
 import { Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
 import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
-import { IFunction } from '@aws-cdk/aws-lambda';
+import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
@@ -74,13 +74,14 @@ export class Ingestion extends Construct implements IGrantable {
     });
 
     const handler = new Handler(this, 'Default', {
-      description: 'Ingests new package versions into the Construct Hub',
+      description: '[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub',
       environment: {
         BUCKET_NAME: props.bucket.bucketName,
         STATE_MACHINE_ARN: props.orchestration.stateMachine.stateMachineArn,
       },
       memorySize: 10_240, // Currently the maximum possible setting
       timeout: Duration.minutes(15),
+      tracing: Tracing.ACTIVE,
     });
     this.function = handler;
 
