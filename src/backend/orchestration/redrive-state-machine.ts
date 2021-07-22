@@ -7,7 +7,7 @@ export interface RedriveStateMachineProps extends lambda.FunctionOptions {
 }
 
 export class RedriveStateMachine extends lambda.Function {
-  constructor(scope: Construct, id: string, props: RedriveStateMachineProps = {}) {
+  constructor(scope: Construct, id: string, props?: RedriveStateMachineProps) {
     super(scope, id, {
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,

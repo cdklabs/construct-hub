@@ -1,3 +1,4 @@
+import { createHash } from 'crypto';
 import { basename, extname } from 'path';
 import { URL } from 'url';
 import { createGunzip } from 'zlib';
@@ -220,9 +221,7 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
 
     const sfn = await aws.stepFunctions().startExecution({
       input: JSON.stringify(created),
-      name: `${packageName}@v${packageVersion}-${context.awsRequestId}`
-        // Execution names cannot contain several "special" characters:
-        .replace(/[\u0000-\u001F\u007F-\u009F\s<>[\]{}?*"#%\\^|~`&,;:/]/g, '_'),
+      name: sfnExecutionNameFromParts(packageName, `v${packageVersion}`, context.awsRequestId),
       stateMachineArn: STATE_MACHINE_ARN,
     }).promise();
     console.log(`Started StateMachine execution: ${sfn.executionArn}`);
@@ -255,4 +254,30 @@ function isLicenseFile(fileName: string): boolean {
   const possibleExtensions = new Set(['', '.md', '.txt']);
   return possibleExtensions.has(ext.toLowerCase())
     && basename(fileName, ext).toUpperCase() === 'LICENSE';
+}
+
+
+/**
+ * Creates a StepFunction execution request name based on the provided parts.
+ * The result is guaranteed to be 80 characters or less and to contain only
+ * characters that are valid for a StepFunction execution request name for which
+ * CloudWatch Logging can be enabled. The resulting name is very likely to
+ * be unique for a given input.
+ */
+function sfnExecutionNameFromParts(first: string, ...rest: readonly string[]): string {
+  const parts = [first, ...rest];
+  const name = parts
+    .map((part) => part.replace(/[^a-z0-9_-]+/ig, '_'))
+    .join('_')
+    .replace(/^_/g, '')
+    .replace(/_{2,}/g, '_');
+  if (name.length <= 80) {
+    return name;
+  }
+  const suffix = createHash('sha256')
+  // The hash is computed based on input arguments, to maximize unicity
+    .update(parts.join('_'))
+    .digest('hex')
+    .substring(0, 6);
+  return `${name.substring(0, 80 - suffix.length - 1)}_${suffix}`;
 }

@@ -7,7 +7,7 @@ export interface TransliteratorProps extends lambda.FunctionOptions {
 }
 
 export class Transliterator extends lambda.Function {
-  constructor(scope: Construct, id: string, props: TransliteratorProps = {}) {
+  constructor(scope: Construct, id: string, props?: TransliteratorProps) {
     super(scope, id, {
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,

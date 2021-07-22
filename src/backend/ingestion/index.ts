@@ -43,6 +43,13 @@ export class Ingestion extends Construct implements IGrantable {
    */
   public readonly queue: IQueue;
 
+  /**
+   * The ingestion dead letter queue, which will hold messages that failed
+   * ingestion one too many times, so that poison pills don't endlessly consume
+   * resources.
+   */
+  public readonly deadLetterQueue: IQueue;
+
   public readonly queueRetentionPeriod = Duration.days(14);
 
   public readonly function: IFunction;
@@ -50,7 +57,17 @@ export class Ingestion extends Construct implements IGrantable {
   public constructor(scope: Construct, id: string, props: IngestionProps) {
     super(scope, id);
 
+    this.deadLetterQueue = new Queue(this, 'DLQ', {
+      encryption: QueueEncryption.KMS_MANAGED,
+      retentionPeriod: this.queueRetentionPeriod,
+      visibilityTimeout: Duration.minutes(15),
+    });
+
     this.queue = new Queue(this, 'Queue', {
+      deadLetterQueue: {
+        maxReceiveCount: 5,
+        queue: this.deadLetterQueue,
+      },
       encryption: QueueEncryption.KMS_MANAGED,
       retentionPeriod: this.queueRetentionPeriod,
       visibilityTimeout: Duration.minutes(15),
@@ -71,6 +88,8 @@ export class Ingestion extends Construct implements IGrantable {
     props.orchestration.stateMachine.grantStartExecution(this.function);
 
     this.function.addEventSource(new SqsEventSource(this.queue, { batchSize: 1 }));
+    // This event source is disabled, and can be used to re-process dead-letter-queue messages
+    this.function.addEventSource(new SqsEventSource(this.deadLetterQueue, { batchSize: 1, enabled: false }));
 
     this.grantPrincipal = this.function.grantPrincipal;
 

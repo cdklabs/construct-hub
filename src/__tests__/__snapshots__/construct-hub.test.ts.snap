@@ -105,16 +105,16 @@ Object {
       "Description": "S3 key for asset version \\"abe09179aec5fc242534a5aaedc4c9e5f609ca571a0909b5c7ff865d8a46c864\\"",
       "Type": "String",
     },
-    "AssetParametersc08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432cArtifactHashD115336C": Object {
-      "Description": "Artifact hash for asset \\"c08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432c\\"",
+    "AssetParametersb7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518ArtifactHash79D00608": Object {
+      "Description": "Artifact hash for asset \\"b7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518\\"",
       "Type": "String",
     },
-    "AssetParametersc08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432cS3Bucket6DA7A8DD": Object {
-      "Description": "S3 bucket for asset \\"c08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432c\\"",
+    "AssetParametersb7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518S3BucketDB0CD18C": Object {
+      "Description": "S3 bucket for asset \\"b7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518\\"",
       "Type": "String",
     },
-    "AssetParametersc08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432cS3VersionKey1BB9AEBB": Object {
-      "Description": "S3 key for asset version \\"c08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432c\\"",
+    "AssetParametersb7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518S3VersionKey4D6486C4": Object {
+      "Description": "S3 key for asset version \\"b7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518\\"",
       "Type": "String",
     },
     "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfArtifactHash85F58E48": Object {
@@ -531,7 +531,32 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:State Machine](/states/home#/statemachines/view/",
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":24,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"AWS/SQS\\",\\"ApproximateNumberOfMessagesVisible\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionDLQ3E96A5F2",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Visible Messages\\",\\"stat\\":\\"Maximum\\"}],[\\"AWS/SQS\\",\\"ApproximateNumberOfMessagesNotVisible\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionDLQ3E96A5F2",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Invisible Messages\\",\\"stat\\":\\"Maximum\\"}],[\\"AWS/SQS\\",\\"ApproximateAgeOfOldestMessage\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionDLQ3E96A5F2",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:State Machine](/states/home#/statemachines/view/",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -1110,7 +1135,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersc08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432cS3Bucket6DA7A8DD",
+            "Ref": "AssetParametersb7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518S3BucketDB0CD18C",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -1123,7 +1148,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersc08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432cS3VersionKey1BB9AEBB",
+                          "Ref": "AssetParametersb7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518S3VersionKey4D6486C4",
                         },
                       ],
                     },
@@ -1136,7 +1161,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersc08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432cS3VersionKey1BB9AEBB",
+                          "Ref": "AssetParametersb7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518S3VersionKey4D6486C4",
                         },
                       ],
                     },
@@ -1170,11 +1195,30 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::Function",
     },
+    "ConstructHubIngestionDLQ3E96A5F2": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 1209600,
+        "VisibilityTimeout": 900,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
     "ConstructHubIngestionQueue1AD94CA3": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
         "KmsMasterKeyId": "alias/aws/sqs",
         "MessageRetentionPeriod": 1209600,
+        "RedrivePolicy": Object {
+          "deadLetterTargetArn": Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubIngestionDLQ3E96A5F2",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 5,
+        },
         "VisibilityTimeout": 900,
       },
       "Type": "AWS::SQS::Queue",
@@ -1270,6 +1314,22 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             Object {
               "Action": Array [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionDLQ3E96A5F2",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
                 "s3:GetObject*",
                 "s3:GetBucket*",
                 "s3:List*",
@@ -1309,6 +1369,22 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubIngestionSqsEventSourceTestConstructHubIngestionDLQEC555E58E8FEA048": Object {
+      "Properties": Object {
+        "BatchSize": 1,
+        "Enabled": false,
+        "EventSourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubIngestionDLQ3E96A5F2",
+            "Arn",
+          ],
+        },
+        "FunctionName": Object {
+          "Ref": "ConstructHubIngestion407909CE",
+        },
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
     },
     "ConstructHubIngestionSqsEventSourceTestConstructHubIngestionQueue165B81E2C095FF2A": Object {
       "Properties": Object {
@@ -3065,7 +3141,37 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*.md",
+                      "/data/*/docs-python.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-python.md.not-supported",
                     ],
                   ],
                 },
@@ -3376,7 +3482,37 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*.md",
+                      "/data/*/docs-typescript.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-typescript.md.not-supported",
                     ],
                   ],
                 },
@@ -4329,7 +4465,106 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*.md",
+                      "/data/*/docs-python.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:Abort*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-python.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:Abort*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-typescript.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:Abort*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-typescript.md.not-supported",
                     ],
                   ],
                 },
@@ -5291,16 +5526,16 @@ Object {
       "Description": "S3 key for asset version \\"abe09179aec5fc242534a5aaedc4c9e5f609ca571a0909b5c7ff865d8a46c864\\"",
       "Type": "String",
     },
-    "AssetParametersc08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432cArtifactHashD115336C": Object {
-      "Description": "Artifact hash for asset \\"c08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432c\\"",
+    "AssetParametersb7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518ArtifactHash79D00608": Object {
+      "Description": "Artifact hash for asset \\"b7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518\\"",
       "Type": "String",
     },
-    "AssetParametersc08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432cS3Bucket6DA7A8DD": Object {
-      "Description": "S3 bucket for asset \\"c08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432c\\"",
+    "AssetParametersb7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518S3BucketDB0CD18C": Object {
+      "Description": "S3 bucket for asset \\"b7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518\\"",
       "Type": "String",
     },
-    "AssetParametersc08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432cS3VersionKey1BB9AEBB": Object {
-      "Description": "S3 key for asset version \\"c08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432c\\"",
+    "AssetParametersb7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518S3VersionKey4D6486C4": Object {
+      "Description": "S3 key for asset version \\"b7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518\\"",
       "Type": "String",
     },
     "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfArtifactHash85F58E48": Object {
@@ -5866,7 +6101,32 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:State Machine](/states/home#/statemachines/view/",
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":24,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"AWS/SQS\\",\\"ApproximateNumberOfMessagesVisible\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionDLQ3E96A5F2",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Visible Messages\\",\\"stat\\":\\"Maximum\\"}],[\\"AWS/SQS\\",\\"ApproximateNumberOfMessagesNotVisible\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionDLQ3E96A5F2",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Invisible Messages\\",\\"stat\\":\\"Maximum\\"}],[\\"AWS/SQS\\",\\"ApproximateAgeOfOldestMessage\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionDLQ3E96A5F2",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:State Machine](/states/home#/statemachines/view/",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -6445,7 +6705,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersc08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432cS3Bucket6DA7A8DD",
+            "Ref": "AssetParametersb7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518S3BucketDB0CD18C",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -6458,7 +6718,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersc08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432cS3VersionKey1BB9AEBB",
+                          "Ref": "AssetParametersb7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518S3VersionKey4D6486C4",
                         },
                       ],
                     },
@@ -6471,7 +6731,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersc08a465be47af4494f6c7799f871267e9b3a949380ea72a9a5d9ee9f9c5a432cS3VersionKey1BB9AEBB",
+                          "Ref": "AssetParametersb7ed7d144bebbc129b4af150f0bb44272c3f80b99db168b50f80c5c9c16d0518S3VersionKey4D6486C4",
                         },
                       ],
                     },
@@ -6505,11 +6765,30 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::Function",
     },
+    "ConstructHubIngestionDLQ3E96A5F2": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 1209600,
+        "VisibilityTimeout": 900,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
     "ConstructHubIngestionQueue1AD94CA3": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
         "KmsMasterKeyId": "alias/aws/sqs",
         "MessageRetentionPeriod": 1209600,
+        "RedrivePolicy": Object {
+          "deadLetterTargetArn": Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubIngestionDLQ3E96A5F2",
+              "Arn",
+            ],
+          },
+          "maxReceiveCount": 5,
+        },
         "VisibilityTimeout": 900,
       },
       "Type": "AWS::SQS::Queue",
@@ -6605,6 +6884,22 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             Object {
               "Action": Array [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionDLQ3E96A5F2",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
                 "s3:GetObject*",
                 "s3:GetBucket*",
                 "s3:List*",
@@ -6644,6 +6939,22 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubIngestionSqsEventSourceTestConstructHubIngestionDLQEC555E58E8FEA048": Object {
+      "Properties": Object {
+        "BatchSize": 1,
+        "Enabled": false,
+        "EventSourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubIngestionDLQ3E96A5F2",
+            "Arn",
+          ],
+        },
+        "FunctionName": Object {
+          "Ref": "ConstructHubIngestion407909CE",
+        },
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
     },
     "ConstructHubIngestionSqsEventSourceTestConstructHubIngestionQueue165B81E2C095FF2A": Object {
       "Properties": Object {
@@ -8422,7 +8733,37 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*.md",
+                      "/data/*/docs-python.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-python.md.not-supported",
                     ],
                   ],
                 },
@@ -8733,7 +9074,37 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*.md",
+                      "/data/*/docs-typescript.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-typescript.md.not-supported",
                     ],
                   ],
                 },
@@ -9686,7 +10057,106 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*.md",
+                      "/data/*/docs-python.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:Abort*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-python.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:Abort*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-typescript.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:Abort*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-typescript.md.not-supported",
                     ],
                   ],
                 },

@@ -63,7 +63,7 @@ export class WebApp extends Construct {
       domainNames: props.domain ? [props.domain.zone.zoneName] : undefined,
       certificate: props.domain ? props.domain.cert : undefined,
       defaultRootObject: 'index.html',
-      errorResponses: [404, 403].map(httpStatus => ( {
+      errorResponses: [404, 403].map(httpStatus => ({
         httpStatus,
         responseHttpStatus: 200,
         responsePagePath: '/index.html',

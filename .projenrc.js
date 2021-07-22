@@ -220,7 +220,10 @@ function newLambdaHandler(entrypoint) {
   ts.close('}');
   ts.line();
   ts.open(`export class ${className} extends lambda.Function {`);
-  ts.open(`constructor(scope: Construct, id: string, props: ${propsName} = {}) {`);
+  // NOTE: unlike the array splat (`[...arr]`), the object splat (`{...obj}`) is
+  //       `undefined`-safe. We can hence save an unnecessary object allocation
+  //       by not specifying a default value for the `props` argument here.
+  ts.open(`constructor(scope: Construct, id: string, props?: ${propsName}) {`);
   ts.open('super(scope, id, {');
   ts.line('...props,');
   ts.line('runtime: lambda.Runtime.NODEJS_14_X,');

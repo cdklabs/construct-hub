@@ -163,6 +163,21 @@ export class BackendDashboard extends Construct {
             ],
             rightYAxis: { min: 0 },
           }),
+          new GraphWidget({
+            height: 6,
+            width: 12,
+            title: 'Dead Letters',
+            left: [
+              props.ingestion.deadLetterQueue.metricApproximateNumberOfMessagesVisible({ label: 'Visible Messages' }),
+              props.ingestion.deadLetterQueue.metricApproximateNumberOfMessagesNotVisible({ label: 'Invisible Messages' }),
+            ],
+            leftYAxis: { min: 0 },
+            right: [
+              props.ingestion.deadLetterQueue.metricApproximateAgeOfOldestMessage({ label: 'Oldest Message Age' }),
+            ],
+            rightYAxis: { min: 0 },
+            period: Duration.minutes(1),
+          }),
         ],
         [
           new TextWidget({
