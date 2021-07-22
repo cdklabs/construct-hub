@@ -37,8 +37,9 @@ export class Orchestration extends Construct {
   public constructor(scope: Construct, id: string, props: OrchestrationProps) {
     super(scope, id);
 
-    const addToCatalog = new tasks.LambdaInvoke(this, 'Add to catalog.json', {
-      lambdaFunction: new CatalogBuilder(this, 'CatalogBuilder', props).function,
+    const catalogBuilder = new CatalogBuilder(this, 'CatalogBuilder', props).function;
+    const addToCatalog = (lang: DocumentationLanguage) => new tasks.LambdaInvoke(this, `Add to catalog.json (${lang})`, {
+      lambdaFunction: catalogBuilder,
       resultPath: '$.catalogBuilderOutput',
       resultSelector: {
         'ETag.$': '$.Payload.ETag',
@@ -67,7 +68,7 @@ export class Orchestration extends Construct {
           resultPath: '$.docGenOutput',
           resultSelector: { [`${language}.$`]: '$.Payload' },
         }).addRetry({ interval: Duration.seconds(30) });
-        return task.next(addToCatalog);
+        return task.next(addToCatalog(language));
       }))
       .addCatch(
         sendToDeadLetterQueue.next(new Fail(this, 'Fail', {

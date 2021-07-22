@@ -1782,13 +1782,13 @@ Resources:
             Effect: Allow
             Resource:
               Fn::GetAtt:
-                - ConstructHubOrchestrationDocGentypescriptF9C30384
+                - ConstructHubOrchestrationCatalogBuilder7C964951
                 - Arn
           - Action: lambda:InvokeFunction
             Effect: Allow
             Resource:
               Fn::GetAtt:
-                - ConstructHubOrchestrationCatalogBuilder7C964951
+                - ConstructHubOrchestrationDocGentypescriptF9C30384
                 - Arn
         Version: 2012-10-17
       PolicyName: ConstructHubOrchestrationRoleDefaultPolicyEACD181F
@@ -1806,23 +1806,32 @@ Resources:
           - ""
           - - '{"StartAt":"DocGen","States":{"DocGen":{"Type":"Parallel","End":true,"Catch":[{"ErrorEquals":["States.ALL"],"ResultPath":"$._error","Next":"Send
               to Dead Letter Queue"}],"Branches":[{"StartAt":"Generate python
-              docs","States":{"Generate python
-              docs":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":30}],"Type":"Task","ResultPath":"$.docGenOutput","ResultSelector":{"python.$":"$.Payload"},"Resource":"arn:'
+              docs","States":{"Generate python docs":{"Next":"Add to
+              catalog.json
+              (python)","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":30}],"Type":"Task","ResultPath":"$.docGenOutput","ResultSelector":{"python.$":"$.Payload"},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::lambda:invoke","Parameters":{"FunctionName":"
             - Fn::GetAtt:
                 - ConstructHubOrchestrationDocGenpython77179663
                 - Arn
+            - '","Payload.$":"$"}},"Add to catalog.json
+              (python)":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:'
+            - Ref: AWS::Partition
+            - :states:::lambda:invoke","Parameters":{"FunctionName":"
+            - Fn::GetAtt:
+                - ConstructHubOrchestrationCatalogBuilder7C964951
+                - Arn
             - '","Payload.$":"$"}}}},{"StartAt":"Generate typescript
               docs","States":{"Generate typescript docs":{"Next":"Add to
-              catalog.json","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":30}],"Type":"Task","ResultPath":"$.docGenOutput","ResultSelector":{"typescript.$":"$.Payload"},"Resource":"arn:'
+              catalog.json
+              (typescript)","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":30}],"Type":"Task","ResultPath":"$.docGenOutput","ResultSelector":{"typescript.$":"$.Payload"},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::lambda:invoke","Parameters":{"FunctionName":"
             - Fn::GetAtt:
                 - ConstructHubOrchestrationDocGentypescriptF9C30384
                 - Arn
-            - '","Payload.$":"$"}},"Add to
-              catalog.json":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:'
+            - '","Payload.$":"$"}},"Add to catalog.json
+              (typescript)":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::lambda:invoke","Parameters":{"FunctionName":"
             - Fn::GetAtt:
