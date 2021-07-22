@@ -42,6 +42,32 @@ export const DOCS_KEY_SUFFIX_PYTHON = docsKeySuffix(DocumentationLanguage.PYTHON
 export const DOCS_KEY_SUFFIX_ANY = docsKeySuffix('*');
 
 /**
+ * Return the S3 object key prefix for a specific package name and optionally a
+ * version. Note that the prefix does not end with a "/" so you will likely want
+ * to add that if you want to match a specific set of objects.
+ */
+export function getObjectKeyPrefix(packageName: string, packageVersion?: string) {
+  let key = `${STORAGE_KEY_PREFIX}${packageName}`;
+  if (packageVersion) {
+    key += `/v${packageVersion}`;
+  }
+
+  return key;
+}
+
+/**
+ * Resolves the set of S3 object keys use for a specific package/version.
+ */
+export function getObjectKeys(packageName: string, packageVersion: string) {
+  const prefix = getObjectKeyPrefix(packageName, packageVersion);
+  return {
+    assemblyKey: `${prefix}${ASSEMBLY_KEY_SUFFIX}`,
+    packageKey: `${prefix}${PACKAGE_KEY_SUFFIX}`,
+    metadataKey: `${prefix}${METADATA_KEY_SUFFIX}`,
+  };
+}
+
+/**
  * The key suffix for documentation artifacts by language and submodule.
  */
 export function docsKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string) {

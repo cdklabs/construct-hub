@@ -1,16 +1,7 @@
 import * as AWS from 'aws-sdk';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DenyListMap, DenyListRule } from './api';
-
-/**
- * The name of an environment variable that contains the bucket name that includes the deny list.
- */
-export const DENY_LIST_BUCKET_NAME_ENV = 'DENY_LIST_BUCKET_NAME';
-
-/**
-  * The object key of the deny list in the bucket.
-  */
-export const DENY_LIST_OBJECT_KEY_ENV = 'DENY_LIST_OBJECT_KEY';
+import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY } from './constants';
 
 /**
  * Options for `DenyListClient`.
@@ -37,11 +28,11 @@ export class DenyListClient {
   private readonly bucketName: string;
   private readonly objectKey: string;
 
-  private map: DenyListMap | undefined;
+  private _map: DenyListMap | undefined;
 
   constructor(options: DenyListClientOptions = {}) {
-    this.bucketName = options.bucketName ?? requireEnv(DENY_LIST_BUCKET_NAME_ENV);
-    this.objectKey = options.objectKey ?? requireEnv(DENY_LIST_OBJECT_KEY_ENV);
+    this.bucketName = options.bucketName ?? requireEnv(ENV_DENY_LIST_BUCKET_NAME);
+    this.objectKey = options.objectKey ?? requireEnv(ENV_DENY_LIST_OBJECT_KEY);
     this.s3 = new AWS.S3();
   }
 
@@ -51,7 +42,7 @@ export class DenyListClient {
    * This must be called before `lookup()`.
    */
   public async init() {
-    this.map = {}; // reset
+    this._map = {}; // reset
 
     try {
       const params = {
@@ -73,7 +64,7 @@ export class DenyListClient {
         return;
       }
 
-      this.map = data;
+      this._map = data;
     } catch (e) {
       console.log(`Error pasing deny list file ${this.bucketName}/${this.objectKey}: ${e}`);
     }
@@ -87,15 +78,28 @@ export class DenyListClient {
    * `DenyListRule` otherwise.
    */
   public lookup(name: string, version: string): DenyListRule | undefined {
-    if (!this.map) {
-      throw new Error('DenyListClient must be initialized before calling isDenied');
+    if (!this._map) {
+      throw new Error('DenyListClient must be initialized');
     }
 
-    let entry = this.map[name];
+    let entry = this._map[name];
     if (!entry) {
-      entry = this.map[`${name}@${version}`];
+      entry = this._map[`${name}/v${version}`];
     }
 
     return entry;
+  }
+
+  /**
+   * Returns a copy of the deny list map.
+   */
+  public get map() {
+    if (!this._map) {
+      throw new Error('DenyListClient must be initialized');
+    }
+
+    return {
+      ...this._map,
+    };
   }
 }

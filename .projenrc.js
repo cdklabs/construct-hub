@@ -172,6 +172,20 @@ function addDevApp() {
   });
 }
 
+function discoverIntegrationTests() {
+  const files = glob.sync('**/*.integ.ts', { cwd: project.srcdir });
+  for (const entry of files) {
+    console.log(`integration test: ${entry}`);
+    const name = basename(entry, '.integ.ts');
+    const libdir = join(project.libdir, dirname(entry));
+    const task = project.addTask(`integ:${name}`, {
+      description: `deploy integration test ${entry}`,
+      cwd: libdir,
+      exec: `npx cdk --app "node ${basename(entry, '.ts')}.js" deploy --require-approval=never`,
+    });
+  }
+}
+
 const bundleTask = project.addTask('bundle', { description: 'Bundle all lambda functions' });
 
 /**
@@ -186,8 +200,10 @@ const bundleTask = project.addTask('bundle', { description: 'Bundle all lambda f
  * @param entrypoint the location of a file in the form `src/.../xxx.lambda.ts`
  * under the source directory with an exported `handler` function. This is the
  * entrypoint of the AWS Lambda function.
+ *
+ * @param trigger trigger this handler during deployment
  */
-function newLambdaHandler(entrypoint) {
+function newLambdaHandler(entrypoint, trigger) {
   project.addDevDeps('pascal-case');
 
   if (!entrypoint.startsWith(project.srcdir)) {
@@ -213,9 +229,20 @@ function newLambdaHandler(entrypoint) {
   ts.line(`// ${FileBase.PROJEN_MARKER}`);
   ts.line('import * as path from \'path\';');
   ts.line('import * as lambda from \'@aws-cdk/aws-lambda\';');
-  ts.line('import { Construct } from \'constructs\';');
+  ts.line('import { Construct } from \'@aws-cdk/core\';');
+  if (trigger) {
+    ts.line('import { AfterCreate } from \'cdk-triggers\';');
+  }
+
   ts.line();
   ts.open(`export interface ${propsName} extends lambda.FunctionOptions {`);
+  if (trigger) {
+    ts.line('/**');
+    ts.line(' * Trigger this handler after these constructs were deployed.');
+    ts.line(' * @default - trigger this handler after all implicit dependencies have been created');
+    ts.line(' */');
+    ts.line('readonly after?: Construct[];');
+  }
   ts.close('}');
   ts.line();
   ts.open(`export class ${className} extends lambda.Function {`);
@@ -224,8 +251,15 @@ function newLambdaHandler(entrypoint) {
   ts.line('runtime: lambda.Runtime.NODEJS_14_X,');
   ts.line('handler: \'index.handler\',');
   ts.line(`code: lambda.Code.fromAsset(path.join(__dirname, '/${basename(outdir)}')),`);
+  ts.line(`description: '${entrypoint}',`);
   ts.line('...props,');
   ts.close('});');
+  if (trigger) {
+    ts.open('new AfterCreate(this, \'Trigger\', {');
+    ts.line('handler: this,');
+    ts.line('resources: props.after,');
+    ts.close('});');
+  }
   ts.close('}');
   ts.close('}');
 
@@ -258,7 +292,8 @@ function discoverLambdas() {
   project.eslint.allowDevDeps('src/**/*.lambda-shared.ts');
   project.addDevDeps('glob');
   for (const entry of glob.sync('src/**/*.lambda.ts')) {
-    newLambdaHandler(entry);
+    const trigger = basename(entry).startsWith('trigger.');
+    newLambdaHandler(entry, trigger);
   }
 
   // Add the AWS Lambda type definitions, and ignore that it never resolves
@@ -273,6 +308,7 @@ function discoverLambdas() {
 // and bundle it with this library. this way, we are only taking a
 // dev-dependency on the webapp instead of a normal/bundled dependency.
 project.addDevDeps('construct-hub-webapp');
+project.addDevDeps('cdk-triggers');
 project.compileTask.prependExec('cp -r ./node_modules/construct-hub-webapp/build ./website');
 project.compileTask.prependExec('rm -rf ./website');
 project.npmignore.addPatterns('!/website'); // <-- include in tarball
@@ -280,5 +316,6 @@ project.gitignore.addPatterns('/website'); // <-- don't commit
 
 addDevApp();
 discoverLambdas();
+discoverIntegrationTests();
 
 project.synth();

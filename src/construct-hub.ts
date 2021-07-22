@@ -10,6 +10,7 @@ import { AlarmActions, Domain } from './api';
 import { CatalogBuilder, DenyList, Discovery, Ingestion, Transliterator } from './backend';
 import { DenyListRule } from './backend/deny-list/api';
 import { Inventory } from './backend/inventory';
+import { STORAGE_KEY_PREFIX } from './backend/shared/constants';
 import { Repository } from './codeartifact/repository';
 import { Monitoring } from './monitoring';
 import { WebApp } from './webapp';
@@ -89,6 +90,8 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     const denyList = new DenyList(this, 'DenyList', {
       rules: props.denyList,
+      packageDataBucket: packageData,
+      packageDataKeyPrefix: STORAGE_KEY_PREFIX,
     });
 
     const codeArtifact = new Repository(this, 'CodeArtifact', { description: 'Proxy to npmjs.com for ConstructHub' });

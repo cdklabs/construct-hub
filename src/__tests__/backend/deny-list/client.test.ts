@@ -1,7 +1,8 @@
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import { DenyListRule } from '../../../backend/deny-list/api';
-import { DenyListClient, DENY_LIST_BUCKET_NAME_ENV, DENY_LIST_OBJECT_KEY_ENV } from '../../../backend/deny-list/client.lambda-shared';
+import { DenyListClient } from '../../../backend/deny-list/client.lambda-shared';
+import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY } from '../../../backend/deny-list/constants';
 
 const sample: Record<string, DenyListRule> = {
   'foo@1.2.3': {
@@ -16,8 +17,8 @@ const sample: Record<string, DenyListRule> = {
 };
 
 beforeEach(() => {
-  process.env[DENY_LIST_BUCKET_NAME_ENV] = 'deny-list-bucket-name';
-  process.env[DENY_LIST_OBJECT_KEY_ENV] = 'deny-list.json';
+  process.env[ENV_DENY_LIST_BUCKET_NAME] = 'deny-list-bucket-name';
+  process.env[ENV_DENY_LIST_OBJECT_KEY] = 'deny-list.json';
   AWSMock.setSDKInstance(AWS);
 });
 
