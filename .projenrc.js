@@ -210,8 +210,11 @@ function discoverIntegrationTests() {
     const assert = project.addTask(`integ:${name}:assert`, {
       description: `synthesize integration test ${entry}`,
     });
+
+    const exclude = ['asset.*', 'cdk.out', 'manifest.json', 'tree.json'];
+
     assert.exec(`cdk synth --app ${app} -o ${actualdir} > /dev/null`);
-    assert.exec(`diff -r -x asset.* -x cdk.out ${snapshotdir}/ ${actualdir}/`);
+    assert.exec(`diff -r ${exclude.map(x => `-x ${x}`).join(' ')} ${snapshotdir}/ ${actualdir}/`);
 
     project.addTask(`integ:${name}:snapshot`, {
       description: `update snapshot for integration test ${entry}`,
@@ -221,12 +224,22 @@ function discoverIntegrationTests() {
     // synth as part of our tests, which means that if outdir changes, anti-tamper will fail
     project.testTask.spawn(assert);
     project.addGitIgnore(`!${snapshotdir}`); // commit outdir to git but not assets
-    project.addGitIgnore(`${snapshotdir}/**/asset.*`); // commit outdir to git but not assets
-    project.addGitIgnore(`${snapshotdir}/cdk.out`); // commit outdir to git but not assets
 
-    // do not commit these temporary dirs
-    project.addGitIgnore(actualdir);
+    // do not commit all files we are excluding
+    for (const x of exclude) {
+      const spec = `${snapshotdir}/${x}`;
+      project.addGitIgnore(spec);
+      project.addPackageIgnore(spec);
+    }
+
     project.addGitIgnore(deploydir);
+    project.addPackageIgnore(deploydir);
+    project.addGitIgnore(actualdir);
+    project.addPackageIgnore(actualdir);
+
+    // commit the snapshot (but not into the tarball)
+    project.addGitIgnore(`!${snapshotdir}`);
+    project.addPackageIgnore(snapshotdir);
   }
 }
 

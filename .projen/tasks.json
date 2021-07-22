@@ -544,7 +544,7 @@
           "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" -o src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.actual > /dev/null"
         },
         {
-          "exec": "diff -r -x asset.* -x cdk.out src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout/ src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.actual/"
+          "exec": "diff -r -x asset.* -x cdk.out -x manifest.json -x tree.json src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout/ src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.actual/"
         }
       ]
     },
