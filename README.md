@@ -38,6 +38,8 @@ For each integration test, we have two tasks:
   to the repository.
 * `integ:xxx:assert` - runs during `yarn test` and compares the synthesized
   output of the test to the one in `.cdkout`.
+* `integ:xxx:destroy` - can be used to delete the integration test app (called
+  by `deploy` as well)
 
 ## Security
 

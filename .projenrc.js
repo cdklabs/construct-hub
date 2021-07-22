@@ -200,6 +200,13 @@ function discoverIntegrationTests() {
     deploy.exec(`rm -fr ${expecteddir}`);
     deploy.exec(`mv ${deploydir} ${expecteddir}`);
 
+    const destroy = project.addTask(`integ:${name}:destroy`, {
+      description: `destroy integration test ${entry}`,
+      exec: `cdk destroy --app ${expecteddir}`,
+    });
+
+    deploy.spawn(destroy);
+
     const assert = project.addTask(`integ:${name}:assert`, {
       description: `synthesize integration test ${entry}`,
     });
