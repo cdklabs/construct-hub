@@ -39,7 +39,7 @@ export class Orchestration extends Construct {
    * The function operators can use to reprocess all indexed packages through
    * the backend data pipeline.
    */
-   public readonly reprocessAllFunction: IFunction;
+  public readonly reprocessAllFunction: IFunction;
 
   public constructor(scope: Construct, id: string, props: OrchestrationProps) {
     super(scope, id);
