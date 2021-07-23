@@ -60,7 +60,7 @@ export class Orchestration extends Construct {
     })
       // This has a concurrency of 1, so we want to aggressively retry being throttled here.
       .addRetry({ errors: ['Lambda.TooManyRequestsException'], interval: Duration.seconds(30), maxAttempts: 5 })
-      .addCatch(new Pass(this, `Failed to add to catalog.json`, {
+      .addCatch(new Pass(this, 'Failed to add to catalog.json', {
         parameters: { 'error.$': 'States.StringToJson($.Cause)' },
         resultPath: '$.error',
       }).next(sendToDeadLetterQueue));
