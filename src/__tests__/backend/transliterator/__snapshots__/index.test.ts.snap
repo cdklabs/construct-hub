@@ -219,7 +219,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3Bucket63665D18",
+            "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3BucketB29D99C7",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -232,7 +232,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3VersionKey360A8CA5",
+                          "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA",
                         },
                       ],
                     },
@@ -245,7 +245,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3VersionKey360A8CA5",
+                          "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA",
                         },
                       ],
                     },
@@ -290,6 +290,9 @@ Object {
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -351,6 +354,14 @@ Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": "sts:GetServiceBearerToken",
               "Condition": Object {
@@ -618,7 +629,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3Bucket63665D18",
+            "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3BucketB29D99C7",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -631,7 +642,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3VersionKey360A8CA5",
+                          "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA",
                         },
                       ],
                     },
@@ -644,7 +655,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3VersionKey360A8CA5",
+                          "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA",
                         },
                       ],
                     },
@@ -692,6 +703,9 @@ Object {
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
         "VpcConfig": Object {
           "SecurityGroupIds": Array [
             Object {
@@ -799,6 +813,14 @@ Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": Array [
                 "s3:GetObject*",
@@ -1136,7 +1158,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3Bucket63665D18",
+            "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3BucketB29D99C7",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -1149,7 +1171,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3VersionKey360A8CA5",
+                          "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA",
                         },
                       ],
                     },
@@ -1162,7 +1184,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3VersionKey360A8CA5",
+                          "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA",
                         },
                       ],
                     },
@@ -1228,6 +1250,9 @@ Object {
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
         "VpcConfig": Object {
           "SecurityGroupIds": Array [
             Object {
@@ -1335,6 +1360,14 @@ Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": "sts:GetServiceBearerToken",
               "Condition": Object {
@@ -1614,7 +1647,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3Bucket63665D18",
+            "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3BucketB29D99C7",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -1627,7 +1660,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3VersionKey360A8CA5",
+                          "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA",
                         },
                       ],
                     },
@@ -1640,7 +1673,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3VersionKey360A8CA5",
+                          "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA",
                         },
                       ],
                     },
@@ -1667,6 +1700,9 @@ Object {
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -1728,6 +1764,14 @@ Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": Array [
                 "s3:GetObject*",

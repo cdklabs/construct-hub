@@ -1,4 +1,4 @@
-import { IFunction } from '@aws-cdk/aws-lambda';
+import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Fail, IStateMachine, JsonPath, Parallel, StateMachine, StateMachineType, TaskInput } from '@aws-cdk/aws-stepfunctions';
 import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
@@ -83,6 +83,7 @@ export class Orchestration extends Construct {
       definition,
       stateMachineType: StateMachineType.STANDARD,
       timeout: Duration.hours(1),
+      tracingEnabled: true,
     });
 
     // This function is intended to be manually triggered by an operrator to
@@ -95,6 +96,7 @@ export class Orchestration extends Construct {
       },
       memorySize: 1_024,
       timeout: Duration.minutes(15),
+      tracing: Tracing.ACTIVE,
     });
     this.stateMachine.grantStartExecution(this.redriveFunction);
     this.deadLetterQueue.grantConsumeMessages(this.redriveFunction);

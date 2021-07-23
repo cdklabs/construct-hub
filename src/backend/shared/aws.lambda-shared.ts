@@ -1,4 +1,10 @@
-import * as AWS from 'aws-sdk';
+import * as _AWS from 'aws-sdk';
+import * as AWSXRay from 'aws-xray-sdk-core';
+
+// Do nothing if there is no XRay trace context
+AWSXRay.setContextMissingStrategy(() => {});
+
+const AWS = AWSXRay.captureAWS(_AWS);
 
 let _s3: AWS.S3 | undefined;
 let _sqs: AWS.SQS | undefined;

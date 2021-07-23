@@ -1300,6 +1300,11 @@ Resources:
       PolicyDocument:
         Statement:
           - Action:
+              - xray:PutTraceSegments
+              - xray:PutTelemetryRecords
+            Effect: Allow
+            Resource: "*"
+          - Action:
               - s3:GetObject*
               - s3:GetBucket*
               - s3:List*
@@ -1326,7 +1331,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters695ccc0aa20f6087325b397aa42262f845eda865c76aeae21bee279903ad71a1S3BucketEF294402
+          Ref: AssetParameters809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46S3Bucket74C7566A
         S3Key:
           Fn::Join:
             - ""
@@ -1334,12 +1339,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters695ccc0aa20f6087325b397aa42262f845eda865c76aeae21bee279903ad71a1S3VersionKeyA89431BD
+                      - Ref: AssetParameters809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46S3VersionKey20358883
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters695ccc0aa20f6087325b397aa42262f845eda865c76aeae21bee279903ad71a1S3VersionKeyA89431BD
+                      - Ref: AssetParameters809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46S3VersionKey20358883
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
@@ -1358,6 +1363,8 @@ Resources:
       ReservedConcurrentExecutions: 1
       Runtime: nodejs14.x
       Timeout: 900
+      TracingConfig:
+        Mode: PassThrough
     DependsOn:
       - ConstructHubOrchestrationCatalogBuilderServiceRoleDefaultPolicyDA5D5AA5
       - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
@@ -1408,6 +1415,11 @@ Resources:
     Properties:
       PolicyDocument:
         Statement:
+          - Action:
+              - xray:PutTraceSegments
+              - xray:PutTelemetryRecords
+            Effect: Allow
+            Resource: "*"
           - Action: sts:GetServiceBearerToken
             Condition:
               StringEquals:
@@ -1491,7 +1503,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3Bucket63665D18
+          Ref: AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3BucketB29D99C7
         S3Key:
           Fn::Join:
             - ""
@@ -1499,12 +1511,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3VersionKey360A8CA5
+                      - Ref: AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3VersionKey360A8CA5
+                      - Ref: AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2
@@ -1540,6 +1552,8 @@ Resources:
       MemorySize: 10240
       Runtime: nodejs14.x
       Timeout: 900
+      TracingConfig:
+        Mode: PassThrough
       VpcConfig:
         SecurityGroupIds:
           - Fn::GetAtt:
@@ -1590,6 +1604,11 @@ Resources:
     Properties:
       PolicyDocument:
         Statement:
+          - Action:
+              - xray:PutTraceSegments
+              - xray:PutTelemetryRecords
+            Effect: Allow
+            Resource: "*"
           - Action: sts:GetServiceBearerToken
             Condition:
               StringEquals:
@@ -1673,7 +1692,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3Bucket63665D18
+          Ref: AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3BucketB29D99C7
         S3Key:
           Fn::Join:
             - ""
@@ -1681,12 +1700,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3VersionKey360A8CA5
+                      - Ref: AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3VersionKey360A8CA5
+                      - Ref: AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19
@@ -1722,6 +1741,8 @@ Resources:
       MemorySize: 10240
       Runtime: nodejs14.x
       Timeout: 900
+      TracingConfig:
+        Mode: PassThrough
       VpcConfig:
         SecurityGroupIds:
           - Fn::GetAtt:
@@ -1766,6 +1787,13 @@ Resources:
     Properties:
       PolicyDocument:
         Statement:
+          - Action:
+              - xray:PutTraceSegments
+              - xray:PutTelemetryRecords
+              - xray:GetSamplingRules
+              - xray:GetSamplingTargets
+            Effect: Allow
+            Resource: "*"
           - Action: sqs:SendMessage
             Effect: Allow
             Resource:
@@ -1845,6 +1873,8 @@ Resources:
             - '","MessageBody.$":"$"}},"Fail":{"Type":"Fail","Error":"Failed","Cause":"Input
               was submitted to dead letter queue"}},"TimeoutSeconds":3600}'
       StateMachineType: STANDARD
+      TracingConfiguration:
+        Enabled: true
     DependsOn:
       - ConstructHubOrchestrationRoleDefaultPolicyEACD181F
       - ConstructHubOrchestrationRoleF4CF6987
@@ -1869,6 +1899,11 @@ Resources:
     Properties:
       PolicyDocument:
         Statement:
+          - Action:
+              - xray:PutTraceSegments
+              - xray:PutTelemetryRecords
+            Effect: Allow
+            Resource: "*"
           - Action: states:StartExecution
             Effect: Allow
             Resource:
@@ -1893,7 +1928,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0S3BucketE303749C
+          Ref: AssetParametersaed78bc431dd6cdac01afad951cec010f57f9d972c3f748c3ceeb5ca096544fdS3Bucket2D90B8C0
         S3Key:
           Fn::Join:
             - ""
@@ -1901,12 +1936,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0S3VersionKey1AAD9013
+                      - Ref: AssetParametersaed78bc431dd6cdac01afad951cec010f57f9d972c3f748c3ceeb5ca096544fdS3VersionKey8E462E51
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0S3VersionKey1AAD9013
+                      - Ref: AssetParametersaed78bc431dd6cdac01afad951cec010f57f9d972c3f748c3ceeb5ca096544fdS3VersionKey8E462E51
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationRedriveServiceRoleB84EFF33
@@ -1923,6 +1958,8 @@ Resources:
       MemorySize: 1024
       Runtime: nodejs14.x
       Timeout: 900
+      TracingConfig:
+        Mode: Active
     DependsOn:
       - ConstructHubOrchestrationRedriveServiceRoleDefaultPolicyC018F436
       - ConstructHubOrchestrationRedriveServiceRoleB84EFF33
@@ -1975,7 +2012,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters19c253c362d78e2170ba37bab1bb2d77a7566ea2392011c5a6932073e3bd3060S3BucketFDF589E8
+          Ref: AssetParameters516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9S3Bucket781BDABF
         S3Key:
           Fn::Join:
             - ""
@@ -1983,12 +2020,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters19c253c362d78e2170ba37bab1bb2d77a7566ea2392011c5a6932073e3bd3060S3VersionKey0CB27E81
+                      - Ref: AssetParameters516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9S3VersionKey31C2F325
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters19c253c362d78e2170ba37bab1bb2d77a7566ea2392011c5a6932073e3bd3060S3VersionKey0CB27E81
+                      - Ref: AssetParameters516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9S3VersionKey31C2F325
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationReprocessAllServiceRoleE23FF434
@@ -2051,6 +2088,11 @@ Resources:
     Properties:
       PolicyDocument:
         Statement:
+          - Action:
+              - xray:PutTraceSegments
+              - xray:PutTelemetryRecords
+            Effect: Allow
+            Resource: "*"
           - Action:
               - s3:DeleteObject*
               - s3:PutObject*
@@ -2116,7 +2158,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersdb3d271c9b6dc32444c2577e3a4c37f6ad96024ce7db03eb8a960ac377928252S3BucketB95E1649
+          Ref: AssetParameterseebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05S3Bucket316434E8
         S3Key:
           Fn::Join:
             - ""
@@ -2124,17 +2166,18 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersdb3d271c9b6dc32444c2577e3a4c37f6ad96024ce7db03eb8a960ac377928252S3VersionKey2C632176
+                      - Ref: AssetParameterseebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05S3VersionKey512FE4EF
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersdb3d271c9b6dc32444c2577e3a4c37f6ad96024ce7db03eb8a960ac377928252S3VersionKey2C632176
+                      - Ref: AssetParameterseebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05S3VersionKey512FE4EF
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
           - Arn
-      Description: Ingests new package versions into the Construct Hub
+      Description: "[ConstructHub/Ingestion] Ingests new package versions into the
+        Construct Hub"
       Environment:
         Variables:
           BUCKET_NAME:
@@ -2145,6 +2188,8 @@ Resources:
       MemorySize: 10240
       Runtime: nodejs14.x
       Timeout: 900
+      TracingConfig:
+        Mode: Active
     DependsOn:
       - ConstructHubIngestionServiceRoleDefaultPolicyC0D2B6F2
       - ConstructHubIngestionServiceRole6380BAB6
@@ -2266,7 +2311,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters59d62379a8feb5959cfdbb60eb7433d5bf416584092413e6cd3f8cddc9d17158S3Bucket8124F51C
+          Ref: AssetParametersa25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88eceS3Bucket7E891C93
         S3Key:
           Fn::Join:
             - ""
@@ -2274,17 +2319,18 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters59d62379a8feb5959cfdbb60eb7433d5bf416584092413e6cd3f8cddc9d17158S3VersionKey80262D06
+                      - Ref: AssetParametersa25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88eceS3VersionKeyC3F65FED
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters59d62379a8feb5959cfdbb60eb7433d5bf416584092413e6cd3f8cddc9d17158S3VersionKey80262D06
+                      - Ref: AssetParametersa25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88eceS3VersionKeyC3F65FED
       Role:
         Fn::GetAtt:
           - ConstructHubDiscoveryServiceRole1B3CFF96
           - Arn
-      Description: Periodically query npm.js index for new construct libraries
+      Description: "[ConstructHub/Discovery] Periodically query npm.js index for new
+        construct libraries"
       Environment:
         Variables:
           BUCKET_NAME:
@@ -2398,7 +2444,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersaf9dead816d553255b3b2af0359ef6782aecbecd0fa3fb9d94a4e8cf8c11670cS3Bucket0097CC5B
+          Ref: AssetParametersad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2cS3BucketCD8DFC1A
         S3Key:
           Fn::Join:
             - ""
@@ -2406,12 +2452,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersaf9dead816d553255b3b2af0359ef6782aecbecd0fa3fb9d94a4e8cf8c11670cS3VersionKeyDD342F78
+                      - Ref: AssetParametersad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2cS3VersionKey0F98DF50
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersaf9dead816d553255b3b2af0359ef6782aecbecd0fa3fb9d94a4e8cf8c11670cS3VersionKeyDD342F78
+                      - Ref: AssetParametersad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2cS3VersionKey0F98DF50
       Role:
         Fn::GetAtt:
           - ConstructHubInventoryCanaryServiceRole7684EDDE
@@ -2480,29 +2526,29 @@ Resources:
               Language:
               typescript"}},{"type":"metric","width":6,"height":6,"x":0,"y":9,"properties":{"view":"timeSeries","title":"Packages","region":"'
             - Ref: AWS::Region
-            - '","stacked":true,"metrics":[["ConstructHub/Inventory","SupportedPackageCount","Language","typescript",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageCount","Language","typescript",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":6,"height":6,"x":6,"y":9,"properties":{"view":"timeSeries","title":"Package
+            - '","stacked":true,"metrics":[["ConstructHub/Inventory","SupportedPackageCount","Language","typescript",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageCount","Language","typescript",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":6,"height":6,"x":6,"y":9,"properties":{"view":"timeSeries","title":"Package
               Major Versions","region":"'
             - Ref: AWS::Region
-            - '","stacked":true,"metrics":[["ConstructHub/Inventory","SupportedMajorVersionCount","Language","typescript",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedMajorVersionCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingMajorVersionCount","Language","typescript",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":6,"height":6,"x":12,"y":9,"properties":{"view":"timeSeries","title":"Package
+            - '","stacked":true,"metrics":[["ConstructHub/Inventory","SupportedMajorVersionCount","Language","typescript",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedMajorVersionCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingMajorVersionCount","Language","typescript",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":6,"height":6,"x":12,"y":9,"properties":{"view":"timeSeries","title":"Package
               Versions","region":"'
             - Ref: AWS::Region
-            - '","stacked":true,"metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","typescript",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","typescript",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":6,"height":6,"x":18,"y":9,"properties":{"view":"timeSeries","title":"Package
+            - '","stacked":true,"metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","typescript",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","typescript",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":6,"height":6,"x":18,"y":9,"properties":{"view":"timeSeries","title":"Package
               Version Submodules","region":"'
             - Ref: AWS::Region
-            - '","stacked":true,"metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","typescript",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","typescript",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":1,"x":0,"y":15,"properties":{"markdown":"##
+            - '","stacked":true,"metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","typescript",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","typescript",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":15,"properties":{"markdown":"##
               Language:
               python"}},{"type":"metric","width":6,"height":6,"x":0,"y":16,"properties":{"view":"timeSeries","title":"Packages","region":"'
             - Ref: AWS::Region
-            - '","stacked":true,"metrics":[["ConstructHub/Inventory","SupportedPackageCount","Language","python",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageCount","Language","python",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageCount","Language","python",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":6,"height":6,"x":6,"y":16,"properties":{"view":"timeSeries","title":"Package
+            - '","stacked":true,"metrics":[["ConstructHub/Inventory","SupportedPackageCount","Language","python",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageCount","Language","python",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageCount","Language","python",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":6,"height":6,"x":6,"y":16,"properties":{"view":"timeSeries","title":"Package
               Major Versions","region":"'
             - Ref: AWS::Region
-            - '","stacked":true,"metrics":[["ConstructHub/Inventory","SupportedMajorVersionCount","Language","python",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedMajorVersionCount","Language","python",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingMajorVersionCount","Language","python",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":6,"height":6,"x":12,"y":16,"properties":{"view":"timeSeries","title":"Package
+            - '","stacked":true,"metrics":[["ConstructHub/Inventory","SupportedMajorVersionCount","Language","python",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedMajorVersionCount","Language","python",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingMajorVersionCount","Language","python",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":6,"height":6,"x":12,"y":16,"properties":{"view":"timeSeries","title":"Package
               Versions","region":"'
             - Ref: AWS::Region
-            - '","stacked":true,"metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","python",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","python",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","python",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":6,"height":6,"x":18,"y":16,"properties":{"view":"timeSeries","title":"Package
+            - '","stacked":true,"metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","python",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","python",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","python",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":6,"height":6,"x":18,"y":16,"properties":{"view":"timeSeries","title":"Package
               Version Submodules","region":"'
             - Ref: AWS::Region
-            - '","stacked":true,"metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","python",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","python",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","python",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":22,"properties":{"markdown":"#
+            - '","stacked":true,"metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","python",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","python",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","python",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":2,"x":0,"y":22,"properties":{"markdown":"#
               Discovery Function\\n\\n[button:Search Log
               Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f'
             - Ref: ConstructHubDiscoveryD6EEC2B8
@@ -3305,18 +3351,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "f3d3a3cc7f26921b237eff24fc5dd7aef8f0465a1f376b8f7918eb3d4b3e8797"
-  AssetParameters695ccc0aa20f6087325b397aa42262f845eda865c76aeae21bee279903ad71a1S3BucketEF294402:
+  AssetParameters809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46S3Bucket74C7566A:
     Type: String
     Description: S3 bucket for asset
-      "695ccc0aa20f6087325b397aa42262f845eda865c76aeae21bee279903ad71a1"
-  AssetParameters695ccc0aa20f6087325b397aa42262f845eda865c76aeae21bee279903ad71a1S3VersionKeyA89431BD:
+      "809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46"
+  AssetParameters809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46S3VersionKey20358883:
     Type: String
     Description: S3 key for asset version
-      "695ccc0aa20f6087325b397aa42262f845eda865c76aeae21bee279903ad71a1"
-  AssetParameters695ccc0aa20f6087325b397aa42262f845eda865c76aeae21bee279903ad71a1ArtifactHashB7CA7198:
+      "809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46"
+  AssetParameters809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46ArtifactHash1825D77A:
     Type: String
     Description: Artifact hash for asset
-      "695ccc0aa20f6087325b397aa42262f845eda865c76aeae21bee279903ad71a1"
+      "809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46"
   AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3Bucket4D46ABB5:
     Type: String
     Description: S3 bucket for asset
@@ -3329,78 +3375,78 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24"
-  AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3Bucket63665D18:
+  AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3BucketB29D99C7:
     Type: String
     Description: S3 bucket for asset
-      "b80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557"
-  AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557S3VersionKey360A8CA5:
+      "7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74e"
+  AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA:
     Type: String
     Description: S3 key for asset version
-      "b80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557"
-  AssetParametersb80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557ArtifactHashB6A1B548:
+      "7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74e"
+  AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eArtifactHash8E86E95B:
     Type: String
     Description: Artifact hash for asset
-      "b80198c4af5dcfcf566fbc0427bacbf079fbb051f9cb05aa3d2eb43d570d5557"
-  AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0S3BucketE303749C:
+      "7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74e"
+  AssetParametersaed78bc431dd6cdac01afad951cec010f57f9d972c3f748c3ceeb5ca096544fdS3Bucket2D90B8C0:
     Type: String
     Description: S3 bucket for asset
-      "6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0"
-  AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0S3VersionKey1AAD9013:
+      "aed78bc431dd6cdac01afad951cec010f57f9d972c3f748c3ceeb5ca096544fd"
+  AssetParametersaed78bc431dd6cdac01afad951cec010f57f9d972c3f748c3ceeb5ca096544fdS3VersionKey8E462E51:
     Type: String
     Description: S3 key for asset version
-      "6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0"
-  AssetParameters6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0ArtifactHashE7494211:
+      "aed78bc431dd6cdac01afad951cec010f57f9d972c3f748c3ceeb5ca096544fd"
+  AssetParametersaed78bc431dd6cdac01afad951cec010f57f9d972c3f748c3ceeb5ca096544fdArtifactHash7600F3BF:
     Type: String
     Description: Artifact hash for asset
-      "6af9b1657437e8486777a113ea9fedeca24ca7c17cc7d67fa3d78ca6fd7affb0"
-  AssetParameters19c253c362d78e2170ba37bab1bb2d77a7566ea2392011c5a6932073e3bd3060S3BucketFDF589E8:
+      "aed78bc431dd6cdac01afad951cec010f57f9d972c3f748c3ceeb5ca096544fd"
+  AssetParameters516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9S3Bucket781BDABF:
     Type: String
     Description: S3 bucket for asset
-      "19c253c362d78e2170ba37bab1bb2d77a7566ea2392011c5a6932073e3bd3060"
-  AssetParameters19c253c362d78e2170ba37bab1bb2d77a7566ea2392011c5a6932073e3bd3060S3VersionKey0CB27E81:
+      "516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9"
+  AssetParameters516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9S3VersionKey31C2F325:
     Type: String
     Description: S3 key for asset version
-      "19c253c362d78e2170ba37bab1bb2d77a7566ea2392011c5a6932073e3bd3060"
-  AssetParameters19c253c362d78e2170ba37bab1bb2d77a7566ea2392011c5a6932073e3bd3060ArtifactHashB6EE242F:
+      "516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9"
+  AssetParameters516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9ArtifactHash41DE1E42:
     Type: String
     Description: Artifact hash for asset
-      "19c253c362d78e2170ba37bab1bb2d77a7566ea2392011c5a6932073e3bd3060"
-  AssetParametersdb3d271c9b6dc32444c2577e3a4c37f6ad96024ce7db03eb8a960ac377928252S3BucketB95E1649:
+      "516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9"
+  AssetParameterseebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05S3Bucket316434E8:
     Type: String
     Description: S3 bucket for asset
-      "db3d271c9b6dc32444c2577e3a4c37f6ad96024ce7db03eb8a960ac377928252"
-  AssetParametersdb3d271c9b6dc32444c2577e3a4c37f6ad96024ce7db03eb8a960ac377928252S3VersionKey2C632176:
+      "eebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05"
+  AssetParameterseebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05S3VersionKey512FE4EF:
     Type: String
     Description: S3 key for asset version
-      "db3d271c9b6dc32444c2577e3a4c37f6ad96024ce7db03eb8a960ac377928252"
-  AssetParametersdb3d271c9b6dc32444c2577e3a4c37f6ad96024ce7db03eb8a960ac377928252ArtifactHashCE66AE51:
+      "eebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05"
+  AssetParameterseebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05ArtifactHash41760E5F:
     Type: String
     Description: Artifact hash for asset
-      "db3d271c9b6dc32444c2577e3a4c37f6ad96024ce7db03eb8a960ac377928252"
-  AssetParameters59d62379a8feb5959cfdbb60eb7433d5bf416584092413e6cd3f8cddc9d17158S3Bucket8124F51C:
+      "eebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05"
+  AssetParametersa25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88eceS3Bucket7E891C93:
     Type: String
     Description: S3 bucket for asset
-      "59d62379a8feb5959cfdbb60eb7433d5bf416584092413e6cd3f8cddc9d17158"
-  AssetParameters59d62379a8feb5959cfdbb60eb7433d5bf416584092413e6cd3f8cddc9d17158S3VersionKey80262D06:
+      "a25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88ece"
+  AssetParametersa25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88eceS3VersionKeyC3F65FED:
     Type: String
     Description: S3 key for asset version
-      "59d62379a8feb5959cfdbb60eb7433d5bf416584092413e6cd3f8cddc9d17158"
-  AssetParameters59d62379a8feb5959cfdbb60eb7433d5bf416584092413e6cd3f8cddc9d17158ArtifactHashDCE6934E:
+      "a25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88ece"
+  AssetParametersa25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88eceArtifactHashF9E29BD1:
     Type: String
     Description: Artifact hash for asset
-      "59d62379a8feb5959cfdbb60eb7433d5bf416584092413e6cd3f8cddc9d17158"
-  AssetParametersaf9dead816d553255b3b2af0359ef6782aecbecd0fa3fb9d94a4e8cf8c11670cS3Bucket0097CC5B:
+      "a25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88ece"
+  AssetParametersad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2cS3BucketCD8DFC1A:
     Type: String
     Description: S3 bucket for asset
-      "af9dead816d553255b3b2af0359ef6782aecbecd0fa3fb9d94a4e8cf8c11670c"
-  AssetParametersaf9dead816d553255b3b2af0359ef6782aecbecd0fa3fb9d94a4e8cf8c11670cS3VersionKeyDD342F78:
+      "ad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2c"
+  AssetParametersad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2cS3VersionKey0F98DF50:
     Type: String
     Description: S3 key for asset version
-      "af9dead816d553255b3b2af0359ef6782aecbecd0fa3fb9d94a4e8cf8c11670c"
-  AssetParametersaf9dead816d553255b3b2af0359ef6782aecbecd0fa3fb9d94a4e8cf8c11670cArtifactHash5DFB0BE8:
+      "ad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2c"
+  AssetParametersad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2cArtifactHash9665E5DB:
     Type: String
     Description: Artifact hash for asset
-      "af9dead816d553255b3b2af0359ef6782aecbecd0fa3fb9d94a4e8cf8c11670c"
+      "ad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2c"
   AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746S3Bucket81575F72:
     Type: String
     Description: S3 bucket for asset
