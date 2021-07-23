@@ -17,7 +17,14 @@ function handler(event: CloudFrontResponse) {
   headers['strict-transport-security'] = { value: 'max-age=47304000; includeSubDomains' };
   headers['content-security-policy'] = {
     value:
-      'default-src \'none\'; img-src \'self\' https://img.shields.io; script-src \'self\'; style-src \'unsafe-inline\' \'self\'; object-src \'none\'; connect-src \'self\'; manifest-src \'self\'; font-src \'self\'; frame-src \'none\'',
+      [
+        "default-src 'self' 'unsafe-inline' https://*.awsstatic.com;",
+        "connect-src 'self' https://*.shortbread.aws.dev;",
+        "frame-src 'none';",
+        "img-src 'self' https://* http://*.omtrdc.net;",
+        "object-src 'none';",
+        "style-src 'self' 'unsafe-inline';",
+      ].join(' '),
   };
 
   return response;
