@@ -2556,7 +2556,15 @@ Resources:
               Ingestion Function\\n\\n[button:Search Log
               Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f'
             - Ref: ConstructHubIngestion407909CE
-            - /log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Function
+            - /log-events)\\n[button:DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.
+            - Ref: AWS::Region
+            - .amazonaws.com%2F
+            - Ref: AWS::AccountId
+            - "%2F"
+            - Fn::GetAtt:
+                - ConstructHubIngestionDLQ3E96A5F2
+                - QueueName
+            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Function
               Health","region":"
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Invocations","expression":"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2,
@@ -2628,6 +2636,14 @@ Resources:
             - Ref: ConstructHubOrchestration39161A46
             - )\\n[button:Redrive](/lambda/home#/functions/
             - Ref: ConstructHubOrchestrationRedrive8DDBA67E
+            - )\\n[button:DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.
+            - Ref: AWS::Region
+            - .amazonaws.com%2F
+            - Ref: AWS::AccountId
+            - "%2F"
+            - Fn::GetAtt:
+                - ConstructHubOrchestrationDLQ9C6D9BD4
+                - QueueName
             - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":32,"properties":{"view":"timeSeries","title":"State
               Machine Executions","region":"
             - Ref: AWS::Region

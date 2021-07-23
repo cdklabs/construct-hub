@@ -502,7 +502,22 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
+              "/log-events)\\\\n[button:DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionDLQ3E96A5F2",
+                  "QueueName",
+                ],
+              },
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -575,6 +590,21 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               ")\\\\n[button:Redrive](/lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubOrchestrationRedrive8DDBA67E",
+              },
+              ")\\\\n[button:DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubOrchestrationDLQ9C6D9BD4",
+                  "QueueName",
+                ],
               },
               ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":32,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
               Object {
@@ -6315,7 +6345,22 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
+              "/log-events)\\\\n[button:DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubIngestionDLQ3E96A5F2",
+                  "QueueName",
+                ],
+              },
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -6388,6 +6433,21 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               ")\\\\n[button:Redrive](/lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubOrchestrationRedrive8DDBA67E",
+              },
+              ")\\\\n[button:DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubOrchestrationDLQ9C6D9BD4",
+                  "QueueName",
+                ],
               },
               ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":32,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
               Object {
