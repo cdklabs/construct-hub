@@ -1963,6 +1963,88 @@ Resources:
     DependsOn:
       - ConstructHubOrchestrationRedriveServiceRoleDefaultPolicyC018F436
       - ConstructHubOrchestrationRedriveServiceRoleB84EFF33
+  ConstructHubOrchestrationReprocessAllServiceRoleE23FF434:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /*
+          - Action: states:StartExecution
+            Effect: Allow
+            Resource:
+              Ref: ConstructHubOrchestration39161A46
+        Version: 2012-10-17
+      PolicyName: ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB
+      Roles:
+        - Ref: ConstructHubOrchestrationReprocessAllServiceRoleE23FF434
+  ConstructHubOrchestrationReprocessAllFF2F2455:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParameters59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1S3Bucket1FDE25A6
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1S3VersionKeyBEFE590F
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters59f2575e4afaff3cdce4cd03b812c6afc27e31bb97ef7771b527abcd05ac76d1S3VersionKeyBEFE590F
+      Role:
+        Fn::GetAtt:
+          - ConstructHubOrchestrationReprocessAllServiceRoleE23FF434
+          - Arn
+      Description: "[ConstructHub/ReprocessAll] Reprocess all package versions through
+        the backend"
+      Environment:
+        Variables:
+          BUCKET_NAME:
+            Ref: ConstructHubPackageDataDC5EF35E
+          STATE_MACHINE_ARN:
+            Ref: ConstructHubOrchestration39161A46
+      Handler: index.handler
+      MemorySize: 1024
+      Runtime: nodejs14.x
+      Timeout: 900
+    DependsOn:
+      - ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB
+      - ConstructHubOrchestrationReprocessAllServiceRoleE23FF434
   ConstructHubIngestionDLQ3E96A5F2:
     Type: AWS::SQS::Queue
     Properties:
@@ -2441,7 +2523,8 @@ Resources:
               Assembly","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageMetadataCount",{"label":"Missing
               Metadata","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageTarballCount",{"label":"Missing
               Tarball","stat":"Maximum"}],["ConstructHub/Inventory","MissingPythonDocsCount",{"label":"Missing
-              Py-Docs","stat":"Maximum"}]],"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":8,"properties":{"markdown":"#
+              Py-Docs","stat":"Maximum"}],["ConstructHub/Inventory","MissingTypeScriptDocsCount",{"label":"Missing
+              Ts-Doc","stat":"Maximum"}]],"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":8,"properties":{"markdown":"#
               Discovery Function\\n\\n[button:Search Log
               Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f'
             - Ref: ConstructHubDiscoveryD6EEC2B8
@@ -2841,7 +2924,7 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParameters0f4f45543147026b5233dcd5c66624e46bdb04f9da64841c8bccd26811b741efS3BucketC1150DED
+        - Ref: AssetParametersc6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706S3Bucket77842B48
       SourceObjectKeys:
         - Fn::Join:
             - ""
@@ -2849,12 +2932,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters0f4f45543147026b5233dcd5c66624e46bdb04f9da64841c8bccd26811b741efS3VersionKeyDBC8C398
+                      - Ref: AssetParametersc6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706S3VersionKey5E1BC344
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters0f4f45543147026b5233dcd5c66624e46bdb04f9da64841c8bccd26811b741efS3VersionKeyDBC8C398
+                      - Ref: AssetParametersc6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706S3VersionKey5E1BC344
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: true
@@ -3148,13 +3231,13 @@ Resources:
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters0f4f45543147026b5233dcd5c66624e46bdb04f9da64841c8bccd26811b741efS3BucketC1150DED
+                    - Ref: AssetParametersc6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706S3Bucket77842B48
               - Fn::Join:
                   - ""
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters0f4f45543147026b5233dcd5c66624e46bdb04f9da64841c8bccd26811b741efS3BucketC1150DED
+                    - Ref: AssetParametersc6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706S3Bucket77842B48
                     - /*
           - Action:
               - s3:GetObject*
@@ -3363,18 +3446,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf"
-  AssetParameters0f4f45543147026b5233dcd5c66624e46bdb04f9da64841c8bccd26811b741efS3BucketC1150DED:
+  AssetParametersc6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706S3Bucket77842B48:
     Type: String
     Description: S3 bucket for asset
-      "0f4f45543147026b5233dcd5c66624e46bdb04f9da64841c8bccd26811b741ef"
-  AssetParameters0f4f45543147026b5233dcd5c66624e46bdb04f9da64841c8bccd26811b741efS3VersionKeyDBC8C398:
+      "c6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706"
+  AssetParametersc6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706S3VersionKey5E1BC344:
     Type: String
     Description: S3 key for asset version
-      "0f4f45543147026b5233dcd5c66624e46bdb04f9da64841c8bccd26811b741ef"
-  AssetParameters0f4f45543147026b5233dcd5c66624e46bdb04f9da64841c8bccd26811b741efArtifactHash56643CF2:
+      "c6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706"
+  AssetParametersc6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706ArtifactHash8EDEDEC2:
     Type: String
     Description: Artifact hash for asset
-      "0f4f45543147026b5233dcd5c66624e46bdb04f9da64841c8bccd26811b741ef"
+      "c6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706"
   AssetParametersd5594c96e8d8bc8ce1cd238fb011bd3e1a5c69dada29b4366e17e735f7617fa3S3Bucket5045DB1E:
     Type: String
     Description: S3 bucket for asset
