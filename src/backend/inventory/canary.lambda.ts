@@ -310,14 +310,14 @@ function doRecordPerLanguage(
   // If there is a submodule, only update the submodule domain.
   const outputDomains: readonly [Map<string, PerLanguageStatus>, string][] =
     submodule
-    ? [
-      [data.submodules, `${pkgVersion}.${submodule}`],
-    ]
-    : [
-      [data.packageMajors, pkgMajor],
-      [data.packageVersions, pkgVersion],
-      [data.packages, pkgName],
-    ];
+      ? [
+        [data.submodules, `${pkgVersion}.${submodule}`],
+      ]
+      : [
+        [data.packageMajors, pkgMajor],
+        [data.packageVersions, pkgVersion],
+        [data.packages, pkgName],
+      ];
   for (const [map, name] of outputDomains) {
     switch (status) {
       case PerLanguageStatus.MISSING:
