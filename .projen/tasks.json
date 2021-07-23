@@ -64,6 +64,9 @@
           "spawn": "bundle:redrive-state-machine"
         },
         {
+          "spawn": "bundle:reprocess-all"
+        },
+        {
           "spawn": "bundle:transliterator"
         },
         {
@@ -175,7 +178,7 @@
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak jsii-rosetta json-schema nano normalize-registry-metadata npm-check-updates pascal-case projen semver standard-version tar-stream typescript yaml"
+          "exec": "yarn upgrade @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak json-schema nano normalize-registry-metadata npm-check-updates pascal-case projen semver standard-version tar-stream typescript yaml"
         },
         {
           "exec": "npx projen"
@@ -284,6 +287,9 @@
           "spawn": "bundle:redrive-state-machine"
         },
         {
+          "spawn": "bundle:reprocess-all"
+        },
+        {
           "spawn": "bundle:transliterator"
         },
         {
@@ -379,6 +385,15 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/backend/orchestration/redrive-state-machine.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/orchestration/redrive-state-machine.bundle/index.js\" --external:aws-sdk"
+        }
+      ]
+    },
+    "bundle:reprocess-all": {
+      "name": "bundle:reprocess-all",
+      "description": "Create an AWS Lambda bundle from src/backend/orchestration/reprocess-all.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/orchestration/reprocess-all.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/orchestration/reprocess-all.bundle/index.js\" --external:aws-sdk"
         }
       ]
     },

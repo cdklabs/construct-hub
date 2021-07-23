@@ -126,7 +126,7 @@ export class Inventory extends Construct {
       period: Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
       ...opts,
-      metricName: MetricName.MISSING_PYTHON_DOCS_COUNT,
+      metricName: MetricName.MISSING_TYPESCRIPT_DOCS_COUNT,
       namespace: METRICS_NAMESPACE,
     });
   }

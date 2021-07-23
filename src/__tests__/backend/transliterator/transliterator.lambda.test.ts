@@ -11,7 +11,6 @@ import { handler } from '../../../backend/transliterator/transliterator.lambda';
 
 jest.mock('child_process');
 jest.mock('jsii-docgen');
-jest.mock('jsii-rosetta/lib/commands/transliterate');
 jest.mock('../../../backend/shared/code-artifact.lambda-shared');
 
 type Response<T> = (err: AWS.AWSError | null, data?: T) => void;

@@ -1,4 +1,4 @@
-import { IFunction } from '@aws-cdk/aws-lambda';
+import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Choice, Condition, Fail, IStateMachine, JsonPath, Parallel, Pass, StateMachine, StateMachineType, Succeed, TaskInput } from '@aws-cdk/aws-stepfunctions';
 import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
@@ -7,6 +7,7 @@ import { CatalogBuilder } from '../catalog-builder';
 import { DocumentationLanguage } from '../shared/language';
 import { Transliterator, TransliteratorProps } from '../transliterator';
 import { RedriveStateMachine } from './redrive-state-machine';
+import { ReprocessAll } from './reprocess-all';
 
 const SUPPORTED_LANGUAGES = [DocumentationLanguage.PYTHON, DocumentationLanguage.TYPESCRIPT];
 
@@ -41,8 +42,8 @@ export class Orchestration extends Construct {
       lambdaFunction: new CatalogBuilder(this, 'CatalogBuilder', props).function,
       resultPath: '$.catalogBuilderOutput',
       resultSelector: {
-        'ETag': '$.Payload.Etag',
-        'VersionId': '$.Payload.VersionId',
+        ETag: '$.Payload.Etag',
+        VersionId: '$.Payload.VersionId',
       },
     })
       // This has a concurrency of 1, so we want to aggressively retry being throttled here.
@@ -104,6 +105,7 @@ export class Orchestration extends Construct {
       definition,
       stateMachineType: StateMachineType.STANDARD,
       timeout: Duration.hours(1),
+      tracingEnabled: true,
     });
 
     // This function is intended to be manually triggered by an operrator to
@@ -116,8 +118,24 @@ export class Orchestration extends Construct {
       },
       memorySize: 1_024,
       timeout: Duration.minutes(15),
+      tracing: Tracing.ACTIVE,
     });
     this.stateMachine.grantStartExecution(this.redriveFunction);
     this.deadLetterQueue.grantConsumeMessages(this.redriveFunction);
+
+    // This function is intended to be manually triggered by an operator to
+    // reprocess all package versions currently in store through the back-end.
+    const reprocessAll = new ReprocessAll(this, 'ReprocessAll', {
+      description: '[ConstructHub/ReprocessAll] Reprocess all package versions through the backend',
+      environment: {
+        BUCKET_NAME: props.bucket.bucketName,
+        STATE_MACHINE_ARN: this.stateMachine.stateMachineArn,
+      },
+      memorySize: 1_024,
+      timeout: Duration.minutes(15),
+      tracing: Tracing.ACTIVE,
+    });
+    props.bucket.grantRead(reprocessAll);
+    this.stateMachine.grantStartExecution(reprocessAll);
   }
 }
