@@ -1,4 +1,4 @@
-import { IFunction } from '@aws-cdk/aws-lambda';
+import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
@@ -43,6 +43,7 @@ export class CatalogBuilder extends Construct {
       memorySize: 10_240, // Currently the maximum possible setting
       reservedConcurrentExecutions: 1,
       timeout: Duration.minutes(15),
+      tracing: Tracing.PASS_THROUGH,
     });
     this.function = handler;
 

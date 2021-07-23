@@ -1,5 +1,5 @@
 import { GatewayVpcEndpoint, InterfaceVpcEndpoint, IVpc, SubnetSelection, SubnetType } from '@aws-cdk/aws-ec2';
-import { IFunction } from '@aws-cdk/aws-lambda';
+import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration, Fn } from '@aws-cdk/core';
@@ -117,6 +117,7 @@ export class Transliterator extends Construct {
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 10_240, // Currently the maximum possible setting
       timeout: Duration.minutes(15),
+      tracing: Tracing.PASS_THROUGH,
       vpc: props.vpc,
       vpcSubnets: props.vpcSubnets ?? { subnetType: SubnetType.ISOLATED },
     });
