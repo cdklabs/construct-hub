@@ -38,17 +38,6 @@ export class Orchestration extends Construct {
   public constructor(scope: Construct, id: string, props: OrchestrationProps) {
     super(scope, id);
 
-    const addToCatalog = new tasks.LambdaInvoke(this, 'Add to catalog.json', {
-      lambdaFunction: new CatalogBuilder(this, 'CatalogBuilder', props).function,
-      resultPath: '$.catalogBuilderOutput',
-      resultSelector: {
-        ETag: '$.Payload.Etag',
-        VersionId: '$.Payload.VersionId',
-      },
-    })
-      // This has a concurrency of 1, so we want to aggressively retry being throttled here.
-      .addRetry({ errors: ['Lambda.TooManyRequestsException'], interval: Duration.seconds(30), maxAttempts: 5 });
-
     this.deadLetterQueue = new Queue(this, 'DLQ', {
       encryption: QueueEncryption.KMS_MANAGED,
       retentionPeriod: Duration.days(14),
@@ -60,6 +49,22 @@ export class Orchestration extends Construct {
       queue: this.deadLetterQueue,
       resultPath: JsonPath.DISCARD,
     });
+
+    const addToCatalog = new tasks.LambdaInvoke(this, 'Add to catalog.json', {
+      lambdaFunction: new CatalogBuilder(this, 'CatalogBuilder', props).function,
+      resultPath: '$.catalogBuilderOutput',
+      resultSelector: {
+        'ETag.$': '$.Payload.ETag',
+        'VersionId.$': '$.Payload.VersionId',
+      },
+    })
+      // This has a concurrency of 1, so we want to aggressively retry being throttled here.
+      .addRetry({ errors: ['Lambda.TooManyRequestsException'], interval: Duration.seconds(30), maxAttempts: 5 })
+      .addCatch(new Pass(this, `Failed to add to catalog.json`, {
+        parameters: { 'error.$': 'States.StringToJson($.Cause)' },
+        resultPath: '$.error',
+      }).next(sendToDeadLetterQueue));
+
     const docGenResultsKey = 'DocGen';
     const sendToDlqIfNeeded = new Choice(this, 'Any Failure?')
       .when(
@@ -70,36 +75,46 @@ export class Orchestration extends Construct {
       )
       .otherwise(new Succeed(this, 'Success'));
 
-    const definition = new Parallel(this, 'DocGen', { resultPath: `$.${docGenResultsKey}` })
-      .branch(...SUPPORTED_LANGUAGES.map((language) =>
-        new tasks.LambdaInvoke(this, `Generate ${language} docs`, {
-          lambdaFunction: new Transliterator(this, `DocGen-${language}`, { ...props, language }).function,
-          outputPath: '$.result',
-          resultSelector: {
-            result: {
-              'language': language,
-              'success.$': '$.Payload',
-            },
-          },
-        }).addRetry({ interval: Duration.seconds(30) })
-          .addCatch(
-            new Pass(this, `Failed ${language}`, {
-              parameters: {
-                error: 'States.StringToJson($.Cause)',
-                language,
+    const definition = new Pass(this, 'Track Execution Infos', {
+      inputPath: '$$.Execution',
+      parameters: {
+        'Id.$': '$.Id',
+        'Name.$': '$.Name',
+        'RoleArn.$': '$.RoleArn',
+        'StartTime.$': '$.StartTime',
+      },
+      resultPath: '$.$TaskExecution',
+    }).next(
+      new Parallel(this, 'DocGen', { resultPath: `$.${docGenResultsKey}` })
+        .branch(...SUPPORTED_LANGUAGES.map((language) =>
+          new tasks.LambdaInvoke(this, `Generate ${language} docs`, {
+            lambdaFunction: new Transliterator(this, `DocGen-${language}`, { ...props, language }).function,
+            outputPath: '$.result',
+            resultSelector: {
+              result: {
+                'language': language,
+                'success.$': '$.Payload',
               },
-            }),
-          ),
-      ))
-      .next(new Choice(this, 'Any Success?')
-        .when(
-          Condition.or(
-            ...SUPPORTED_LANGUAGES.map((_, i) => Condition.isNotPresent(`$.${docGenResultsKey}[${i}].error`)),
-          ),
-          addToCatalog.next(sendToDlqIfNeeded),
-        )
-        .otherwise(sendToDlqIfNeeded),
-      );
+            },
+          }).addRetry({ interval: Duration.seconds(30) })
+            .addCatch(
+              new Pass(this, `Failed ${language}`, {
+                parameters: {
+                  'error.$': 'States.StringToJson($.Cause)',
+                  language,
+                },
+              }),
+            ),
+        ))
+        .next(new Choice(this, 'Any Success?')
+          .when(
+            Condition.or(
+              ...SUPPORTED_LANGUAGES.map((_, i) => Condition.isNotPresent(`$.${docGenResultsKey}[${i}].error`)),
+            ),
+            addToCatalog.next(sendToDlqIfNeeded),
+          )
+          .otherwise(sendToDlqIfNeeded),
+        ));
 
     this.stateMachine = new StateMachine(this, 'Resource', {
       definition,
