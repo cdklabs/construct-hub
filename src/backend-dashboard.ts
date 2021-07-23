@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
 
-import { Dashboard, MathExpression, GraphWidget, PeriodOverride, TextWidget, Metric } from '@aws-cdk/aws-cloudwatch';
+import { Dashboard, MathExpression, GraphWidget, PeriodOverride, TextWidget, Metric, IWidget } from '@aws-cdk/aws-cloudwatch';
 import { IFunction } from '@aws-cdk/aws-lambda';
 import { IStateMachine } from '@aws-cdk/aws-stepfunctions';
 import { Construct, Duration } from '@aws-cdk/core';
@@ -8,8 +8,10 @@ import { Discovery } from './backend/discovery';
 import { Ingestion } from './backend/ingestion';
 import { Inventory } from './backend/inventory';
 import { Orchestration } from './backend/orchestration';
+import { DocumentationLanguage } from './backend/shared/language';
 
 export interface BackendDashboardProps {
+  readonly dashboardName?: string;
   readonly discovery: Discovery;
   readonly ingestion: Ingestion;
   readonly orchestration: Orchestration;
@@ -21,6 +23,7 @@ export class BackendDashboard extends Construct {
     super(scope, id);
 
     new Dashboard(this, 'Resource', {
+      dashboardName: props.dashboardName,
       periodOverride: PeriodOverride.INHERIT,
       widgets: [
         [
@@ -52,12 +55,11 @@ export class BackendDashboard extends Construct {
               props.inventory.metricMissingAssemblyCount({ label: 'Missing Assembly' }),
               props.inventory.metricMissingPackageMetadataCount({ label: 'Missing Metadata' }),
               props.inventory.metricMissingPackageTarballCount({ label: 'Missing Tarball' }),
-              props.inventory.metricMissingPythonDocsCount({ label: 'Missing Py-Docs' }),
-              props.inventory.metricMissingTypeScriptDocsCount({ label: 'Missing Ts-Doc' }),
             ],
             leftYAxis: { min: 0 },
           }),
         ],
+        ...this.catalogOverviewLanguageSections(props.inventory),
         [
           new TextWidget({
             height: 2,
@@ -156,12 +158,10 @@ export class BackendDashboard extends Construct {
               fillMetric(props.ingestion.metricInvalidTarball({ label: 'Invalid Tarball' })),
               fillMetric(props.ingestion.metricIneligibleLicense({ label: 'Ineligible License' })),
               fillMetric(props.ingestion.metricMismatchedIdentityRejections({ label: 'Mismatched Identity' })),
-            ],
-            leftYAxis: { min: 0 },
-            right: [
               fillMetric(props.ingestion.metricFoundLicenseFile({ label: 'Found License file' })),
             ],
-            rightYAxis: { min: 0 },
+            leftYAxis: { label: 'Count', min: 0, showUnits: false },
+            stacked: true,
           }),
           new GraphWidget({
             height: 6,
@@ -229,6 +229,68 @@ export class BackendDashboard extends Construct {
         ],
       ],
     });
+  }
+
+  private *catalogOverviewLanguageSections(inventory: Inventory): Generator<IWidget[]> {
+    for (const language of DocumentationLanguage.ALL) {
+      yield [
+        new TextWidget({
+          height: 1,
+          width: 24,
+          markdown: `## Language: ${language.toString()}`,
+        }),
+      ];
+      yield [
+        new GraphWidget({
+          height: 6,
+          width: 6,
+          title: 'Packages',
+          left: [
+            inventory.metricSupportedPackageCount(language, { label: 'Available', color: '#2ca02c' }),
+            inventory.metricUnsupportedPackageCount(language, { label: 'Unsupported', color: '#9467bd' }),
+            inventory.metricMissingPackageCount(language, { label: 'Missing', color: '#d62728' }),
+          ],
+          leftYAxis: { min: 0 },
+          stacked: true,
+        }),
+        new GraphWidget({
+          height: 6,
+          width: 6,
+          title: 'Package Major Versions',
+          left: [
+            inventory.metricSupportedMajorVersionCount(language, { label: 'Available', color: '#2ca02c' }),
+            inventory.metricUnsupportedMajorVersionCount(language, { label: 'Unsupported', color: '#9467bd' }),
+            inventory.metricMissingMajorVersionCount(language, { label: 'Missing', color: '#d62728' }),
+          ],
+          leftYAxis: { min: 0 },
+          stacked: true,
+        }),
+        new GraphWidget({
+          height: 6,
+          width: 6,
+          title: 'Package Versions',
+          left: [
+            inventory.metricSupportedPackageVersionCount(language, { label: 'Available', color: '#2ca02c' }),
+            inventory.metricUnsupportedPackageVersionCount(language, { label: 'Unsupported', color: '#9467bd' }),
+            inventory.metricMissingPackageVersionCount(language, { label: 'Missing', color: '#d62728' }),
+          ],
+          leftYAxis: { min: 0 },
+          stacked: true,
+        }),
+        new GraphWidget({
+          height: 6,
+          width: 6,
+          title: 'Package Version Submodules',
+          left: [
+            inventory.metricSupportedSubmoduleCount(language, { label: 'Available', color: '#2ca02c' }),
+            inventory.metricUnsupportedSubmoduleCount(language, { label: 'Unsupported', color: '#9467bd' }),
+            inventory.metricMissingSubmoduleCount(language, { label: 'Missing', color: '#d62728' }),
+          ],
+          leftYAxis: { min: 0 },
+          stacked: true,
+        }),
+      ];
+    }
   }
 }
 

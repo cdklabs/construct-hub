@@ -52,6 +52,12 @@ export interface ConstructHubProps {
    * @default true
    */
   readonly isolateLambdas?: boolean;
+
+  /**
+   * The name of the CloudWatch dashboard that represents the health of backend
+   * systems.
+   */
+  readonly backendDashboardName?: string;
 }
 
 /**
@@ -134,7 +140,13 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     const inventory = new Inventory(this, 'InventoryCanary', { bucket: packageData, monitoring });
 
-    new BackendDashboard(this, 'BackendDashboard', { discovery, ingestion: this.ingestion, inventory, orchestration });
+    new BackendDashboard(this, 'BackendDashboard', {
+      dashboardName: props.backendDashboardName,
+      discovery,
+      ingestion: this.ingestion,
+      inventory,
+      orchestration,
+    });
 
     new WebApp(this, 'WebApp', {
       domain: props.domain,
