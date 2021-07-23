@@ -62,6 +62,7 @@ const project = new JsiiProject({
     'aws-embedded-metrics',
     'aws-sdk-mock',
     'aws-sdk',
+    'aws-xray-sdk-core',
     'esbuild',
     'fs-extra',
     'got',

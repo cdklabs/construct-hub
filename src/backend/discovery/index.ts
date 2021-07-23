@@ -77,7 +77,7 @@ export class Discovery extends Construct {
 
     // Note: the handler is designed to stop processing more batches about 2 minutes ahead of the timeout.
     const handler = new Handler(this, 'Default', {
-      description: 'Periodically query npm.js index for new construct libraries',
+      description: '[ConstructHub/Discovery] Periodically query npm.js index for new construct libraries',
       memorySize: 10_240,
       reservedConcurrentExecutions: 1, // Only one execution (avoids race conditions on the S3 marker object)
       timeout: this.timeout,
