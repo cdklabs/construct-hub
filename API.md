@@ -112,6 +112,14 @@ Actions to perform when alarms are set.
 
 ---
 
+##### `backendDashboardName`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.backendDashboardName"></a>
+
+- *Type:* `string`
+
+The name of the CloudWatch dashboard that represents the health of backend systems.
+
+---
+
 ##### `dashboardName`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.dashboardName"></a>
 
 - *Type:* `string`
