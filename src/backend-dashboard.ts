@@ -250,7 +250,7 @@ export class BackendDashboard extends Construct {
             inventory.metricUnsupportedPackageCount(language, { label: 'Unsupported', color: '#9467bd' }),
             inventory.metricMissingPackageCount(language, { label: 'Missing', color: '#d62728' }),
           ],
-          leftYAxis: { min: 0 },
+          leftYAxis: { showUnits: false },
           stacked: true,
         }),
         new GraphWidget({
@@ -262,7 +262,7 @@ export class BackendDashboard extends Construct {
             inventory.metricUnsupportedMajorVersionCount(language, { label: 'Unsupported', color: '#9467bd' }),
             inventory.metricMissingMajorVersionCount(language, { label: 'Missing', color: '#d62728' }),
           ],
-          leftYAxis: { min: 0 },
+          leftYAxis: { showUnits: false },
           stacked: true,
         }),
         new GraphWidget({
@@ -274,7 +274,7 @@ export class BackendDashboard extends Construct {
             inventory.metricUnsupportedPackageVersionCount(language, { label: 'Unsupported', color: '#9467bd' }),
             inventory.metricMissingPackageVersionCount(language, { label: 'Missing', color: '#d62728' }),
           ],
-          leftYAxis: { min: 0 },
+          leftYAxis: { showUnits: false },
           stacked: true,
         }),
         new GraphWidget({
@@ -286,7 +286,7 @@ export class BackendDashboard extends Construct {
             inventory.metricUnsupportedSubmoduleCount(language, { label: 'Unsupported', color: '#9467bd' }),
             inventory.metricMissingSubmoduleCount(language, { label: 'Missing', color: '#d62728' }),
           ],
-          leftYAxis: { min: 0 },
+          leftYAxis: { showUnits: false },
           stacked: true,
         }),
       ];

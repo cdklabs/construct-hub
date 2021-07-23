@@ -24,6 +24,8 @@ export async function handler(event: ScheduledEvent, _context: Context) {
    * version, and package version submodule in the per-language state storage.
    * Whenever a new entry is added, a `MISSING` entry is automatically inserted
    * for the other languages (unless another entry already exists).
+   *
+   * If a submodule is provided, only that submodule's availability is updated.
    */
   function recordPerLanguage(
     language: DocumentationLanguage,
@@ -56,6 +58,12 @@ export async function handler(event: ScheduledEvent, _context: Context) {
     packageMajorVersions.add(majorVersion);
 
     const fullName = `${name}@${version}`;
+
+    // Ensure the package is fully registered for per-language status, even if no doc exists yet.
+    for (const language of DocumentationLanguage.ALL) {
+      recordPerLanguage(language, PerLanguageStatus.MISSING, name, majorVersion, fullName);
+    }
+
     if (!indexedPackages.has(fullName)) {
       indexedPackages.set(fullName, {});
     }
@@ -73,6 +81,10 @@ export async function handler(event: ScheduledEvent, _context: Context) {
         const match = submoduleKeyRegexp(language).exec(key);
         if (match != null) {
           const [, submodule, isUnsupported] = match;
+          if (status.submodules == null) {
+            status.submodules = new Set();
+          }
+          status.submodules.add(`${fullName}.${submodule}`);
           recordPerLanguage(
             language,
             isUnsupported ? PerLanguageStatus.UNSUPPORTED : PerLanguageStatus.SUPPORTED,
@@ -156,6 +168,11 @@ export async function handler(event: ScheduledEvent, _context: Context) {
         Array.from(data.packageVersions.values()).filter((v) => v === PerLanguageStatus.MISSING).length,
         Unit.Count,
       );
+      metrics.putMetric(
+        MetricName.PER_LANGUAGE_MISSING_SUBMODULES,
+        Array.from(data.submodules.values()).filter((v) => v === PerLanguageStatus.MISSING).length,
+        Unit.Count,
+      );
 
       metrics.putMetric(
         MetricName.PER_LANGUAGE_SUPPORTED_PACKAGES,
@@ -172,6 +189,11 @@ export async function handler(event: ScheduledEvent, _context: Context) {
         Array.from(data.packageVersions.values()).filter((v) => v === PerLanguageStatus.SUPPORTED).length,
         Unit.Count,
       );
+      metrics.putMetric(
+        MetricName.PER_LANGUAGE_SUPPORTED_SUBMODULES,
+        Array.from(data.submodules.values()).filter((v) => v === PerLanguageStatus.SUPPORTED).length,
+        Unit.Count,
+      );
 
       metrics.putMetric(
         MetricName.PER_LANGUAGE_UNSUPPORTED_PACKAGES,
@@ -186,6 +208,11 @@ export async function handler(event: ScheduledEvent, _context: Context) {
       metrics.putMetric(
         MetricName.PER_LANGUAGE_UNSUPPORTED_VERSIONS,
         Array.from(data.packageVersions.values()).filter((v) => v === PerLanguageStatus.UNSUPPORTED).length,
+        Unit.Count,
+      );
+      metrics.putMetric(
+        MetricName.PER_LANGUAGE_UNSUPPORTED_SUBMODULES,
+        Array.from(data.submodules.values()).filter((v) => v === PerLanguageStatus.UNSUPPORTED).length,
         Unit.Count,
       );
     })();
@@ -258,6 +285,8 @@ const enum PerLanguageStatus {
  * will be ignored if another status was already registered for the same
  * entity. An "UNSUPPORTED" status will be ignored if a "SUPPORTED" status
  * was already registered for the same entity.
+ *
+ * If a submodule is provided, only that submodule's availability is updated.
  */
 function doRecordPerLanguage(
   perLanguage: Map<DocumentationLanguage, PerLanguageData>,
@@ -277,14 +306,18 @@ function doRecordPerLanguage(
     });
   }
   const data = perLanguage.get(language)!;
-  const outputDomains: readonly [Map<string, PerLanguageStatus>, string][] = [
-    [data.packageMajors, pkgMajor],
-    [data.packageVersions, pkgVersion],
-    [data.packages, pkgName],
-    ...submodule
-      ? [[data.submodules, `${pkgVersion}.${submodule}`] as [Map<string, PerLanguageStatus>, string]]
-      : [],
-  ];
+
+  // If there is a submodule, only update the submodule domain.
+  const outputDomains: readonly [Map<string, PerLanguageStatus>, string][] =
+    submodule
+    ? [
+      [data.submodules, `${pkgVersion}.${submodule}`],
+    ]
+    : [
+      [data.packageMajors, pkgMajor],
+      [data.packageVersions, pkgVersion],
+      [data.packages, pkgName],
+    ];
   for (const [map, name] of outputDomains) {
     switch (status) {
       case PerLanguageStatus.MISSING:
