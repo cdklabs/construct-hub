@@ -1,5 +1,5 @@
-import * as AWSXRay from 'aws-xray-sdk-core';
 import * as _AWS from 'aws-sdk';
+import * as AWSXRay from 'aws-xray-sdk-core';
 
 // Do nothing if there is no XRay trace context
 AWSXRay.setContextMissingStrategy(() => {});
