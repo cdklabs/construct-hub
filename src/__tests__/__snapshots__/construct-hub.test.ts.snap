@@ -1112,7 +1112,23 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
+<<<<<<< HEAD
         "SourceBucketNames": Array [
+=======
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubDiscoveryErrorsAlarmDEA85148": Object {
+      "Properties": Object {
+        "AlarmDescription": "The discovery function (on npmjs.com) failed to run",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": Array [
+>>>>>>> 1f16563 (chore: improved StepFunctions orchestration (#224))
           Object {
             "Ref": "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064S3BucketAB02BCB2",
           },
@@ -1353,6 +1369,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "Statement": Array [
             Object {
               "Action": Array [
+<<<<<<< HEAD
                 "sqs:SendMessage",
                 "sqs:GetQueueAttributes",
                 "sqs:GetQueueUrl",
@@ -1364,6 +1381,13 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "Arn",
                 ],
               },
+=======
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+>>>>>>> 1f16563 (chore: improved StepFunctions orchestration (#224))
             },
             Object {
               "Action": Array [
@@ -3473,7 +3497,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"DocGen\\",\\"States\\":{\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"End\\":true,\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$._error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Branches\\":[{\\"StartAt\\":\\"Generate python docs\\",\\"States\\":{\\"Generate python docs\\":{\\"Next\\":\\"Add to catalog.json (python)\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"IntervalSeconds\\":30}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.docGenOutput\\",\\"ResultSelector\\":{\\"python.$\\":\\"$.Payload\\"},\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Track Execution Infos\\",\\"States\\":{\\"Track Execution Infos\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.$TaskExecution\\",\\"InputPath\\":\\"$$.Execution\\",\\"Parameters\\":{\\"Id.$\\":\\"$.Id\\",\\"Name.$\\":\\"$.Name\\",\\"RoleArn.$\\":\\"$.RoleArn\\",\\"StartTime.$\\":\\"$.StartTime\\"},\\"Next\\":\\"DocGen\\"},\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"ResultPath\\":\\"$.DocGen\\",\\"Next\\":\\"Any Success?\\",\\"Branches\\":[{\\"StartAt\\":\\"Generate python docs\\",\\"States\\":{\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"IntervalSeconds\\":30}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Failed python\\"}],\\"Type\\":\\"Task\\",\\"OutputPath\\":\\"$.result\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"python\\"},\\"success.$\\":\\"$.Payload\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -3484,18 +3508,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}},\\"Add to catalog.json (python)\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogBuilderOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
-              Object {
-                "Ref": "AWS::Partition",
-              },
-              ":states:::lambda:invoke\\",\\"Parameters\\":{\\"FunctionName\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationCatalogBuilder7C964951",
-                  "Arn",
-                ],
-              },
-              "\\",\\"Payload.$\\":\\"$\\"}}}},{\\"StartAt\\":\\"Generate typescript docs\\",\\"States\\":{\\"Generate typescript docs\\":{\\"Next\\":\\"Add to catalog.json (typescript)\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"IntervalSeconds\\":30}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.docGenOutput\\",\\"ResultSelector\\":{\\"typescript.$\\":\\"$.Payload\\"},\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}},\\"Failed python\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Generate typescript docs\\",\\"States\\":{\\"Generate typescript docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"IntervalSeconds\\":30}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Failed typescript\\"}],\\"Type\\":\\"Task\\",\\"OutputPath\\":\\"$.result\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"typescript\\"},\\"success.$\\":\\"$.Payload\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -3506,7 +3519,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}},\\"Add to catalog.json (typescript)\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogBuilderOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}},\\"Failed typescript\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true}}}]},\\"Any Success?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":false}],\\"Next\\":\\"Add to catalog.json\\"}],\\"Default\\":\\"Any Failure?\\"},\\"Any Failure?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":true}],\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Default\\":\\"Success\\"},\\"Add to catalog.json\\":{\\"Next\\":\\"Any Failure?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Failed to add to catalog.json\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogBuilderOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -3517,7 +3530,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}}}}]},\\"Send to Dead Letter Queue\\":{\\"Next\\":\\"Fail\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":null,\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}},\\"Failed to add to catalog.json\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"Send to Dead Letter Queue\\":{\\"Next\\":\\"Fail\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":null,\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -3525,7 +3538,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationDLQ9C6D9BD4",
               },
-              "\\",\\"MessageBody.$\\":\\"$\\"}},\\"Fail\\":{\\"Type\\":\\"Fail\\",\\"Error\\":\\"Failed\\",\\"Cause\\":\\"Input was submitted to dead letter queue\\"}},\\"TimeoutSeconds\\":3600}",
+              "\\",\\"MessageBody.$\\":\\"$\\"}},\\"Fail\\":{\\"Type\\":\\"Fail\\"},\\"Success\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":3600}",
             ],
           ],
         },
@@ -4947,6 +4960,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
+<<<<<<< HEAD
+=======
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
+>>>>>>> 1f16563 (chore: improved StepFunctions orchestration (#224))
       },
       "Type": "Custom::S3BucketNotifications",
     },
@@ -4958,6 +4979,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         "PolicyDocument": Object {
           "Statement": Array [
             Object {
+<<<<<<< HEAD
               "Action": "s3:*",
               "Condition": Object {
                 "Bool": Object {
@@ -4968,6 +4990,22 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Principal": Object {
                 "AWS": "*",
               },
+=======
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+>>>>>>> 1f16563 (chore: improved StepFunctions orchestration (#224))
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -5192,6 +5230,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                 "ConstructHubVPC16ECCEA2",
                 "CidrBlock",
               ],
+<<<<<<< HEAD
             },
             "Description": Object {
               "Fn::Join": Array [
@@ -5205,6 +5244,28 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                     ],
                   },
                   ":443",
+=======
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubOrchestrationCatalogBuilder7C964951",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubOrchestrationDLQ9C6D9BD4",
+                  "Arn",
+>>>>>>> 1f16563 (chore: improved StepFunctions orchestration (#224))
                 ],
               ],
             },
@@ -5242,7 +5303,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               },
               "Resource": Object {
                 "Fn::GetAtt": Array [
+<<<<<<< HEAD
                   "ConstructHubCodeArtifact1188409E",
+=======
+                  "ConstructHubOrchestrationDocGenpython77179663",
+>>>>>>> 1f16563 (chore: improved StepFunctions orchestration (#224))
                   "Arn",
                 ],
               },
@@ -8882,6 +8947,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -8999,6 +9067,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": Array [
                 "s3:GetObject*",
@@ -10679,7 +10755,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"DocGen\\",\\"States\\":{\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"End\\":true,\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$._error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Branches\\":[{\\"StartAt\\":\\"Generate python docs\\",\\"States\\":{\\"Generate python docs\\":{\\"Next\\":\\"Add to catalog.json (python)\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"IntervalSeconds\\":30}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.docGenOutput\\",\\"ResultSelector\\":{\\"python.$\\":\\"$.Payload\\"},\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Track Execution Infos\\",\\"States\\":{\\"Track Execution Infos\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.$TaskExecution\\",\\"InputPath\\":\\"$$.Execution\\",\\"Parameters\\":{\\"Id.$\\":\\"$.Id\\",\\"Name.$\\":\\"$.Name\\",\\"RoleArn.$\\":\\"$.RoleArn\\",\\"StartTime.$\\":\\"$.StartTime\\"},\\"Next\\":\\"DocGen\\"},\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"ResultPath\\":\\"$.DocGen\\",\\"Next\\":\\"Any Success?\\",\\"Branches\\":[{\\"StartAt\\":\\"Generate python docs\\",\\"States\\":{\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"IntervalSeconds\\":30}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Failed python\\"}],\\"Type\\":\\"Task\\",\\"OutputPath\\":\\"$.result\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"python\\"},\\"success.$\\":\\"$.Payload\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -10690,18 +10766,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}},\\"Add to catalog.json (python)\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogBuilderOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
-              Object {
-                "Ref": "AWS::Partition",
-              },
-              ":states:::lambda:invoke\\",\\"Parameters\\":{\\"FunctionName\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationCatalogBuilder7C964951",
-                  "Arn",
-                ],
-              },
-              "\\",\\"Payload.$\\":\\"$\\"}}}},{\\"StartAt\\":\\"Generate typescript docs\\",\\"States\\":{\\"Generate typescript docs\\":{\\"Next\\":\\"Add to catalog.json (typescript)\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"IntervalSeconds\\":30}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.docGenOutput\\",\\"ResultSelector\\":{\\"typescript.$\\":\\"$.Payload\\"},\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}},\\"Failed python\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Generate typescript docs\\",\\"States\\":{\\"Generate typescript docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"IntervalSeconds\\":30}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Failed typescript\\"}],\\"Type\\":\\"Task\\",\\"OutputPath\\":\\"$.result\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"typescript\\"},\\"success.$\\":\\"$.Payload\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -10712,7 +10777,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}},\\"Add to catalog.json (typescript)\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogBuilderOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}},\\"Failed typescript\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true}}}]},\\"Any Success?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":false}],\\"Next\\":\\"Add to catalog.json\\"}],\\"Default\\":\\"Any Failure?\\"},\\"Any Failure?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":true}],\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Default\\":\\"Success\\"},\\"Add to catalog.json\\":{\\"Next\\":\\"Any Failure?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Failed to add to catalog.json\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogBuilderOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -10723,7 +10788,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}}}}]},\\"Send to Dead Letter Queue\\":{\\"Next\\":\\"Fail\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":null,\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}},\\"Failed to add to catalog.json\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"Send to Dead Letter Queue\\":{\\"Next\\":\\"Fail\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":null,\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -10731,7 +10796,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationDLQ9C6D9BD4",
               },
-              "\\",\\"MessageBody.$\\":\\"$\\"}},\\"Fail\\":{\\"Type\\":\\"Fail\\",\\"Error\\":\\"Failed\\",\\"Cause\\":\\"Input was submitted to dead letter queue\\"}},\\"TimeoutSeconds\\":3600}",
+              "\\",\\"MessageBody.$\\":\\"$\\"}},\\"Fail\\":{\\"Type\\":\\"Fail\\"},\\"Success\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":3600}",
             ],
           ],
         },
@@ -11866,6 +11931,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
         "Runtime": "nodejs14.x",
         "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -11873,6 +11941,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
             Object {
               "Action": Array [
                 "s3:GetObject*",
@@ -11968,6 +12044,16 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Resource": "*",
             },
             Object {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubOrchestrationCatalogBuilder7C964951",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
               "Action": "sqs:SendMessage",
               "Effect": "Allow",
               "Resource": Object {
@@ -11983,16 +12069,6 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Resource": Object {
                 "Fn::GetAtt": Array [
                   "ConstructHubOrchestrationDocGenpython77179663",
-                  "Arn",
-                ],
-              },
-            },
-            Object {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationCatalogBuilder7C964951",
                   "Arn",
                 ],
               },
