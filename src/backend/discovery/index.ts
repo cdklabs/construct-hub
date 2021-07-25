@@ -1,7 +1,7 @@
 import { ComparisonOperator, IAlarm, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
-import { IFunction } from '@aws-cdk/aws-lambda';
+import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
 import { IQueue } from '@aws-cdk/aws-sqs';
@@ -72,13 +72,14 @@ export class Discovery extends Construct {
     // Note: the handler is designed to stop processing more batches about 2 minutes ahead of the timeout.
     this.function = new Handler(this, 'Default', {
       description: '[ConstructHub/Discovery] Periodically query npm.js index for new construct libraries',
-      memorySize: 10_240,
-      reservedConcurrentExecutions: 1, // Only one execution (avoids race conditions on the S3 marker object)
-      timeout: this.timeout,
       environment: {
         BUCKET_NAME: this.bucket.bucketName,
         QUEUE_URL: props.queue.queueUrl,
       },
+      memorySize: 10_240,
+      reservedConcurrentExecutions: 1, // Only one execution (avoids race conditions on the S3 marker object)
+      timeout: this.timeout,
+      tracing: Tracing.ACTIVE,
     });
 
     this.bucket.grantReadWrite(this.function);
