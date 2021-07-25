@@ -2,8 +2,9 @@ import { createHash } from 'crypto';
 
 import { Dashboard, MathExpression, GraphWidget, PeriodOverride, TextWidget, Metric } from '@aws-cdk/aws-cloudwatch';
 import { IFunction } from '@aws-cdk/aws-lambda';
+import { IQueue } from '@aws-cdk/aws-sqs';
 import { IStateMachine } from '@aws-cdk/aws-stepfunctions';
-import { Construct, Duration } from '@aws-cdk/core';
+import { Construct, Duration, Stack } from '@aws-cdk/core';
 import { Discovery } from './backend/discovery';
 import { Ingestion } from './backend/ingestion';
 import { Inventory } from './backend/inventory';
@@ -110,6 +111,7 @@ export class BackendDashboard extends Construct {
               '# Ingestion Function',
               '',
               `[button:Search Log Group](${lambdaSearchLogGroupUrl(props.ingestion.function)})`,
+              `[button:DLQ](${sqsQueueUrl(props.ingestion.deadLetterQueue)})`,
             ].join('\n'),
           }),
         ],
@@ -188,7 +190,9 @@ export class BackendDashboard extends Construct {
                 '# Orchestration',
                 '',
                 `[button:State Machine](${stateMachineUrl(props.orchestration.stateMachine)})`,
-                `[button:Redrive](${lambdaFunctionUrl(props.orchestration.redriveFunction)})`,
+                `[button:DLQ](${sqsQueueUrl(props.orchestration.deadLetterQueue)})`,
+                `[button:Redrive DLQ](${lambdaFunctionUrl(props.orchestration.redriveFunction)})`,
+                `[button:Reprocess](${lambdaFunctionUrl(props.orchestration.reprocessAllFunction)})`,
               ].join('\n'),
           }),
         ],
@@ -242,6 +246,12 @@ function lambdaSearchLogGroupUrl(lambda: IFunction): string {
 
 function stateMachineUrl(stateMachine: IStateMachine): string {
   return `/states/home#/statemachines/view/${stateMachine.stateMachineArn}`;
+}
+
+function sqsQueueUrl(queue: IQueue): string {
+  const stack = Stack.of(queue);
+  // We can't use the Queue URL as-is, because we can't "easily" URL-encode it in CFN...
+  return `/sqs/v2/home#/queues/https%3A%2F%2Fsqs.${stack.region}.amazonaws.com%2F${stack.account}%2F${queue.queueName}`;
 }
 
 function fillMetric(metric: Metric, value: number | 'REPEAT' = 0): MathExpression {
