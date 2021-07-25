@@ -35,6 +35,12 @@ export class Orchestration extends Construct {
    */
   public readonly redriveFunction: IFunction;
 
+  /**
+   * The function operators can use to reprocess all indexed packages through
+   * the backend data pipeline.
+   */
+  public readonly reprocessAllFunction: IFunction;
+
   public constructor(scope: Construct, id: string, props: OrchestrationProps) {
     super(scope, id);
 
@@ -103,7 +109,7 @@ export class Orchestration extends Construct {
 
     // This function is intended to be manually triggered by an operator to
     // reprocess all package versions currently in store through the back-end.
-    const reprocessAll = new ReprocessAll(this, 'ReprocessAll', {
+    this.reprocessAllFunction = new ReprocessAll(this, 'ReprocessAll', {
       description: '[ConstructHub/ReprocessAll] Reprocess all package versions through the backend',
       environment: {
         BUCKET_NAME: props.bucket.bucketName,
@@ -112,7 +118,7 @@ export class Orchestration extends Construct {
       memorySize: 1_024,
       timeout: Duration.minutes(15),
     });
-    props.bucket.grantRead(reprocessAll);
-    this.stateMachine.grantStartExecution(reprocessAll);
+    props.bucket.grantRead(this.reprocessAllFunction);
+    this.stateMachine.grantStartExecution(this.reprocessAllFunction);
   }
 }
