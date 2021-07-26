@@ -1238,7 +1238,41 @@ Resources:
                   - - Fn::GetAtt:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
+                    - /data/*/docs-*-python.md
+          - Action:
+              - s3:Abort*
+              - s3:DeleteObject*
+              - s3:PutObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
                     - /data/*/docs-python.md.not-supported
+          - Action:
+              - s3:Abort*
+              - s3:DeleteObject*
+              - s3:PutObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-*-python.md.not-supported
           - Action:
               - s3:Abort*
               - s3:DeleteObject*
@@ -1272,7 +1306,41 @@ Resources:
                   - - Fn::GetAtt:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
+                    - /data/*/docs-*-typescript.md
+          - Action:
+              - s3:Abort*
+              - s3:DeleteObject*
+              - s3:PutObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
                     - /data/*/docs-typescript.md.not-supported
+          - Action:
+              - s3:Abort*
+              - s3:DeleteObject*
+              - s3:PutObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-*-typescript.md.not-supported
         Version: 2012-10-17
       RouteTableIds:
         - Ref: ConstructHubVPCIsolatedSubnet1RouteTable750E6F36
@@ -1482,7 +1550,37 @@ Resources:
                   - - Fn::GetAtt:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
+                    - /data/*/docs-*-python.md
+          - Action:
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
                     - /data/*/docs-python.md.not-supported
+          - Action:
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-*-python.md.not-supported
         Version: 2012-10-17
       PolicyName: ConstructHubOrchestrationDocGenpythonServiceRoleDefaultPolicy7A9DA724
       Roles:
@@ -1671,7 +1769,37 @@ Resources:
                   - - Fn::GetAtt:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
+                    - /data/*/docs-*-typescript.md
+          - Action:
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
                     - /data/*/docs-typescript.md.not-supported
+          - Action:
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-*-typescript.md.not-supported
         Version: 2012-10-17
       PolicyName: ConstructHubOrchestrationDocGentypescriptServiceRoleDefaultPolicyEBA45F12
       Roles:
