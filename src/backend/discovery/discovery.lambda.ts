@@ -97,7 +97,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
           // Obtain the modified package version from the update event, and filter
           // out packages that are not of interest to us (not construct libraries).
-          const versionInfos = await getRelevantVersionInfos(batch, metrics, denyList);
+          const versionInfos = getRelevantVersionInfos(batch, metrics, denyList);
           console.log(`Identified ${versionInfos.length} relevant package version update(s)`);
           metrics.putMetric(MetricName.RELEVANT_PACKAGE_VERSIONS, versionInfos.length, Unit.Count);
 
@@ -292,10 +292,10 @@ export async function handler(event: ScheduledEvent, context: Context) {
  *
  * @returns a list of `VersionInfo` objects
  */
-async function getRelevantVersionInfos(
+function getRelevantVersionInfos(
   changes: readonly Change[],
   metrics: MetricsLogger,
-  denyList: DenyListClient): Promise<readonly UpdatedVersion[]> {
+  denyList: DenyListClient): readonly UpdatedVersion[] {
 
   const result = new Array<UpdatedVersion>();
 
