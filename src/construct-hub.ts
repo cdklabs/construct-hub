@@ -93,30 +93,46 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     const codeArtifact = new Repository(this, 'CodeArtifact', { description: 'Proxy to npmjs.com for ConstructHub' });
 
-    const vpc = (props.isolateLambdas ?? true)
-      ? new ec2.Vpc(this, 'VPC', {
-        enableDnsHostnames: true,
-        enableDnsSupport: true,
-        natGateways: 0,
-        subnetConfiguration: [{ name: 'Isolated', subnetType: ec2.SubnetType.ISOLATED }],
-      })
-      : undefined;
-    const vpcEndpoints = vpc && {
+    // We always need a VPC, regardless of the value of `isolateLambdas`, as the Transliterator
+    // functions require an EFS mount, which is only available within a VPC.
+    const subnetType = props.isolateLambdas ? ec2.SubnetType.ISOLATED : ec2.SubnetType.PRIVATE;
+    const vpc = new ec2.Vpc(this, 'VPC', {
+      enableDnsHostnames: true,
+      enableDnsSupport: true,
+      natGateways: subnetType === ec2.SubnetType.ISOLATED ? 0 : undefined,
+      // Pre-allocating PUBLIC / PRIVATE / INTERNAL subnets, regardless of use, so we don't create
+      // a whole new VPC each time we flip the `props.isolateLambdas` setting. We'll mark those we
+      // are not actually using as `reserved` so they're not actually provisionned (or are cleaned
+      // up on configuration changes).
+      subnetConfiguration: [
+        // If there is a PRIVATE subnet, there must also have a PUBLIC subnet (for NAT gateways).
+        { name: 'Public', subnetType: ec2.SubnetType.PUBLIC, reserved: subnetType !== ec2.SubnetType.PRIVATE },
+        { name: 'Private', subnetType: ec2.SubnetType.PRIVATE, reserved: subnetType !== ec2.SubnetType.PRIVATE },
+        { name: 'Isolated', subnetType: ec2.SubnetType.ISOLATED, reserved: subnetType !== ec2.SubnetType.ISOLATED },
+      ],
+    });
+    // We'll only use VPC endpoints if we are configured to run in an ISOLATED subnet.
+    const vpcEndpoints = (subnetType === ec2.SubnetType.ISOLATED) ? {
       codeArtifactApi: vpc.addInterfaceEndpoint('CodeArtifact.API', {
         privateDnsEnabled: false,
         service: new ec2.InterfaceVpcEndpointAwsService('codeartifact.api'),
-        subnets: { subnetType: ec2.SubnetType.ISOLATED },
+        subnets: { subnetType },
       }),
       codeArtifact: vpc.addInterfaceEndpoint('CodeArtifact', {
         privateDnsEnabled: true,
         service: new ec2.InterfaceVpcEndpointAwsService('codeartifact.repositories'),
-        subnets: { subnetType: ec2.SubnetType.ISOLATED },
+        subnets: { subnetType },
+      }),
+      elasticFileSystem: vpc.addInterfaceEndpoint('EFS', {
+        privateDnsEnabled: true,
+        service: ec2.InterfaceVpcEndpointAwsService.ELASTIC_FILESYSTEM,
+        subnets: { subnetType },
       }),
       s3: vpc.addGatewayEndpoint('S3', {
         service: ec2.GatewayVpcEndpointAwsService.S3,
-        subnets: [{ subnetType: ec2.SubnetType.ISOLATED }],
+        subnets: [{ subnetType }],
       }),
-    };
+    } : undefined;
     // The S3 access is necessary for the CodeArtifact VPC endpoint to be used.
     vpcEndpoints?.s3.addToPolicy(new PolicyStatement({
       effect: Effect.ALLOW,
@@ -132,7 +148,9 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       monitoring,
       vpc,
       vpcEndpoints,
+      vpcSubnets: { subnetType },
     });
+
     this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData, orchestration, monitoring });
 
     const discovery = new Discovery(this, 'Discovery', { queue: this.ingestion.queue, monitoring });
