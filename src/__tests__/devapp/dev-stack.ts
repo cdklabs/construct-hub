@@ -1,4 +1,3 @@
-import * as sns from '@aws-cdk/aws-sns';
 import { Construct, Stack } from '@aws-cdk/core';
 import { ConstructHub } from '../..';
 
@@ -11,13 +10,13 @@ export class DevStack extends Stack {
       },
     });
 
-    const topic = new sns.Topic(this, 'Topic');
-
     new ConstructHub(this, 'ConstructHub', {
-      alarmActions: {
-        normalSeverity: topic.topicArn,
-        highSeverity: topic.topicArn,
-      },
+      denyList: [
+        { package: '@aws-cdk/cdk', reason: 'This package has been deprecated in favor of @aws-cdk/core' },
+        { package: 'cdk-foo-bar', reason: 'Dummy package' },
+        { package: 'cdk-lambda-subminute', version: '0.1.31', reason: 'test' },
+        { package: 'cdk-ecr-image-scan-notify', version: '0.0.192', reason: 'test number 2' },
+      ],
     });
   }
 }

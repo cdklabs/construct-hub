@@ -27,18 +27,9 @@ export interface ConstructHubProps {
   readonly domain?: Domain;
 
   /**
-   * The name of the CloudWatch Dashboard created to observe this application.
-   *
-   * Must only contain alphanumerics, dash (-) and underscore (_).
-   *
-   * @default "construct-hub"
-   */
-  readonly dashboardName?: string;
-
-  /**
    * Actions to perform when alarms are set.
    */
-  readonly alarmActions: AlarmActions;
+  readonly alarmActions?: AlarmActions;
 
   /**
    * Whether sensitive Lambda functions (which operate on un-trusted complex
@@ -68,12 +59,11 @@ export interface ConstructHubProps {
 export class ConstructHub extends CoreConstruct implements iam.IGrantable {
   private readonly ingestion: Ingestion;
 
-  public constructor(scope: Construct, id: string, props: ConstructHubProps) {
+  public constructor(scope: Construct, id: string, props: ConstructHubProps = {}) {
     super(scope, id);
 
     const monitoring = new Monitoring(this, 'Monitoring', {
       alarmActions: props.alarmActions,
-      dashboardName: props.dashboardName ?? 'construct-hub',
     });
 
     const packageData = new s3.Bucket(this, 'PackageData', {
@@ -91,12 +81,6 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
         { noncurrentVersionExpiration: Duration.days(7), prefix: CATALOG_KEY },
       ],
       versioned: true,
-    });
-
-    const denyList = new DenyList(this, 'DenyList', {
-      rules: props.denyList,
-      packageDataBucket: packageData,
-      packageDataKeyPrefix: STORAGE_KEY_PREFIX,
     });
 
     const codeArtifact = new Repository(this, 'CodeArtifact', { description: 'Proxy to npmjs.com for ConstructHub' });
@@ -141,6 +125,15 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       vpc,
       vpcEndpoints,
     });
+
+    const denyList = new DenyList(this, 'DenyList', {
+      catalogBuilderFunction: orchestration.catalogBuilder,
+      rules: props.denyList,
+      packageDataBucket: packageData,
+      packageDataKeyPrefix: STORAGE_KEY_PREFIX,
+      monitoring: monitoring,
+    });
+
     this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData, orchestration, monitoring });
 
     const discovery = new Discovery(this, 'Discovery', { queue: this.ingestion.queue, monitoring, denyList });
@@ -148,7 +141,14 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     const inventory = new Inventory(this, 'InventoryCanary', { bucket: packageData, monitoring });
 
-    new BackendDashboard(this, 'BackendDashboard', { discovery, ingestion: this.ingestion, inventory, orchestration });
+    new BackendDashboard(this, 'BackendDashboard', {
+      packageData,
+      discovery,
+      ingestion: this.ingestion,
+      inventory,
+      orchestration,
+      denyList,
+    });
 
     new WebApp(this, 'WebApp', {
       domain: props.domain,

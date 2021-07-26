@@ -4,6 +4,8 @@ import { BucketDeployment, Source } from '@aws-cdk/aws-s3-deployment';
 import { App, Duration, RemovalPolicy, Stack } from '@aws-cdk/core';
 import { DenyList } from '../../../../backend';
 import { STORAGE_KEY_PREFIX } from '../../../../backend/shared/constants';
+import { Monitoring } from '../../../../monitoring';
+import { CatalogBuilderMock } from './catalog-builder-mock';
 import { TriggerClientTest } from './trigger.client-test';
 import { TriggerPruneTest } from './trigger.prune-test';
 
@@ -23,9 +25,14 @@ new BucketDeployment(stack, 'MockData', {
   sources: [Source.asset(mockPackageDataDir)],
 });
 
+const monitoring = new Monitoring(stack, 'Monitoring');
+const catalogBuilderMock = new CatalogBuilderMock(stack, 'CatalogBuilderMock');
+
 const denylist = new DenyList(stack, 'DenyList', {
+  monitoring: monitoring,
   packageDataBucket: packageData,
   packageDataKeyPrefix: STORAGE_KEY_PREFIX,
+  catalogBuilderFunction: catalogBuilderMock,
   rules: [
     { package: 'mypackage', reason: '"mypackage" is deprecated' },
     { package: 'your', version: '1.2.3', reason: 'v1.2.3 of "your" has a security issue' },
@@ -36,7 +43,7 @@ const test1 = new TriggerClientTest(stack, 'ClientTest', {
   after: [denylist],
   environment: {
     BUCKET_NAME: denylist.bucket.bucketName,
-    FILE_NAME: denylist.fileName,
+    FILE_NAME: denylist.objectKey,
   },
 });
 denylist.grantRead(test1);

@@ -14,7 +14,6 @@ test('basic use', () => {
   const bucket = new Bucket(stack, 'Bucket');
   const monitoring = new Monitoring(stack, 'Monitoring', {
     alarmActions: { highSeverity: 'high-sev', normalSeverity: 'normal-sev' },
-    dashboardName: 'monitoring',
   });
 
   // WHEN
@@ -39,7 +38,6 @@ test('CodeArtifact repository', () => {
   const bucket = new Bucket(stack, 'Bucket');
   const monitoring = new Monitoring(stack, 'Monitoring', {
     alarmActions: { highSeverity: 'high-sev', normalSeverity: 'normal-sev' },
-    dashboardName: 'monitoring',
   });
   const codeArtifact = new Repository(stack, 'CodeArtifact');
 
@@ -75,7 +73,6 @@ test('VPC Endpoints', () => {
   const bucket = new Bucket(stack, 'Bucket');
   const monitoring = new Monitoring(stack, 'Monitoring', {
     alarmActions: { highSeverity: 'high-sev', normalSeverity: 'normal-sev' },
-    dashboardName: 'monitoring',
   });
   const vpc = new Vpc(stack, 'VPC', { subnetConfiguration: [{ name: 'Isolated', subnetType: SubnetType.ISOLATED }] });
   const codeArtifactApi = vpc.addInterfaceEndpoint('CodeArtifact.API', {
@@ -120,7 +117,6 @@ test('VPC Endpoints and CodeArtifact repository', () => {
   const repository = new Repository(stack, 'CodeArtifact');
   const monitoring = new Monitoring(stack, 'Monitoring', {
     alarmActions: { highSeverity: 'high-sev', normalSeverity: 'normal-sev' },
-    dashboardName: 'monitoring',
   });
   const vpc = new Vpc(stack, 'VPC', { subnetConfiguration: [{ name: 'Isolated', subnetType: SubnetType.ISOLATED }] });
   const codeArtifactApi = vpc.addInterfaceEndpoint('CodeArtifact.API', {

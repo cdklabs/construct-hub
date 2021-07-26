@@ -1,14 +1,28 @@
+import { Configuration, metricScope, Unit } from 'aws-embedded-metrics';
+import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import * as AWS from 'aws-sdk';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DenyListClient } from './client.lambda-shared';
-import { ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME, ENV_PRUNE_PACKAGE_DATA_KEY_PREFIX, ENV_PRUNE_QUEUE_URL } from './constants';
+import { ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME, ENV_PRUNE_PACKAGE_DATA_KEY_PREFIX, ENV_PRUNE_QUEUE_URL, MetricName, METRICS_NAMESPACE } from './constants';
 
 const s3 = new AWS.S3();
 const sqs = new AWS.SQS();
 
+// Configure embedded metrics format
+Configuration.environmentOverride = Environments.Lambda;
+Configuration.namespace = METRICS_NAMESPACE;
+
 export async function handler() {
   const client = new DenyListClient();
   await client.init();
+
+  await metricScope((metrics) => async () => {
+    metrics.setDimensions();
+
+    const ruleCount = Object.keys(client.map).length;
+    console.log(`Found ${ruleCount} deny list rules`);
+    metrics.putMetric(MetricName.DENY_LIST_RULE_COUNT, ruleCount, Unit.Count);
+  })();
 
   const packageData = requireEnv(ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME);
   const pruneQueue = requireEnv(ENV_PRUNE_QUEUE_URL);

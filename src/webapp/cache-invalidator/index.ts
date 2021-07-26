@@ -56,7 +56,10 @@ export class CacheInvalidator extends Construct {
       resources: ['*'], // CreateInvalidation does not support resource scoping
     }));
 
-    handler.addEventSource(new S3EventSource(props.bucket, { events: [EventType.OBJECT_CREATED] }));
+    // invalidate cache when a file was created/removed from the bucket
+    handler.addEventSource(new S3EventSource(props.bucket, {
+      events: [EventType.OBJECT_CREATED, EventType.OBJECT_REMOVED],
+    }));
   }
 
   /**

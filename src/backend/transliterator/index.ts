@@ -1,7 +1,7 @@
 import { GatewayVpcEndpoint, InterfaceVpcEndpoint, IVpc, SubnetSelection, SubnetType } from '@aws-cdk/aws-ec2';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
-import { IBucket } from '@aws-cdk/aws-s3';
+import { Bucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration, Fn } from '@aws-cdk/core';
 import { Repository } from '../../codeartifact/repository';
 import { Monitoring } from '../../monitoring';
@@ -14,7 +14,7 @@ export interface TransliteratorProps {
   /**
    * The bucket in which to source assemblies to transliterate.
    */
-  readonly bucket: IBucket;
+  readonly bucket: Bucket;
 
   /**
    * The language to generate documentation for.

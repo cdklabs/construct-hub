@@ -1,16 +1,18 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
+import { Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
 import * as events from '@aws-cdk/aws-events';
 import * as targets from '@aws-cdk/aws-events-targets';
-import { Function } from '@aws-cdk/aws-lambda';
+import * as lambda from '@aws-cdk/aws-lambda';
 import { S3EventSource } from '@aws-cdk/aws-lambda-event-sources';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
 import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
 import { Construct } from 'constructs';
+import { Monitoring } from '../../monitoring';
 import { DenyListRule } from './api';
-import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY } from './constants';
+import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY, MetricName, METRICS_NAMESPACE } from './constants';
 import { Prune } from './prune';
 
 /**
@@ -47,6 +49,17 @@ export interface DenyListProps {
    * @default Duration.minutes(5)
    */
   readonly prunePeriod?: Duration;
+
+  /**
+   * The catalog builder lambda function. Invoked
+   * when a package is deleted to rebuild the catalog.
+   */
+  readonly catalogBuilderFunction: lambda.IFunction;
+
+  /**
+   * The monitoring system.
+   */
+  readonly monitoring: Monitoring;
 }
 
 /**
@@ -61,7 +74,12 @@ export class DenyList extends CoreConstruct {
   /**
    * The object key within the bucket with the deny list JSON file.
    */
-  public readonly fileName: string;
+  public readonly objectKey: string;
+
+  /**
+   * Responsible for deleting objects that match the deny list.
+   */
+  public readonly prune: Prune;
 
   constructor(scope: Construct, id: string, props: DenyListProps) {
     super(scope, id);
@@ -72,8 +90,8 @@ export class DenyList extends CoreConstruct {
       versioned: true,
     });
 
-    this.fileName = 'deny-list.json';
-    const directory = this.writeToFile(props.rules ?? [], this.fileName);
+    this.objectKey = 'deny-list.json';
+    const directory = this.writeToFile(props.rules ?? [], this.objectKey);
 
     // upload the deny list to the bucket
     const upload = new s3deploy.BucketDeployment(this, 'BucketDeployment', {
@@ -84,7 +102,11 @@ export class DenyList extends CoreConstruct {
     const prune = new Prune(this, 'Prune', {
       packageDataBucket: props.packageDataBucket,
       packageDataKeyPrefix: props.packageDataKeyPrefix,
+      monitoring: props.monitoring,
+      catalogBuilderFunction: props.catalogBuilderFunction,
     });
+
+    this.prune = prune;
 
     this.grantRead(prune.handler);
 
@@ -93,7 +115,7 @@ export class DenyList extends CoreConstruct {
     if (pruneOnChange) {
       prune.handler.addEventSource(new S3EventSource(this.bucket, {
         events: [s3.EventType.OBJECT_CREATED],
-        filters: [{ prefix: this.fileName }],
+        filters: [{ prefix: this.objectKey }],
       }));
     }
 
@@ -115,10 +137,23 @@ export class DenyList extends CoreConstruct {
   /**
    * Grants an AWS Lambda function permissions to read the deny list.
    */
-  public grantRead(handler: Function) {
+  public grantRead(handler: lambda.Function) {
     handler.addEnvironment(ENV_DENY_LIST_BUCKET_NAME, this.bucket.bucketName);
-    handler.addEnvironment(ENV_DENY_LIST_OBJECT_KEY, this.fileName);
+    handler.addEnvironment(ENV_DENY_LIST_OBJECT_KEY, this.objectKey);
     this.bucket.grantRead(handler);
+  }
+
+  /**
+   * Number of rules in the deny list.
+   */
+  public metricDenyListRules(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      metricName: MetricName.DENY_LIST_RULE_COUNT,
+      namespace: METRICS_NAMESPACE,
+    });
   }
 
   /**

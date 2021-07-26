@@ -1,10 +1,12 @@
-import { Function } from '@aws-cdk/aws-lambda';
+import * as lambda from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as sqs from '@aws-cdk/aws-sqs';
+
 import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
 import { Construct } from 'constructs';
-import { ENV_DELETE_OBJECT_DATA_BUCKET_NAME, ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME, ENV_PRUNE_PACKAGE_DATA_KEY_PREFIX, ENV_PRUNE_QUEUE_URL } from './constants';
+import { Monitoring } from '../../monitoring';
+import { ENV_DELETE_OBJECT_CATALOG_REBUILD_FUNCTION_NAME, ENV_DELETE_OBJECT_DATA_BUCKET_NAME, ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME, ENV_PRUNE_PACKAGE_DATA_KEY_PREFIX, ENV_PRUNE_QUEUE_URL } from './constants';
 import { PruneHandler } from './prune-handler';
 import { PruneQueueHandler } from './prune-queue-handler';
 
@@ -21,6 +23,17 @@ export interface PruneProps {
     * The S3 key prefix for all package data.
     */
   readonly packageDataKeyPrefix: string;
+
+  /**
+   * The catalog builder lambda function. Invoked
+   * when a package is deleted to rebuild the catalog.
+   */
+  readonly catalogBuilderFunction: lambda.IFunction;
+
+  /**
+   * The monitoring system.
+   */
+  readonly monitoring: Monitoring;
 }
 
 /**
@@ -31,7 +44,17 @@ export class Prune extends CoreConstruct {
   /**
    * The function that needs to read the deny list.
    */
-  public readonly handler: Function;
+  public readonly handler: lambda.Function;
+
+  /**
+   * The function that deletes files of denied packages.
+   */
+  public readonly deleteHandler: lambda.Function;
+
+  /**
+   * An SQS queue which includes objects to be deleted.
+   */
+  public readonly queue: sqs.Queue;
 
   constructor(scope: Construct, id: string, props: PruneProps) {
     super(scope, id);
@@ -55,15 +78,22 @@ export class Prune extends CoreConstruct {
     props.packageDataBucket.grantRead(pruneHandler);
 
     // processes messages. each message includes an object key to delete.
-    const deleteObject = new PruneQueueHandler(this, 'PruneQueueHandler', {
+    const deleteHandler = new PruneQueueHandler(this, 'PruneQueueHandler', {
       timeout: Duration.minutes(1),
       environment: {
         [ENV_DELETE_OBJECT_DATA_BUCKET_NAME]: props.packageDataBucket.bucketName,
+        [ENV_DELETE_OBJECT_CATALOG_REBUILD_FUNCTION_NAME]: props.catalogBuilderFunction.functionArn,
       },
     });
-    props.packageDataBucket.grantWrite(deleteObject);
-    deleteObject.addEventSource(new SqsEventSource(deleteQueue)); // reads from the queue
+    props.packageDataBucket.grantWrite(deleteHandler);
+    props.catalogBuilderFunction.grantInvoke(deleteHandler);
+    deleteHandler.addEventSource(new SqsEventSource(deleteQueue)); // reads from the queue
 
     this.handler = pruneHandler;
+    this.queue = deleteQueue;
+    this.deleteHandler = deleteHandler;
+
+    props.monitoring.watchful.watchLambdaFunction('Deny List - Prune Function', this.handler);
+    props.monitoring.watchful.watchLambdaFunction('Deny List - Prune Delete Function', this.deleteHandler);
   }
 }

@@ -41,6 +41,11 @@ export class Orchestration extends Construct {
    */
   public readonly reprocessAllFunction: IFunction;
 
+  /**
+   * The function that builds the catalog.
+   */
+  public readonly catalogBuilder: IFunction;
+
   public constructor(scope: Construct, id: string, props: OrchestrationProps) {
     super(scope, id);
 
@@ -56,8 +61,10 @@ export class Orchestration extends Construct {
       resultPath: JsonPath.DISCARD,
     });
 
+    this.catalogBuilder = new CatalogBuilder(this, 'CatalogBuilder', props).function;
+
     const addToCatalog = new tasks.LambdaInvoke(this, 'Add to catalog.json', {
-      lambdaFunction: new CatalogBuilder(this, 'CatalogBuilder', props).function,
+      lambdaFunction: this.catalogBuilder,
       resultPath: '$.catalogBuilderOutput',
       resultSelector: {
         'ETag.$': '$.Payload.ETag',

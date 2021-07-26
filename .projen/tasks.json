@@ -49,6 +49,9 @@
           "spawn": "docgen"
         },
         {
+          "spawn": "bundle:catalog-builder-mock"
+        },
+        {
           "spawn": "bundle:trigger.client-test"
         },
         {
@@ -287,6 +290,9 @@
       "description": "Bundle all lambda functions",
       "steps": [
         {
+          "spawn": "bundle:catalog-builder-mock"
+        },
+        {
           "spawn": "bundle:trigger.client-test"
         },
         {
@@ -379,6 +385,15 @@
         }
       ],
       "cwd": "lib/__tests__/devapp"
+    },
+    "bundle:catalog-builder-mock": {
+      "name": "bundle:catalog-builder-mock",
+      "description": "Create an AWS Lambda bundle from src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/catalog-builder-mock.bundle/index.js\" --external:aws-sdk"
+        }
+      ]
     },
     "bundle:trigger.client-test": {
       "name": "bundle:trigger.client-test",

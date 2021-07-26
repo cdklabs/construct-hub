@@ -1,6 +1,6 @@
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
-import { IBucket } from '@aws-cdk/aws-s3';
+import { Bucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 
 import { Monitoring } from '../../monitoring';
@@ -10,7 +10,7 @@ export interface CatalogBuilderProps {
   /**
    * The package store bucket.
    */
-  readonly bucket: IBucket;
+  readonly bucket: Bucket;
 
   /**
    * The monitoring handler to register alarms with.
@@ -50,5 +50,6 @@ export class CatalogBuilder extends Construct {
     props.bucket.grantReadWrite(this.function);
 
     props.monitoring.watchful.watchLambdaFunction('Catalog Builder Function', handler);
+
   }
 }

@@ -2,9 +2,11 @@ import { createHash } from 'crypto';
 
 import { Dashboard, MathExpression, GraphWidget, PeriodOverride, TextWidget, Metric } from '@aws-cdk/aws-cloudwatch';
 import { IFunction } from '@aws-cdk/aws-lambda';
+import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue } from '@aws-cdk/aws-sqs';
 import { IStateMachine } from '@aws-cdk/aws-stepfunctions';
 import { Construct, Duration, Stack } from '@aws-cdk/core';
+import { DenyList } from './backend/deny-list';
 import { Discovery } from './backend/discovery';
 import { Ingestion } from './backend/ingestion';
 import { Inventory } from './backend/inventory';
@@ -15,6 +17,8 @@ export interface BackendDashboardProps {
   readonly ingestion: Ingestion;
   readonly orchestration: Orchestration;
   readonly inventory: Inventory;
+  readonly denyList: DenyList;
+  readonly packageData: IBucket;
 }
 
 export class BackendDashboard extends Construct {
@@ -28,7 +32,12 @@ export class BackendDashboard extends Construct {
           new TextWidget({
             height: 2,
             width: 24,
-            markdown: '# Catalog Overview',
+            markdown: [
+              '# Catalog Overview',
+              '',
+              `[button:Package Data](${s3ObjectUrl(props.packageData)})`,
+              `[button:Catalog Builder](${lambdaFunctionUrl(props.orchestration.catalogBuilder)})`,
+            ].join('\n'),
           }),
         ],
         [
@@ -231,6 +240,51 @@ export class BackendDashboard extends Construct {
             period: Duration.minutes(1),
           }),
         ],
+
+
+        // deny list
+        // ----------------------------------------------
+        [
+          new TextWidget({
+            height: 2,
+            width: 24,
+            markdown:
+              [
+                '# Deny List',
+                '',
+                `[button:Deny List File](${s3ObjectUrl(props.denyList.bucket, props.denyList.objectKey)})`,
+                `[button:Prune Function](${lambdaFunctionUrl(props.denyList.prune.handler)})`,
+                `[button:Prune Logs](${lambdaSearchLogGroupUrl(props.denyList.prune.handler)})`,
+                `[button:Delete Queue](${sqsQueueUrl(props.denyList.prune.queue)})`,
+                `[button:Delete Logs](${lambdaSearchLogGroupUrl(props.denyList.prune.deleteHandler)})`,
+              ].join('\n'),
+          }),
+        ],
+        [
+          new GraphWidget({
+            height: 6,
+            width: 8,
+            title: 'Deny List',
+            left: [
+              fillMetric(props.denyList.metricDenyListRules({ label: 'Rules' })),
+              props.denyList.prune.queue.metricNumberOfMessagesDeleted({ label: 'Deleted Files' }),
+            ],
+            leftYAxis: { min: 0 },
+            period: Duration.minutes(5),
+          }),
+          new GraphWidget({
+            height: 6,
+            width: 8,
+            title: 'Prune Function Health',
+            left: [
+              fillMetric(props.denyList.prune.handler.metricInvocations({ label: 'Invocations' })),
+              fillMetric(props.denyList.prune.handler.metricErrors({ label: 'Errors' })),
+            ],
+            leftYAxis: { min: 0 },
+            period: Duration.minutes(5),
+          }),
+        ],
+
       ],
     });
   }
@@ -252,6 +306,15 @@ function sqsQueueUrl(queue: IQueue): string {
   const stack = Stack.of(queue);
   // We can't use the Queue URL as-is, because we can't "easily" URL-encode it in CFN...
   return `/sqs/v2/home#/queues/https%3A%2F%2Fsqs.${stack.region}.amazonaws.com%2F${stack.account}%2F${queue.queueName}`;
+}
+
+function s3ObjectUrl(bucket: IBucket, objectKey?: string): string {
+  const stack = Stack.of(bucket);
+  if (objectKey) {
+    return `/s3/object/${bucket.bucketName}?region=${stack.region}&prefix=${objectKey}`;
+  } else {
+    return `/s3/buckets/${bucket.bucketName}?region=${stack.region}`;
+  }
 }
 
 function fillMetric(metric: Metric, value: number | 'REPEAT' = 0): MathExpression {

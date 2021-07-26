@@ -7,7 +7,7 @@ import { METRICS_NAMESPACE, MetricName } from './constants';
 const DISTRIBUTION_ID = requireEnv('DISTRIBUTION_ID');
 const PATH_PREFIX = requireEnv('PATH_PREFIX');
 
-export async function handler(event: S3Event, _context: Context) {
+export async function handler(event: S3Event, context: Context) {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
 
   if (event.Records.length === 0) {
@@ -28,14 +28,18 @@ export async function handler(event: S3Event, _context: Context) {
   })();
 
   const cf = new AWS.CloudFront();
-  return cf.createInvalidation({
+  const invalidationRequet: AWS.CloudFront.CreateInvalidationRequest = {
     DistributionId: DISTRIBUTION_ID,
     InvalidationBatch: {
       Paths: {
         Quantity: event.Records.length,
         Items: event.Records.map((record) => `${PATH_PREFIX}${record.s3.object.key}`),
       },
-      CallerReference: event.Records.map((record) => record.s3.object.eTag).join(', '),
+      CallerReference: context.awsRequestId,
     },
-  }).promise();
+  };
+  console.log(JSON.stringify({ invalidationRequet }));
+  const invalidationResponse = cf.createInvalidation(invalidationRequet).promise();
+  console.log(JSON.stringify({ invalidationResponse }));
+  return invalidationResponse;
 }

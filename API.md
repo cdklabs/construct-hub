@@ -112,17 +112,6 @@ Actions to perform when alarms are set.
 
 ---
 
-##### `dashboardName`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.dashboardName"></a>
-
-- *Type:* `string`
-- *Default:* "construct-hub"
-
-The name of the CloudWatch Dashboard created to observe this application.
-
-Must only contain alphanumerics, dash (-) and underscore (_).
-
----
-
 ##### `denyList`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.denyList"></a>
 
 - *Type:* [`construct-hub.DenyListRule`](#construct-hub.DenyListRule)[]
