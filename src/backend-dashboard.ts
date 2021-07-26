@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
 
-import { Dashboard, MathExpression, GraphWidget, PeriodOverride, TextWidget, Metric, IWidget } from '@aws-cdk/aws-cloudwatch';
+import { Dashboard, MathExpression, GraphWidget, GraphWidgetView, PeriodOverride, TextWidget, Metric, IWidget } from '@aws-cdk/aws-cloudwatch';
 import { IFunction } from '@aws-cdk/aws-lambda';
 import { IQueue } from '@aws-cdk/aws-sqs';
 import { IStateMachine } from '@aws-cdk/aws-stepfunctions';
@@ -236,6 +236,13 @@ export class BackendDashboard extends Construct {
   }
 
   private *catalogOverviewLanguageSections(inventory: Inventory): Generator<IWidget[]> {
+    yield [
+      new TextWidget({
+        height: 2,
+        width: 24,
+        markdown: '# Documentation Generation',
+      }),
+    ];
     for (const language of DocumentationLanguage.ALL) {
       yield [
         new TextWidget({
@@ -248,26 +255,14 @@ export class BackendDashboard extends Construct {
         new GraphWidget({
           height: 6,
           width: 6,
-          title: 'Packages',
+          title: 'Package Versions',
           left: [
-            inventory.metricSupportedPackageCount(language, { label: 'Available', color: '#2ca02c' }),
-            inventory.metricUnsupportedPackageCount(language, { label: 'Unsupported', color: '#9467bd' }),
-            inventory.metricMissingPackageCount(language, { label: 'Missing', color: '#d62728' }),
+            inventory.metricSupportedPackageVersionCount(language, { label: 'Available', color: '#2ca02c' }),
+            inventory.metricUnsupportedPackageVersionCount(language, { label: 'Unsupported', color: '#9467bd' }),
+            inventory.metricMissingPackageVersionCount(language, { label: 'Missing', color: '#d62728' }),
           ],
           leftYAxis: { showUnits: false },
-          stacked: true,
-        }),
-        new GraphWidget({
-          height: 6,
-          width: 6,
-          title: 'Package Major Versions',
-          left: [
-            inventory.metricSupportedMajorVersionCount(language, { label: 'Available', color: '#2ca02c' }),
-            inventory.metricUnsupportedMajorVersionCount(language, { label: 'Unsupported', color: '#9467bd' }),
-            inventory.metricMissingMajorVersionCount(language, { label: 'Missing', color: '#d62728' }),
-          ],
-          leftYAxis: { showUnits: false },
-          stacked: true,
+          view: GraphWidgetView.PIE,
         }),
         new GraphWidget({
           height: 6,
@@ -280,6 +275,18 @@ export class BackendDashboard extends Construct {
           ],
           leftYAxis: { showUnits: false },
           stacked: true,
+        }),
+        new GraphWidget({
+          height: 6,
+          width: 6,
+          title: 'Package Version Submodules',
+          left: [
+            inventory.metricSupportedSubmoduleCount(language, { label: 'Available', color: '#2ca02c' }),
+            inventory.metricUnsupportedSubmoduleCount(language, { label: 'Unsupported', color: '#9467bd' }),
+            inventory.metricMissingSubmoduleCount(language, { label: 'Missing', color: '#d62728' }),
+          ],
+          leftYAxis: { showUnits: false },
+          view: GraphWidgetView.PIE,
         }),
         new GraphWidget({
           height: 6,
