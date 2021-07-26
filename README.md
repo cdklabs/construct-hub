@@ -41,6 +41,12 @@ For each integration test, we have two tasks:
 * `integ:xxx:destroy` - can be used to delete the integration test app (called
   by `deploy` as well)
 
+Integration tests use "triggers" which are lambda functions that are executed during deployment
+and are used to make assertions about the deployed resources. Triggers are automatically
+generated for all files named `trigger.xxx.lambda.ts` (for example, `trigger.prune-test.lambda.ts`)
+and can just be added to the integration test stack with the relevant dependencies. See the deny-list
+integration test as an example.
+
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more
