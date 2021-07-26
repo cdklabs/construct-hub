@@ -13,7 +13,7 @@ Construct Hub.
 ```typescript
 import { ConstructHub } from 'construct-hub'
 
-new ConstructHub(scope: Construct, id: string, props: ConstructHubProps)
+new ConstructHub(scope: Construct, id: string, props?: ConstructHubProps)
 ```
 
 ##### `scope`<sup>Required</sup> <a name="construct-hub.ConstructHub.parameter.scope"></a>
@@ -28,7 +28,7 @@ new ConstructHub(scope: Construct, id: string, props: ConstructHubProps)
 
 ---
 
-##### `props`<sup>Required</sup> <a name="construct-hub.ConstructHub.parameter.props"></a>
+##### `props`<sup>Optional</sup> <a name="construct-hub.ConstructHub.parameter.props"></a>
 
 - *Type:* [`construct-hub.ConstructHubProps`](#construct-hub.ConstructHubProps)
 
@@ -104,7 +104,7 @@ import { ConstructHubProps } from 'construct-hub'
 const constructHubProps: ConstructHubProps = { ... }
 ```
 
-##### `alarmActions`<sup>Required</sup> <a name="construct-hub.ConstructHubProps.property.alarmActions"></a>
+##### `alarmActions`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.alarmActions"></a>
 
 - *Type:* [`construct-hub.AlarmActions`](#construct-hub.AlarmActions)
 
