@@ -153,68 +153,15 @@ export async function handler(event: ScheduledEvent, _context: Context) {
     await metricScope((metrics) => () => {
       metrics.setDimensions({ [LANGUAGE_DIMENSION]: language.toString() });
 
-      metrics.putMetric(
-        MetricName.PER_LANGUAGE_MISSING_PACKAGES,
-        Array.from(data.packages.values()).filter((v) => v === PerLanguageStatus.MISSING).length,
-        Unit.Count,
-      );
-      metrics.putMetric(
-        MetricName.PER_LANGUAGE_MISSING_MAJORS,
-        Array.from(data.packageMajors.values()).filter((v) => v === PerLanguageStatus.MISSING).length,
-        Unit.Count,
-      );
-      metrics.putMetric(
-        MetricName.PER_LANGUAGE_MISSING_VERSIONS,
-        Array.from(data.packageVersions.values()).filter((v) => v === PerLanguageStatus.MISSING).length,
-        Unit.Count,
-      );
-      metrics.putMetric(
-        MetricName.PER_LANGUAGE_MISSING_SUBMODULES,
-        Array.from(data.submodules.values()).filter((v) => v === PerLanguageStatus.MISSING).length,
-        Unit.Count,
-      );
-
-      metrics.putMetric(
-        MetricName.PER_LANGUAGE_SUPPORTED_PACKAGES,
-        Array.from(data.packages.values()).filter((v) => v === PerLanguageStatus.SUPPORTED).length,
-        Unit.Count,
-      );
-      metrics.putMetric(
-        MetricName.PER_LANGUAGE_SUPPORTED_MAJORS,
-        Array.from(data.packageMajors.values()).filter((v) => v === PerLanguageStatus.SUPPORTED).length,
-        Unit.Count,
-      );
-      metrics.putMetric(
-        MetricName.PER_LANGUAGE_SUPPORTED_VERSIONS,
-        Array.from(data.packageVersions.values()).filter((v) => v === PerLanguageStatus.SUPPORTED).length,
-        Unit.Count,
-      );
-      metrics.putMetric(
-        MetricName.PER_LANGUAGE_SUPPORTED_SUBMODULES,
-        Array.from(data.submodules.values()).filter((v) => v === PerLanguageStatus.SUPPORTED).length,
-        Unit.Count,
-      );
-
-      metrics.putMetric(
-        MetricName.PER_LANGUAGE_UNSUPPORTED_PACKAGES,
-        Array.from(data.packages.values()).filter((v) => v === PerLanguageStatus.UNSUPPORTED).length,
-        Unit.Count,
-      );
-      metrics.putMetric(
-        MetricName.PER_LANGUAGE_UNSUPPORTED_MAJORS,
-        Array.from(data.packageMajors.values()).filter((v) => v === PerLanguageStatus.UNSUPPORTED).length,
-        Unit.Count,
-      );
-      metrics.putMetric(
-        MetricName.PER_LANGUAGE_UNSUPPORTED_VERSIONS,
-        Array.from(data.packageVersions.values()).filter((v) => v === PerLanguageStatus.UNSUPPORTED).length,
-        Unit.Count,
-      );
-      metrics.putMetric(
-        MetricName.PER_LANGUAGE_UNSUPPORTED_SUBMODULES,
-        Array.from(data.submodules.values()).filter((v) => v === PerLanguageStatus.UNSUPPORTED).length,
-        Unit.Count,
-      );
+      for (const forStatus of [PerLanguageStatus.SUPPORTED, PerLanguageStatus.UNSUPPORTED, PerLanguageStatus.MISSING]) {
+        for (const [key, statuses] of Object.entries(data)) {
+          let filtered = Array.from(statuses.entries()).filter(([, status]) => forStatus === status);
+          let metricName = METRIC_NAME_BY_STATUS_AND_GRAIN[forStatus as PerLanguageStatus][key as keyof PerLanguageData];
+          // List out selected packages for posterity (and troubleshooting)
+          console.log(`${forStatus} ${key} for ${language}: ${filtered.map(([name]) => name).join(', ')}`);
+          metrics.putMetric(metricName, filtered.length, Unit.Count);
+        }
+      }
     })();
   }
 }
@@ -267,18 +214,42 @@ interface IndexedPackageStatus {
   unknownObjects?: string[];
 }
 
-interface PerLanguageData {
-  readonly packages: Map<string, PerLanguageStatus>;
-  readonly packageMajors: Map<string, PerLanguageStatus>;
-  readonly packageVersions: Map<string, PerLanguageStatus>;
-  readonly submodules: Map<string, PerLanguageStatus>;
+const enum Grain {
+  PACKAGE_MAJOR_VERSIONS = 'package major versions',
+  PACKAGE_VERSION_SUBMODULES = 'package version submodules',
+  PACKAGE_VERSIONS = 'package versions',
+  PACKAGES = 'packages',
 }
 
+type PerLanguageData = { readonly [grain in Grain]: Map<string, PerLanguageStatus> };
+
 const enum PerLanguageStatus {
-  MISSING,
-  UNSUPPORTED,
-  SUPPORTED,
+  MISSING = 'Missing',
+  UNSUPPORTED = 'Unsupported',
+  SUPPORTED = 'Supported',
 }
+
+const METRIC_NAME_BY_STATUS_AND_GRAIN: { readonly [status in PerLanguageStatus]: { readonly [grain in Grain]: MetricName } } = {
+  [PerLanguageStatus.MISSING]: {
+    [Grain.PACKAGES]: MetricName.PER_LANGUAGE_MISSING_PACKAGES,
+    [Grain.PACKAGE_MAJOR_VERSIONS]: MetricName.PER_LANGUAGE_MISSING_MAJORS,
+    [Grain.PACKAGE_VERSIONS]: MetricName.PER_LANGUAGE_MISSING_VERSIONS,
+    [Grain.PACKAGE_VERSION_SUBMODULES]: MetricName.PER_LANGUAGE_MISSING_SUBMODULES,
+  },
+  [PerLanguageStatus.UNSUPPORTED]: {
+    [Grain.PACKAGES]: MetricName.PER_LANGUAGE_UNSUPPORTED_PACKAGES,
+    [Grain.PACKAGE_MAJOR_VERSIONS]: MetricName.PER_LANGUAGE_UNSUPPORTED_MAJORS,
+    [Grain.PACKAGE_VERSIONS]: MetricName.PER_LANGUAGE_UNSUPPORTED_VERSIONS,
+    [Grain.PACKAGE_VERSION_SUBMODULES]: MetricName.PER_LANGUAGE_UNSUPPORTED_SUBMODULES,
+  },
+  [PerLanguageStatus.SUPPORTED]: {
+    [Grain.PACKAGES]: MetricName.PER_LANGUAGE_SUPPORTED_PACKAGES,
+    [Grain.PACKAGE_MAJOR_VERSIONS]: MetricName.PER_LANGUAGE_SUPPORTED_MAJORS,
+    [Grain.PACKAGE_VERSIONS]: MetricName.PER_LANGUAGE_SUPPORTED_VERSIONS,
+    [Grain.PACKAGE_VERSION_SUBMODULES]: MetricName.PER_LANGUAGE_SUPPORTED_SUBMODULES,
+  },
+};
+
 
 /**
  * Registers the information for the provided language. A "MISSING" status
@@ -299,10 +270,10 @@ function doRecordPerLanguage(
 ) {
   if (!perLanguage.has(language)) {
     perLanguage.set(language, {
-      packageMajors: new Map(),
-      packageVersions: new Map(),
-      packages: new Map(),
-      submodules: new Map(),
+      [Grain.PACKAGE_MAJOR_VERSIONS]: new Map(),
+      [Grain.PACKAGES]: new Map(),
+      [Grain.PACKAGE_VERSION_SUBMODULES]: new Map(),
+      [Grain.PACKAGE_VERSIONS]: new Map(),
     });
   }
   const data = perLanguage.get(language)!;
@@ -310,14 +281,14 @@ function doRecordPerLanguage(
   // If there is a submodule, only update the submodule domain.
   const outputDomains: readonly [Map<string, PerLanguageStatus>, string][] =
     submodule
-    ? [
-      [data.submodules, `${pkgVersion}.${submodule}`],
-    ]
-    : [
-      [data.packageMajors, pkgMajor],
-      [data.packageVersions, pkgVersion],
-      [data.packages, pkgName],
-    ];
+      ? [
+        [data[Grain.PACKAGE_VERSION_SUBMODULES], `${pkgVersion}.${submodule}`],
+      ]
+      : [
+        [data[Grain.PACKAGE_MAJOR_VERSIONS], pkgMajor],
+        [data[Grain.PACKAGE_VERSIONS], pkgVersion],
+        [data[Grain.PACKAGES], pkgName],
+      ];
   for (const [map, name] of outputDomains) {
     switch (status) {
       case PerLanguageStatus.MISSING:

@@ -1278,6 +1278,14 @@ Resources:
         - Ref: ConstructHubVPCIsolatedSubnet1RouteTable750E6F36
         - Ref: ConstructHubVPCIsolatedSubnet2RouteTable18129C5D
       VpcEndpointType: Gateway
+  ConstructHubOrchestrationDLQ9C6D9BD4:
+    Type: AWS::SQS::Queue
+    Properties:
+      KmsMasterKeyId: alias/aws/sqs
+      MessageRetentionPeriod: 1209600
+      VisibilityTimeout: 900
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
   ConstructHubOrchestrationCatalogBuilderServiceRole851C750C:
     Type: AWS::IAM::Role
     Properties:
@@ -1381,14 +1389,6 @@ Resources:
           - - /aws/lambda/
             - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
       RetentionInDays: 3653
-  ConstructHubOrchestrationDLQ9C6D9BD4:
-    Type: AWS::SQS::Queue
-    Properties:
-      KmsMasterKeyId: alias/aws/sqs
-      MessageRetentionPeriod: 1209600
-      VisibilityTimeout: 900
-    UpdateReplacePolicy: Delete
-    DeletionPolicy: Delete
   ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2:
     Type: AWS::IAM::Role
     Properties:
@@ -1794,6 +1794,12 @@ Resources:
               - xray:GetSamplingTargets
             Effect: Allow
             Resource: "*"
+          - Action: lambda:InvokeFunction
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ConstructHubOrchestrationCatalogBuilder7C964951
+                - Arn
           - Action: sqs:SendMessage
             Effect: Allow
             Resource:
@@ -1805,12 +1811,6 @@ Resources:
             Resource:
               Fn::GetAtt:
                 - ConstructHubOrchestrationDocGenpython77179663
-                - Arn
-          - Action: lambda:InvokeFunction
-            Effect: Allow
-            Resource:
-              Fn::GetAtt:
-                - ConstructHubOrchestrationCatalogBuilder7C964951
                 - Arn
           - Action: lambda:InvokeFunction
             Effect: Allow
@@ -1832,46 +1832,50 @@ Resources:
       DefinitionString:
         Fn::Join:
           - ""
-          - - '{"StartAt":"DocGen","States":{"DocGen":{"Type":"Parallel","End":true,"Catch":[{"ErrorEquals":["States.ALL"],"ResultPath":"$._error","Next":"Send
-              to Dead Letter Queue"}],"Branches":[{"StartAt":"Generate python
-              docs","States":{"Generate python docs":{"Next":"Add to
-              catalog.json
-              (python)","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":30}],"Type":"Task","ResultPath":"$.docGenOutput","ResultSelector":{"python.$":"$.Payload"},"Resource":"arn:'
+          - - '{"StartAt":"Track Execution Infos","States":{"Track Execution
+              Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"DocGen"},"DocGen":{"Type":"Parallel","ResultPath":"$.DocGen","Next":"Any
+              Success?","Branches":[{"StartAt":"Generate python
+              docs","States":{"Generate python
+              docs":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":30}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"Failed
+              python"}],"Type":"Task","OutputPath":"$.result","ResultSelector":{"result":{"language":{"lang":"python"},"success.$":"$.Payload"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::lambda:invoke","Parameters":{"FunctionName":"
             - Fn::GetAtt:
                 - ConstructHubOrchestrationDocGenpython77179663
                 - Arn
-            - '","Payload.$":"$"}},"Add to catalog.json
-              (python)":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:'
-            - Ref: AWS::Partition
-            - :states:::lambda:invoke","Parameters":{"FunctionName":"
-            - Fn::GetAtt:
-                - ConstructHubOrchestrationCatalogBuilder7C964951
-                - Arn
-            - '","Payload.$":"$"}}}},{"StartAt":"Generate typescript
-              docs","States":{"Generate typescript docs":{"Next":"Add to
-              catalog.json
-              (typescript)","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":30}],"Type":"Task","ResultPath":"$.docGenOutput","ResultSelector":{"typescript.$":"$.Payload"},"Resource":"arn:'
+            - '","Payload.$":"$"}},"Failed
+              python":{"Type":"Pass","Parameters":{"error.$":"States.StringToJson($.Cause)","language":{"lang":"python"}},"End":true}}},{"StartAt":"Generate
+              typescript docs","States":{"Generate typescript
+              docs":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":30}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"Failed
+              typescript"}],"Type":"Task","OutputPath":"$.result","ResultSelector":{"result":{"language":{"lang":"typescript"},"success.$":"$.Payload"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::lambda:invoke","Parameters":{"FunctionName":"
             - Fn::GetAtt:
                 - ConstructHubOrchestrationDocGentypescriptF9C30384
                 - Arn
-            - '","Payload.$":"$"}},"Add to catalog.json
-              (typescript)":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:'
+            - '","Payload.$":"$"}},"Failed
+              typescript":{"Type":"Pass","Parameters":{"error.$":"States.StringToJson($.Cause)","language":{"lang":"typescript"}},"End":true}}}]},"Any
+              Success?":{"Type":"Choice","Choices":[{"Or":[{"Variable":"$.DocGen[0].error","IsPresent":false},{"Variable":"$.DocGen[1].error","IsPresent":false}],"Next":"Add
+              to catalog.json"}],"Default":"Any Failure?"},"Any
+              Failure?":{"Type":"Choice","Choices":[{"Or":[{"Variable":"$.DocGen[0].error","IsPresent":true},{"Variable":"$.DocGen[1].error","IsPresent":true}],"Next":"Send
+              to Dead Letter Queue"}],"Default":"Success"},"Add to
+              catalog.json":{"Next":"Any
+              Failure?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"Failed
+              to add to
+              catalog.json"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::lambda:invoke","Parameters":{"FunctionName":"
             - Fn::GetAtt:
                 - ConstructHubOrchestrationCatalogBuilder7C964951
                 - Arn
-            - '","Payload.$":"$"}}}}]},"Send to Dead Letter
+            - '","Payload.$":"$"}},"Failed to add to
+              catalog.json":{"Type":"Pass","ResultPath":"$.error","Parameters":{"error.$":"States.StringToJson($.Cause)"},"Next":"Send
+              to Dead Letter Queue"},"Send to Dead Letter
               Queue":{"Next":"Fail","Type":"Task","ResultPath":null,"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::sqs:sendMessage","Parameters":{"QueueUrl":"
             - Ref: ConstructHubOrchestrationDLQ9C6D9BD4
-            - '","MessageBody.$":"$"}},"Fail":{"Type":"Fail","Error":"Failed","Cause":"Input
-              was submitted to dead letter queue"}},"TimeoutSeconds":3600}'
+            - '","MessageBody.$":"$"}},"Fail":{"Type":"Fail"},"Success":{"Type":"Succeed"}},"TimeoutSeconds":3600}'
       StateMachineType: STANDARD
       TracingConfiguration:
         Enabled: true
@@ -1985,6 +1989,11 @@ Resources:
       PolicyDocument:
         Statement:
           - Action:
+              - xray:PutTraceSegments
+              - xray:PutTelemetryRecords
+            Effect: Allow
+            Resource: "*"
+          - Action:
               - s3:GetObject*
               - s3:GetBucket*
               - s3:List*
@@ -2042,6 +2051,8 @@ Resources:
       MemorySize: 1024
       Runtime: nodejs14.x
       Timeout: 900
+      TracingConfig:
+        Mode: Active
     DependsOn:
       - ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB
       - ConstructHubOrchestrationReprocessAllServiceRoleE23FF434
@@ -2276,6 +2287,11 @@ Resources:
       PolicyDocument:
         Statement:
           - Action:
+              - xray:PutTraceSegments
+              - xray:PutTelemetryRecords
+            Effect: Allow
+            Resource: "*"
+          - Action:
               - s3:GetObject*
               - s3:GetBucket*
               - s3:List*
@@ -2342,6 +2358,8 @@ Resources:
       ReservedConcurrentExecutions: 1
       Runtime: nodejs14.x
       Timeout: 900
+      TracingConfig:
+        Mode: Active
     DependsOn:
       - ConstructHubDiscoveryServiceRoleDefaultPolicy9D5F91B3
       - ConstructHubDiscoveryServiceRole1B3CFF96
@@ -2444,7 +2462,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2cS3BucketCD8DFC1A
+          Ref: AssetParameters2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663S3Bucket55C0232E
         S3Key:
           Fn::Join:
             - ""
@@ -2452,12 +2470,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2cS3VersionKey0F98DF50
+                      - Ref: AssetParameters2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663S3VersionKey156B584D
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2cS3VersionKey0F98DF50
+                      - Ref: AssetParameters2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663S3VersionKey156B584D
       Role:
         Fn::GetAtt:
           - ConstructHubInventoryCanaryServiceRole7684EDDE
@@ -2580,7 +2598,15 @@ Resources:
               Ingestion Function\\n\\n[button:Search Log
               Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f'
             - Ref: ConstructHubIngestion407909CE
-            - /log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":32,"properties":{"view":"timeSeries","title":"Function
+            - /log-events)\\n[button:DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.
+            - Ref: AWS::Region
+            - .amazonaws.com%2F
+            - Ref: AWS::AccountId
+            - "%2F"
+            - Fn::GetAtt:
+                - ConstructHubIngestionDLQ3E96A5F2
+                - QueueName
+            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":32,"properties":{"view":"timeSeries","title":"Function
               Health","region":"
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Invocations","expression":"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2,
@@ -2650,8 +2676,18 @@ Resources:
               Orchestration\\n\\n[button:State
               Machine](/states/home#/statemachines/view/'
             - Ref: ConstructHubOrchestration39161A46
-            - )\\n[button:Redrive](/lambda/home#/functions/
+            - )\\n[button:DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.
+            - Ref: AWS::Region
+            - .amazonaws.com%2F
+            - Ref: AWS::AccountId
+            - "%2F"
+            - Fn::GetAtt:
+                - ConstructHubOrchestrationDLQ9C6D9BD4
+                - QueueName
+            - )\\n[button:Redrive DLQ](/lambda/home#/functions/
             - Ref: ConstructHubOrchestrationRedrive8DDBA67E
+            - )\\n[button:Reprocess](/lambda/home#/functions/
+            - Ref: ConstructHubOrchestrationReprocessAllFF2F2455
             - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":46,"properties":{"view":"timeSeries","title":"State
               Machine Executions","region":"
             - Ref: AWS::Region
@@ -2762,12 +2798,19 @@ Resources:
             headers['x-content-type-options'] = { value: 'nosniff' };
             headers['strict-transport-security'] = { value: 'max-age=47304000; includeSubDomains' };
             headers['content-security-policy'] = {
-                value: 'default-src \\'none\\'; img-src \\'self\\' https://img.shields.io; script-src \\'self\\'; style-src \\'unsafe-inline\\' \\'self\\'; object-src \\'none\\'; connect-src \\'self\\'; manifest-src \\'self\\'; font-src \\'self\\'; frame-src \\'none\\'',
+                value: [
+                    "default-src 'self' 'unsafe-inline' https://*.awsstatic.com;",
+                    "connect-src 'self' https://*.shortbread.aws.dev;",
+                    "frame-src 'none';",
+                    "img-src 'self' https://* http://*.omtrdc.net;",
+                    "object-src 'none';",
+                    "style-src 'self' 'unsafe-inline';",
+                ].join(' '),
             };
             return response;
         }
 
-        //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxTQUFTLE9BQU8sQ0FBQyxLQUF5QjtJQUN4QyxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0gsbU9BQW1PO0tBQ3RPLENBQUM7SUFFRixPQUFPLFFBQVEsQ0FBQztBQUNsQixDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiaW50ZXJmYWNlIENsb3VkRnJvbnRSZXNwb25zZSB7XG4gIHJlc3BvbnNlOiBhbnk7XG4gIGhlYWRlcnM6IHtcbiAgICBba2V5OiBzdHJpbmddOiB7XG4gICAgICB2YWx1ZTogc3RyaW5nO1xuICAgIH07XG4gIH07XG59XG5cbmZ1bmN0aW9uIGhhbmRsZXIoZXZlbnQ6IENsb3VkRnJvbnRSZXNwb25zZSkge1xuICB2YXIgcmVzcG9uc2UgPSBldmVudC5yZXNwb25zZTtcbiAgdmFyIGhlYWRlcnMgPSByZXNwb25zZS5oZWFkZXJzO1xuXG4gIGhlYWRlcnNbJ3gtZnJhbWUtb3B0aW9ucyddID0geyB2YWx1ZTogJ2RlbnknIH07XG4gIGhlYWRlcnNbJ3gteHNzLXByb3RlY3Rpb24nXSA9IHsgdmFsdWU6ICcxOyBtb2RlPWJsb2NrJyB9O1xuICBoZWFkZXJzWyd4LWNvbnRlbnQtdHlwZS1vcHRpb25zJ10gPSB7IHZhbHVlOiAnbm9zbmlmZicgfTtcbiAgaGVhZGVyc1snc3RyaWN0LXRyYW5zcG9ydC1zZWN1cml0eSddID0geyB2YWx1ZTogJ21heC1hZ2U9NDczMDQwMDA7IGluY2x1ZGVTdWJEb21haW5zJyB9O1xuICBoZWFkZXJzWydjb250ZW50LXNlY3VyaXR5LXBvbGljeSddID0ge1xuICAgIHZhbHVlOlxuICAgICAgJ2RlZmF1bHQtc3JjIFxcJ25vbmVcXCc7IGltZy1zcmMgXFwnc2VsZlxcJyBodHRwczovL2ltZy5zaGllbGRzLmlvOyBzY3JpcHQtc3JjIFxcJ3NlbGZcXCc7IHN0eWxlLXNyYyBcXCd1bnNhZmUtaW5saW5lXFwnIFxcJ3NlbGZcXCc7IG9iamVjdC1zcmMgXFwnbm9uZVxcJzsgY29ubmVjdC1zcmMgXFwnc2VsZlxcJzsgbWFuaWZlc3Qtc3JjIFxcJ3NlbGZcXCc7IGZvbnQtc3JjIFxcJ3NlbGZcXCc7IGZyYW1lLXNyYyBcXCdub25lXFwnJyxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=
+        //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxTQUFTLE9BQU8sQ0FBQyxLQUF5QjtJQUN4QyxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0g7WUFDRSw2REFBNkQ7WUFDN0Qsa0RBQWtEO1lBQ2xELG1CQUFtQjtZQUNuQiwrQ0FBK0M7WUFDL0Msb0JBQW9CO1lBQ3BCLG1DQUFtQztTQUNwQyxDQUFDLElBQUksQ0FBQyxHQUFHLENBQUM7S0FDZCxDQUFDO0lBRUYsT0FBTyxRQUFRLENBQUM7QUFDbEIsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImludGVyZmFjZSBDbG91ZEZyb250UmVzcG9uc2Uge1xuICByZXNwb25zZTogYW55O1xuICBoZWFkZXJzOiB7XG4gICAgW2tleTogc3RyaW5nXToge1xuICAgICAgdmFsdWU6IHN0cmluZztcbiAgICB9O1xuICB9O1xufVxuXG5mdW5jdGlvbiBoYW5kbGVyKGV2ZW50OiBDbG91ZEZyb250UmVzcG9uc2UpIHtcbiAgdmFyIHJlc3BvbnNlID0gZXZlbnQucmVzcG9uc2U7XG4gIHZhciBoZWFkZXJzID0gcmVzcG9uc2UuaGVhZGVycztcblxuICBoZWFkZXJzWyd4LWZyYW1lLW9wdGlvbnMnXSA9IHsgdmFsdWU6ICdkZW55JyB9O1xuICBoZWFkZXJzWyd4LXhzcy1wcm90ZWN0aW9uJ10gPSB7IHZhbHVlOiAnMTsgbW9kZT1ibG9jaycgfTtcbiAgaGVhZGVyc1sneC1jb250ZW50LXR5cGUtb3B0aW9ucyddID0geyB2YWx1ZTogJ25vc25pZmYnIH07XG4gIGhlYWRlcnNbJ3N0cmljdC10cmFuc3BvcnQtc2VjdXJpdHknXSA9IHsgdmFsdWU6ICdtYXgtYWdlPTQ3MzA0MDAwOyBpbmNsdWRlU3ViRG9tYWlucycgfTtcbiAgaGVhZGVyc1snY29udGVudC1zZWN1cml0eS1wb2xpY3knXSA9IHtcbiAgICB2YWx1ZTpcbiAgICAgIFtcbiAgICAgICAgXCJkZWZhdWx0LXNyYyAnc2VsZicgJ3Vuc2FmZS1pbmxpbmUnIGh0dHBzOi8vKi5hd3NzdGF0aWMuY29tO1wiLFxuICAgICAgICBcImNvbm5lY3Qtc3JjICdzZWxmJyBodHRwczovLyouc2hvcnRicmVhZC5hd3MuZGV2O1wiLFxuICAgICAgICBcImZyYW1lLXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwiaW1nLXNyYyAnc2VsZicgaHR0cHM6Ly8qIGh0dHA6Ly8qLm9tdHJkYy5uZXQ7XCIsXG4gICAgICAgIFwib2JqZWN0LXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwic3R5bGUtc3JjICdzZWxmJyAndW5zYWZlLWlubGluZSc7XCIsXG4gICAgICBdLmpvaW4oJyAnKSxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=
       FunctionConfig:
         Comment: AddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
         Runtime: cloudfront-js-1.0
@@ -2949,7 +2992,7 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParametersc6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706S3Bucket77842B48
+        - Ref: AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3Bucket7701BA06
       SourceObjectKeys:
         - Fn::Join:
             - ""
@@ -2957,12 +3000,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersc6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706S3VersionKey5E1BC344
+                      - Ref: AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3VersionKey2BFF2A41
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersc6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706S3VersionKey5E1BC344
+                      - Ref: AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3VersionKey2BFF2A41
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: true
@@ -3256,13 +3299,13 @@ Resources:
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParametersc6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706S3Bucket77842B48
+                    - Ref: AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3Bucket7701BA06
               - Fn::Join:
                   - ""
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParametersc6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706S3Bucket77842B48
+                    - Ref: AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3Bucket7701BA06
                     - /*
           - Action:
               - s3:GetObject*
@@ -3435,18 +3478,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "a25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88ece"
-  AssetParametersad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2cS3BucketCD8DFC1A:
+  AssetParameters2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663S3Bucket55C0232E:
     Type: String
     Description: S3 bucket for asset
-      "ad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2c"
-  AssetParametersad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2cS3VersionKey0F98DF50:
+      "2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663"
+  AssetParameters2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663S3VersionKey156B584D:
     Type: String
     Description: S3 key for asset version
-      "ad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2c"
-  AssetParametersad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2cArtifactHash9665E5DB:
+      "2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663"
+  AssetParameters2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663ArtifactHash359D7BA7:
     Type: String
     Description: Artifact hash for asset
-      "ad83fed51ffbd85eed2d12479f475b703938e840541446c3cc6e2edd1a3f0b2c"
+      "2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663"
   AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746S3Bucket81575F72:
     Type: String
     Description: S3 bucket for asset
@@ -3483,18 +3526,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf"
-  AssetParametersc6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706S3Bucket77842B48:
+  AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3Bucket7701BA06:
     Type: String
     Description: S3 bucket for asset
-      "c6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706"
-  AssetParametersc6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706S3VersionKey5E1BC344:
+      "61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7a"
+  AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3VersionKey2BFF2A41:
     Type: String
     Description: S3 key for asset version
-      "c6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706"
-  AssetParametersc6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706ArtifactHash8EDEDEC2:
+      "61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7a"
+  AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aArtifactHash390AB370:
     Type: String
     Description: Artifact hash for asset
-      "c6584f39470b0fdb93ced473b0f51f47f45f99858a4ac84dd2419213feec6706"
+      "61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7a"
   AssetParametersd5594c96e8d8bc8ce1cd238fb011bd3e1a5c69dada29b4366e17e735f7617fa3S3Bucket5045DB1E:
     Type: String
     Description: S3 bucket for asset

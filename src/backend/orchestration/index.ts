@@ -1,6 +1,6 @@
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
-import { Fail, IStateMachine, JsonPath, Parallel, StateMachine, StateMachineType, TaskInput } from '@aws-cdk/aws-stepfunctions';
+import { Choice, Condition, Fail, IStateMachine, JsonPath, Parallel, Pass, StateMachine, StateMachineType, Succeed, TaskInput } from '@aws-cdk/aws-stepfunctions';
 import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
 import { Construct, Duration } from '@aws-cdk/core';
 import { CatalogBuilder } from '../catalog-builder';
@@ -35,20 +35,14 @@ export class Orchestration extends Construct {
    */
   public readonly redriveFunction: IFunction;
 
+  /**
+   * The function operators can use to reprocess all indexed packages through
+   * the backend data pipeline.
+   */
+  public readonly reprocessAllFunction: IFunction;
+
   public constructor(scope: Construct, id: string, props: OrchestrationProps) {
     super(scope, id);
-
-    const catalogBuilder = new CatalogBuilder(this, 'CatalogBuilder', props).function;
-    const addToCatalog = (lang: DocumentationLanguage) => new tasks.LambdaInvoke(this, `Add to catalog.json (${lang})`, {
-      lambdaFunction: catalogBuilder,
-      resultPath: '$.catalogBuilderOutput',
-      resultSelector: {
-        'ETag.$': '$.Payload.ETag',
-        'VersionId.$': '$.Payload.VersionId',
-      },
-    })
-      // This has a concurrency of 1, so we want to aggressively retry being throttled here.
-      .addRetry({ errors: ['Lambda.TooManyRequestsException'], interval: Duration.seconds(30), maxAttempts: 5 });
 
     this.deadLetterQueue = new Queue(this, 'DLQ', {
       encryption: QueueEncryption.KMS_MANAGED,
@@ -62,22 +56,71 @@ export class Orchestration extends Construct {
       resultPath: JsonPath.DISCARD,
     });
 
-    const definition = new Parallel(this, 'DocGen')
-      .branch(...SUPPORTED_LANGUAGES.map((language) => {
-        const task = new tasks.LambdaInvoke(this, `Generate ${language} docs`, {
-          lambdaFunction: new Transliterator(this, `DocGen-${language}`, { ...props, language }).function,
-          resultPath: '$.docGenOutput',
-          resultSelector: { [`${language}.$`]: '$.Payload' },
-        }).addRetry({ interval: Duration.seconds(30) });
-        return task.next(addToCatalog(language));
-      }))
-      .addCatch(
-        sendToDeadLetterQueue.next(new Fail(this, 'Fail', {
-          error: 'Failed',
-          cause: 'Input was submitted to dead letter queue',
-        })),
-        { resultPath: '$._error' },
-      );
+    const addToCatalog = new tasks.LambdaInvoke(this, 'Add to catalog.json', {
+      lambdaFunction: new CatalogBuilder(this, 'CatalogBuilder', props).function,
+      resultPath: '$.catalogBuilderOutput',
+      resultSelector: {
+        'ETag.$': '$.Payload.ETag',
+        'VersionId.$': '$.Payload.VersionId',
+      },
+    })
+      // This has a concurrency of 1, so we want to aggressively retry being throttled here.
+      .addRetry({ errors: ['Lambda.TooManyRequestsException'], interval: Duration.seconds(30), maxAttempts: 5 })
+      .addCatch(new Pass(this, 'Failed to add to catalog.json', {
+        parameters: { 'error.$': 'States.StringToJson($.Cause)' },
+        resultPath: '$.error',
+      }).next(sendToDeadLetterQueue));
+
+    const docGenResultsKey = 'DocGen';
+    const sendToDlqIfNeeded = new Choice(this, 'Any Failure?')
+      .when(
+        Condition.or(
+          ...SUPPORTED_LANGUAGES.map((_, i) => Condition.isPresent(`$.${docGenResultsKey}[${i}].error`)),
+        ),
+        sendToDeadLetterQueue.next(new Fail(this, 'Fail')),
+      )
+      .otherwise(new Succeed(this, 'Success'));
+
+    const definition = new Pass(this, 'Track Execution Infos', {
+      inputPath: '$$.Execution',
+      parameters: {
+        'Id.$': '$.Id',
+        'Name.$': '$.Name',
+        'RoleArn.$': '$.RoleArn',
+        'StartTime.$': '$.StartTime',
+      },
+      resultPath: '$.$TaskExecution',
+    }).next(
+      new Parallel(this, 'DocGen', { resultPath: `$.${docGenResultsKey}` })
+        .branch(...SUPPORTED_LANGUAGES.map((language) =>
+          new tasks.LambdaInvoke(this, `Generate ${language} docs`, {
+            lambdaFunction: new Transliterator(this, `DocGen-${language}`, { ...props, language }).function,
+            outputPath: '$.result',
+            resultSelector: {
+              result: {
+                'language': language,
+                'success.$': '$.Payload',
+              },
+            },
+          }).addRetry({ interval: Duration.seconds(30) })
+            .addCatch(
+              new Pass(this, `Failed ${language}`, {
+                parameters: {
+                  'error.$': 'States.StringToJson($.Cause)',
+                  language,
+                },
+              }),
+            ),
+        ))
+        .next(new Choice(this, 'Any Success?')
+          .when(
+            Condition.or(
+              ...SUPPORTED_LANGUAGES.map((_, i) => Condition.isNotPresent(`$.${docGenResultsKey}[${i}].error`)),
+            ),
+            addToCatalog.next(sendToDlqIfNeeded),
+          )
+          .otherwise(sendToDlqIfNeeded),
+        ));
 
     this.stateMachine = new StateMachine(this, 'Resource', {
       definition,
@@ -103,7 +146,7 @@ export class Orchestration extends Construct {
 
     // This function is intended to be manually triggered by an operator to
     // reprocess all package versions currently in store through the back-end.
-    const reprocessAll = new ReprocessAll(this, 'ReprocessAll', {
+    this.reprocessAllFunction = new ReprocessAll(this, 'ReprocessAll', {
       description: '[ConstructHub/ReprocessAll] Reprocess all package versions through the backend',
       environment: {
         BUCKET_NAME: props.bucket.bucketName,
@@ -111,8 +154,9 @@ export class Orchestration extends Construct {
       },
       memorySize: 1_024,
       timeout: Duration.minutes(15),
+      tracing: Tracing.ACTIVE,
     });
-    props.bucket.grantRead(reprocessAll);
-    this.stateMachine.grantStartExecution(reprocessAll);
+    props.bucket.grantRead(this.reprocessAllFunction);
+    this.stateMachine.grantStartExecution(this.reprocessAllFunction);
   }
 }
