@@ -57,16 +57,16 @@ Object {
       "Description": "S3 key for asset version \\"516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9\\"",
       "Type": "String",
     },
-    "AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aArtifactHash390AB370": Object {
-      "Description": "Artifact hash for asset \\"61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7a\\"",
+    "AssetParameters51b62a58623b4981489597820118aeca89c58c2c6c12340c0cfbef37eefdc748ArtifactHash36F17D18": Object {
+      "Description": "Artifact hash for asset \\"51b62a58623b4981489597820118aeca89c58c2c6c12340c0cfbef37eefdc748\\"",
       "Type": "String",
     },
-    "AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3Bucket7701BA06": Object {
-      "Description": "S3 bucket for asset \\"61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7a\\"",
+    "AssetParameters51b62a58623b4981489597820118aeca89c58c2c6c12340c0cfbef37eefdc748S3Bucket778BD559": Object {
+      "Description": "S3 bucket for asset \\"51b62a58623b4981489597820118aeca89c58c2c6c12340c0cfbef37eefdc748\\"",
       "Type": "String",
     },
-    "AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3VersionKey2BFF2A41": Object {
-      "Description": "S3 key for asset version \\"61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7a\\"",
+    "AssetParameters51b62a58623b4981489597820118aeca89c58c2c6c12340c0cfbef37eefdc748S3VersionKeyD847F614": Object {
+      "Description": "S3 key for asset version \\"51b62a58623b4981489597820118aeca89c58c2c6c12340c0cfbef37eefdc748\\"",
       "Type": "String",
     },
     "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24ArtifactHashBA91B77F": Object {
@@ -3296,7 +3296,67 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                           "Arn",
                         ],
                       },
+                      "/data/*/docs-*-python.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
                       "/data/*/docs-python.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-python.md.not-supported",
                     ],
                   ],
                 },
@@ -3648,7 +3708,67 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                           "Arn",
                         ],
                       },
+                      "/data/*/docs-*-typescript.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
                       "/data/*/docs-typescript.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-typescript.md.not-supported",
                     ],
                   ],
                 },
@@ -4818,7 +4938,73 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                           "Arn",
                         ],
                       },
+                      "/data/*/docs-*-python.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:Abort*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
                       "/data/*/docs-python.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:Abort*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-python.md.not-supported",
                     ],
                   ],
                 },
@@ -4884,7 +5070,73 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                           "Arn",
                         ],
                       },
+                      "/data/*/docs-*-typescript.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:Abort*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
                       "/data/*/docs-typescript.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:Abort*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-typescript.md.not-supported",
                     ],
                   ],
                 },
@@ -5142,7 +5394,7 @@ function handler(event) {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3Bucket7701BA06",
+            "Ref": "AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591S3Bucket5E5ABF3D",
           },
         ],
         "SourceObjectKeys": Array [
@@ -5157,7 +5409,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3VersionKey2BFF2A41",
+                          "Ref": "AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591S3VersionKeyA4AD8D03",
                         },
                       ],
                     },
@@ -5170,7 +5422,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3VersionKey2BFF2A41",
+                          "Ref": "AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591S3VersionKeyA4AD8D03",
                         },
                       ],
                     },
@@ -5524,7 +5776,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3Bucket7701BA06",
+                        "Ref": "AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591S3Bucket5E5ABF3D",
                       },
                     ],
                   ],
@@ -5539,7 +5791,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3Bucket7701BA06",
+                        "Ref": "AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591S3Bucket5E5ABF3D",
                       },
                       "/*",
                     ],
@@ -5793,16 +6045,16 @@ Object {
       "Description": "S3 key for asset version \\"516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9\\"",
       "Type": "String",
     },
-    "AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aArtifactHash390AB370": Object {
-      "Description": "Artifact hash for asset \\"61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7a\\"",
+    "AssetParameters51b62a58623b4981489597820118aeca89c58c2c6c12340c0cfbef37eefdc748ArtifactHash36F17D18": Object {
+      "Description": "Artifact hash for asset \\"51b62a58623b4981489597820118aeca89c58c2c6c12340c0cfbef37eefdc748\\"",
       "Type": "String",
     },
-    "AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3Bucket7701BA06": Object {
-      "Description": "S3 bucket for asset \\"61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7a\\"",
+    "AssetParameters51b62a58623b4981489597820118aeca89c58c2c6c12340c0cfbef37eefdc748S3Bucket778BD559": Object {
+      "Description": "S3 bucket for asset \\"51b62a58623b4981489597820118aeca89c58c2c6c12340c0cfbef37eefdc748\\"",
       "Type": "String",
     },
-    "AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3VersionKey2BFF2A41": Object {
-      "Description": "S3 key for asset version \\"61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7a\\"",
+    "AssetParameters51b62a58623b4981489597820118aeca89c58c2c6c12340c0cfbef37eefdc748S3VersionKeyD847F614": Object {
+      "Description": "S3 key for asset version \\"51b62a58623b4981489597820118aeca89c58c2c6c12340c0cfbef37eefdc748\\"",
       "Type": "String",
     },
     "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24ArtifactHashBA91B77F": Object {
@@ -9215,7 +9467,67 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                           "Arn",
                         ],
                       },
+                      "/data/*/docs-*-python.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
                       "/data/*/docs-python.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-python.md.not-supported",
                     ],
                   ],
                 },
@@ -9567,7 +9879,67 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                           "Arn",
                         ],
                       },
+                      "/data/*/docs-*-typescript.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
                       "/data/*/docs-typescript.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-typescript.md.not-supported",
                     ],
                   ],
                 },
@@ -10737,7 +11109,73 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                           "Arn",
                         ],
                       },
+                      "/data/*/docs-*-python.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:Abort*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
                       "/data/*/docs-python.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:Abort*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-python.md.not-supported",
                     ],
                   ],
                 },
@@ -10803,7 +11241,73 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                           "Arn",
                         ],
                       },
+                      "/data/*/docs-*-typescript.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:Abort*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
                       "/data/*/docs-typescript.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:Abort*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-typescript.md.not-supported",
                     ],
                   ],
                 },
@@ -11113,7 +11617,7 @@ function handler(event) {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3Bucket7701BA06",
+            "Ref": "AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591S3Bucket5E5ABF3D",
           },
         ],
         "SourceObjectKeys": Array [
@@ -11128,7 +11632,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3VersionKey2BFF2A41",
+                          "Ref": "AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591S3VersionKeyA4AD8D03",
                         },
                       ],
                     },
@@ -11141,7 +11645,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3VersionKey2BFF2A41",
+                          "Ref": "AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591S3VersionKeyA4AD8D03",
                         },
                       ],
                     },
@@ -11721,7 +12225,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3Bucket7701BA06",
+                        "Ref": "AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591S3Bucket5E5ABF3D",
                       },
                     ],
                   ],
@@ -11736,7 +12240,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters61b1fd9ee5fa58c13e12d28f7d8ecc1ef94a15673bec6fb6e516ad87cb29df7aS3Bucket7701BA06",
+                        "Ref": "AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591S3Bucket5E5ABF3D",
                       },
                       "/*",
                     ],
