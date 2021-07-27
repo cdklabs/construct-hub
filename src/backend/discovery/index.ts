@@ -9,7 +9,7 @@ import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
 import { MetricName, METRICS_NAMESPACE, S3KeyPrefix, DISCOVERY_MARKER_KEY } from './constants';
-import { Discovery as Handler } from './discovery';
+import { Follow } from './follow';
 import { Stage } from './stage';
 
 export interface DiscoveryProps {
@@ -84,7 +84,7 @@ export class Discovery extends Construct {
       visibilityTimeout: this.timeout,
     });
 
-    this.npmCatalogFollower = new Handler(this, 'Default', {
+    this.npmCatalogFollower = new Follow(this, 'Default', {
       description: '[ConstructHub/Discovery/NpmCatalogFollower] Periodically query npm.js index for new construct libraries',
       memorySize: 10_240,
       /// Only one execution (avoids race conditions on the S3 marker object)
