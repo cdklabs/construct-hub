@@ -1,17 +1,23 @@
-import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
+import { Port } from '@aws-cdk/aws-ec2';
+import { FileSystem, IAccessPoint, LifecyclePolicy, PerformanceMode, ThroughputMode } from '@aws-cdk/aws-efs';
+import { Rule, Schedule } from '@aws-cdk/aws-events';
+import { LambdaFunction } from '@aws-cdk/aws-events-targets';
+import { Effect, PolicyStatement } from '@aws-cdk/aws-iam';
+import { CfnFunction, IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Choice, Condition, Fail, IStateMachine, JsonPath, Parallel, Pass, StateMachine, StateMachineType, Succeed, TaskInput } from '@aws-cdk/aws-stepfunctions';
 import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
-import { Construct, Duration } from '@aws-cdk/core';
+import { Construct, Duration, RemovalPolicy } from '@aws-cdk/core';
 import { CatalogBuilder } from '../catalog-builder';
 import { DocumentationLanguage } from '../shared/language';
 import { Transliterator, TransliteratorProps } from '../transliterator';
+import { CleanUpEfs } from './clean-up-efs';
 import { RedriveStateMachine } from './redrive-state-machine';
 import { ReprocessAll } from './reprocess-all';
 
 const SUPPORTED_LANGUAGES = [DocumentationLanguage.PYTHON, DocumentationLanguage.TYPESCRIPT];
 
-export interface OrchestrationProps extends Omit<TransliteratorProps, 'language'>{}
+export interface OrchestrationProps extends Omit<TransliteratorProps, 'efsAccessPoint' | 'language'>{}
 
 /**
  * Orchestrates the backend processing tasks using a StepFunctions State Machine.
@@ -81,6 +87,8 @@ export class Orchestration extends Construct {
       )
       .otherwise(new Succeed(this, 'Success'));
 
+    const efsAccessPoint = this.newEfsAccessPoint(props);
+
     const definition = new Pass(this, 'Track Execution Infos', {
       inputPath: '$$.Execution',
       parameters: {
@@ -94,7 +102,7 @@ export class Orchestration extends Construct {
       new Parallel(this, 'DocGen', { resultPath: `$.${docGenResultsKey}` })
         .branch(...SUPPORTED_LANGUAGES.map((language) =>
           new tasks.LambdaInvoke(this, `Generate ${language} docs`, {
-            lambdaFunction: new Transliterator(this, `DocGen-${language}`, { ...props, language }).function,
+            lambdaFunction: new Transliterator(this, `DocGen-${language}`, { ...props, efsAccessPoint, language }).function,
             outputPath: '$.result',
             resultSelector: {
               result: {
@@ -129,6 +137,9 @@ export class Orchestration extends Construct {
       tracingEnabled: true,
     });
 
+    // Ensure the State Machine does not get to run before the VPC can be used.
+    this.stateMachine.node.addDependency(props.vpc.internetConnectivityEstablished);
+
     // This function is intended to be manually triggered by an operrator to
     // attempt redriving messages from the DLQ.
     this.redriveFunction = new RedriveStateMachine(this, 'Redrive', {
@@ -158,5 +169,67 @@ export class Orchestration extends Construct {
     });
     props.bucket.grantRead(this.reprocessAllFunction);
     this.stateMachine.grantStartExecution(this.reprocessAllFunction);
+  }
+
+  private newEfsAccessPoint(props: OrchestrationProps): IAccessPoint {
+    const fs = new FileSystem(this, 'FileSystem', {
+      encrypted: true,
+      lifecyclePolicy: LifecyclePolicy.AFTER_7_DAYS,
+      performanceMode: PerformanceMode.GENERAL_PURPOSE,
+      removalPolicy: RemovalPolicy.DESTROY, // The data is 100% transient
+      throughputMode: ThroughputMode.BURSTING,
+      vpc: props.vpc,
+      vpcSubnets: props.vpcSubnets,
+    });
+    const efsAccessPoint = fs.addAccessPoint('AccessPoint', {
+      createAcl: {
+        ownerGid: '1000',
+        ownerUid: '1000',
+        permissions: '0777',
+      },
+      path: '/lambda-shared',
+      posixUser: {
+        uid: '1000',
+        gid: '1000',
+      },
+    });
+    efsAccessPoint.node.addDependency(fs.mountTargetsAvailable);
+
+    const efsMountPath = '/mnt/efs';
+    const cleanUp = new CleanUpEfs(this, 'EFSCleanUp', {
+      description: '[ConstructHub/CleanUpEFS] Cleans up leftover files from an EFS file system',
+      environment: {
+        EFS_MOUNT_PATH: efsMountPath,
+        IGNORE_DIRS: `${efsMountPath}/HOME`,
+      },
+      memorySize: 1_024,
+      timeout: Duration.minutes(15),
+      vpc: props.vpc,
+      vpcSubnets: props.vpcSubnets,
+    });
+    // TODO: The @aws-cdk/aws-lambda library does not support EFS mounts yet T_T
+    (cleanUp.node.defaultChild! as CfnFunction).addPropertyOverride('FileSystemConfigs', [{
+      Arn: efsAccessPoint.accessPointArn,
+      LocalMountPath: efsMountPath,
+    }]);
+    fs.connections.allowFrom(cleanUp, Port.allTraffic());
+
+    const rule = new Rule(this, 'CleanUpEFSTrigger', { description: `Runs ${cleanUp.functionName} every hour`, schedule: Schedule.rate(Duration.hours(1)) });
+    rule.addTarget(new LambdaFunction(cleanUp));
+
+    if (props.vpcEndpoints) {
+      props.vpcEndpoints.elasticFileSystem.addToPolicy(new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['elasticfilesystem:ClientMount', 'elasticfilesystem:ClientWrite'],
+        conditions: {
+          Bool: { 'aws:SecureTransport': 'true' },
+          ArnEquals: { 'elasticfilesystem:AccessPointArn': efsAccessPoint.accessPointArn },
+        },
+        principals: [cleanUp.grantPrincipal],
+        resources: [fs.fileSystemArn],
+      }));
+    }
+
+    return efsAccessPoint;
   }
 }

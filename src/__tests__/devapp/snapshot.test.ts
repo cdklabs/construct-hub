@@ -13,6 +13,6 @@ expect.addSnapshotSerializer({
 
 test('golden snapshot', () => {
   const app = new App();
-  const stack = new DevStack(app, 'dev');
+  const stack = new DevStack(app, 'dev', { isolateLambdas: true });
   expect(app.synth().getStackByName(stack.stackName)).toMatchSnapshot();
 });

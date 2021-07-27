@@ -57,6 +57,18 @@ Object {
       "Description": "S3 key for asset version \\"2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663\\"",
       "Type": "String",
     },
+    "AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98ArtifactHashD4AC1828": Object {
+      "Description": "Artifact hash for asset \\"2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98\\"",
+      "Type": "String",
+    },
+    "AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98S3BucketF611EFC9": Object {
+      "Description": "S3 bucket for asset \\"2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98\\"",
+      "Type": "String",
+    },
+    "AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98S3VersionKey9E90DFEA": Object {
+      "Description": "S3 key for asset version \\"2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98\\"",
+      "Type": "String",
+    },
     "AssetParameters516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9ArtifactHash41DE1E42": Object {
       "Description": "Artifact hash for asset \\"516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9\\"",
       "Type": "String",
@@ -81,16 +93,16 @@ Object {
       "Description": "S3 key for asset version \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
       "Type": "String",
     },
-    "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eArtifactHash8E86E95B": Object {
-      "Description": "Artifact hash for asset \\"7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74e\\"",
+    "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beArtifactHash5DE94BC7": Object {
+      "Description": "Artifact hash for asset \\"75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230be\\"",
       "Type": "String",
     },
-    "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3BucketB29D99C7": Object {
-      "Description": "S3 bucket for asset \\"7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74e\\"",
+    "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beS3BucketD7CA7618": Object {
+      "Description": "S3 bucket for asset \\"75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230be\\"",
       "Type": "String",
     },
-    "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA": Object {
-      "Description": "S3 key for asset version \\"7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74e\\"",
+    "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beS3VersionKey7C750AD6": Object {
+      "Description": "S3 key for asset version \\"75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230be\\"",
       "Type": "String",
     },
     "AssetParameters809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46ArtifactHash1825D77A": Object {
@@ -721,71 +733,6 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         "RepositoryName": "c857fcb69e05ffe74ccbcc624c4f6a4017daeb8cbb",
       },
       "Type": "AWS::CodeArtifact::Repository",
-    },
-    "ConstructHubCodeArtifactDescribeDomain6ABCBF4B": Object {
-      "DeletionPolicy": "Delete",
-      "DependsOn": Array [
-        "ConstructHubCodeArtifactDescribeDomainCustomResourcePolicy1A93C60C",
-      ],
-      "Properties": Object {
-        "Create": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"describeDomain\\",\\"parameters\\":{\\"domain\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubCodeArtifact1188409E",
-                  "DomainName",
-                ],
-              },
-              "\\",\\"domainOwner\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubCodeArtifact1188409E",
-                  "DomainOwner",
-                ],
-              },
-              "\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"domain.s3BucketArn\\"}}",
-            ],
-          ],
-        },
-        "InstallLatestAwsSdk": true,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::CoreArtifactDomainDescription",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ConstructHubCodeArtifactDescribeDomainCustomResourcePolicy1A93C60C": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "codeartifact:DescribeDomain",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubCodeArtifactDomainFC30B796",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ConstructHubCodeArtifactDescribeDomainCustomResourcePolicy1A93C60C",
-        "Roles": Array [
-          Object {
-            "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubCodeArtifactDomainFC30B796": Object {
       "Properties": Object {
@@ -2698,6 +2645,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "DependsOn": Array [
         "ConstructHubOrchestrationRoleDefaultPolicyEACD181F",
         "ConstructHubOrchestrationRoleF4CF6987",
+        "ConstructHubVPCIGW935F4C28",
       ],
       "Properties": Object {
         "DefinitionString": Object {
@@ -2952,6 +2900,55 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::IAM::Policy",
     },
+    "ConstructHubOrchestrationCleanUpEFSTrigger7CBD4AE3": Object {
+      "Properties": Object {
+        "Description": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "Runs ",
+              Object {
+                "Ref": "ConstructHubOrchestrationEFSCleanUpAEF55F55",
+              },
+              " every hour",
+            ],
+          ],
+        },
+        "ScheduleExpression": "rate(1 hour)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubOrchestrationEFSCleanUpAEF55F55",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubOrchestrationCleanUpEFSTriggerAllowEventRuleTestConstructHubOrchestrationEFSCleanUpE3EDBF26CEEEA65D": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationEFSCleanUpAEF55F55",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationCleanUpEFSTrigger7CBD4AE3",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
     "ConstructHubOrchestrationDLQ9C6D9BD4": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
@@ -2970,7 +2967,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3BucketB29D99C7",
+            "Ref": "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beS3BucketD7CA7618",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -2983,7 +2980,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA",
+                          "Ref": "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beS3VersionKey7C750AD6",
                         },
                       ],
                     },
@@ -2996,7 +2993,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA",
+                          "Ref": "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beS3VersionKey7C750AD6",
                         },
                       ],
                     },
@@ -3009,27 +3006,6 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         "Description": "Creates python documentation from jsii-enabled npm packages",
         "Environment": Object {
           "Variables": Object {
-            "CODE_ARTIFACT_API_ENDPOINT": Object {
-              "Fn::Select": Array [
-                1,
-                Object {
-                  "Fn::Split": Array [
-                    ":",
-                    Object {
-                      "Fn::Select": Array [
-                        0,
-                        Object {
-                          "Fn::GetAtt": Array [
-                            "ConstructHubVPCCodeArtifactAPI954CFDE1",
-                            "DnsEntries",
-                          ],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
             "CODE_ARTIFACT_DOMAIN_NAME": Object {
               "Fn::GetAtt": Array [
                 "ConstructHubCodeArtifact1188409E",
@@ -3049,9 +3025,39 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               ],
             },
             "HEADER_SPAN": "true",
+            "HOME": "/mnt/efs/HOME",
             "TARGET_LANGUAGE": "python",
+            "TMPDIR": "/mnt/efs",
           },
         },
+        "FileSystemConfigs": Array [
+          Object {
+            "Arn": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "arn:",
+                  Object {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":elasticfilesystem:",
+                  Object {
+                    "Ref": "AWS::Region",
+                  },
+                  ":",
+                  Object {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":access-point/",
+                  Object {
+                    "Ref": "ConstructHubOrchestrationFileSystemAccessPoint77C6EF7B",
+                  },
+                ],
+              ],
+            },
+            "LocalMountPath": "/mnt/efs",
+          },
+        ],
         "Handler": "index.handler",
         "MemorySize": 10240,
         "Role": Object {
@@ -3076,10 +3082,10 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
           "SubnetIds": Array [
             Object {
-              "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
+              "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
             },
             Object {
-              "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
+              "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
             },
           ],
         },
@@ -3382,7 +3388,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3BucketB29D99C7",
+            "Ref": "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beS3BucketD7CA7618",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -3395,7 +3401,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA",
+                          "Ref": "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beS3VersionKey7C750AD6",
                         },
                       ],
                     },
@@ -3408,7 +3414,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA",
+                          "Ref": "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beS3VersionKey7C750AD6",
                         },
                       ],
                     },
@@ -3421,27 +3427,6 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         "Description": "Creates typescript documentation from jsii-enabled npm packages",
         "Environment": Object {
           "Variables": Object {
-            "CODE_ARTIFACT_API_ENDPOINT": Object {
-              "Fn::Select": Array [
-                1,
-                Object {
-                  "Fn::Split": Array [
-                    ":",
-                    Object {
-                      "Fn::Select": Array [
-                        0,
-                        Object {
-                          "Fn::GetAtt": Array [
-                            "ConstructHubVPCCodeArtifactAPI954CFDE1",
-                            "DnsEntries",
-                          ],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
             "CODE_ARTIFACT_DOMAIN_NAME": Object {
               "Fn::GetAtt": Array [
                 "ConstructHubCodeArtifact1188409E",
@@ -3461,9 +3446,39 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               ],
             },
             "HEADER_SPAN": "true",
+            "HOME": "/mnt/efs/HOME",
             "TARGET_LANGUAGE": "typescript",
+            "TMPDIR": "/mnt/efs",
           },
         },
+        "FileSystemConfigs": Array [
+          Object {
+            "Arn": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "arn:",
+                  Object {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":elasticfilesystem:",
+                  Object {
+                    "Ref": "AWS::Region",
+                  },
+                  ":",
+                  Object {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":access-point/",
+                  Object {
+                    "Ref": "ConstructHubOrchestrationFileSystemAccessPoint77C6EF7B",
+                  },
+                ],
+              ],
+            },
+            "LocalMountPath": "/mnt/efs",
+          },
+        ],
         "Handler": "index.handler",
         "MemorySize": 10240,
         "Role": Object {
@@ -3488,10 +3503,10 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
           "SubnetIds": Array [
             Object {
-              "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
+              "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
             },
             Object {
-              "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
+              "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
             },
           ],
         },
@@ -3785,6 +3800,336 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubOrchestrationEFSCleanUpAEF55F55": Object {
+      "DependsOn": Array [
+        "ConstructHubOrchestrationEFSCleanUpServiceRole56AA94B9",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98S3BucketF611EFC9",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98S3VersionKey9E90DFEA",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98S3VersionKey9E90DFEA",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "[ConstructHub/CleanUpEFS] Cleans up leftover files from an EFS file system",
+        "Environment": Object {
+          "Variables": Object {
+            "EFS_MOUNT_PATH": "/mnt/efs",
+            "IGNORE_DIRS": "/mnt/efs/HOME",
+          },
+        },
+        "FileSystemConfigs": Array [
+          Object {
+            "Arn": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "arn:",
+                  Object {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":elasticfilesystem:",
+                  Object {
+                    "Ref": "AWS::Region",
+                  },
+                  ":",
+                  Object {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":access-point/",
+                  Object {
+                    "Ref": "ConstructHubOrchestrationFileSystemAccessPoint77C6EF7B",
+                  },
+                ],
+              ],
+            },
+            "LocalMountPath": "/mnt/efs",
+          },
+        ],
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationEFSCleanUpServiceRole56AA94B9",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+        "VpcConfig": Object {
+          "SecurityGroupIds": Array [
+            Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubOrchestrationEFSCleanUpSecurityGroup61914A8D",
+                "GroupId",
+              ],
+            },
+          ],
+          "SubnetIds": Array [
+            Object {
+              "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
+            },
+            Object {
+              "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
+            },
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubOrchestrationEFSCleanUpSecurityGroup61914A8D": Object {
+      "Properties": Object {
+        "GroupDescription": "Automatic security group for Lambda Function TestConstructHubOrchestrationEFSCleanUpE3EDBF26",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "ConstructHubOrchestrationEFSCleanUpServiceRole56AA94B9": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubOrchestrationFileSystemADB533E6": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "Encrypted": true,
+        "FileSystemTags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Orchestration/FileSystem",
+          },
+        ],
+        "LifecyclePolicies": Array [
+          Object {
+            "TransitionToIA": "AFTER_7_DAYS",
+          },
+        ],
+        "PerformanceMode": "generalPurpose",
+        "ThroughputMode": "bursting",
+      },
+      "Type": "AWS::EFS::FileSystem",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubOrchestrationFileSystemAccessPoint77C6EF7B": Object {
+      "DependsOn": Array [
+        "ConstructHubOrchestrationFileSystemEfsMountTarget149FD6F15",
+        "ConstructHubOrchestrationFileSystemEfsMountTarget23DA818AD",
+      ],
+      "Properties": Object {
+        "FileSystemId": Object {
+          "Ref": "ConstructHubOrchestrationFileSystemADB533E6",
+        },
+        "PosixUser": Object {
+          "Gid": "1000",
+          "Uid": "1000",
+        },
+        "RootDirectory": Object {
+          "CreationInfo": Object {
+            "OwnerGid": "1000",
+            "OwnerUid": "1000",
+            "Permissions": "0777",
+          },
+          "Path": "/lambda-shared",
+        },
+      },
+      "Type": "AWS::EFS::AccessPoint",
+    },
+    "ConstructHubOrchestrationFileSystemEfsMountTarget149FD6F15": Object {
+      "Properties": Object {
+        "FileSystemId": Object {
+          "Ref": "ConstructHubOrchestrationFileSystemADB533E6",
+        },
+        "SecurityGroups": Array [
+          Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A",
+              "GroupId",
+            ],
+          },
+        ],
+        "SubnetId": Object {
+          "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
+        },
+      },
+      "Type": "AWS::EFS::MountTarget",
+    },
+    "ConstructHubOrchestrationFileSystemEfsMountTarget23DA818AD": Object {
+      "Properties": Object {
+        "FileSystemId": Object {
+          "Ref": "ConstructHubOrchestrationFileSystemADB533E6",
+        },
+        "SecurityGroups": Array [
+          Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A",
+              "GroupId",
+            ],
+          },
+        ],
+        "SubnetId": Object {
+          "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
+        },
+      },
+      "Type": "AWS::EFS::MountTarget",
+    },
+    "ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A": Object {
+      "Properties": Object {
+        "GroupDescription": "Test/ConstructHub/Orchestration/FileSystem/EfsSecurityGroup",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Orchestration/FileSystem",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "ConstructHubOrchestrationFileSystemEfsSecurityGroupfromTestConstructHubOrchestrationDocGenpythonSecurityGroup9423C0B6ALLTRAFFICB34ADEB8": Object {
+      "Properties": Object {
+        "Description": "from TestConstructHubOrchestrationDocGenpythonSecurityGroup9423C0B6:ALL TRAFFIC",
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "-1",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationDocGenpythonSecurityGroup5820AD9B",
+            "GroupId",
+          ],
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "ConstructHubOrchestrationFileSystemEfsSecurityGroupfromTestConstructHubOrchestrationDocGentypescriptSecurityGroup753362BDALLTRAFFIC4DE8A292": Object {
+      "Properties": Object {
+        "Description": "from TestConstructHubOrchestrationDocGentypescriptSecurityGroup753362BD:ALL TRAFFIC",
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "-1",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationDocGentypescriptSecurityGroupDD0CDD88",
+            "GroupId",
+          ],
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "ConstructHubOrchestrationFileSystemEfsSecurityGroupfromTestConstructHubOrchestrationEFSCleanUpSecurityGroupF47817D6ALLTRAFFIC2B89AF4A": Object {
+      "Properties": Object {
+        "Description": "from TestConstructHubOrchestrationEFSCleanUpSecurityGroupF47817D6:ALL TRAFFIC",
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "-1",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationEFSCleanUpSecurityGroup61914A8D",
+            "GroupId",
+          ],
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
     },
     "ConstructHubOrchestrationRedrive8DDBA67E": Object {
       "DependsOn": Array [
@@ -4099,6 +4444,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::IAM::Role",
     },
     "ConstructHubOrchestrationRoleDefaultPolicyEACD181F": Object {
+      "DependsOn": Array [
+        "ConstructHubVPCIGW935F4C28",
+      ],
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
@@ -4165,6 +4513,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::IAM::Policy",
     },
     "ConstructHubOrchestrationRoleF4CF6987": Object {
+      "DependsOn": Array [
+        "ConstructHubVPCIGW935F4C28",
+      ],
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -4389,328 +4740,35 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::EC2::VPC",
     },
-    "ConstructHubVPCCodeArtifactAPI954CFDE1": Object {
+    "ConstructHubVPCIGW935F4C28": Object {
       "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:GetServiceBearerToken",
-              "Condition": Object {
-                "StringEquals": Object {
-                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
-                    "Arn",
-                  ],
-                },
-              },
-              "Resource": "*",
-            },
-            Object {
-              "Action": Array [
-                "codeartifact:GetAuthorizationToken",
-                "codeartifact:GetRepositoryEndpoint",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
-                    "Arn",
-                  ],
-                },
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubCodeArtifactDomainFC30B796",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubCodeArtifact1188409E",
-                    "Arn",
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": "sts:GetServiceBearerToken",
-              "Condition": Object {
-                "StringEquals": Object {
-                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
-                    "Arn",
-                  ],
-                },
-              },
-              "Resource": "*",
-            },
-            Object {
-              "Action": Array [
-                "codeartifact:GetAuthorizationToken",
-                "codeartifact:GetRepositoryEndpoint",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
-                    "Arn",
-                  ],
-                },
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubCodeArtifactDomainFC30B796",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubCodeArtifact1188409E",
-                    "Arn",
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PrivateDnsEnabled": false,
-        "SecurityGroupIds": Array [
-          Object {
-            "Fn::GetAtt": Array [
-              "ConstructHubVPCCodeArtifactAPISecurityGroupBE06BEF9",
-              "GroupId",
-            ],
-          },
-        ],
-        "ServiceName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "com.amazonaws.",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              ".codeartifact.api",
-            ],
-          ],
-        },
-        "SubnetIds": Array [
-          Object {
-            "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
-          },
-          Object {
-            "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
-          },
-        ],
-        "VpcEndpointType": "Interface",
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::VPCEndpoint",
-    },
-    "ConstructHubVPCCodeArtifactAPISecurityGroupBE06BEF9": Object {
-      "Properties": Object {
-        "GroupDescription": "Test/ConstructHub/VPC/CodeArtifact.API/SecurityGroup",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "SecurityGroupIngress": Array [
-          Object {
-            "CidrIp": Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubVPC16ECCEA2",
-                "CidrBlock",
-              ],
-            },
-            "Description": Object {
-              "Fn::Join": Array [
-                "",
-                Array [
-                  "from ",
-                  Object {
-                    "Fn::GetAtt": Array [
-                      "ConstructHubVPC16ECCEA2",
-                      "CidrBlock",
-                    ],
-                  },
-                  ":443",
-                ],
-              ],
-            },
-            "FromPort": 443,
-            "IpProtocol": "tcp",
-            "ToPort": 443,
-          },
-        ],
         "Tags": Array [
           Object {
             "Key": "Name",
             "Value": "Test/ConstructHub/VPC",
           },
         ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
       },
-      "Type": "AWS::EC2::SecurityGroup",
+      "Type": "AWS::EC2::InternetGateway",
     },
-    "ConstructHubVPCCodeArtifactBD6E076F": Object {
+    "ConstructHubVPCPrivateSubnet1DefaultRoute0553742E": Object {
       "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "codeartifact:ReadFromRepository",
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
-                    "Arn",
-                  ],
-                },
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubCodeArtifact1188409E",
-                  "Arn",
-                ],
-              },
-            },
-            Object {
-              "Action": "codeartifact:ReadFromRepository",
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
-                    "Arn",
-                  ],
-                },
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubCodeArtifact1188409E",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet1NATGatewayDEE96CEC",
         },
-        "PrivateDnsEnabled": true,
-        "SecurityGroupIds": Array [
-          Object {
-            "Fn::GetAtt": Array [
-              "ConstructHubVPCCodeArtifactSecurityGroupBCADE40D",
-              "GroupId",
-            ],
-          },
-        ],
-        "ServiceName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "com.amazonaws.",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              ".codeartifact.repositories",
-            ],
-          ],
-        },
-        "SubnetIds": Array [
-          Object {
-            "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
-          },
-          Object {
-            "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
-          },
-        ],
-        "VpcEndpointType": "Interface",
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
+        "RouteTableId": Object {
+          "Ref": "ConstructHubVPCPrivateSubnet1RouteTable46ACFBE4",
         },
       },
-      "Type": "AWS::EC2::VPCEndpoint",
+      "Type": "AWS::EC2::Route",
     },
-    "ConstructHubVPCCodeArtifactSecurityGroupBCADE40D": Object {
-      "Properties": Object {
-        "GroupDescription": "Test/ConstructHub/VPC/CodeArtifact/SecurityGroup",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "SecurityGroupIngress": Array [
-          Object {
-            "CidrIp": Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubVPC16ECCEA2",
-                "CidrBlock",
-              ],
-            },
-            "Description": Object {
-              "Fn::Join": Array [
-                "",
-                Array [
-                  "from ",
-                  Object {
-                    "Fn::GetAtt": Array [
-                      "ConstructHubVPC16ECCEA2",
-                      "CidrBlock",
-                    ],
-                  },
-                  ":443",
-                ],
-              ],
-            },
-            "FromPort": 443,
-            "IpProtocol": "tcp",
-            "ToPort": 443,
-          },
-        ],
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "ConstructHubVPCIsolatedSubnet1RouteTable750E6F36": Object {
+    "ConstructHubVPCPrivateSubnet1RouteTable46ACFBE4": Object {
       "Properties": Object {
         "Tags": Array [
           Object {
             "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/IsolatedSubnet1",
+            "Value": "Test/ConstructHub/VPC/PrivateSubnet1",
           },
         ],
         "VpcId": Object {
@@ -4719,18 +4777,18 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ConstructHubVPCIsolatedSubnet1RouteTableAssociation3F8E4C37": Object {
+    "ConstructHubVPCPrivateSubnet1RouteTableAssociation521F6308": Object {
       "Properties": Object {
         "RouteTableId": Object {
-          "Ref": "ConstructHubVPCIsolatedSubnet1RouteTable750E6F36",
+          "Ref": "ConstructHubVPCPrivateSubnet1RouteTable46ACFBE4",
         },
         "SubnetId": Object {
-          "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
+          "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A": Object {
+    "ConstructHubVPCPrivateSubnet1Subnet755A0095": Object {
       "Properties": Object {
         "AvailabilityZone": Object {
           "Fn::Select": Array [
@@ -4740,20 +4798,20 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
           ],
         },
-        "CidrBlock": "10.0.0.0/17",
+        "CidrBlock": "10.0.64.0/19",
         "MapPublicIpOnLaunch": false,
         "Tags": Array [
           Object {
             "Key": "aws-cdk:subnet-name",
-            "Value": "Isolated",
+            "Value": "Private",
           },
           Object {
             "Key": "aws-cdk:subnet-type",
-            "Value": "Isolated",
+            "Value": "Private",
           },
           Object {
             "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/IsolatedSubnet1",
+            "Value": "Test/ConstructHub/VPC/PrivateSubnet1",
           },
         ],
         "VpcId": Object {
@@ -4762,12 +4820,24 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ConstructHubVPCIsolatedSubnet2RouteTable18129C5D": Object {
+    "ConstructHubVPCPrivateSubnet2DefaultRoute32448B57": Object {
+      "Properties": Object {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet2NATGateway2593E153",
+        },
+        "RouteTableId": Object {
+          "Ref": "ConstructHubVPCPrivateSubnet2RouteTable2B6A0911",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "ConstructHubVPCPrivateSubnet2RouteTable2B6A0911": Object {
       "Properties": Object {
         "Tags": Array [
           Object {
             "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/IsolatedSubnet2",
+            "Value": "Test/ConstructHub/VPC/PrivateSubnet2",
           },
         ],
         "VpcId": Object {
@@ -4776,18 +4846,18 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ConstructHubVPCIsolatedSubnet2RouteTableAssociationF8AD0E0F": Object {
+    "ConstructHubVPCPrivateSubnet2RouteTableAssociation988450B0": Object {
       "Properties": Object {
         "RouteTableId": Object {
-          "Ref": "ConstructHubVPCIsolatedSubnet2RouteTable18129C5D",
+          "Ref": "ConstructHubVPCPrivateSubnet2RouteTable2B6A0911",
         },
         "SubnetId": Object {
-          "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
+          "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ConstructHubVPCIsolatedSubnet2Subnet483D4302": Object {
+    "ConstructHubVPCPrivateSubnet2Subnet87694557": Object {
       "Properties": Object {
         "AvailabilityZone": Object {
           "Fn::Select": Array [
@@ -4797,20 +4867,20 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
           ],
         },
-        "CidrBlock": "10.0.128.0/17",
+        "CidrBlock": "10.0.96.0/19",
         "MapPublicIpOnLaunch": false,
         "Tags": Array [
           Object {
             "Key": "aws-cdk:subnet-name",
-            "Value": "Isolated",
+            "Value": "Private",
           },
           Object {
             "Key": "aws-cdk:subnet-type",
-            "Value": "Isolated",
+            "Value": "Private",
           },
           Object {
             "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/IsolatedSubnet2",
+            "Value": "Test/ConstructHub/VPC/PrivateSubnet2",
           },
         ],
         "VpcId": Object {
@@ -4819,358 +4889,224 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ConstructHubVPCS319E90CB6": Object {
+    "ConstructHubVPCPublicSubnet1DefaultRouteDA26F0D8": Object {
+      "DependsOn": Array [
+        "ConstructHubVPCVPCGWDF75BD8E",
+      ],
       "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "s3:GetObject",
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubCodeArtifactDescribeDomain6ABCBF4B",
-                        "domain.s3BucketArn",
-                      ],
-                    },
-                    "/*",
-                  ],
-                ],
-              },
-              "Sid": "Allow-CodeArtifact-Bucket",
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/assembly.json",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:Abort*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-python.md",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:Abort*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*-python.md",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:Abort*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-python.md.not-supported",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:Abort*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*-python.md.not-supported",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:Abort*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-typescript.md",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:Abort*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*-typescript.md",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:Abort*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-typescript.md.not-supported",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:Abort*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*-typescript.md.not-supported",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": Object {
+          "Ref": "ConstructHubVPCIGW935F4C28",
         },
-        "RouteTableIds": Array [
+        "RouteTableId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet1RouteTable00866DD0",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "ConstructHubVPCPublicSubnet1EIPF444F07C": Object {
+      "Properties": Object {
+        "Domain": "vpc",
+        "Tags": Array [
           Object {
-            "Ref": "ConstructHubVPCIsolatedSubnet1RouteTable750E6F36",
-          },
-          Object {
-            "Ref": "ConstructHubVPCIsolatedSubnet2RouteTable18129C5D",
+            "Key": "Name",
+            "Value": "Test/ConstructHub/VPC/PublicSubnet1",
           },
         ],
-        "ServiceName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "com.amazonaws.",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              ".s3",
-            ],
+      },
+      "Type": "AWS::EC2::EIP",
+    },
+    "ConstructHubVPCPublicSubnet1NATGatewayDEE96CEC": Object {
+      "Properties": Object {
+        "AllocationId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubVPCPublicSubnet1EIPF444F07C",
+            "AllocationId",
           ],
         },
-        "VpcEndpointType": "Gateway",
+        "SubnetId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet1SubnetBB5BFB5F",
+        },
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/VPC/PublicSubnet1",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::NatGateway",
+    },
+    "ConstructHubVPCPublicSubnet1RouteTable00866DD0": Object {
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/VPC/PublicSubnet1",
+          },
+        ],
         "VpcId": Object {
           "Ref": "ConstructHubVPC16ECCEA2",
         },
       },
-      "Type": "AWS::EC2::VPCEndpoint",
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "ConstructHubVPCPublicSubnet1RouteTableAssociationED868449": Object {
+      "Properties": Object {
+        "RouteTableId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet1RouteTable00866DD0",
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet1SubnetBB5BFB5F",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "ConstructHubVPCPublicSubnet1SubnetBB5BFB5F": Object {
+      "Properties": Object {
+        "AvailabilityZone": Object {
+          "Fn::Select": Array [
+            0,
+            Object {
+              "Fn::GetAZs": "",
+            },
+          ],
+        },
+        "CidrBlock": "10.0.0.0/19",
+        "MapPublicIpOnLaunch": true,
+        "Tags": Array [
+          Object {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/VPC/PublicSubnet1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "ConstructHubVPCPublicSubnet2DefaultRoute34459150": Object {
+      "DependsOn": Array [
+        "ConstructHubVPCVPCGWDF75BD8E",
+      ],
+      "Properties": Object {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": Object {
+          "Ref": "ConstructHubVPCIGW935F4C28",
+        },
+        "RouteTableId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet2RouteTable277E70CA",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "ConstructHubVPCPublicSubnet2EIP18E1FA8F": Object {
+      "Properties": Object {
+        "Domain": "vpc",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/VPC/PublicSubnet2",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::EIP",
+    },
+    "ConstructHubVPCPublicSubnet2NATGateway2593E153": Object {
+      "Properties": Object {
+        "AllocationId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubVPCPublicSubnet2EIP18E1FA8F",
+            "AllocationId",
+          ],
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet2Subnet4F6EAB14",
+        },
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/VPC/PublicSubnet2",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::NatGateway",
+    },
+    "ConstructHubVPCPublicSubnet2RouteTable277E70CA": Object {
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/VPC/PublicSubnet2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "ConstructHubVPCPublicSubnet2RouteTableAssociationED806BA2": Object {
+      "Properties": Object {
+        "RouteTableId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet2RouteTable277E70CA",
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet2Subnet4F6EAB14",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "ConstructHubVPCPublicSubnet2Subnet4F6EAB14": Object {
+      "Properties": Object {
+        "AvailabilityZone": Object {
+          "Fn::Select": Array [
+            1,
+            Object {
+              "Fn::GetAZs": "",
+            },
+          ],
+        },
+        "CidrBlock": "10.0.32.0/19",
+        "MapPublicIpOnLaunch": true,
+        "Tags": Array [
+          Object {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/VPC/PublicSubnet2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "ConstructHubVPCVPCGWDF75BD8E": Object {
+      "Properties": Object {
+        "InternetGatewayId": Object {
+          "Ref": "ConstructHubVPCIGW935F4C28",
+        },
+        "VpcId": Object {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::VPCGatewayAttachment",
     },
     "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B": Object {
       "Properties": Object {
@@ -6033,6 +5969,18 @@ Object {
       "Description": "S3 key for asset version \\"2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663\\"",
       "Type": "String",
     },
+    "AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98ArtifactHashD4AC1828": Object {
+      "Description": "Artifact hash for asset \\"2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98\\"",
+      "Type": "String",
+    },
+    "AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98S3BucketF611EFC9": Object {
+      "Description": "S3 bucket for asset \\"2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98\\"",
+      "Type": "String",
+    },
+    "AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98S3VersionKey9E90DFEA": Object {
+      "Description": "S3 key for asset version \\"2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98\\"",
+      "Type": "String",
+    },
     "AssetParameters516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9ArtifactHash41DE1E42": Object {
       "Description": "Artifact hash for asset \\"516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9\\"",
       "Type": "String",
@@ -6057,16 +6005,16 @@ Object {
       "Description": "S3 key for asset version \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
       "Type": "String",
     },
-    "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eArtifactHash8E86E95B": Object {
-      "Description": "Artifact hash for asset \\"7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74e\\"",
+    "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beArtifactHash5DE94BC7": Object {
+      "Description": "Artifact hash for asset \\"75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230be\\"",
       "Type": "String",
     },
-    "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3BucketB29D99C7": Object {
-      "Description": "S3 bucket for asset \\"7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74e\\"",
+    "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beS3BucketD7CA7618": Object {
+      "Description": "S3 bucket for asset \\"75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230be\\"",
       "Type": "String",
     },
-    "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA": Object {
-      "Description": "S3 key for asset version \\"7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74e\\"",
+    "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beS3VersionKey7C750AD6": Object {
+      "Description": "S3 key for asset version \\"75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230be\\"",
       "Type": "String",
     },
     "AssetParameters79e603efe968ac49808df5587ffabdc3a5dbf21d0284a3ddac62e3eac7db12a6ArtifactHash905316EF": Object {
@@ -6870,71 +6818,6 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         "RepositoryName": "c857fcb69e05ffe74ccbcc624c4f6a4017daeb8cbb",
       },
       "Type": "AWS::CodeArtifact::Repository",
-    },
-    "ConstructHubCodeArtifactDescribeDomain6ABCBF4B": Object {
-      "DeletionPolicy": "Delete",
-      "DependsOn": Array [
-        "ConstructHubCodeArtifactDescribeDomainCustomResourcePolicy1A93C60C",
-      ],
-      "Properties": Object {
-        "Create": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"describeDomain\\",\\"parameters\\":{\\"domain\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubCodeArtifact1188409E",
-                  "DomainName",
-                ],
-              },
-              "\\",\\"domainOwner\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubCodeArtifact1188409E",
-                  "DomainOwner",
-                ],
-              },
-              "\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"domain.s3BucketArn\\"}}",
-            ],
-          ],
-        },
-        "InstallLatestAwsSdk": true,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::CoreArtifactDomainDescription",
-      "UpdateReplacePolicy": "Delete",
-    },
-    "ConstructHubCodeArtifactDescribeDomainCustomResourcePolicy1A93C60C": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "codeartifact:DescribeDomain",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubCodeArtifactDomainFC30B796",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ConstructHubCodeArtifactDescribeDomainCustomResourcePolicy1A93C60C",
-        "Roles": Array [
-          Object {
-            "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubCodeArtifactDomainFC30B796": Object {
       "Properties": Object {
@@ -8869,6 +8752,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "DependsOn": Array [
         "ConstructHubOrchestrationRoleDefaultPolicyEACD181F",
         "ConstructHubOrchestrationRoleF4CF6987",
+        "ConstructHubVPCIGW935F4C28",
       ],
       "Properties": Object {
         "DefinitionString": Object {
@@ -9123,6 +9007,55 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::IAM::Policy",
     },
+    "ConstructHubOrchestrationCleanUpEFSTrigger7CBD4AE3": Object {
+      "Properties": Object {
+        "Description": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "Runs ",
+              Object {
+                "Ref": "ConstructHubOrchestrationEFSCleanUpAEF55F55",
+              },
+              " every hour",
+            ],
+          ],
+        },
+        "ScheduleExpression": "rate(1 hour)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubOrchestrationEFSCleanUpAEF55F55",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubOrchestrationCleanUpEFSTriggerAllowEventRuleTestConstructHubOrchestrationEFSCleanUpE3EDBF26CEEEA65D": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationEFSCleanUpAEF55F55",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationCleanUpEFSTrigger7CBD4AE3",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
     "ConstructHubOrchestrationDLQ9C6D9BD4": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
@@ -9141,7 +9074,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3BucketB29D99C7",
+            "Ref": "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beS3BucketD7CA7618",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -9154,7 +9087,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA",
+                          "Ref": "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beS3VersionKey7C750AD6",
                         },
                       ],
                     },
@@ -9167,7 +9100,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA",
+                          "Ref": "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beS3VersionKey7C750AD6",
                         },
                       ],
                     },
@@ -9180,27 +9113,6 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         "Description": "Creates python documentation from jsii-enabled npm packages",
         "Environment": Object {
           "Variables": Object {
-            "CODE_ARTIFACT_API_ENDPOINT": Object {
-              "Fn::Select": Array [
-                1,
-                Object {
-                  "Fn::Split": Array [
-                    ":",
-                    Object {
-                      "Fn::Select": Array [
-                        0,
-                        Object {
-                          "Fn::GetAtt": Array [
-                            "ConstructHubVPCCodeArtifactAPI954CFDE1",
-                            "DnsEntries",
-                          ],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
             "CODE_ARTIFACT_DOMAIN_NAME": Object {
               "Fn::GetAtt": Array [
                 "ConstructHubCodeArtifact1188409E",
@@ -9220,9 +9132,39 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               ],
             },
             "HEADER_SPAN": "true",
+            "HOME": "/mnt/efs/HOME",
             "TARGET_LANGUAGE": "python",
+            "TMPDIR": "/mnt/efs",
           },
         },
+        "FileSystemConfigs": Array [
+          Object {
+            "Arn": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "arn:",
+                  Object {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":elasticfilesystem:",
+                  Object {
+                    "Ref": "AWS::Region",
+                  },
+                  ":",
+                  Object {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":access-point/",
+                  Object {
+                    "Ref": "ConstructHubOrchestrationFileSystemAccessPoint77C6EF7B",
+                  },
+                ],
+              ],
+            },
+            "LocalMountPath": "/mnt/efs",
+          },
+        ],
         "Handler": "index.handler",
         "MemorySize": 10240,
         "Role": Object {
@@ -9247,10 +9189,10 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
           "SubnetIds": Array [
             Object {
-              "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
+              "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
             },
             Object {
-              "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
+              "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
             },
           ],
         },
@@ -9553,7 +9495,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3BucketB29D99C7",
+            "Ref": "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beS3BucketD7CA7618",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -9566,7 +9508,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA",
+                          "Ref": "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beS3VersionKey7C750AD6",
                         },
                       ],
                     },
@@ -9579,7 +9521,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters7379fd84eff0b591867de2678a7733efa22e810bf064da0c1d0ef6e0c30cc74eS3VersionKey15B55BAA",
+                          "Ref": "AssetParameters75f48e0bcdd44387d27f83caba59489a5604099e9cfdc2eb37d3b270551230beS3VersionKey7C750AD6",
                         },
                       ],
                     },
@@ -9592,27 +9534,6 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         "Description": "Creates typescript documentation from jsii-enabled npm packages",
         "Environment": Object {
           "Variables": Object {
-            "CODE_ARTIFACT_API_ENDPOINT": Object {
-              "Fn::Select": Array [
-                1,
-                Object {
-                  "Fn::Split": Array [
-                    ":",
-                    Object {
-                      "Fn::Select": Array [
-                        0,
-                        Object {
-                          "Fn::GetAtt": Array [
-                            "ConstructHubVPCCodeArtifactAPI954CFDE1",
-                            "DnsEntries",
-                          ],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
             "CODE_ARTIFACT_DOMAIN_NAME": Object {
               "Fn::GetAtt": Array [
                 "ConstructHubCodeArtifact1188409E",
@@ -9632,9 +9553,39 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               ],
             },
             "HEADER_SPAN": "true",
+            "HOME": "/mnt/efs/HOME",
             "TARGET_LANGUAGE": "typescript",
+            "TMPDIR": "/mnt/efs",
           },
         },
+        "FileSystemConfigs": Array [
+          Object {
+            "Arn": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "arn:",
+                  Object {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":elasticfilesystem:",
+                  Object {
+                    "Ref": "AWS::Region",
+                  },
+                  ":",
+                  Object {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":access-point/",
+                  Object {
+                    "Ref": "ConstructHubOrchestrationFileSystemAccessPoint77C6EF7B",
+                  },
+                ],
+              ],
+            },
+            "LocalMountPath": "/mnt/efs",
+          },
+        ],
         "Handler": "index.handler",
         "MemorySize": 10240,
         "Role": Object {
@@ -9659,10 +9610,10 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
           "SubnetIds": Array [
             Object {
-              "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
+              "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
             },
             Object {
-              "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
+              "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
             },
           ],
         },
@@ -9956,6 +9907,336 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubOrchestrationEFSCleanUpAEF55F55": Object {
+      "DependsOn": Array [
+        "ConstructHubOrchestrationEFSCleanUpServiceRole56AA94B9",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98S3BucketF611EFC9",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98S3VersionKey9E90DFEA",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98S3VersionKey9E90DFEA",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "[ConstructHub/CleanUpEFS] Cleans up leftover files from an EFS file system",
+        "Environment": Object {
+          "Variables": Object {
+            "EFS_MOUNT_PATH": "/mnt/efs",
+            "IGNORE_DIRS": "/mnt/efs/HOME",
+          },
+        },
+        "FileSystemConfigs": Array [
+          Object {
+            "Arn": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "arn:",
+                  Object {
+                    "Ref": "AWS::Partition",
+                  },
+                  ":elasticfilesystem:",
+                  Object {
+                    "Ref": "AWS::Region",
+                  },
+                  ":",
+                  Object {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ":access-point/",
+                  Object {
+                    "Ref": "ConstructHubOrchestrationFileSystemAccessPoint77C6EF7B",
+                  },
+                ],
+              ],
+            },
+            "LocalMountPath": "/mnt/efs",
+          },
+        ],
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationEFSCleanUpServiceRole56AA94B9",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+        "VpcConfig": Object {
+          "SecurityGroupIds": Array [
+            Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubOrchestrationEFSCleanUpSecurityGroup61914A8D",
+                "GroupId",
+              ],
+            },
+          ],
+          "SubnetIds": Array [
+            Object {
+              "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
+            },
+            Object {
+              "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
+            },
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubOrchestrationEFSCleanUpSecurityGroup61914A8D": Object {
+      "Properties": Object {
+        "GroupDescription": "Automatic security group for Lambda Function TestConstructHubOrchestrationEFSCleanUpE3EDBF26",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "ConstructHubOrchestrationEFSCleanUpServiceRole56AA94B9": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubOrchestrationFileSystemADB533E6": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "Encrypted": true,
+        "FileSystemTags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Orchestration/FileSystem",
+          },
+        ],
+        "LifecyclePolicies": Array [
+          Object {
+            "TransitionToIA": "AFTER_7_DAYS",
+          },
+        ],
+        "PerformanceMode": "generalPurpose",
+        "ThroughputMode": "bursting",
+      },
+      "Type": "AWS::EFS::FileSystem",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubOrchestrationFileSystemAccessPoint77C6EF7B": Object {
+      "DependsOn": Array [
+        "ConstructHubOrchestrationFileSystemEfsMountTarget149FD6F15",
+        "ConstructHubOrchestrationFileSystemEfsMountTarget23DA818AD",
+      ],
+      "Properties": Object {
+        "FileSystemId": Object {
+          "Ref": "ConstructHubOrchestrationFileSystemADB533E6",
+        },
+        "PosixUser": Object {
+          "Gid": "1000",
+          "Uid": "1000",
+        },
+        "RootDirectory": Object {
+          "CreationInfo": Object {
+            "OwnerGid": "1000",
+            "OwnerUid": "1000",
+            "Permissions": "0777",
+          },
+          "Path": "/lambda-shared",
+        },
+      },
+      "Type": "AWS::EFS::AccessPoint",
+    },
+    "ConstructHubOrchestrationFileSystemEfsMountTarget149FD6F15": Object {
+      "Properties": Object {
+        "FileSystemId": Object {
+          "Ref": "ConstructHubOrchestrationFileSystemADB533E6",
+        },
+        "SecurityGroups": Array [
+          Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A",
+              "GroupId",
+            ],
+          },
+        ],
+        "SubnetId": Object {
+          "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
+        },
+      },
+      "Type": "AWS::EFS::MountTarget",
+    },
+    "ConstructHubOrchestrationFileSystemEfsMountTarget23DA818AD": Object {
+      "Properties": Object {
+        "FileSystemId": Object {
+          "Ref": "ConstructHubOrchestrationFileSystemADB533E6",
+        },
+        "SecurityGroups": Array [
+          Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A",
+              "GroupId",
+            ],
+          },
+        ],
+        "SubnetId": Object {
+          "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
+        },
+      },
+      "Type": "AWS::EFS::MountTarget",
+    },
+    "ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A": Object {
+      "Properties": Object {
+        "GroupDescription": "Test/ConstructHub/Orchestration/FileSystem/EfsSecurityGroup",
+        "SecurityGroupEgress": Array [
+          Object {
+            "CidrIp": "0.0.0.0/0",
+            "Description": "Allow all outbound traffic by default",
+            "IpProtocol": "-1",
+          },
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Orchestration/FileSystem",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "ConstructHubOrchestrationFileSystemEfsSecurityGroupfromTestConstructHubOrchestrationDocGenpythonSecurityGroup9423C0B6ALLTRAFFICB34ADEB8": Object {
+      "Properties": Object {
+        "Description": "from TestConstructHubOrchestrationDocGenpythonSecurityGroup9423C0B6:ALL TRAFFIC",
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "-1",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationDocGenpythonSecurityGroup5820AD9B",
+            "GroupId",
+          ],
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "ConstructHubOrchestrationFileSystemEfsSecurityGroupfromTestConstructHubOrchestrationDocGentypescriptSecurityGroup753362BDALLTRAFFIC4DE8A292": Object {
+      "Properties": Object {
+        "Description": "from TestConstructHubOrchestrationDocGentypescriptSecurityGroup753362BD:ALL TRAFFIC",
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "-1",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationDocGentypescriptSecurityGroupDD0CDD88",
+            "GroupId",
+          ],
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
+    },
+    "ConstructHubOrchestrationFileSystemEfsSecurityGroupfromTestConstructHubOrchestrationEFSCleanUpSecurityGroupF47817D6ALLTRAFFIC2B89AF4A": Object {
+      "Properties": Object {
+        "Description": "from TestConstructHubOrchestrationEFSCleanUpSecurityGroupF47817D6:ALL TRAFFIC",
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "-1",
+        "SourceSecurityGroupId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationEFSCleanUpSecurityGroup61914A8D",
+            "GroupId",
+          ],
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroupIngress",
     },
     "ConstructHubOrchestrationRedrive8DDBA67E": Object {
       "DependsOn": Array [
@@ -10270,6 +10551,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::IAM::Role",
     },
     "ConstructHubOrchestrationRoleDefaultPolicyEACD181F": Object {
+      "DependsOn": Array [
+        "ConstructHubVPCIGW935F4C28",
+      ],
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
@@ -10336,6 +10620,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::IAM::Policy",
     },
     "ConstructHubOrchestrationRoleF4CF6987": Object {
+      "DependsOn": Array [
+        "ConstructHubVPCIGW935F4C28",
+      ],
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -10560,328 +10847,35 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::EC2::VPC",
     },
-    "ConstructHubVPCCodeArtifactAPI954CFDE1": Object {
+    "ConstructHubVPCIGW935F4C28": Object {
       "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:GetServiceBearerToken",
-              "Condition": Object {
-                "StringEquals": Object {
-                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
-                    "Arn",
-                  ],
-                },
-              },
-              "Resource": "*",
-            },
-            Object {
-              "Action": Array [
-                "codeartifact:GetAuthorizationToken",
-                "codeartifact:GetRepositoryEndpoint",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
-                    "Arn",
-                  ],
-                },
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubCodeArtifactDomainFC30B796",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubCodeArtifact1188409E",
-                    "Arn",
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": "sts:GetServiceBearerToken",
-              "Condition": Object {
-                "StringEquals": Object {
-                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
-                },
-              },
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
-                    "Arn",
-                  ],
-                },
-              },
-              "Resource": "*",
-            },
-            Object {
-              "Action": Array [
-                "codeartifact:GetAuthorizationToken",
-                "codeartifact:GetRepositoryEndpoint",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
-                    "Arn",
-                  ],
-                },
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubCodeArtifactDomainFC30B796",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubCodeArtifact1188409E",
-                    "Arn",
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PrivateDnsEnabled": false,
-        "SecurityGroupIds": Array [
-          Object {
-            "Fn::GetAtt": Array [
-              "ConstructHubVPCCodeArtifactAPISecurityGroupBE06BEF9",
-              "GroupId",
-            ],
-          },
-        ],
-        "ServiceName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "com.amazonaws.",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              ".codeartifact.api",
-            ],
-          ],
-        },
-        "SubnetIds": Array [
-          Object {
-            "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
-          },
-          Object {
-            "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
-          },
-        ],
-        "VpcEndpointType": "Interface",
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::VPCEndpoint",
-    },
-    "ConstructHubVPCCodeArtifactAPISecurityGroupBE06BEF9": Object {
-      "Properties": Object {
-        "GroupDescription": "Test/ConstructHub/VPC/CodeArtifact.API/SecurityGroup",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "SecurityGroupIngress": Array [
-          Object {
-            "CidrIp": Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubVPC16ECCEA2",
-                "CidrBlock",
-              ],
-            },
-            "Description": Object {
-              "Fn::Join": Array [
-                "",
-                Array [
-                  "from ",
-                  Object {
-                    "Fn::GetAtt": Array [
-                      "ConstructHubVPC16ECCEA2",
-                      "CidrBlock",
-                    ],
-                  },
-                  ":443",
-                ],
-              ],
-            },
-            "FromPort": 443,
-            "IpProtocol": "tcp",
-            "ToPort": 443,
-          },
-        ],
         "Tags": Array [
           Object {
             "Key": "Name",
             "Value": "Test/ConstructHub/VPC",
           },
         ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
       },
-      "Type": "AWS::EC2::SecurityGroup",
+      "Type": "AWS::EC2::InternetGateway",
     },
-    "ConstructHubVPCCodeArtifactBD6E076F": Object {
+    "ConstructHubVPCPrivateSubnet1DefaultRoute0553742E": Object {
       "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "codeartifact:ReadFromRepository",
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2",
-                    "Arn",
-                  ],
-                },
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubCodeArtifact1188409E",
-                  "Arn",
-                ],
-              },
-            },
-            Object {
-              "Action": "codeartifact:ReadFromRepository",
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19",
-                    "Arn",
-                  ],
-                },
-              },
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubCodeArtifact1188409E",
-                  "Arn",
-                ],
-              },
-            },
-          ],
-          "Version": "2012-10-17",
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet1NATGatewayDEE96CEC",
         },
-        "PrivateDnsEnabled": true,
-        "SecurityGroupIds": Array [
-          Object {
-            "Fn::GetAtt": Array [
-              "ConstructHubVPCCodeArtifactSecurityGroupBCADE40D",
-              "GroupId",
-            ],
-          },
-        ],
-        "ServiceName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "com.amazonaws.",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              ".codeartifact.repositories",
-            ],
-          ],
-        },
-        "SubnetIds": Array [
-          Object {
-            "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
-          },
-          Object {
-            "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
-          },
-        ],
-        "VpcEndpointType": "Interface",
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
+        "RouteTableId": Object {
+          "Ref": "ConstructHubVPCPrivateSubnet1RouteTable46ACFBE4",
         },
       },
-      "Type": "AWS::EC2::VPCEndpoint",
+      "Type": "AWS::EC2::Route",
     },
-    "ConstructHubVPCCodeArtifactSecurityGroupBCADE40D": Object {
-      "Properties": Object {
-        "GroupDescription": "Test/ConstructHub/VPC/CodeArtifact/SecurityGroup",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "SecurityGroupIngress": Array [
-          Object {
-            "CidrIp": Object {
-              "Fn::GetAtt": Array [
-                "ConstructHubVPC16ECCEA2",
-                "CidrBlock",
-              ],
-            },
-            "Description": Object {
-              "Fn::Join": Array [
-                "",
-                Array [
-                  "from ",
-                  Object {
-                    "Fn::GetAtt": Array [
-                      "ConstructHubVPC16ECCEA2",
-                      "CidrBlock",
-                    ],
-                  },
-                  ":443",
-                ],
-              ],
-            },
-            "FromPort": 443,
-            "IpProtocol": "tcp",
-            "ToPort": 443,
-          },
-        ],
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "ConstructHubVPCIsolatedSubnet1RouteTable750E6F36": Object {
+    "ConstructHubVPCPrivateSubnet1RouteTable46ACFBE4": Object {
       "Properties": Object {
         "Tags": Array [
           Object {
             "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/IsolatedSubnet1",
+            "Value": "Test/ConstructHub/VPC/PrivateSubnet1",
           },
         ],
         "VpcId": Object {
@@ -10890,18 +10884,18 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ConstructHubVPCIsolatedSubnet1RouteTableAssociation3F8E4C37": Object {
+    "ConstructHubVPCPrivateSubnet1RouteTableAssociation521F6308": Object {
       "Properties": Object {
         "RouteTableId": Object {
-          "Ref": "ConstructHubVPCIsolatedSubnet1RouteTable750E6F36",
+          "Ref": "ConstructHubVPCPrivateSubnet1RouteTable46ACFBE4",
         },
         "SubnetId": Object {
-          "Ref": "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A",
+          "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A": Object {
+    "ConstructHubVPCPrivateSubnet1Subnet755A0095": Object {
       "Properties": Object {
         "AvailabilityZone": Object {
           "Fn::Select": Array [
@@ -10911,20 +10905,20 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
           ],
         },
-        "CidrBlock": "10.0.0.0/17",
+        "CidrBlock": "10.0.64.0/19",
         "MapPublicIpOnLaunch": false,
         "Tags": Array [
           Object {
             "Key": "aws-cdk:subnet-name",
-            "Value": "Isolated",
+            "Value": "Private",
           },
           Object {
             "Key": "aws-cdk:subnet-type",
-            "Value": "Isolated",
+            "Value": "Private",
           },
           Object {
             "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/IsolatedSubnet1",
+            "Value": "Test/ConstructHub/VPC/PrivateSubnet1",
           },
         ],
         "VpcId": Object {
@@ -10933,12 +10927,24 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ConstructHubVPCIsolatedSubnet2RouteTable18129C5D": Object {
+    "ConstructHubVPCPrivateSubnet2DefaultRoute32448B57": Object {
+      "Properties": Object {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet2NATGateway2593E153",
+        },
+        "RouteTableId": Object {
+          "Ref": "ConstructHubVPCPrivateSubnet2RouteTable2B6A0911",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "ConstructHubVPCPrivateSubnet2RouteTable2B6A0911": Object {
       "Properties": Object {
         "Tags": Array [
           Object {
             "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/IsolatedSubnet2",
+            "Value": "Test/ConstructHub/VPC/PrivateSubnet2",
           },
         ],
         "VpcId": Object {
@@ -10947,18 +10953,18 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "ConstructHubVPCIsolatedSubnet2RouteTableAssociationF8AD0E0F": Object {
+    "ConstructHubVPCPrivateSubnet2RouteTableAssociation988450B0": Object {
       "Properties": Object {
         "RouteTableId": Object {
-          "Ref": "ConstructHubVPCIsolatedSubnet2RouteTable18129C5D",
+          "Ref": "ConstructHubVPCPrivateSubnet2RouteTable2B6A0911",
         },
         "SubnetId": Object {
-          "Ref": "ConstructHubVPCIsolatedSubnet2Subnet483D4302",
+          "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "ConstructHubVPCIsolatedSubnet2Subnet483D4302": Object {
+    "ConstructHubVPCPrivateSubnet2Subnet87694557": Object {
       "Properties": Object {
         "AvailabilityZone": Object {
           "Fn::Select": Array [
@@ -10968,20 +10974,20 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
           ],
         },
-        "CidrBlock": "10.0.128.0/17",
+        "CidrBlock": "10.0.96.0/19",
         "MapPublicIpOnLaunch": false,
         "Tags": Array [
           Object {
             "Key": "aws-cdk:subnet-name",
-            "Value": "Isolated",
+            "Value": "Private",
           },
           Object {
             "Key": "aws-cdk:subnet-type",
-            "Value": "Isolated",
+            "Value": "Private",
           },
           Object {
             "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/IsolatedSubnet2",
+            "Value": "Test/ConstructHub/VPC/PrivateSubnet2",
           },
         ],
         "VpcId": Object {
@@ -10990,358 +10996,224 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "ConstructHubVPCS319E90CB6": Object {
+    "ConstructHubVPCPublicSubnet1DefaultRouteDA26F0D8": Object {
+      "DependsOn": Array [
+        "ConstructHubVPCVPCGWDF75BD8E",
+      ],
       "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "s3:GetObject",
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubCodeArtifactDescribeDomain6ABCBF4B",
-                        "domain.s3BucketArn",
-                      ],
-                    },
-                    "/*",
-                  ],
-                ],
-              },
-              "Sid": "Allow-CodeArtifact-Bucket",
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/assembly.json",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:Abort*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-python.md",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:Abort*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*-python.md",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:Abort*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-python.md.not-supported",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:Abort*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*-python.md.not-supported",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:Abort*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-typescript.md",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:Abort*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*-typescript.md",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:Abort*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-typescript.md.not-supported",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:Abort*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*-typescript.md.not-supported",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": Object {
+          "Ref": "ConstructHubVPCIGW935F4C28",
         },
-        "RouteTableIds": Array [
+        "RouteTableId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet1RouteTable00866DD0",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "ConstructHubVPCPublicSubnet1EIPF444F07C": Object {
+      "Properties": Object {
+        "Domain": "vpc",
+        "Tags": Array [
           Object {
-            "Ref": "ConstructHubVPCIsolatedSubnet1RouteTable750E6F36",
-          },
-          Object {
-            "Ref": "ConstructHubVPCIsolatedSubnet2RouteTable18129C5D",
+            "Key": "Name",
+            "Value": "Test/ConstructHub/VPC/PublicSubnet1",
           },
         ],
-        "ServiceName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "com.amazonaws.",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              ".s3",
-            ],
+      },
+      "Type": "AWS::EC2::EIP",
+    },
+    "ConstructHubVPCPublicSubnet1NATGatewayDEE96CEC": Object {
+      "Properties": Object {
+        "AllocationId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubVPCPublicSubnet1EIPF444F07C",
+            "AllocationId",
           ],
         },
-        "VpcEndpointType": "Gateway",
+        "SubnetId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet1SubnetBB5BFB5F",
+        },
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/VPC/PublicSubnet1",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::NatGateway",
+    },
+    "ConstructHubVPCPublicSubnet1RouteTable00866DD0": Object {
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/VPC/PublicSubnet1",
+          },
+        ],
         "VpcId": Object {
           "Ref": "ConstructHubVPC16ECCEA2",
         },
       },
-      "Type": "AWS::EC2::VPCEndpoint",
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "ConstructHubVPCPublicSubnet1RouteTableAssociationED868449": Object {
+      "Properties": Object {
+        "RouteTableId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet1RouteTable00866DD0",
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet1SubnetBB5BFB5F",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "ConstructHubVPCPublicSubnet1SubnetBB5BFB5F": Object {
+      "Properties": Object {
+        "AvailabilityZone": Object {
+          "Fn::Select": Array [
+            0,
+            Object {
+              "Fn::GetAZs": "",
+            },
+          ],
+        },
+        "CidrBlock": "10.0.0.0/19",
+        "MapPublicIpOnLaunch": true,
+        "Tags": Array [
+          Object {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/VPC/PublicSubnet1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "ConstructHubVPCPublicSubnet2DefaultRoute34459150": Object {
+      "DependsOn": Array [
+        "ConstructHubVPCVPCGWDF75BD8E",
+      ],
+      "Properties": Object {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": Object {
+          "Ref": "ConstructHubVPCIGW935F4C28",
+        },
+        "RouteTableId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet2RouteTable277E70CA",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "ConstructHubVPCPublicSubnet2EIP18E1FA8F": Object {
+      "Properties": Object {
+        "Domain": "vpc",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/VPC/PublicSubnet2",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::EIP",
+    },
+    "ConstructHubVPCPublicSubnet2NATGateway2593E153": Object {
+      "Properties": Object {
+        "AllocationId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubVPCPublicSubnet2EIP18E1FA8F",
+            "AllocationId",
+          ],
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet2Subnet4F6EAB14",
+        },
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/VPC/PublicSubnet2",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::NatGateway",
+    },
+    "ConstructHubVPCPublicSubnet2RouteTable277E70CA": Object {
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/VPC/PublicSubnet2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "ConstructHubVPCPublicSubnet2RouteTableAssociationED806BA2": Object {
+      "Properties": Object {
+        "RouteTableId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet2RouteTable277E70CA",
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubVPCPublicSubnet2Subnet4F6EAB14",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "ConstructHubVPCPublicSubnet2Subnet4F6EAB14": Object {
+      "Properties": Object {
+        "AvailabilityZone": Object {
+          "Fn::Select": Array [
+            1,
+            Object {
+              "Fn::GetAZs": "",
+            },
+          ],
+        },
+        "CidrBlock": "10.0.32.0/19",
+        "MapPublicIpOnLaunch": true,
+        "Tags": Array [
+          Object {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/VPC/PublicSubnet2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "ConstructHubVPCVPCGWDF75BD8E": Object {
+      "Properties": Object {
+        "InternetGatewayId": Object {
+          "Ref": "ConstructHubVPCIGW935F4C28",
+        },
+        "VpcId": Object {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::VPCGatewayAttachment",
     },
     "ConstructHubWebAppARecord3863FF6C": Object {
       "Properties": Object {
