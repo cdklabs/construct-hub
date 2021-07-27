@@ -13,6 +13,7 @@ import { Construct } from 'constructs';
 import { Monitoring } from '../../monitoring';
 import { DenyListRule } from './api';
 import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY, MetricName, METRICS_NAMESPACE } from './constants';
+import { createDenyListMap } from './create-map';
 import { Prune } from './prune';
 
 /**
@@ -43,8 +44,6 @@ export interface DenyListProps {
 
   /**
    * Prunes all S3 objects that are in the deny list periodically.
-   *
-   * Set to `Duration.zero` to disable
    *
    * @default Duration.minutes(5)
    */
@@ -170,16 +169,7 @@ export class DenyList extends CoreConstruct {
   private writeToFile(list: DenyListRule[], fileName: string): string {
     const tmpdir = fs.mkdtempSync(path.join(os.tmpdir(), 'deny-list-'));
     const filePath = path.join(tmpdir, fileName);
-    const map: { [nameVersion: string]: DenyListRule } = {};
-    for (const entry of list) {
-      const versionSuffix = entry.version ? `/v${entry.version}` : '';
-      const key = `${entry.package}${versionSuffix}`;
-      if (key in map) {
-        throw new Error(`Duplicate deny list entry: ${key}`);
-      }
-
-      map[key] = entry;
-    }
+    const map = createDenyListMap(list);
     fs.writeFileSync(filePath, JSON.stringify(map, null, 2));
     return tmpdir;
   }

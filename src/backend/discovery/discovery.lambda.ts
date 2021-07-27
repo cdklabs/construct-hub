@@ -42,8 +42,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
   const stagingBucket = requireEnv('BUCKET_NAME');
   const queueUrl = requireEnv('QUEUE_URL');
 
-  const denyList = new DenyListClient();
-  await denyList.init(); // downloads denylist from s3
+  const denyList = await DenyListClient.newClient();
 
   const initialMarker = await loadLastTransactionMarker(1_800_000 /* @aws-cdk/cdk initial release was at 1_846_709 */);
 
@@ -295,7 +294,8 @@ export async function handler(event: ScheduledEvent, context: Context) {
 function getRelevantVersionInfos(
   changes: readonly Change[],
   metrics: MetricsLogger,
-  denyList: DenyListClient): readonly UpdatedVersion[] {
+  denyList: DenyListClient,
+): readonly UpdatedVersion[] {
 
   const result = new Array<UpdatedVersion>();
 
@@ -348,11 +348,11 @@ function getRelevantVersionInfos(
           console.log(`[${change.seq}] Could not find info for "${change.doc.name}@${version}". Was it un-published?`);
         } else if (isConstructLibrary(infos)) {
 
-          // skip if this package is denied (the deny list client will log the reason)
+          // skip if this package is denied
           const denied = denyList.lookup(infos.name, infos.version);
           if (denied) {
             console.log(`[${change.seq}] Package denied: ${JSON.stringify(denied)}`);
-            metrics.putMetric(MetricName.DENIED_COUNT, 1, Unit.Count);
+            metrics.putMetric(MetricName.DENY_LISTED_COUNT, 1, Unit.Count);
             continue;
           }
 

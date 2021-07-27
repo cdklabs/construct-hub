@@ -1,39 +1,32 @@
 import * as AWS from 'aws-sdk';
+import { s3 } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DenyListMap, DenyListRule } from './api';
 import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY } from './constants';
 
 /**
- * Options for `DenyListClient`.
- */
-export interface DenyListClientOptions {
-  /**
-   * The name of the S3 bucket where the deny list is stored.
-   * @default process.env.DENY_LIST_BUCKET_NAME
-   */
-  readonly bucketName?: string;
-
-  /**
-   * The object key where the deny list is stored.
-   * @default process.env.DENY_LIST_OBJECT_KEY
-   */
-  readonly objectKey?: string;
-}
-
-/**
  * A client for working with the deny list.
  */
 export class DenyListClient {
+  /**
+   * Creates a new client for accessing the deny list.
+   */
+  public static async newClient() {
+    const client = new DenyListClient();
+    await client.init();
+    return client;
+  }
+
   private readonly s3: AWS.S3;
   private readonly bucketName: string;
   private readonly objectKey: string;
 
   private _map: DenyListMap | undefined;
 
-  constructor(options: DenyListClientOptions = {}) {
-    this.bucketName = options.bucketName ?? requireEnv(ENV_DENY_LIST_BUCKET_NAME);
-    this.objectKey = options.objectKey ?? requireEnv(ENV_DENY_LIST_OBJECT_KEY);
-    this.s3 = new AWS.S3();
+  private constructor() {
+    this.bucketName = requireEnv(ENV_DENY_LIST_BUCKET_NAME);
+    this.objectKey = requireEnv(ENV_DENY_LIST_OBJECT_KEY);
+    this.s3 = s3();
   }
 
   /**
@@ -41,7 +34,7 @@ export class DenyListClient {
    *
    * This must be called before `lookup()`.
    */
-  public async init() {
+  private async init() {
     this._map = {}; // reset
 
     try {

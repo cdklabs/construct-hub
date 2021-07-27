@@ -307,7 +307,7 @@ function newLambdaHandler(entrypoint, trigger) {
     ts.line(' * Trigger this handler after these constructs were deployed.');
     ts.line(' * @default - trigger this handler after all implicit dependencies have been created');
     ts.line(' */');
-    ts.line('readonly after?: Construct[];');
+    ts.line('readonly invokeAfter?: Construct[];');
   }
   ts.close('}');
   ts.line();
@@ -317,16 +317,16 @@ function newLambdaHandler(entrypoint, trigger) {
   //       by not specifying a default value for the `props` argument here.
   ts.open(`constructor(scope: Construct, id: string, props?: ${propsName}) {`);
   ts.open('super(scope, id, {');
+  ts.line(`description: '${entrypoint}',`);
+  ts.line('...props,');
   ts.line('runtime: lambda.Runtime.NODEJS_14_X,');
   ts.line('handler: \'index.handler\',');
   ts.line(`code: lambda.Code.fromAsset(path.join(__dirname, '/${basename(outdir)}')),`);
-  ts.line(`description: '${entrypoint}',`);
-  ts.line('...props,');
   ts.close('});');
   if (trigger) {
     ts.open('new AfterCreate(this, \'Trigger\', {');
     ts.line('handler: this,');
-    ts.line('resources: props?.after,');
+    ts.line('resources: props?.invokeAfter,');
     ts.close('});');
   }
   ts.close('}');

@@ -1,26 +1,27 @@
 import { Configuration, metricScope, Unit } from 'aws-embedded-metrics';
 import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import * as AWS from 'aws-sdk';
+import * as clients from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DenyListClient } from './client.lambda-shared';
 import { ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME, ENV_PRUNE_PACKAGE_DATA_KEY_PREFIX, ENV_PRUNE_QUEUE_URL, MetricName, METRICS_NAMESPACE } from './constants';
 
-const s3 = new AWS.S3();
-const sqs = new AWS.SQS();
+const s3 = clients.s3();
+const sqs = clients.sqs();
 
 // Configure embedded metrics format
 Configuration.environmentOverride = Environments.Lambda;
 Configuration.namespace = METRICS_NAMESPACE;
 
-export async function handler() {
-  const client = new DenyListClient();
-  await client.init();
+export async function handler(event: unknown) {
+  console.log(`Event: ${JSON.stringify(event)}`);
+
+  const client = await DenyListClient.newClient();
 
   await metricScope((metrics) => async () => {
     metrics.setDimensions();
 
     const ruleCount = Object.keys(client.map).length;
-    console.log(`Found ${ruleCount} deny list rules`);
     metrics.putMetric(MetricName.DENY_LIST_RULE_COUNT, ruleCount, Unit.Count);
   })();
 
@@ -45,15 +46,18 @@ export async function handler() {
       const result = await s3.listObjectsV2(req).promise();
       continuation = result.NextContinuationToken;
 
-      const objects = result.Contents ?? [];
-      if (objects.length > 0) {
-        const sendMessageRequest: AWS.SQS.SendMessageBatchRequest = {
+      // queue all objects for deletion
+      for (const object of result.Contents ?? []) {
+        if (!object.Key) {
+          continue;
+        }
+        const sendMessageRequest: AWS.SQS.SendMessageRequest = {
           QueueUrl: pruneQueue,
-          Entries: objects.filter(o => o.Key).map((o, i) => ({ Id: `Object${i}`, MessageBody: o.Key! })),
+          MessageBody: object.Key,
         };
 
         console.log(JSON.stringify({ sendMessageRequest }));
-        const sendMessageResponse = await sqs.sendMessageBatch(sendMessageRequest).promise();
+        const sendMessageResponse = await sqs.sendMessage(sendMessageRequest).promise();
         console.log(JSON.stringify({ sendMessageResponse }));
       }
 

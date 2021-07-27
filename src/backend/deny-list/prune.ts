@@ -61,7 +61,7 @@ export class Prune extends CoreConstruct {
 
     // invoke the prune handler every time the deny list is updated.
     const deleteQueue = new sqs.Queue(this, 'DeleteQueue', {
-      visibilityTimeout: Duration.minutes(2), // must be > processor timeout
+      visibilityTimeout: Duration.minutes(2), // must be larger than the timeout of PruneQueueHandler
     });
 
     // this handler reads the deny list and queues all the matched objects for
@@ -85,7 +85,7 @@ export class Prune extends CoreConstruct {
         [ENV_DELETE_OBJECT_CATALOG_REBUILD_FUNCTION_NAME]: props.catalogBuilderFunction.functionArn,
       },
     });
-    props.packageDataBucket.grantWrite(deleteHandler);
+    props.packageDataBucket.grantDelete(deleteHandler);
     props.catalogBuilderFunction.grantInvoke(deleteHandler);
     deleteHandler.addEventSource(new SqsEventSource(deleteQueue)); // reads from the queue
 

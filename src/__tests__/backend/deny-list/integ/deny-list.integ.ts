@@ -40,7 +40,7 @@ const denylist = new DenyList(stack, 'DenyList', {
 });
 
 const test1 = new TriggerClientTest(stack, 'ClientTest', {
-  after: [denylist],
+  invokeAfter: [denylist],
   environment: {
     BUCKET_NAME: denylist.bucket.bucketName,
     FILE_NAME: denylist.objectKey,
@@ -50,7 +50,7 @@ denylist.grantRead(test1);
 
 
 const test2 = new TriggerPruneTest(stack, 'PruneTest', {
-  after: [denylist],
+  invokeAfter: [denylist],
   timeout: Duration.minutes(5),
   environment: {
     BUCKET_NAME: packageData.bucketName,

@@ -16,7 +16,7 @@ export const enum MetricName {
   /**
    * Number of package versions that were skipped since they were in the deny list.
    */
-  DENIED_COUNT = 'DeniedCount',
+  DENY_LISTED_COUNT = 'DenyListedCount',
 }
 
 export const enum S3KeyPrefix {

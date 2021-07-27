@@ -13,8 +13,7 @@ const RULE2 = {
 };
 
 export async function handler() {
-  const client = new DenyListClient();
-  await client.init();
+  const client = await DenyListClient.newClient();
 
   assert.deepStrictEqual(client.map, {
     'mypackage': RULE1,

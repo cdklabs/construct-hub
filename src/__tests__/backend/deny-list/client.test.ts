@@ -23,12 +23,9 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  delete process.env[ENV_DENY_LIST_BUCKET_NAME];
+  delete process.env[ENV_DENY_LIST_OBJECT_KEY];
   AWSMock.restore();
-});
-
-test('lookup() fails if not initialized', () => {
-  const client = new DenyListClient();
-  expect(() => client.lookup('foo', '1.2.3')).toThrow(/init/);
 });
 
 test('s3 object not found error', async () => {
@@ -36,8 +33,7 @@ test('s3 object not found error', async () => {
     callback(new Error('not found'), null);
   });
 
-  const client = new DenyListClient();
-  await client.init();
+  const client = await DenyListClient.newClient();
   expect(client.lookup('foo', '1.2.3')).toBeUndefined();
 });
 
@@ -48,8 +44,7 @@ test('empty file', async () => {
     callback(null, { Body: '' });
   });
 
-  const client = new DenyListClient();
-  await client.init();
+  const client = await DenyListClient.newClient();
   expect(client.lookup('foo', '1.2.3')).toBeUndefined();
 });
 
@@ -60,8 +55,7 @@ test('json parsing error', async () => {
     callback(null, { Body: '09x{}' });
   });
 
-  const client = new DenyListClient();
-  await client.init();
+  const client = await DenyListClient.newClient();
   expect(client.lookup('foo', '1.2.3')).toBeUndefined();
 });
 
@@ -75,8 +69,7 @@ describe('lookup', () => {
       callback(null, { Body: JSON.stringify(sample) });
     });
 
-    client = new DenyListClient();
-    await client.init();
+    client = await DenyListClient.newClient();
   });
 
   test('match specific package + version', () => {
@@ -100,20 +93,4 @@ describe('lookup', () => {
   test('version does not match', () => {
     expect(client.lookup('foo', '4.4.4')).toBeUndefined();
   });
-});
-
-test('init() downloads the file every time', async () => {
-  AWSMock.mock('S3', 'getObject', (_, callback) => callback(null, { Body: JSON.stringify(sample) }));
-
-  const client = new DenyListClient();
-  await client.init();
-  expect(client.lookup('foo', '1.2.3')).toStrictEqual({
-    package: 'foo',
-    version: '1.2.3',
-    reason: 'bar',
-  });
-
-  AWSMock.remock('S3', 'getObject', (_, callback) => callback(null, { Body: JSON.stringify({}) }));
-  await client.init();
-  expect(client.lookup('foo', '1.2.3')).toBeUndefined();
 });

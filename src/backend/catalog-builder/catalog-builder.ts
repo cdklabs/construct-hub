@@ -9,11 +9,11 @@ export interface CatalogBuilderProps extends lambda.FunctionOptions {
 export class CatalogBuilder extends lambda.Function {
   constructor(scope: Construct, id: string, props?: CatalogBuilderProps) {
     super(scope, id, {
+      description: 'backend/catalog-builder/catalog-builder.lambda.ts',
+      ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/catalog-builder.bundle')),
-      description: 'backend/catalog-builder/catalog-builder.lambda.ts',
-      ...props,
     });
   }
 }

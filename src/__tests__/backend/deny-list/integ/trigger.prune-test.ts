@@ -9,21 +9,21 @@ export interface TriggerPruneTestProps extends lambda.FunctionOptions {
    * Trigger this handler after these constructs were deployed.
    * @default - trigger this handler after all implicit dependencies have been created
    */
-  readonly after?: Construct[];
+  readonly invokeAfter?: Construct[];
 }
 
 export class TriggerPruneTest extends lambda.Function {
   constructor(scope: Construct, id: string, props?: TriggerPruneTestProps) {
     super(scope, id, {
+      description: '__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts',
+      ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/trigger.prune-test.bundle')),
-      description: '__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts',
-      ...props,
     });
     new AfterCreate(this, 'Trigger', {
       handler: this,
-      resources: props?.after,
+      resources: props?.invokeAfter,
     });
   }
 }
