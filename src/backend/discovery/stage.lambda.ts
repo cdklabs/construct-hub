@@ -7,11 +7,11 @@ import * as aws from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 import type { IngestionInput } from '../shared/ingestion-input.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
-import { METRIC_NAMESPACE, METRIC_NAME_STAGED_PACKAGE_VERSION_AGE, METRIC_NAME_STAGING_TIME, STAGED_KEY_PREFIX } from './constants.lambda-shared';
+import { MetricName, METRICS_NAMESPACE, S3KeyPrefix } from './constants';
 import type { UpdatedVersion } from './version-info.lambda-shared';
 
 export const handler = metricScope((metrics) => async (event: SQSEvent, context: Context) => {
-  metrics.setNamespace(METRIC_NAMESPACE);
+  metrics.setNamespace(METRICS_NAMESPACE);
 
   const bucket = requireEnv('BUCKET_NAME');
   const queueUrl = requireEnv('QUEUE_URL');
@@ -25,7 +25,7 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
   await aws.sqsSendMessageBatch(queueUrl, messages);
 
   async function stageUpdatedVersion({ infos, modified, seq }: UpdatedVersion): Promise<IngestionInput> {
-    metrics.putMetric(METRIC_NAME_STAGED_PACKAGE_VERSION_AGE, Date.now() - modified.getTime(), Unit.Milliseconds);
+    metrics.putMetric(MetricName.STAGED_PACKAGE_VERSION_AGE, Date.now() - modified.getTime(), Unit.Milliseconds);
 
     const startTime = Date.now();
     const tarball = await httpGet(infos.dist.tarball);
@@ -33,7 +33,7 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
     // Store the tarball into the staging bucket
     // - infos.dist.tarball => https://registry.npmjs.org/<@scope>/<name>/-/<name>-<version>.tgz
     // - stagingKey         =>                     staged/<@scope>/<name>/-/<name>-<version>.tgz
-    const stagingKey = `${STAGED_KEY_PREFIX}${new URL(infos.dist.tarball).pathname}`.replace(/\/{2,}/g, '/');
+    const stagingKey = `${S3KeyPrefix.STAGED_KEY_PREFIX}${new URL(infos.dist.tarball).pathname}`.replace(/\/{2,}/g, '/');
     await aws.s3PutObject(
       context,
       bucket,
@@ -48,7 +48,7 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
         },
       });
 
-    metrics.putMetric(METRIC_NAME_STAGING_TIME, Date.now() - startTime, Unit.Milliseconds);
+    metrics.putMetric(MetricName.STAGING_TIME, Date.now() - startTime, Unit.Milliseconds);
 
     // Prepare SQS message for ingestion
     const messageBase = {

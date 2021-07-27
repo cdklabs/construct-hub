@@ -5,7 +5,7 @@ import type { Context, ScheduledEvent } from 'aws-lambda';
 import Nano = require('nano');
 import * as aws from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
-import { MetricName, METRICS_NAMESPACE, DISCOVERY_MARKER_KEY } from './constants.lambda-shared';
+import { MetricName, METRICS_NAMESPACE, DISCOVERY_MARKER_KEY } from './constants';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const normalizeNPMMetadata = require('normalize-registry-metadata');
 

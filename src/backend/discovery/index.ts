@@ -1,4 +1,4 @@
-import { ComparisonOperator, IAlarm, Metric, Statistic } from '@aws-cdk/aws-cloudwatch';
+import { ComparisonOperator, IAlarm, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { Tracing, Function } from '@aws-cdk/aws-lambda';
@@ -8,9 +8,9 @@ import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
-import { MetricName, METRICS_NAMESPACE, S3KeyPrefix, DISCOVERY_MARKER_KEY } from './constants.lambda-shared';
-import { NpmCatalogFollower } from './npm-catalog-follower';
-import { StageAndNotify } from './stage-and-notify';
+import { MetricName, METRICS_NAMESPACE, S3KeyPrefix, DISCOVERY_MARKER_KEY } from './constants';
+import { Follow } from './follow';
+import { Stage } from './stage';
 
 export interface DiscoveryProps {
   /**
@@ -58,8 +58,8 @@ export class Discovery extends Construct {
    */
   public readonly alarmNoInvocations: IAlarm;
 
-  private readonly npmCatalogFollower: Function;
-  private readonly stageAndNotify: Function;
+  public readonly npmCatalogFollower: Function;
+  public readonly stageAndNotify: Function;
 
   public constructor(scope: Construct, id: string, props: DiscoveryProps) {
     super(scope, id);
@@ -84,7 +84,7 @@ export class Discovery extends Construct {
       visibilityTimeout: timeout,
     });
 
-    this.npmCatalogFollower = new NpmCatalogFollower(this, 'Default', {
+    this.npmCatalogFollower = new Follow(this, 'Default', {
       description: '[ConstructHub/Discovery/NpmCatalogFollower] Periodically query npm.js index for new construct libraries',
       memorySize: 10_240,
       /// Only one execution (avoids race conditions on the S3 marker object)
@@ -99,7 +99,7 @@ export class Discovery extends Construct {
     discoveryQueue.grantSendMessages(this.npmCatalogFollower);
     this.bucket.grantReadWrite(this.npmCatalogFollower, DISCOVERY_MARKER_KEY);
 
-    this.stageAndNotify = new StageAndNotify(this, 'StageAndNotify', {
+    this.stageAndNotify = new Stage(this, 'Stage', {
       deadLetterQueueEnabled: true,
       description: '[Discovery/StageAndNotify] Stages a new package version and notifies Construct Hub about it',
       memorySize: 10_240,
@@ -146,120 +146,129 @@ export class Discovery extends Construct {
       });
   }
 
-  public metricBatchProcessingTime(): Metric {
+  public metricBatchProcessingTime(opts?: MetricOptions): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
+      statistic: Statistic.AVERAGE,
+      ...opts,
       metricName: MetricName.BATCH_PROCESSING_TIME,
       namespace: METRICS_NAMESPACE,
-      statistic: Statistic.AVERAGE,
     });
   }
 
-  public metricBatchSize(): Metric {
+  public metricBatchSize(opts?: MetricOptions): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
+      statistic: Statistic.AVERAGE,
+      ...opts,
       metricName: MetricName.CHANGE_COUNT,
       namespace: METRICS_NAMESPACE,
-      statistic: Statistic.AVERAGE,
     });
   }
 
-  public metricNewPackageVersions(): Metric {
+  public metricNewPackageVersions(opts?: MetricOptions): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
+      statistic: Statistic.SUM,
+      ...opts,
       metricName: MetricName.NEW_PACKAGE_VERSIONS,
       namespace: METRICS_NAMESPACE,
-      statistic: Statistic.SUM,
     });
   }
 
-  public metricPackageVersionAge(): Metric {
+  public metricPackageVersionAge(opts?: MetricOptions): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
+      statistic: Statistic.MAXIMUM,
+      ...opts,
       metricName: MetricName.PACKAGE_VERSION_AGE,
       namespace: METRICS_NAMESPACE,
-      statistic: Statistic.MAXIMUM,
     });
   }
 
-  public metricRelevantPackageVersions(): Metric {
+  public metricRelevantPackageVersions(opts?: MetricOptions): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
+      statistic: Statistic.SUM,
+      ...opts,
       metricName: MetricName.RELEVANT_PACKAGE_VERSIONS,
       namespace: METRICS_NAMESPACE,
-      statistic: Statistic.SUM,
     });
   }
 
-  public metricRemainingTime(): Metric {
+  public metricRemainingTime(opts?: MetricOptions): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
+      statistic: Statistic.AVERAGE,
+      ...opts,
       metricName: MetricName.REMAINING_TIME,
       namespace: METRICS_NAMESPACE,
-      statistic: Statistic.AVERAGE,
     });
   }
 
-  public metricStagedPackageVersionAge(): Metric {
+  public metricStagedPackageVersionAge(opts?: MetricOptions): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.stageAndNotify.functionName,
         ServiceName: this.stageAndNotify.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
+      statistic: Statistic.MAXIMUM,
+      ...opts,
       metricName: MetricName.STAGED_PACKAGE_VERSION_AGE,
       namespace: METRICS_NAMESPACE,
-      statistic: Statistic.MAXIMUM,
     });
   }
 
-  public metricStagingTime(): Metric {
+  public metricStagingTime(opts?: MetricOptions): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.stageAndNotify.functionName,
         ServiceName: this.stageAndNotify.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
+      statistic: Statistic.AVERAGE,
+      ...opts,
       metricName: MetricName.STAGING_TIME,
       namespace: METRICS_NAMESPACE,
-      statistic: Statistic.AVERAGE,
     });
   }
 
-  public metricUnprocessableEntity(): Metric {
+  public metricUnprocessableEntity(opts?: MetricOptions): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
+      statistic: Statistic.SUM,
+      ...opts,
       metricName: MetricName.UNPROCESSABLE_ENTITY,
       namespace: METRICS_NAMESPACE,
-      statistic: Statistic.SUM,
     });
   }
 
