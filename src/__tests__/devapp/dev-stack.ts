@@ -17,6 +17,7 @@ export class DevStack extends Stack {
         { package: 'cdk-lambda-subminute', version: '0.1.31', reason: 'test' },
         { package: 'cdk-ecr-image-scan-notify', version: '0.0.192', reason: 'test number 2' },
       ],
+      backendDashboardName: 'construct-hub-backend',
     });
   }
 }

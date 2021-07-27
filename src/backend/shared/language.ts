@@ -13,6 +13,11 @@ export class DocumentationLanguage {
   public static readonly PYTHON = new DocumentationLanguage('python');
 
   /**
+   * All supported languages.
+   */
+  public static readonly ALL = [DocumentationLanguage.TYPESCRIPT, DocumentationLanguage.PYTHON] as const;
+
+  /**
    * Transform a literal string to the `DocumentationLanguage` object.
    *
    * Throws an `UnsupportedLanguageError` if the language is not supported.

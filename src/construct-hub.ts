@@ -46,6 +46,12 @@ export interface ConstructHubProps {
   readonly isolateLambdas?: boolean;
 
   /**
+   * The name of the CloudWatch dashboard that represents the health of backend
+   * systems.
+   */
+  readonly backendDashboardName?: string;
+
+  /**
    * A list of packages to block from the construct hub.
    *
    * @default []
@@ -143,6 +149,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     new BackendDashboard(this, 'BackendDashboard', {
       packageData,
+      dashboardName: props.backendDashboardName,
       discovery,
       ingestion: this.ingestion,
       inventory,
