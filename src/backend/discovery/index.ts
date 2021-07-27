@@ -183,7 +183,7 @@ export class Discovery extends Construct {
   /**
    * The age of the oldest package version that was processed.
    */
-   public metricPackageVersionAge(opts?: MetricOptions): Metric {
+  public metricPackageVersionAge(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
       statistic: Statistic.MAXIMUM,
@@ -236,7 +236,7 @@ export class Discovery extends Construct {
   /**
    * The average time it took to stage a package to S3.
    */
-   public metricStagingTime(opts?: MetricOptions): Metric {
+  public metricStagingTime(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
       statistic: Statistic.AVERAGE,
