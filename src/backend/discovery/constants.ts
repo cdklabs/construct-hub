@@ -4,7 +4,6 @@ export const DISCOVERY_MARKER_KEY = 'couchdb-last-transaction-id';
 export const enum MetricName {
   BATCH_PROCESSING_TIME = 'BatchProcessingTime',
   CHANGE_COUNT = 'ChangeCount',
-  NEW_PACKAGE_VERSIONS = 'NewPackageVersions',
   INELIGIBLE_LICENSE = 'IneligibleLicense',
   NPMJS_CHANGE_AGE = 'NpmJsChangeAge',
   PACKAGE_VERSION_AGE = 'PackageVersionAge',

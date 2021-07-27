@@ -186,21 +186,6 @@ export class Discovery extends Construct {
     });
   }
 
-  public metricNewPackageVersions(opts?: MetricOptions): Metric {
-    return new Metric({
-      period: this.timeout,
-      dimensions: {
-        LogGroup: this.npmCatalogFollower.functionName,
-        ServiceName: this.npmCatalogFollower.functionName,
-        ServiceType: 'AWS::Lambda::Function',
-      },
-      statistic: Statistic.SUM,
-      ...opts,
-      metricName: MetricName.NEW_PACKAGE_VERSIONS,
-      namespace: METRICS_NAMESPACE,
-    });
-  }
-
   public metricPackageVersionAge(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,

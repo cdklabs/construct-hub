@@ -40,7 +40,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
     includeDocs: true,
     // pause the changes reader after each request
     wait: true,
-    since: initialMarker.lastSeq.toFixed(),
+    since: initialMarker.toFixed(),
     // `changesReader.get` stops once a response with zero changes is received, however it waits too long
     //  since we want to terminate the Lambda function we define a timeout shorter than the default
     timeout: TIMEOUT_MILLISECONDS,
@@ -91,23 +91,11 @@ export async function handler(event: ScheduledEvent, context: Context) {
           console.log(`Identified ${versionInfos.length} relevant package version update(s)`);
           metrics.putMetric(MetricName.RELEVANT_PACKAGE_VERSIONS, versionInfos.length, Unit.Count);
 
-          const newVersions = versionInfos.filter(({ infos, modified }) => {
-            const key = `${infos.name}@${infos.version}`;
-            if (updatedMarker.knownPackageVersions.has(key) && updatedMarker.knownPackageVersions.get(key)! >= modified) {
-              // We already saw this package update, or a more recent one.
-              return false;
-            }
-            updatedMarker.knownPackageVersions.set(key, modified);
-            return true;
-          });
-          metrics.putMetric(MetricName.NEW_PACKAGE_VERSIONS, newVersions.length, Unit.Count);
-
           // Notify the staging & notification function
-          await aws.sqsSendMessageBatch(queueUrl, newVersions);
+          await aws.sqsSendMessageBatch(queueUrl, versionInfos);
 
           // Update the transaction marker in S3.
-          updatedMarker.lastSeq = lastSeq;
-          await saveLastTransactionMarker(updatedMarker);
+          await saveLastTransactionMarker(context, stagingBucket, lastSeq);
 
           // If we have enough time left before timeout, proceed with the next batch, otherwise we're done here.
           // Since the distribution of the time it takes to process each package/batch is non uniform, this is a best
@@ -137,6 +125,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
       });
   });
 
+
   //#region Last transaction marker
   /**
    * Loads the last transaction marker from S3.
@@ -145,148 +134,112 @@ export async function handler(event: ScheduledEvent, context: Context) {
    *
    * @returns the value of the last transaction marker.
    */
-  async function loadLastTransactionMarker(defaultValue: number): Promise<Marker> {
+   async function loadLastTransactionMarker(defaultValue: number): Promise<number> {
     try {
       const response = await aws.s3().getObject({
         Bucket: stagingBucket,
         Key: DISCOVERY_MARKER_KEY,
       }).promise();
-      let result = JSON.parse(
-        response.Body!.toString('utf-8'),
-        (key, value) => {
-          if (key !== 'knownPackageVersions' || typeof value !== 'object') {
-            return value;
-          }
-          return Object.entries(value).reduce(
-            (map, [pkg, time]) => map.set(pkg, new Date(time as number)),
-            new Map<string, Date>(),
-          );
-        },
-      ) as number | Marker;
-      if (typeof result === 'number') {
-        console.log('Migrating transaction marker to new format...');
-        result = { lastSeq: result, knownPackageVersions: new Map() };
-      }
-      console.log(`Read last transaction marker: ${result.lastSeq}`);
-      return result;
+      const marker = Number.parseInt(response.Body!.toString('utf-8'), 10);
+      console.log(`Read last transaction marker: ${marker}`);
+      return marker;
     } catch (error) {
       if (error.code !== 'NoSuchKey') {
         throw error;
       }
       console.log(`Marker object (s3://${stagingBucket}/${DISCOVERY_MARKER_KEY}) does not exist, starting from the default (${defaultValue})`);
-      return { lastSeq: defaultValue, knownPackageVersions: new Map() };
+      return defaultValue;
     }
   }
 
-  /**
+ /**
    * Updates the last transaction marker in S3.
    *
    * @param sequence the last transaction marker value
    */
-  async function saveLastTransactionMarker(newMarker: Marker) {
-    console.log(`Updating last transaction marker to ${newMarker.lastSeq}`);
-    return aws.s3PutObject(
-      context,
-      stagingBucket,
-      DISCOVERY_MARKER_KEY,
-      JSON.stringify(
-        newMarker,
-        (key, value) => {
-          if (key !== 'knownPackageVersions') {
-            return value;
-          }
-          const obj = Object.create(null);
-          for (const [pkg, date] of (value as Map<string, Date>).entries()) {
-            obj[pkg] = date.getTime();
-          }
-          return obj;
-        },
-        2,
-      ),
-      { ContentType: 'text/json' },
-    );
+  async function saveLastTransactionMarker(context: Context, bucket: string, sequence: Number) {
+    console.log(`Updating last transaction marker to ${sequence}`);
+    return aws.s3PutObject(context, bucket, DISCOVERY_MARKER_KEY, sequence.toFixed(), { ContentType: 'text/plain; charset=UTF-8' });
   }
-  //#endregion
-}
 
-/**
- * Obtains the `VersionInfo` corresponding to the modified version(s) in the
- * provided `Change` objects, ensures they are relevant (construct libraries),
- * and returns those only.
- *
- * @param changes the changes to be processed.
- *
- * @returns a list of `VersionInfo` objects
- */
-function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLogger): readonly UpdatedVersion[] {
-  const result = new Array<UpdatedVersion>();
+  /**
+   * Obtains the `VersionInfo` corresponding to the modified version(s) in the
+   * provided `Change` objects, ensures they are relevant (construct libraries),
+   * and returns those only.
+   *
+   * @param changes the changes to be processed.
+   *
+   * @returns a list of `VersionInfo` objects
+   */
+  function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLogger): readonly UpdatedVersion[] {
+    const result = new Array<UpdatedVersion>();
 
-  for (const change of changes) {
-    // Filter out all elements that don't have a "name" in the document, as
-    // these are schemas, which are not relevant to our business here.
-    if (change.doc.name === undefined) {
-      console.error(`[${change.seq}] Changed document contains no 'name': ${change.id}`);
-      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
-      continue;
-    }
+    for (const change of changes) {
+      // Filter out all elements that don't have a "name" in the document, as
+      // these are schemas, which are not relevant to our business here.
+      if (change.doc.name === undefined) {
+        console.error(`[${change.seq}] Changed document contains no 'name': ${change.id}`);
+        metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
+        continue;
+      }
 
-    // The normalize function change the object in place, if the doc object is invalid it will return undefined
-    if (normalizeNPMMetadata(change.doc) === undefined) {
-      console.error(`[${change.seq}] Changed document invalid, npm normalize returned undefined: ${change.id}`);
-      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
-      continue;
-    }
+      // The normalize function change the object in place, if the doc object is invalid it will return undefined
+      if (normalizeNPMMetadata(change.doc) === undefined) {
+        console.error(`[${change.seq}] Changed document invalid, npm normalize returned undefined: ${change.id}`);
+        metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
+        continue;
+      }
 
-    // Sometimes, there are no versions in the document. We skip those.
-    if (change.doc.versions == null) {
-      console.error(`[${change.seq}] Changed document contains no 'versions': ${change.id}`);
-      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
-      continue;
-    }
+      // Sometimes, there are no versions in the document. We skip those.
+      if (change.doc.versions == null) {
+        console.error(`[${change.seq}] Changed document contains no 'versions': ${change.id}`);
+        metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
+        continue;
+      }
 
-    // Sometimes, there is no 'time' entry in the document. We skip those.
-    if (change.doc.time == null) {
-      console.error(`[${change.seq}] Changed document contains no 'time': ${change.id}`);
-      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
-      continue;
-    }
+      // Sometimes, there is no 'time' entry in the document. We skip those.
+      if (change.doc.time == null) {
+        console.error(`[${change.seq}] Changed document contains no 'time': ${change.id}`);
+        metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
+        continue;
+      }
 
-    // Get the last modification date from the change
-    const sortedUpdates = Object.entries(change.doc.time)
-      // Ignore the "created" and "modified" keys here
-      .filter(([key]) => key !== 'created' && key !== 'modified')
-      // Parse all the dates to ensure they are comparable
-      .map(([version, isoDate]) => [version, new Date(isoDate)] as const)
-      // Sort by date, descending
-      .sort(([, l], [, r]) => r.getTime() - l.getTime());
-    metrics.putMetric(MetricName.PACKAGE_VERSION_COUNT, sortedUpdates.length, Unit.Count);
+      // Get the last modification date from the change
+      const sortedUpdates = Object.entries(change.doc.time)
+        // Ignore the "created" and "modified" keys here
+        .filter(([key]) => key !== 'created' && key !== 'modified')
+        // Parse all the dates to ensure they are comparable
+        .map(([version, isoDate]) => [version, new Date(isoDate)] as const)
+        // Sort by date, descending
+        .sort(([, l], [, r]) => r.getTime() - l.getTime());
+      metrics.putMetric(MetricName.PACKAGE_VERSION_COUNT, sortedUpdates.length, Unit.Count);
 
-    for (const [version, modified] of sortedUpdates) {
-      const infos = change.doc.versions[version];
-      if (infos == null) {
-        // Could be the version in question was un-published.
-        console.log(`[${change.seq}] Could not find info for "${change.doc.name}@${version}". Was it un-published?`);
-      } else if (isRelevantPackageVersion(infos)) {
-        metrics.putMetric(MetricName.PACKAGE_VERSION_AGE, Date.now() - modified.getTime(), Unit.Milliseconds);
-        result.push({ infos, modified, seq: change.seq });
-      } else {
-        console.log(`[${change.seq}] Ignoring "${change.doc.name}@${version}" as it is not a construct library.`);
+      for (const [version, modified] of sortedUpdates) {
+        const infos = change.doc.versions[version];
+        if (infos == null) {
+          // Could be the version in question was un-published.
+          console.log(`[${change.seq}] Could not find info for "${change.doc.name}@${version}". Was it un-published?`);
+        } else if (isRelevantPackageVersion(infos)) {
+          metrics.putMetric(MetricName.PACKAGE_VERSION_AGE, Date.now() - modified.getTime(), Unit.Milliseconds);
+          result.push({ infos, modified, seq: change.seq });
+        } else {
+          console.log(`[${change.seq}] Ignoring "${change.doc.name}@${version}" as it is not a construct library.`);
+        }
       }
     }
-  }
 
-  return result;
+    return result;
 
-  function isRelevantPackageVersion(infos: VersionInfo): boolean {
-    if (infos.jsii == null) {
-      return false;
+    function isRelevantPackageVersion(infos: VersionInfo): boolean {
+      if (infos.jsii == null) {
+        return false;
+      }
+      return infos.name === 'construct'
+        || infos.name === 'aws-cdk-lib'
+        || infos.name.startsWith('@aws-cdk')
+        || infos.keywords?.some((kw) => CONSTRUCT_KEYWORDS.has(kw));
     }
-    return infos.name === 'construct'
-      || infos.name === 'aws-cdk-lib'
-      || infos.name.startsWith('@aws-cdk')
-      || infos.keywords?.some((kw) => CONSTRUCT_KEYWORDS.has(kw));
   }
-
 }
 
 interface Document {
@@ -319,7 +272,3 @@ interface Change {
   readonly deleted: boolean;
 }
 
-interface Marker {
-  lastSeq: number;
-  knownPackageVersions: Map<string, Date>;
-}

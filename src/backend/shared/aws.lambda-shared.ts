@@ -90,7 +90,7 @@ export function stepFunctions(): AWS.StepFunctions {
  * @param queueUrl the URL of the queue where to send the messages
  * @param messages the messages to be sent
  */
-export async function sqsSendMessageBatch(queueUrl: string, messages: any[]): Promise<void> {
+export async function sqsSendMessageBatch(queueUrl: string, messages: readonly any[]): Promise<void> {
   for (const batch of batchedMessages()) {
     const result = await sqs().sendMessageBatch({ Entries: batch, QueueUrl: queueUrl }).promise();
     if (result.Failed.length > 0) {

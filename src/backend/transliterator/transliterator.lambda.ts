@@ -1,9 +1,7 @@
 import * as os from 'os';
 import * as path from 'path';
-import * as process from 'process';
 
 import type { Context } from 'aws-lambda';
-// eslint-disable-next-line import/no-unresolved
 import { PromiseResult } from 'aws-sdk/lib/request';
 import * as fs from 'fs-extra';
 import * as docgen from 'jsii-docgen';
