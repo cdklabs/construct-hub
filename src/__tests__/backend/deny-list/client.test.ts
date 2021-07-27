@@ -3,6 +3,7 @@ import * as AWSMock from 'aws-sdk-mock';
 import { DenyListRule } from '../../../backend/deny-list/api';
 import { DenyListClient } from '../../../backend/deny-list/client.lambda-shared';
 import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY } from '../../../backend/deny-list/constants';
+import * as aws from '../../../backend/shared/aws.lambda-shared';
 
 const sample: Record<string, DenyListRule> = {
   'foo/v1.2.3': {
@@ -26,6 +27,7 @@ afterEach(() => {
   delete process.env[ENV_DENY_LIST_BUCKET_NAME];
   delete process.env[ENV_DENY_LIST_OBJECT_KEY];
   AWSMock.restore();
+  aws.reset();
 });
 
 test('s3 object not found error', async () => {
