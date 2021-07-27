@@ -161,84 +161,84 @@ export async function handler(event: ScheduledEvent, context: Context) {
     console.log(`Updating last transaction marker to ${sequence}`);
     return aws.s3PutObject(context, stagingBucket, DISCOVERY_MARKER_KEY, sequence.toFixed(), { ContentType: 'text/plain; charset=UTF-8' });
   }
+}
 
-  /**
-   * Obtains the `VersionInfo` corresponding to the modified version(s) in the
-   * provided `Change` objects, ensures they are relevant (construct libraries),
-   * and returns those only.
-   *
-   * @param changes the changes to be processed.
-   *
-   * @returns a list of `VersionInfo` objects
-   */
-  function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLogger): readonly UpdatedVersion[] {
-    const result = new Array<UpdatedVersion>();
+/**
+ * Obtains the `VersionInfo` corresponding to the modified version(s) in the
+ * provided `Change` objects, ensures they are relevant (construct libraries),
+ * and returns those only.
+ *
+ * @param changes the changes to be processed.
+ *
+ * @returns a list of `VersionInfo` objects
+ */
+function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLogger): readonly UpdatedVersion[] {
+  const result = new Array<UpdatedVersion>();
 
-    for (const change of changes) {
-      // Filter out all elements that don't have a "name" in the document, as
-      // these are schemas, which are not relevant to our business here.
-      if (change.doc.name === undefined) {
-        console.error(`[${change.seq}] Changed document contains no 'name': ${change.id}`);
-        metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
-        continue;
-      }
-
-      // The normalize function change the object in place, if the doc object is invalid it will return undefined
-      if (normalizeNPMMetadata(change.doc) === undefined) {
-        console.error(`[${change.seq}] Changed document invalid, npm normalize returned undefined: ${change.id}`);
-        metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
-        continue;
-      }
-
-      // Sometimes, there are no versions in the document. We skip those.
-      if (change.doc.versions == null) {
-        console.error(`[${change.seq}] Changed document contains no 'versions': ${change.id}`);
-        metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
-        continue;
-      }
-
-      // Sometimes, there is no 'time' entry in the document. We skip those.
-      if (change.doc.time == null) {
-        console.error(`[${change.seq}] Changed document contains no 'time': ${change.id}`);
-        metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
-        continue;
-      }
-
-      // Get the last modification date from the change
-      const sortedUpdates = Object.entries(change.doc.time)
-        // Ignore the "created" and "modified" keys here
-        .filter(([key]) => key !== 'created' && key !== 'modified')
-        // Parse all the dates to ensure they are comparable
-        .map(([version, isoDate]) => [version, new Date(isoDate)] as const)
-        // Sort by date, descending
-        .sort(([, l], [, r]) => r.getTime() - l.getTime());
-      metrics.putMetric(MetricName.PACKAGE_VERSION_COUNT, sortedUpdates.length, Unit.Count);
-
-      for (const [version, modified] of sortedUpdates) {
-        const infos = change.doc.versions[version];
-        if (infos == null) {
-          // Could be the version in question was un-published.
-          console.log(`[${change.seq}] Could not find info for "${change.doc.name}@${version}". Was it un-published?`);
-        } else if (isRelevantPackageVersion(infos)) {
-          metrics.putMetric(MetricName.PACKAGE_VERSION_AGE, Date.now() - modified.getTime(), Unit.Milliseconds);
-          result.push({ infos, modified, seq: change.seq });
-        } else {
-          console.log(`[${change.seq}] Ignoring "${change.doc.name}@${version}" as it is not a construct library.`);
-        }
-      }
+  for (const change of changes) {
+    // Filter out all elements that don't have a "name" in the document, as
+    // these are schemas, which are not relevant to our business here.
+    if (change.doc.name === undefined) {
+      console.error(`[${change.seq}] Changed document contains no 'name': ${change.id}`);
+      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
+      continue;
     }
 
-    return result;
-
-    function isRelevantPackageVersion(infos: VersionInfo): boolean {
-      if (infos.jsii == null) {
-        return false;
-      }
-      return infos.name === 'construct'
-        || infos.name === 'aws-cdk-lib'
-        || infos.name.startsWith('@aws-cdk')
-        || infos.keywords?.some((kw) => CONSTRUCT_KEYWORDS.has(kw));
+    // The normalize function change the object in place, if the doc object is invalid it will return undefined
+    if (normalizeNPMMetadata(change.doc) === undefined) {
+      console.error(`[${change.seq}] Changed document invalid, npm normalize returned undefined: ${change.id}`);
+      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
+      continue;
     }
+
+    // Sometimes, there are no versions in the document. We skip those.
+    if (change.doc.versions == null) {
+      console.error(`[${change.seq}] Changed document contains no 'versions': ${change.id}`);
+      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
+      continue;
+    }
+
+    // Sometimes, there is no 'time' entry in the document. We skip those.
+    if (change.doc.time == null) {
+      console.error(`[${change.seq}] Changed document contains no 'time': ${change.id}`);
+      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
+      continue;
+    }
+
+    // Get the last modification date from the change
+    const sortedUpdates = Object.entries(change.doc.time)
+      // Ignore the "created" and "modified" keys here
+      .filter(([key]) => key !== 'created' && key !== 'modified')
+      // Parse all the dates to ensure they are comparable
+      .map(([version, isoDate]) => [version, new Date(isoDate)] as const)
+      // Sort by date, descending
+      .sort(([, l], [, r]) => r.getTime() - l.getTime());
+    metrics.putMetric(MetricName.PACKAGE_VERSION_COUNT, sortedUpdates.length, Unit.Count);
+
+    for (const [version, modified] of sortedUpdates) {
+      const infos = change.doc.versions[version];
+      if (infos == null) {
+        // Could be the version in question was un-published.
+        console.log(`[${change.seq}] Could not find info for "${change.doc.name}@${version}". Was it un-published?`);
+      } else if (isRelevantPackageVersion(infos)) {
+        metrics.putMetric(MetricName.PACKAGE_VERSION_AGE, Date.now() - modified.getTime(), Unit.Milliseconds);
+        result.push({ infos, modified, seq: change.seq });
+      } else {
+        console.log(`[${change.seq}] Ignoring "${change.doc.name}@${version}" as it is not a construct library.`);
+      }
+    }
+  }
+
+  return result;
+
+  function isRelevantPackageVersion(infos: VersionInfo): boolean {
+    if (infos.jsii == null) {
+      return false;
+    }
+    return infos.name === 'construct'
+      || infos.name === 'aws-cdk-lib'
+      || infos.name.startsWith('@aws-cdk')
+      || infos.keywords?.some((kw) => CONSTRUCT_KEYWORDS.has(kw));
   }
 }
 
