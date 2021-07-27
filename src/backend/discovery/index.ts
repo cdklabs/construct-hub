@@ -144,6 +144,9 @@ export class Discovery extends Construct {
       });
   }
 
+  /**
+   * The average time it took to process a changes batch.
+   */
   public metricBatchProcessingTime(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
@@ -159,6 +162,9 @@ export class Discovery extends Construct {
     });
   }
 
+  /**
+   * The total count of changes that were processed.
+   */
   public metricChangeCount(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
@@ -184,7 +190,10 @@ export class Discovery extends Construct {
     });
   }
 
-  public metricPackageVersionAge(opts?: MetricOptions): Metric {
+  /**
+   * The age of the oldest package version that was processed.
+   */
+   public metricPackageVersionAge(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
       dimensions: {
@@ -199,6 +208,22 @@ export class Discovery extends Construct {
     });
   }
 
+  /**
+   * The total count of package versions that were inspected.
+   */
+  public metricPackageVersionCount(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: this.timeout,
+      statistic: Statistic.SUM,
+      ...opts,
+      metricName: MetricName.PACKAGE_VERSION_COUNT,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The total count of package versions that were deemed relevant.
+   */
   public metricRelevantPackageVersions(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
@@ -214,6 +239,10 @@ export class Discovery extends Construct {
     });
   }
 
+  /**
+   * The amount of time that was remaining when the lambda returned in order to
+   * avoid hitting a timeout.
+   */
   public metricRemainingTime(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
@@ -225,6 +254,24 @@ export class Discovery extends Construct {
       statistic: Statistic.AVERAGE,
       ...opts,
       metricName: MetricName.REMAINING_TIME,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The average time it took to stage a package to S3.
+   */
+   public metricStagingTime(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: this.timeout,
+      dimensions: {
+        LogGroup: this.stage.functionName,
+        ServiceName: this.stage.functionName,
+        ServiceType: 'AWS::Lambda::Function',
+      },
+      statistic: Statistic.AVERAGE,
+      ...opts,
+      metricName: MetricName.STAGING_TIME,
       namespace: METRICS_NAMESPACE,
     });
   }
@@ -244,21 +291,10 @@ export class Discovery extends Construct {
     });
   }
 
-  public metricStagingTime(opts?: MetricOptions): Metric {
-    return new Metric({
-      period: this.timeout,
-      dimensions: {
-        LogGroup: this.stage.functionName,
-        ServiceName: this.stage.functionName,
-        ServiceType: 'AWS::Lambda::Function',
-      },
-      statistic: Statistic.AVERAGE,
-      ...opts,
-      metricName: MetricName.STAGING_TIME,
-      namespace: METRICS_NAMESPACE,
-    });
-  }
-
+  /**
+   * The amount of changes that were not processed due to having an invalid
+   * format.
+   */
   public metricUnprocessableEntity(opts?: MetricOptions): Metric {
     return new Metric({
       dimensions: {
