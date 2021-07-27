@@ -18,6 +18,7 @@ export class DevStack extends Stack {
         normalSeverity: topic.topicArn,
         highSeverity: topic.topicArn,
       },
+      backendDashboardName: 'construct-hub-backend',
     });
   }
 }

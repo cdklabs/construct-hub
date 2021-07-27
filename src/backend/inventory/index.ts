@@ -5,8 +5,9 @@ import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
+import { DocumentationLanguage } from '../shared/language';
 import { Canary } from './canary';
-import { METRICS_NAMESPACE, MetricName } from './constants';
+import { METRICS_NAMESPACE, MetricName, LANGUAGE_DIMENSION } from './constants';
 
 export interface InventoryProps {
   /**
@@ -111,26 +112,6 @@ export class Inventory extends Construct {
     });
   }
 
-  public metricMissingPythonDocsCount(opts?: MetricOptions): Metric {
-    return new Metric({
-      period: Duration.minutes(5),
-      statistic: Statistic.MAXIMUM,
-      ...opts,
-      metricName: MetricName.MISSING_PYTHON_DOCS_COUNT,
-      namespace: METRICS_NAMESPACE,
-    });
-  }
-
-  public metricMissingTypeScriptDocsCount(opts?: MetricOptions): Metric {
-    return new Metric({
-      period: Duration.minutes(5),
-      statistic: Statistic.MAXIMUM,
-      ...opts,
-      metricName: MetricName.MISSING_TYPESCRIPT_DOCS_COUNT,
-      namespace: METRICS_NAMESPACE,
-    });
-  }
-
   public metricMissingPackageTarballCount(opts?: MetricOptions): Metric {
     return new Metric({
       period: Duration.minutes(5),
@@ -157,6 +138,213 @@ export class Inventory extends Construct {
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.UNKNOWN_OBJECT_COUNT,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of packages for which all versions are missing a documnetation artifact
+   * (whether supported or not) for the provided `DocumentationLanguage`.
+   */
+  public metricMissingPackageCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_MISSING_PACKAGES,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of package major versions for which all versions are missing a
+   * documnetation artifact (whether supported or not) for the provided
+   * `DocumentationLanguage`.
+   */
+  public metricMissingMajorVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_MISSING_MAJORS,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of package versions that are missing a documnetation artifact
+   * (whether supported or not) for the provided `DocumentationLanguage`.
+   */
+  public metricMissingPackageVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_MISSING_VERSIONS,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of package version submodules that are missing a documnetation
+   * artifact (whether supported or not) for the provided
+   * `DocumentationLanguage`.
+   */
+  public metricMissingSubmoduleCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_MISSING_SUBMODULES,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of packages that have at least one version for which there is
+   * available documentation in the provided `DocumentationLanguage`.
+   */
+  public metricSupportedPackageCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_SUPPORTED_PACKAGES,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of package major versions that have at least one version for
+   * which there is available documentation in the provided
+   * `DocumentationLanguage`.
+   */
+  public metricSupportedMajorVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_SUPPORTED_MAJORS,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of package versions that have available documentation in the
+   * provided `DocumentationLanguage`.
+   */
+  public metricSupportedPackageVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_SUPPORTED_VERSIONS,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of package version submodules that have available documentation
+   * in the provided `DocumentationLanguage`.
+   */
+  public metricSupportedSubmoduleCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_SUPPORTED_SUBMODULES,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of packages that do not support the provided
+   * `DocumentationLanguage`, and hence cannot have documentation for it.
+   */
+  public metricUnsupportedPackageCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_UNSUPPORTED_PACKAGES,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of package major versions that do not support the provided
+   * `DocumentationLanguage`, and hence cannot have documentation for it.
+   */
+  public metricUnsupportedMajorVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_UNSUPPORTED_MAJORS,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of package versions that do not support the provided
+   * `DocumentationLanguage`, and hence cannot have documentation for it.
+   */
+  public metricUnsupportedPackageVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_UNSUPPORTED_VERSIONS,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of package version submodules that do not support the provided
+   * `DocumentationLanguage`, and hence cannot have documentation for it.
+   */
+  public metricUnsupportedSubmoduleCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_UNSUPPORTED_SUBMODULES,
       namespace: METRICS_NAMESPACE,
     });
   }
