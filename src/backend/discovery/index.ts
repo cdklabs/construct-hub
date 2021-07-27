@@ -150,11 +150,6 @@ export class Discovery extends Construct {
   public metricBatchProcessingTime(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
-      dimensions: {
-        LogGroup: this.follow.functionName,
-        ServiceName: this.follow.functionName,
-        ServiceType: 'AWS::Lambda::Function',
-      },
       statistic: Statistic.AVERAGE,
       ...opts,
       metricName: MetricName.BATCH_PROCESSING_TIME,
@@ -168,11 +163,6 @@ export class Discovery extends Construct {
   public metricChangeCount(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
-      dimensions: {
-        LogGroup: this.follow.functionName,
-        ServiceName: this.follow.functionName,
-        ServiceType: 'AWS::Lambda::Function',
-      },
       statistic: Statistic.AVERAGE,
       ...opts,
       metricName: MetricName.CHANGE_COUNT,
@@ -196,11 +186,6 @@ export class Discovery extends Construct {
    public metricPackageVersionAge(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
-      dimensions: {
-        LogGroup: this.follow.functionName,
-        ServiceName: this.follow.functionName,
-        ServiceType: 'AWS::Lambda::Function',
-      },
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.PACKAGE_VERSION_AGE,
@@ -227,11 +212,6 @@ export class Discovery extends Construct {
   public metricRelevantPackageVersions(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
-      dimensions: {
-        LogGroup: this.follow.functionName,
-        ServiceName: this.follow.functionName,
-        ServiceType: 'AWS::Lambda::Function',
-      },
       statistic: Statistic.SUM,
       ...opts,
       metricName: MetricName.RELEVANT_PACKAGE_VERSIONS,
@@ -246,11 +226,6 @@ export class Discovery extends Construct {
   public metricRemainingTime(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
-      dimensions: {
-        LogGroup: this.follow.functionName,
-        ServiceName: this.follow.functionName,
-        ServiceType: 'AWS::Lambda::Function',
-      },
       statistic: Statistic.AVERAGE,
       ...opts,
       metricName: MetricName.REMAINING_TIME,
@@ -264,11 +239,6 @@ export class Discovery extends Construct {
    public metricStagingTime(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
-      dimensions: {
-        LogGroup: this.stage.functionName,
-        ServiceName: this.stage.functionName,
-        ServiceType: 'AWS::Lambda::Function',
-      },
       statistic: Statistic.AVERAGE,
       ...opts,
       metricName: MetricName.STAGING_TIME,
@@ -279,11 +249,6 @@ export class Discovery extends Construct {
   public metricStagedPackageVersionAge(opts?: MetricOptions): Metric {
     return new Metric({
       period: this.timeout,
-      dimensions: {
-        LogGroup: this.stage.functionName,
-        ServiceName: this.stage.functionName,
-        ServiceType: 'AWS::Lambda::Function',
-      },
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.STAGED_PACKAGE_VERSION_AGE,
@@ -297,11 +262,7 @@ export class Discovery extends Construct {
    */
   public metricUnprocessableEntity(opts?: MetricOptions): Metric {
     return new Metric({
-      dimensions: {
-        LogGroup: this.follow.functionName,
-        ServiceName: this.follow.functionName,
-        ServiceType: 'AWS::Lambda::Function',
-      },
+      period: this.timeout,
       statistic: Statistic.SUM,
       ...opts,
       metricName: MetricName.UNPROCESSABLE_ENTITY,
