@@ -255,9 +255,6 @@ function discoverLambdas() {
   project.eslint.allowDevDeps('src/**/*.lambda.ts');
   // Allow .lambda-shared code to import dev-deps (these are not entry points, but are shared by several lambdas)
   project.eslint.allowDevDeps('src/**/*.lambda-shared.ts');
-  // Allow importing the "aws-lambda" module even though it does not resolve (it's types-only)
-  project.eslint.rules['import/no-unresolved'][1] = { ignore: ['aws-lambda'] };
-
   project.addDevDeps('glob');
   for (const entry of glob.sync('src/**/*.lambda.ts')) {
     newLambdaHandler(entry);

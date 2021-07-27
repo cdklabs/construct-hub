@@ -6,6 +6,7 @@ import Nano = require('nano');
 import * as aws from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { MetricName, METRICS_NAMESPACE, DISCOVERY_MARKER_KEY } from './constants';
+import { UpdatedVersion, VersionInfo } from './version-info.lambda-shared';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const normalizeNPMMetadata = require('normalize-registry-metadata');
 
@@ -286,42 +287,6 @@ function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLog
       || infos.keywords?.some((kw) => CONSTRUCT_KEYWORDS.has(kw));
   }
 
-}
-
-/**
-  * The scheme of a package version in the update. Includes the package.json keys, as well as some additional npm metadata
-  * @see https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md#version
-  */
-interface VersionInfo {
-  readonly devDependencies: { readonly [name: string]: string };
-  readonly dependencies: { readonly [name: string]: string };
-  readonly jsii: unknown;
-  readonly license?: string;
-  readonly name: string;
-  readonly [key: string]: unknown;
-  readonly keywords: string[];
-  readonly dist: {
-    readonly shasum: string;
-    readonly tarball: string;
-  };
-  readonly version: string;
-}
-
-interface UpdatedVersion {
-  /**
-   * The `VersionInfo` for the modified package version.
-   */
-  readonly infos: VersionInfo;
-
-  /**
-   * The time at which the `VersionInfo` was last modified.
-   */
-  readonly modified: Date;
-
-  /**
-   * The CouchDB transaction number for the update.
-   */
-  readonly seq: number;
 }
 
 interface Document {

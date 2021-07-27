@@ -61,6 +61,8 @@ export class Discovery extends Construct {
   public readonly npmCatalogFollower: Function;
   public readonly stageAndNotify: Function;
 
+  private readonly timeout = Duration.minutes(15);
+
   public constructor(scope: Construct, id: string, props: DiscoveryProps) {
     super(scope, id);
 
@@ -76,12 +78,10 @@ export class Discovery extends Construct {
       ],
     });
 
-    const timeout = Duration.minutes(15);
-
     const discoveryQueue = new Queue(this, 'DiscoveredPackages', {
       encryption: QueueEncryption.KMS_MANAGED,
       // This is a Lambda event source, visibility timeout needs to be >= to target function timeout
-      visibilityTimeout: timeout,
+      visibilityTimeout: this.timeout,
     });
 
     this.npmCatalogFollower = new Follow(this, 'Default', {
@@ -89,7 +89,7 @@ export class Discovery extends Construct {
       memorySize: 10_240,
       /// Only one execution (avoids race conditions on the S3 marker object)
       reservedConcurrentExecutions: 1,
-      timeout,
+      timeout: this.timeout,
       environment: {
         BUCKET_NAME: this.bucket.bucketName,
         QUEUE_URL: discoveryQueue.queueUrl,
@@ -114,7 +114,7 @@ export class Discovery extends Construct {
     this.stageAndNotify.addEventSource(new SqsEventSource(discoveryQueue));
 
     new Rule(this, 'ScheduleRule', {
-      schedule: Schedule.rate(timeout),
+      schedule: Schedule.rate(this.timeout),
       targets: [new LambdaFunction(this.npmCatalogFollower)],
     });
 
@@ -148,6 +148,7 @@ export class Discovery extends Construct {
 
   public metricBatchProcessingTime(opts?: MetricOptions): Metric {
     return new Metric({
+      period: this.timeout,
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
@@ -160,8 +161,9 @@ export class Discovery extends Construct {
     });
   }
 
-  public metricBatchSize(opts?: MetricOptions): Metric {
+  public metricChangeCount(opts?: MetricOptions): Metric {
     return new Metric({
+      period: this.timeout,
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
@@ -174,8 +176,19 @@ export class Discovery extends Construct {
     });
   }
 
+  public metricNpmJsChangeAge(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: this.timeout,
+      statistic: Statistic.MINIMUM,
+      ...opts,
+      metricName: MetricName.NPMJS_CHANGE_AGE,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
   public metricNewPackageVersions(opts?: MetricOptions): Metric {
     return new Metric({
+      period: this.timeout,
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
@@ -190,6 +203,7 @@ export class Discovery extends Construct {
 
   public metricPackageVersionAge(opts?: MetricOptions): Metric {
     return new Metric({
+      period: this.timeout,
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
@@ -204,6 +218,7 @@ export class Discovery extends Construct {
 
   public metricRelevantPackageVersions(opts?: MetricOptions): Metric {
     return new Metric({
+      period: this.timeout,
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
@@ -218,6 +233,7 @@ export class Discovery extends Construct {
 
   public metricRemainingTime(opts?: MetricOptions): Metric {
     return new Metric({
+      period: this.timeout,
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
@@ -232,6 +248,7 @@ export class Discovery extends Construct {
 
   public metricStagedPackageVersionAge(opts?: MetricOptions): Metric {
     return new Metric({
+      period: this.timeout,
       dimensions: {
         LogGroup: this.stageAndNotify.functionName,
         ServiceName: this.stageAndNotify.functionName,
@@ -246,6 +263,7 @@ export class Discovery extends Construct {
 
   public metricStagingTime(opts?: MetricOptions): Metric {
     return new Metric({
+      period: this.timeout,
       dimensions: {
         LogGroup: this.stageAndNotify.functionName,
         ServiceName: this.stageAndNotify.functionName,
