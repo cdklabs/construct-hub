@@ -43,8 +43,7 @@ export class Discovery extends Construct {
   public readonly bucket: IBucket;
 
   /**
-   * Alarms when the dead-letter-queue associated with the stage-and-notify
-   * function is not empty.
+   * Alarms when the dead-letter-queue associated with the stage function is not empty.
    */
   public readonly alarmDeadLetterQueueNotEmpty: IAlarm;
 
@@ -58,8 +57,8 @@ export class Discovery extends Construct {
    */
   public readonly alarmNoInvocations: IAlarm;
 
-  public readonly npmCatalogFollower: Function;
-  public readonly stageAndNotify: Function;
+  public readonly follow: Function;
+  public readonly stage: Function;
 
   private readonly timeout = Duration.minutes(15);
 
@@ -71,8 +70,7 @@ export class Discovery extends Construct {
       enforceSSL: true,
       lifecycleRules: [
         {
-          // delete the staged tarball after 30 days
-          prefix: S3KeyPrefix.STAGED_KEY_PREFIX,
+          prefix: S3KeyPrefix.STAGED_KEY_PREFIX, // delete the staged tarball after 30 days
           expiration: Duration.days(30),
         },
       ],
@@ -84,7 +82,7 @@ export class Discovery extends Construct {
       visibilityTimeout: this.timeout,
     });
 
-    this.npmCatalogFollower = new Follow(this, 'Default', {
+    this.follow = new Follow(this, 'Default', {
       description: '[ConstructHub/Discovery/NpmCatalogFollower] Periodically query npm.js index for new construct libraries',
       memorySize: 10_240,
       /// Only one execution (avoids race conditions on the S3 marker object)
@@ -96,10 +94,10 @@ export class Discovery extends Construct {
       },
       tracing: Tracing.ACTIVE,
     });
-    discoveryQueue.grantSendMessages(this.npmCatalogFollower);
-    this.bucket.grantReadWrite(this.npmCatalogFollower, DISCOVERY_MARKER_KEY);
+    discoveryQueue.grantSendMessages(this.follow);
+    this.bucket.grantReadWrite(this.follow, DISCOVERY_MARKER_KEY);
 
-    this.stageAndNotify = new Stage(this, 'Stage', {
+    this.stage = new Stage(this, 'Stage', {
       deadLetterQueueEnabled: true,
       description: '[Discovery/StageAndNotify] Stages a new package version and notifies Construct Hub about it',
       memorySize: 10_240,
@@ -109,35 +107,35 @@ export class Discovery extends Construct {
         QUEUE_URL: props.queue.queueUrl,
       },
     });
-    this.bucket.grantReadWrite(this.stageAndNotify, `${S3KeyPrefix.STAGED_KEY_PREFIX}*`);
-    props.queue.grantSendMessages(this.stageAndNotify);
-    this.stageAndNotify.addEventSource(new SqsEventSource(discoveryQueue));
+    this.bucket.grantReadWrite(this.stage, `${S3KeyPrefix.STAGED_KEY_PREFIX}*`);
+    props.queue.grantSendMessages(this.stage);
+    this.stage.addEventSource(new SqsEventSource(discoveryQueue));
 
     new Rule(this, 'ScheduleRule', {
       schedule: Schedule.rate(this.timeout),
-      targets: [new LambdaFunction(this.npmCatalogFollower)],
+      targets: [new LambdaFunction(this.follow)],
     });
 
-    props.monitoring.watchful.watchLambdaFunction('Discovery npmjs.com follower', this.npmCatalogFollower);
-    this.alarmErrors = this.npmCatalogFollower.metricErrors({ period: Duration.minutes(15) })
+    props.monitoring.watchful.watchLambdaFunction('Discovery npmjs.com follower', this.follow);
+    this.alarmErrors = this.follow.metricErrors({ period: Duration.minutes(15) })
       .createAlarm(this, 'ErrorsAlarm', {
         alarmDescription: 'The npm catalog follower function failed to run',
         comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
         evaluationPeriods: 1,
         threshold: 1,
       });
-    this.alarmNoInvocations = this.npmCatalogFollower.metricInvocations({ period: Duration.minutes(15) })
+    this.alarmNoInvocations = this.follow.metricInvocations({ period: Duration.minutes(15) })
       .createAlarm(this, 'NoInvocationsAlarm', {
         alarmDescription: 'The npm catalog follower function is not running as scheduled',
         comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
         evaluationPeriods: 1,
         threshold: 1,
       });
-    this.bucket.grantReadWrite(this.stageAndNotify);
-    props.queue.grantSendMessages(this.stageAndNotify);
+    this.bucket.grantReadWrite(this.stage);
+    props.queue.grantSendMessages(this.stage);
 
-    props.monitoring.watchful.watchLambdaFunction('Discovery stager', this.stageAndNotify);
-    this.alarmDeadLetterQueueNotEmpty = this.stageAndNotify.deadLetterQueue!.metricApproximateNumberOfMessagesVisible()
+    props.monitoring.watchful.watchLambdaFunction('Discovery stager', this.stage);
+    this.alarmDeadLetterQueueNotEmpty = this.stage.deadLetterQueue!.metricApproximateNumberOfMessagesVisible()
       .createAlarm(this, 'AlarmDLQ', {
         alarmDescription: 'The dead-letter-queue associated with the discovery stage-and-notify function is not empty',
         comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
@@ -150,8 +148,8 @@ export class Discovery extends Construct {
     return new Metric({
       period: this.timeout,
       dimensions: {
-        LogGroup: this.npmCatalogFollower.functionName,
-        ServiceName: this.npmCatalogFollower.functionName,
+        LogGroup: this.follow.functionName,
+        ServiceName: this.follow.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
       statistic: Statistic.AVERAGE,
@@ -165,8 +163,8 @@ export class Discovery extends Construct {
     return new Metric({
       period: this.timeout,
       dimensions: {
-        LogGroup: this.npmCatalogFollower.functionName,
-        ServiceName: this.npmCatalogFollower.functionName,
+        LogGroup: this.follow.functionName,
+        ServiceName: this.follow.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
       statistic: Statistic.AVERAGE,
@@ -190,8 +188,8 @@ export class Discovery extends Construct {
     return new Metric({
       period: this.timeout,
       dimensions: {
-        LogGroup: this.npmCatalogFollower.functionName,
-        ServiceName: this.npmCatalogFollower.functionName,
+        LogGroup: this.follow.functionName,
+        ServiceName: this.follow.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
       statistic: Statistic.MAXIMUM,
@@ -205,8 +203,8 @@ export class Discovery extends Construct {
     return new Metric({
       period: this.timeout,
       dimensions: {
-        LogGroup: this.npmCatalogFollower.functionName,
-        ServiceName: this.npmCatalogFollower.functionName,
+        LogGroup: this.follow.functionName,
+        ServiceName: this.follow.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
       statistic: Statistic.SUM,
@@ -220,8 +218,8 @@ export class Discovery extends Construct {
     return new Metric({
       period: this.timeout,
       dimensions: {
-        LogGroup: this.npmCatalogFollower.functionName,
-        ServiceName: this.npmCatalogFollower.functionName,
+        LogGroup: this.follow.functionName,
+        ServiceName: this.follow.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
       statistic: Statistic.AVERAGE,
@@ -235,8 +233,8 @@ export class Discovery extends Construct {
     return new Metric({
       period: this.timeout,
       dimensions: {
-        LogGroup: this.stageAndNotify.functionName,
-        ServiceName: this.stageAndNotify.functionName,
+        LogGroup: this.stage.functionName,
+        ServiceName: this.stage.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
       statistic: Statistic.MAXIMUM,
@@ -250,8 +248,8 @@ export class Discovery extends Construct {
     return new Metric({
       period: this.timeout,
       dimensions: {
-        LogGroup: this.stageAndNotify.functionName,
-        ServiceName: this.stageAndNotify.functionName,
+        LogGroup: this.stage.functionName,
+        ServiceName: this.stage.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
       statistic: Statistic.AVERAGE,
@@ -264,8 +262,8 @@ export class Discovery extends Construct {
   public metricUnprocessableEntity(opts?: MetricOptions): Metric {
     return new Metric({
       dimensions: {
-        LogGroup: this.npmCatalogFollower.functionName,
-        ServiceName: this.npmCatalogFollower.functionName,
+        LogGroup: this.follow.functionName,
+        ServiceName: this.follow.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
       statistic: Statistic.SUM,

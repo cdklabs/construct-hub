@@ -68,7 +68,7 @@ export class BackendDashboard extends Construct {
             markdown: [
               '# Discovery/Follower Function',
               '',
-              `[button:Search Log Group](${lambdaSearchLogGroupUrl(props.discovery.npmCatalogFollower)})`,
+              `[button:Search Log Group](${lambdaSearchLogGroupUrl(props.discovery.follow)})`,
             ].join('\n'),
           }),
         ],
@@ -78,8 +78,8 @@ export class BackendDashboard extends Construct {
             width: 12,
             title: 'Function Health',
             left: [
-              fillMetric(props.discovery.npmCatalogFollower.metricInvocations({ label: 'Invocations' })),
-              fillMetric(props.discovery.npmCatalogFollower.metricErrors({ label: 'Errors' })),
+              fillMetric(props.discovery.follow.metricInvocations({ label: 'Invocations' })),
+              fillMetric(props.discovery.follow.metricErrors({ label: 'Errors' })),
             ],
             leftYAxis: { min: 0 },
             right: [
