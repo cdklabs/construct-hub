@@ -1,10 +1,15 @@
-import * as console from 'console';
-
 import type { Context } from 'aws-lambda';
-import * as AWS from 'aws-sdk';
+import * as _AWS from 'aws-sdk';
+import * as AWSXRay from 'aws-xray-sdk-core';
+
+// Do nothing if there is no XRay trace context
+AWSXRay.setContextMissingStrategy(() => {});
+
+const AWS = AWSXRay.captureAWS(_AWS);
 
 let _s3: AWS.S3 | undefined;
 let _sqs: AWS.SQS | undefined;
+let _sfn: AWS.StepFunctions | undefined;
 
 export function s3(): AWS.S3 {
   if (_s3 == null) {
@@ -44,11 +49,37 @@ export function s3PutObject(
   }).promise();
 }
 
+/**
+ * Checks whether an object exists in S3 at the provided bucket and key.
+ */
+export function s3ObjectExists(bucket: string, key: string): Promise<boolean> {
+  return s3().headObject({
+    Bucket: bucket,
+    Key: key,
+  }).promise()
+    .then(
+      () => true,
+      (cause) => {
+        if (cause.code === 'NotFound') {
+          return false;
+        }
+        return Promise.reject(cause);
+      },
+    );
+}
+
 export function sqs(): AWS.SQS {
   if (_sqs == null) {
     _sqs = new AWS.SQS();
   }
   return _sqs;
+}
+
+export function stepFunctions(): AWS.StepFunctions {
+  if (_sfn == null) {
+    _sfn = new AWS.StepFunctions();
+  }
+  return _sfn;
 }
 
 /**
@@ -109,5 +140,5 @@ export async function sqsSendMessageBatch(queueUrl: string, messages: any[]): Pr
  * `aws-sdk-mocks` is used, so that new mocks are injected as intended.
  */
 export function reset(): void {
-  _s3 = _sqs = undefined;
+  _s3 = _sqs = _sfn = undefined;
 }

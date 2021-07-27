@@ -9,6 +9,8 @@ const peerDeps = [
   '@aws-cdk/aws-cloudfront',
   '@aws-cdk/aws-cloudwatch-actions',
   '@aws-cdk/aws-cloudwatch',
+  '@aws-cdk/aws-codeartifact',
+  '@aws-cdk/aws-ec2',
   '@aws-cdk/aws-events-targets',
   '@aws-cdk/aws-events',
   '@aws-cdk/aws-iam',
@@ -19,10 +21,13 @@ const peerDeps = [
   '@aws-cdk/aws-route53',
   '@aws-cdk/aws-s3-deployment',
   '@aws-cdk/aws-s3',
-  '@aws-cdk/aws-sqs',
+  '@aws-cdk/aws-s3-notifications',
   '@aws-cdk/aws-sns',
-  '@aws-cdk/core',
   '@aws-cdk/aws-sqs',
+  '@aws-cdk/aws-stepfunctions',
+  '@aws-cdk/aws-stepfunctions-tasks',
+  '@aws-cdk/core',
+  '@aws-cdk/custom-resources',
   '@aws-cdk/cx-api',
   'cdk-watchful',
   'constructs',
@@ -50,7 +55,6 @@ const project = new JsiiProject({
     cdkAssert,
     ...peerDeps,
     '@jsii/spec',
-    '@types/aws-lambda',
     '@types/fs-extra',
     '@types/semver',
     '@types/tar-stream',
@@ -58,10 +62,10 @@ const project = new JsiiProject({
     'aws-embedded-metrics',
     'aws-sdk-mock',
     'aws-sdk',
+    'aws-xray-sdk-core',
     'esbuild',
     'fs-extra',
     'got',
-    'jsii-rosetta',
     'semver',
     'tar-stream',
     'yaml',
@@ -128,11 +132,6 @@ const project = new JsiiProject({
     },
   }),
 });
-
-// Required while we vendor-in jsii-rosetta to a pre-release version
-project.addDevDeps('jsii-rosetta@./vendor/jsii-rosetta.tgz');
-project.addDevDeps('@jsii/spec@./vendor/jsii-spec.tgz');
-project.addFields({ resolutions: { '@jsii/spec': './vendor/jsii-spec.tgz' } });
 
 function addDevApp() {
   // add "dev:xxx" tasks for interacting with the dev stack
@@ -216,12 +215,15 @@ function newLambdaHandler(entrypoint) {
   ts.close('}');
   ts.line();
   ts.open(`export class ${className} extends lambda.Function {`);
-  ts.open(`constructor(scope: Construct, id: string, props: ${propsName} = {}) {`);
+  // NOTE: unlike the array splat (`[...arr]`), the object splat (`{...obj}`) is
+  //       `undefined`-safe. We can hence save an unnecessary object allocation
+  //       by not specifying a default value for the `props` argument here.
+  ts.open(`constructor(scope: Construct, id: string, props?: ${propsName}) {`);
   ts.open('super(scope, id, {');
+  ts.line('...props,');
   ts.line('runtime: lambda.Runtime.NODEJS_14_X,');
   ts.line('handler: \'index.handler\',');
   ts.line(`code: lambda.Code.fromAsset(path.join(__dirname, '/${basename(outdir)}')),`);
-  ts.line('...props,');
   ts.close('});');
   ts.close('}');
   ts.close('}');
@@ -260,6 +262,13 @@ function discoverLambdas() {
   for (const entry of glob.sync('src/**/*.lambda.ts')) {
     newLambdaHandler(entry);
   }
+
+  // Add the AWS Lambda type definitions, and ignore that it never resolves
+  project.addDevDeps('@types/aws-lambda');
+  const noUnresolvedRule = project.eslint && project.eslint.rules['import/no-unresolved'];
+  if (noUnresolvedRule != null) {
+    noUnresolvedRule[1] = { ...noUnresolvedRule[1] || {}, ignore: [...(noUnresolvedRule[1] || {}).ignore || [], 'aws-lambda'] };
+  }
 }
 
 // extract the "build/" directory from "construct-hub-webapp" into "./website"
@@ -267,6 +276,7 @@ function discoverLambdas() {
 // dev-dependency on the webapp instead of a normal/bundled dependency.
 project.addDevDeps('construct-hub-webapp');
 project.compileTask.prependExec('cp -r ./node_modules/construct-hub-webapp/build ./website');
+project.compileTask.prependExec('rm -rf ./website');
 project.npmignore.addPatterns('!/website'); // <-- include in tarball
 project.gitignore.addPatterns('/website'); // <-- don't commit
 

@@ -1,21 +1,34 @@
+import { createHash } from 'crypto';
+import { basename, extname } from 'path';
 import { URL } from 'url';
 import { createGunzip } from 'zlib';
 
 import { validateAssembly } from '@jsii/spec';
-import { Context, SQSEvent } from 'aws-lambda';
+import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
+import Environments from 'aws-embedded-metrics/lib/environment/Environments';
+import type { Context, SQSEvent } from 'aws-lambda';
 import { extract } from 'tar-stream';
+import type { StateMachineInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
-import * as constants from '../shared/constants.lambda-shared';
+import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
+import { MetricName, METRICS_NAMESPACE } from './constants';
 
-export async function handler(event: SQSEvent, context: Context) {
+Configuration.environmentOverride = Environments.Lambda;
+Configuration.namespace = METRICS_NAMESPACE;
+
+export const handler = metricScope((metrics) => async (event: SQSEvent, context: Context) => {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
 
-  const BUCKET_NAME = requireEnv('BUCKET_NAME');
+  // Clear out the default dimensions, we won't need them.
+  metrics.setDimensions();
 
-  const result = new Array<CreatedObject>();
+  const BUCKET_NAME = requireEnv('BUCKET_NAME');
+  const STATE_MACHINE_ARN = requireEnv('STATE_MACHINE_ARN');
+
+  const result = new Array<string>();
 
   for (const record of event.Records ?? []) {
     const payload = JSON.parse(record.body) as IngestionInput;
@@ -38,33 +51,104 @@ export async function handler(event: SQSEvent, context: Context) {
     }
 
     const tar = await gunzip(Buffer.from(tarball.Body!));
-    const dotJsii = await new Promise<Buffer>((ok, ko) => {
-      extract()
-        .on('entry', (headers, stream, next) => {
-          if (headers.name !== 'package/.jsii') {
+    let dotJsii: Buffer;
+    let licenseText: Buffer | undefined;
+    let packageJson: Buffer;
+    try {
+      const extracted = await new Promise<{ dotJsii: Buffer; licenseText?: Buffer; packageJson: Buffer }>((ok, ko) => {
+        let dotJsiiBuffer: Buffer | undefined;
+        let licenseTextBuffer: Buffer | undefined;
+        let packageJsonData: Buffer | undefined;
+        const extractor = extract({ filenameEncoding: 'utf-8' })
+          .once('error', (reason) => {
+            ko(reason);
+          })
+          .once('finish', () => {
+            if (dotJsiiBuffer == null) {
+              ko(new Error('No .jsii file found in tarball!'));
+            } else if (packageJsonData == null) {
+              ko(new Error('No package.json file found in tarball!'));
+            } else {
+              ok({ dotJsii: dotJsiiBuffer, licenseText: licenseTextBuffer, packageJson: packageJsonData });
+            }
+          })
+          .on('entry', (headers, stream, next) => {
+            const chunks = new Array<Buffer>();
+            if (headers.name === 'package/.jsii') {
+              return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
+                .once('error', ko)
+                .once('end', () => {
+                  dotJsiiBuffer = Buffer.concat(chunks);
+                  // Skip on next runLoop iteration so we avoid filling the stack.
+                  setImmediate(next);
+                })
+                .resume();
+            } else if (headers.name === 'package/package.json') {
+              return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
+                .once('error', ko)
+                .once('end', () => {
+                  packageJsonData = Buffer.concat(chunks);
+                  // Skip on next runLoop iteration so we avoid filling the stack.
+                  setImmediate(next);
+                })
+                .resume();
+            } else if (isLicenseFile(headers.name)) {
+              return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
+                .once('error', ko)
+                .once('end', () => {
+                  licenseTextBuffer = Buffer.concat(chunks);
+                  // Skip on next runLoop iteration so we avoid filling the stack.
+                  setImmediate(next);
+                })
+                .resume();
+            }
             // Skip on next runLoop iteration so we avoid filling the stack.
             return setImmediate(next);
-          }
-          const chunks = new Array<Buffer>();
-          return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
-            .once('error', ko)
-            .once('end', () => {
-              ok(Buffer.concat(chunks));
-              next();
-            })
-            .resume();
-        })
-        .once('error', ko)
-        .once('close', () => ko(new Error('No .jsii file found in tarball!')))
-        .write(tar, (err) => {
+          });
+        extractor.write(tar, (err) => {
           if (err != null) {
             ko(err);
           }
+          extractor.end();
         });
-    });
-    const metadata = { date: payload.time };
+      });
+      dotJsii = extracted.dotJsii;
+      licenseText = extracted.licenseText;
+      packageJson = extracted.packageJson;
+      metrics.putMetric(MetricName.INVALID_TARBALL, 0, Unit.Count);
+    } catch (err) {
+      console.error(`Invalid tarball content: ${err}`);
+      metrics.putMetric(MetricName.INVALID_TARBALL, 1, Unit.Count);
+      return;
+    }
+    const metadata = { date: payload.time, licenseText: licenseText?.toString('utf-8') };
 
-    const { name: packageName, version: packageVersion } = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
+    let packageLicense: string;
+    let packageName: string;
+    let packageVersion: string;
+    try {
+      const { license, name, version } = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
+      packageLicense = license;
+      packageName = name;
+      packageVersion = version;
+      metrics.putMetric(MetricName.INVALID_ASSEMBLY, 0, Unit.Count);
+    } catch (ex) {
+      console.error(`Package does not contain a valid assembly -- ignoring: ${ex}`);
+      metrics.putMetric(MetricName.INVALID_ASSEMBLY, 1, Unit.Count);
+      return;
+    }
+
+    // Ensure the `.jsii` name, version & license corresponds to those in `package.json`
+    const { name: packageJsonName, version: packageJsonVersion, license: packageJsonLicense } = JSON.parse(packageJson.toString('utf-8'));
+    if (packageJsonName !== packageName || packageJsonVersion !== packageVersion || packageJsonLicense !== packageLicense) {
+      console.log(`Ignoring package with mismatched name, version, and/or license (${packageJsonName}@${packageJsonVersion} is ${packageJsonLicense} !== ${packageName}@${packageVersion} is ${packageLicense})`);
+      metrics.putMetric(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 1, Unit.Count);
+      continue;
+    }
+    metrics.putMetric(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 0, Unit.Count);
+
+    // Did we identify a license file or not?
+    metrics.putMetric(MetricName.FOUND_LICENSE_FILE, licenseText != null ? 1 : 0, Unit.Count);
 
     const assemblyKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`;
     console.log(`Writing assembly at ${assemblyKey}`);
@@ -73,23 +157,16 @@ export async function handler(event: SQSEvent, context: Context) {
     const metadataKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.METADATA_KEY_SUFFIX}`;
     console.log(`Writing metadata at  ${metadataKey}`);
 
-    const [assembly, pkg, storedMetadata] = await Promise.all([
-      aws.s3().putObject({
-        Bucket: BUCKET_NAME,
-        Key: assemblyKey,
-        Body: dotJsii,
-        ContentType: 'application/json',
-        Metadata: {
-          'Lambda-Log-Group': context.logGroupName,
-          'Lambda-Log-Stream': context.logStreamName,
-          'Lambda-Run-Id': context.awsRequestId,
-        },
-      }).promise(),
+    // we upload the metadata file first because the catalog builder depends on
+    // it and is triggered by the assembly file upload.
+    console.log(`${packageName}@${packageVersion} | Uploading package and metadata files`);
+    const [pkg, storedMetadata] = await Promise.all([
       aws.s3().putObject({
         Bucket: BUCKET_NAME,
         Key: packageKey,
         Body: tarball.Body,
-        ContentType: 'application/x-gtar',
+        CacheControl: 'public',
+        ContentType: 'application/octet-stream',
         Metadata: {
           'Lambda-Log-Group': context.logGroupName,
           'Lambda-Log-Stream': context.logStreamName,
@@ -100,6 +177,7 @@ export async function handler(event: SQSEvent, context: Context) {
         Bucket: BUCKET_NAME,
         Key: metadataKey,
         Body: JSON.stringify(metadata),
+        CacheControl: 'public',
         ContentType: 'application/json',
         Metadata: {
           'Lambda-Log-Group': context.logGroupName,
@@ -109,7 +187,22 @@ export async function handler(event: SQSEvent, context: Context) {
       }).promise(),
     ]);
 
-    const created = {
+    // now we can upload the assembly.
+    console.log(`${packageName}@${packageVersion} | Uploading assembly file`);
+    const assembly = await aws.s3().putObject({
+      Bucket: BUCKET_NAME,
+      Key: assemblyKey,
+      Body: dotJsii,
+      CacheControl: 'public',
+      ContentType: 'application/json',
+      Metadata: {
+        'Lambda-Log-Group': context.logGroupName,
+        'Lambda-Log-Stream': context.logStreamName,
+        'Lambda-Run-Id': context.awsRequestId,
+      },
+    }).promise();
+
+    const created: StateMachineInput = {
       bucket: BUCKET_NAME,
       assembly: {
         key: assemblyKey,
@@ -125,11 +218,18 @@ export async function handler(event: SQSEvent, context: Context) {
       },
     };
     console.log(`Created objects: ${JSON.stringify(created, null, 2)}`);
-    result.push(created);
+
+    const sfn = await aws.stepFunctions().startExecution({
+      input: JSON.stringify(created),
+      name: sfnExecutionNameFromParts(packageName, `v${packageVersion}`, context.awsRequestId),
+      stateMachineArn: STATE_MACHINE_ARN,
+    }).promise();
+    console.log(`Started StateMachine execution: ${sfn.executionArn}`);
+    result.push(sfn.executionArn);
   }
 
   return result;
-}
+});
 
 function gunzip(data: Buffer): Promise<Buffer> {
   const chunks = new Array<Buffer>();
@@ -141,13 +241,43 @@ function gunzip(data: Buffer): Promise<Buffer> {
       .end(data));
 }
 
-interface CreatedObject {
-  readonly bucket: string;
-  readonly assembly: KeyAndVersion;
-  readonly package: KeyAndVersion;
+/**
+ * Checks whether the provided file name corresponds to a license file or not.
+ *
+ * @param fileName the file name to be checked.
+ *
+ * @returns `true` IIF the file is named LICENSE and has the .MD or .TXT
+ *          extension, or no extension at all. The test is case-insensitive.
+ */
+function isLicenseFile(fileName: string): boolean {
+  const ext = extname(fileName);
+  const possibleExtensions = new Set(['', '.md', '.txt']);
+  return possibleExtensions.has(ext.toLowerCase())
+    && basename(fileName, ext).toUpperCase() === 'LICENSE';
 }
 
-interface KeyAndVersion {
-  readonly key: string;
-  readonly versionId?: string;
+
+/**
+ * Creates a StepFunction execution request name based on the provided parts.
+ * The result is guaranteed to be 80 characters or less and to contain only
+ * characters that are valid for a StepFunction execution request name for which
+ * CloudWatch Logging can be enabled. The resulting name is very likely to
+ * be unique for a given input.
+ */
+function sfnExecutionNameFromParts(first: string, ...rest: readonly string[]): string {
+  const parts = [first, ...rest];
+  const name = parts
+    .map((part) => part.replace(/[^a-z0-9_-]+/ig, '_'))
+    .join('_')
+    .replace(/^_/g, '')
+    .replace(/_{2,}/g, '_');
+  if (name.length <= 80) {
+    return name;
+  }
+  const suffix = createHash('sha256')
+  // The hash is computed based on input arguments, to maximize unicity
+    .update(parts.join('_'))
+    .digest('hex')
+    .substring(0, 6);
+  return `${name.substring(0, 80 - suffix.length - 1)}_${suffix}`;
 }

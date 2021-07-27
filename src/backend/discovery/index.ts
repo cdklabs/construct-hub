@@ -1,15 +1,14 @@
-import { ComparisonOperator, IAlarm, IMetric, Metric, Statistic } from '@aws-cdk/aws-cloudwatch';
+import { ComparisonOperator, IAlarm, Metric, Statistic } from '@aws-cdk/aws-cloudwatch';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
-import { Function } from '@aws-cdk/aws-lambda';
+import { Tracing, Function } from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
-
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
-import { DISCOVERY_MARKER_KEY, METRIC_NAMESPACE, METRIC_NAME_BATCH_PROCESSING_TIME, METRIC_NAME_BATCH_SIZE, METRIC_NAME_NEW_PACKAGE_VERSIONS, METRIC_NAME_PACKAGE_VERSION_AGE, METRIC_NAME_RELEVANT_PACKAGE_VERSIONS, METRIC_NAME_REMAINING_TIME, METRIC_NAME_STAGED_PACKAGE_VERSION_AGE, METRIC_NAME_STAGING_TIME, METRIC_NAME_UNPROCESSABLE_ENTITY, RESET_BEACON_KEY, STAGED_KEY_PREFIX } from './constants.lambda-shared';
+import { MetricName, METRICS_NAMESPACE, S3KeyPrefix, DISCOVERY_MARKER_KEY } from './constants.lambda-shared';
 import { NpmCatalogFollower } from './npm-catalog-follower';
 import { StageAndNotify } from './stage-and-notify';
 
@@ -67,35 +66,38 @@ export class Discovery extends Construct {
 
     this.bucket = new Bucket(this, 'StagingBucket', {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+      enforceSSL: true,
       lifecycleRules: [
         {
-          prefix: STAGED_KEY_PREFIX, // delete the staged tarball after 30 days
+          // delete the staged tarball after 30 days
+          prefix: S3KeyPrefix.STAGED_KEY_PREFIX,
           expiration: Duration.days(30),
         },
       ],
     });
 
+    const timeout = Duration.minutes(15);
+
     const discoveryQueue = new Queue(this, 'DiscoveredPackages', {
       encryption: QueueEncryption.KMS_MANAGED,
       // This is a Lambda event source, visibility timeout needs to be >= to target function timeout
-      visibilityTimeout: Duration.minutes(15),
+      visibilityTimeout: timeout,
     });
 
-    // Note: the handler is designed to stop processing more batches about 2 minutes ahead of the timeout.
-    const timeout = Duration.minutes(15);
     this.npmCatalogFollower = new NpmCatalogFollower(this, 'Default', {
-      description: '[Discovery/NpmCatalogFollower] Periodically query npm.js index for new construct libraries',
+      description: '[ConstructHub/Discovery/NpmCatalogFollower] Periodically query npm.js index for new construct libraries',
       memorySize: 10_240,
-      reservedConcurrentExecutions: 1, // Only one execution (avoids race conditions on the S3 marker object)
+      /// Only one execution (avoids race conditions on the S3 marker object)
+      reservedConcurrentExecutions: 1,
       timeout,
       environment: {
         BUCKET_NAME: this.bucket.bucketName,
         QUEUE_URL: discoveryQueue.queueUrl,
       },
+      tracing: Tracing.ACTIVE,
     });
     discoveryQueue.grantSendMessages(this.npmCatalogFollower);
     this.bucket.grantReadWrite(this.npmCatalogFollower, DISCOVERY_MARKER_KEY);
-    this.bucket.grantReadWrite(this.npmCatalogFollower, RESET_BEACON_KEY);
 
     this.stageAndNotify = new StageAndNotify(this, 'StageAndNotify', {
       deadLetterQueueEnabled: true,
@@ -107,7 +109,7 @@ export class Discovery extends Construct {
         QUEUE_URL: props.queue.queueUrl,
       },
     });
-    this.bucket.grantReadWrite(this.stageAndNotify, `${STAGED_KEY_PREFIX}*`);
+    this.bucket.grantReadWrite(this.stageAndNotify, `${S3KeyPrefix.STAGED_KEY_PREFIX}*`);
     props.queue.grantSendMessages(this.stageAndNotify);
     this.stageAndNotify.addEventSource(new SqsEventSource(discoveryQueue));
 
@@ -131,6 +133,9 @@ export class Discovery extends Construct {
         evaluationPeriods: 1,
         threshold: 1,
       });
+    this.bucket.grantReadWrite(this.stageAndNotify);
+    props.queue.grantSendMessages(this.stageAndNotify);
+
     props.monitoring.watchful.watchLambdaFunction('Discovery stager', this.stageAndNotify);
     this.alarmDeadLetterQueueNotEmpty = this.stageAndNotify.deadLetterQueue!.metricApproximateNumberOfMessagesVisible()
       .createAlarm(this, 'AlarmDLQ', {
@@ -141,119 +146,119 @@ export class Discovery extends Construct {
       });
   }
 
-  public metricBatchProcessingTime(): IMetric {
+  public metricBatchProcessingTime(): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
-      metricName: METRIC_NAME_BATCH_PROCESSING_TIME,
-      namespace: METRIC_NAMESPACE,
+      metricName: MetricName.BATCH_PROCESSING_TIME,
+      namespace: METRICS_NAMESPACE,
       statistic: Statistic.AVERAGE,
     });
   }
 
-  public metricBatchSize(): IMetric {
+  public metricBatchSize(): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
-      metricName: METRIC_NAME_BATCH_SIZE,
-      namespace: METRIC_NAMESPACE,
+      metricName: MetricName.CHANGE_COUNT,
+      namespace: METRICS_NAMESPACE,
       statistic: Statistic.AVERAGE,
     });
   }
 
-  public metricNewPackageVersions(): IMetric {
+  public metricNewPackageVersions(): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
-      metricName: METRIC_NAME_NEW_PACKAGE_VERSIONS,
-      namespace: METRIC_NAMESPACE,
+      metricName: MetricName.NEW_PACKAGE_VERSIONS,
+      namespace: METRICS_NAMESPACE,
       statistic: Statistic.SUM,
     });
   }
 
-  public metricPackageVersionAge(): IMetric {
+  public metricPackageVersionAge(): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
-      metricName: METRIC_NAME_PACKAGE_VERSION_AGE,
-      namespace: METRIC_NAMESPACE,
+      metricName: MetricName.PACKAGE_VERSION_AGE,
+      namespace: METRICS_NAMESPACE,
       statistic: Statistic.MAXIMUM,
     });
   }
 
-  public metricRelevantPackageVersions(): IMetric {
+  public metricRelevantPackageVersions(): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
-      metricName: METRIC_NAME_RELEVANT_PACKAGE_VERSIONS,
-      namespace: METRIC_NAMESPACE,
+      metricName: MetricName.RELEVANT_PACKAGE_VERSIONS,
+      namespace: METRICS_NAMESPACE,
       statistic: Statistic.SUM,
     });
   }
 
-  public metricRemainingTime(): IMetric {
+  public metricRemainingTime(): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
-      metricName: METRIC_NAME_REMAINING_TIME,
-      namespace: METRIC_NAMESPACE,
+      metricName: MetricName.REMAINING_TIME,
+      namespace: METRICS_NAMESPACE,
       statistic: Statistic.AVERAGE,
     });
   }
 
-  public metricStagedPackageVersionAge(): IMetric {
+  public metricStagedPackageVersionAge(): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.stageAndNotify.functionName,
         ServiceName: this.stageAndNotify.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
-      metricName: METRIC_NAME_STAGED_PACKAGE_VERSION_AGE,
-      namespace: METRIC_NAMESPACE,
+      metricName: MetricName.STAGED_PACKAGE_VERSION_AGE,
+      namespace: METRICS_NAMESPACE,
       statistic: Statistic.MAXIMUM,
     });
   }
 
-  public metricStagingTime(): IMetric {
+  public metricStagingTime(): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.stageAndNotify.functionName,
         ServiceName: this.stageAndNotify.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
-      metricName: METRIC_NAME_STAGING_TIME,
-      namespace: METRIC_NAMESPACE,
+      metricName: MetricName.STAGING_TIME,
+      namespace: METRICS_NAMESPACE,
       statistic: Statistic.AVERAGE,
     });
   }
 
-  public metricUnprocessableEntity(): IMetric {
+  public metricUnprocessableEntity(): Metric {
     return new Metric({
       dimensions: {
         LogGroup: this.npmCatalogFollower.functionName,
         ServiceName: this.npmCatalogFollower.functionName,
         ServiceType: 'AWS::Lambda::Function',
       },
-      metricName: METRIC_NAME_UNPROCESSABLE_ENTITY,
-      namespace: METRIC_NAMESPACE,
+      metricName: MetricName.UNPROCESSABLE_ENTITY,
+      namespace: METRICS_NAMESPACE,
       statistic: Statistic.SUM,
     });
   }

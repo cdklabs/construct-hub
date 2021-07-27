@@ -1,20 +1,21 @@
-import { spawn } from 'child_process';
-import * as console from 'console';
 import * as os from 'os';
 import * as path from 'path';
 import * as process from 'process';
 
-import type { Context, S3Event } from 'aws-lambda';
-import { S3 } from 'aws-sdk';
+import type { Context } from 'aws-lambda';
+// eslint-disable-next-line import/no-unresolved
+import { PromiseResult } from 'aws-sdk/lib/request';
 import * as fs from 'fs-extra';
-import { TargetLanguage } from 'jsii-rosetta';
-import { transliterateAssembly } from 'jsii-rosetta/lib/commands/transliterate';
+import * as docgen from 'jsii-docgen';
 
-import * as constants from '../shared/constants.lambda-shared';
+import type { TransliteratorInput } from '../payload-schema';
+import * as aws from '../shared/aws.lambda-shared';
+import { logInWithCodeArtifact } from '../shared/code-artifact.lambda-shared';
+import * as constants from '../shared/constants';
+import { requireEnv } from '../shared/env.lambda-shared';
+import { DocumentationLanguage } from '../shared/language';
 
-const clients = new Map<string, S3>();
-
-const PACKAGE_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)${constants.PACKAGE_KEY_SUFFIX}$`);
+const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)${constants.ASSEMBLY_KEY_SUFFIX}$`);
 // Capture groups:                                                    ┗━━━━━━━━━1━━━━━━━┛  ┗━━2━━┛
 
 /**
@@ -27,102 +28,150 @@ const PACKAGE_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+
  *
  * @returns nothing
  */
-export async function handler(event: S3Event, context: Context): Promise<readonly S3Object[]> {
+export function handler(event: TransliteratorInput, context: Context): Promise<S3Object[]> {
   console.log(JSON.stringify(event, null, 2));
+  // We'll need a writable $HOME directory, or this won't work well, because
+  // npm will try to write stuff like the `.npmrc` or package caches in there
+  // and that'll bail out on EROFS if that fails.
+  return withFakeHome(async () => {
+    const endpoint = process.env.CODE_ARTIFACT_REPOSITORY_ENDPOINT;
+    if (!endpoint) {
+      console.log('No CodeArtifact endpoint configured - using npm\'s default registry');
+    } else {
+      console.log(`Using CodeArtifact registry: ${endpoint}`);
+      const domain = requireEnv('CODE_ARTIFACT_DOMAIN_NAME');
+      const domainOwner = process.env.CODE_ARTIFACT_DOMAIN_OWNER;
+      const apiEndpoint = process.env.CODE_ARTIFACT_API_ENDPOINT;
+      await logInWithCodeArtifact({ endpoint, domain, domainOwner, apiEndpoint });
+    }
 
-  const created = new Array<S3Object>();
+    const language = requireEnv('TARGET_LANGUAGE');
+    const created = new Array<S3Object>();
 
-  for (const record of event.Records) {
-    // Key names are escaped (`@` as `%40`) in the input payload... Decode it here... We cannot use
-    // `decodeURI` here because it does not undo encoding that `encodeURI` would not have done, and
-    // that would not replace `@` in the position where it is in the keys... So we have to work on
-    // the URI components instead.
-    const inputKey = record.s3.object.key.split('/').map((comp) => decodeURIComponent(comp)).join('/');
-    const [, packageName, packageVersion] = inputKey.match(PACKAGE_KEY_REGEX) ?? [];
+    const [, packageName, packageVersion] = event.assembly.key.match(ASSEMBLY_KEY_REGEX) ?? [];
     if (packageName == null) {
-      throw new Error(`Invalid object key: "${inputKey}". It was expected to match ${PACKAGE_KEY_REGEX}!`);
+      throw new Error(`Invalid object key: "${event.assembly.key}". It was expected to match ${ASSEMBLY_KEY_REGEX}!`);
     }
 
-    const client = (clients.has(record.awsRegion)
-      ? clients
-      : clients.set(record.awsRegion, new S3({ region: record.awsRegion }))
-    ).get(record.awsRegion)!;
+    const packageFqn = `${packageName}@${packageVersion}`;
 
-    console.log(`Source Bucket:  ${record.s3.bucket.name}`);
-    console.log(`Source Key:     ${inputKey}`);
-    console.log(`Source Version: ${record.s3.object.versionId}`);
+    console.log(`Source Bucket:  ${event.bucket}`);
+    console.log(`Source Key:     ${event.assembly.key}`);
+    console.log(`Source Version: ${event.assembly.versionId}`);
 
-    const object = await client.getObject({
-      Bucket: record.s3.bucket.name,
-      Key: inputKey,
-      VersionId: record.s3.object.versionId,
-    }).promise();
-
-    const workdir = await fs.mkdtemp(path.join(os.tmpdir(), 'workdir'));
-    try {
-      const tarball = path.join(workdir, `${packageName.replace('@', '').replace('/', '-')}-${packageVersion}.tgz`);
-      await fs.writeFile(tarball, object.Body!);
-      await new Promise<void>((ok, ko) => {
-        // --ignore-scripts disables lifecycle hooks, in order to prevent execution of arbitrary code
-        // --no-bin-links ensures npm does not insert anything in $PATH
-        const npmInstall = spawn('npm', ['install', '--ignore-scripts', '--no-bin-links', '--no-save', tarball], {
-          cwd: workdir,
-          env: {
-            ...process.env,
-            HOME: os.tmpdir(), // npm fails with EROFS if $HOME is read-only, event if it won't write there
-          },
-          stdio: ['ignore', 'inherit', 'inherit'],
-        });
-        npmInstall.once('error', ko);
-        npmInstall.once('close', (code, signal) => {
-          if (code === 0) {
-            ok();
-          } else {
-            ko(`"npm install" command ${code != null ? `exited with code ${code}` : `was terminated by signal ${signal}`}`);
-          }
-        });
-      });
-      const packageDir = path.join(workdir, 'node_modules', ...packageName.split('/'));
-
-      await transliterateAssembly(
-        [packageDir],
-        [TargetLanguage.PYTHON], // TODO: allow configuring this
-      );
-
-      // Payload object key => packages/[<@scope>/]<name>/v<version>/package.tgz
-      // Output object key  => packages/[<@scope>/]<name>/v<version>/assembly-python.json
-      const key = inputKey.replace(/\/[^/]+$/, constants.assemblyKeySuffix(TargetLanguage.PYTHON));
-      const response = await client.putObject({
-        Bucket: record.s3.bucket.name,
-        Key: key,
-        Body: await fs.readFile(path.join(packageDir, '.jsii.python')),
-        ContentType: 'text/json',
-        Metadata: {
-          'Origin-Version-Id': record.s3.object.versionId ?? 'N/A',
-          'Lambda-Log-Group': context.logGroupName,
-          'Lambda-Log-Stream': context.logStreamName,
-          'Lambda-Run-Id': context.awsRequestId,
-        },
-      }).promise();
-
-      created.push({
-        bucket: record.s3.bucket.name,
-        key,
-        versionId: response.VersionId,
-      });
-    } finally {
-      await fs.remove(workdir);
+    console.log(`Fetching assembly: ${event.assembly.key}`);
+    const assemblyResponse = await aws.s3().getObject({ Bucket: event.bucket, Key: event.assembly.key }).promise();
+    if (!assemblyResponse.Body) {
+      throw new Error(`Response body for assembly at key ${event.assembly.key} is empty`);
     }
+
+    const assembly = JSON.parse(assemblyResponse.Body.toString('utf-8'));
+    const submodules = Object.keys(assembly.submodules ?? {}).map(s => s.split('.')[1]);
+
+    if (language !== 'typescript' && assembly.targets[language] == null) {
+      console.error(`Package ${assembly.name}@${assembly.version} does not support ${language}, skipping!`);
+      console.log(`Assembly targets: ${JSON.stringify(assembly.targets, null, 2)}`);
+      for (const submodule of [undefined, ...submodules]) {
+        const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(language), submodule)) + constants.NOT_SUPPORTED_SUFFIX;
+        const response = await uploadFile(context, event.bucket, key, event.assembly.versionId);
+        created.push({ bucket: event.bucket, key, versionId: response.VersionId });
+      }
+      return created;
+    }
+
+    async function generateDocs(lang: string) {
+
+      const uploads = new Map<string, Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>>();
+      const docs = await docgen.Documentation.forPackage(packageFqn, { language: docgen.Language.fromString(lang) });
+
+      function renderAndDispatch(submodule?: string) {
+        console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
+        const page = docs.render({ submodule, linkFormatter: linkFormatter(docs) }).render();
+        const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(lang), submodule));
+        console.log(`Uploading ${key}`);
+        const upload = uploadFile(context, event.bucket, key, event.assembly.versionId, page);
+        uploads.set(key, upload);
+      }
+
+      renderAndDispatch();
+      for (const submodule of submodules) {
+        renderAndDispatch(submodule);
+      }
+
+      for (const [key, upload] of uploads.entries()) {
+        const response = await upload;
+        created.push({ bucket: event.bucket, key, versionId: response.VersionId });
+        console.log(`Finished uploading ${key} (Version ID: ${response.VersionId})`);
+      }
+
+    }
+    await generateDocs(language);
+
+    return created;
+  });
+}
+
+async function withFakeHome<T>(cb: () => Promise<T>): Promise<T> {
+  const fakeHome = await fs.mkdtemp(path.join(os.tmpdir(), 'fake-home'));
+  const oldHome = process.env.HOME;
+  try {
+    process.env.HOME = fakeHome;
+    return await cb();
+  } finally {
+    process.env.HOME = oldHome;
+    await fs.remove(fakeHome);
   }
-  return created;
+}
+
+function uploadFile(context: Context, bucket: string, key: string, sourceVersionId?: string, body?: AWS.S3.Body) {
+  return aws.s3().putObject({
+    Bucket: bucket,
+    Key: key,
+    Body: body,
+    CacheControl: 'public',
+    ContentType: 'text/markdown; charset=UTF-8',
+    Metadata: {
+      'Origin-Version-Id': sourceVersionId ?? 'N/A',
+      'Lambda-Log-Group': context.logGroupName,
+      'Lambda-Log-Stream': context.logStreamName,
+      'Lambda-Run-Id': context.awsRequestId,
+    },
+  }).promise();
 }
 
 /**
- * Visible for testing. Clears the caches so that the next execution runs clean.
+ * A link formatter to make sure type links redirect to the appropriate package
+ * page in the webapp.
  */
-export function reset() {
-  clients.clear();
+function linkFormatter(docs: docgen.Documentation): (type: docgen.TranspiledType) => string {
+
+  function _formatter(type: docgen.TranspiledType): string {
+
+    const packageName = type.source.assembly.name;
+    const packageVersion = type.source.assembly.version;
+
+    // the webapp sanitizes anchors - so we need to as well when
+    // linking to them.
+    const hash = sanitize(type.fqn);
+
+    if (docs.assembly.name === packageName) {
+      // link to the same package - just add the hash
+      return `#${hash}`;
+    }
+
+    // cross link to another package
+    return `/packages/${packageName}/v/${packageVersion}?lang=${type.language.toString()}${type.submodule ? `&submodule=${type.submodule}` : ''}#${hash}`;
+  }
+
+  return _formatter;
 }
+
+function sanitize(input: string): string {
+  return input
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9 ]/g, '')
+    .replace(/ /g, '-');
+};
 
 interface S3Object {
   readonly bucket: string;

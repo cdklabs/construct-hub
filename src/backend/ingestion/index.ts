@@ -1,11 +1,13 @@
-import { ComparisonOperator, IAlarm } from '@aws-cdk/aws-cloudwatch';
+import { Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
 import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
+import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
-
+import { Orchestration } from '../orchestration';
+import { MetricName, METRICS_NAMESPACE } from './constants';
 import { Ingestion as Handler } from './ingestion';
 
 export interface IngestionProps {
@@ -18,6 +20,12 @@ export interface IngestionProps {
    * The monitoring handler to register alarms with.
    */
   readonly monitoring: Monitoring;
+
+  /**
+   * The backend orchestration to invoke once the package metadata has been
+   * successfully registered.
+   */
+  readonly orchestration: Orchestration;
 }
 
 /**
@@ -31,49 +39,116 @@ export class Ingestion extends Construct implements IGrantable {
   public readonly grantPrincipal: IPrincipal;
 
   /**
-   * Alarms if the dead-letter-queue associated with the ingestion process
-   * is not empty, meaning some packages failed ingestion and require operator
-   * attention.
-   */
-  public readonly alarmDeadLetterQueueNotEmpty: IAlarm;
-
-  /**
    * The SQS queue that triggers the ingestion function.
    */
   public readonly queue: IQueue;
 
+  /**
+   * The ingestion dead letter queue, which will hold messages that failed
+   * ingestion one too many times, so that poison pills don't endlessly consume
+   * resources.
+   */
+  public readonly deadLetterQueue: IQueue;
+
+  public readonly queueRetentionPeriod = Duration.days(14);
+
+  public readonly function: IFunction;
+
   public constructor(scope: Construct, id: string, props: IngestionProps) {
     super(scope, id);
 
-    this.queue = new Queue(this, 'Queue', {
+    this.deadLetterQueue = new Queue(this, 'DLQ', {
       encryption: QueueEncryption.KMS_MANAGED,
+      retentionPeriod: this.queueRetentionPeriod,
+      visibilityTimeout: Duration.minutes(15),
+    });
+
+    this.queue = new Queue(this, 'Queue', {
+      deadLetterQueue: {
+        maxReceiveCount: 5,
+        queue: this.deadLetterQueue,
+      },
+      encryption: QueueEncryption.KMS_MANAGED,
+      retentionPeriod: this.queueRetentionPeriod,
       visibilityTimeout: Duration.minutes(15),
     });
 
     const handler = new Handler(this, 'Default', {
-      deadLetterQueueEnabled: true,
-      description: 'Ingests new package versions into the Construct Hub',
+      description: '[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub',
       environment: {
         BUCKET_NAME: props.bucket.bucketName,
+        STATE_MACHINE_ARN: props.orchestration.stateMachine.stateMachineArn,
       },
       memorySize: 10_240, // Currently the maximum possible setting
-      retryAttempts: 2,
       timeout: Duration.minutes(15),
+      tracing: Tracing.ACTIVE,
     });
+    this.function = handler;
 
-    props.bucket.grantWrite(handler);
+    props.bucket.grantWrite(this.function);
+    props.orchestration.stateMachine.grantStartExecution(this.function);
 
-    handler.addEventSource(new SqsEventSource(this.queue, { batchSize: 1 }));
+    this.function.addEventSource(new SqsEventSource(this.queue, { batchSize: 1 }));
+    // This event source is disabled, and can be used to re-process dead-letter-queue messages
+    this.function.addEventSource(new SqsEventSource(this.deadLetterQueue, { batchSize: 1, enabled: false }));
 
-    this.grantPrincipal = handler.grantPrincipal;
+    this.grantPrincipal = this.function.grantPrincipal;
 
     props.monitoring.watchful.watchLambdaFunction('Ingestion Function', handler);
-    this.alarmDeadLetterQueueNotEmpty = handler.deadLetterQueue!.metricApproximateNumberOfMessagesVisible()
-      .createAlarm(this, 'DLQAlarm', {
-        alarmDescription: 'The ingestion function failed for one or more packages',
-        comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-        evaluationPeriods: 1,
-        threshold: 1,
-      });
+  }
+
+  public metricFoundLicenseFile(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.SUM,
+      ...opts,
+      metricName: MetricName.FOUND_LICENSE_FILE,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  public metricIneligibleLicense(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.SUM,
+      ...opts,
+      metricName: MetricName.INELIGIBLE_LICENSE,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  public metricInvalidAssembly(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.SUM,
+      ...opts,
+      metricName: MetricName.INVALID_ASSEMBLY,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  public metricInvalidTarball(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.SUM,
+      ...opts,
+      metricName: MetricName.INVALID_TARBALL,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * This metrics is the total count of packages that were rejected due to
+   * mismatched identity (name, version, license) between the `package.json`
+   * file and te `.jsii` attribute.
+   */
+  public metricMismatchedIdentityRejections(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.SUM,
+      ...opts,
+      metricName: MetricName.MISMATCHED_IDENTITY_REJECTIONS,
+      namespace: METRICS_NAMESPACE,
+    });
   }
 }

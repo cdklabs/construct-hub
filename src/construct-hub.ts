@@ -1,11 +1,18 @@
+import * as ec2 from '@aws-cdk/aws-ec2';
 import * as iam from '@aws-cdk/aws-iam';
+import { AnyPrincipal, Effect, PolicyStatement } from '@aws-cdk/aws-iam';
 import * as s3 from '@aws-cdk/aws-s3';
 import { BlockPublicAccess } from '@aws-cdk/aws-s3';
 import * as sqs from '@aws-cdk/aws-sqs';
 import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { AlarmActions, Domain } from './api';
-import { CatalogBuilder, Discovery, Ingestion, Transliterator } from './backend';
+import { Discovery, Ingestion } from './backend';
+import { BackendDashboard } from './backend-dashboard';
+import { Inventory } from './backend/inventory';
+import { Orchestration } from './backend/orchestration';
+import { CATALOG_KEY } from './backend/shared/constants';
+import { Repository } from './codeartifact/repository';
 import { Monitoring } from './monitoring';
 import { WebApp } from './webapp';
 
@@ -31,6 +38,20 @@ export interface ConstructHubProps {
    * Actions to perform when alarms are set.
    */
   readonly alarmActions: AlarmActions;
+
+  /**
+   * Whether sensitive Lambda functions (which operate on un-trusted complex
+   * data, such as the transliterator, which operates with externally-sourced
+   * npm package tarballs) should run in network-isolated environments. This
+   * implies the creation of additonal resources, including:
+   *
+   * - A VPC with only isolated subnets.
+   * - VPC Endpoints (CodeArtifact, CodeArtifact API, S3)
+   * - A CodeArtifact Repository with an external connection to npmjs.com
+   *
+   * @default true
+   */
+  readonly isolateLambdas?: boolean;
 }
 
 /**
@@ -49,6 +70,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     const packageData = new s3.Bucket(this, 'PackageData', {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+      enforceSSL: true,
       encryption: s3.BucketEncryption.S3_MANAGED,
       lifecycleRules: [
         // Abort multi-part uploads after 1 day
@@ -56,18 +78,63 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
         // Transition non-current object versions to IA after 1 month
         { noncurrentVersionTransitions: [{ storageClass: s3.StorageClass.INFREQUENT_ACCESS, transitionAfter: Duration.days(31) }] },
         // Permanently delete non-current object versions after 3 months
-        { noncurrentVersionExpiration: Duration.days(90) },
+        { noncurrentVersionExpiration: Duration.days(90), expiredObjectDeleteMarker: true },
+        // Permanently delete non-current versions of catalog.json earlier
+        { noncurrentVersionExpiration: Duration.days(7), prefix: CATALOG_KEY },
       ],
       versioned: true,
     });
 
-    this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData, monitoring });
+    const codeArtifact = new Repository(this, 'CodeArtifact', { description: 'Proxy to npmjs.com for ConstructHub' });
+
+    const vpc = (props.isolateLambdas ?? true)
+      ? new ec2.Vpc(this, 'VPC', {
+        enableDnsHostnames: true,
+        enableDnsSupport: true,
+        natGateways: 0,
+        subnetConfiguration: [{ name: 'Isolated', subnetType: ec2.SubnetType.ISOLATED }],
+      })
+      : undefined;
+    const vpcEndpoints = vpc && {
+      codeArtifactApi: vpc.addInterfaceEndpoint('CodeArtifact.API', {
+        privateDnsEnabled: false,
+        service: new ec2.InterfaceVpcEndpointAwsService('codeartifact.api'),
+        subnets: { subnetType: ec2.SubnetType.ISOLATED },
+      }),
+      codeArtifact: vpc.addInterfaceEndpoint('CodeArtifact', {
+        privateDnsEnabled: true,
+        service: new ec2.InterfaceVpcEndpointAwsService('codeartifact.repositories'),
+        subnets: { subnetType: ec2.SubnetType.ISOLATED },
+      }),
+      s3: vpc.addGatewayEndpoint('S3', {
+        service: ec2.GatewayVpcEndpointAwsService.S3,
+        subnets: [{ subnetType: ec2.SubnetType.ISOLATED }],
+      }),
+    };
+    // The S3 access is necessary for the CodeArtifact VPC endpoint to be used.
+    vpcEndpoints?.s3.addToPolicy(new PolicyStatement({
+      effect: Effect.ALLOW,
+      actions: ['s3:GetObject'],
+      resources: [`${codeArtifact.s3BucketArn}/*`],
+      principals: [new AnyPrincipal()],
+      sid: 'Allow-CodeArtifact-Bucket',
+    }));
+
+    const orchestration = new Orchestration(this, 'Orchestration', {
+      bucket: packageData,
+      codeArtifact,
+      monitoring,
+      vpc,
+      vpcEndpoints,
+    });
+    this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData, orchestration, monitoring });
 
     const discovery = new Discovery(this, 'Discovery', { queue: this.ingestion.queue, monitoring });
     discovery.bucket.grantRead(this.ingestion);
 
-    new Transliterator(this, 'Transliterator', { bucket: packageData, monitoring });
-    new CatalogBuilder(this, 'CatalogBuilder', { bucket: packageData, monitoring });
+    const inventory = new Inventory(this, 'InventoryCanary', { bucket: packageData, monitoring });
+
+    new BackendDashboard(this, 'BackendDashboard', { discovery, ingestion: this.ingestion, inventory, orchestration });
 
     new WebApp(this, 'WebApp', {
       domain: props.domain,

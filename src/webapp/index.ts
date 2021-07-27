@@ -7,7 +7,10 @@ import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
 import { CfnOutput, Construct } from '@aws-cdk/core';
 import { Domain } from '../api';
+import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
+import { CacheInvalidator } from './cache-invalidator';
+import { ResponseFunction } from './response-function';
 
 export interface WebAppProps {
   /**
@@ -24,7 +27,7 @@ export interface WebAppProps {
   /**
    * The bucket containing package data.
    */
-  readonly packageData: s3.IBucket;
+  readonly packageData: s3.Bucket;
 }
 
 export class WebApp extends Construct {
@@ -33,11 +36,26 @@ export class WebApp extends Construct {
   public constructor(scope: Construct, id: string, props: WebAppProps) {
     super(scope, id);
 
-    this.bucket = new s3.Bucket(this, 'WebsiteBucket', { blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL });
+    this.bucket = new s3.Bucket(this, 'WebsiteBucket', {
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      enforceSSL: true,
+    });
+
+    // generate a stable unique id for the cloudfront function and use it
+    // both for the function name and the logical id of the function so if
+    // it is changed the function will be recreated.
+    // see https://github.com/aws/aws-cdk/issues/15523
+    const functionId = `AddHeadersFunction${this.node.addr}`;
 
     const behaviorOptions = {
       compress: true,
       cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+      functionAssociations: [{
+        function: new ResponseFunction(this, functionId, {
+          functionName: functionId,
+        }),
+        eventType: cloudfront.FunctionEventType.VIEWER_RESPONSE,
+      }],
     };
 
     this.distribution = new cloudfront.Distribution(this, 'Distribution', {
@@ -45,16 +63,19 @@ export class WebApp extends Construct {
       domainNames: props.domain ? [props.domain.zone.zoneName] : undefined,
       certificate: props.domain ? props.domain.cert : undefined,
       defaultRootObject: 'index.html',
-      errorResponses: [404, 403].map(httpStatus => ( {
+      errorResponses: [404, 403].map(httpStatus => ({
         httpStatus,
         responseHttpStatus: 200,
         responsePagePath: '/index.html',
       })),
+      minimumProtocolVersion: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2018,
     });
 
     const jsiiObjOrigin = new origins.S3Origin(props.packageData);
     this.distribution.addBehavior('/data/*', jsiiObjOrigin, behaviorOptions);
     this.distribution.addBehavior('/catalog.json', jsiiObjOrigin, behaviorOptions);
+
+    new CacheInvalidator(this, 'CacheInvalidator', { bucket: props.packageData, distribution: this.distribution });
 
     // if we use a domain, and A records with a CloudFront alias
     if (props.domain) {
@@ -71,6 +92,16 @@ export class WebApp extends Construct {
         target: r53.RecordTarget.fromAlias(new r53targets.CloudFrontTarget(this.distribution)),
         comment: 'Created by the AWS CDK',
       });
+
+      // Monitor certificate expiration
+      if (props.domain.monitorCertificateExpiration ?? true) {
+        const monitored = new MonitoredCertificate(this, 'ExpirationMonitor', {
+          certificate: props.domain.cert,
+          domainName: props.domain.zone.zoneName,
+        });
+        props.monitoring.addHighSeverityAlarm('ACM Certificate Expiry', monitored.alarmAcmCertificateExpiresSoon);
+        props.monitoring.addHighSeverityAlarm('Endpoint Certificate Expiry', monitored.alarmEndpointCertificateExpiresSoon);
+      }
     }
 
     // "website" contains the static react app

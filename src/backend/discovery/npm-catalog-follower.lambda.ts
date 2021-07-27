@@ -1,19 +1,21 @@
-import * as console from 'console';
-
-import { metricScope, MetricsLogger, Unit } from 'aws-embedded-metrics';
+import { metricScope, Configuration, MetricsLogger, Unit } from 'aws-embedded-metrics';
+import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, ScheduledEvent } from 'aws-lambda';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import Nano = require('nano');
 import * as aws from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
-import { DISCOVERY_MARKER_KEY, METRIC_NAMESPACE, METRIC_NAME_BATCH_PROCESSING_TIME, METRIC_NAME_BATCH_SIZE, METRIC_NAME_NEW_PACKAGE_VERSIONS, METRIC_NAME_PACKAGE_VERSION_AGE, METRIC_NAME_RELEVANT_PACKAGE_VERSIONS, METRIC_NAME_REMAINING_TIME, METRIC_NAME_UNPROCESSABLE_ENTITY, RESET_BEACON_KEY } from './constants.lambda-shared';
-import type { UpdatedVersion, VersionInfo } from './version-info.lambda-shared';
+import { MetricName, METRICS_NAMESPACE, DISCOVERY_MARKER_KEY } from './constants.lambda-shared';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const normalizeNPMMetadata = require('normalize-registry-metadata');
 
 const TIMEOUT_MILLISECONDS = 10_000;
 const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set(['cdk', 'aws-cdk', 'cdk8s', 'cdktf']);
 const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
+
+// Configure embedded metrics format
+Configuration.environmentOverride = Environments.Lambda;
+Configuration.namespace = METRICS_NAMESPACE;
 
 /**
  * This function triggers on a fixed schedule and reads a stream of changes from npmjs couchdb _changes endpoint.
@@ -31,13 +33,13 @@ export async function handler(event: ScheduledEvent, context: Context) {
   const stagingBucket = requireEnv('BUCKET_NAME');
   const queueUrl = requireEnv('QUEUE_URL');
 
-  const marker = await loadLastTransactionMarker(1_800_000 /* @aws-cdk/cdk initial release was at 1_846_709 */);
+  const initialMarker = await loadLastTransactionMarker(1_800_000 /* @aws-cdk/cdk initial release was at 1_846_709 */);
 
   const config: Nano.ChangesReaderOptions = {
     includeDocs: true,
     // pause the changes reader after each request
     wait: true,
-    since: marker.lastSeq.toFixed(),
+    since: initialMarker.lastSeq.toFixed(),
     // `changesReader.get` stops once a response with zero changes is received, however it waits too long
     //  since we want to terminate the Lambda function we define a timeout shorter than the default
     timeout: TIMEOUT_MILLISECONDS,
@@ -54,38 +56,57 @@ export async function handler(event: ScheduledEvent, context: Context) {
   // We need to make an explicit Promise here, because otherwise Lambda won't
   // know when it's done...
   return new Promise<void>((ok, ko) => {
+
+    let updatedMarker = initialMarker;
+
     db.changesReader.get(config)
       .on('batch', metricScope((metrics) => async (batch: readonly Change[]) => {
-        metrics.setNamespace(METRIC_NAMESPACE);
+        // Clear automatically set dimensions - we don't need them (see https://github.com/awslabs/aws-embedded-metrics-node/issues/73)
+        metrics.setDimensions();
+
+        metrics.setProperty('StartSeq', updatedMarker);
         const startTime = Date.now();
+
+        // Emit npm.js replication lag
+        for (const { doc } of batch) {
+          if (doc?.time?.modified) {
+            metrics.putMetric(
+              MetricName.NPMJS_CHANGE_AGE,
+              startTime - new Date(doc.time.modified).getTime(),
+              Unit.Milliseconds,
+            );
+          }
+        }
+
         try {
           console.log(`Received a batch of ${batch.length} element(s)`);
-          metrics.putMetric(METRIC_NAME_BATCH_SIZE, batch.length, Unit.Count);
+          metrics.putMetric(MetricName.CHANGE_COUNT, batch.length, Unit.Count);
           const lastSeq = Math.max(...batch.map((change) => change.seq));
+          metrics.setProperty('EndSeq', updatedMarker);
 
           // Obtain the modified package version from the update event, and filter
           // out packages that are not of interest to us (not construct libraries).
           const versionInfos = getRelevantVersionInfos(batch, metrics);
           console.log(`Identified ${versionInfos.length} relevant package version update(s)`);
-          metrics.putMetric(METRIC_NAME_RELEVANT_PACKAGE_VERSIONS, versionInfos.length, Unit.Count);
+          metrics.putMetric(MetricName.RELEVANT_PACKAGE_VERSIONS, versionInfos.length, Unit.Count);
 
           const newVersions = versionInfos.filter(({ infos, modified }) => {
             const key = `${infos.name}@${infos.version}`;
-            if (marker.knownPackageVersions.has(key) && marker.knownPackageVersions.get(key)! >= modified) {
+            if (updatedMarker.knownPackageVersions.has(key) && updatedMarker.knownPackageVersions.get(key)! >= modified) {
               // We already saw this package update, or a more recent one.
               return false;
             }
-            marker.knownPackageVersions.set(key, modified);
+            updatedMarker.knownPackageVersions.set(key, modified);
             return true;
           });
-          metrics.putMetric(METRIC_NAME_NEW_PACKAGE_VERSIONS, newVersions.length, Unit.Count);
+          metrics.putMetric(MetricName.NEW_PACKAGE_VERSIONS, newVersions.length, Unit.Count);
 
           // Notify the staging & notification function
           await aws.sqsSendMessageBatch(queueUrl, newVersions);
 
           // Update the transaction marker in S3.
-          await saveLastTransactionMarker(marker);
-          marker.lastSeq = lastSeq;
+          updatedMarker.lastSeq = lastSeq;
+          await saveLastTransactionMarker(updatedMarker);
 
           // If we have enough time left before timeout, proceed with the next batch, otherwise we're done here.
           // Since the distribution of the time it takes to process each package/batch is non uniform, this is a best
@@ -97,7 +118,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
           } else {
             console.log('We are almost out of time, so stopping here.');
             db.changesReader.stop();
-            metrics.putMetric(METRIC_NAME_REMAINING_TIME, context.getRemainingTimeInMillis(), Unit.Milliseconds);
+            metrics.putMetric(MetricName.REMAINING_TIME, context.getRemainingTimeInMillis(), Unit.Milliseconds);
             ok();
           }
         } catch (err) {
@@ -106,7 +127,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
           db.changesReader.stop();
           ko(err);
         } finally {
-          metrics.putMetric(METRIC_NAME_BATCH_PROCESSING_TIME, Date.now() - startTime, Unit.Milliseconds);
+          metrics.putMetric(MetricName.BATCH_PROCESSING_TIME, Date.now() - startTime, Unit.Milliseconds);
         }
       }))
       .once('end', () => {
@@ -124,21 +145,6 @@ export async function handler(event: ScheduledEvent, context: Context) {
    * @returns the value of the last transaction marker.
    */
   async function loadLastTransactionMarker(defaultValue: number): Promise<Marker> {
-    const resetObject = { Bucket: stagingBucket, Key: RESET_BEACON_KEY };
-    const reset = await aws.s3().headObject(resetObject)
-      .promise()
-      .then(
-        // Object was found => we were asked to reset
-        () => true,
-        // If the error was NotFound, then we were NOT asked to reset
-        (err) => err.code === 'NotFound' ? Promise.resolve(false) : Promise.reject(err),
-      );
-    if (reset) {
-      console.log(`Change Stream reset requested... Rolling back to ${defaultValue}`);
-      await aws.s3().deleteObject(resetObject).promise();
-      return { lastSeq: defaultValue, knownPackageVersions: new Map() };
-    }
-
     try {
       const response = await aws.s3().getObject({
         Bucket: stagingBucket,
@@ -219,28 +225,28 @@ function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLog
     // these are schemas, which are not relevant to our business here.
     if (change.doc.name === undefined) {
       console.error(`[${change.seq}] Changed document contains no 'name': ${change.id}`);
-      metrics.putMetric(METRIC_NAME_UNPROCESSABLE_ENTITY, 1, Unit.Count);
+      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
       continue;
     }
 
     // The normalize function change the object in place, if the doc object is invalid it will return undefined
     if (normalizeNPMMetadata(change.doc) === undefined) {
       console.error(`[${change.seq}] Changed document invalid, npm normalize returned undefined: ${change.id}`);
-      metrics.putMetric(METRIC_NAME_UNPROCESSABLE_ENTITY, 1, Unit.Count);
+      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
       continue;
     }
 
     // Sometimes, there are no versions in the document. We skip those.
     if (change.doc.versions == null) {
       console.error(`[${change.seq}] Changed document contains no 'versions': ${change.id}`);
-      metrics.putMetric(METRIC_NAME_UNPROCESSABLE_ENTITY, 1, Unit.Count);
+      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
       continue;
     }
 
     // Sometimes, there is no 'time' entry in the document. We skip those.
     if (change.doc.time == null) {
       console.error(`[${change.seq}] Changed document contains no 'time': ${change.id}`);
-      metrics.putMetric(METRIC_NAME_UNPROCESSABLE_ENTITY, 1, Unit.Count);
+      metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
       continue;
     }
 
@@ -252,6 +258,7 @@ function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLog
       .map(([version, isoDate]) => [version, new Date(isoDate)] as const)
       // Sort by date, descending
       .sort(([, l], [, r]) => r.getTime() - l.getTime());
+    metrics.putMetric(MetricName.PACKAGE_VERSION_COUNT, sortedUpdates.length, Unit.Count);
 
     for (const [version, modified] of sortedUpdates) {
       const infos = change.doc.versions[version];
@@ -259,7 +266,7 @@ function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLog
         // Could be the version in question was un-published.
         console.log(`[${change.seq}] Could not find info for "${change.doc.name}@${version}". Was it un-published?`);
       } else if (isRelevantPackageVersion(infos)) {
-        metrics.putMetric(METRIC_NAME_PACKAGE_VERSION_AGE, Date.now() - modified.getTime(), Unit.Milliseconds);
+        metrics.putMetric(MetricName.PACKAGE_VERSION_AGE, Date.now() - modified.getTime(), Unit.Milliseconds);
         result.push({ infos, modified, seq: change.seq });
       } else {
         console.log(`[${change.seq}] Ignoring "${change.doc.name}@${version}" as it is not a construct library.`);
@@ -278,6 +285,43 @@ function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLog
       || infos.name.startsWith('@aws-cdk')
       || infos.keywords?.some((kw) => CONSTRUCT_KEYWORDS.has(kw));
   }
+
+}
+
+/**
+  * The scheme of a package version in the update. Includes the package.json keys, as well as some additional npm metadata
+  * @see https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md#version
+  */
+interface VersionInfo {
+  readonly devDependencies: { readonly [name: string]: string };
+  readonly dependencies: { readonly [name: string]: string };
+  readonly jsii: unknown;
+  readonly license?: string;
+  readonly name: string;
+  readonly [key: string]: unknown;
+  readonly keywords: string[];
+  readonly dist: {
+    readonly shasum: string;
+    readonly tarball: string;
+  };
+  readonly version: string;
+}
+
+interface UpdatedVersion {
+  /**
+   * The `VersionInfo` for the modified package version.
+   */
+  readonly infos: VersionInfo;
+
+  /**
+   * The time at which the `VersionInfo` was last modified.
+   */
+  readonly modified: Date;
+
+  /**
+   * The CouchDB transaction number for the update.
+   */
+  readonly seq: number;
 }
 
 interface Document {
