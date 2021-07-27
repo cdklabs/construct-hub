@@ -95,7 +95,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
           await aws.sqsSendMessageBatch(queueUrl, versionInfos);
 
           // Update the transaction marker in S3.
-          await saveLastTransactionMarker(context, stagingBucket, lastSeq);
+          await saveLastTransactionMarker(lastSeq);
 
           // If we have enough time left before timeout, proceed with the next batch, otherwise we're done here.
           // Since the distribution of the time it takes to process each package/batch is non uniform, this is a best
@@ -134,7 +134,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
    *
    * @returns the value of the last transaction marker.
    */
-   async function loadLastTransactionMarker(defaultValue: number): Promise<number> {
+  async function loadLastTransactionMarker(defaultValue: number): Promise<number> {
     try {
       const response = await aws.s3().getObject({
         Bucket: stagingBucket,
@@ -152,14 +152,14 @@ export async function handler(event: ScheduledEvent, context: Context) {
     }
   }
 
- /**
+  /**
    * Updates the last transaction marker in S3.
    *
    * @param sequence the last transaction marker value
    */
-  async function saveLastTransactionMarker(context: Context, bucket: string, sequence: Number) {
+  async function saveLastTransactionMarker(sequence: Number) {
     console.log(`Updating last transaction marker to ${sequence}`);
-    return aws.s3PutObject(context, bucket, DISCOVERY_MARKER_KEY, sequence.toFixed(), { ContentType: 'text/plain; charset=UTF-8' });
+    return aws.s3PutObject(context, stagingBucket, DISCOVERY_MARKER_KEY, sequence.toFixed(), { ContentType: 'text/plain; charset=UTF-8' });
   }
 
   /**
