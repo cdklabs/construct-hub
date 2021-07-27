@@ -7,558 +7,71 @@ Resources:
   ConstructHubMonitoringWatchfulDashboardB8493D55:
     Type: AWS::CloudWatch::Dashboard
     Properties:
-      DashboardBody:
-        Fn::Join:
-          - ""
-          - - '{"widgets":[{"type":"text","width":24,"height":2,"x":0,"y":0,"properties":{"markdown":"#
-              Catalog Builder Function\\n\\n[button:AWS Lambda
-              Console](https://console.aws.amazon.com/lambda/home?region='
-            - Ref: AWS::Region
-            - "#/functions/"
-            - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
-            - ?tab=graph) [button:CloudWatch
-              Logs](https://console.aws.amazon.com/cloudwatch/home?region=
-            - Ref: AWS::Region
-            - "#logEventViewer:group=/aws/lambda/"
-            - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
-            - )"}},{"type":"metric","width":6,"height":6,"x":0,"y":2,"properties":{"view":"timeSeries","title":"Invocations/5min","region":"
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Invocations","FunctionName","'
-            - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
-            - '",{"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":2,"properties":{"view":"timeSeries","title":"Errors/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Errors","FunctionName","'
-            - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
-            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Errors
-              > 0 for 3 datapoints within 15
-              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":2,"properties":{"view":"timeSeries","title":"Throttles/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Throttles","FunctionName","'
-            - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
-            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Throttles
-              > 0 for 3 datapoints within 15
-              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":2,"properties":{"view":"timeSeries","title":"Duration/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Duration","FunctionName","'
-            - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
-            - '",{"label":"p99","stat":"p99"}]],"annotations":{"horizontal":[{"label":"p99
-              > 720000 for 3 datapoints within 15
-              minutes","value":720000,"yAxis":"left"}]},"yAxis":{}}},{"type":"text","width":24,"height":2,"x":0,"y":8,"properties":{"markdown":"#
-              Transliterator Function\\n\\n[button:AWS Lambda
-              Console](https://console.aws.amazon.com/lambda/home?region='
-            - Ref: AWS::Region
-            - "#/functions/"
-            - Ref: ConstructHubOrchestrationDocGenpython77179663
-            - ?tab=graph) [button:CloudWatch
-              Logs](https://console.aws.amazon.com/cloudwatch/home?region=
-            - Ref: AWS::Region
-            - "#logEventViewer:group=/aws/lambda/"
-            - Ref: ConstructHubOrchestrationDocGenpython77179663
-            - )"}},{"type":"metric","width":6,"height":6,"x":0,"y":10,"properties":{"view":"timeSeries","title":"Invocations/5min","region":"
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Invocations","FunctionName","'
-            - Ref: ConstructHubOrchestrationDocGenpython77179663
-            - '",{"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":10,"properties":{"view":"timeSeries","title":"Errors/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Errors","FunctionName","'
-            - Ref: ConstructHubOrchestrationDocGenpython77179663
-            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Errors
-              > 0 for 3 datapoints within 15
-              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":10,"properties":{"view":"timeSeries","title":"Throttles/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Throttles","FunctionName","'
-            - Ref: ConstructHubOrchestrationDocGenpython77179663
-            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Throttles
-              > 0 for 3 datapoints within 15
-              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":10,"properties":{"view":"timeSeries","title":"Duration/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Duration","FunctionName","'
-            - Ref: ConstructHubOrchestrationDocGenpython77179663
-            - '",{"label":"p99","stat":"p99"}]],"annotations":{"horizontal":[{"label":"p99
-              > 720000 for 3 datapoints within 15
-              minutes","value":720000,"yAxis":"left"}]},"yAxis":{}}},{"type":"text","width":24,"height":2,"x":0,"y":16,"properties":{"markdown":"#
-              Transliterator Function\\n\\n[button:AWS Lambda
-              Console](https://console.aws.amazon.com/lambda/home?region='
-            - Ref: AWS::Region
-            - "#/functions/"
-            - Ref: ConstructHubOrchestrationDocGentypescriptF9C30384
-            - ?tab=graph) [button:CloudWatch
-              Logs](https://console.aws.amazon.com/cloudwatch/home?region=
-            - Ref: AWS::Region
-            - "#logEventViewer:group=/aws/lambda/"
-            - Ref: ConstructHubOrchestrationDocGentypescriptF9C30384
-            - )"}},{"type":"metric","width":6,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Invocations/5min","region":"
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Invocations","FunctionName","'
-            - Ref: ConstructHubOrchestrationDocGentypescriptF9C30384
-            - '",{"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":18,"properties":{"view":"timeSeries","title":"Errors/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Errors","FunctionName","'
-            - Ref: ConstructHubOrchestrationDocGentypescriptF9C30384
-            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Errors
-              > 0 for 3 datapoints within 15
-              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":18,"properties":{"view":"timeSeries","title":"Throttles/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Throttles","FunctionName","'
-            - Ref: ConstructHubOrchestrationDocGentypescriptF9C30384
-            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Throttles
-              > 0 for 3 datapoints within 15
-              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":18,"properties":{"view":"timeSeries","title":"Duration/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Duration","FunctionName","'
-            - Ref: ConstructHubOrchestrationDocGentypescriptF9C30384
-            - '",{"label":"p99","stat":"p99"}]],"annotations":{"horizontal":[{"label":"p99
-              > 720000 for 3 datapoints within 15
-              minutes","value":720000,"yAxis":"left"}]},"yAxis":{}}},{"type":"text","width":24,"height":2,"x":0,"y":24,"properties":{"markdown":"#
-              Ingestion Function\\n\\n[button:AWS Lambda
-              Console](https://console.aws.amazon.com/lambda/home?region='
-            - Ref: AWS::Region
-            - "#/functions/"
-            - Ref: ConstructHubIngestion407909CE
-            - ?tab=graph) [button:CloudWatch
-              Logs](https://console.aws.amazon.com/cloudwatch/home?region=
-            - Ref: AWS::Region
-            - "#logEventViewer:group=/aws/lambda/"
-            - Ref: ConstructHubIngestion407909CE
-            - )"}},{"type":"metric","width":6,"height":6,"x":0,"y":26,"properties":{"view":"timeSeries","title":"Invocations/5min","region":"
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Invocations","FunctionName","'
-            - Ref: ConstructHubIngestion407909CE
-            - '",{"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":26,"properties":{"view":"timeSeries","title":"Errors/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Errors","FunctionName","'
-            - Ref: ConstructHubIngestion407909CE
-            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Errors
-              > 0 for 3 datapoints within 15
-              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":26,"properties":{"view":"timeSeries","title":"Throttles/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Throttles","FunctionName","'
-            - Ref: ConstructHubIngestion407909CE
-            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Throttles
-              > 0 for 3 datapoints within 15
-              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":26,"properties":{"view":"timeSeries","title":"Duration/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Duration","FunctionName","'
-            - Ref: ConstructHubIngestion407909CE
-            - '",{"label":"p99","stat":"p99"}]],"annotations":{"horizontal":[{"label":"p99
-              > 720000 for 3 datapoints within 15
-              minutes","value":720000,"yAxis":"left"}]},"yAxis":{}}},{"type":"text","width":24,"height":2,"x":0,"y":32,"properties":{"markdown":"#
-              Discovery Function\\n\\n[button:AWS Lambda
-              Console](https://console.aws.amazon.com/lambda/home?region='
-            - Ref: AWS::Region
-            - "#/functions/"
-            - Ref: ConstructHubDiscoveryD6EEC2B8
-            - ?tab=graph) [button:CloudWatch
-              Logs](https://console.aws.amazon.com/cloudwatch/home?region=
-            - Ref: AWS::Region
-            - "#logEventViewer:group=/aws/lambda/"
-            - Ref: ConstructHubDiscoveryD6EEC2B8
-            - )"}},{"type":"metric","width":6,"height":6,"x":0,"y":34,"properties":{"view":"timeSeries","title":"Invocations/5min","region":"
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Invocations","FunctionName","'
-            - Ref: ConstructHubDiscoveryD6EEC2B8
-            - '",{"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":34,"properties":{"view":"timeSeries","title":"Errors/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Errors","FunctionName","'
-            - Ref: ConstructHubDiscoveryD6EEC2B8
-            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Errors
-              > 0 for 3 datapoints within 15
-              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":34,"properties":{"view":"timeSeries","title":"Throttles/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Throttles","FunctionName","'
-            - Ref: ConstructHubDiscoveryD6EEC2B8
-            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Throttles
-              > 0 for 3 datapoints within 15
-              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":34,"properties":{"view":"timeSeries","title":"Duration/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Duration","FunctionName","'
-            - Ref: ConstructHubDiscoveryD6EEC2B8
-            - '",{"label":"p99","stat":"p99"}]],"annotations":{"horizontal":[{"label":"p99
-              > 720000 for 3 datapoints within 15
-              minutes","value":720000,"yAxis":"left"}]},"yAxis":{}}},{"type":"text","width":24,"height":2,"x":0,"y":40,"properties":{"markdown":"#
-              Inventory Canary\\n\\n[button:AWS Lambda
-              Console](https://console.aws.amazon.com/lambda/home?region='
-            - Ref: AWS::Region
-            - "#/functions/"
-            - Ref: ConstructHubInventoryCanary63D899BC
-            - ?tab=graph) [button:CloudWatch
-              Logs](https://console.aws.amazon.com/cloudwatch/home?region=
-            - Ref: AWS::Region
-            - "#logEventViewer:group=/aws/lambda/"
-            - Ref: ConstructHubInventoryCanary63D899BC
-            - )"}},{"type":"metric","width":6,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"Invocations/5min","region":"
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Invocations","FunctionName","'
-            - Ref: ConstructHubInventoryCanary63D899BC
-            - '",{"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":42,"properties":{"view":"timeSeries","title":"Errors/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Errors","FunctionName","'
-            - Ref: ConstructHubInventoryCanary63D899BC
-            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Errors
-              > 0 for 3 datapoints within 15
-              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":42,"properties":{"view":"timeSeries","title":"Throttles/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Throttles","FunctionName","'
-            - Ref: ConstructHubInventoryCanary63D899BC
-            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Throttles
-              > 0 for 3 datapoints within 15
-              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":42,"properties":{"view":"timeSeries","title":"Duration/5min","region":"'
-            - Ref: AWS::Region
-            - '","metrics":[["AWS/Lambda","Duration","FunctionName","'
-            - Ref: ConstructHubInventoryCanary63D899BC
-            - '",{"label":"p99","stat":"p99"}]],"annotations":{"horizontal":[{"label":"p99
-              > 240000 for 3 datapoints within 15
-              minutes","value":240000,"yAxis":"left"}]},"yAxis":{}}}]}'
+      DashboardBody: '{"widgets":[]}'
       DashboardName: construct-hub
-  ConstructHubMonitoringWatchfuldevConstructHubOrchestrationCatalogBuilder5F503FCDErrorsAlarmBBEF0CFC:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: Over 0 errors per minute
-      Dimensions:
-        - Name: FunctionName
-          Value:
-            Ref: ConstructHubOrchestrationCatalogBuilder7C964951
-      MetricName: Errors
-      Namespace: AWS/Lambda
-      Period: 300
-      Statistic: Sum
-      Threshold: 0
-  ConstructHubMonitoringWatchfuldevConstructHubOrchestrationCatalogBuilder5F503FCDThrottlesAlarm70F0A665:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: Over 0 throttles per minute
-      Dimensions:
-        - Name: FunctionName
-          Value:
-            Ref: ConstructHubOrchestrationCatalogBuilder7C964951
-      MetricName: Throttles
-      Namespace: AWS/Lambda
-      Period: 300
-      Statistic: Sum
-      Threshold: 0
-  ConstructHubMonitoringWatchfuldevConstructHubOrchestrationCatalogBuilder5F503FCDDurationAlarm8A6A5C62:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: p99 latency >= 720s (80%)
-      Metrics:
-        - Id: m1
-          Label: p99
-          MetricStat:
-            Metric:
-              Dimensions:
-                - Name: FunctionName
-                  Value:
-                    Ref: ConstructHubOrchestrationCatalogBuilder7C964951
-              MetricName: Duration
-              Namespace: AWS/Lambda
-            Period: 300
-            Stat: p99
-          ReturnData: true
-      Threshold: 720000
-  ConstructHubMonitoringWatchfuldevConstructHubOrchestrationDocGenpython3F2037E7ErrorsAlarm71B282CA:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: Over 0 errors per minute
-      Dimensions:
-        - Name: FunctionName
-          Value:
-            Ref: ConstructHubOrchestrationDocGenpython77179663
-      MetricName: Errors
-      Namespace: AWS/Lambda
-      Period: 300
-      Statistic: Sum
-      Threshold: 0
-  ConstructHubMonitoringWatchfuldevConstructHubOrchestrationDocGenpython3F2037E7ThrottlesAlarm82B134FA:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: Over 0 throttles per minute
-      Dimensions:
-        - Name: FunctionName
-          Value:
-            Ref: ConstructHubOrchestrationDocGenpython77179663
-      MetricName: Throttles
-      Namespace: AWS/Lambda
-      Period: 300
-      Statistic: Sum
-      Threshold: 0
-  ConstructHubMonitoringWatchfuldevConstructHubOrchestrationDocGenpython3F2037E7DurationAlarmC78C713F:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: p99 latency >= 720s (80%)
-      Metrics:
-        - Id: m1
-          Label: p99
-          MetricStat:
-            Metric:
-              Dimensions:
-                - Name: FunctionName
-                  Value:
-                    Ref: ConstructHubOrchestrationDocGenpython77179663
-              MetricName: Duration
-              Namespace: AWS/Lambda
-            Period: 300
-            Stat: p99
-          ReturnData: true
-      Threshold: 720000
-  ConstructHubMonitoringWatchfuldevConstructHubOrchestrationDocGentypescript2264926AErrorsAlarm3A07D599:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: Over 0 errors per minute
-      Dimensions:
-        - Name: FunctionName
-          Value:
-            Ref: ConstructHubOrchestrationDocGentypescriptF9C30384
-      MetricName: Errors
-      Namespace: AWS/Lambda
-      Period: 300
-      Statistic: Sum
-      Threshold: 0
-  ConstructHubMonitoringWatchfuldevConstructHubOrchestrationDocGentypescript2264926AThrottlesAlarmE0439796:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: Over 0 throttles per minute
-      Dimensions:
-        - Name: FunctionName
-          Value:
-            Ref: ConstructHubOrchestrationDocGentypescriptF9C30384
-      MetricName: Throttles
-      Namespace: AWS/Lambda
-      Period: 300
-      Statistic: Sum
-      Threshold: 0
-  ConstructHubMonitoringWatchfuldevConstructHubOrchestrationDocGentypescript2264926ADurationAlarm09208CEF:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: p99 latency >= 720s (80%)
-      Metrics:
-        - Id: m1
-          Label: p99
-          MetricStat:
-            Metric:
-              Dimensions:
-                - Name: FunctionName
-                  Value:
-                    Ref: ConstructHubOrchestrationDocGentypescriptF9C30384
-              MetricName: Duration
-              Namespace: AWS/Lambda
-            Period: 300
-            Stat: p99
-          ReturnData: true
-      Threshold: 720000
-  ConstructHubMonitoringWatchfuldevConstructHubIngestion6BEB6ABAErrorsAlarmBE537614:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: Over 0 errors per minute
-      Dimensions:
-        - Name: FunctionName
-          Value:
-            Ref: ConstructHubIngestion407909CE
-      MetricName: Errors
-      Namespace: AWS/Lambda
-      Period: 300
-      Statistic: Sum
-      Threshold: 0
-  ConstructHubMonitoringWatchfuldevConstructHubIngestion6BEB6ABAThrottlesAlarm76839343:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: Over 0 throttles per minute
-      Dimensions:
-        - Name: FunctionName
-          Value:
-            Ref: ConstructHubIngestion407909CE
-      MetricName: Throttles
-      Namespace: AWS/Lambda
-      Period: 300
-      Statistic: Sum
-      Threshold: 0
-  ConstructHubMonitoringWatchfuldevConstructHubIngestion6BEB6ABADurationAlarm23308F3B:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: p99 latency >= 720s (80%)
-      Metrics:
-        - Id: m1
-          Label: p99
-          MetricStat:
-            Metric:
-              Dimensions:
-                - Name: FunctionName
-                  Value:
-                    Ref: ConstructHubIngestion407909CE
-              MetricName: Duration
-              Namespace: AWS/Lambda
-            Period: 300
-            Stat: p99
-          ReturnData: true
-      Threshold: 720000
-  ConstructHubMonitoringWatchfuldevConstructHubDiscovery67F2A541ErrorsAlarm1D897383:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: Over 0 errors per minute
-      Dimensions:
-        - Name: FunctionName
-          Value:
-            Ref: ConstructHubDiscoveryD6EEC2B8
-      MetricName: Errors
-      Namespace: AWS/Lambda
-      Period: 300
-      Statistic: Sum
-      Threshold: 0
-  ConstructHubMonitoringWatchfuldevConstructHubDiscovery67F2A541ThrottlesAlarmFB98FA43:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: Over 0 throttles per minute
-      Dimensions:
-        - Name: FunctionName
-          Value:
-            Ref: ConstructHubDiscoveryD6EEC2B8
-      MetricName: Throttles
-      Namespace: AWS/Lambda
-      Period: 300
-      Statistic: Sum
-      Threshold: 0
-  ConstructHubMonitoringWatchfuldevConstructHubDiscovery67F2A541DurationAlarmCFA098E6:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: p99 latency >= 720s (80%)
-      Metrics:
-        - Id: m1
-          Label: p99
-          MetricStat:
-            Metric:
-              Dimensions:
-                - Name: FunctionName
-                  Value:
-                    Ref: ConstructHubDiscoveryD6EEC2B8
-              MetricName: Duration
-              Namespace: AWS/Lambda
-            Period: 300
-            Stat: p99
-          ReturnData: true
-      Threshold: 720000
-  ConstructHubMonitoringWatchfuldevConstructHubInventoryCanaryEF8B6D02ErrorsAlarm44090DCB:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: Over 0 errors per minute
-      Dimensions:
-        - Name: FunctionName
-          Value:
-            Ref: ConstructHubInventoryCanary63D899BC
-      MetricName: Errors
-      Namespace: AWS/Lambda
-      Period: 300
-      Statistic: Sum
-      Threshold: 0
-  ConstructHubMonitoringWatchfuldevConstructHubInventoryCanaryEF8B6D02ThrottlesAlarm84FBEA9A:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: Over 0 throttles per minute
-      Dimensions:
-        - Name: FunctionName
-          Value:
-            Ref: ConstructHubInventoryCanary63D899BC
-      MetricName: Throttles
-      Namespace: AWS/Lambda
-      Period: 300
-      Statistic: Sum
-      Threshold: 0
-  ConstructHubMonitoringWatchfuldevConstructHubInventoryCanaryEF8B6D02DurationAlarmD1E8B8E6:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: GreaterThanThreshold
-      EvaluationPeriods: 3
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
-      AlarmDescription: p99 latency >= 240s (80%)
-      Metrics:
-        - Id: m1
-          Label: p99
-          MetricStat:
-            Metric:
-              Dimensions:
-                - Name: FunctionName
-                  Value:
-                    Ref: ConstructHubInventoryCanary63D899BC
-              MetricName: Duration
-              Namespace: AWS/Lambda
-            Period: 300
-            Stat: p99
-          ReturnData: true
-      Threshold: 240000
   ConstructHubMonitoringDashboard78E057C8:
     Type: AWS::CloudWatch::Dashboard
     Properties:
       DashboardBody:
         Fn::Join:
           - ""
-          - - '{"widgets":[{"type":"metric","width":24,"height":6,"x":0,"y":0,"properties":{"view":"timeSeries","title":"Home
+          - - '{"widgets":[{"type":"metric","width":24,"height":6,"x":0,"y":0,"properties":{"view":"timeSeries","title":"Backend
+              Orchestration Dead-Letter Queue is not empty","region":"'
+            - Ref: AWS::Region
+            - '","annotations":{"alarms":["'
+            - Fn::GetAtt:
+                - ConstructHubOrchestrationDLQAlarm85EE7509
+                - Arn
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":6,"properties":{"view":"timeSeries","title":"Backend
+              Orchestration Failed","region":"'
+            - Ref: AWS::Region
+            - '","annotations":{"alarms":["'
+            - Fn::GetAtt:
+                - ConstructHubOrchestrationOrchestrationFailed5AF50838
+                - Arn
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Ingestion
+              Dead-Letter Queue not empty","region":"'
+            - Ref: AWS::Region
+            - '","annotations":{"alarms":["'
+            - Fn::GetAtt:
+                - ConstructHubIngestionDLQAlarm83BD1903
+                - Arn
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Ingestion
+              failures","region":"'
+            - Ref: AWS::Region
+            - '","annotations":{"alarms":["'
+            - Fn::GetAtt:
+                - ConstructHubIngestionFailureAlarm9D0028DD
+                - Arn
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"Discovery
+              Failures","region":"'
+            - Ref: AWS::Region
+            - '","annotations":{"alarms":["'
+            - Fn::GetAtt:
+                - ConstructHubDiscoveryErrorsAlarmDEA85148
+                - Arn
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"Discovery
+              not Running","region":"'
+            - Ref: AWS::Region
+            - '","annotations":{"alarms":["'
+            - Fn::GetAtt:
+                - ConstructHubDiscoveryNoInvocationsAlarm6F5E3A99
+                - Arn
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"Inventory
+              Canary is not Running","region":"'
+            - Ref: AWS::Region
+            - '","annotations":{"alarms":["'
+            - Fn::GetAtt:
+                - ConstructHubInventoryCanaryNotRunningAF44D71C
+                - Arn
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"Inventory
+              Canary is failing","region":"'
+            - Ref: AWS::Region
+            - '","annotations":{"alarms":["'
+            - Fn::GetAtt:
+                - ConstructHubInventoryCanaryFailures5BDA8051
+                - Arn
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":48,"properties":{"view":"timeSeries","title":"Home
               Page Canary","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
@@ -1354,6 +867,63 @@ Resources:
       VisibilityTimeout: 900
     UpdateReplacePolicy: Delete
     DeletionPolicy: Delete
+  ConstructHubOrchestrationDLQAlarm85EE7509:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      EvaluationPeriods: 1
+      AlarmActions:
+        - Ref: TopicBFC7AF6E
+      AlarmDescription:
+        Fn::Join:
+          - ""
+          - - |-
+              Backend orchestration dead-letter queue is not empty.
+
+              Direct link to queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.
+            - Ref: AWS::Region
+            - .amazonaws.com%2F
+            - Ref: AWS::AccountId
+            - "%2F"
+            - Fn::GetAtt:
+                - ConstructHubOrchestrationDLQ9C6D9BD4
+                - QueueName
+            - >-
+              
+              Warning: State Machines executions that sent messages to the DLQ will not show as "failed".
+      AlarmName: dev/ConstructHub/Orchestration/DLQ/NotEmpty
+      Metrics:
+        - Expression: m1 + m2
+          Id: expr_1
+        - Id: m1
+          MetricStat:
+            Metric:
+              Dimensions:
+                - Name: QueueName
+                  Value:
+                    Fn::GetAtt:
+                      - ConstructHubOrchestrationDLQ9C6D9BD4
+                      - QueueName
+              MetricName: ApproximateNumberOfMessagesVisible
+              Namespace: AWS/SQS
+            Period: 300
+            Stat: Maximum
+          ReturnData: false
+        - Id: m2
+          MetricStat:
+            Metric:
+              Dimensions:
+                - Name: QueueName
+                  Value:
+                    Fn::GetAtt:
+                      - ConstructHubOrchestrationDLQ9C6D9BD4
+                      - QueueName
+              MetricName: ApproximateNumberOfMessagesNotVisible
+              Namespace: AWS/SQS
+            Period: 300
+            Stat: Maximum
+          ReturnData: false
+      Threshold: 1
   ConstructHubOrchestrationCatalogBuilderServiceRole851C750C:
     Type: AWS::IAM::Role
     Properties:
@@ -1999,17 +1569,45 @@ Resources:
             - '","Payload.$":"$"}},"Failed to add to
               catalog.json":{"Type":"Pass","ResultPath":"$.error","Parameters":{"error.$":"States.StringToJson($.Cause)"},"Next":"Send
               to Dead Letter Queue"},"Send to Dead Letter
-              Queue":{"Next":"Fail","Type":"Task","ResultPath":null,"Resource":"arn:'
+              Queue":{"End":true,"Type":"Task","ResultPath":null,"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::sqs:sendMessage","Parameters":{"QueueUrl":"
             - Ref: ConstructHubOrchestrationDLQ9C6D9BD4
-            - '","MessageBody.$":"$"}},"Fail":{"Type":"Fail"},"Success":{"Type":"Succeed"}},"TimeoutSeconds":3600}'
+            - '","MessageBody.$":"$"}},"Success":{"Type":"Succeed"}},"TimeoutSeconds":3600}'
       StateMachineType: STANDARD
       TracingConfiguration:
         Enabled: true
     DependsOn:
       - ConstructHubOrchestrationRoleDefaultPolicyEACD181F
       - ConstructHubOrchestrationRoleF4CF6987
+  ConstructHubOrchestrationOrchestrationFailed5AF50838:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      EvaluationPeriods: 1
+      AlarmActions:
+        - Ref: TopicBFC7AF6E
+      AlarmDescription:
+        Fn::Join:
+          - ""
+          - - |-
+              Backend orchestration failed!
+
+              Direct link to state machine: /states/home#/statemachines/view/
+            - Ref: ConstructHubOrchestration39161A46
+            - >-
+              
+              Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!
+      AlarmName: dev/ConstructHub/Orchestration/Resource/ExecutionsFailed
+      Dimensions:
+        - Name: StateMachineArn
+          Value:
+            Ref: ConstructHubOrchestration39161A46
+      MetricName: ExecutionsFailed
+      Namespace: AWS/States
+      Period: 300
+      Statistic: Sum
+      Threshold: 1
   ConstructHubOrchestrationRedriveServiceRoleB84EFF33:
     Type: AWS::IAM::Role
     Properties:
@@ -2353,6 +1951,89 @@ Resources:
         Fn::GetAtt:
           - ConstructHubIngestionDLQ3E96A5F2
           - Arn
+  ConstructHubIngestionDLQAlarm83BD1903:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      EvaluationPeriods: 1
+      AlarmActions:
+        - Ref: TopicBFC7AF6E
+      AlarmDescription:
+        Fn::Join:
+          - ""
+          - - |-
+              The dead-letter queue for the Ingestion function is not empty!
+
+              Direct link to the queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.
+            - Ref: AWS::Region
+            - .amazonaws.com%2F
+            - Ref: AWS::AccountId
+            - "%2F"
+            - Fn::GetAtt:
+                - ConstructHubIngestionDLQ3E96A5F2
+                - QueueName
+            - |-
+              
+              Direct link to the function: /lambda/home#/functions/
+            - Ref: ConstructHubIngestion407909CE
+      AlarmName: dev/ConstructHub/Ingestion/DLQNotEmpty
+      Metrics:
+        - Expression: m1 + m2
+          Id: expr_1
+        - Id: m1
+          MetricStat:
+            Metric:
+              Dimensions:
+                - Name: QueueName
+                  Value:
+                    Fn::GetAtt:
+                      - ConstructHubIngestionDLQ3E96A5F2
+                      - QueueName
+              MetricName: ApproximateNumberOfMessagesVisible
+              Namespace: AWS/SQS
+            Period: 300
+            Stat: Maximum
+          ReturnData: false
+        - Id: m2
+          MetricStat:
+            Metric:
+              Dimensions:
+                - Name: QueueName
+                  Value:
+                    Fn::GetAtt:
+                      - ConstructHubIngestionDLQ3E96A5F2
+                      - QueueName
+              MetricName: ApproximateNumberOfMessagesNotVisible
+              Namespace: AWS/SQS
+            Period: 300
+            Stat: Maximum
+          ReturnData: false
+      Threshold: 1
+  ConstructHubIngestionFailureAlarm9D0028DD:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      EvaluationPeriods: 1
+      AlarmActions:
+        - Ref: TopicBFC7AF6E
+      AlarmDescription:
+        Fn::Join:
+          - ""
+          - - |-
+              The Ingestion function is failing!
+
+              Direct link to the function: /lambda/home#/functions/
+            - Ref: ConstructHubIngestion407909CE
+      AlarmName: dev/ConstructHub/Ingestion/Failure
+      Dimensions:
+        - Name: FunctionName
+          Value:
+            Ref: ConstructHubIngestion407909CE
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Period: 300
+      Statistic: Sum
+      Threshold: 1
   ConstructHubDiscoveryStagingBucket1F2F7AE8:
     Type: AWS::S3::Bucket
     Properties:
@@ -2520,7 +2201,17 @@ Resources:
     Properties:
       ComparisonOperator: GreaterThanOrEqualToThreshold
       EvaluationPeriods: 1
-      AlarmDescription: The discovery function (on npmjs.com) failed to run
+      AlarmActions:
+        - Ref: TopicBFC7AF6E
+      AlarmDescription:
+        Fn::Join:
+          - ""
+          - - |-
+              The discovery function (on npmjs.com) failed to run
+
+              Direct link to Lambda function: /lambda/home#/functions/
+            - Ref: ConstructHubDiscoveryD6EEC2B8
+      AlarmName: dev/ConstructHub/Discovery/Errors
       Dimensions:
         - Name: FunctionName
           Value:
@@ -2535,7 +2226,17 @@ Resources:
     Properties:
       ComparisonOperator: LessThanThreshold
       EvaluationPeriods: 1
-      AlarmDescription: The discovery function (on npmjs.com) is not running as scheduled
+      AlarmActions:
+        - Ref: TopicBFC7AF6E
+      AlarmDescription:
+        Fn::Join:
+          - ""
+          - - |-
+              The discovery function (on npmjs.com) is not running as scheduled
+
+              Direct link to Lambda function: /lambda/home#/functions/
+            - Ref: ConstructHubDiscoveryD6EEC2B8
+      AlarmName: dev/ConstructHub/Discovery/NotRunning
       Dimensions:
         - Name: FunctionName
           Value:
@@ -2649,6 +2350,56 @@ Resources:
           - Arn
     DependsOn:
       - ConstructHubInventoryCanaryServiceRoleDefaultPolicy144783F1
+  ConstructHubInventoryCanaryNotRunningAF44D71C:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: LessThanThreshold
+      EvaluationPeriods: 1
+      AlarmActions:
+        - Ref: TopicBFC7AF6E
+      AlarmDescription:
+        Fn::Join:
+          - ""
+          - - |-
+              The inventory canary is not running!
+
+              Direct link to function: /lambda/home#/functions/
+            - Ref: ConstructHubInventoryCanary63D899BC
+      AlarmName: dev/ConstructHub/InventoryCanary/NotRunning
+      Dimensions:
+        - Name: FunctionName
+          Value:
+            Ref: ConstructHubInventoryCanary63D899BC
+      MetricName: Invocations
+      Namespace: AWS/Lambda
+      Period: 300
+      Statistic: Sum
+      Threshold: 1
+  ConstructHubInventoryCanaryFailures5BDA8051:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      EvaluationPeriods: 1
+      AlarmActions:
+        - Ref: TopicBFC7AF6E
+      AlarmDescription:
+        Fn::Join:
+          - ""
+          - - |-
+              The inventory canary is failing!
+
+              Direct link to function: /lambda/home#/functions/
+            - Ref: ConstructHubInventoryCanary63D899BC
+      AlarmName: dev/ConstructHub/InventoryCanary/Failures
+      Dimensions:
+        - Name: FunctionName
+          Value:
+            Ref: ConstructHubInventoryCanary63D899BC
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Period: 300
+      Statistic: Sum
+      Threshold: 1
   ConstructHubBackendDashboard18A041DC:
     Type: AWS::CloudWatch::Dashboard
     Properties:

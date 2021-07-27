@@ -1,8 +1,10 @@
+import { ComparisonOperator, MathExpression } from '@aws-cdk/aws-cloudwatch';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
-import { Choice, Condition, Fail, IStateMachine, JsonPath, Parallel, Pass, StateMachine, StateMachineType, Succeed, TaskInput } from '@aws-cdk/aws-stepfunctions';
+import { Choice, Condition, IStateMachine, JsonPath, Parallel, Pass, StateMachine, StateMachineType, Succeed, TaskInput } from '@aws-cdk/aws-stepfunctions';
 import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
 import { Construct, Duration } from '@aws-cdk/core';
+import { sqsQueueUrl, stateMachineUrl } from '../../deep-link';
 import { CatalogBuilder } from '../catalog-builder';
 import { DocumentationLanguage } from '../shared/language';
 import { Transliterator, TransliteratorProps } from '../transliterator';
@@ -50,6 +52,28 @@ export class Orchestration extends Construct {
       visibilityTimeout: Duration.minutes(15),
     });
 
+    props.monitoring.addHighSeverityAlarm(
+      'Backend Orchestration Dead-Letter Queue is not empty',
+      new MathExpression({
+        expression: 'm1 + m2',
+        usingMetrics: {
+          m1: this.deadLetterQueue.metricApproximateNumberOfMessagesVisible({ period: Duration.minutes(1) }),
+          m2: this.deadLetterQueue.metricApproximateNumberOfMessagesNotVisible({ period: Duration.minutes(1) }),
+        },
+      }).createAlarm(this, 'DLQAlarm', {
+        alarmName: `${this.deadLetterQueue.node.path}/NotEmpty`,
+        alarmDescription: [
+          'Backend orchestration dead-letter queue is not empty.',
+          '',
+          `Direct link to queue: ${sqsQueueUrl(this.deadLetterQueue)}`,
+          'Warning: State Machines executions that sent messages to the DLQ will not show as "failed".',
+        ].join('\n'),
+        comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        evaluationPeriods: 1,
+        threshold: 1,
+      }),
+    );
+
     const sendToDeadLetterQueue = new tasks.SqsSendMessage(this, 'Send to Dead Letter Queue', {
       messageBody: TaskInput.fromJsonPathAt('$'),
       queue: this.deadLetterQueue,
@@ -77,7 +101,7 @@ export class Orchestration extends Construct {
         Condition.or(
           ...SUPPORTED_LANGUAGES.map((_, i) => Condition.isPresent(`$.${docGenResultsKey}[${i}].error`)),
         ),
-        sendToDeadLetterQueue.next(new Fail(this, 'Fail')),
+        sendToDeadLetterQueue,
       )
       .otherwise(new Succeed(this, 'Success'));
 
@@ -128,6 +152,22 @@ export class Orchestration extends Construct {
       timeout: Duration.hours(1),
       tracingEnabled: true,
     });
+
+    props.monitoring.addHighSeverityAlarm(
+      'Backend Orchestration Failed',
+      this.stateMachine.metricFailed()
+        .createAlarm(this, 'OrchestrationFailed', {
+          alarmName: `${this.stateMachine.node.path}/${this.stateMachine.metricFailed().metricName}`,
+          alarmDescription: [
+            'Backend orchestration failed!',
+            '',
+            `Direct link to state machine: ${stateMachineUrl(this.stateMachine)}`,
+            'Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!',
+          ].join('\n'),
+          comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+          evaluationPeriods: 1,
+          threshold: 1,
+        }));
 
     // This function is intended to be manually triggered by an operrator to
     // attempt redriving messages from the DLQ.

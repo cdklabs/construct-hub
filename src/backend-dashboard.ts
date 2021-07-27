@@ -1,15 +1,13 @@
 import { createHash } from 'crypto';
 
 import { Dashboard, MathExpression, GraphWidget, GraphWidgetView, PeriodOverride, TextWidget, Metric, IWidget } from '@aws-cdk/aws-cloudwatch';
-import { IFunction } from '@aws-cdk/aws-lambda';
-import { IQueue } from '@aws-cdk/aws-sqs';
-import { IStateMachine } from '@aws-cdk/aws-stepfunctions';
-import { Construct, Duration, Stack } from '@aws-cdk/core';
+import { Construct, Duration } from '@aws-cdk/core';
 import { Discovery } from './backend/discovery';
 import { Ingestion } from './backend/ingestion';
 import { Inventory } from './backend/inventory';
 import { Orchestration } from './backend/orchestration';
 import { DocumentationLanguage } from './backend/shared/language';
+import { lambdaFunctionUrl, lambdaSearchLogGroupUrl, sqsQueueUrl, stateMachineUrl } from './deep-link';
 
 export interface BackendDashboardProps {
   readonly dashboardName?: string;
@@ -303,24 +301,6 @@ export class BackendDashboard extends Construct {
       ];
     }
   }
-}
-
-function lambdaFunctionUrl(lambda: IFunction): string {
-  return `/lambda/home#/functions/${lambda.functionName}`;
-}
-
-function lambdaSearchLogGroupUrl(lambda: IFunction): string {
-  return `/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f${lambda.functionName}/log-events`;
-}
-
-function stateMachineUrl(stateMachine: IStateMachine): string {
-  return `/states/home#/statemachines/view/${stateMachine.stateMachineArn}`;
-}
-
-function sqsQueueUrl(queue: IQueue): string {
-  const stack = Stack.of(queue);
-  // We can't use the Queue URL as-is, because we can't "easily" URL-encode it in CFN...
-  return `/sqs/v2/home#/queues/https%3A%2F%2Fsqs.${stack.region}.amazonaws.com%2F${stack.account}%2F${queue.queueName}`;
 }
 
 function fillMetric(metric: Metric, value: number | 'REPEAT' = 0): MathExpression {

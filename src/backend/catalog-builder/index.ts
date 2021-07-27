@@ -48,7 +48,5 @@ export class CatalogBuilder extends Construct {
     this.function = handler;
 
     props.bucket.grantReadWrite(this.function);
-
-    props.monitoring.watchful.watchLambdaFunction('Catalog Builder Function', handler);
   }
 }
