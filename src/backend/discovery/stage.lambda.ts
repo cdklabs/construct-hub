@@ -25,8 +25,6 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
   await aws.sqsSendMessageBatch(queueUrl, messages);
 
   async function stageUpdatedVersion({ infos, modified, seq }: UpdatedVersion): Promise<IngestionInput> {
-    metrics.putMetric(MetricName.STAGED_PACKAGE_VERSION_AGE, Date.now() - modified.getTime(), Unit.Milliseconds);
-
     const startTime = Date.now();
     const tarball = await httpGet(infos.dist.tarball);
 

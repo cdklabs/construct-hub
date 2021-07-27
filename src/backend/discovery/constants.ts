@@ -7,11 +7,9 @@ export const enum MetricName {
   INELIGIBLE_LICENSE = 'IneligibleLicense',
   NPMJS_CHANGE_AGE = 'NpmJsChangeAge',
   PACKAGE_VERSION_AGE = 'PackageVersionAge',
-  STAGED_PACKAGE_VERSION_AGE = 'StagedPackageVersionAge',
   PACKAGE_VERSION_COUNT = 'PackageVersionCount',
   RELEVANT_PACKAGE_VERSIONS = 'RelevantPackageVersions',
   REMAINING_TIME = 'RemainingTime',
-  STAGING_FAILURE_COUNT = 'StagingFailureCount',
   STAGING_TIME = 'StagingTime',
   UNPROCESSABLE_ENTITY = 'UnprocessableEntity',
 }

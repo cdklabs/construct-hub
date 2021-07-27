@@ -246,16 +246,6 @@ export class Discovery extends Construct {
     });
   }
 
-  public metricStagedPackageVersionAge(opts?: MetricOptions): Metric {
-    return new Metric({
-      period: this.timeout,
-      statistic: Statistic.MAXIMUM,
-      ...opts,
-      metricName: MetricName.STAGED_PACKAGE_VERSION_AGE,
-      namespace: METRICS_NAMESPACE,
-    });
-  }
-
   /**
    * The amount of changes that were not processed due to having an invalid
    * format.
