@@ -207,6 +207,19 @@ export class Discovery extends Construct {
   }
 
   /**
+   * The average time it took to stage a package to S3.
+   */
+   public metricStagingTime(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: this.timeout,
+      statistic: Statistic.AVERAGE,
+      ...opts,
+      metricName: MetricName.STAGING_TIME,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
    * The total count of package versions that were deemed relevant.
    */
   public metricRelevantPackageVersions(opts?: MetricOptions): Metric {
@@ -229,19 +242,6 @@ export class Discovery extends Construct {
       statistic: Statistic.AVERAGE,
       ...opts,
       metricName: MetricName.REMAINING_TIME,
-      namespace: METRICS_NAMESPACE,
-    });
-  }
-
-  /**
-   * The average time it took to stage a package to S3.
-   */
-  public metricStagingTime(opts?: MetricOptions): Metric {
-    return new Metric({
-      period: this.timeout,
-      statistic: Statistic.AVERAGE,
-      ...opts,
-      metricName: MetricName.STAGING_TIME,
       namespace: METRICS_NAMESPACE,
     });
   }
