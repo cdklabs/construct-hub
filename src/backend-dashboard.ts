@@ -1,13 +1,15 @@
 import { createHash } from 'crypto';
 
 import { Dashboard, MathExpression, GraphWidget, GraphWidgetView, PeriodOverride, TextWidget, Metric, IWidget } from '@aws-cdk/aws-cloudwatch';
+import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
+import { DenyList } from './backend/deny-list';
 import { Discovery } from './backend/discovery';
 import { Ingestion } from './backend/ingestion';
 import { Inventory } from './backend/inventory';
 import { Orchestration } from './backend/orchestration';
 import { DocumentationLanguage } from './backend/shared/language';
-import { lambdaFunctionUrl, lambdaSearchLogGroupUrl, sqsQueueUrl, stateMachineUrl } from './deep-link';
+import { lambdaFunctionUrl, lambdaSearchLogGroupUrl, s3ObjectUrl, sqsQueueUrl, stateMachineUrl } from './deep-link';
 
 export interface BackendDashboardProps {
   readonly dashboardName?: string;
@@ -15,6 +17,8 @@ export interface BackendDashboardProps {
   readonly ingestion: Ingestion;
   readonly orchestration: Orchestration;
   readonly inventory: Inventory;
+  readonly denyList: DenyList;
+  readonly packageData: IBucket;
 }
 
 export class BackendDashboard extends Construct {
@@ -29,7 +33,12 @@ export class BackendDashboard extends Construct {
           new TextWidget({
             height: 2,
             width: 24,
-            markdown: '# Catalog Overview',
+            markdown: [
+              '# Catalog Overview',
+              '',
+              `[button:Package Data](${s3ObjectUrl(props.packageData)})`,
+              `[button:Catalog Builder](${lambdaFunctionUrl(props.orchestration.catalogBuilder)})`,
+            ].join('\n'),
           }),
         ],
         [
@@ -229,6 +238,51 @@ export class BackendDashboard extends Construct {
             period: Duration.minutes(1),
           }),
         ],
+
+
+        // deny list
+        // ----------------------------------------------
+        [
+          new TextWidget({
+            height: 2,
+            width: 24,
+            markdown:
+              [
+                '# Deny List',
+                '',
+                `[button:Deny List Object](${s3ObjectUrl(props.denyList.bucket, props.denyList.objectKey)})`,
+                `[button:Prune Function](${lambdaFunctionUrl(props.denyList.prune.handler)})`,
+                `[button:Prune Logs](${lambdaSearchLogGroupUrl(props.denyList.prune.handler)})`,
+                `[button:Delete Queue](${sqsQueueUrl(props.denyList.prune.queue)})`,
+                `[button:Delete Logs](${lambdaSearchLogGroupUrl(props.denyList.prune.deleteHandler)})`,
+              ].join('\n'),
+          }),
+        ],
+        [
+          new GraphWidget({
+            height: 6,
+            width: 12,
+            title: 'Deny List',
+            left: [
+              fillMetric(props.denyList.metricDenyListRules({ label: 'Rules' }), 'REPEAT'),
+              props.denyList.prune.queue.metricNumberOfMessagesDeleted({ label: 'Deleted Files' }),
+            ],
+            leftYAxis: { min: 0 },
+            period: Duration.minutes(5),
+          }),
+          new GraphWidget({
+            height: 6,
+            width: 12,
+            title: 'Prune Function Health',
+            left: [
+              fillMetric(props.denyList.prune.handler.metricInvocations({ label: 'Invocations' })),
+              fillMetric(props.denyList.prune.handler.metricErrors({ label: 'Errors' })),
+            ],
+            leftYAxis: { min: 0 },
+            period: Duration.minutes(5),
+          }),
+        ],
+
       ],
     });
   }

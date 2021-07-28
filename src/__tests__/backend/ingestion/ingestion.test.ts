@@ -99,9 +99,7 @@ test('basic happy case', async () => {
 
   let mockTarballCreated = false;
   let mockMetadataCreated = false;
-  const assemblyKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`;
-  const metadataKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.METADATA_KEY_SUFFIX}`;
-  const packageKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`;
+  const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(packageName, packageVersion);
   AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
     try {
       expect(req.Bucket).toBe(mockBucketName);
@@ -237,9 +235,7 @@ test('basic happy case with license file', async () => {
 
   let mockTarballCreated = false;
   let mockMetadataCreated = false;
-  const assemblyKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`;
-  const metadataKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.METADATA_KEY_SUFFIX}`;
-  const packageKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`;
+  const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(packageName, packageVersion);
   AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
     try {
       expect(req.Bucket).toBe(mockBucketName);

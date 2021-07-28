@@ -54,7 +54,7 @@ test('creates the expected invalidation', async () => {
       expect(req.DistributionId).toBe(mockDistributionId);
       expect(req.InvalidationBatch.Paths.Quantity).toBe(mockEvent.Records.length);
       expect(req.InvalidationBatch.Paths.Items).toEqual(mockEvent.Records.map((record) => `${mockPathPrefix}${record.s3.object.key}`));
-      expect(req.InvalidationBatch.CallerReference).toBe(mockEvent.Records.map((record) => record.s3.object.eTag).join(', '));
+      expect(req.InvalidationBatch.CallerReference).toBe('MyRequestId');
     } catch (e) {
       return cb(e);
     }
@@ -64,7 +64,7 @@ test('creates the expected invalidation', async () => {
   // Requiring the handler her to ensure it sees the expected environment variables
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { handler } = require('../../../webapp/cache-invalidator/handler.lambda');
-  return expect(handler(mockEvent, {} as any)).resolves.toEqual({ Location: mockInvalidationLocation });
+  return expect(handler(mockEvent, { awsRequestId: 'MyRequestId' })).resolves.toEqual({ Location: mockInvalidationLocation });
 });
 
 type Response<T> = (err: Error | null, data?: T) => void;

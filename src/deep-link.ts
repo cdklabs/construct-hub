@@ -1,4 +1,5 @@
 import { IFunction } from '@aws-cdk/aws-lambda';
+import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue } from '@aws-cdk/aws-sqs';
 import { IStateMachine } from '@aws-cdk/aws-stepfunctions';
 import { Stack } from '@aws-cdk/core';
@@ -9,6 +10,14 @@ export function lambdaFunctionUrl(lambda: IFunction): string {
 
 export function lambdaSearchLogGroupUrl(lambda: IFunction): string {
   return `/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f${lambda.functionName}/log-events`;
+}
+
+export function s3ObjectUrl(bucket: IBucket, objectKey?: string): string {
+  if (objectKey) {
+    return `/s3/object/${bucket.bucketName}?prefix=${objectKey}`;
+  } else {
+    return `/s3/buckets/${bucket.bucketName}`;
+  }
 }
 
 export function stateMachineUrl(stateMachine: IStateMachine): string {

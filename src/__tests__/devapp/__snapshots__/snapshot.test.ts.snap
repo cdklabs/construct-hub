@@ -2,14 +2,188 @@
 
 exports[`golden snapshot 1`] = `
 Resources:
-  TopicBFC7AF6E:
-    Type: AWS::SNS::Topic
   ConstructHubMonitoringWatchfulDashboardB8493D55:
     Type: AWS::CloudWatch::Dashboard
     Properties:
-      DashboardBody: '{"widgets":[]}'
-      DashboardName: construct-hub
-  ConstructHubMonitoringDashboard78E057C8:
+      DashboardBody:
+        Fn::Join:
+          - ""
+          - - '{"widgets":[{"type":"text","width":24,"height":2,"x":0,"y":0,"properties":{"markdown":"#
+              Deny List - Prune Function\\n\\n[button:AWS Lambda
+              Console](https://console.aws.amazon.com/lambda/home?region='
+            - Ref: AWS::Region
+            - "#/functions/"
+            - Ref: ConstructHubDenyListPrunePruneHandler30B33551
+            - ?tab=graph) [button:CloudWatch
+              Logs](https://console.aws.amazon.com/cloudwatch/home?region=
+            - Ref: AWS::Region
+            - "#logEventViewer:group=/aws/lambda/"
+            - Ref: ConstructHubDenyListPrunePruneHandler30B33551
+            - )"}},{"type":"metric","width":6,"height":6,"x":0,"y":2,"properties":{"view":"timeSeries","title":"Invocations/5min","region":"
+            - Ref: AWS::Region
+            - '","metrics":[["AWS/Lambda","Invocations","FunctionName","'
+            - Ref: ConstructHubDenyListPrunePruneHandler30B33551
+            - '",{"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":2,"properties":{"view":"timeSeries","title":"Errors/5min","region":"'
+            - Ref: AWS::Region
+            - '","metrics":[["AWS/Lambda","Errors","FunctionName","'
+            - Ref: ConstructHubDenyListPrunePruneHandler30B33551
+            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Errors
+              > 0 for 3 datapoints within 15
+              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":2,"properties":{"view":"timeSeries","title":"Throttles/5min","region":"'
+            - Ref: AWS::Region
+            - '","metrics":[["AWS/Lambda","Throttles","FunctionName","'
+            - Ref: ConstructHubDenyListPrunePruneHandler30B33551
+            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Throttles
+              > 0 for 3 datapoints within 15
+              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":2,"properties":{"view":"timeSeries","title":"Duration/5min","region":"'
+            - Ref: AWS::Region
+            - '","metrics":[["AWS/Lambda","Duration","FunctionName","'
+            - Ref: ConstructHubDenyListPrunePruneHandler30B33551
+            - '",{"label":"p99","stat":"p99"}]],"annotations":{"horizontal":[{"label":"p99
+              > 720000 for 3 datapoints within 15
+              minutes","value":720000,"yAxis":"left"}]},"yAxis":{}}},{"type":"text","width":24,"height":2,"x":0,"y":8,"properties":{"markdown":"#
+              Deny List - Prune Delete Function\\n\\n[button:AWS Lambda
+              Console](https://console.aws.amazon.com/lambda/home?region='
+            - Ref: AWS::Region
+            - "#/functions/"
+            - Ref: ConstructHubDenyListPrunePruneQueueHandlerF7EB599B
+            - ?tab=graph) [button:CloudWatch
+              Logs](https://console.aws.amazon.com/cloudwatch/home?region=
+            - Ref: AWS::Region
+            - "#logEventViewer:group=/aws/lambda/"
+            - Ref: ConstructHubDenyListPrunePruneQueueHandlerF7EB599B
+            - )"}},{"type":"metric","width":6,"height":6,"x":0,"y":10,"properties":{"view":"timeSeries","title":"Invocations/5min","region":"
+            - Ref: AWS::Region
+            - '","metrics":[["AWS/Lambda","Invocations","FunctionName","'
+            - Ref: ConstructHubDenyListPrunePruneQueueHandlerF7EB599B
+            - '",{"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":10,"properties":{"view":"timeSeries","title":"Errors/5min","region":"'
+            - Ref: AWS::Region
+            - '","metrics":[["AWS/Lambda","Errors","FunctionName","'
+            - Ref: ConstructHubDenyListPrunePruneQueueHandlerF7EB599B
+            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Errors
+              > 0 for 3 datapoints within 15
+              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":10,"properties":{"view":"timeSeries","title":"Throttles/5min","region":"'
+            - Ref: AWS::Region
+            - '","metrics":[["AWS/Lambda","Throttles","FunctionName","'
+            - Ref: ConstructHubDenyListPrunePruneQueueHandlerF7EB599B
+            - '",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Throttles
+              > 0 for 3 datapoints within 15
+              minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":10,"properties":{"view":"timeSeries","title":"Duration/5min","region":"'
+            - Ref: AWS::Region
+            - '","metrics":[["AWS/Lambda","Duration","FunctionName","'
+            - Ref: ConstructHubDenyListPrunePruneQueueHandlerF7EB599B
+            - '",{"label":"p99","stat":"p99"}]],"annotations":{"horizontal":[{"label":"p99
+              > 48000 for 3 datapoints within 15
+              minutes","value":48000,"yAxis":"left"}]},"yAxis":{}}}]}'
+  ConstructHubMonitoringWatchfuldevConstructHubDenyListPrunePruneHandler8F0BBF5EErrorsAlarm615741A8:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 3
+      AlarmActions: []
+      AlarmDescription: Over 0 errors per minute
+      Dimensions:
+        - Name: FunctionName
+          Value:
+            Ref: ConstructHubDenyListPrunePruneHandler30B33551
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Period: 300
+      Statistic: Sum
+      Threshold: 0
+  ConstructHubMonitoringWatchfuldevConstructHubDenyListPrunePruneHandler8F0BBF5EThrottlesAlarm310F7D39:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 3
+      AlarmActions: []
+      AlarmDescription: Over 0 throttles per minute
+      Dimensions:
+        - Name: FunctionName
+          Value:
+            Ref: ConstructHubDenyListPrunePruneHandler30B33551
+      MetricName: Throttles
+      Namespace: AWS/Lambda
+      Period: 300
+      Statistic: Sum
+      Threshold: 0
+  ConstructHubMonitoringWatchfuldevConstructHubDenyListPrunePruneHandler8F0BBF5EDurationAlarm073AF5CE:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 3
+      AlarmActions: []
+      AlarmDescription: p99 latency >= 720s (80%)
+      Metrics:
+        - Id: m1
+          Label: p99
+          MetricStat:
+            Metric:
+              Dimensions:
+                - Name: FunctionName
+                  Value:
+                    Ref: ConstructHubDenyListPrunePruneHandler30B33551
+              MetricName: Duration
+              Namespace: AWS/Lambda
+            Period: 300
+            Stat: p99
+          ReturnData: true
+      Threshold: 720000
+  ConstructHubMonitoringWatchfuldevConstructHubDenyListPrunePruneQueueHandlerB847E57CErrorsAlarmCAA191E1:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 3
+      AlarmActions: []
+      AlarmDescription: Over 0 errors per minute
+      Dimensions:
+        - Name: FunctionName
+          Value:
+            Ref: ConstructHubDenyListPrunePruneQueueHandlerF7EB599B
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Period: 300
+      Statistic: Sum
+      Threshold: 0
+  ConstructHubMonitoringWatchfuldevConstructHubDenyListPrunePruneQueueHandlerB847E57CThrottlesAlarm19D4ADCD:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 3
+      AlarmActions: []
+      AlarmDescription: Over 0 throttles per minute
+      Dimensions:
+        - Name: FunctionName
+          Value:
+            Ref: ConstructHubDenyListPrunePruneQueueHandlerF7EB599B
+      MetricName: Throttles
+      Namespace: AWS/Lambda
+      Period: 300
+      Statistic: Sum
+      Threshold: 0
+  ConstructHubMonitoringWatchfuldevConstructHubDenyListPrunePruneQueueHandlerB847E57CDurationAlarm09AF9418:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 3
+      AlarmActions: []
+      AlarmDescription: p99 latency >= 48s (80%)
+      Metrics:
+        - Id: m1
+          Label: p99
+          MetricStat:
+            Metric:
+              Dimensions:
+                - Name: FunctionName
+                  Value:
+                    Ref: ConstructHubDenyListPrunePruneQueueHandlerF7EB599B
+              MetricName: Duration
+              Namespace: AWS/Lambda
+            Period: 300
+            Stat: p99
+          ReturnData: true
+      Threshold: 48000
+  ConstructHubMonitoringHighSeverityDashboard8761DBAC:
     Type: AWS::CloudWatch::Dashboard
     Properties:
       DashboardBody:
@@ -79,7 +253,6 @@ Resources:
                 - ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002
                 - Arn
             - '"]},"yAxis":{}}}]}'
-      DashboardName: construct-hub-high-severity
   ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionServiceRole9AAAD93C:
     Type: AWS::IAM::Role
     Properties:
@@ -169,8 +342,6 @@ Resources:
     Properties:
       ComparisonOperator: GreaterThanOrEqualToThreshold
       EvaluationPeriods: 1
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
       AlarmDescription:
         Fn::Join:
           - ""
@@ -215,6 +386,12 @@ Resources:
         LambdaFunctionConfigurations:
           - Events:
               - s3:ObjectCreated:*
+            LambdaFunctionArn:
+              Fn::GetAtt:
+                - ConstructHubWebAppCacheInvalidator07CDD78B
+                - Arn
+          - Events:
+              - s3:ObjectRemoved:*
             LambdaFunctionArn:
               Fn::GetAtt:
                 - ConstructHubWebAppCacheInvalidator07CDD78B
@@ -420,7 +597,7 @@ Resources:
       - ConstructHubCodeArtifactGetEndpointCustomResourcePolicy4FC951E9
     UpdateReplacePolicy: Delete
     DeletionPolicy: Delete
-  ConstructHubVPC16ECCEA2:
+  ConstructHubLambdaVPCE85ABF51:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: 10.0.0.0/16
@@ -429,13 +606,13 @@ Resources:
       InstanceTenancy: default
       Tags:
         - Key: Name
-          Value: dev/ConstructHub/VPC
-  ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A:
+          Value: dev/ConstructHub/Lambda-VPC
+  ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B:
     Type: AWS::EC2::Subnet
     Properties:
       CidrBlock: 10.0.128.0/19
       VpcId:
-        Ref: ConstructHubVPC16ECCEA2
+        Ref: ConstructHubLambdaVPCE85ABF51
       AvailabilityZone:
         Fn::Select:
           - 0
@@ -447,28 +624,28 @@ Resources:
         - Key: aws-cdk:subnet-type
           Value: Isolated
         - Key: Name
-          Value: dev/ConstructHub/VPC/IsolatedSubnet1
-  ConstructHubVPCIsolatedSubnet1RouteTable750E6F36:
+          Value: dev/ConstructHub/Lambda-VPC/IsolatedSubnet1
+  ConstructHubLambdaVPCIsolatedSubnet1RouteTable65529AB4:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId:
-        Ref: ConstructHubVPC16ECCEA2
+        Ref: ConstructHubLambdaVPCE85ABF51
       Tags:
         - Key: Name
-          Value: dev/ConstructHub/VPC/IsolatedSubnet1
-  ConstructHubVPCIsolatedSubnet1RouteTableAssociation3F8E4C37:
+          Value: dev/ConstructHub/Lambda-VPC/IsolatedSubnet1
+  ConstructHubLambdaVPCIsolatedSubnet1RouteTableAssociation26A1CF34:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId:
-        Ref: ConstructHubVPCIsolatedSubnet1RouteTable750E6F36
+        Ref: ConstructHubLambdaVPCIsolatedSubnet1RouteTable65529AB4
       SubnetId:
-        Ref: ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A
-  ConstructHubVPCIsolatedSubnet2Subnet483D4302:
+        Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
+  ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B:
     Type: AWS::EC2::Subnet
     Properties:
       CidrBlock: 10.0.160.0/19
       VpcId:
-        Ref: ConstructHubVPC16ECCEA2
+        Ref: ConstructHubLambdaVPCE85ABF51
       AvailabilityZone:
         Fn::Select:
           - 1
@@ -480,39 +657,39 @@ Resources:
         - Key: aws-cdk:subnet-type
           Value: Isolated
         - Key: Name
-          Value: dev/ConstructHub/VPC/IsolatedSubnet2
-  ConstructHubVPCIsolatedSubnet2RouteTable18129C5D:
+          Value: dev/ConstructHub/Lambda-VPC/IsolatedSubnet2
+  ConstructHubLambdaVPCIsolatedSubnet2RouteTable57ABF8F6:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId:
-        Ref: ConstructHubVPC16ECCEA2
+        Ref: ConstructHubLambdaVPCE85ABF51
       Tags:
         - Key: Name
-          Value: dev/ConstructHub/VPC/IsolatedSubnet2
-  ConstructHubVPCIsolatedSubnet2RouteTableAssociationF8AD0E0F:
+          Value: dev/ConstructHub/Lambda-VPC/IsolatedSubnet2
+  ConstructHubLambdaVPCIsolatedSubnet2RouteTableAssociation78494BD1:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId:
-        Ref: ConstructHubVPCIsolatedSubnet2RouteTable18129C5D
+        Ref: ConstructHubLambdaVPCIsolatedSubnet2RouteTable57ABF8F6
       SubnetId:
-        Ref: ConstructHubVPCIsolatedSubnet2Subnet483D4302
-  ConstructHubVPCIGW935F4C28:
+        Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
+  ConstructHubLambdaVPCIGWBD019E6D:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
-          Value: dev/ConstructHub/VPC
-  ConstructHubVPCVPCGWDF75BD8E:
+          Value: dev/ConstructHub/Lambda-VPC
+  ConstructHubLambdaVPCVPCGWF32CA0BD:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       VpcId:
-        Ref: ConstructHubVPC16ECCEA2
+        Ref: ConstructHubLambdaVPCE85ABF51
       InternetGatewayId:
-        Ref: ConstructHubVPCIGW935F4C28
-  ConstructHubVPCCodeArtifactAPISecurityGroupBE06BEF9:
+        Ref: ConstructHubLambdaVPCIGWBD019E6D
+  ConstructHubLambdaVPCCodeArtifactAPISecurityGroup4732A9BF:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: dev/ConstructHub/VPC/CodeArtifact.API/SecurityGroup
+      GroupDescription: dev/ConstructHub/Lambda-VPC/CodeArtifact.API/SecurityGroup
       SecurityGroupEgress:
         - CidrIp: 0.0.0.0/0
           Description: Allow all outbound traffic by default
@@ -520,14 +697,14 @@ Resources:
       SecurityGroupIngress:
         - CidrIp:
             Fn::GetAtt:
-              - ConstructHubVPC16ECCEA2
+              - ConstructHubLambdaVPCE85ABF51
               - CidrBlock
           Description:
             Fn::Join:
               - ""
               - - "from "
                 - Fn::GetAtt:
-                    - ConstructHubVPC16ECCEA2
+                    - ConstructHubLambdaVPCE85ABF51
                     - CidrBlock
                 - :443
           FromPort: 443
@@ -535,10 +712,10 @@ Resources:
           ToPort: 443
       Tags:
         - Key: Name
-          Value: dev/ConstructHub/VPC
+          Value: dev/ConstructHub/Lambda-VPC
       VpcId:
-        Ref: ConstructHubVPC16ECCEA2
-  ConstructHubVPCCodeArtifactAPI954CFDE1:
+        Ref: ConstructHubLambdaVPCE85ABF51
+  ConstructHubLambdaVPCCodeArtifactAPI0A2356B9:
     Type: AWS::EC2::VPCEndpoint
     Properties:
       ServiceName:
@@ -548,7 +725,7 @@ Resources:
             - Ref: AWS::Region
             - .codeartifact.api
       VpcId:
-        Ref: ConstructHubVPC16ECCEA2
+        Ref: ConstructHubLambdaVPCE85ABF51
       PolicyDocument:
         Statement:
           - Action: sts:GetServiceBearerToken
@@ -609,16 +786,16 @@ Resources:
       PrivateDnsEnabled: false
       SecurityGroupIds:
         - Fn::GetAtt:
-            - ConstructHubVPCCodeArtifactAPISecurityGroupBE06BEF9
+            - ConstructHubLambdaVPCCodeArtifactAPISecurityGroup4732A9BF
             - GroupId
       SubnetIds:
-        - Ref: ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A
-        - Ref: ConstructHubVPCIsolatedSubnet2Subnet483D4302
+        - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
+        - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
       VpcEndpointType: Interface
-  ConstructHubVPCCodeArtifactSecurityGroupBCADE40D:
+  ConstructHubLambdaVPCCodeArtifactSecurityGroup81DA2A6B:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: dev/ConstructHub/VPC/CodeArtifact/SecurityGroup
+      GroupDescription: dev/ConstructHub/Lambda-VPC/CodeArtifact/SecurityGroup
       SecurityGroupEgress:
         - CidrIp: 0.0.0.0/0
           Description: Allow all outbound traffic by default
@@ -626,14 +803,14 @@ Resources:
       SecurityGroupIngress:
         - CidrIp:
             Fn::GetAtt:
-              - ConstructHubVPC16ECCEA2
+              - ConstructHubLambdaVPCE85ABF51
               - CidrBlock
           Description:
             Fn::Join:
               - ""
               - - "from "
                 - Fn::GetAtt:
-                    - ConstructHubVPC16ECCEA2
+                    - ConstructHubLambdaVPCE85ABF51
                     - CidrBlock
                 - :443
           FromPort: 443
@@ -641,10 +818,10 @@ Resources:
           ToPort: 443
       Tags:
         - Key: Name
-          Value: dev/ConstructHub/VPC
+          Value: dev/ConstructHub/Lambda-VPC
       VpcId:
-        Ref: ConstructHubVPC16ECCEA2
-  ConstructHubVPCCodeArtifactBD6E076F:
+        Ref: ConstructHubLambdaVPCE85ABF51
+  ConstructHubLambdaVPCCodeArtifactBBCFE15F:
     Type: AWS::EC2::VPCEndpoint
     Properties:
       ServiceName:
@@ -654,7 +831,7 @@ Resources:
             - Ref: AWS::Region
             - .codeartifact.repositories
       VpcId:
-        Ref: ConstructHubVPC16ECCEA2
+        Ref: ConstructHubLambdaVPCE85ABF51
       PolicyDocument:
         Statement:
           - Action: codeartifact:ReadFromRepository
@@ -683,16 +860,16 @@ Resources:
       PrivateDnsEnabled: true
       SecurityGroupIds:
         - Fn::GetAtt:
-            - ConstructHubVPCCodeArtifactSecurityGroupBCADE40D
+            - ConstructHubLambdaVPCCodeArtifactSecurityGroup81DA2A6B
             - GroupId
       SubnetIds:
-        - Ref: ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A
-        - Ref: ConstructHubVPCIsolatedSubnet2Subnet483D4302
+        - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
+        - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
       VpcEndpointType: Interface
-  ConstructHubVPCEFSSecurityGroup8BBD946A:
+  ConstructHubLambdaVPCEFSSecurityGroupF8F622CB:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: dev/ConstructHub/VPC/EFS/SecurityGroup
+      GroupDescription: dev/ConstructHub/Lambda-VPC/EFS/SecurityGroup
       SecurityGroupEgress:
         - CidrIp: 0.0.0.0/0
           Description: Allow all outbound traffic by default
@@ -700,14 +877,14 @@ Resources:
       SecurityGroupIngress:
         - CidrIp:
             Fn::GetAtt:
-              - ConstructHubVPC16ECCEA2
+              - ConstructHubLambdaVPCE85ABF51
               - CidrBlock
           Description:
             Fn::Join:
               - ""
               - - "from "
                 - Fn::GetAtt:
-                    - ConstructHubVPC16ECCEA2
+                    - ConstructHubLambdaVPCE85ABF51
                     - CidrBlock
                 - :443
           FromPort: 443
@@ -715,10 +892,10 @@ Resources:
           ToPort: 443
       Tags:
         - Key: Name
-          Value: dev/ConstructHub/VPC
+          Value: dev/ConstructHub/Lambda-VPC
       VpcId:
-        Ref: ConstructHubVPC16ECCEA2
-  ConstructHubVPCEFS4C8BAB2C:
+        Ref: ConstructHubLambdaVPCE85ABF51
+  ConstructHubLambdaVPCEFSD3E408F7:
     Type: AWS::EC2::VPCEndpoint
     Properties:
       ServiceName:
@@ -728,7 +905,7 @@ Resources:
             - Ref: AWS::Region
             - .elasticfilesystem
       VpcId:
-        Ref: ConstructHubVPC16ECCEA2
+        Ref: ConstructHubLambdaVPCE85ABF51
       PolicyDocument:
         Statement:
           - Action:
@@ -819,13 +996,13 @@ Resources:
       PrivateDnsEnabled: true
       SecurityGroupIds:
         - Fn::GetAtt:
-            - ConstructHubVPCEFSSecurityGroup8BBD946A
+            - ConstructHubLambdaVPCEFSSecurityGroupF8F622CB
             - GroupId
       SubnetIds:
-        - Ref: ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A
-        - Ref: ConstructHubVPCIsolatedSubnet2Subnet483D4302
+        - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
+        - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
       VpcEndpointType: Interface
-  ConstructHubVPCS319E90CB6:
+  ConstructHubLambdaVPCS3E3D830AE:
     Type: AWS::EC2::VPCEndpoint
     Properties:
       ServiceName:
@@ -835,7 +1012,7 @@ Resources:
             - Ref: AWS::Region
             - .s3
       VpcId:
-        Ref: ConstructHubVPC16ECCEA2
+        Ref: ConstructHubLambdaVPCE85ABF51
       PolicyDocument:
         Statement:
           - Action: s3:GetObject
@@ -1005,8 +1182,8 @@ Resources:
                     - /data/*/docs-*-typescript.md.not-supported
         Version: 2012-10-17
       RouteTableIds:
-        - Ref: ConstructHubVPCIsolatedSubnet1RouteTable750E6F36
-        - Ref: ConstructHubVPCIsolatedSubnet2RouteTable18129C5D
+        - Ref: ConstructHubLambdaVPCIsolatedSubnet1RouteTable65529AB4
+        - Ref: ConstructHubLambdaVPCIsolatedSubnet2RouteTable57ABF8F6
       VpcEndpointType: Gateway
   ConstructHubOrchestrationDLQ9C6D9BD4:
     Type: AWS::SQS::Queue
@@ -1021,8 +1198,6 @@ Resources:
     Properties:
       ComparisonOperator: GreaterThanOrEqualToThreshold
       EvaluationPeriods: 1
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
       AlarmDescription:
         Fn::Join:
           - ""
@@ -1126,7 +1301,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46S3Bucket74C7566A
+          Ref: AssetParametersbc55115a3d47286cd102706a6613555d05e7bb9a58c9117824e100c526545e4bS3Bucket23DA0459
         S3Key:
           Fn::Join:
             - ""
@@ -1134,12 +1309,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46S3VersionKey20358883
+                      - Ref: AssetParametersbc55115a3d47286cd102706a6613555d05e7bb9a58c9117824e100c526545e4bS3VersionKeyD2F56AAA
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46S3VersionKey20358883
+                      - Ref: AssetParametersbc55115a3d47286cd102706a6613555d05e7bb9a58c9117824e100c526545e4bS3VersionKeyD2F56AAA
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
@@ -1201,7 +1376,7 @@ Resources:
         - Key: Name
           Value: dev/ConstructHub/Orchestration/FileSystem
       VpcId:
-        Ref: ConstructHubVPC16ECCEA2
+        Ref: ConstructHubLambdaVPCE85ABF51
   ConstructHubOrchestrationFileSystemEfsSecurityGroupfromdevConstructHubOrchestrationEFSCleanUpSecurityGroup4C1E01CFALLTRAFFIC5D0E438C:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
@@ -1256,7 +1431,7 @@ Resources:
             - ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A
             - GroupId
       SubnetId:
-        Ref: ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A
+        Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
   ConstructHubOrchestrationFileSystemEfsMountTarget23DA818AD:
     Type: AWS::EFS::MountTarget
     Properties:
@@ -1267,7 +1442,7 @@ Resources:
             - ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A
             - GroupId
       SubnetId:
-        Ref: ConstructHubVPCIsolatedSubnet2Subnet483D4302
+        Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
   ConstructHubOrchestrationFileSystemAccessPoint77C6EF7B:
     Type: AWS::EFS::AccessPoint
     Properties:
@@ -1316,7 +1491,7 @@ Resources:
           Description: Allow all outbound traffic by default
           IpProtocol: "-1"
       VpcId:
-        Ref: ConstructHubVPC16ECCEA2
+        Ref: ConstructHubLambdaVPCE85ABF51
   ConstructHubOrchestrationEFSCleanUpAEF55F55:
     Type: AWS::Lambda::Function
     Properties:
@@ -1369,8 +1544,8 @@ Resources:
               - ConstructHubOrchestrationEFSCleanUpSecurityGroup61914A8D
               - GroupId
         SubnetIds:
-          - Ref: ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A
-          - Ref: ConstructHubVPCIsolatedSubnet2Subnet483D4302
+          - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
+          - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
     DependsOn:
       - ConstructHubOrchestrationEFSCleanUpServiceRole56AA94B9
   ConstructHubOrchestrationCleanUpEFSTrigger7CBD4AE3:
@@ -1541,7 +1716,7 @@ Resources:
           Description: Allow all outbound traffic by default
           IpProtocol: "-1"
       VpcId:
-        Ref: ConstructHubVPC16ECCEA2
+        Ref: ConstructHubLambdaVPCE85ABF51
   ConstructHubOrchestrationDocGenpython77179663:
     Type: AWS::Lambda::Function
     Properties:
@@ -1580,7 +1755,7 @@ Resources:
                   - Fn::Select:
                       - 0
                       - Fn::GetAtt:
-                          - ConstructHubVPCCodeArtifactAPI954CFDE1
+                          - ConstructHubLambdaVPCCodeArtifactAPI0A2356B9
                           - DnsEntries
           CODE_ARTIFACT_DOMAIN_NAME:
             Fn::GetAtt:
@@ -1619,8 +1794,8 @@ Resources:
               - ConstructHubOrchestrationDocGenpythonSecurityGroup5820AD9B
               - GroupId
         SubnetIds:
-          - Ref: ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A
-          - Ref: ConstructHubVPCIsolatedSubnet2Subnet483D4302
+          - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
+          - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
     DependsOn:
       - ConstructHubOrchestrationDocGenpythonServiceRoleDefaultPolicy7A9DA724
       - ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2
@@ -1775,7 +1950,7 @@ Resources:
           Description: Allow all outbound traffic by default
           IpProtocol: "-1"
       VpcId:
-        Ref: ConstructHubVPC16ECCEA2
+        Ref: ConstructHubLambdaVPCE85ABF51
   ConstructHubOrchestrationDocGentypescriptF9C30384:
     Type: AWS::Lambda::Function
     Properties:
@@ -1814,7 +1989,7 @@ Resources:
                   - Fn::Select:
                       - 0
                       - Fn::GetAtt:
-                          - ConstructHubVPCCodeArtifactAPI954CFDE1
+                          - ConstructHubLambdaVPCCodeArtifactAPI0A2356B9
                           - DnsEntries
           CODE_ARTIFACT_DOMAIN_NAME:
             Fn::GetAtt:
@@ -1853,8 +2028,8 @@ Resources:
               - ConstructHubOrchestrationDocGentypescriptSecurityGroupDD0CDD88
               - GroupId
         SubnetIds:
-          - Ref: ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A
-          - Ref: ConstructHubVPCIsolatedSubnet2Subnet483D4302
+          - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
+          - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
     DependsOn:
       - ConstructHubOrchestrationDocGentypescriptServiceRoleDefaultPolicyEBA45F12
       - ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19
@@ -1887,7 +2062,7 @@ Resources:
                     - .amazonaws.com
         Version: 2012-10-17
     DependsOn:
-      - ConstructHubVPCIGW935F4C28
+      - ConstructHubLambdaVPCIGWBD019E6D
   ConstructHubOrchestrationRoleDefaultPolicyEACD181F:
     Type: AWS::IAM::Policy
     Properties:
@@ -1929,7 +2104,7 @@ Resources:
       Roles:
         - Ref: ConstructHubOrchestrationRoleF4CF6987
     DependsOn:
-      - ConstructHubVPCIGW935F4C28
+      - ConstructHubLambdaVPCIGWBD019E6D
   ConstructHubOrchestration39161A46:
     Type: AWS::StepFunctions::StateMachine
     Properties:
@@ -1988,16 +2163,14 @@ Resources:
       TracingConfiguration:
         Enabled: true
     DependsOn:
+      - ConstructHubLambdaVPCIGWBD019E6D
       - ConstructHubOrchestrationRoleDefaultPolicyEACD181F
       - ConstructHubOrchestrationRoleF4CF6987
-      - ConstructHubVPCIGW935F4C28
   ConstructHubOrchestrationOrchestrationFailed5AF50838:
     Type: AWS::CloudWatch::Alarm
     Properties:
       ComparisonOperator: GreaterThanOrEqualToThreshold
       EvaluationPeriods: 1
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
       AlarmDescription:
         Fn::Join:
           - ""
@@ -2193,6 +2366,378 @@ Resources:
     DependsOn:
       - ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB
       - ConstructHubOrchestrationReprocessAllServiceRoleE23FF434
+  ConstructHubDenyListBucketNotifications2269EB2A:
+    Type: Custom::S3BucketNotifications
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691
+          - Arn
+      BucketName:
+        Ref: ConstructHubDenyListBucket1B3C2C2E
+      NotificationConfiguration:
+        LambdaFunctionConfigurations:
+          - Events:
+              - s3:ObjectCreated:*
+            Filter:
+              Key:
+                FilterRules:
+                  - Name: suffix
+                    Value: deny-list.json
+                  - Name: prefix
+                    Value: deny-list.json
+            LambdaFunctionArn:
+              Fn::GetAtt:
+                - ConstructHubDenyListPrunePruneHandler30B33551
+                - Arn
+      Managed: true
+    DependsOn:
+      - ConstructHubDenyListBucketAllowBucketNotificationsTodevConstructHubDenyListPrunePruneHandler8F0BBF5E2222C5D6
+  ConstructHubDenyListBucket1B3C2C2E:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+  ConstructHubDenyListBucketPolicyA1878E10:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: ConstructHubDenyListBucket1B3C2C2E
+      PolicyDocument:
+        Statement:
+          - Action: s3:*
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"
+            Effect: Deny
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubDenyListBucket1B3C2C2E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubDenyListBucket1B3C2C2E
+                        - Arn
+                    - /*
+        Version: 2012-10-17
+  ConstructHubDenyListBucketAllowBucketNotificationsTodevConstructHubDenyListPrunePruneHandler8F0BBF5E2222C5D6:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - ConstructHubDenyListPrunePruneHandler30B33551
+          - Arn
+      Principal: s3.amazonaws.com
+      SourceAccount:
+        Ref: AWS::AccountId
+      SourceArn:
+        Fn::GetAtt:
+          - ConstructHubDenyListBucket1B3C2C2E
+          - Arn
+  ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      Content:
+        S3Bucket:
+          Ref: AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F
+      Description: /opt/awscli/aws
+    DependsOn:
+      - ConstructHubDenyListBucketAllowBucketNotificationsTodevConstructHubDenyListPrunePruneHandler8F0BBF5E2222C5D6
+      - ConstructHubDenyListBucketNotifications2269EB2A
+      - ConstructHubDenyListBucketPolicyA1878E10
+      - ConstructHubDenyListBucket1B3C2C2E
+  ConstructHubDenyListBucketDeploymentCustomResourceF835956B:
+    Type: Custom::CDKBucketDeployment
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
+          - Arn
+      SourceBucketNames:
+        - Ref: AssetParameters8a32ba71115da8362669662bd85577d1dda9d4e77766749ccdf33e29a04debb1S3Bucket92503838
+      SourceObjectKeys:
+        - Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters8a32ba71115da8362669662bd85577d1dda9d4e77766749ccdf33e29a04debb1S3VersionKeyC80DD2F7
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters8a32ba71115da8362669662bd85577d1dda9d4e77766749ccdf33e29a04debb1S3VersionKeyC80DD2F7
+      DestinationBucketName:
+        Ref: ConstructHubDenyListBucket1B3C2C2E
+      Prune: true
+    DependsOn:
+      - ConstructHubDenyListBucketAllowBucketNotificationsTodevConstructHubDenyListPrunePruneHandler8F0BBF5E2222C5D6
+      - ConstructHubDenyListBucketNotifications2269EB2A
+      - ConstructHubDenyListBucketPolicyA1878E10
+      - ConstructHubDenyListBucket1B3C2C2E
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+  ConstructHubDenyListPruneDeleteQueueBBF60185:
+    Type: AWS::SQS::Queue
+    Properties:
+      VisibilityTimeout: 120
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+  ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  ConstructHubDenyListPrunePruneHandlerServiceRoleDefaultPolicy416BC8DA:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - sqs:SendMessage
+              - sqs:GetQueueAttributes
+              - sqs:GetQueueUrl
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ConstructHubDenyListPruneDeleteQueueBBF60185
+                - Arn
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubDenyListBucket1B3C2C2E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubDenyListBucket1B3C2C2E
+                        - Arn
+                    - /*
+        Version: 2012-10-17
+      PolicyName: ConstructHubDenyListPrunePruneHandlerServiceRoleDefaultPolicy416BC8DA
+      Roles:
+        - Ref: ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE
+  ConstructHubDenyListPrunePruneHandler30B33551:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParametersf15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87S3Bucket1ACB4F30
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersf15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87S3VersionKey40E83DEB
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersf15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87S3VersionKey40E83DEB
+      Role:
+        Fn::GetAtt:
+          - ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE
+          - Arn
+      Description: backend/deny-list/prune-handler.lambda.ts
+      Environment:
+        Variables:
+          PACKAGE_DATA_BUCKET_NAME:
+            Ref: ConstructHubPackageDataDC5EF35E
+          PACKAGE_DATA_KEY_PREFIX: data/
+          PRUNE_QUEUE_URL:
+            Ref: ConstructHubDenyListPruneDeleteQueueBBF60185
+          DENY_LIST_BUCKET_NAME:
+            Ref: ConstructHubDenyListBucket1B3C2C2E
+          DENY_LIST_OBJECT_KEY: deny-list.json
+      Handler: index.handler
+      Runtime: nodejs14.x
+      Timeout: 900
+    DependsOn:
+      - ConstructHubDenyListPrunePruneHandlerServiceRoleDefaultPolicy416BC8DA
+      - ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE
+  ConstructHubDenyListPrunePruneQueueHandlerServiceRoleC10AC418:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  ConstructHubDenyListPrunePruneQueueHandlerServiceRoleDefaultPolicy8AA78393:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: s3:DeleteObject*
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /*
+          - Action: lambda:InvokeFunction
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ConstructHubOrchestrationCatalogBuilder7C964951
+                - Arn
+          - Action:
+              - sqs:ReceiveMessage
+              - sqs:ChangeMessageVisibility
+              - sqs:GetQueueUrl
+              - sqs:DeleteMessage
+              - sqs:GetQueueAttributes
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ConstructHubDenyListPruneDeleteQueueBBF60185
+                - Arn
+        Version: 2012-10-17
+      PolicyName: ConstructHubDenyListPrunePruneQueueHandlerServiceRoleDefaultPolicy8AA78393
+      Roles:
+        - Ref: ConstructHubDenyListPrunePruneQueueHandlerServiceRoleC10AC418
+  ConstructHubDenyListPrunePruneQueueHandlerF7EB599B:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParameters24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132S3Bucket5CD47BB7
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132S3VersionKeyA4C13882
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132S3VersionKeyA4C13882
+      Role:
+        Fn::GetAtt:
+          - ConstructHubDenyListPrunePruneQueueHandlerServiceRoleC10AC418
+          - Arn
+      Description: backend/deny-list/prune-queue-handler.lambda.ts
+      Environment:
+        Variables:
+          PACKAGE_DATA_BUCKET_NAME:
+            Ref: ConstructHubPackageDataDC5EF35E
+          CATALOG_REBUILD_FUNCTION_NAME:
+            Fn::GetAtt:
+              - ConstructHubOrchestrationCatalogBuilder7C964951
+              - Arn
+      Handler: index.handler
+      Runtime: nodejs14.x
+      Timeout: 60
+    DependsOn:
+      - ConstructHubDenyListPrunePruneQueueHandlerServiceRoleDefaultPolicy8AA78393
+      - ConstructHubDenyListPrunePruneQueueHandlerServiceRoleC10AC418
+  ConstructHubDenyListPrunePruneQueueHandlerSqsEventSourcedevConstructHubDenyListPruneDeleteQueue5B9B1B667049B35D:
+    Type: AWS::Lambda::EventSourceMapping
+    Properties:
+      FunctionName:
+        Ref: ConstructHubDenyListPrunePruneQueueHandlerF7EB599B
+      EventSourceArn:
+        Fn::GetAtt:
+          - ConstructHubDenyListPruneDeleteQueueBBF60185
+          - Arn
+  ConstructHubDenyListPeriodicPruneA981153D:
+    Type: AWS::Events::Rule
+    Properties:
+      ScheduleExpression: rate(5 minutes)
+      State: ENABLED
+      Targets:
+        - Arn:
+            Fn::GetAtt:
+              - ConstructHubDenyListPrunePruneHandler30B33551
+              - Arn
+          Id: Target0
+  ConstructHubDenyListPeriodicPruneAllowEventRuledevConstructHubDenyListPrunePruneHandler8F0BBF5E7B81288F:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - ConstructHubDenyListPrunePruneHandler30B33551
+          - Arn
+      Principal: events.amazonaws.com
+      SourceArn:
+        Fn::GetAtt:
+          - ConstructHubDenyListPeriodicPruneA981153D
+          - Arn
   ConstructHubIngestionDLQ3E96A5F2:
     Type: AWS::SQS::Queue
     Properties:
@@ -2306,7 +2851,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameterseebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05S3Bucket316434E8
+          Ref: AssetParameters81f5b64ef2b8116e4a35365bc3e42b8cafdd25859d2ec15d5f673a53d3229b69S3Bucket70567FDE
         S3Key:
           Fn::Join:
             - ""
@@ -2314,12 +2859,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameterseebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05S3VersionKey512FE4EF
+                      - Ref: AssetParameters81f5b64ef2b8116e4a35365bc3e42b8cafdd25859d2ec15d5f673a53d3229b69S3VersionKeyFA9F452D
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameterseebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05S3VersionKey512FE4EF
+                      - Ref: AssetParameters81f5b64ef2b8116e4a35365bc3e42b8cafdd25859d2ec15d5f673a53d3229b69S3VersionKeyFA9F452D
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
@@ -2367,8 +2912,6 @@ Resources:
     Properties:
       ComparisonOperator: GreaterThanOrEqualToThreshold
       EvaluationPeriods: 1
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
       AlarmDescription:
         Fn::Join:
           - ""
@@ -2425,8 +2968,6 @@ Resources:
     Properties:
       ComparisonOperator: GreaterThanOrEqualToThreshold
       EvaluationPeriods: 1
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
       AlarmDescription:
         Fn::Join:
           - ""
@@ -2538,6 +3079,21 @@ Resources:
               Fn::GetAtt:
                 - ConstructHubIngestionQueue1AD94CA3
                 - Arn
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubDenyListBucket1B3C2C2E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubDenyListBucket1B3C2C2E
+                        - Arn
+                    - /*
         Version: 2012-10-17
       PolicyName: ConstructHubDiscoveryServiceRoleDefaultPolicy9D5F91B3
       Roles:
@@ -2547,7 +3103,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersa25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88eceS3Bucket7E891C93
+          Ref: AssetParameters7e824dff8164e87d794261ec3601f3c0b0a9d602591a0a47e75fa02ae8d1ea5eS3BucketBDCC9807
         S3Key:
           Fn::Join:
             - ""
@@ -2555,12 +3111,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersa25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88eceS3VersionKeyC3F65FED
+                      - Ref: AssetParameters7e824dff8164e87d794261ec3601f3c0b0a9d602591a0a47e75fa02ae8d1ea5eS3VersionKeyF2C2508F
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersa25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88eceS3VersionKeyC3F65FED
+                      - Ref: AssetParameters7e824dff8164e87d794261ec3601f3c0b0a9d602591a0a47e75fa02ae8d1ea5eS3VersionKeyF2C2508F
       Role:
         Fn::GetAtt:
           - ConstructHubDiscoveryServiceRole1B3CFF96
@@ -2573,6 +3129,9 @@ Resources:
             Ref: ConstructHubDiscoveryStagingBucket1F2F7AE8
           QUEUE_URL:
             Ref: ConstructHubIngestionQueue1AD94CA3
+          DENY_LIST_BUCKET_NAME:
+            Ref: ConstructHubDenyListBucket1B3C2C2E
+          DENY_LIST_OBJECT_KEY: deny-list.json
       Handler: index.handler
       MemorySize: 10240
       ReservedConcurrentExecutions: 1
@@ -2612,8 +3171,6 @@ Resources:
     Properties:
       ComparisonOperator: GreaterThanOrEqualToThreshold
       EvaluationPeriods: 1
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
       AlarmDescription:
         Fn::Join:
           - ""
@@ -2637,8 +3194,6 @@ Resources:
     Properties:
       ComparisonOperator: LessThanThreshold
       EvaluationPeriods: 1
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
       AlarmDescription:
         Fn::Join:
           - ""
@@ -2766,8 +3321,6 @@ Resources:
     Properties:
       ComparisonOperator: LessThanThreshold
       EvaluationPeriods: 1
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
       AlarmDescription:
         Fn::Join:
           - ""
@@ -2791,8 +3344,6 @@ Resources:
     Properties:
       ComparisonOperator: GreaterThanOrEqualToThreshold
       EvaluationPeriods: 1
-      AlarmActions:
-        - Ref: TopicBFC7AF6E
       AlarmDescription:
         Fn::Join:
           - ""
@@ -2818,9 +3369,12 @@ Resources:
         Fn::Join:
           - ""
           - - '{"periodOverride":"inherit","widgets":[{"type":"text","width":24,"height":2,"x":0,"y":0,"properties":{"markdown":"#
-              Catalog
-              Overview"}},{"type":"metric","width":12,"height":6,"x":0,"y":2,"properties":{"view":"timeSeries","title":"Catalog
-              Size","region":"'
+              Catalog Overview\\n\\n[button:Package Data](/s3/buckets/'
+            - Ref: ConstructHubPackageDataDC5EF35E
+            - )\\n[button:Catalog Builder](/lambda/home#/functions/
+            - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
+            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":2,"properties":{"view":"timeSeries","title":"Catalog
+              Size","region":"
             - Ref: AWS::Region
             - '","metrics":[["ConstructHub/Inventory","SubmoduleCount",{"label":"Submodules","stat":"Maximum"}],["ConstructHub/Inventory","PackageVersionCount",{"label":"Package
               Versions","stat":"Maximum"}],["ConstructHub/Inventory","PackageMajorVersionCount",{"label":"Package
@@ -3025,7 +3579,46 @@ Resources:
                 - ConstructHubOrchestrationDLQ9C6D9BD4
                 - QueueName
             - '",{"label":"Oldest Message
-              Age","stat":"Maximum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}}]}'
+              Age","stat":"Maximum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":54,"properties":{"markdown":"#
+              Deny List\\n\\n[button:Deny List Object](/s3/object/'
+            - Ref: ConstructHubDenyListBucket1B3C2C2E
+            - ?prefix=deny-list.json)\\n[button:Prune
+              Function](/lambda/home#/functions/
+            - Ref: ConstructHubDenyListPrunePruneHandler30B33551
+            - )\\n[button:Prune
+              Logs](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f
+            - Ref: ConstructHubDenyListPrunePruneHandler30B33551
+            - /log-events)\\n[button:Delete
+              Queue](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.
+            - Ref: AWS::Region
+            - .amazonaws.com%2F
+            - Ref: AWS::AccountId
+            - "%2F"
+            - Fn::GetAtt:
+                - ConstructHubDenyListPruneDeleteQueueBBF60185
+                - QueueName
+            - )\\n[button:Delete
+              Logs](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f
+            - Ref: ConstructHubDenyListPrunePruneQueueHandlerF7EB599B
+            - /log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":56,"properties":{"view":"timeSeries","title":"Deny
+              List","region":"
+            - Ref: AWS::Region
+            - '","metrics":[[{"label":"Rules","expression":"FILL(m41327b0edbbef1ca627d9503d1b9b9fab401700118519537b58e0557adee7e4f,
+              REPEAT)"}],["ConstructHub/DenyList","DenyListRuleCount",{"label":"Rules","stat":"Maximum","visible":false,"id":"m41327b0edbbef1ca627d9503d1b9b9fab401700118519537b58e0557adee7e4f"}],["AWS/SQS","NumberOfMessagesDeleted","QueueName","'
+            - Fn::GetAtt:
+                - ConstructHubDenyListPruneDeleteQueueBBF60185
+                - QueueName
+            - '",{"label":"Deleted
+              Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":56,"properties":{"view":"timeSeries","title":"Prune
+              Function Health","region":"'
+            - Ref: AWS::Region
+            - '","metrics":[[{"label":"Invocations","expression":"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2,
+              0)"}],["AWS/Lambda","Invocations","FunctionName","'
+            - Ref: ConstructHubDenyListPrunePruneHandler30B33551
+            - '",{"label":"Invocations","stat":"Sum","visible":false,"id":"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2"}],[{"label":"Errors","expression":"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55,
+              0)"}],["AWS/Lambda","Errors","FunctionName","'
+            - Ref: ConstructHubDenyListPrunePruneHandler30B33551
+            - '",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}}]}'
       DashboardName: construct-hub-backend
   ConstructHubWebAppWebsiteBucket4B2B9DB2:
     Type: AWS::S3::Bucket
@@ -3223,7 +3816,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746S3Bucket81575F72
+          Ref: AssetParameters7ee6e37c4f89b09a6b3c50e513093daf23a858809daed5a6703095d14955c9b2S3BucketF2BF2B22
         S3Key:
           Fn::Join:
             - ""
@@ -3231,12 +3824,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746S3VersionKey49943C8A
+                      - Ref: AssetParameters7ee6e37c4f89b09a6b3c50e513093daf23a858809daed5a6703095d14955c9b2S3VersionKey3CDFB870
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746S3VersionKey49943C8A
+                      - Ref: AssetParameters7ee6e37c4f89b09a6b3c50e513093daf23a858809daed5a6703095d14955c9b2S3VersionKey3CDFB870
       Role:
         Fn::GetAtt:
           - ConstructHubWebAppCacheInvalidatorServiceRoleAABE9AE2
@@ -3286,7 +3879,7 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591S3Bucket5E5ABF3D
+        - Ref: AssetParameters6c4e3d2383b1b7f493d4a873c73f292d109a402058ec3951bd81aa400f1ec362S3BucketC57AC98B
       SourceObjectKeys:
         - Fn::Join:
             - ""
@@ -3294,12 +3887,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591S3VersionKeyA4AD8D03
+                      - Ref: AssetParameters6c4e3d2383b1b7f493d4a873c73f292d109a402058ec3951bd81aa400f1ec362S3VersionKeyA339B276
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591S3VersionKeyA4AD8D03
+                      - Ref: AssetParameters6c4e3d2383b1b7f493d4a873c73f292d109a402058ec3951bd81aa400f1ec362S3VersionKeyA339B276
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: true
@@ -3409,6 +4002,141 @@ Resources:
     DependsOn:
       - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB
       - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB
+  CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - ":s3:::"
+                    - Ref: AssetParameters8a32ba71115da8362669662bd85577d1dda9d4e77766749ccdf33e29a04debb1S3Bucket92503838
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - ":s3:::"
+                    - Ref: AssetParameters8a32ba71115da8362669662bd85577d1dda9d4e77766749ccdf33e29a04debb1S3Bucket92503838
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubDenyListBucket1B3C2C2E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubDenyListBucket1B3C2C2E
+                        - Arn
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - ":s3:::"
+                    - Ref: AssetParameters6c4e3d2383b1b7f493d4a873c73f292d109a402058ec3951bd81aa400f1ec362S3BucketC57AC98B
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - ":s3:::"
+                    - Ref: AssetParameters6c4e3d2383b1b7f493d4a873c73f292d109a402058ec3951bd81aa400f1ec362S3BucketC57AC98B
+                    - /*
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubWebAppWebsiteBucket4B2B9DB2
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubWebAppWebsiteBucket4B2B9DB2
+                        - Arn
+                    - /*
+          - Action:
+              - cloudfront:GetInvalidation
+              - cloudfront:CreateInvalidation
+            Effect: Allow
+            Resource: "*"
+        Version: 2012-10-17
+      PolicyName: CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF
+      Roles:
+        - Ref: CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265
+  CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70
+      Role:
+        Fn::GetAtt:
+          - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265
+          - Arn
+      Handler: index.handler
+      Layers:
+        - Ref: ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
+      Runtime: python3.6
+      Timeout: 900
+    DependsOn:
+      - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF
+      - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265
   BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC:
     Type: AWS::IAM::Role
     Properties:
@@ -3561,104 +4289,6 @@ Resources:
     DependsOn:
       - BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36
       - BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC
-  CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Action: sts:AssumeRole
-            Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-        Version: 2012-10-17
-      ManagedPolicyArns:
-        - Fn::Join:
-            - ""
-            - - "arn:"
-              - Ref: AWS::Partition
-              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-  CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyDocument:
-        Statement:
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
-            Effect: Allow
-            Resource:
-              - Fn::Join:
-                  - ""
-                  - - "arn:"
-                    - Ref: AWS::Partition
-                    - ":s3:::"
-                    - Ref: AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591S3Bucket5E5ABF3D
-              - Fn::Join:
-                  - ""
-                  - - "arn:"
-                    - Ref: AWS::Partition
-                    - ":s3:::"
-                    - Ref: AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591S3Bucket5E5ABF3D
-                    - /*
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
-              - s3:DeleteObject*
-              - s3:PutObject*
-              - s3:Abort*
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubWebAppWebsiteBucket4B2B9DB2
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubWebAppWebsiteBucket4B2B9DB2
-                        - Arn
-                    - /*
-          - Action:
-              - cloudfront:GetInvalidation
-              - cloudfront:CreateInvalidation
-            Effect: Allow
-            Resource: "*"
-        Version: 2012-10-17
-      PolicyName: CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF
-      Roles:
-        - Ref: CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265
-  CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket:
-          Ref: AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70
-      Role:
-        Fn::GetAtt:
-          - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265
-          - Arn
-      Handler: index.handler
-      Layers:
-        - Ref: ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1
-      Runtime: python3.6
-      Timeout: 900
-    DependsOn:
-      - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF
-      - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265
 Outputs:
   ConstructHubMonitoringWatchfulWatchfulDashboard75D318D0:
     Value:
@@ -3688,18 +4318,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "f3d3a3cc7f26921b237eff24fc5dd7aef8f0465a1f376b8f7918eb3d4b3e8797"
-  AssetParameters809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46S3Bucket74C7566A:
+  AssetParametersbc55115a3d47286cd102706a6613555d05e7bb9a58c9117824e100c526545e4bS3Bucket23DA0459:
     Type: String
     Description: S3 bucket for asset
-      "809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46"
-  AssetParameters809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46S3VersionKey20358883:
+      "bc55115a3d47286cd102706a6613555d05e7bb9a58c9117824e100c526545e4b"
+  AssetParametersbc55115a3d47286cd102706a6613555d05e7bb9a58c9117824e100c526545e4bS3VersionKeyD2F56AAA:
     Type: String
     Description: S3 key for asset version
-      "809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46"
-  AssetParameters809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46ArtifactHash1825D77A:
+      "bc55115a3d47286cd102706a6613555d05e7bb9a58c9117824e100c526545e4b"
+  AssetParametersbc55115a3d47286cd102706a6613555d05e7bb9a58c9117824e100c526545e4bArtifactHashB8053B61:
     Type: String
     Description: Artifact hash for asset
-      "809531852639a68119c43ce922cb874bdd8a13bf6a2ae48a97e51f0420755c46"
+      "bc55115a3d47286cd102706a6613555d05e7bb9a58c9117824e100c526545e4b"
   AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3Bucket4D46ABB5:
     Type: String
     Description: S3 bucket for asset
@@ -3760,54 +4390,6 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9"
-  AssetParameterseebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05S3Bucket316434E8:
-    Type: String
-    Description: S3 bucket for asset
-      "eebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05"
-  AssetParameterseebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05S3VersionKey512FE4EF:
-    Type: String
-    Description: S3 key for asset version
-      "eebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05"
-  AssetParameterseebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05ArtifactHash41760E5F:
-    Type: String
-    Description: Artifact hash for asset
-      "eebf8380c4fec48b5355ef68b364f1ca13012662430177814d17e97dc3f19a05"
-  AssetParametersa25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88eceS3Bucket7E891C93:
-    Type: String
-    Description: S3 bucket for asset
-      "a25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88ece"
-  AssetParametersa25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88eceS3VersionKeyC3F65FED:
-    Type: String
-    Description: S3 key for asset version
-      "a25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88ece"
-  AssetParametersa25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88eceArtifactHashF9E29BD1:
-    Type: String
-    Description: Artifact hash for asset
-      "a25fa2777473b6894ec29a4cafe92d58829dcb876d9be72aef232b3abbc88ece"
-  AssetParameters2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663S3Bucket55C0232E:
-    Type: String
-    Description: S3 bucket for asset
-      "2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663"
-  AssetParameters2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663S3VersionKey156B584D:
-    Type: String
-    Description: S3 key for asset version
-      "2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663"
-  AssetParameters2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663ArtifactHash359D7BA7:
-    Type: String
-    Description: Artifact hash for asset
-      "2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663"
-  AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746S3Bucket81575F72:
-    Type: String
-    Description: S3 bucket for asset
-      "ab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746"
-  AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746S3VersionKey49943C8A:
-    Type: String
-    Description: S3 key for asset version
-      "ab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746"
-  AssetParametersab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746ArtifactHashEEC36421:
-    Type: String
-    Description: Artifact hash for asset
-      "ab7165ea861865a93ca2649ba71de4c5b4fc6a6633b7e02789f72549b8465746"
   AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7:
     Type: String
     Description: S3 bucket for asset
@@ -3832,18 +4414,102 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf"
-  AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591S3Bucket5E5ABF3D:
+  AssetParameters8a32ba71115da8362669662bd85577d1dda9d4e77766749ccdf33e29a04debb1S3Bucket92503838:
     Type: String
     Description: S3 bucket for asset
-      "1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591"
-  AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591S3VersionKeyA4AD8D03:
+      "8a32ba71115da8362669662bd85577d1dda9d4e77766749ccdf33e29a04debb1"
+  AssetParameters8a32ba71115da8362669662bd85577d1dda9d4e77766749ccdf33e29a04debb1S3VersionKeyC80DD2F7:
     Type: String
     Description: S3 key for asset version
-      "1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591"
-  AssetParameters1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591ArtifactHash4F5F19A2:
+      "8a32ba71115da8362669662bd85577d1dda9d4e77766749ccdf33e29a04debb1"
+  AssetParameters8a32ba71115da8362669662bd85577d1dda9d4e77766749ccdf33e29a04debb1ArtifactHash281D2BDC:
     Type: String
     Description: Artifact hash for asset
-      "1feee2e2bb756ae6aeb10a87fe5e5b79120754f52b1528eb46d95f5b35f97591"
+      "8a32ba71115da8362669662bd85577d1dda9d4e77766749ccdf33e29a04debb1"
+  AssetParametersf15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87S3Bucket1ACB4F30:
+    Type: String
+    Description: S3 bucket for asset
+      "f15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87"
+  AssetParametersf15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87S3VersionKey40E83DEB:
+    Type: String
+    Description: S3 key for asset version
+      "f15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87"
+  AssetParametersf15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87ArtifactHashF98AA924:
+    Type: String
+    Description: Artifact hash for asset
+      "f15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87"
+  AssetParameters24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132S3Bucket5CD47BB7:
+    Type: String
+    Description: S3 bucket for asset
+      "24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132"
+  AssetParameters24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132S3VersionKeyA4C13882:
+    Type: String
+    Description: S3 key for asset version
+      "24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132"
+  AssetParameters24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132ArtifactHashD9DB2CA3:
+    Type: String
+    Description: Artifact hash for asset
+      "24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132"
+  AssetParameters81f5b64ef2b8116e4a35365bc3e42b8cafdd25859d2ec15d5f673a53d3229b69S3Bucket70567FDE:
+    Type: String
+    Description: S3 bucket for asset
+      "81f5b64ef2b8116e4a35365bc3e42b8cafdd25859d2ec15d5f673a53d3229b69"
+  AssetParameters81f5b64ef2b8116e4a35365bc3e42b8cafdd25859d2ec15d5f673a53d3229b69S3VersionKeyFA9F452D:
+    Type: String
+    Description: S3 key for asset version
+      "81f5b64ef2b8116e4a35365bc3e42b8cafdd25859d2ec15d5f673a53d3229b69"
+  AssetParameters81f5b64ef2b8116e4a35365bc3e42b8cafdd25859d2ec15d5f673a53d3229b69ArtifactHash5F9D6031:
+    Type: String
+    Description: Artifact hash for asset
+      "81f5b64ef2b8116e4a35365bc3e42b8cafdd25859d2ec15d5f673a53d3229b69"
+  AssetParameters7e824dff8164e87d794261ec3601f3c0b0a9d602591a0a47e75fa02ae8d1ea5eS3BucketBDCC9807:
+    Type: String
+    Description: S3 bucket for asset
+      "7e824dff8164e87d794261ec3601f3c0b0a9d602591a0a47e75fa02ae8d1ea5e"
+  AssetParameters7e824dff8164e87d794261ec3601f3c0b0a9d602591a0a47e75fa02ae8d1ea5eS3VersionKeyF2C2508F:
+    Type: String
+    Description: S3 key for asset version
+      "7e824dff8164e87d794261ec3601f3c0b0a9d602591a0a47e75fa02ae8d1ea5e"
+  AssetParameters7e824dff8164e87d794261ec3601f3c0b0a9d602591a0a47e75fa02ae8d1ea5eArtifactHash3101EE2F:
+    Type: String
+    Description: Artifact hash for asset
+      "7e824dff8164e87d794261ec3601f3c0b0a9d602591a0a47e75fa02ae8d1ea5e"
+  AssetParameters2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663S3Bucket55C0232E:
+    Type: String
+    Description: S3 bucket for asset
+      "2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663"
+  AssetParameters2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663S3VersionKey156B584D:
+    Type: String
+    Description: S3 key for asset version
+      "2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663"
+  AssetParameters2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663ArtifactHash359D7BA7:
+    Type: String
+    Description: Artifact hash for asset
+      "2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663"
+  AssetParameters7ee6e37c4f89b09a6b3c50e513093daf23a858809daed5a6703095d14955c9b2S3BucketF2BF2B22:
+    Type: String
+    Description: S3 bucket for asset
+      "7ee6e37c4f89b09a6b3c50e513093daf23a858809daed5a6703095d14955c9b2"
+  AssetParameters7ee6e37c4f89b09a6b3c50e513093daf23a858809daed5a6703095d14955c9b2S3VersionKey3CDFB870:
+    Type: String
+    Description: S3 key for asset version
+      "7ee6e37c4f89b09a6b3c50e513093daf23a858809daed5a6703095d14955c9b2"
+  AssetParameters7ee6e37c4f89b09a6b3c50e513093daf23a858809daed5a6703095d14955c9b2ArtifactHash65BC41FC:
+    Type: String
+    Description: Artifact hash for asset
+      "7ee6e37c4f89b09a6b3c50e513093daf23a858809daed5a6703095d14955c9b2"
+  AssetParameters6c4e3d2383b1b7f493d4a873c73f292d109a402058ec3951bd81aa400f1ec362S3BucketC57AC98B:
+    Type: String
+    Description: S3 bucket for asset
+      "6c4e3d2383b1b7f493d4a873c73f292d109a402058ec3951bd81aa400f1ec362"
+  AssetParameters6c4e3d2383b1b7f493d4a873c73f292d109a402058ec3951bd81aa400f1ec362S3VersionKeyA339B276:
+    Type: String
+    Description: S3 key for asset version
+      "6c4e3d2383b1b7f493d4a873c73f292d109a402058ec3951bd81aa400f1ec362"
+  AssetParameters6c4e3d2383b1b7f493d4a873c73f292d109a402058ec3951bd81aa400f1ec362ArtifactHash4E9B3694:
+    Type: String
+    Description: Artifact hash for asset
+      "6c4e3d2383b1b7f493d4a873c73f292d109a402058ec3951bd81aa400f1ec362"
   AssetParametersd5594c96e8d8bc8ce1cd238fb011bd3e1a5c69dada29b4366e17e735f7617fa3S3Bucket5045DB1E:
     Type: String
     Description: S3 bucket for asset

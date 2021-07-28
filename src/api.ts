@@ -3,6 +3,8 @@
 import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
 import * as route53 from '@aws-cdk/aws-route53';
 
+export * from './backend/deny-list/api';
+
 /**
  * Domain configuration for the website.
  */

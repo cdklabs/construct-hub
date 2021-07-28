@@ -7,11 +7,12 @@ import * as sqs from '@aws-cdk/aws-sqs';
 import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { AlarmActions, Domain } from './api';
-import { Discovery, Ingestion } from './backend';
+import { DenyList, Discovery, Ingestion } from './backend';
 import { BackendDashboard } from './backend-dashboard';
+import { DenyListRule } from './backend/deny-list/api';
 import { Inventory } from './backend/inventory';
 import { Orchestration } from './backend/orchestration';
-import { CATALOG_KEY } from './backend/shared/constants';
+import { CATALOG_KEY, STORAGE_KEY_PREFIX } from './backend/shared/constants';
 import { Repository } from './codeartifact/repository';
 import { Monitoring } from './monitoring';
 import { WebApp } from './webapp';
@@ -26,18 +27,9 @@ export interface ConstructHubProps {
   readonly domain?: Domain;
 
   /**
-   * The name of the CloudWatch Dashboard created to observe this application.
-   *
-   * Must only contain alphanumerics, dash (-) and underscore (_).
-   *
-   * @default "construct-hub"
-   */
-  readonly dashboardName?: string;
-
-  /**
    * Actions to perform when alarms are set.
    */
-  readonly alarmActions: AlarmActions;
+  readonly alarmActions?: AlarmActions;
 
   /**
    * Whether sensitive Lambda functions (which operate on un-trusted complex
@@ -58,6 +50,13 @@ export interface ConstructHubProps {
    * systems.
    */
   readonly backendDashboardName?: string;
+
+  /**
+   * A list of packages to block from the construct hub.
+   *
+   * @default []
+   */
+  readonly denyList?: DenyListRule[];
 }
 
 /**
@@ -66,12 +65,11 @@ export interface ConstructHubProps {
 export class ConstructHub extends CoreConstruct implements iam.IGrantable {
   private readonly ingestion: Ingestion;
 
-  public constructor(scope: Construct, id: string, props: ConstructHubProps) {
+  public constructor(scope: Construct, id: string, props: ConstructHubProps = {}) {
     super(scope, id);
 
     const monitoring = new Monitoring(this, 'Monitoring', {
       alarmActions: props.alarmActions,
-      dashboardName: props.dashboardName ?? 'construct-hub',
     });
 
     const packageData = new s3.Bucket(this, 'PackageData', {
@@ -95,8 +93,8 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     // We always need a VPC, regardless of the value of `isolateLambdas`, as the Transliterator
     // functions require an EFS mount, which is only available within a VPC.
-    const subnetType = props.isolateLambdas ? ec2.SubnetType.ISOLATED : ec2.SubnetType.PRIVATE;
-    const vpc = new ec2.Vpc(this, 'VPC', {
+    const subnetType = (props.isolateLambdas ?? true) ? ec2.SubnetType.ISOLATED : ec2.SubnetType.PRIVATE;
+    const vpc = new ec2.Vpc(this, 'Lambda-VPC', {
       enableDnsHostnames: true,
       enableDnsSupport: true,
       natGateways: subnetType === ec2.SubnetType.ISOLATED ? 0 : undefined,
@@ -151,19 +149,29 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       vpcSubnets: { subnetType },
     });
 
+    const denyList = new DenyList(this, 'DenyList', {
+      catalogBuilderFunction: orchestration.catalogBuilder,
+      rules: props.denyList ?? [],
+      packageDataBucket: packageData,
+      packageDataKeyPrefix: STORAGE_KEY_PREFIX,
+      monitoring: monitoring,
+    });
+
     this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData, orchestration, monitoring });
 
-    const discovery = new Discovery(this, 'Discovery', { queue: this.ingestion.queue, monitoring });
+    const discovery = new Discovery(this, 'Discovery', { queue: this.ingestion.queue, monitoring, denyList });
     discovery.bucket.grantRead(this.ingestion);
 
     const inventory = new Inventory(this, 'InventoryCanary', { bucket: packageData, monitoring });
 
     new BackendDashboard(this, 'BackendDashboard', {
+      packageData,
       dashboardName: props.backendDashboardName,
       discovery,
       ingestion: this.ingestion,
       inventory,
       orchestration,
+      denyList,
     });
 
     new WebApp(this, 'WebApp', {

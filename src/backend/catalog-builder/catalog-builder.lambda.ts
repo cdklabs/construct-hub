@@ -24,20 +24,31 @@ const METRICS_NAMESPACE = 'ConstructHub/CatalogBuilder';
  * @returns the information about the updated S3 object.
  */
 export async function handler(event: CatalogBuilderInput, context: Context) {
-
   console.log(JSON.stringify(event, null, 2));
+
+  // determine if this is a request to rebuild the catalog (basically, an empty event)
+  const rebuild = !event?.package;
+  if (rebuild) {
+    console.log('Requesting catalog rebuild (empty event)');
+  }
 
   const BUCKET_NAME = requireEnv('BUCKET_NAME');
 
   const packages = new Map<string, Map<number, PackageInfo>>();
 
-  console.log('Loading existing catalog...');
-  const data = await aws.s3().getObject({ Bucket: BUCKET_NAME, Key: constants.CATALOG_KEY }).promise()
-    .catch((err: AWSError) => err.code !== 'NoSuchKey'
-      ? Promise.reject(err)
-      : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
+  let data: undefined | AWS.S3.GetObjectOutput;
 
-  if (!data.Body) {
+  if (!rebuild) {
+    console.log('Loading existing catalog...');
+
+    data = await aws.s3().getObject({ Bucket: BUCKET_NAME, Key: constants.CATALOG_KEY }).promise()
+      .catch((err: AWSError) => err.code !== 'NoSuchKey'
+        ? Promise.reject(err)
+        : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
+  }
+
+  // if event is empty, we're doing a full rebuild
+  if (!data?.Body || rebuild) {
     console.log('Catalog not found. Recreating...');
     const failures: any = {};
     for await (const { Key: pkgKey } of relevantObjects(BUCKET_NAME)) {

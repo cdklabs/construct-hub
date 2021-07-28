@@ -150,11 +150,9 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
     // Did we identify a license file or not?
     metrics.putMetric(MetricName.FOUND_LICENSE_FILE, licenseText != null ? 1 : 0, Unit.Count);
 
-    const assemblyKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`;
+    const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(packageName, packageVersion);
     console.log(`Writing assembly at ${assemblyKey}`);
-    const packageKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`;
     console.log(`Writing package at  ${packageKey}`);
-    const metadataKey = `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.METADATA_KEY_SUFFIX}`;
     console.log(`Writing metadata at  ${metadataKey}`);
 
     // we upload the metadata file first because the catalog builder depends on
