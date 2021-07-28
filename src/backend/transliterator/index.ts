@@ -1,5 +1,7 @@
-import { GatewayVpcEndpoint, InterfaceVpcEndpoint, IVpc, SubnetSelection, SubnetType } from '@aws-cdk/aws-ec2';
-import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
+import { GatewayVpcEndpoint, InterfaceVpcEndpoint, IVpc, Port, SubnetSelection } from '@aws-cdk/aws-ec2';
+import { IAccessPoint } from '@aws-cdk/aws-efs';
+import { Effect, PolicyStatement } from '@aws-cdk/aws-iam';
+import { CfnFunction, IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration, Fn } from '@aws-cdk/core';
@@ -9,6 +11,8 @@ import * as s3 from '../../s3';
 import * as constants from '../shared/constants';
 import { DocumentationLanguage } from '../shared/language';
 import { Transliterator as Handler } from './transliterator';
+
+const EFS_MOUNT_PATH = '/mnt/efs';
 
 export interface TransliteratorProps {
   /**
@@ -34,7 +38,12 @@ export interface TransliteratorProps {
   /**
    * The VPC in which isolated lambda functions will reside.
    */
-  readonly vpc?: IVpc;
+  readonly vpc: IVpc;
+
+  /**
+   * The subnet selection to use for placement of the Lambda function.
+   */
+  readonly vpcSubnets?: SubnetSelection;
 
   /**
    * VPC endpoints to use for interacting with CodeArtifact and S3.
@@ -42,18 +51,18 @@ export interface TransliteratorProps {
   readonly vpcEndpoints?: TransliteratorVpcEndpoints;
 
   /**
-   * The subnet selection to use for placement of the Lambda function.
-   *
-   * @default { subnetType: SubnetType.ISOLATED }
-   */
-  readonly vpcSubnets?: SubnetSelection;
-
-  /**
    * How long should execution logs be retained?
    *
    * @default RetentionDays.TEN_YEARS
    */
   readonly logRetention?: RetentionDays;
+
+  /**
+   * An optional EFS Access Point to use for allowing to work with larger
+   * packages, which otherwise would exceed Lambda's 512MB writable storage
+   * limit.
+   */
+  readonly efsAccessPoint: IAccessPoint;
 }
 
 export interface TransliteratorVpcEndpoints {
@@ -66,6 +75,11 @@ export interface TransliteratorVpcEndpoints {
    * The VPC endpoint for the CodeArtifact repositories (service: 'codeartifact.repositories')
    */
   readonly codeArtifact: InterfaceVpcEndpoint;
+
+  /**
+   * The VPC endpoint for the Elastic File System service.
+   */
+  readonly elasticFileSystem: InterfaceVpcEndpoint;
 
   /**
    * The VPC endpoint for the S3
@@ -94,6 +108,11 @@ export class Transliterator extends Construct {
       // temporaty hack to generate construct-hub compliant markdown.
       // see https://github.com/cdklabs/jsii-docgen/blob/master/src/docgen/render/markdown.ts#L172
       HEADER_SPAN: 'true',
+      TARGET_LANGUAGE: props.language.toString(),
+      // Override $TMPDIR to be on the EFS volume (so we are not limited to 512MB)
+      TMPDIR: EFS_MOUNT_PATH,
+      // Override $HOME to be a fixed directory in the EFS volume (so we share npm caches)
+      HOME: `${EFS_MOUNT_PATH}/HOME`,
     };
     if (props.vpcEndpoints) {
       // Those are returned as an array of HOSTED_ZONE_ID:DNS_NAME... We care
@@ -113,15 +132,36 @@ export class Transliterator extends Construct {
 
     const lambda = new Handler(this, 'Resource', {
       description: `Creates ${props.language} documentation from jsii-enabled npm packages`,
-      environment: { ...environment, TARGET_LANGUAGE: props.language.toString() },
+      environment,
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 10_240, // Currently the maximum possible setting
       timeout: Duration.minutes(15),
       tracing: Tracing.PASS_THROUGH,
       vpc: props.vpc,
-      vpcSubnets: props.vpcSubnets ?? { subnetType: SubnetType.ISOLATED },
+      vpcSubnets: props.vpcSubnets,
     });
     this.function = lambda;
+
+    // TODO: The @aws-cdk/aws-lambda library does not support EFS mounts yet T_T
+    (lambda.node.defaultChild as CfnFunction).addPropertyOverride('FileSystemConfigs', [{
+      Arn: props.efsAccessPoint.accessPointArn,
+      LocalMountPath: EFS_MOUNT_PATH,
+    }]);
+
+    props.efsAccessPoint.fileSystem.connections.allowFrom(lambda, Port.allTraffic());
+
+    if (props.vpcEndpoints) {
+      props.vpcEndpoints.elasticFileSystem.addToPolicy(new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['elasticfilesystem:ClientMount', 'elasticfilesystem:ClientWrite'],
+        conditions: {
+          Bool: { 'aws:SecureTransport': 'true' },
+          ArnEquals: { 'elasticfilesystem:AccessPointArn': props.efsAccessPoint.accessPointArn },
+        },
+        principals: [lambda.grantPrincipal],
+        resources: [props.efsAccessPoint.fileSystem.fileSystemArn],
+      }));
+    }
 
     repository?.grantReadFromRepository(this.function);
 
