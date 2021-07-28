@@ -11,6 +11,7 @@ import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
 import { Construct, Duration, RemovalPolicy } from '@aws-cdk/core';
 import { sqsQueueUrl, stateMachineUrl } from '../../deep-link';
 import { CatalogBuilder } from '../catalog-builder';
+import { DenyList } from '../deny-list';
 import { DocumentationLanguage } from '../shared/language';
 import { Transliterator, TransliteratorProps } from '../transliterator';
 import { CleanUpEfs } from './clean-up-efs';
@@ -19,7 +20,12 @@ import { ReprocessAll } from './reprocess-all';
 
 const SUPPORTED_LANGUAGES = [DocumentationLanguage.PYTHON, DocumentationLanguage.TYPESCRIPT];
 
-export interface OrchestrationProps extends Omit<TransliteratorProps, 'efsAccessPoint' | 'language'>{}
+export interface OrchestrationProps extends Omit<TransliteratorProps, 'efsAccessPoint' | 'language'>{
+  /**
+   * The deny list.
+   */
+  readonly denyList: DenyList;
+}
 
 /**
  * Orchestrates the backend processing tasks using a StepFunctions State Machine.

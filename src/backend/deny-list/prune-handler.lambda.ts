@@ -4,10 +4,11 @@ import * as AWS from 'aws-sdk';
 import * as clients from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DenyListClient } from './client.lambda-shared';
-import { ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME, ENV_PRUNE_PACKAGE_DATA_KEY_PREFIX, ENV_PRUNE_QUEUE_URL, MetricName, METRICS_NAMESPACE } from './constants';
+import { ENV_PRUNE_ON_CHANGE_FUNCTION_NAME, ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME, ENV_PRUNE_PACKAGE_DATA_KEY_PREFIX, ENV_PRUNE_QUEUE_URL, MetricName, METRICS_NAMESPACE } from './constants';
 
 const s3 = clients.s3();
 const sqs = clients.sqs();
+const lambda = clients.lambda();
 
 // Configure embedded metrics format
 Configuration.environmentOverride = Environments.Lambda;
@@ -28,6 +29,7 @@ export async function handler(event: unknown) {
   const packageData = requireEnv(ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME);
   const pruneQueue = requireEnv(ENV_PRUNE_QUEUE_URL);
   const keyPrefix = requireEnv(ENV_PRUNE_PACKAGE_DATA_KEY_PREFIX);
+  const objectsFound = new Array<string>();
 
   for (const nameVersion of Object.keys(client.map)) {
     const prefix = `${keyPrefix}${nameVersion}/`;
@@ -59,8 +61,23 @@ export async function handler(event: unknown) {
         console.log(JSON.stringify({ sendMessageRequest }));
         const sendMessageResponse = await sqs.sendMessage(sendMessageRequest).promise();
         console.log(JSON.stringify({ sendMessageResponse }));
+        objectsFound.push(object.Key);
       }
 
     } while (continuation);
+
+    // trigger the "on change" handler objects were found and we have a handler
+    const onChangeFunctionName = process.env[ENV_PRUNE_ON_CHANGE_FUNCTION_NAME];
+    if (onChangeFunctionName && objectsFound.length > 0) {
+      console.log(`Triggering a on-change handler: ${onChangeFunctionName}`);
+      const onChangeCallbackRequest: AWS.Lambda.InvocationRequest = {
+        FunctionName: onChangeFunctionName,
+        InvocationType: 'Event',
+      };
+
+      console.log(JSON.stringify({ onChangeCallbackRequest }));
+      const onChangeCallbackResponse = await lambda.invoke(onChangeCallbackRequest).promise();
+      console.log(JSON.stringify({ onChangeCallbackResponse }));
+    }
   }
 }

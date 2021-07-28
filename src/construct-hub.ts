@@ -140,7 +140,15 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       sid: 'Allow-CodeArtifact-Bucket',
     }));
 
+    const denyList = new DenyList(this, 'DenyList', {
+      rules: props.denyList ?? [],
+      packageDataBucket: packageData,
+      packageDataKeyPrefix: STORAGE_KEY_PREFIX,
+      monitoring: monitoring,
+    });
+
     const orchestration = new Orchestration(this, 'Orchestration', {
+      denyList: denyList,
       bucket: packageData,
       codeArtifact,
       monitoring,
@@ -149,13 +157,8 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       vpcSubnets: { subnetType },
     });
 
-    const denyList = new DenyList(this, 'DenyList', {
-      catalogBuilderFunction: orchestration.catalogBuilder,
-      rules: props.denyList ?? [],
-      packageDataBucket: packageData,
-      packageDataKeyPrefix: STORAGE_KEY_PREFIX,
-      monitoring: monitoring,
-    });
+    // rebuild the catalog when the deny list changes.
+    denyList.prune.onChangeInvoke(orchestration.catalogBuilder);
 
     this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData, orchestration, monitoring });
 

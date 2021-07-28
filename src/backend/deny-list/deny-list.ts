@@ -54,12 +54,6 @@ export interface DenyListProps {
   readonly prunePeriod?: Duration;
 
   /**
-   * The catalog builder lambda function. Invoked
-   * when a package is deleted to rebuild the catalog.
-   */
-  readonly catalogBuilderFunction: lambda.IFunction;
-
-  /**
    * The monitoring system.
    */
   readonly monitoring: Monitoring;
@@ -106,15 +100,14 @@ export class DenyList extends Construct {
       packageDataBucket: props.packageDataBucket,
       packageDataKeyPrefix: props.packageDataKeyPrefix,
       monitoring: props.monitoring,
-      catalogBuilderFunction: props.catalogBuilderFunction,
     });
 
-    this.grantRead(this.prune.handler);
+    this.grantRead(this.prune.pruneHandler);
 
     // trigger prune when the deny list changes
     const pruneOnChange = props.pruneOnChange ?? true;
     if (pruneOnChange) {
-      this.prune.handler.addEventSource(new S3EventSource(this.bucket, {
+      this.prune.pruneHandler.addEventSource(new S3EventSource(this.bucket, {
         events: [s3.EventType.OBJECT_CREATED],
         filters: [{ prefix: this.objectKey, suffix: this.objectKey }],
       }));
@@ -125,7 +118,7 @@ export class DenyList extends Construct {
     if (prunePeriod && prunePeriod.toSeconds() > 0) {
       new events.Rule(this, 'PeriodicPrune', {
         schedule: events.Schedule.rate(prunePeriod),
-        targets: [new targets.LambdaFunction(this.prune.handler)],
+        targets: [new targets.LambdaFunction(this.prune.pruneHandler)],
       });
     }
 
