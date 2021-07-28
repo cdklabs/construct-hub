@@ -253,7 +253,7 @@ export class Orchestration extends Construct {
       description: '[ConstructHub/CleanUpEFS] Cleans up leftover files from an EFS file system',
       environment: {
         EFS_MOUNT_PATH: efsMountPath,
-        IGNORE_DIRS: `${efsMountPath}/HOME`,
+        IGNORE_DIRS: `${efsMountPath}${Transliterator.SHARED_NPM_CACHE_PATH}`,
       },
       memorySize: 1_024,
       timeout: Duration.minutes(15),
