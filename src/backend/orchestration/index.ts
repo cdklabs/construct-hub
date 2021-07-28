@@ -109,10 +109,14 @@ export class Orchestration extends Construct {
     })
       // This has a concurrency of 1, so we want to aggressively retry being throttled here.
       .addRetry({ errors: ['Lambda.TooManyRequestsException'], interval: Duration.seconds(30), maxAttempts: 5 })
-      .addCatch(new Pass(this, 'Failed to add to catalog.json', {
+      .addCatch(new Pass(this, 'Add to catalog.json failure', {
         parameters: { 'error.$': 'States.StringToJson($.Cause)' },
         resultPath: '$.error',
-      }).next(sendToDeadLetterQueue));
+      }).next(sendToDeadLetterQueue), { errors: ['States.TaskFailed'] })
+      .addCatch(new Pass(this, 'Add to catalog.json fault', {
+        parameters: { 'error.$': '$.Cause' },
+        resultPath: '$.error',
+      }).next(sendToDeadLetterQueue), { errors: ['States.ALL'] });
 
     const docGenResultsKey = 'DocGen';
     const sendToDlqIfNeeded = new Choice(this, 'Any Failure?')
@@ -149,12 +153,11 @@ export class Orchestration extends Construct {
             },
           }).addRetry({ interval: Duration.seconds(30) })
             .addCatch(
-              new Pass(this, `Failed ${language}`, {
-                parameters: {
-                  'error.$': 'States.StringToJson($.Cause)',
-                  language,
-                },
-              }),
+              new Pass(this, `Generate ${language} docs failure`, { parameters: { 'error.$': 'States.StringToJson($.Cause)', language } }),
+            )
+            .addCatch(
+              new Pass(this, `Generate ${language} docs fault`, { parameters: { 'error.$': '$.Cause', language } }),
+              { errors: ['States.ALL'] },
             ),
         ))
         .next(new Choice(this, 'Any Success?')
@@ -170,7 +173,7 @@ export class Orchestration extends Construct {
     this.stateMachine = new StateMachine(this, 'Resource', {
       definition,
       stateMachineType: StateMachineType.STANDARD,
-      timeout: Duration.hours(1),
+      timeout: Duration.days(1), // Ample time for retries, etc...
       tracingEnabled: true,
     });
 
