@@ -51,6 +51,20 @@ test('prunePeriod controls period', () => {
   });
 });
 
+test('prunePeriod of zero disables periodical pruning', () => {
+  const stack = new Stack();
+  new DenyList(stack, 'DenyList', {
+    catalogBuilderFunction: new CatalogBuilderMock(stack, 'CatalogBuilderMock'),
+    monitoring: new Monitoring(stack, 'Monitoring'),
+    packageDataBucket: new s3.Bucket(stack, 'PackageDataBucket'),
+    packageDataKeyPrefix: 'my-data/',
+    prunePeriod: Duration.minutes(0),
+  });
+
+  // THEN
+  expect(stack).not.toHaveResource('AWS::Events::Rule');
+});
+
 describe('createDenyListMap()', () => {
   test('no rules', () => {
     const rules: DenyListRule[] = [];

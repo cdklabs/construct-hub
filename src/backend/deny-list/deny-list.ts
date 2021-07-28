@@ -45,6 +45,8 @@ export interface DenyListProps {
   /**
    * Prunes all S3 objects that are in the deny list periodically.
    *
+   * Use `Duration.minutes(0)` to disable periodical pruning.
+   *
    * @default Duration.minutes(5)
    */
   readonly prunePeriod?: Duration;
@@ -120,7 +122,7 @@ export class DenyList extends CoreConstruct {
 
     // trigger prune periodically (every 5 minutes) - just in case
     const prunePeriod = props.prunePeriod ?? Duration.minutes(5);
-    if (prunePeriod) {
+    if (prunePeriod && prunePeriod.toSeconds() > 0) {
       new events.Rule(this, 'PeriodicPrune', {
         schedule: events.Schedule.rate(prunePeriod),
         targets: [new targets.LambdaFunction(prune.handler)],
@@ -134,7 +136,8 @@ export class DenyList extends CoreConstruct {
   }
 
   /**
-   * Grants an AWS Lambda function permissions to read the deny list.
+   * Grants an AWS Lambda function permissions to read the deny list, and adds
+   * the relevant environment variables expected by the `DenyListClient`.
    */
   public grantRead(handler: lambda.Function) {
     handler.addEnvironment(ENV_DENY_LIST_BUCKET_NAME, this.bucket.bucketName);
