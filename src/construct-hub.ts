@@ -95,7 +95,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     // We always need a VPC, regardless of the value of `isolateLambdas`, as the Transliterator
     // functions require an EFS mount, which is only available within a VPC.
-    const subnetType = props.isolateLambdas ? ec2.SubnetType.ISOLATED : ec2.SubnetType.PRIVATE;
+    const subnetType = (props.isolateLambdas ?? true) ? ec2.SubnetType.ISOLATED : ec2.SubnetType.PRIVATE;
     const vpc = new ec2.Vpc(this, 'Lambda-VPC', {
       enableDnsHostnames: true,
       enableDnsSupport: true,
