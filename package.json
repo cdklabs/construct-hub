@@ -29,7 +29,13 @@
     "dev:diff": "npx projen dev:diff",
     "dev:deploy": "npx projen dev:deploy",
     "dev:destroy": "npx projen dev:destroy",
+    "dev:bootstrap": "npx projen dev:bootstrap",
+    "bundle:catalog-builder-mock": "npx projen bundle:catalog-builder-mock",
+    "bundle:trigger.client-test": "npx projen bundle:trigger.client-test",
+    "bundle:trigger.prune-test": "npx projen bundle:trigger.prune-test",
     "bundle:catalog-builder": "npx projen bundle:catalog-builder",
+    "bundle:prune-handler": "npx projen bundle:prune-handler",
+    "bundle:prune-queue-handler": "npx projen bundle:prune-queue-handler",
     "bundle:follow": "npx projen bundle:follow",
     "bundle:stage": "npx projen bundle:stage",
     "bundle:ingestion": "npx projen bundle:ingestion",
@@ -41,6 +47,10 @@
     "bundle:certificate-monitor": "npx projen bundle:certificate-monitor",
     "bundle:http-get-function": "npx projen bundle:http-get-function",
     "bundle:handler": "npx projen bundle:handler",
+    "integ:deny-list:deploy": "npx projen integ:deny-list:deploy",
+    "integ:deny-list:destroy": "npx projen integ:deny-list:destroy",
+    "integ:deny-list:assert": "npx projen integ:deny-list:assert",
+    "integ:deny-list:snapshot": "npx projen integ:deny-list:snapshot",
     "release": "npx projen release",
     "projen": "npx projen",
     "start": "npx projen start"
@@ -52,6 +62,7 @@
   },
   "devDependencies": {
     "@aws-cdk/assert": "1.115.0",
+    "@aws-cdk/assets": "^1.115.0",
     "@aws-cdk/aws-certificatemanager": "1.115.0",
     "@aws-cdk/aws-cloudfront": "1.115.0",
     "@aws-cdk/aws-cloudfront-origins": "1.115.0",
@@ -92,6 +103,7 @@
     "aws-sdk": "^2.955.0",
     "aws-sdk-mock": "^5.2.1",
     "aws-xray-sdk-core": "^3.3.3",
+    "cdk-triggers": "^0.0.61",
     "cdk-watchful": "0.5.154",
     "construct-hub-webapp": "^0.1.165",
     "constructs": "^3.3.69",
@@ -122,6 +134,7 @@
     "yaml": "^1.10.2"
   },
   "peerDependencies": {
+    "@aws-cdk/assets": "^1.115.0",
     "@aws-cdk/aws-certificatemanager": "^1.115.0",
     "@aws-cdk/aws-cloudfront": "^1.115.0",
     "@aws-cdk/aws-cloudfront-origins": "^1.115.0",

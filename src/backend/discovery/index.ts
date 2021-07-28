@@ -8,6 +8,7 @@ import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
+import { DenyList } from '../deny-list';
 import { MetricName, METRICS_NAMESPACE, S3KeyPrefix, DISCOVERY_MARKER_KEY } from './constants';
 import { Follow } from './follow';
 import { Stage } from './stage';
@@ -29,6 +30,11 @@ export interface DiscoveryProps {
    * @default RetentionDays.TEN_YEARS
    */
   readonly logRetention?: RetentionDays;
+
+  /**
+   * The deny list construct.
+   */
+  readonly denyList: DenyList;
 }
 
 /**
@@ -96,6 +102,7 @@ export class Discovery extends Construct {
     });
     discoveryQueue.grantSendMessages(this.follow);
     this.bucket.grantReadWrite(this.follow, DISCOVERY_MARKER_KEY);
+    props.denyList.grantRead(this.follow);
 
     this.stage = new Stage(this, 'Stage', {
       deadLetterQueueEnabled: true,

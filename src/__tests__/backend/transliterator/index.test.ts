@@ -15,7 +15,6 @@ test('basic use', () => {
   const bucket = new Bucket(stack, 'Bucket');
   const monitoring = new Monitoring(stack, 'Monitoring', {
     alarmActions: { highSeverity: 'high-sev', normalSeverity: 'normal-sev' },
-    dashboardName: 'monitoring',
   });
   const vpc = new Vpc(stack, 'VPC');
   const efsFileSystem = new FileSystem(stack, 'EFS', { vpc });
@@ -45,7 +44,6 @@ test('CodeArtifact repository', () => {
   const bucket = new Bucket(stack, 'Bucket');
   const monitoring = new Monitoring(stack, 'Monitoring', {
     alarmActions: { highSeverity: 'high-sev', normalSeverity: 'normal-sev' },
-    dashboardName: 'monitoring',
   });
   const vpc = new Vpc(stack, 'VPC');
   const efsFileSystem = new FileSystem(stack, 'EFS', { vpc });
@@ -86,7 +84,6 @@ test('VPC Endpoints', () => {
   const bucket = new Bucket(stack, 'Bucket');
   const monitoring = new Monitoring(stack, 'Monitoring', {
     alarmActions: { highSeverity: 'high-sev', normalSeverity: 'normal-sev' },
-    dashboardName: 'monitoring',
   });
   const vpc = new Vpc(stack, 'VPC', { subnetConfiguration: [{ name: 'Isolated', subnetType: SubnetType.ISOLATED }] });
   const efsAccessPoint = new FileSystem(stack, 'EFS', { vpc, vpcSubnets: { subnetType: SubnetType.ISOLATED } })
@@ -138,7 +135,6 @@ test('VPC Endpoints and CodeArtifact repository', () => {
   const repository = new Repository(stack, 'CodeArtifact');
   const monitoring = new Monitoring(stack, 'Monitoring', {
     alarmActions: { highSeverity: 'high-sev', normalSeverity: 'normal-sev' },
-    dashboardName: 'monitoring',
   });
   const vpc = new Vpc(stack, 'VPC', { subnetConfiguration: [{ name: 'Isolated', subnetType: SubnetType.ISOLATED }] });
   const efsFileSystem = new FileSystem(stack, 'EFS', { vpc, vpcSubnets: { subnetType: SubnetType.ISOLATED } });
