@@ -252,7 +252,7 @@ export class BackendDashboard extends Construct {
               [
                 '# Deny List',
                 '',
-                `[button:Deny List File](${s3ObjectUrl(props.denyList.bucket, props.denyList.objectKey)})`,
+                `[button:Deny List Object](${s3ObjectUrl(props.denyList.bucket, props.denyList.objectKey)})`,
                 `[button:Prune Function](${lambdaFunctionUrl(props.denyList.prune.handler)})`,
                 `[button:Prune Logs](${lambdaSearchLogGroupUrl(props.denyList.prune.handler)})`,
                 `[button:Delete Queue](${sqsQueueUrl(props.denyList.prune.queue)})`,
@@ -263,10 +263,10 @@ export class BackendDashboard extends Construct {
         [
           new GraphWidget({
             height: 6,
-            width: 8,
+            width: 12,
             title: 'Deny List',
             left: [
-              fillMetric(props.denyList.metricDenyListRules({ label: 'Rules' })),
+              fillMetric(props.denyList.metricDenyListRules({ label: 'Rules' }), 'REPEAT'),
               props.denyList.prune.queue.metricNumberOfMessagesDeleted({ label: 'Deleted Files' }),
             ],
             leftYAxis: { min: 0 },
@@ -274,7 +274,7 @@ export class BackendDashboard extends Construct {
           }),
           new GraphWidget({
             height: 6,
-            width: 8,
+            width: 12,
             title: 'Prune Function Health',
             left: [
               fillMetric(props.denyList.prune.handler.metricInvocations({ label: 'Invocations' })),
@@ -378,11 +378,10 @@ function sqsQueueUrl(queue: IQueue): string {
 }
 
 function s3ObjectUrl(bucket: IBucket, objectKey?: string): string {
-  const stack = Stack.of(bucket);
   if (objectKey) {
-    return `/s3/object/${bucket.bucketName}?region=${stack.region}&prefix=${objectKey}`;
+    return `/s3/object/${bucket.bucketName}?prefix=${objectKey}`;
   } else {
-    return `/s3/buckets/${bucket.bucketName}?region=${stack.region}`;
+    return `/s3/buckets/${bucket.bucketName}`;
   }
 }
 

@@ -86,8 +86,6 @@ export class DenyListClient {
       throw new Error('DenyListClient must be initialized');
     }
 
-    return {
-      ...this._map,
-    };
+    return this._map;
   }
 }
