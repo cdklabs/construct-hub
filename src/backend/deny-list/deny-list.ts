@@ -116,7 +116,7 @@ export class DenyList extends CoreConstruct {
     if (pruneOnChange) {
       prune.handler.addEventSource(new S3EventSource(this.bucket, {
         events: [s3.EventType.OBJECT_CREATED],
-        filters: [{ prefix: this.objectKey }],
+        filters: [{ prefix: this.objectKey, suffix: this.objectKey }],
       }));
     }
 
