@@ -1910,7 +1910,7 @@ Resources:
       Environment:
         Variables:
           EFS_MOUNT_PATH: /mnt/efs
-          IGNORE_DIRS: /mnt/efs/HOME
+          IGNORE_DIRS: /mnt/efs/npm-cache
       FileSystemConfigs:
         - Arn:
             Fn::Join:
@@ -2112,7 +2112,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3BucketEC636295
+          Ref: AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3Bucket46FC2A6C
         S3Key:
           Fn::Join:
             - ""
@@ -2120,12 +2120,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2
+                      - Ref: AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2
+                      - Ref: AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2
@@ -2136,7 +2136,7 @@ Resources:
           HEADER_SPAN: "true"
           TARGET_LANGUAGE: python
           TMPDIR: /mnt/efs
-          HOME: /mnt/efs/HOME
+          NPM_CACHE: /mnt/efs/npm-cache
           CODE_ARTIFACT_API_ENDPOINT:
             Fn::Select:
               - 1
@@ -2346,7 +2346,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3BucketEC636295
+          Ref: AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3Bucket46FC2A6C
         S3Key:
           Fn::Join:
             - ""
@@ -2354,12 +2354,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2
+                      - Ref: AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2
+                      - Ref: AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19
@@ -2370,7 +2370,7 @@ Resources:
           HEADER_SPAN: "true"
           TARGET_LANGUAGE: typescript
           TMPDIR: /mnt/efs
-          HOME: /mnt/efs/HOME
+          NPM_CACHE: /mnt/efs/npm-cache
           CODE_ARTIFACT_API_ENDPOINT:
             Fn::Select:
               - 1
@@ -4432,18 +4432,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98"
-  AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3BucketEC636295:
+  AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3Bucket46FC2A6C:
     Type: String
     Description: S3 bucket for asset
-      "5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3"
-  AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2:
+      "6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5f"
+  AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84:
     Type: String
     Description: S3 key for asset version
-      "5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3"
-  AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3ArtifactHash135508FF:
+      "6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5f"
+  AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fArtifactHash0E5BE15B:
     Type: String
     Description: Artifact hash for asset
-      "5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3"
+      "6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5f"
   AssetParametersaed78bc431dd6cdac01afad951cec010f57f9d972c3f748c3ceeb5ca096544fdS3Bucket2D90B8C0:
     Type: String
     Description: S3 bucket for asset

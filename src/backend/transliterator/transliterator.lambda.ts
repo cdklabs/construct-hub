@@ -12,6 +12,7 @@ import { logInWithCodeArtifact } from '../shared/code-artifact.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DocumentationLanguage } from '../shared/language';
+import { shellOut } from '../shared/shell-out.lambda-shared';
 
 const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)${constants.ASSEMBLY_KEY_SUFFIX}$`);
 // Capture groups:                                                    ┗━━━━━━━━━1━━━━━━━┛  ┗━━2━━┛
@@ -41,6 +42,15 @@ export function handler(event: TransliteratorInput, context: Context): Promise<S
       const domainOwner = process.env.CODE_ARTIFACT_DOMAIN_OWNER;
       const apiEndpoint = process.env.CODE_ARTIFACT_API_ENDPOINT;
       await logInWithCodeArtifact({ endpoint, domain, domainOwner, apiEndpoint });
+    }
+
+    // Set up NPM shared cache directory (https://docs.npmjs.com/cli/v7/using-npm/config#cache)
+    const npmCacheDir = process.env.NPM_CACHE;
+    if (npmCacheDir) {
+      // Create it if it does not exist yet...
+      await fs.mkdirp(npmCacheDir);
+      console.log(`Using shared NPM cache at: ${npmCacheDir}`);
+      await shellOut('npm', 'config', 'set', `cache=${npmCacheDir}`);
     }
 
     const language = requireEnv('TARGET_LANGUAGE');
@@ -110,37 +120,6 @@ export function handler(event: TransliteratorInput, context: Context): Promise<S
 }
 
 async function ensureWritableHome<T>(cb: () => Promise<T>): Promise<T> {
-  if (process.env.HOME) {
-    let exists = await fs.pathExists(process.env.HOME);
-    // If the directory does not exist, create it (this is cheating, but...).
-    // This happens as the EFS filesystem that is mounted may not contain a HOME
-    // directory just yet... And it somehow needs to be bootstrapped (here!).
-    if (!exists) {
-      console.log(`$HOME points to non-existent directory ${process.env.HOME}... Creating!`);
-      try {
-        await fs.mkdirp(process.env.HOME);
-        exists = true;
-      } catch {
-        // IGNORE - We could not create the directory, and this is okay.
-      }
-    }
-
-    // If at this stage, the $HOME directory still does not exist, go the TMPDIR
-    // route, as we are hopeless to fix that...
-    if (exists) {
-      // $HOME is set, so let's check if it is writable
-      const stat = await fs.stat(process.env.HOME);
-      // We check against the rwx------ bitmask here, as group & other are
-      // probably not relevant to our business. This is a good enough heuristic
-      // within lambda functions.
-      // eslint-disable-next-line no-bitwise
-      if (stat.isDirectory() && (stat.mode & 0o700) === 0o700) {
-        console.log(`Using existing, writable $HOME directory: ${process.env.HOME}`);
-        return cb();
-      }
-    }
-  }
-
   // Since $HOME is not set, or is not writable, we'll just go make our own...
   const fakeHome = await fs.mkdtemp(path.join(os.tmpdir(), 'fake-home'));
   console.log(`Made temporary $HOME directory: ${fakeHome}`);
