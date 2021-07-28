@@ -234,11 +234,7 @@ function discoverIntegrationTests() {
     // do not commit all files we are excluding
     for (const x of exclude) {
       project.addGitIgnore(`${snapshotdir}/${x}`);
-      project.addPackageIgnore(`${snapshotdir}/${x}`);
-
-      // nested assemblies
-      project.addGitIgnore(`${snapshotdir}/**/${x}`);
-      project.addPackageIgnore(`${snapshotdir}/**/${x}`);
+      project.addGitIgnore(`${snapshotdir}/**/${x}`); // nested assemblies
     }
 
     project.addGitIgnore(deploydir);
