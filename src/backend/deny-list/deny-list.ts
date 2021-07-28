@@ -8,8 +8,7 @@ import * as lambda from '@aws-cdk/aws-lambda';
 import { S3EventSource } from '@aws-cdk/aws-lambda-event-sources';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
-import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
-import { Construct } from 'constructs';
+import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
 import { DenyListRule } from './api';
 import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY, MetricName, METRICS_NAMESPACE } from './constants';
@@ -21,15 +20,17 @@ import { Prune } from './prune';
  */
 export interface DenyListProps {
   /**
-   * The deny list.
-   * @default []
+   * A set of rules that are matched against package names and versions to
+   * determine if they are blocked from displaying in the Construct Hub.
+   *
+   * An empty list will result in no packages being blocked.
    */
-  readonly rules?: DenyListRule[];
+  readonly rules: DenyListRule[];
 
   /**
    * The S3 bucket that includes the package data.
    */
-  readonly packageDataBucket: s3.Bucket;
+  readonly packageDataBucket: s3.IBucket;
 
   /**
    * The S3 key prefix for all package data.
@@ -38,6 +39,7 @@ export interface DenyListProps {
 
   /**
    * Triggers prune when deny list changes.
+   *
    * @default true
    */
   readonly pruneOnChange?: boolean;
@@ -66,7 +68,7 @@ export interface DenyListProps {
 /**
  * Manages the construct hub deny list.
  */
-export class DenyList extends CoreConstruct {
+export class DenyList extends Construct {
   /**
    * The S3 bucket that contains the deny list.
    */
@@ -75,7 +77,7 @@ export class DenyList extends CoreConstruct {
   /**
    * The object key within the bucket with the deny list JSON file.
    */
-  public readonly objectKey: string;
+  public readonly objectKey = 'deny-list.json';
 
   /**
    * Responsible for deleting objects that match the deny list.
@@ -89,10 +91,10 @@ export class DenyList extends CoreConstruct {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       encryption: s3.BucketEncryption.S3_MANAGED,
       versioned: true,
+      enforceSSL: true,
     });
 
-    this.objectKey = 'deny-list.json';
-    const directory = this.writeToFile(props.rules ?? [], this.objectKey);
+    const directory = this.writeToFile(props.rules, this.objectKey);
 
     // upload the deny list to the bucket
     const upload = new s3deploy.BucketDeployment(this, 'BucketDeployment', {
@@ -100,21 +102,19 @@ export class DenyList extends CoreConstruct {
       sources: [s3deploy.Source.asset(directory)],
     });
 
-    const prune = new Prune(this, 'Prune', {
+    this.prune = new Prune(this, 'Prune', {
       packageDataBucket: props.packageDataBucket,
       packageDataKeyPrefix: props.packageDataKeyPrefix,
       monitoring: props.monitoring,
       catalogBuilderFunction: props.catalogBuilderFunction,
     });
 
-    this.prune = prune;
-
-    this.grantRead(prune.handler);
+    this.grantRead(this.prune.handler);
 
     // trigger prune when the deny list changes
     const pruneOnChange = props.pruneOnChange ?? true;
     if (pruneOnChange) {
-      prune.handler.addEventSource(new S3EventSource(this.bucket, {
+      this.prune.handler.addEventSource(new S3EventSource(this.bucket, {
         events: [s3.EventType.OBJECT_CREATED],
         filters: [{ prefix: this.objectKey, suffix: this.objectKey }],
       }));
@@ -125,7 +125,7 @@ export class DenyList extends CoreConstruct {
     if (prunePeriod && prunePeriod.toSeconds() > 0) {
       new events.Rule(this, 'PeriodicPrune', {
         schedule: events.Schedule.rate(prunePeriod),
-        targets: [new targets.LambdaFunction(prune.handler)],
+        targets: [new targets.LambdaFunction(this.prune.handler)],
       });
     }
 

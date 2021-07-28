@@ -2,9 +2,7 @@ import * as lambda from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as sqs from '@aws-cdk/aws-sqs';
-
-import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
-import { Construct } from 'constructs';
+import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
 import { ENV_DELETE_OBJECT_CATALOG_REBUILD_FUNCTION_NAME, ENV_DELETE_OBJECT_DATA_BUCKET_NAME, ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME, ENV_PRUNE_PACKAGE_DATA_KEY_PREFIX, ENV_PRUNE_QUEUE_URL } from './constants';
 import { PruneHandler } from './prune-handler';
@@ -17,7 +15,7 @@ export interface PruneProps {
   /**
    * The S3 bucket that includes the package data.
    */
-  readonly packageDataBucket: s3.Bucket;
+  readonly packageDataBucket: s3.IBucket;
 
   /**
     * The S3 key prefix for all package data.
@@ -40,7 +38,7 @@ export interface PruneProps {
  * Reads the deny list and prunes all objects from the package data bucket
  * related to packages that match one of the deny list rules.
  */
-export class Prune extends CoreConstruct {
+export class Prune extends Construct {
   /**
    * The function that needs to read the deny list.
    */

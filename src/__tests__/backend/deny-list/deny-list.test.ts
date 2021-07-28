@@ -11,6 +11,7 @@ import { CatalogBuilderMock } from './integ/catalog-builder-mock';
 test('defaults - empty deny list', () => {
   const stack = new Stack();
   new DenyList(stack, 'DenyList', {
+    rules: [],
     catalogBuilderFunction: new CatalogBuilderMock(stack, 'CatalogBuilderMock'),
     monitoring: new Monitoring(stack, 'Monitoring'),
     packageDataBucket: new s3.Bucket(stack, 'PackageDataBucket'),
@@ -24,6 +25,7 @@ test('defaults - empty deny list', () => {
 test('pruneOnChange is disabled', () => {
   const stack = new Stack();
   new DenyList(stack, 'DenyList', {
+    rules: [],
     catalogBuilderFunction: new CatalogBuilderMock(stack, 'CatalogBuilderMock'),
     monitoring: new Monitoring(stack, 'Monitoring'),
     packageDataBucket: new s3.Bucket(stack, 'PackageDataBucket'),
@@ -38,6 +40,7 @@ test('pruneOnChange is disabled', () => {
 test('prunePeriod controls period', () => {
   const stack = new Stack();
   new DenyList(stack, 'DenyList', {
+    rules: [],
     catalogBuilderFunction: new CatalogBuilderMock(stack, 'CatalogBuilderMock'),
     monitoring: new Monitoring(stack, 'Monitoring'),
     packageDataBucket: new s3.Bucket(stack, 'PackageDataBucket'),
@@ -54,6 +57,7 @@ test('prunePeriod controls period', () => {
 test('prunePeriod of zero disables periodical pruning', () => {
   const stack = new Stack();
   new DenyList(stack, 'DenyList', {
+    rules: [],
     catalogBuilderFunction: new CatalogBuilderMock(stack, 'CatalogBuilderMock'),
     monitoring: new Monitoring(stack, 'Monitoring'),
     packageDataBucket: new s3.Bucket(stack, 'PackageDataBucket'),

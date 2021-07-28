@@ -590,6 +590,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "DependsOn": Array [
         "DenyListBucketAllowBucketNotificationsToDenyListPrunePruneHandler6E446DC61E677015",
         "DenyListBucketNotificationsEF0449EB",
+        "DenyListBucketPolicyFE28C82A",
         "DenyListBucketC1C9D3D9",
       ],
       "Properties": Object {
@@ -640,6 +641,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "DependsOn": Array [
         "DenyListBucketAllowBucketNotificationsToDenyListPrunePruneHandler6E446DC61E677015",
         "DenyListBucketNotificationsEF0449EB",
+        "DenyListBucketPolicyFE28C82A",
         "DenyListBucketC1C9D3D9",
       ],
       "Properties": Object {
@@ -716,6 +718,10 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                 "Key": Object {
                   "FilterRules": Array [
                     Object {
+                      "Name": "suffix",
+                      "Value": "deny-list.json",
+                    },
+                    Object {
                       "Name": "prefix",
                       "Value": "deny-list.json",
                     },
@@ -739,6 +745,53 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "Custom::S3BucketNotifications",
+    },
+    "DenyListBucketPolicyFE28C82A": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "DenyListBucketC1C9D3D9",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "DenyListBucketC1C9D3D9",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "DenyListBucketC1C9D3D9",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "DenyListPeriodicPruneAllowEventRuleDenyListPrunePruneHandler6E446DC674D56F6A": Object {
       "Properties": Object {

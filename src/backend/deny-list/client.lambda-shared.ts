@@ -35,7 +35,9 @@ export class DenyListClient {
    * This must be called before `lookup()`.
    */
   private async init() {
-    this._map = {}; // reset
+    if (this._map) {
+      throw new Error('init() cannot be called twice');
+    }
 
     try {
       const params = {
@@ -43,15 +45,13 @@ export class DenyListClient {
         Key: this.objectKey,
       };
 
-      const response = await this.s3.getObject(params).promise();
-      const body = response.Body;
-
+      const { Body: body } = await this.s3.getObject(params).promise();
       if (!body) {
         console.log(`WARNING: deny list body is empty at ${this.bucketName}/${this.objectKey}`);
         return;
       }
 
-      const data = JSON.parse(body.toString()) as DenyListMap;
+      const data = JSON.parse(body.toString('utf-8')) as DenyListMap;
       if (typeof(data) != 'object') {
         console.log(`ERROR: Invalid format in deny list file at ${this.bucketName}/${this.objectKey}. Expecting a map`);
         return;
@@ -59,7 +59,7 @@ export class DenyListClient {
 
       this._map = data;
     } catch (e) {
-      console.log(`ERROR: Unable to parse deny list file ${this.bucketName}/${this.objectKey}: ${e}`);
+      throw new Error(`ERROR: Unable to parse deny list file ${this.bucketName}/${this.objectKey}: ${e}`);
     }
   }
 
@@ -75,12 +75,7 @@ export class DenyListClient {
       throw new Error('DenyListClient must be initialized');
     }
 
-    let entry = this._map[name];
-    if (!entry) {
-      entry = this._map[`${name}/v${version}`];
-    }
-
-    return entry;
+    return this._map[name] ?? this._map[`${name}/v${version}`];
   }
 
   /**
