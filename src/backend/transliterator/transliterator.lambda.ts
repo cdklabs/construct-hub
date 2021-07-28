@@ -31,7 +31,7 @@ export function handler(event: TransliteratorInput, context: Context): Promise<S
   // We'll need a writable $HOME directory, or this won't work well, because
   // npm will try to write stuff like the `.npmrc` or package caches in there
   // and that'll bail out on EROFS if that fails.
-  return withFakeHome(async () => {
+  return ensureWritableHome(async () => {
     const endpoint = process.env.CODE_ARTIFACT_REPOSITORY_ENDPOINT;
     if (!endpoint) {
       console.log('No CodeArtifact endpoint configured - using npm\'s default registry');
@@ -109,8 +109,23 @@ export function handler(event: TransliteratorInput, context: Context): Promise<S
   });
 }
 
-async function withFakeHome<T>(cb: () => Promise<T>): Promise<T> {
+async function ensureWritableHome<T>(cb: () => Promise<T>): Promise<T> {
+  if (process.env.HOME) {
+    // $HOME is set, so let's check if it is writable
+    const stat = await fs.stat(process.env.HOME);
+    // We check against the rwx------ bitmask here, as group & other are
+    // probably not relevant to our business. This is a good enough heuristic
+    // within lambda functions.
+    // eslint-disable-next-line no-bitwise
+    if (stat.isDirectory() && (stat.mode & 0o700) === 0o700) {
+      console.log(`Using existing, writable $HOME directory: ${process.env.HOME}`);
+      return cb();
+    }
+  }
+
+  // Since $HOME is not set, or is not writable, we'll just go make our own...
   const fakeHome = await fs.mkdtemp(path.join(os.tmpdir(), 'fake-home'));
+  console.log(`Made temporary $HOME directory: ${fakeHome}`);
   const oldHome = process.env.HOME;
   try {
     process.env.HOME = fakeHome;
@@ -118,6 +133,7 @@ async function withFakeHome<T>(cb: () => Promise<T>): Promise<T> {
   } finally {
     process.env.HOME = oldHome;
     await fs.remove(fakeHome);
+    console.log(`Cleaned-up temporary $HOME directory: ${fakeHome}`);
   }
 }
 

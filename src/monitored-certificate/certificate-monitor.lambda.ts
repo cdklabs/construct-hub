@@ -1,9 +1,8 @@
-import * as process from 'process';
 import * as tls from 'tls';
 
-// eslint-disable-next-line import/no-unresolved
+import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context, ScheduledEvent } from 'aws-lambda';
-import * as AWS from 'aws-sdk';
+import { requireEnv } from '../backend/shared/env.lambda-shared';
 
 /**
  * Obtains the TLS certificate used by the HTTPS endpoint designated by the
@@ -14,7 +13,9 @@ import * as AWS from 'aws-sdk';
  * If the certificate is past expiration, the metric will be trimmed to `0`
  * instead of turning into negative values.
  */
-export async function handler(_event: ScheduledEvent, _context: Context) {
+export const handler = metricScope((metrics) => async (event: ScheduledEvent, _context: Context) => {
+  console.log(`Event: ${JSON.stringify(event, null, 2)}`);
+
   const endpoint = requireEnv('HTTPS_ENDPOINT');
   const metricNamespace = requireEnv('METRIC_NAMESPACE');
   const metricName = requireEnv('METRIC_NAME');
@@ -24,30 +25,10 @@ export async function handler(_event: ScheduledEvent, _context: Context) {
   const daysRemaining = await tlsValidDaysRemaining(endpoint, now);
   console.log(`The certificate has ${daysRemaining} remaining validity days`);
 
-  return new AWS.CloudWatch()
-    .putMetricData({
-      Namespace: metricNamespace,
-      MetricData: [
-        // One metric entry with the DomainName dimension set
-        {
-          Dimensions: [{ Name: 'DomainName', Value: endpoint }],
-          MetricName: metricName,
-          Timestamp: now,
-          Unit: 'Count', // There is no "Days" unit, unfortunately
-          Value: daysRemaining,
-        },
-      ],
-    })
-    .promise();
-}
-
-function requireEnv(name: string): string {
-  const result = process.env[name];
-  if (!result) {
-    throw new Error(`Missing required environment variable "${name}"`);
-  }
-  return result;
-}
+  metrics.setDimensions({ DomainName: endpoint });
+  metrics.setNamespace(metricNamespace);
+  metrics.putMetric(metricName, daysRemaining, Unit.Count);
+});
 
 /**
  * Obtains the remaining validity days from the provided `endpoint`. This
