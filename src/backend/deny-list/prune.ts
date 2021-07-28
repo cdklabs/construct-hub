@@ -4,7 +4,7 @@ import * as s3 from '@aws-cdk/aws-s3';
 import * as sqs from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
-import { ENV_DELETE_OBJECT_CATALOG_REBUILD_FUNCTION_NAME, ENV_DELETE_OBJECT_DATA_BUCKET_NAME, ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME, ENV_PRUNE_PACKAGE_DATA_KEY_PREFIX, ENV_PRUNE_QUEUE_URL } from './constants';
+import { ENV_DELETE_OBJECT_DATA_BUCKET_NAME, ENV_PRUNE_ON_CHANGE_FUNCTION_NAME, ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME, ENV_PRUNE_PACKAGE_DATA_KEY_PREFIX, ENV_PRUNE_QUEUE_URL } from './constants';
 import { PruneHandler } from './prune-handler';
 import { PruneQueueHandler } from './prune-queue-handler';
 
@@ -23,12 +23,6 @@ export interface PruneProps {
   readonly packageDataKeyPrefix: string;
 
   /**
-   * The catalog builder lambda function. Invoked
-   * when a package is deleted to rebuild the catalog.
-   */
-  readonly catalogBuilderFunction: lambda.IFunction;
-
-  /**
    * The monitoring system.
    */
   readonly monitoring: Monitoring;
@@ -42,7 +36,7 @@ export class Prune extends Construct {
   /**
    * The function that needs to read the deny list.
    */
-  public readonly handler: lambda.Function;
+  public readonly pruneHandler: lambda.Function;
 
   /**
    * The function that deletes files of denied packages.
@@ -80,18 +74,24 @@ export class Prune extends Construct {
       timeout: Duration.minutes(1),
       environment: {
         [ENV_DELETE_OBJECT_DATA_BUCKET_NAME]: props.packageDataBucket.bucketName,
-        [ENV_DELETE_OBJECT_CATALOG_REBUILD_FUNCTION_NAME]: props.catalogBuilderFunction.functionArn,
       },
     });
     props.packageDataBucket.grantDelete(deleteHandler);
-    props.catalogBuilderFunction.grantInvoke(deleteHandler);
     deleteHandler.addEventSource(new SqsEventSource(deleteQueue)); // reads from the queue
 
-    this.handler = pruneHandler;
+    this.pruneHandler = pruneHandler;
     this.queue = deleteQueue;
     this.deleteHandler = deleteHandler;
 
-    props.monitoring.watchful.watchLambdaFunction('Deny List - Prune Function', this.handler);
+    props.monitoring.watchful.watchLambdaFunction('Deny List - Prune Function', this.pruneHandler);
     props.monitoring.watchful.watchLambdaFunction('Deny List - Prune Delete Function', this.deleteHandler);
+  }
+
+  /**
+   * Should be called to rebuild the catalog when the deny list changes.
+   */
+  public onChangeInvoke(callback: lambda.IFunction) {
+    callback.grantInvoke(this.pruneHandler);
+    this.pruneHandler.addEnvironment(ENV_PRUNE_ON_CHANGE_FUNCTION_NAME, callback.functionArn);
   }
 }

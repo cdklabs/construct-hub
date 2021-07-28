@@ -849,100 +849,6 @@
         "aws:cdk:path": "TestDenyList/Monitoring/HighSeverityDashboard/Resource"
       }
     },
-    "CatalogBuilderMockServiceRole8558CA02": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Statement": [
-            {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": "lambda.amazonaws.com"
-              }
-            }
-          ],
-          "Version": "2012-10-17"
-        },
-        "ManagedPolicyArns": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                "arn:",
-                {
-                  "Ref": "AWS::Partition"
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-              ]
-            ]
-          }
-        ]
-      },
-      "Metadata": {
-        "aws:cdk:path": "TestDenyList/CatalogBuilderMock/ServiceRole/Resource"
-      }
-    },
-    "CatalogBuilderMock263D4D67": {
-      "Type": "AWS::Lambda::Function",
-      "Properties": {
-        "Code": {
-          "S3Bucket": {
-            "Ref": "AssetParameters301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49cecaS3Bucket6FB0094F"
-          },
-          "S3Key": {
-            "Fn::Join": [
-              "",
-              [
-                {
-                  "Fn::Select": [
-                    0,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameters301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49cecaS3VersionKey244218D9"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "Fn::Select": [
-                    1,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameters301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49cecaS3VersionKey244218D9"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            ]
-          }
-        },
-        "Role": {
-          "Fn::GetAtt": [
-            "CatalogBuilderMockServiceRole8558CA02",
-            "Arn"
-          ]
-        },
-        "Description": "__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts",
-        "Handler": "index.handler",
-        "Runtime": "nodejs14.x"
-      },
-      "DependsOn": [
-        "CatalogBuilderMockServiceRole8558CA02"
-      ],
-      "Metadata": {
-        "aws:cdk:path": "TestDenyList/CatalogBuilderMock/Resource",
-        "aws:asset:path": "asset.301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49ceca.bundle",
-        "aws:asset:property": "Code"
-      }
-    },
     "DenyListBucketNotificationsEF0449EB": {
       "Type": "Custom::S3BucketNotifications",
       "Properties": {
@@ -1340,6 +1246,16 @@
                   ]
                 }
               ]
+            },
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::GetAtt": [
+                  "CatalogBuilderMock263D4D67",
+                  "Arn"
+                ]
+              }
             }
           ],
           "Version": "2012-10-17"
@@ -1360,7 +1276,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": {
-            "Ref": "AssetParametersf15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87S3Bucket1ACB4F30"
+            "Ref": "AssetParametersbbc9ab047a759ced27673c53f025c62f37d1f655f3fb909ed15f513f60ab7ec4S3BucketA418E27F"
           },
           "S3Key": {
             "Fn::Join": [
@@ -1373,7 +1289,7 @@
                       "Fn::Split": [
                         "||",
                         {
-                          "Ref": "AssetParametersf15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87S3VersionKey40E83DEB"
+                          "Ref": "AssetParametersbbc9ab047a759ced27673c53f025c62f37d1f655f3fb909ed15f513f60ab7ec4S3VersionKey2757BCA2"
                         }
                       ]
                     }
@@ -1386,7 +1302,7 @@
                       "Fn::Split": [
                         "||",
                         {
-                          "Ref": "AssetParametersf15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87S3VersionKey40E83DEB"
+                          "Ref": "AssetParametersbbc9ab047a759ced27673c53f025c62f37d1f655f3fb909ed15f513f60ab7ec4S3VersionKey2757BCA2"
                         }
                       ]
                     }
@@ -1415,7 +1331,13 @@
             "DENY_LIST_BUCKET_NAME": {
               "Ref": "DenyListBucketC1C9D3D9"
             },
-            "DENY_LIST_OBJECT_KEY": "deny-list.json"
+            "DENY_LIST_OBJECT_KEY": "deny-list.json",
+            "ON_CHANGE_FUNCTION_NAME": {
+              "Fn::GetAtt": [
+                "CatalogBuilderMock263D4D67",
+                "Arn"
+              ]
+            }
           }
         },
         "Handler": "index.handler",
@@ -1428,7 +1350,7 @@
       ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneHandler/Resource",
-        "aws:asset:path": "asset.f15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87.bundle",
+        "aws:asset:path": "asset.bbc9ab047a759ced27673c53f025c62f37d1f655f3fb909ed15f513f60ab7ec4.bundle",
         "aws:asset:property": "Code"
       }
     },
@@ -1490,16 +1412,6 @@
               }
             },
             {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "CatalogBuilderMock263D4D67",
-                  "Arn"
-                ]
-              }
-            },
-            {
               "Action": [
                 "sqs:ReceiveMessage",
                 "sqs:ChangeMessageVisibility",
@@ -1534,7 +1446,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": {
-            "Ref": "AssetParameters24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132S3Bucket5CD47BB7"
+            "Ref": "AssetParametersd5ce621914a7c3f15cf5d46823956ea431a98db7cf8d22b7af369eb6d01413c7S3BucketDD77D5D5"
           },
           "S3Key": {
             "Fn::Join": [
@@ -1547,7 +1459,7 @@
                       "Fn::Split": [
                         "||",
                         {
-                          "Ref": "AssetParameters24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132S3VersionKeyA4C13882"
+                          "Ref": "AssetParametersd5ce621914a7c3f15cf5d46823956ea431a98db7cf8d22b7af369eb6d01413c7S3VersionKeyF95E7291"
                         }
                       ]
                     }
@@ -1560,7 +1472,7 @@
                       "Fn::Split": [
                         "||",
                         {
-                          "Ref": "AssetParameters24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132S3VersionKeyA4C13882"
+                          "Ref": "AssetParametersd5ce621914a7c3f15cf5d46823956ea431a98db7cf8d22b7af369eb6d01413c7S3VersionKeyF95E7291"
                         }
                       ]
                     }
@@ -1581,12 +1493,6 @@
           "Variables": {
             "PACKAGE_DATA_BUCKET_NAME": {
               "Ref": "MockDataBucket4719A0C1"
-            },
-            "CATALOG_REBUILD_FUNCTION_NAME": {
-              "Fn::GetAtt": [
-                "CatalogBuilderMock263D4D67",
-                "Arn"
-              ]
             }
           }
         },
@@ -1600,7 +1506,7 @@
       ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneQueueHandler/Resource",
-        "aws:asset:path": "asset.24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132.bundle",
+        "aws:asset:path": "asset.d5ce621914a7c3f15cf5d46823956ea431a98db7cf8d22b7af369eb6d01413c7.bundle",
         "aws:asset:property": "Code"
       }
     },
@@ -1745,6 +1651,100 @@
       ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/BucketNotificationsHandler050a0587b7544547bf325f094a3db834/Resource"
+      }
+    },
+    "CatalogBuilderMockServiceRole8558CA02": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/CatalogBuilderMock/ServiceRole/Resource"
+      }
+    },
+    "CatalogBuilderMock263D4D67": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "AssetParameters301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49cecaS3Bucket6FB0094F"
+          },
+          "S3Key": {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::Select": [
+                    0,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49cecaS3VersionKey244218D9"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "Fn::Select": [
+                    1,
+                    {
+                      "Fn::Split": [
+                        "||",
+                        {
+                          "Ref": "AssetParameters301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49cecaS3VersionKey244218D9"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            ]
+          }
+        },
+        "Role": {
+          "Fn::GetAtt": [
+            "CatalogBuilderMockServiceRole8558CA02",
+            "Arn"
+          ]
+        },
+        "Description": "__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts",
+        "Handler": "index.handler",
+        "Runtime": "nodejs14.x"
+      },
+      "DependsOn": [
+        "CatalogBuilderMockServiceRole8558CA02"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/CatalogBuilderMock/Resource",
+        "aws:asset:path": "asset.301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49ceca.bundle",
+        "aws:asset:property": "Code"
       }
     },
     "ClientTestServiceRole4F7802CF": {
@@ -2306,18 +2306,6 @@
       "Type": "String",
       "Description": "Artifact hash for asset \"9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffd\""
     },
-    "AssetParameters301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49cecaS3Bucket6FB0094F": {
-      "Type": "String",
-      "Description": "S3 bucket for asset \"301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49ceca\""
-    },
-    "AssetParameters301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49cecaS3VersionKey244218D9": {
-      "Type": "String",
-      "Description": "S3 key for asset version \"301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49ceca\""
-    },
-    "AssetParameters301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49cecaArtifactHash0FE01591": {
-      "Type": "String",
-      "Description": "Artifact hash for asset \"301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49ceca\""
-    },
     "AssetParameters9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3S3BucketBC2DCE0D": {
       "Type": "String",
       "Description": "S3 bucket for asset \"9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3\""
@@ -2330,29 +2318,41 @@
       "Type": "String",
       "Description": "Artifact hash for asset \"9627e41cee6dcfc9e2f70c10bdf4e1da29c93fbc1408a63f187d9a7b67e93eb3\""
     },
-    "AssetParametersf15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87S3Bucket1ACB4F30": {
+    "AssetParametersbbc9ab047a759ced27673c53f025c62f37d1f655f3fb909ed15f513f60ab7ec4S3BucketA418E27F": {
       "Type": "String",
-      "Description": "S3 bucket for asset \"f15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87\""
+      "Description": "S3 bucket for asset \"bbc9ab047a759ced27673c53f025c62f37d1f655f3fb909ed15f513f60ab7ec4\""
     },
-    "AssetParametersf15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87S3VersionKey40E83DEB": {
+    "AssetParametersbbc9ab047a759ced27673c53f025c62f37d1f655f3fb909ed15f513f60ab7ec4S3VersionKey2757BCA2": {
       "Type": "String",
-      "Description": "S3 key for asset version \"f15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87\""
+      "Description": "S3 key for asset version \"bbc9ab047a759ced27673c53f025c62f37d1f655f3fb909ed15f513f60ab7ec4\""
     },
-    "AssetParametersf15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87ArtifactHashF98AA924": {
+    "AssetParametersbbc9ab047a759ced27673c53f025c62f37d1f655f3fb909ed15f513f60ab7ec4ArtifactHash4C57E914": {
       "Type": "String",
-      "Description": "Artifact hash for asset \"f15a0684186862b22f491cdd272e6021e5c0bf8bd802acb47298b3579effad87\""
+      "Description": "Artifact hash for asset \"bbc9ab047a759ced27673c53f025c62f37d1f655f3fb909ed15f513f60ab7ec4\""
     },
-    "AssetParameters24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132S3Bucket5CD47BB7": {
+    "AssetParametersd5ce621914a7c3f15cf5d46823956ea431a98db7cf8d22b7af369eb6d01413c7S3BucketDD77D5D5": {
       "Type": "String",
-      "Description": "S3 bucket for asset \"24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132\""
+      "Description": "S3 bucket for asset \"d5ce621914a7c3f15cf5d46823956ea431a98db7cf8d22b7af369eb6d01413c7\""
     },
-    "AssetParameters24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132S3VersionKeyA4C13882": {
+    "AssetParametersd5ce621914a7c3f15cf5d46823956ea431a98db7cf8d22b7af369eb6d01413c7S3VersionKeyF95E7291": {
       "Type": "String",
-      "Description": "S3 key for asset version \"24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132\""
+      "Description": "S3 key for asset version \"d5ce621914a7c3f15cf5d46823956ea431a98db7cf8d22b7af369eb6d01413c7\""
     },
-    "AssetParameters24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132ArtifactHashD9DB2CA3": {
+    "AssetParametersd5ce621914a7c3f15cf5d46823956ea431a98db7cf8d22b7af369eb6d01413c7ArtifactHashC896926E": {
       "Type": "String",
-      "Description": "Artifact hash for asset \"24a285d80e264da1a45882c4ad844d93910f657b679c475830eb1e58bf840132\""
+      "Description": "Artifact hash for asset \"d5ce621914a7c3f15cf5d46823956ea431a98db7cf8d22b7af369eb6d01413c7\""
+    },
+    "AssetParameters301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49cecaS3Bucket6FB0094F": {
+      "Type": "String",
+      "Description": "S3 bucket for asset \"301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49ceca\""
+    },
+    "AssetParameters301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49cecaS3VersionKey244218D9": {
+      "Type": "String",
+      "Description": "S3 key for asset version \"301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49ceca\""
+    },
+    "AssetParameters301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49cecaArtifactHash0FE01591": {
+      "Type": "String",
+      "Description": "Artifact hash for asset \"301d0f0074be0416b34b040a8b572d2c749ed20124b3c6daa446b7c13c49ceca\""
     },
     "AssetParameters4407a4329a9b2c4e6e1ee65ec8fada44ee3a3188954f7bb56bf38d5be020c28cS3Bucket49BD85A9": {
       "Type": "String",
