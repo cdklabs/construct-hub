@@ -91,6 +91,11 @@ export interface TransliteratorVpcEndpoints {
  * Transliterates jsii assemblies to various other languages.
  */
 export class Transliterator extends Construct {
+  /**
+   * The path under which the npm cache will be located, within the EFS mount.
+   */
+  public static readonly SHARED_NPM_CACHE_PATH = '/npm-cache';
+
   public readonly function: IFunction
 
   public constructor(scope: Construct, id: string, props: TransliteratorProps) {
@@ -111,8 +116,8 @@ export class Transliterator extends Construct {
       TARGET_LANGUAGE: props.language.toString(),
       // Override $TMPDIR to be on the EFS volume (so we are not limited to 512MB)
       TMPDIR: EFS_MOUNT_PATH,
-      // Override $HOME to be a fixed directory in the EFS volume (so we share npm caches)
-      HOME: `${EFS_MOUNT_PATH}/HOME`,
+      // Configure a fixed directory in the EFS volume where we share npm caches
+      NPM_CACHE: `${EFS_MOUNT_PATH}${Transliterator.SHARED_NPM_CACHE_PATH}`,
     };
     if (props.vpcEndpoints) {
       // Those are returned as an array of HOSTED_ZONE_ID:DNS_NAME... We care

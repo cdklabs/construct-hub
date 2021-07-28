@@ -93,18 +93,6 @@ Object {
       "Description": "S3 key for asset version \\"516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9\\"",
       "Type": "String",
     },
-    "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3ArtifactHash135508FF": Object {
-      "Description": "Artifact hash for asset \\"5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3\\"",
-      "Type": "String",
-    },
-    "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3BucketEC636295": Object {
-      "Description": "S3 bucket for asset \\"5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3\\"",
-      "Type": "String",
-    },
-    "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2": Object {
-      "Description": "S3 key for asset version \\"5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3\\"",
-      "Type": "String",
-    },
     "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24ArtifactHashBA91B77F": Object {
       "Description": "Artifact hash for asset \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
       "Type": "String",
@@ -115,6 +103,18 @@ Object {
     },
     "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861": Object {
       "Description": "S3 key for asset version \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
+      "Type": "String",
+    },
+    "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fArtifactHash0E5BE15B": Object {
+      "Description": "Artifact hash for asset \\"6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5f\\"",
+      "Type": "String",
+    },
+    "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3Bucket46FC2A6C": Object {
+      "Description": "S3 bucket for asset \\"6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5f\\"",
+      "Type": "String",
+    },
+    "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84": Object {
+      "Description": "S3 key for asset version \\"6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5f\\"",
       "Type": "String",
     },
     "AssetParameters6c4e3d2383b1b7f493d4a873c73f292d109a402058ec3951bd81aa400f1ec362ArtifactHash4E9B3694": Object {
@@ -5205,7 +5205,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3BucketEC636295",
+            "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3Bucket46FC2A6C",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -5218,7 +5218,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2",
+                          "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84",
                         },
                       ],
                     },
@@ -5231,7 +5231,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2",
+                          "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84",
                         },
                       ],
                     },
@@ -5284,7 +5284,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
               ],
             },
             "HEADER_SPAN": "true",
-            "HOME": "/mnt/efs/HOME",
+            "NPM_CACHE": "/mnt/efs/npm-cache",
             "TARGET_LANGUAGE": "python",
             "TMPDIR": "/mnt/efs",
           },
@@ -5647,7 +5647,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3BucketEC636295",
+            "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3Bucket46FC2A6C",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -5660,7 +5660,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2",
+                          "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84",
                         },
                       ],
                     },
@@ -5673,7 +5673,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2",
+                          "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84",
                         },
                       ],
                     },
@@ -5726,7 +5726,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
               ],
             },
             "HEADER_SPAN": "true",
-            "HOME": "/mnt/efs/HOME",
+            "NPM_CACHE": "/mnt/efs/npm-cache",
             "TARGET_LANGUAGE": "typescript",
             "TMPDIR": "/mnt/efs",
           },
@@ -6128,7 +6128,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
         "Environment": Object {
           "Variables": Object {
             "EFS_MOUNT_PATH": "/mnt/efs",
-            "IGNORE_DIRS": "/mnt/efs/HOME",
+            "IGNORE_DIRS": "/mnt/efs/npm-cache",
           },
         },
         "FileSystemConfigs": Array [
@@ -8026,18 +8026,6 @@ Object {
       "Description": "S3 key for asset version \\"516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9\\"",
       "Type": "String",
     },
-    "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3ArtifactHash135508FF": Object {
-      "Description": "Artifact hash for asset \\"5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3\\"",
-      "Type": "String",
-    },
-    "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3BucketEC636295": Object {
-      "Description": "S3 bucket for asset \\"5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3\\"",
-      "Type": "String",
-    },
-    "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2": Object {
-      "Description": "S3 key for asset version \\"5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3\\"",
-      "Type": "String",
-    },
     "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24ArtifactHashBA91B77F": Object {
       "Description": "Artifact hash for asset \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
       "Type": "String",
@@ -8048,6 +8036,18 @@ Object {
     },
     "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861": Object {
       "Description": "S3 key for asset version \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
+      "Type": "String",
+    },
+    "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fArtifactHash0E5BE15B": Object {
+      "Description": "Artifact hash for asset \\"6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5f\\"",
+      "Type": "String",
+    },
+    "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3Bucket46FC2A6C": Object {
+      "Description": "S3 bucket for asset \\"6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5f\\"",
+      "Type": "String",
+    },
+    "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84": Object {
+      "Description": "S3 key for asset version \\"6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5f\\"",
       "Type": "String",
     },
     "AssetParameters6c4e3d2383b1b7f493d4a873c73f292d109a402058ec3951bd81aa400f1ec362ArtifactHash4E9B3694": Object {
@@ -13333,7 +13333,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3BucketEC636295",
+            "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3Bucket46FC2A6C",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -13346,7 +13346,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2",
+                          "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84",
                         },
                       ],
                     },
@@ -13359,7 +13359,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2",
+                          "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84",
                         },
                       ],
                     },
@@ -13412,7 +13412,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
               ],
             },
             "HEADER_SPAN": "true",
-            "HOME": "/mnt/efs/HOME",
+            "NPM_CACHE": "/mnt/efs/npm-cache",
             "TARGET_LANGUAGE": "python",
             "TMPDIR": "/mnt/efs",
           },
@@ -13775,7 +13775,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3BucketEC636295",
+            "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3Bucket46FC2A6C",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -13788,7 +13788,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2",
+                          "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84",
                         },
                       ],
                     },
@@ -13801,7 +13801,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2",
+                          "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84",
                         },
                       ],
                     },
@@ -13854,7 +13854,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
               ],
             },
             "HEADER_SPAN": "true",
-            "HOME": "/mnt/efs/HOME",
+            "NPM_CACHE": "/mnt/efs/npm-cache",
             "TARGET_LANGUAGE": "typescript",
             "TMPDIR": "/mnt/efs",
           },
@@ -14256,7 +14256,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
         "Environment": Object {
           "Variables": Object {
             "EFS_MOUNT_PATH": "/mnt/efs",
-            "IGNORE_DIRS": "/mnt/efs/HOME",
+            "IGNORE_DIRS": "/mnt/efs/npm-cache",
           },
         },
         "FileSystemConfigs": Array [
@@ -16422,18 +16422,6 @@ Object {
       "Description": "S3 key for asset version \\"516cab73c91fb1a1a9ada8da3852fead6468a28305ca5c46b319b4f98cc36fe9\\"",
       "Type": "String",
     },
-    "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3ArtifactHash135508FF": Object {
-      "Description": "Artifact hash for asset \\"5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3\\"",
-      "Type": "String",
-    },
-    "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3BucketEC636295": Object {
-      "Description": "S3 bucket for asset \\"5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3\\"",
-      "Type": "String",
-    },
-    "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2": Object {
-      "Description": "S3 key for asset version \\"5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3\\"",
-      "Type": "String",
-    },
     "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24ArtifactHashBA91B77F": Object {
       "Description": "Artifact hash for asset \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
       "Type": "String",
@@ -16444,6 +16432,18 @@ Object {
     },
     "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861": Object {
       "Description": "S3 key for asset version \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
+      "Type": "String",
+    },
+    "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fArtifactHash0E5BE15B": Object {
+      "Description": "Artifact hash for asset \\"6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5f\\"",
+      "Type": "String",
+    },
+    "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3Bucket46FC2A6C": Object {
+      "Description": "S3 bucket for asset \\"6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5f\\"",
+      "Type": "String",
+    },
+    "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84": Object {
+      "Description": "S3 key for asset version \\"6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5f\\"",
       "Type": "String",
     },
     "AssetParameters6c4e3d2383b1b7f493d4a873c73f292d109a402058ec3951bd81aa400f1ec362ArtifactHash4E9B3694": Object {
@@ -20786,7 +20786,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3BucketEC636295",
+            "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3Bucket46FC2A6C",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -20799,7 +20799,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2",
+                          "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84",
                         },
                       ],
                     },
@@ -20812,7 +20812,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2",
+                          "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84",
                         },
                       ],
                     },
@@ -20844,7 +20844,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
               ],
             },
             "HEADER_SPAN": "true",
-            "HOME": "/mnt/efs/HOME",
+            "NPM_CACHE": "/mnt/efs/npm-cache",
             "TARGET_LANGUAGE": "python",
             "TMPDIR": "/mnt/efs",
           },
@@ -21207,7 +21207,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3BucketEC636295",
+            "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3Bucket46FC2A6C",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -21220,7 +21220,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2",
+                          "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84",
                         },
                       ],
                     },
@@ -21233,7 +21233,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters5abbe4d206588da10173427e018e5ecf68ce4c95f7ba2d24f57d8fd26d5c65f3S3VersionKey0B6671C2",
+                          "Ref": "AssetParameters6a211f4692221a9e2673f51ed0d4cbe3eb2043136d993a62202e9644ba317f5fS3VersionKey3B5FCD84",
                         },
                       ],
                     },
@@ -21265,7 +21265,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
               ],
             },
             "HEADER_SPAN": "true",
-            "HOME": "/mnt/efs/HOME",
+            "NPM_CACHE": "/mnt/efs/npm-cache",
             "TARGET_LANGUAGE": "typescript",
             "TMPDIR": "/mnt/efs",
           },
@@ -21667,7 +21667,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
         "Environment": Object {
           "Variables": Object {
             "EFS_MOUNT_PATH": "/mnt/efs",
-            "IGNORE_DIRS": "/mnt/efs/HOME",
+            "IGNORE_DIRS": "/mnt/efs/npm-cache",
           },
         },
         "FileSystemConfigs": Array [
