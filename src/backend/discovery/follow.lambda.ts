@@ -37,13 +37,13 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
   const denyList = await DenyListClient.newClient();
 
-  const initialMarker = await loadLastTransactionMarker(1_800_000 /* @aws-cdk/cdk initial release was at 1_846_709 */);
+  const marker = await loadLastTransactionMarker(1_800_000 /* @aws-cdk/cdk initial release was at 1_846_709 */);
 
   const config: Nano.ChangesReaderOptions = {
     includeDocs: true,
     // pause the changes reader after each request
     wait: true,
-    since: initialMarker.toFixed(),
+    since: marker.lastSeq.toFixed(),
     // `changesReader.get` stops once a response with zero changes is received, however it waits too long
     //  since we want to terminate the Lambda function we define a timeout shorter than the default
     timeout: TIMEOUT_MILLISECONDS,
@@ -61,7 +61,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
   // know when it's done...
   return new Promise<void>((ok, ko) => {
 
-    let updatedMarker = initialMarker;
+    let updatedMarker = marker;
 
     db.changesReader.get(config)
       .on('batch', metricScope((metrics) => async (batch: readonly Change[]) => {
@@ -94,8 +94,21 @@ export async function handler(event: ScheduledEvent, context: Context) {
           console.log(`Identified ${versionInfos.length} relevant package version update(s)`);
           metrics.putMetric(MetricName.RELEVANT_PACKAGE_VERSIONS, versionInfos.length, Unit.Count);
 
+          // since npm will include ALL versions in every single change record
+          // we filter those we have already seen to reduce the throttling probability caused by
+          // reprocessing the same version over and over again.
+          const newVersions = versionInfos.filter(({ infos, modified }) => {
+            const key = `${infos.name}@${infos.version}`;
+            if (marker.knownPackageVersions.has(key) && marker.knownPackageVersions.get(key)! >= modified) {
+              // We already saw this package update, or a more recent one.
+              return false;
+            }
+            marker.knownPackageVersions.set(key, modified);
+            return true;
+          });
+
           // Notify the staging & notification function
-          await aws.sqsSendMessageBatch(queueUrl, versionInfos);
+          await aws.sqsSendMessageBatch(queueUrl, newVersions);
 
           // Update the transaction marker in S3.
           await saveLastTransactionMarker(lastSeq);
@@ -137,21 +150,36 @@ export async function handler(event: ScheduledEvent, context: Context) {
    *
    * @returns the value of the last transaction marker.
    */
-  async function loadLastTransactionMarker(defaultValue: number): Promise<number> {
+  async function loadLastTransactionMarker(defaultValue: number): Promise<Marker> {
     try {
       const response = await aws.s3().getObject({
         Bucket: stagingBucket,
         Key: DISCOVERY_MARKER_KEY,
       }).promise();
-      const marker = Number.parseInt(response.Body!.toString('utf-8'), 10);
-      console.log(`Read last transaction marker: ${marker}`);
-      return marker;
+      let result = JSON.parse(
+        response.Body!.toString('utf-8'),
+        (key, value) => {
+          if (key !== 'knownPackageVersions' || typeof value !== 'object') {
+            return value;
+          }
+          return Object.entries(value).reduce(
+            (map, [pkg, time]) => map.set(pkg, new Date(time as number)),
+            new Map<string, Date>(),
+          );
+        },
+      ) as number | Marker;
+      if (typeof result === 'number') {
+        console.log('Migrating transaction marker to new format...');
+        result = { lastSeq: result, knownPackageVersions: new Map() };
+      }
+      console.log(`Read last transaction marker: ${result.lastSeq}`);
+      return result;
     } catch (error) {
       if (error.code !== 'NoSuchKey') {
         throw error;
       }
       console.log(`Marker object (s3://${stagingBucket}/${DISCOVERY_MARKER_KEY}) does not exist, starting from the default (${defaultValue})`);
-      return defaultValue;
+      return { lastSeq: defaultValue, knownPackageVersions: new Map() };
     }
   }
 
@@ -291,3 +319,7 @@ interface Change {
   readonly deleted: boolean;
 }
 
+interface Marker {
+  lastSeq: number;
+  knownPackageVersions: Map<string, Date>;
+}

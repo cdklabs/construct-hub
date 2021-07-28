@@ -65,6 +65,7 @@ export class Discovery extends Construct {
 
   public readonly follow: Function;
   public readonly stage: Function;
+  public readonly queue: Queue;
 
   private readonly timeout = Duration.minutes(15);
 
@@ -82,7 +83,7 @@ export class Discovery extends Construct {
       ],
     });
 
-    const discoveryQueue = new Queue(this, 'DiscoveredPackages', {
+    this.queue = new Queue(this, 'DiscoveredPackages', {
       encryption: QueueEncryption.KMS_MANAGED,
       // This is a Lambda event source, visibility timeout needs to be >= to target function timeout
       visibilityTimeout: this.timeout,
@@ -96,11 +97,11 @@ export class Discovery extends Construct {
       timeout: this.timeout,
       environment: {
         BUCKET_NAME: this.bucket.bucketName,
-        QUEUE_URL: discoveryQueue.queueUrl,
+        QUEUE_URL: this.queue.queueUrl,
       },
       tracing: Tracing.ACTIVE,
     });
-    discoveryQueue.grantSendMessages(this.follow);
+    this.queue.grantSendMessages(this.follow);
     this.bucket.grantReadWrite(this.follow, DISCOVERY_MARKER_KEY);
     props.denyList.grantRead(this.follow);
 
@@ -116,7 +117,7 @@ export class Discovery extends Construct {
     });
     this.bucket.grantReadWrite(this.stage, `${S3KeyPrefix.STAGED_KEY_PREFIX}*`);
     props.queue.grantSendMessages(this.stage);
-    this.stage.addEventSource(new SqsEventSource(discoveryQueue));
+    this.stage.addEventSource(new SqsEventSource(this.queue));
 
     new Rule(this, 'ScheduleRule', {
       schedule: Schedule.rate(this.timeout),

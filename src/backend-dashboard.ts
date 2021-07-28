@@ -100,7 +100,7 @@ export class BackendDashboard extends Construct {
           new GraphWidget({
             height: 6,
             width: 12,
-            title: 'CouchDB Follower',
+            title: 'Function Metrics',
             left: [
               props.discovery.metricChangeCount({ label: 'Change Count' }),
               props.discovery.metricUnprocessableEntity({ label: 'Unprocessable' }),
@@ -112,6 +112,69 @@ export class BackendDashboard extends Construct {
             ],
             rightYAxis: { label: 'Milliseconds', min: 0, showUnits: false },
             period: Duration.minutes(15),
+          }),
+        ],
+        [
+          new TextWidget({
+            height: 2,
+            width: 24,
+            markdown: [
+              '# Discovery/Stage Function',
+              '',
+              `[button:Search Log Group](${lambdaSearchLogGroupUrl(props.discovery.follow)})`,
+            ].join('\n'),
+          }),
+        ],
+        [
+          new GraphWidget({
+            height: 6,
+            width: 12,
+            title: 'Function Health',
+            left: [
+              fillMetric(props.discovery.stage.metricInvocations({ label: 'Invocations' })),
+              fillMetric(props.discovery.stage.metricErrors({ label: 'Errors' })),
+            ],
+            leftYAxis: { min: 0 },
+            right: [
+              props.discovery.metricStagingTime({ label: 'Staging Time' }),
+            ],
+            rightYAxis: { min: 0 },
+            period: Duration.minutes(15),
+          }),
+          new GraphWidget({
+            height: 6,
+            width: 12,
+            title: 'Input Queue',
+            left: [
+              props.discovery.queue.metricApproximateNumberOfMessagesVisible({ label: 'Visible Messages', period: Duration.minutes(1) }),
+              props.discovery.queue.metricApproximateNumberOfMessagesNotVisible({ label: 'Hidden Messages', period: Duration.minutes(1) }),
+            ],
+            leftYAxis: { min: 0 },
+            right: [
+              props.discovery.queue.metricApproximateAgeOfOldestMessage({ label: 'Oldest Message Age', period: Duration.minutes(1) }),
+            ],
+            rightAnnotations: [{
+              color: '#ffa500',
+              label: '10 Minutes',
+              value: Duration.minutes(10).toSeconds(),
+            }],
+            rightYAxis: { min: 0 },
+            period: Duration.minutes(1),
+          }),
+          new GraphWidget({
+            height: 6,
+            width: 12,
+            title: 'Dead Letters',
+            left: [
+              props.discovery.stage.deadLetterQueue!.metricApproximateNumberOfMessagesVisible({ label: 'Visible Messages' }),
+              props.discovery.stage.deadLetterQueue!.metricApproximateNumberOfMessagesNotVisible({ label: 'Invisible Messages' }),
+            ],
+            leftYAxis: { min: 0 },
+            right: [
+              props.discovery.stage.deadLetterQueue!.metricApproximateAgeOfOldestMessage({ label: 'Oldest Message Age' }),
+            ],
+            rightYAxis: { min: 0 },
+            period: Duration.minutes(1),
           }),
         ],
         [
