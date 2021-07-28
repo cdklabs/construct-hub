@@ -101,6 +101,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
             const key = `${infos.name}@${infos.version}`;
             if (marker.knownPackageVersions.has(key) && marker.knownPackageVersions.get(key)! >= modified) {
               // We already saw this package update, or a more recent one.
+              console.log(`Ignoring change for ${key} since we've already seen it before`);
               return false;
             }
             marker.knownPackageVersions.set(key, modified);
@@ -108,6 +109,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
           });
 
           // Notify the staging & notification function
+          console.log(`Sending ${newVersions.length} packages for staging`);
           await aws.sqsSendMessageBatch(queueUrl, newVersions);
 
           // Update the transaction marker in S3.
