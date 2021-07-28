@@ -134,7 +134,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     const denyList = new DenyList(this, 'DenyList', {
       catalogBuilderFunction: orchestration.catalogBuilder,
-      rules: props.denyList,
+      rules: props.denyList ?? [],
       packageDataBucket: packageData,
       packageDataKeyPrefix: STORAGE_KEY_PREFIX,
       monitoring: monitoring,
