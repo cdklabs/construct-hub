@@ -4,6 +4,7 @@ import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 
 import { Monitoring } from '../../monitoring';
+import { DenyList } from '../deny-list';
 import { CatalogBuilder as Handler } from './catalog-builder';
 
 export interface CatalogBuilderProps {
@@ -23,6 +24,11 @@ export interface CatalogBuilderProps {
    * @default RetentionDays.TEN_YEARS
    */
   readonly logRetention?: RetentionDays;
+
+  /**
+   * The deny list construct.
+   */
+  readonly denyList: DenyList;
 }
 
 /**
@@ -47,8 +53,9 @@ export class CatalogBuilder extends Construct {
     });
     this.function = handler;
 
-    props.bucket.grantReadWrite(this.function);
+    // allow the catalog builder to use the client.
+    props.denyList.grantRead(handler);
 
-    props.monitoring.watchful.watchLambdaFunction('Catalog Builder Function', handler);
+    props.bucket.grantReadWrite(this.function);
   }
 }

@@ -7,15 +7,34 @@ import { AWSError } from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import * as tar from 'tar-stream';
 
+import { DenyListMap } from '../../../backend';
 import { handler } from '../../../backend/catalog-builder/catalog-builder.lambda';
+import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY } from '../../../backend/deny-list/constants';
 import { CatalogBuilderInput } from '../../../backend/payload-schema';
 import * as aws from '../../../backend/shared/aws.lambda-shared';
 import * as constants from '../../../backend/shared/constants';
 
 let mockBucketName: string | undefined;
 
+const MOCK_DENY_LIST_BUCKET = 'deny-list-bucket-name';
+const MOCK_DENY_LIST_OBJECT = 'my-deny-list.json';
+const MOCK_DENY_LIST_MAP: DenyListMap = {
+  'name/v0.0.0-pre': {
+    package: 'name',
+    version: '0.0.0-pre',
+    reason: 'blocked version',
+  },
+  '@foo/blocked': {
+    package: '@foo/blocked',
+    reason: 'block all version of this package please',
+  },
+};
+
 beforeEach((done) => {
   process.env.BUCKET_NAME = mockBucketName = randomBytes(16).toString('base64');
+  process.env[ENV_DENY_LIST_BUCKET_NAME] = MOCK_DENY_LIST_BUCKET;
+  process.env[ENV_DENY_LIST_OBJECT_KEY] = MOCK_DENY_LIST_OBJECT;
+
   AWSMock.setSDKInstance(AWS);
   done();
 });
@@ -24,15 +43,21 @@ afterEach((done) => {
   AWSMock.restore();
   aws.reset();
   process.env.BUCKET_NAME = mockBucketName = undefined;
+  delete process.env[ENV_DENY_LIST_BUCKET_NAME];
+  delete process.env[ENV_DENY_LIST_OBJECT_KEY];
   done();
 });
 
 test('initial build', () => {
   // GIVEN
-
   const npmMetadata = { date: 'Thu, 17 Jun 2021 01:52:04 GMT' };
 
   AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+    const denyListResponse = tryMockDenyList(req);
+    if (denyListResponse) {
+      return cb(null, denyListResponse);
+    }
+
     try {
       expect(req.Bucket).toBe(mockBucketName);
     } catch (e) {
@@ -69,6 +94,9 @@ test('initial build', () => {
     { Key: `${constants.STORAGE_KEY_PREFIX}name/v2.0.0-pre${constants.ASSEMBLY_KEY_SUFFIX}` },
     { Key: `${constants.STORAGE_KEY_PREFIX}name/v2.0.0-pre${constants.PACKAGE_KEY_SUFFIX}` },
     { Key: `${constants.STORAGE_KEY_PREFIX}name/v2.0.0-pre${docsSuffix}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}name/v0.0.0-pre${constants.ASSEMBLY_KEY_SUFFIX}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}name/v0.0.0-pre${constants.PACKAGE_KEY_SUFFIX}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}name/v0.0.0-pre${docsSuffix}` },
   ];
   AWSMock.mock('S3', 'listObjectsV2', (req: AWS.S3.ListObjectsV2Request, cb: Response<AWS.S3.ListObjectsV2Output>) => {
     try {
@@ -191,6 +219,11 @@ describe('incremental build', () => {
   test('new major version of @scope/package', () => {
     // GIVEN
     AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      const denyListResponse = tryMockDenyList(req);
+      if (denyListResponse) {
+        return cb(null, denyListResponse);
+      }
+
       try {
         expect(req.Bucket).toBe(mockBucketName);
       } catch (e) {
@@ -259,6 +292,11 @@ describe('incremental build', () => {
   test('updated un-scoped package version', () => {
     // GIVEN
     AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      const denyListResponse = tryMockDenyList(req);
+      if (denyListResponse) {
+        return cb(null, denyListResponse);
+      }
+
       try {
         expect(req.Bucket).toBe(mockBucketName);
       } catch (e) {
@@ -319,6 +357,11 @@ describe('incremental build', () => {
   test('ignored "older" minor version of @scope/package', () => {
     // GIVEN
     AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      const denyListResponse = tryMockDenyList(req);
+      if (denyListResponse) {
+        return cb(null, denyListResponse);
+      }
+
       try {
         expect(req.Bucket).toBe(mockBucketName);
       } catch (e) {
@@ -375,6 +418,11 @@ describe('incremental build', () => {
   test('ignored "older" pre-release of package', () => {
     // GIVEN
     AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      const denyListResponse = tryMockDenyList(req);
+      if (denyListResponse) {
+        return cb(null, denyListResponse);
+      }
+
       try {
         expect(req.Bucket).toBe(mockBucketName);
       } catch (e) {
@@ -403,6 +451,67 @@ describe('incremental build', () => {
     const event: CatalogBuilderInput = {
       package: {
         key: `${constants.STORAGE_KEY_PREFIX}name/v2.0.0-pre.1${constants.PACKAGE_KEY_SUFFIX}`,
+      },
+    };
+    const mockPutObjectResult: AWS.S3.PutObjectOutput = {};
+    AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
+      try {
+        expect(req.Bucket).toBe(mockBucketName);
+        expect(req.Key).toBe(constants.CATALOG_KEY);
+        expect(req.ContentType).toBe('application/json');
+        expect(req.Metadata).toHaveProperty('Package-Count', '3');
+        const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
+        expect(body.packages).toEqual(initialCatalog.packages);
+        expect(Date.parse(body.updatedAt)).toBeDefined();
+      } catch (e) {
+        return cb(e);
+      }
+      return cb(null, mockPutObjectResult);
+    });
+
+    // WHEN
+    const result = handler(event, { /* context */ } as any);
+
+    // THEN
+    return expect(result).resolves.toBe(mockPutObjectResult);
+  });
+
+  test('ignored denied list package', () => {
+    // GIVEN
+    AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      const denyListResponse = tryMockDenyList(req);
+      if (denyListResponse) {
+        return cb(null, denyListResponse);
+      }
+
+      try {
+        expect(req.Bucket).toBe(mockBucketName);
+      } catch (e) {
+        return cb(e);
+      }
+
+      if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
+        return cb(null, { Body: JSON.stringify(npmMetadata) });
+      }
+
+      const matches = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`).exec(req.Key);
+      if (matches != null) {
+        mockNpmPackage(matches[1], matches[2]).then(
+          (pack) => cb(null, { Body: pack }),
+          cb,
+        );
+      } else if (req.Key === constants.CATALOG_KEY) {
+        return cb(null, {
+          Body: JSON.stringify(initialCatalog, null, 2),
+        });
+      } else {
+        return cb(new NoSuchKeyError());
+      }
+    });
+
+    const event: CatalogBuilderInput = {
+      package: {
+        key: `${constants.STORAGE_KEY_PREFIX}@foo/blocked/v1.1.0${constants.PACKAGE_KEY_SUFFIX}`,
       },
     };
     const mockPutObjectResult: AWS.S3.PutObjectOutput = {};
@@ -474,4 +583,12 @@ function mockNpmPackage(name: string, version: string) {
       ok(Buffer.concat(chunks));
     });
   });
+}
+
+function tryMockDenyList(req: AWS.S3.GetObjectRequest) {
+  if (req.Bucket === MOCK_DENY_LIST_BUCKET && req.Key === MOCK_DENY_LIST_OBJECT) {
+    return { Body: JSON.stringify(MOCK_DENY_LIST_MAP) };
+  } else {
+    return undefined;
+  }
 }

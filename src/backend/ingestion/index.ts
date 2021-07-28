@@ -1,10 +1,11 @@
-import { Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
+import { ComparisonOperator, MathExpression, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
 import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
+import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { Orchestration } from '../orchestration';
 import { MetricName, METRICS_NAMESPACE } from './constants';
@@ -94,7 +95,41 @@ export class Ingestion extends Construct implements IGrantable {
 
     this.grantPrincipal = this.function.grantPrincipal;
 
-    props.monitoring.watchful.watchLambdaFunction('Ingestion Function', handler);
+    props.monitoring.addHighSeverityAlarm(
+      'Ingestion Dead-Letter Queue not empty',
+      new MathExpression({
+        expression: 'm1 + m2',
+        usingMetrics: {
+          m1: this.deadLetterQueue.metricApproximateNumberOfMessagesVisible({ period: Duration.minutes(1) }),
+          m2: this.deadLetterQueue.metricApproximateNumberOfMessagesNotVisible({ period: Duration.minutes(1) }),
+        },
+      }).createAlarm(this, 'DLQAlarm', {
+        alarmName: `${this.node.path}/DLQNotEmpty`,
+        alarmDescription: [
+          'The dead-letter queue for the Ingestion function is not empty!',
+          '',
+          `Direct link to the queue: ${sqsQueueUrl(this.deadLetterQueue)}`,
+          `Direct link to the function: ${lambdaFunctionUrl(this.function)}`,
+        ].join('\n'),
+        comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        evaluationPeriods: 1,
+        threshold: 1,
+      }),
+    );
+    props.monitoring.addHighSeverityAlarm(
+      'Ingestion failures',
+      this.function.metricErrors().createAlarm(this, 'FailureAlarm', {
+        alarmName: `${this.node.path}/Failure`,
+        alarmDescription: [
+          'The Ingestion function is failing!',
+          '',
+          `Direct link to the function: ${lambdaFunctionUrl(this.function)}`,
+        ].join('\n'),
+        comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        evaluationPeriods: 1,
+        threshold: 1,
+      }),
+    );
   }
 
   public metricFoundLicenseFile(opts?: MetricOptions): Metric {

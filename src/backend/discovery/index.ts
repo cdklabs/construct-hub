@@ -1,4 +1,4 @@
-import { ComparisonOperator, IAlarm, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
+import { Alarm, ComparisonOperator, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { Tracing, Function } from '@aws-cdk/aws-lambda';
@@ -7,6 +7,7 @@ import { RetentionDays } from '@aws-cdk/aws-logs';
 import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
+import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { DenyList } from '../deny-list';
 import { MetricName, METRICS_NAMESPACE, S3KeyPrefix, DISCOVERY_MARKER_KEY } from './constants';
@@ -51,17 +52,17 @@ export class Discovery extends Construct {
   /**
    * Alarms when the dead-letter-queue associated with the stage function is not empty.
    */
-  public readonly alarmDeadLetterQueueNotEmpty: IAlarm;
+  public readonly alarmDeadLetterQueueNotEmpty: Alarm;
 
   /**
    * Alarms if the discovery function does not complete successfully.
    */
-  public readonly alarmErrors: IAlarm;
+  public readonly alarmErrors: Alarm;
 
   /**
    * Alarms if the discovery function does not run as expected.
    */
-  public readonly alarmNoInvocations: IAlarm;
+  public readonly alarmNoInvocations: Alarm;
 
   public readonly follow: Function;
   public readonly stage: Function;
@@ -124,17 +125,26 @@ export class Discovery extends Construct {
       targets: [new LambdaFunction(this.follow)],
     });
 
-    props.monitoring.watchful.watchLambdaFunction('Discovery npmjs.com follower', this.follow);
     this.alarmErrors = this.follow.metricErrors({ period: Duration.minutes(15) })
       .createAlarm(this, 'ErrorsAlarm', {
-        alarmDescription: 'The npm catalog follower function failed to run',
+        alarmName: `${this.node.path}/Errors`,
+        alarmDescription: [
+          'The discovery/follow function (on npmjs.com) failed to run',
+          '',
+          `Direct link to Lambda function: ${lambdaFunctionUrl(this.follow)}`,
+        ].join('\n'),
         comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
         evaluationPeriods: 1,
         threshold: 1,
       });
     this.alarmNoInvocations = this.follow.metricInvocations({ period: Duration.minutes(15) })
       .createAlarm(this, 'NoInvocationsAlarm', {
-        alarmDescription: 'The npm catalog follower function is not running as scheduled',
+        alarmName: `${this.node.path}/NotRunning`,
+        alarmDescription: [
+          'The discovery/follow function (on npmjs.com) is not running as scheduled',
+          '',
+          `Direct link to Lambda function: ${lambdaFunctionUrl(this.follow)}`,
+        ].join('\n'),
         comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
         evaluationPeriods: 1,
         threshold: 1,
@@ -142,7 +152,9 @@ export class Discovery extends Construct {
     this.bucket.grantReadWrite(this.stage);
     props.queue.grantSendMessages(this.stage);
 
-    props.monitoring.watchful.watchLambdaFunction('Discovery stager', this.stage);
+    props.monitoring.addHighSeverityAlarm('Discovery Failures', this.alarmErrors);
+    props.monitoring.addHighSeverityAlarm('Discovery not Running', this.alarmNoInvocations);
+
     this.alarmDeadLetterQueueNotEmpty = this.stage.deadLetterQueue!.metricApproximateNumberOfMessagesVisible()
       .createAlarm(this, 'AlarmDLQ', {
         alarmDescription: 'The dead-letter-queue associated with the discovery stage-and-notify function is not empty',
