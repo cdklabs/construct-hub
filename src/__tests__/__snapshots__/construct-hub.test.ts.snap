@@ -1633,6 +1633,389 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::IAM::Policy",
     },
+    "ConstructHubLambdaVPCE85ABF51": Object {
+      "Properties": Object {
+        "CidrBlock": "10.0.0.0/16",
+        "EnableDnsHostnames": true,
+        "EnableDnsSupport": true,
+        "InstanceTenancy": "default",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::VPC",
+    },
+    "ConstructHubLambdaVPCIGWBD019E6D": Object {
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::InternetGateway",
+    },
+    "ConstructHubLambdaVPCPrivateSubnet1DefaultRoute1A1CDBD0": Object {
+      "Properties": Object {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet1NATGateway899BCD3A",
+        },
+        "RouteTableId": Object {
+          "Ref": "ConstructHubLambdaVPCPrivateSubnet1RouteTableB46F58E8",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "ConstructHubLambdaVPCPrivateSubnet1RouteTableAssociationF5B9998D": Object {
+      "Properties": Object {
+        "RouteTableId": Object {
+          "Ref": "ConstructHubLambdaVPCPrivateSubnet1RouteTableB46F58E8",
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubLambdaVPCPrivateSubnet1Subnet29C52F53",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "ConstructHubLambdaVPCPrivateSubnet1RouteTableB46F58E8": Object {
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PrivateSubnet1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "ConstructHubLambdaVPCPrivateSubnet1Subnet29C52F53": Object {
+      "Properties": Object {
+        "AvailabilityZone": Object {
+          "Fn::Select": Array [
+            0,
+            Object {
+              "Fn::GetAZs": "",
+            },
+          ],
+        },
+        "CidrBlock": "10.0.64.0/19",
+        "MapPublicIpOnLaunch": false,
+        "Tags": Array [
+          Object {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Private",
+          },
+          Object {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Private",
+          },
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PrivateSubnet1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "ConstructHubLambdaVPCPrivateSubnet2DefaultRoute1D004E2B": Object {
+      "Properties": Object {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet2NATGateway9F5098C2",
+        },
+        "RouteTableId": Object {
+          "Ref": "ConstructHubLambdaVPCPrivateSubnet2RouteTable1F117012",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "ConstructHubLambdaVPCPrivateSubnet2RouteTable1F117012": Object {
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PrivateSubnet2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "ConstructHubLambdaVPCPrivateSubnet2RouteTableAssociationC317D1CE": Object {
+      "Properties": Object {
+        "RouteTableId": Object {
+          "Ref": "ConstructHubLambdaVPCPrivateSubnet2RouteTable1F117012",
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubLambdaVPCPrivateSubnet2SubnetC6183A89",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "ConstructHubLambdaVPCPrivateSubnet2SubnetC6183A89": Object {
+      "Properties": Object {
+        "AvailabilityZone": Object {
+          "Fn::Select": Array [
+            1,
+            Object {
+              "Fn::GetAZs": "",
+            },
+          ],
+        },
+        "CidrBlock": "10.0.96.0/19",
+        "MapPublicIpOnLaunch": false,
+        "Tags": Array [
+          Object {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Private",
+          },
+          Object {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Private",
+          },
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PrivateSubnet2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "ConstructHubLambdaVPCPublicSubnet1DefaultRoute9C3DC378": Object {
+      "DependsOn": Array [
+        "ConstructHubLambdaVPCVPCGWF32CA0BD",
+      ],
+      "Properties": Object {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": Object {
+          "Ref": "ConstructHubLambdaVPCIGWBD019E6D",
+        },
+        "RouteTableId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet1RouteTable4BF2D08A",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "ConstructHubLambdaVPCPublicSubnet1EIP186F31AA": Object {
+      "Properties": Object {
+        "Domain": "vpc",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PublicSubnet1",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::EIP",
+    },
+    "ConstructHubLambdaVPCPublicSubnet1NATGateway899BCD3A": Object {
+      "Properties": Object {
+        "AllocationId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubLambdaVPCPublicSubnet1EIP186F31AA",
+            "AllocationId",
+          ],
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet1SubnetFD6A1BB0",
+        },
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PublicSubnet1",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::NatGateway",
+    },
+    "ConstructHubLambdaVPCPublicSubnet1RouteTable4BF2D08A": Object {
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PublicSubnet1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "ConstructHubLambdaVPCPublicSubnet1RouteTableAssociationD36F08E0": Object {
+      "Properties": Object {
+        "RouteTableId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet1RouteTable4BF2D08A",
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet1SubnetFD6A1BB0",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "ConstructHubLambdaVPCPublicSubnet1SubnetFD6A1BB0": Object {
+      "Properties": Object {
+        "AvailabilityZone": Object {
+          "Fn::Select": Array [
+            0,
+            Object {
+              "Fn::GetAZs": "",
+            },
+          ],
+        },
+        "CidrBlock": "10.0.0.0/19",
+        "MapPublicIpOnLaunch": true,
+        "Tags": Array [
+          Object {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PublicSubnet1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "ConstructHubLambdaVPCPublicSubnet2DefaultRoute0AD07FFA": Object {
+      "DependsOn": Array [
+        "ConstructHubLambdaVPCVPCGWF32CA0BD",
+      ],
+      "Properties": Object {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": Object {
+          "Ref": "ConstructHubLambdaVPCIGWBD019E6D",
+        },
+        "RouteTableId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet2RouteTable950A6E78",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "ConstructHubLambdaVPCPublicSubnet2EIP86B824B4": Object {
+      "Properties": Object {
+        "Domain": "vpc",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PublicSubnet2",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::EIP",
+    },
+    "ConstructHubLambdaVPCPublicSubnet2NATGateway9F5098C2": Object {
+      "Properties": Object {
+        "AllocationId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubLambdaVPCPublicSubnet2EIP86B824B4",
+            "AllocationId",
+          ],
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet2Subnet10D1822F",
+        },
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PublicSubnet2",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::NatGateway",
+    },
+    "ConstructHubLambdaVPCPublicSubnet2RouteTable950A6E78": Object {
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PublicSubnet2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "ConstructHubLambdaVPCPublicSubnet2RouteTableAssociationB8BB5960": Object {
+      "Properties": Object {
+        "RouteTableId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet2RouteTable950A6E78",
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet2Subnet10D1822F",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "ConstructHubLambdaVPCPublicSubnet2Subnet10D1822F": Object {
+      "Properties": Object {
+        "AvailabilityZone": Object {
+          "Fn::Select": Array [
+            1,
+            Object {
+              "Fn::GetAZs": "",
+            },
+          ],
+        },
+        "CidrBlock": "10.0.32.0/19",
+        "MapPublicIpOnLaunch": true,
+        "Tags": Array [
+          Object {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PublicSubnet2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "ConstructHubLambdaVPCVPCGWF32CA0BD": Object {
+      "Properties": Object {
+        "InternetGatewayId": Object {
+          "Ref": "ConstructHubLambdaVPCIGWBD019E6D",
+        },
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+    },
     "ConstructHubMonitoringDashboard78E057C8": Object {
       "Properties": Object {
         "DashboardBody": Object {
@@ -2643,9 +3026,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
     },
     "ConstructHubOrchestration39161A46": Object {
       "DependsOn": Array [
+        "ConstructHubLambdaVPCIGWBD019E6D",
         "ConstructHubOrchestrationRoleDefaultPolicyEACD181F",
         "ConstructHubOrchestrationRoleF4CF6987",
-        "ConstructHubVPCIGW935F4C28",
       ],
       "Properties": Object {
         "DefinitionString": Object {
@@ -3082,10 +3465,10 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
           "SubnetIds": Array [
             Object {
-              "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
+              "Ref": "ConstructHubLambdaVPCPrivateSubnet1Subnet29C52F53",
             },
             Object {
-              "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
+              "Ref": "ConstructHubLambdaVPCPrivateSubnet2SubnetC6183A89",
             },
           ],
         },
@@ -3126,7 +3509,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           },
         ],
         "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
@@ -3503,10 +3886,10 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
           "SubnetIds": Array [
             Object {
-              "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
+              "Ref": "ConstructHubLambdaVPCPrivateSubnet1Subnet29C52F53",
             },
             Object {
-              "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
+              "Ref": "ConstructHubLambdaVPCPrivateSubnet2SubnetC6183A89",
             },
           ],
         },
@@ -3547,7 +3930,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           },
         ],
         "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
@@ -3900,10 +4283,10 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
           "SubnetIds": Array [
             Object {
-              "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
+              "Ref": "ConstructHubLambdaVPCPrivateSubnet1Subnet29C52F53",
             },
             Object {
-              "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
+              "Ref": "ConstructHubLambdaVPCPrivateSubnet2SubnetC6183A89",
             },
           ],
         },
@@ -3921,7 +4304,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           },
         ],
         "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
@@ -4028,7 +4411,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           },
         ],
         "SubnetId": Object {
-          "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
+          "Ref": "ConstructHubLambdaVPCPrivateSubnet1Subnet29C52F53",
         },
       },
       "Type": "AWS::EFS::MountTarget",
@@ -4047,7 +4430,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           },
         ],
         "SubnetId": Object {
-          "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
+          "Ref": "ConstructHubLambdaVPCPrivateSubnet2SubnetC6183A89",
         },
       },
       "Type": "AWS::EFS::MountTarget",
@@ -4069,7 +4452,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           },
         ],
         "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
@@ -4445,7 +4828,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
     },
     "ConstructHubOrchestrationRoleDefaultPolicyEACD181F": Object {
       "DependsOn": Array [
-        "ConstructHubVPCIGW935F4C28",
+        "ConstructHubLambdaVPCIGWBD019E6D",
       ],
       "Properties": Object {
         "PolicyDocument": Object {
@@ -4514,7 +4897,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
     },
     "ConstructHubOrchestrationRoleF4CF6987": Object {
       "DependsOn": Array [
-        "ConstructHubVPCIGW935F4C28",
+        "ConstructHubLambdaVPCIGWBD019E6D",
       ],
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
@@ -4724,389 +5107,6 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "AWS::S3::BucketPolicy",
-    },
-    "ConstructHubVPC16ECCEA2": Object {
-      "Properties": Object {
-        "CidrBlock": "10.0.0.0/16",
-        "EnableDnsHostnames": true,
-        "EnableDnsSupport": true,
-        "InstanceTenancy": "default",
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC",
-          },
-        ],
-      },
-      "Type": "AWS::EC2::VPC",
-    },
-    "ConstructHubVPCIGW935F4C28": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC",
-          },
-        ],
-      },
-      "Type": "AWS::EC2::InternetGateway",
-    },
-    "ConstructHubVPCPrivateSubnet1DefaultRoute0553742E": Object {
-      "Properties": Object {
-        "DestinationCidrBlock": "0.0.0.0/0",
-        "NatGatewayId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet1NATGatewayDEE96CEC",
-        },
-        "RouteTableId": Object {
-          "Ref": "ConstructHubVPCPrivateSubnet1RouteTable46ACFBE4",
-        },
-      },
-      "Type": "AWS::EC2::Route",
-    },
-    "ConstructHubVPCPrivateSubnet1RouteTable46ACFBE4": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PrivateSubnet1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::RouteTable",
-    },
-    "ConstructHubVPCPrivateSubnet1RouteTableAssociation521F6308": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
-          "Ref": "ConstructHubVPCPrivateSubnet1RouteTable46ACFBE4",
-        },
-        "SubnetId": Object {
-          "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
-        },
-      },
-      "Type": "AWS::EC2::SubnetRouteTableAssociation",
-    },
-    "ConstructHubVPCPrivateSubnet1Subnet755A0095": Object {
-      "Properties": Object {
-        "AvailabilityZone": Object {
-          "Fn::Select": Array [
-            0,
-            Object {
-              "Fn::GetAZs": "",
-            },
-          ],
-        },
-        "CidrBlock": "10.0.64.0/19",
-        "MapPublicIpOnLaunch": false,
-        "Tags": Array [
-          Object {
-            "Key": "aws-cdk:subnet-name",
-            "Value": "Private",
-          },
-          Object {
-            "Key": "aws-cdk:subnet-type",
-            "Value": "Private",
-          },
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PrivateSubnet1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::Subnet",
-    },
-    "ConstructHubVPCPrivateSubnet2DefaultRoute32448B57": Object {
-      "Properties": Object {
-        "DestinationCidrBlock": "0.0.0.0/0",
-        "NatGatewayId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet2NATGateway2593E153",
-        },
-        "RouteTableId": Object {
-          "Ref": "ConstructHubVPCPrivateSubnet2RouteTable2B6A0911",
-        },
-      },
-      "Type": "AWS::EC2::Route",
-    },
-    "ConstructHubVPCPrivateSubnet2RouteTable2B6A0911": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PrivateSubnet2",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::RouteTable",
-    },
-    "ConstructHubVPCPrivateSubnet2RouteTableAssociation988450B0": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
-          "Ref": "ConstructHubVPCPrivateSubnet2RouteTable2B6A0911",
-        },
-        "SubnetId": Object {
-          "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
-        },
-      },
-      "Type": "AWS::EC2::SubnetRouteTableAssociation",
-    },
-    "ConstructHubVPCPrivateSubnet2Subnet87694557": Object {
-      "Properties": Object {
-        "AvailabilityZone": Object {
-          "Fn::Select": Array [
-            1,
-            Object {
-              "Fn::GetAZs": "",
-            },
-          ],
-        },
-        "CidrBlock": "10.0.96.0/19",
-        "MapPublicIpOnLaunch": false,
-        "Tags": Array [
-          Object {
-            "Key": "aws-cdk:subnet-name",
-            "Value": "Private",
-          },
-          Object {
-            "Key": "aws-cdk:subnet-type",
-            "Value": "Private",
-          },
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PrivateSubnet2",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::Subnet",
-    },
-    "ConstructHubVPCPublicSubnet1DefaultRouteDA26F0D8": Object {
-      "DependsOn": Array [
-        "ConstructHubVPCVPCGWDF75BD8E",
-      ],
-      "Properties": Object {
-        "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": Object {
-          "Ref": "ConstructHubVPCIGW935F4C28",
-        },
-        "RouteTableId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet1RouteTable00866DD0",
-        },
-      },
-      "Type": "AWS::EC2::Route",
-    },
-    "ConstructHubVPCPublicSubnet1EIPF444F07C": Object {
-      "Properties": Object {
-        "Domain": "vpc",
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PublicSubnet1",
-          },
-        ],
-      },
-      "Type": "AWS::EC2::EIP",
-    },
-    "ConstructHubVPCPublicSubnet1NATGatewayDEE96CEC": Object {
-      "Properties": Object {
-        "AllocationId": Object {
-          "Fn::GetAtt": Array [
-            "ConstructHubVPCPublicSubnet1EIPF444F07C",
-            "AllocationId",
-          ],
-        },
-        "SubnetId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet1SubnetBB5BFB5F",
-        },
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PublicSubnet1",
-          },
-        ],
-      },
-      "Type": "AWS::EC2::NatGateway",
-    },
-    "ConstructHubVPCPublicSubnet1RouteTable00866DD0": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PublicSubnet1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::RouteTable",
-    },
-    "ConstructHubVPCPublicSubnet1RouteTableAssociationED868449": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet1RouteTable00866DD0",
-        },
-        "SubnetId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet1SubnetBB5BFB5F",
-        },
-      },
-      "Type": "AWS::EC2::SubnetRouteTableAssociation",
-    },
-    "ConstructHubVPCPublicSubnet1SubnetBB5BFB5F": Object {
-      "Properties": Object {
-        "AvailabilityZone": Object {
-          "Fn::Select": Array [
-            0,
-            Object {
-              "Fn::GetAZs": "",
-            },
-          ],
-        },
-        "CidrBlock": "10.0.0.0/19",
-        "MapPublicIpOnLaunch": true,
-        "Tags": Array [
-          Object {
-            "Key": "aws-cdk:subnet-name",
-            "Value": "Public",
-          },
-          Object {
-            "Key": "aws-cdk:subnet-type",
-            "Value": "Public",
-          },
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PublicSubnet1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::Subnet",
-    },
-    "ConstructHubVPCPublicSubnet2DefaultRoute34459150": Object {
-      "DependsOn": Array [
-        "ConstructHubVPCVPCGWDF75BD8E",
-      ],
-      "Properties": Object {
-        "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": Object {
-          "Ref": "ConstructHubVPCIGW935F4C28",
-        },
-        "RouteTableId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet2RouteTable277E70CA",
-        },
-      },
-      "Type": "AWS::EC2::Route",
-    },
-    "ConstructHubVPCPublicSubnet2EIP18E1FA8F": Object {
-      "Properties": Object {
-        "Domain": "vpc",
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PublicSubnet2",
-          },
-        ],
-      },
-      "Type": "AWS::EC2::EIP",
-    },
-    "ConstructHubVPCPublicSubnet2NATGateway2593E153": Object {
-      "Properties": Object {
-        "AllocationId": Object {
-          "Fn::GetAtt": Array [
-            "ConstructHubVPCPublicSubnet2EIP18E1FA8F",
-            "AllocationId",
-          ],
-        },
-        "SubnetId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet2Subnet4F6EAB14",
-        },
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PublicSubnet2",
-          },
-        ],
-      },
-      "Type": "AWS::EC2::NatGateway",
-    },
-    "ConstructHubVPCPublicSubnet2RouteTable277E70CA": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PublicSubnet2",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::RouteTable",
-    },
-    "ConstructHubVPCPublicSubnet2RouteTableAssociationED806BA2": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet2RouteTable277E70CA",
-        },
-        "SubnetId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet2Subnet4F6EAB14",
-        },
-      },
-      "Type": "AWS::EC2::SubnetRouteTableAssociation",
-    },
-    "ConstructHubVPCPublicSubnet2Subnet4F6EAB14": Object {
-      "Properties": Object {
-        "AvailabilityZone": Object {
-          "Fn::Select": Array [
-            1,
-            Object {
-              "Fn::GetAZs": "",
-            },
-          ],
-        },
-        "CidrBlock": "10.0.32.0/19",
-        "MapPublicIpOnLaunch": true,
-        "Tags": Array [
-          Object {
-            "Key": "aws-cdk:subnet-name",
-            "Value": "Public",
-          },
-          Object {
-            "Key": "aws-cdk:subnet-type",
-            "Value": "Public",
-          },
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PublicSubnet2",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::Subnet",
-    },
-    "ConstructHubVPCVPCGWDF75BD8E": Object {
-      "Properties": Object {
-        "InternetGatewayId": Object {
-          "Ref": "ConstructHubVPCIGW935F4C28",
-        },
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::VPCGatewayAttachment",
     },
     "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B": Object {
       "Properties": Object {
@@ -7718,6 +7718,389 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::IAM::Policy",
     },
+    "ConstructHubLambdaVPCE85ABF51": Object {
+      "Properties": Object {
+        "CidrBlock": "10.0.0.0/16",
+        "EnableDnsHostnames": true,
+        "EnableDnsSupport": true,
+        "InstanceTenancy": "default",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::VPC",
+    },
+    "ConstructHubLambdaVPCIGWBD019E6D": Object {
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::InternetGateway",
+    },
+    "ConstructHubLambdaVPCPrivateSubnet1DefaultRoute1A1CDBD0": Object {
+      "Properties": Object {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet1NATGateway899BCD3A",
+        },
+        "RouteTableId": Object {
+          "Ref": "ConstructHubLambdaVPCPrivateSubnet1RouteTableB46F58E8",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "ConstructHubLambdaVPCPrivateSubnet1RouteTableAssociationF5B9998D": Object {
+      "Properties": Object {
+        "RouteTableId": Object {
+          "Ref": "ConstructHubLambdaVPCPrivateSubnet1RouteTableB46F58E8",
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubLambdaVPCPrivateSubnet1Subnet29C52F53",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "ConstructHubLambdaVPCPrivateSubnet1RouteTableB46F58E8": Object {
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PrivateSubnet1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "ConstructHubLambdaVPCPrivateSubnet1Subnet29C52F53": Object {
+      "Properties": Object {
+        "AvailabilityZone": Object {
+          "Fn::Select": Array [
+            0,
+            Object {
+              "Fn::GetAZs": "",
+            },
+          ],
+        },
+        "CidrBlock": "10.0.64.0/19",
+        "MapPublicIpOnLaunch": false,
+        "Tags": Array [
+          Object {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Private",
+          },
+          Object {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Private",
+          },
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PrivateSubnet1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "ConstructHubLambdaVPCPrivateSubnet2DefaultRoute1D004E2B": Object {
+      "Properties": Object {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "NatGatewayId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet2NATGateway9F5098C2",
+        },
+        "RouteTableId": Object {
+          "Ref": "ConstructHubLambdaVPCPrivateSubnet2RouteTable1F117012",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "ConstructHubLambdaVPCPrivateSubnet2RouteTable1F117012": Object {
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PrivateSubnet2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "ConstructHubLambdaVPCPrivateSubnet2RouteTableAssociationC317D1CE": Object {
+      "Properties": Object {
+        "RouteTableId": Object {
+          "Ref": "ConstructHubLambdaVPCPrivateSubnet2RouteTable1F117012",
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubLambdaVPCPrivateSubnet2SubnetC6183A89",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "ConstructHubLambdaVPCPrivateSubnet2SubnetC6183A89": Object {
+      "Properties": Object {
+        "AvailabilityZone": Object {
+          "Fn::Select": Array [
+            1,
+            Object {
+              "Fn::GetAZs": "",
+            },
+          ],
+        },
+        "CidrBlock": "10.0.96.0/19",
+        "MapPublicIpOnLaunch": false,
+        "Tags": Array [
+          Object {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Private",
+          },
+          Object {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Private",
+          },
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PrivateSubnet2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "ConstructHubLambdaVPCPublicSubnet1DefaultRoute9C3DC378": Object {
+      "DependsOn": Array [
+        "ConstructHubLambdaVPCVPCGWF32CA0BD",
+      ],
+      "Properties": Object {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": Object {
+          "Ref": "ConstructHubLambdaVPCIGWBD019E6D",
+        },
+        "RouteTableId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet1RouteTable4BF2D08A",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "ConstructHubLambdaVPCPublicSubnet1EIP186F31AA": Object {
+      "Properties": Object {
+        "Domain": "vpc",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PublicSubnet1",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::EIP",
+    },
+    "ConstructHubLambdaVPCPublicSubnet1NATGateway899BCD3A": Object {
+      "Properties": Object {
+        "AllocationId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubLambdaVPCPublicSubnet1EIP186F31AA",
+            "AllocationId",
+          ],
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet1SubnetFD6A1BB0",
+        },
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PublicSubnet1",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::NatGateway",
+    },
+    "ConstructHubLambdaVPCPublicSubnet1RouteTable4BF2D08A": Object {
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PublicSubnet1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "ConstructHubLambdaVPCPublicSubnet1RouteTableAssociationD36F08E0": Object {
+      "Properties": Object {
+        "RouteTableId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet1RouteTable4BF2D08A",
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet1SubnetFD6A1BB0",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "ConstructHubLambdaVPCPublicSubnet1SubnetFD6A1BB0": Object {
+      "Properties": Object {
+        "AvailabilityZone": Object {
+          "Fn::Select": Array [
+            0,
+            Object {
+              "Fn::GetAZs": "",
+            },
+          ],
+        },
+        "CidrBlock": "10.0.0.0/19",
+        "MapPublicIpOnLaunch": true,
+        "Tags": Array [
+          Object {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PublicSubnet1",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "ConstructHubLambdaVPCPublicSubnet2DefaultRoute0AD07FFA": Object {
+      "DependsOn": Array [
+        "ConstructHubLambdaVPCVPCGWF32CA0BD",
+      ],
+      "Properties": Object {
+        "DestinationCidrBlock": "0.0.0.0/0",
+        "GatewayId": Object {
+          "Ref": "ConstructHubLambdaVPCIGWBD019E6D",
+        },
+        "RouteTableId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet2RouteTable950A6E78",
+        },
+      },
+      "Type": "AWS::EC2::Route",
+    },
+    "ConstructHubLambdaVPCPublicSubnet2EIP86B824B4": Object {
+      "Properties": Object {
+        "Domain": "vpc",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PublicSubnet2",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::EIP",
+    },
+    "ConstructHubLambdaVPCPublicSubnet2NATGateway9F5098C2": Object {
+      "Properties": Object {
+        "AllocationId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubLambdaVPCPublicSubnet2EIP86B824B4",
+            "AllocationId",
+          ],
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet2Subnet10D1822F",
+        },
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PublicSubnet2",
+          },
+        ],
+      },
+      "Type": "AWS::EC2::NatGateway",
+    },
+    "ConstructHubLambdaVPCPublicSubnet2RouteTable950A6E78": Object {
+      "Properties": Object {
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PublicSubnet2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::RouteTable",
+    },
+    "ConstructHubLambdaVPCPublicSubnet2RouteTableAssociationB8BB5960": Object {
+      "Properties": Object {
+        "RouteTableId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet2RouteTable950A6E78",
+        },
+        "SubnetId": Object {
+          "Ref": "ConstructHubLambdaVPCPublicSubnet2Subnet10D1822F",
+        },
+      },
+      "Type": "AWS::EC2::SubnetRouteTableAssociation",
+    },
+    "ConstructHubLambdaVPCPublicSubnet2Subnet10D1822F": Object {
+      "Properties": Object {
+        "AvailabilityZone": Object {
+          "Fn::Select": Array [
+            1,
+            Object {
+              "Fn::GetAZs": "",
+            },
+          ],
+        },
+        "CidrBlock": "10.0.32.0/19",
+        "MapPublicIpOnLaunch": true,
+        "Tags": Array [
+          Object {
+            "Key": "aws-cdk:subnet-name",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "aws-cdk:subnet-type",
+            "Value": "Public",
+          },
+          Object {
+            "Key": "Name",
+            "Value": "Test/ConstructHub/Lambda-VPC/PublicSubnet2",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::Subnet",
+    },
+    "ConstructHubLambdaVPCVPCGWF32CA0BD": Object {
+      "Properties": Object {
+        "InternetGatewayId": Object {
+          "Ref": "ConstructHubLambdaVPCIGWBD019E6D",
+        },
+        "VpcId": Object {
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
+        },
+      },
+      "Type": "AWS::EC2::VPCGatewayAttachment",
+    },
     "ConstructHubMonitoringDashboard78E057C8": Object {
       "Properties": Object {
         "DashboardBody": Object {
@@ -8750,9 +9133,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
     },
     "ConstructHubOrchestration39161A46": Object {
       "DependsOn": Array [
+        "ConstructHubLambdaVPCIGWBD019E6D",
         "ConstructHubOrchestrationRoleDefaultPolicyEACD181F",
         "ConstructHubOrchestrationRoleF4CF6987",
-        "ConstructHubVPCIGW935F4C28",
       ],
       "Properties": Object {
         "DefinitionString": Object {
@@ -9189,10 +9572,10 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
           "SubnetIds": Array [
             Object {
-              "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
+              "Ref": "ConstructHubLambdaVPCPrivateSubnet1Subnet29C52F53",
             },
             Object {
-              "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
+              "Ref": "ConstructHubLambdaVPCPrivateSubnet2SubnetC6183A89",
             },
           ],
         },
@@ -9233,7 +9616,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           },
         ],
         "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
@@ -9610,10 +9993,10 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
           "SubnetIds": Array [
             Object {
-              "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
+              "Ref": "ConstructHubLambdaVPCPrivateSubnet1Subnet29C52F53",
             },
             Object {
-              "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
+              "Ref": "ConstructHubLambdaVPCPrivateSubnet2SubnetC6183A89",
             },
           ],
         },
@@ -9654,7 +10037,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           },
         ],
         "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
@@ -10007,10 +10390,10 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           ],
           "SubnetIds": Array [
             Object {
-              "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
+              "Ref": "ConstructHubLambdaVPCPrivateSubnet1Subnet29C52F53",
             },
             Object {
-              "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
+              "Ref": "ConstructHubLambdaVPCPrivateSubnet2SubnetC6183A89",
             },
           ],
         },
@@ -10028,7 +10411,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           },
         ],
         "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
@@ -10135,7 +10518,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           },
         ],
         "SubnetId": Object {
-          "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
+          "Ref": "ConstructHubLambdaVPCPrivateSubnet1Subnet29C52F53",
         },
       },
       "Type": "AWS::EFS::MountTarget",
@@ -10154,7 +10537,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           },
         ],
         "SubnetId": Object {
-          "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
+          "Ref": "ConstructHubLambdaVPCPrivateSubnet2SubnetC6183A89",
         },
       },
       "Type": "AWS::EFS::MountTarget",
@@ -10176,7 +10559,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           },
         ],
         "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
+          "Ref": "ConstructHubLambdaVPCE85ABF51",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
@@ -10552,7 +10935,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
     },
     "ConstructHubOrchestrationRoleDefaultPolicyEACD181F": Object {
       "DependsOn": Array [
-        "ConstructHubVPCIGW935F4C28",
+        "ConstructHubLambdaVPCIGWBD019E6D",
       ],
       "Properties": Object {
         "PolicyDocument": Object {
@@ -10621,7 +11004,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
     },
     "ConstructHubOrchestrationRoleF4CF6987": Object {
       "DependsOn": Array [
-        "ConstructHubVPCIGW935F4C28",
+        "ConstructHubLambdaVPCIGWBD019E6D",
       ],
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
@@ -10831,389 +11214,6 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "AWS::S3::BucketPolicy",
-    },
-    "ConstructHubVPC16ECCEA2": Object {
-      "Properties": Object {
-        "CidrBlock": "10.0.0.0/16",
-        "EnableDnsHostnames": true,
-        "EnableDnsSupport": true,
-        "InstanceTenancy": "default",
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC",
-          },
-        ],
-      },
-      "Type": "AWS::EC2::VPC",
-    },
-    "ConstructHubVPCIGW935F4C28": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC",
-          },
-        ],
-      },
-      "Type": "AWS::EC2::InternetGateway",
-    },
-    "ConstructHubVPCPrivateSubnet1DefaultRoute0553742E": Object {
-      "Properties": Object {
-        "DestinationCidrBlock": "0.0.0.0/0",
-        "NatGatewayId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet1NATGatewayDEE96CEC",
-        },
-        "RouteTableId": Object {
-          "Ref": "ConstructHubVPCPrivateSubnet1RouteTable46ACFBE4",
-        },
-      },
-      "Type": "AWS::EC2::Route",
-    },
-    "ConstructHubVPCPrivateSubnet1RouteTable46ACFBE4": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PrivateSubnet1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::RouteTable",
-    },
-    "ConstructHubVPCPrivateSubnet1RouteTableAssociation521F6308": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
-          "Ref": "ConstructHubVPCPrivateSubnet1RouteTable46ACFBE4",
-        },
-        "SubnetId": Object {
-          "Ref": "ConstructHubVPCPrivateSubnet1Subnet755A0095",
-        },
-      },
-      "Type": "AWS::EC2::SubnetRouteTableAssociation",
-    },
-    "ConstructHubVPCPrivateSubnet1Subnet755A0095": Object {
-      "Properties": Object {
-        "AvailabilityZone": Object {
-          "Fn::Select": Array [
-            0,
-            Object {
-              "Fn::GetAZs": "",
-            },
-          ],
-        },
-        "CidrBlock": "10.0.64.0/19",
-        "MapPublicIpOnLaunch": false,
-        "Tags": Array [
-          Object {
-            "Key": "aws-cdk:subnet-name",
-            "Value": "Private",
-          },
-          Object {
-            "Key": "aws-cdk:subnet-type",
-            "Value": "Private",
-          },
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PrivateSubnet1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::Subnet",
-    },
-    "ConstructHubVPCPrivateSubnet2DefaultRoute32448B57": Object {
-      "Properties": Object {
-        "DestinationCidrBlock": "0.0.0.0/0",
-        "NatGatewayId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet2NATGateway2593E153",
-        },
-        "RouteTableId": Object {
-          "Ref": "ConstructHubVPCPrivateSubnet2RouteTable2B6A0911",
-        },
-      },
-      "Type": "AWS::EC2::Route",
-    },
-    "ConstructHubVPCPrivateSubnet2RouteTable2B6A0911": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PrivateSubnet2",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::RouteTable",
-    },
-    "ConstructHubVPCPrivateSubnet2RouteTableAssociation988450B0": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
-          "Ref": "ConstructHubVPCPrivateSubnet2RouteTable2B6A0911",
-        },
-        "SubnetId": Object {
-          "Ref": "ConstructHubVPCPrivateSubnet2Subnet87694557",
-        },
-      },
-      "Type": "AWS::EC2::SubnetRouteTableAssociation",
-    },
-    "ConstructHubVPCPrivateSubnet2Subnet87694557": Object {
-      "Properties": Object {
-        "AvailabilityZone": Object {
-          "Fn::Select": Array [
-            1,
-            Object {
-              "Fn::GetAZs": "",
-            },
-          ],
-        },
-        "CidrBlock": "10.0.96.0/19",
-        "MapPublicIpOnLaunch": false,
-        "Tags": Array [
-          Object {
-            "Key": "aws-cdk:subnet-name",
-            "Value": "Private",
-          },
-          Object {
-            "Key": "aws-cdk:subnet-type",
-            "Value": "Private",
-          },
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PrivateSubnet2",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::Subnet",
-    },
-    "ConstructHubVPCPublicSubnet1DefaultRouteDA26F0D8": Object {
-      "DependsOn": Array [
-        "ConstructHubVPCVPCGWDF75BD8E",
-      ],
-      "Properties": Object {
-        "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": Object {
-          "Ref": "ConstructHubVPCIGW935F4C28",
-        },
-        "RouteTableId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet1RouteTable00866DD0",
-        },
-      },
-      "Type": "AWS::EC2::Route",
-    },
-    "ConstructHubVPCPublicSubnet1EIPF444F07C": Object {
-      "Properties": Object {
-        "Domain": "vpc",
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PublicSubnet1",
-          },
-        ],
-      },
-      "Type": "AWS::EC2::EIP",
-    },
-    "ConstructHubVPCPublicSubnet1NATGatewayDEE96CEC": Object {
-      "Properties": Object {
-        "AllocationId": Object {
-          "Fn::GetAtt": Array [
-            "ConstructHubVPCPublicSubnet1EIPF444F07C",
-            "AllocationId",
-          ],
-        },
-        "SubnetId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet1SubnetBB5BFB5F",
-        },
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PublicSubnet1",
-          },
-        ],
-      },
-      "Type": "AWS::EC2::NatGateway",
-    },
-    "ConstructHubVPCPublicSubnet1RouteTable00866DD0": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PublicSubnet1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::RouteTable",
-    },
-    "ConstructHubVPCPublicSubnet1RouteTableAssociationED868449": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet1RouteTable00866DD0",
-        },
-        "SubnetId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet1SubnetBB5BFB5F",
-        },
-      },
-      "Type": "AWS::EC2::SubnetRouteTableAssociation",
-    },
-    "ConstructHubVPCPublicSubnet1SubnetBB5BFB5F": Object {
-      "Properties": Object {
-        "AvailabilityZone": Object {
-          "Fn::Select": Array [
-            0,
-            Object {
-              "Fn::GetAZs": "",
-            },
-          ],
-        },
-        "CidrBlock": "10.0.0.0/19",
-        "MapPublicIpOnLaunch": true,
-        "Tags": Array [
-          Object {
-            "Key": "aws-cdk:subnet-name",
-            "Value": "Public",
-          },
-          Object {
-            "Key": "aws-cdk:subnet-type",
-            "Value": "Public",
-          },
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PublicSubnet1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::Subnet",
-    },
-    "ConstructHubVPCPublicSubnet2DefaultRoute34459150": Object {
-      "DependsOn": Array [
-        "ConstructHubVPCVPCGWDF75BD8E",
-      ],
-      "Properties": Object {
-        "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": Object {
-          "Ref": "ConstructHubVPCIGW935F4C28",
-        },
-        "RouteTableId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet2RouteTable277E70CA",
-        },
-      },
-      "Type": "AWS::EC2::Route",
-    },
-    "ConstructHubVPCPublicSubnet2EIP18E1FA8F": Object {
-      "Properties": Object {
-        "Domain": "vpc",
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PublicSubnet2",
-          },
-        ],
-      },
-      "Type": "AWS::EC2::EIP",
-    },
-    "ConstructHubVPCPublicSubnet2NATGateway2593E153": Object {
-      "Properties": Object {
-        "AllocationId": Object {
-          "Fn::GetAtt": Array [
-            "ConstructHubVPCPublicSubnet2EIP18E1FA8F",
-            "AllocationId",
-          ],
-        },
-        "SubnetId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet2Subnet4F6EAB14",
-        },
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PublicSubnet2",
-          },
-        ],
-      },
-      "Type": "AWS::EC2::NatGateway",
-    },
-    "ConstructHubVPCPublicSubnet2RouteTable277E70CA": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PublicSubnet2",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::RouteTable",
-    },
-    "ConstructHubVPCPublicSubnet2RouteTableAssociationED806BA2": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet2RouteTable277E70CA",
-        },
-        "SubnetId": Object {
-          "Ref": "ConstructHubVPCPublicSubnet2Subnet4F6EAB14",
-        },
-      },
-      "Type": "AWS::EC2::SubnetRouteTableAssociation",
-    },
-    "ConstructHubVPCPublicSubnet2Subnet4F6EAB14": Object {
-      "Properties": Object {
-        "AvailabilityZone": Object {
-          "Fn::Select": Array [
-            1,
-            Object {
-              "Fn::GetAZs": "",
-            },
-          ],
-        },
-        "CidrBlock": "10.0.32.0/19",
-        "MapPublicIpOnLaunch": true,
-        "Tags": Array [
-          Object {
-            "Key": "aws-cdk:subnet-name",
-            "Value": "Public",
-          },
-          Object {
-            "Key": "aws-cdk:subnet-type",
-            "Value": "Public",
-          },
-          Object {
-            "Key": "Name",
-            "Value": "Test/ConstructHub/VPC/PublicSubnet2",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::Subnet",
-    },
-    "ConstructHubVPCVPCGWDF75BD8E": Object {
-      "Properties": Object {
-        "InternetGatewayId": Object {
-          "Ref": "ConstructHubVPCIGW935F4C28",
-        },
-        "VpcId": Object {
-          "Ref": "ConstructHubVPC16ECCEA2",
-        },
-      },
-      "Type": "AWS::EC2::VPCGatewayAttachment",
     },
     "ConstructHubWebAppARecord3863FF6C": Object {
       "Properties": Object {
