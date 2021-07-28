@@ -111,15 +111,33 @@ export function handler(event: TransliteratorInput, context: Context): Promise<S
 
 async function ensureWritableHome<T>(cb: () => Promise<T>): Promise<T> {
   if (process.env.HOME) {
-    // $HOME is set, so let's check if it is writable
-    const stat = await fs.stat(process.env.HOME);
-    // We check against the rwx------ bitmask here, as group & other are
-    // probably not relevant to our business. This is a good enough heuristic
-    // within lambda functions.
-    // eslint-disable-next-line no-bitwise
-    if (stat.isDirectory() && (stat.mode & 0o700) === 0o700) {
-      console.log(`Using existing, writable $HOME directory: ${process.env.HOME}`);
-      return cb();
+    let exists = await fs.pathExists(process.env.HOME);
+    // If the directory does not exist, create it (this is cheating, but...).
+    // This happens as the EFS filesystem that is mounted may not contain a HOME
+    // directory just yet... And it somehow needs to be bootstrapped (here!).
+    if (!exists) {
+      console.log(`$HOME points to non-existent directory ${process.env.HOME}... Creating!`);
+      try {
+        await fs.mkdirp(process.env.HOME);
+        exists = true;
+      } catch {
+        // IGNORE - We could not create the directory, and this is okay.
+      }
+    }
+
+    // If at this stage, the $HOME directory still does not exist, go the TMPDIR
+    // route, as we are hopeless to fix that...
+    if (exists) {
+      // $HOME is set, so let's check if it is writable
+      const stat = await fs.stat(process.env.HOME);
+      // We check against the rwx------ bitmask here, as group & other are
+      // probably not relevant to our business. This is a good enough heuristic
+      // within lambda functions.
+      // eslint-disable-next-line no-bitwise
+      if (stat.isDirectory() && (stat.mode & 0o700) === 0o700) {
+        console.log(`Using existing, writable $HOME directory: ${process.env.HOME}`);
+        return cb();
+      }
     }
   }
 
