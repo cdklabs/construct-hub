@@ -26,18 +26,19 @@ new BucketDeployment(stack, 'MockData', {
 });
 
 const monitoring = new Monitoring(stack, 'Monitoring');
-const catalogBuilderMock = new CatalogBuilderMock(stack, 'CatalogBuilderMock');
 
 const denylist = new DenyList(stack, 'DenyList', {
   monitoring: monitoring,
   packageDataBucket: packageData,
   packageDataKeyPrefix: STORAGE_KEY_PREFIX,
-  catalogBuilderFunction: catalogBuilderMock,
   rules: [
     { package: 'mypackage', reason: '"mypackage" is deprecated' },
     { package: 'your', version: '1.2.3', reason: 'v1.2.3 of "your" has a security issue' },
   ],
 });
+
+const catalogBuilderMock = new CatalogBuilderMock(stack, 'CatalogBuilderMock');
+denylist.prune.onChangeInvoke(catalogBuilderMock);
 
 const test1 = new TriggerClientTest(stack, 'ClientTest', {
   invokeAfter: [denylist],

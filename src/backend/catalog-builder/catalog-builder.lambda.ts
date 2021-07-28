@@ -6,6 +6,7 @@ import type { Context } from 'aws-lambda';
 import { AWSError, S3 } from 'aws-sdk';
 import { SemVer } from 'semver';
 import { extract } from 'tar-stream';
+import { DenyListClient } from '../deny-list/client.lambda-shared';
 import type { CatalogBuilderInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
@@ -35,6 +36,7 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
   const BUCKET_NAME = requireEnv('BUCKET_NAME');
 
   const packages = new Map<string, Map<number, PackageInfo>>();
+  const denyList = await DenyListClient.newClient();
 
   let data: undefined | AWS.S3.GetObjectOutput;
 
@@ -53,7 +55,7 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     const failures: any = {};
     for await (const { Key: pkgKey } of relevantObjects(BUCKET_NAME)) {
       try {
-        await appendPackage(packages, pkgKey!, BUCKET_NAME);
+        await appendPackage(packages, pkgKey!, BUCKET_NAME, denyList);
       } catch (e) {
         failures[pkgKey!] = e;
       }
@@ -81,7 +83,7 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     console.log('Registering new packages...');
     // note that we intentionally don't catch errors here to let these
     // event go to the DLQ for manual inspection.
-    await appendPackage(packages, event.package.key, BUCKET_NAME);
+    await appendPackage(packages, event.package.key, BUCKET_NAME, denyList);
   }
 
   // Build the final data package...
@@ -141,7 +143,7 @@ async function* relevantObjects(bucket: string) {
   } while (request.ContinuationToken != null);
 }
 
-async function appendPackage(packages: any, pkgKey: string, bucketName: string) {
+async function appendPackage(packages: any, pkgKey: string, bucketName: string, denyList: DenyListClient) {
   console.log(`Processing key: ${pkgKey}`);
   const [, packageName, versionStr] = constants.STORAGE_KEY_FORMAT_REGEX.exec(pkgKey)!;
   const version = new SemVer(versionStr);
@@ -150,6 +152,14 @@ async function appendPackage(packages: any, pkgKey: string, bucketName: string) 
     console.log(`Skipping ${packageName}@${version} because it is not newer than the existing ${found.version}`);
     return;
   }
+
+  console.log(`Checking if ${packageName}@${version.version} matches a deny list rule`);
+  const blocked = denyList.lookup(packageName, version.version);
+  if (blocked) {
+    console.log(`Skipping ${packageName}@${version.version} because it is blocked by the deny list rule: ${JSON.stringify(blocked)}`);
+    return;
+  }
+
   console.log(`Registering ${packageName}@${version}`);
 
   // Donwload the tarball to inspect the `package.json` data therein.
