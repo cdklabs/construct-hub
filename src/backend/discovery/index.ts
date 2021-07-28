@@ -1,4 +1,4 @@
-import { ComparisonOperator, IAlarm, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
+import { Alarm, ComparisonOperator, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
@@ -7,6 +7,7 @@ import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
 import { IQueue } from '@aws-cdk/aws-sqs';
 
 import { Construct, Duration } from '@aws-cdk/core';
+import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { DenyList } from '../deny-list';
 import { MetricName, METRICS_NAMESPACE, S3KeyPrefix } from './constants.lambda-shared';
@@ -50,12 +51,12 @@ export class Discovery extends Construct {
   /**
    * Alarms if the discovery function does not complete successfully.
    */
-  public readonly alarmErrors: IAlarm;
+  public readonly alarmErrors: Alarm;
 
   /**
    * Alarms if the discovery function does not run as expected.
    */
-  public readonly alarmNoInvocations: IAlarm;
+  public readonly alarmNoInvocations: Alarm;
 
   public readonly function: IFunction;
 
@@ -98,20 +99,32 @@ export class Discovery extends Construct {
       targets: [new LambdaFunction(this.function)],
     });
 
-    props.monitoring.watchful.watchLambdaFunction('Discovery Function', this.function as Handler);
     this.alarmErrors = this.function.metricErrors({ period: Duration.minutes(15) }).createAlarm(this, 'ErrorsAlarm', {
-      alarmDescription: 'The discovery function (on npmjs.com) failed to run',
+      alarmName: `${this.node.path}/Errors`,
+      alarmDescription: [
+        'The discovery function (on npmjs.com) failed to run',
+        '',
+        `Direct link to Lambda function: ${lambdaFunctionUrl(this.function)}`,
+      ].join('\n'),
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
       evaluationPeriods: 1,
       threshold: 1,
     });
     this.alarmNoInvocations = this.function.metricInvocations({ period: Duration.minutes(15) })
       .createAlarm(this, 'NoInvocationsAlarm', {
-        alarmDescription: 'The discovery function (on npmjs.com) is not running as scheduled',
+        alarmName: `${this.node.path}/NotRunning`,
+        alarmDescription: [
+          'The discovery function (on npmjs.com) is not running as scheduled',
+          '',
+          `Direct link to Lambda function: ${lambdaFunctionUrl(this.function)}`,
+        ].join('\n'),
         comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
         evaluationPeriods: 1,
         threshold: 1,
       });
+
+    props.monitoring.addHighSeverityAlarm('Discovery Failures', this.alarmErrors);
+    props.monitoring.addHighSeverityAlarm('Discovery not Running', this.alarmNoInvocations);
   }
 
   /**

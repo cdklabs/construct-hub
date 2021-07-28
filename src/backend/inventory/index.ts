@@ -1,9 +1,10 @@
-import { Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
+import { ComparisonOperator, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
+import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { DocumentationLanguage } from '../shared/language';
 import { Canary } from './canary';
@@ -59,7 +60,34 @@ export class Inventory extends Construct {
       targets: [new LambdaFunction(this.canary)],
     }).node.addDependency(grant);
 
-    props.monitoring.watchful.watchLambdaFunction('Inventory Canary', this.canary);
+    props.monitoring.addHighSeverityAlarm(
+      'Inventory Canary is not Running',
+      this.canary.metricInvocations({ period: Duration.minutes(5) }).createAlarm(this, 'Not Running', {
+        alarmName: `${this.node.path}/NotRunning`,
+        alarmDescription: [
+          'The inventory canary is not running!',
+          '',
+          `Direct link to function: ${lambdaFunctionUrl(this.canary)}`,
+        ].join('\n'),
+        comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+        evaluationPeriods: 1,
+        threshold: 1,
+      }),
+    );
+    props.monitoring.addHighSeverityAlarm(
+      'Inventory Canary is failing',
+      this.canary.metricErrors({ period: Duration.minutes(5) }).createAlarm(this, 'Failures', {
+        alarmName: `${this.node.path}/Failures`,
+        alarmDescription: [
+          'The inventory canary is failing!',
+          '',
+          `Direct link to function: ${lambdaFunctionUrl(this.canary)}`,
+        ].join('\n'),
+        comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        evaluationPeriods: 1,
+        threshold: 1,
+      }),
+    );
   }
 
   public metricMissingPackageMetadataCount(opts?: MetricOptions): Metric {

@@ -171,8 +171,6 @@ export class Transliterator extends Construct {
     bucket.grantWrite(this.function, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(props.language, '*')}`);
     bucket.grantWrite(this.function, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(props.language)}${constants.NOT_SUPPORTED_SUFFIX}`);
     bucket.grantWrite(this.function, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(props.language, '*')}${constants.NOT_SUPPORTED_SUFFIX}`);
-
-    props.monitoring.watchful.watchLambdaFunction('Transliterator Function', lambda);
   }
 
 }
