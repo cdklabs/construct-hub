@@ -22,6 +22,7 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
       .map(stageUpdatedVersion),
   );
 
+  console.log(`Sending ${messages.length} for ingestion`);
   await aws.sqsSendMessageBatch(queueUrl, messages);
 
   async function stageUpdatedVersion({ infos, modified, seq }: UpdatedVersion): Promise<IngestionInput> {
@@ -45,8 +46,8 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
           'Sequence': seq.toFixed(),
         },
       });
-
     metrics.putMetric(MetricName.STAGING_TIME, Date.now() - startTime, Unit.Milliseconds);
+    console.log(`Uploaded: ${stagingKey}`);
 
     // Prepare SQS message for ingestion
     const messageBase = {
