@@ -1,8 +1,18 @@
+import * as process from 'process';
 import { Construct, Stack } from '@aws-cdk/core';
 import { ConstructHub } from '../..';
 
+export interface DevStackProps {
+  /**
+   * Whether lambda functions should be isolated or not.
+   *
+   * @default !!process.env.ISOLATE_LAMBDAS
+   */
+  readonly isolateLambdas?: boolean;
+}
+
 export class DevStack extends Stack {
-  constructor(scope: Construct, id: string) {
+  constructor(scope: Construct, id: string, { isolateLambdas = !!process.env.ISOLATE_LAMBDAS }: DevStackProps = {}) {
     super(scope, id, {
       env: {
         account: process.env.CDK_DEFAULT_ACCOUNT,
@@ -18,6 +28,7 @@ export class DevStack extends Stack {
         { package: 'cdk-ecr-image-scan-notify', version: '0.0.192', reason: 'test number 2' },
       ],
       backendDashboardName: 'construct-hub-backend',
+      isolateLambdas,
     });
   }
 }

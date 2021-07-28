@@ -17,6 +17,16 @@ test('minimal usage', () => {
   expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
 
+test('with non-isolated lambdas', () => {
+  const app = new App();
+  const stack = new Stack(app, 'Test');
+  new ConstructHub(stack, 'ConstructHub', {
+    alarmActions: dummyAlarmAction,
+    isolateLambdas: false,
+  });
+  expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+});
+
 test('with domain', () => {
   const app = new App();
   const stack = new Stack(app, 'Test');

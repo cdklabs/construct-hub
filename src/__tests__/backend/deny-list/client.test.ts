@@ -32,7 +32,20 @@ afterEach(() => {
 
 test('s3 object not found error', async () => {
   AWSMock.mock('S3', 'getObject', (_, callback) => {
-    callback(new Error('not found'), null);
+    const err = new Error('NoSuchKey');
+    (err as any).code = 'NoSuchKey';
+    callback(err, null);
+  });
+
+  const client = await DenyListClient.newClient();
+  expect(client.lookup('foo', '1.2.3')).toBeUndefined();
+});
+
+test('s3 bucket not found error', async () => {
+  AWSMock.mock('S3', 'getObject', (_, callback) => {
+    const err = new Error('NoSuchBucket');
+    (err as any).code = 'NoSuchBucket';
+    callback(err, null);
   });
 
   const client = await DenyListClient.newClient();
@@ -57,8 +70,8 @@ test('json parsing error', async () => {
     callback(null, { Body: '09x{}' });
   });
 
-  const client = await DenyListClient.newClient();
-  expect(client.lookup('foo', '1.2.3')).toBeUndefined();
+  const expected = new Error('Unable to parse deny list file deny-list-bucket-name/deny-list.json: SyntaxError: Unexpected number in JSON at position 1');
+  await expect(DenyListClient.newClient()).rejects.toEqual(expected);
 });
 
 describe('lookup', () => {

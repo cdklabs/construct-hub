@@ -39,6 +39,8 @@ export class DenyListClient {
       throw new Error('init() cannot be called twice');
     }
 
+    this._map = {};
+
     try {
       const params = {
         Bucket: this.bucketName,
@@ -51,15 +53,25 @@ export class DenyListClient {
         return;
       }
 
-      const data = JSON.parse(body.toString('utf-8')) as DenyListMap;
-      if (typeof(data) != 'object') {
-        console.log(`ERROR: Invalid format in deny list file at ${this.bucketName}/${this.objectKey}. Expecting a map`);
+      const contents = body.toString('utf-8');
+
+      // an empty string is a valid (empty) deny list
+      if (contents.length === 0) {
         return;
+      }
+
+      const data = JSON.parse(contents) as DenyListMap;
+      if (typeof(data) != 'object') {
+        throw new Error(`Invalid format in deny list file at ${this.bucketName}/${this.objectKey}. Expecting a map`);
       }
 
       this._map = data;
     } catch (e) {
-      throw new Error(`ERROR: Unable to parse deny list file ${this.bucketName}/${this.objectKey}: ${e}`);
+      if (e.code === 'NoSuchKey' || e.code === 'NoSuchBucket') {
+        return;
+      }
+
+      throw new Error(`Unable to parse deny list file ${this.bucketName}/${this.objectKey}: ${e}`);
     }
   }
 
