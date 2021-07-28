@@ -21,6 +21,7 @@ export class TriggerClientTest extends lambda.Function {
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/trigger.client-test.bundle')),
     });
+
     new AfterCreate(this, 'Trigger', {
       handler: this,
       resources: props?.invokeAfter,

@@ -322,6 +322,7 @@ function newLambdaHandler(entrypoint, trigger) {
   ts.line(`code: lambda.Code.fromAsset(path.join(__dirname, '/${basename(outdir)}')),`);
   ts.close('});');
   if (trigger) {
+    ts.line();
     ts.open('new AfterCreate(this, \'Trigger\', {');
     ts.line('handler: this,');
     ts.line('resources: props?.invokeAfter,');
