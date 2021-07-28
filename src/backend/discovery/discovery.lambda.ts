@@ -7,6 +7,7 @@ import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, ScheduledEvent } from 'aws-lambda';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import Nano = require('nano');
+import { DenyListClient } from '../deny-list/client.lambda-shared';
 import * as aws from '../shared/aws.lambda-shared';
 import { ELIGIBLE_LICENSES } from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
@@ -40,6 +41,8 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
   const stagingBucket = requireEnv('BUCKET_NAME');
   const queueUrl = requireEnv('QUEUE_URL');
+
+  const denyList = await DenyListClient.newClient();
 
   const initialMarker = await loadLastTransactionMarker(1_800_000 /* @aws-cdk/cdk initial release was at 1_846_709 */);
 
@@ -93,7 +96,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
           // Obtain the modified package version from the update event, and filter
           // out packages that are not of interest to us (not construct libraries).
-          const versionInfos = getRelevantVersionInfos(batch, metrics);
+          const versionInfos = getRelevantVersionInfos(batch, metrics, denyList);
           console.log(`Identified ${versionInfos.length} relevant package version update(s)`);
           metrics.putMetric(MetricName.RELEVANT_PACKAGE_VERSIONS, versionInfos.length, Unit.Count);
 
@@ -283,10 +286,17 @@ export async function handler(event: ScheduledEvent, context: Context) {
  * and returns those only.
  *
  * @param changes the changes to be processed.
+ * @param metrics the metrics logger to use.
+ * @param denyList deny list client
  *
  * @returns a list of `VersionInfo` objects
  */
-function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLogger): readonly UpdatedVersion[] {
+function getRelevantVersionInfos(
+  changes: readonly Change[],
+  metrics: MetricsLogger,
+  denyList: DenyListClient,
+): readonly UpdatedVersion[] {
+
   const result = new Array<UpdatedVersion>();
 
   for (const change of changes) {
@@ -336,7 +346,16 @@ function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLog
         if (infos == null) {
           // Could be the version in question was un-published.
           console.log(`[${change.seq}] Could not find info for "${change.doc.name}@${version}". Was it un-published?`);
-        } else if (isRelevantPackageVersion(infos)) {
+        } else if (isConstructLibrary(infos)) {
+
+          // skip if this package is denied
+          const denied = denyList.lookup(infos.name, infos.version);
+          if (denied) {
+            console.log(`[${change.seq}] Package denied: ${JSON.stringify(denied)}`);
+            metrics.putMetric(MetricName.DENY_LISTED_COUNT, 1, Unit.Count);
+            continue;
+          }
+
           metrics.putMetric(MetricName.PACKAGE_VERSION_AGE, Date.now() - modified.getTime(), Unit.Milliseconds);
           const isEligible = usesEligibleLicenses(infos);
           metrics.putMetric(MetricName.INELIGIBLE_LICENSE, isEligible ? 0 : 1, Unit.Count);
@@ -354,7 +373,7 @@ function getRelevantVersionInfos(changes: readonly Change[], metrics: MetricsLog
   }
   return result;
 
-  function isRelevantPackageVersion(infos: VersionInfo): boolean {
+  function isConstructLibrary(infos: VersionInfo): boolean {
     if (infos.jsii == null) {
       return false;
     }

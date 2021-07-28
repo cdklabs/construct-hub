@@ -12,8 +12,9 @@ const peerDeps = [
   '@aws-cdk/aws-codeartifact',
   '@aws-cdk/aws-ec2',
   '@aws-cdk/aws-efs',
-  '@aws-cdk/aws-events-targets',
   '@aws-cdk/aws-events',
+  '@aws-cdk/aws-events-targets',
+  '@aws-cdk/assets',
   '@aws-cdk/aws-iam',
   '@aws-cdk/aws-lambda-event-sources',
   '@aws-cdk/aws-lambda',
@@ -137,7 +138,7 @@ const project = new JsiiProject({
 function addDevApp() {
   // add "dev:xxx" tasks for interacting with the dev stack
   const devapp = 'lib/__tests__/devapp';
-  const commands = ['synth', 'diff', 'deploy', 'destroy'];
+  const commands = ['synth', 'diff', 'deploy', 'destroy', 'bootstrap'];
   for (const cmd of commands) {
     project.addTask(`dev:${cmd}`, {
       description: `cdk ${cmd}`,
@@ -169,6 +170,86 @@ function addDevApp() {
   });
 }
 
+/**
+ * Adds `integ:xxx` tasks for integration tests based on all files with the
+ * `.integ.ts` extension, which are used as CDK application entrypoints.
+ *
+ * To run an integration test, just run `yarn integ:xxx` (with your environment
+ * set up to your AWS development account).
+ */
+function discoverIntegrationTests() {
+  const files = glob.sync('**/*.integ.ts', { cwd: project.srcdir });
+  for (const entry of files) {
+    console.log(`integration test: ${entry}`);
+    const name = basename(entry, '.integ.ts');
+
+    const libdir = join(project.libdir, dirname(entry));
+    const srcdir = join(project.srcdir, dirname(entry));
+
+    const deploydir = join(srcdir, `.tmp.${name}.integ.cdkout.deploy`);
+    const actualdir = join(srcdir, `.tmp.${name}.integ.cdkout.actual`);
+    const snapshotdir = join(srcdir, `${name}.integ.cdkout`);
+
+    const app = `"node ${join(libdir, basename(entry, '.ts'))}.js"`;
+
+    const options = [
+      `--app ${app}`,
+      '--no-version-reporting',
+    ].join(' ');
+
+    const deploy = project.addTask(`integ:${name}:deploy`, {
+      description: `deploy integration test ${entry}`,
+    });
+
+    deploy.exec(`rm -fr ${deploydir}`);
+    deploy.exec(`cdk deploy ${options} --require-approval=never -o ${deploydir}`);
+
+    // if deployment was successful, copy the deploy dir to the expected dir
+    deploy.exec(`rm -fr ${snapshotdir}`);
+    deploy.exec(`mv ${deploydir} ${snapshotdir}`);
+
+    const destroy = project.addTask(`integ:${name}:destroy`, {
+      description: `destroy integration test ${entry}`,
+      exec: `cdk destroy --app ${snapshotdir}`,
+    });
+
+    deploy.spawn(destroy);
+
+    const assert = project.addTask(`integ:${name}:assert`, {
+      description: `synthesize integration test ${entry}`,
+    });
+
+    const exclude = ['asset.*', 'cdk.out', 'manifest.json', 'tree.json'];
+
+    assert.exec(`cdk synth ${options} -o ${actualdir} > /dev/null`);
+    assert.exec(`diff -r ${exclude.map(x => `-x ${x}`).join(' ')} ${snapshotdir}/ ${actualdir}/`);
+
+    project.addTask(`integ:${name}:snapshot`, {
+      description: `update snapshot for integration test ${entry}`,
+      exec: `cdk synth ${options} -o ${snapshotdir} > /dev/null`,
+    });
+
+    // synth as part of our tests, which means that if outdir changes, anti-tamper will fail
+    project.testTask.spawn(assert);
+    project.addGitIgnore(`!${snapshotdir}`); // commit outdir to git but not assets
+
+    // do not commit all files we are excluding
+    for (const x of exclude) {
+      project.addGitIgnore(`${snapshotdir}/${x}`);
+      project.addGitIgnore(`${snapshotdir}/**/${x}`); // nested assemblies
+    }
+
+    project.addGitIgnore(deploydir);
+    project.addPackageIgnore(deploydir);
+    project.addGitIgnore(actualdir);
+    project.addPackageIgnore(actualdir);
+
+    // commit the snapshot (but not into the tarball)
+    project.addGitIgnore(`!${snapshotdir}`);
+    project.addPackageIgnore(snapshotdir);
+  }
+}
+
 const bundleTask = project.addTask('bundle', { description: 'Bundle all lambda functions' });
 
 /**
@@ -183,8 +264,10 @@ const bundleTask = project.addTask('bundle', { description: 'Bundle all lambda f
  * @param entrypoint the location of a file in the form `src/.../xxx.lambda.ts`
  * under the source directory with an exported `handler` function. This is the
  * entrypoint of the AWS Lambda function.
+ *
+ * @param trigger trigger this handler during deployment
  */
-function newLambdaHandler(entrypoint) {
+function newLambdaHandler(entrypoint, trigger) {
   project.addDevDeps('pascal-case');
 
   if (!entrypoint.startsWith(project.srcdir)) {
@@ -210,9 +293,20 @@ function newLambdaHandler(entrypoint) {
   ts.line(`// ${FileBase.PROJEN_MARKER}`);
   ts.line('import * as path from \'path\';');
   ts.line('import * as lambda from \'@aws-cdk/aws-lambda\';');
-  ts.line('import { Construct } from \'constructs\';');
+  ts.line('import { Construct } from \'@aws-cdk/core\';');
+  if (trigger) {
+    ts.line('import { AfterCreate } from \'cdk-triggers\';');
+  }
+
   ts.line();
   ts.open(`export interface ${propsName} extends lambda.FunctionOptions {`);
+  if (trigger) {
+    ts.line('/**');
+    ts.line(' * Trigger this handler after these constructs were deployed.');
+    ts.line(' * @default - trigger this handler after all implicit dependencies have been created');
+    ts.line(' */');
+    ts.line('readonly invokeAfter?: Construct[];');
+  }
   ts.close('}');
   ts.line();
   ts.open(`export class ${className} extends lambda.Function {`);
@@ -221,11 +315,19 @@ function newLambdaHandler(entrypoint) {
   //       by not specifying a default value for the `props` argument here.
   ts.open(`constructor(scope: Construct, id: string, props?: ${propsName}) {`);
   ts.open('super(scope, id, {');
+  ts.line(`description: '${entrypoint}',`);
   ts.line('...props,');
   ts.line('runtime: lambda.Runtime.NODEJS_14_X,');
   ts.line('handler: \'index.handler\',');
   ts.line(`code: lambda.Code.fromAsset(path.join(__dirname, '/${basename(outdir)}')),`);
   ts.close('});');
+  if (trigger) {
+    ts.line();
+    ts.open('new AfterCreate(this, \'Trigger\', {');
+    ts.line('handler: this,');
+    ts.line('resources: props?.invokeAfter,');
+    ts.close('});');
+  }
   ts.close('}');
   ts.close('}');
 
@@ -258,7 +360,8 @@ function discoverLambdas() {
   project.eslint.allowDevDeps('src/**/*.lambda-shared.ts');
   project.addDevDeps('glob');
   for (const entry of glob.sync('src/**/*.lambda.ts')) {
-    newLambdaHandler(entry);
+    const trigger = basename(entry).startsWith('trigger.');
+    newLambdaHandler(entry, trigger);
   }
 
   // Add the AWS Lambda type definitions, and ignore that it never resolves
@@ -273,6 +376,7 @@ function discoverLambdas() {
 // and bundle it with this library. this way, we are only taking a
 // dev-dependency on the webapp instead of a normal/bundled dependency.
 project.addDevDeps('construct-hub-webapp');
+project.addDevDeps('cdk-triggers');
 project.compileTask.prependExec('cp -r ./node_modules/construct-hub-webapp/build ./website');
 project.compileTask.prependExec('rm -rf ./website');
 project.npmignore.addPatterns('!/website'); // <-- include in tarball
@@ -280,5 +384,6 @@ project.gitignore.addPatterns('/website'); // <-- don't commit
 
 addDevApp();
 discoverLambdas();
+discoverIntegrationTests();
 
 project.synth();

@@ -12,6 +12,11 @@ export const enum MetricName {
   STAGING_FAILURE_COUNT = 'StagingFailureCount',
   STAGING_TIME = 'StagingTime',
   UNPROCESSABLE_ENTITY = 'UnprocessableEntity',
+
+  /**
+   * Number of package versions that were skipped since they were in the deny list.
+   */
+  DENY_LISTED_COUNT = 'DenyListedCount',
 }
 
 export const enum S3KeyPrefix {

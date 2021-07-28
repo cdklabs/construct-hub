@@ -11,14 +11,7 @@ export interface MonitoringProps {
   /**
    * ARNs of alarm actions to take for various severities.
    */
-  readonly alarmActions: AlarmActions;
-
-  /**
-   * The name of the CloudWatch dashboard for this app.
-   *
-   * Must only contain alphanumerics, dash (-) and underscore (_).
-   */
-  readonly dashboardName: string;
+  readonly alarmActions?: AlarmActions;
 }
 
 /**
@@ -31,7 +24,7 @@ export interface MonitoringProps {
  * and add canaries and alarms as needed.
  */
 export class Monitoring extends Construct {
-  private alarmActions: AlarmActions;
+  private alarmActions?: AlarmActions;
 
   /**
    * Allows adding automatic monitoring to standard resources. Note that
@@ -42,20 +35,17 @@ export class Monitoring extends Construct {
 
   private readonly highSeverityDashboard: cw.Dashboard;
 
-  constructor(scope: Construct, id: string, props: MonitoringProps) {
+  constructor(scope: Construct, id: string, props: MonitoringProps = {}) {
     super(scope, id);
 
     this.alarmActions = props.alarmActions;
 
     this.watchful = new Watchful(this, 'Watchful', {
-      dashboardName: props.dashboardName,
       // alarms that come from watchful are all considered normal severity
-      alarmActionArns: this.alarmActions.normalSeverity ? [this.alarmActions.normalSeverity] : [],
+      alarmActionArns: this.alarmActions?.normalSeverity ? [this.alarmActions.normalSeverity] : [],
     });
 
-    this.highSeverityDashboard = new cw.Dashboard(this, 'Dashboard', {
-      dashboardName: `${props.dashboardName}-high-severity`,
-    });
+    this.highSeverityDashboard = new cw.Dashboard(this, 'HighSeverityDashboard');
   }
 
   /**
@@ -63,9 +53,12 @@ export class Monitoring extends Construct {
    * @param alarm
    */
   public addHighSeverityAlarm(title: string, alarm: cw.Alarm) {
-    alarm.addAlarmAction({
-      bind: () => ({ alarmActionArn: this.alarmActions.highSeverity }),
-    });
+    const highSeverityAction = this.alarmActions?.highSeverity;
+    if (highSeverityAction) {
+      alarm.addAlarmAction({
+        bind: () => ({ alarmActionArn: highSeverityAction }),
+      });
+    }
 
     this.highSeverityDashboard.addWidgets(new cw.AlarmWidget({
       alarm,

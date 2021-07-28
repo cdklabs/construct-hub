@@ -17,7 +17,6 @@ test('minimal', () => {
   // WHEN
   new Monitoring(stack, 'Monitoring', {
     alarmActions: actions,
-    dashboardName: 'construct-hub',
   });
 
   // a dashboard is automatically created
@@ -34,7 +33,6 @@ test('watchful can be used for setting up automatic monitoring', () => {
   });
   const monitoring = new Monitoring(stack, 'Monitoring', {
     alarmActions: actions,
-    dashboardName: 'construct-hub',
   });
 
   // WHEN
@@ -56,7 +54,6 @@ test('high severity alarms trigger the correct action', () => {
   const topic = new sns.Topic(stack, 'Topic');
   const monitoring = new Monitoring(stack, 'Monitoring', {
     alarmActions: actions,
-    dashboardName: 'construct-hub',
   });
   const alarm = topic.metricNumberOfNotificationsFailed().createAlarm(stack, 'Alarm', { threshold: 1, evaluationPeriods: 1 });
 
@@ -82,7 +79,6 @@ test('high severity alarms trigger the correct action', () => {
         ],
       ],
     },
-    DashboardName: 'construct-hub-high-severity',
   });
 });
 
@@ -91,7 +87,6 @@ test('web canaries can ping URLs and raise high severity alarms', () => {
   const stack = new Stack();
   const monitoring = new Monitoring(stack, 'Monitoring', {
     alarmActions: actions,
-    dashboardName: 'construct-hub',
   });
 
   // WHEN

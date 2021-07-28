@@ -8,6 +8,7 @@ import { IQueue } from '@aws-cdk/aws-sqs';
 
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
+import { DenyList } from '../deny-list';
 import { MetricName, METRICS_NAMESPACE, S3KeyPrefix } from './constants.lambda-shared';
 import { Discovery as Handler } from './discovery';
 
@@ -28,6 +29,11 @@ export interface DiscoveryProps {
    * @default RetentionDays.TEN_YEARS
    */
   readonly logRetention?: RetentionDays;
+
+  /**
+   * The deny list construct.
+   */
+  readonly denyList: DenyList;
 }
 
 /**
@@ -70,7 +76,7 @@ export class Discovery extends Construct {
     });
 
     // Note: the handler is designed to stop processing more batches about 2 minutes ahead of the timeout.
-    this.function = new Handler(this, 'Default', {
+    const handler = new Handler(this, 'Default', {
       description: '[ConstructHub/Discovery] Periodically query npm.js index for new construct libraries',
       environment: {
         BUCKET_NAME: this.bucket.bucketName,
@@ -82,8 +88,10 @@ export class Discovery extends Construct {
       tracing: Tracing.ACTIVE,
     });
 
+    this.function = handler;
     this.bucket.grantReadWrite(this.function);
     props.queue.grantSendMessages(this.function);
+    props.denyList.grantRead(handler);
 
     new Rule(this, 'ScheduleRule', {
       schedule: Schedule.rate(this.timeout),
