@@ -96,12 +96,6 @@ Object {
     "CodeArtifactDomainDB0947A4": Anything,
     "CodeArtifactGetEndpoint0223B4AF": Anything,
     "CodeArtifactGetEndpointCustomResourcePolicy9A5E4C87": Anything,
-    "EFSEFSAP9E813513": Anything,
-    "EFSEfsMountTarget1674E914B": Anything,
-    "EFSEfsMountTarget2A889DFBF": Anything,
-    "EFSEfsSecurityGroup56F189CE": Anything,
-    "EFSEfsSecurityGroupfromTestStackTransliteratorSecurityGroupAA48990AALLTRAFFIC8436D055": Anything,
-    "EFSF3301CFD": Anything,
     "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": Object {
       "DependsOn": Array [
         "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
@@ -280,39 +274,9 @@ Object {
               ],
             },
             "HEADER_SPAN": "true",
-            "NPM_CACHE": "/mnt/efs/npm-cache",
             "TARGET_LANGUAGE": "python",
-            "TMPDIR": "/mnt/efs",
           },
         },
-        "FileSystemConfigs": Array [
-          Object {
-            "Arn": Object {
-              "Fn::Join": Array [
-                "",
-                Array [
-                  "arn:",
-                  Object {
-                    "Ref": "AWS::Partition",
-                  },
-                  ":elasticfilesystem:",
-                  Object {
-                    "Ref": "AWS::Region",
-                  },
-                  ":",
-                  Object {
-                    "Ref": "AWS::AccountId",
-                  },
-                  ":access-point/",
-                  Object {
-                    "Ref": "EFSEFSAP9E813513",
-                  },
-                ],
-              ],
-            },
-            "LocalMountPath": "/mnt/efs",
-          },
-        ],
         "Handler": "index.handler",
         "MemorySize": 10240,
         "Role": Object {
@@ -325,24 +289,6 @@ Object {
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "PassThrough",
-        },
-        "VpcConfig": Object {
-          "SecurityGroupIds": Array [
-            Object {
-              "Fn::GetAtt": Array [
-                "TransliteratorSecurityGroup52541706",
-                "GroupId",
-              ],
-            },
-          ],
-          "SubnetIds": Array [
-            Object {
-              "Ref": "VPCPrivateSubnet1Subnet8BCA10E0",
-            },
-            Object {
-              "Ref": "VPCPrivateSubnet2SubnetCFCDAA7A",
-            },
-          ],
         },
       },
       "Type": "AWS::Lambda::Function",
@@ -370,22 +316,6 @@ Object {
       },
       "Type": "Custom::LogRetention",
     },
-    "TransliteratorSecurityGroup52541706": Object {
-      "Properties": Object {
-        "GroupDescription": "Automatic security group for Lambda Function TestStackTransliterator9D9D4864",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "VPCB9E5F0B4",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
     "TransliteratorServiceRoleDE4FF5F3": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
@@ -410,18 +340,6 @@ Object {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
               ],
             ],
           },
@@ -635,29 +553,6 @@ Object {
       },
       "Type": "AWS::IAM::Policy",
     },
-    "VPCB9E5F0B4": Anything,
-    "VPCIGWB7E252D3": Anything,
-    "VPCPrivateSubnet1DefaultRouteAE1D6490": Anything,
-    "VPCPrivateSubnet1RouteTableAssociation347902D1": Anything,
-    "VPCPrivateSubnet1RouteTableBE8A6027": Anything,
-    "VPCPrivateSubnet1Subnet8BCA10E0": Anything,
-    "VPCPrivateSubnet2DefaultRouteF4F5CFD2": Anything,
-    "VPCPrivateSubnet2RouteTable0A19E10E": Anything,
-    "VPCPrivateSubnet2RouteTableAssociation0C73D413": Anything,
-    "VPCPrivateSubnet2SubnetCFCDAA7A": Anything,
-    "VPCPublicSubnet1DefaultRoute91CEF279": Anything,
-    "VPCPublicSubnet1EIP6AD938E8": Anything,
-    "VPCPublicSubnet1NATGatewayE0556630": Anything,
-    "VPCPublicSubnet1RouteTableAssociation0B0896DC": Anything,
-    "VPCPublicSubnet1RouteTableFEE4B781": Anything,
-    "VPCPublicSubnet1SubnetB4246D30": Anything,
-    "VPCPublicSubnet2DefaultRouteB7481BBA": Anything,
-    "VPCPublicSubnet2EIP4947BC00": Anything,
-    "VPCPublicSubnet2NATGateway3C070193": Anything,
-    "VPCPublicSubnet2RouteTable6F1A15F1": Anything,
-    "VPCPublicSubnet2RouteTableAssociation5A808732": Anything,
-    "VPCPublicSubnet2Subnet74179F39": Anything,
-    "VPCVPCGW99B986DC": Anything,
   },
 }
 `;
@@ -668,107 +563,6 @@ Object {
   "Parameters": Anything,
   "Resources": Object {
     "Bucket83908E77": Anything,
-    "EFSEFSAP9E813513": Object {
-      "Properties": Object {
-        "FileSystemId": Object {
-          "Ref": "EFSF3301CFD",
-        },
-        "RootDirectory": Object {},
-      },
-      "Type": "AWS::EFS::AccessPoint",
-    },
-    "EFSEfsMountTarget1674E914B": Object {
-      "Properties": Object {
-        "FileSystemId": Object {
-          "Ref": "EFSF3301CFD",
-        },
-        "SecurityGroups": Array [
-          Object {
-            "Fn::GetAtt": Array [
-              "EFSEfsSecurityGroup56F189CE",
-              "GroupId",
-            ],
-          },
-        ],
-        "SubnetId": Object {
-          "Ref": "VPCIsolatedSubnet1SubnetEBD00FC6",
-        },
-      },
-      "Type": "AWS::EFS::MountTarget",
-    },
-    "EFSEfsMountTarget2A889DFBF": Object {
-      "Properties": Object {
-        "FileSystemId": Object {
-          "Ref": "EFSF3301CFD",
-        },
-        "SecurityGroups": Array [
-          Object {
-            "Fn::GetAtt": Array [
-              "EFSEfsSecurityGroup56F189CE",
-              "GroupId",
-            ],
-          },
-        ],
-        "SubnetId": Object {
-          "Ref": "VPCIsolatedSubnet2Subnet4B1C8CAA",
-        },
-      },
-      "Type": "AWS::EFS::MountTarget",
-    },
-    "EFSEfsSecurityGroup56F189CE": Object {
-      "Properties": Object {
-        "GroupDescription": "TestStack/EFS/EfsSecurityGroup",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "TestStack/EFS",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "VPCB9E5F0B4",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "EFSEfsSecurityGroupfromTestStackTransliteratorSecurityGroupAA48990AALLTRAFFIC8436D055": Object {
-      "Properties": Object {
-        "Description": "from TestStackTransliteratorSecurityGroupAA48990A:ALL TRAFFIC",
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
-            "EFSEfsSecurityGroup56F189CE",
-            "GroupId",
-          ],
-        },
-        "IpProtocol": "-1",
-        "SourceSecurityGroupId": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratorSecurityGroup52541706",
-            "GroupId",
-          ],
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroupIngress",
-    },
-    "EFSF3301CFD": Object {
-      "DeletionPolicy": "Retain",
-      "Properties": Object {
-        "FileSystemTags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "TestStack/EFS",
-          },
-        ],
-      },
-      "Type": "AWS::EFS::FileSystem",
-      "UpdateReplacePolicy": "Retain",
-    },
     "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": Object {
       "DependsOn": Array [
         "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
@@ -950,39 +744,9 @@ Object {
               ],
             },
             "HEADER_SPAN": "true",
-            "NPM_CACHE": "/mnt/efs/npm-cache",
             "TARGET_LANGUAGE": "python",
-            "TMPDIR": "/mnt/efs",
           },
         },
-        "FileSystemConfigs": Array [
-          Object {
-            "Arn": Object {
-              "Fn::Join": Array [
-                "",
-                Array [
-                  "arn:",
-                  Object {
-                    "Ref": "AWS::Partition",
-                  },
-                  ":elasticfilesystem:",
-                  Object {
-                    "Ref": "AWS::Region",
-                  },
-                  ":",
-                  Object {
-                    "Ref": "AWS::AccountId",
-                  },
-                  ":access-point/",
-                  Object {
-                    "Ref": "EFSEFSAP9E813513",
-                  },
-                ],
-              ],
-            },
-            "LocalMountPath": "/mnt/efs",
-          },
-        ],
         "Handler": "index.handler",
         "MemorySize": 10240,
         "Role": Object {
@@ -1278,8 +1042,6 @@ Object {
     "VPCCodeArtifactAPISecurityGroup64F4145F": Anything,
     "VPCCodeArtifactRepoA711606D": Anything,
     "VPCCodeArtifactRepoSecurityGroupADDB69B7": Anything,
-    "VPCEFS6144880F": Anything,
-    "VPCEFSSecurityGroupAFB450D8": Anything,
     "VPCIsolatedSubnet1RouteTableAssociationA2D18F7C": Anything,
     "VPCIsolatedSubnet1RouteTableEB156210": Anything,
     "VPCIsolatedSubnet1SubnetEBD00FC6": Anything,
@@ -1387,12 +1149,6 @@ Object {
     "CodeArtifactDomainDB0947A4": Anything,
     "CodeArtifactGetEndpoint0223B4AF": Anything,
     "CodeArtifactGetEndpointCustomResourcePolicy9A5E4C87": Anything,
-    "EFSEFSAP9E813513": Anything,
-    "EFSEfsMountTarget1674E914B": Anything,
-    "EFSEfsMountTarget2A889DFBF": Anything,
-    "EFSEfsSecurityGroup56F189CE": Anything,
-    "EFSEfsSecurityGroupfromTestStackTransliteratorSecurityGroupAA48990AALLTRAFFIC8436D055": Anything,
-    "EFSF3301CFD": Anything,
     "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": Object {
       "DependsOn": Array [
         "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
@@ -1592,39 +1348,9 @@ Object {
               ],
             },
             "HEADER_SPAN": "true",
-            "NPM_CACHE": "/mnt/efs/npm-cache",
             "TARGET_LANGUAGE": "python",
-            "TMPDIR": "/mnt/efs",
           },
         },
-        "FileSystemConfigs": Array [
-          Object {
-            "Arn": Object {
-              "Fn::Join": Array [
-                "",
-                Array [
-                  "arn:",
-                  Object {
-                    "Ref": "AWS::Partition",
-                  },
-                  ":elasticfilesystem:",
-                  Object {
-                    "Ref": "AWS::Region",
-                  },
-                  ":",
-                  Object {
-                    "Ref": "AWS::AccountId",
-                  },
-                  ":access-point/",
-                  Object {
-                    "Ref": "EFSEFSAP9E813513",
-                  },
-                ],
-              ],
-            },
-            "LocalMountPath": "/mnt/efs",
-          },
-        ],
         "Handler": "index.handler",
         "MemorySize": 10240,
         "Role": Object {
@@ -1952,8 +1678,6 @@ Object {
     "VPCCodeArtifactAPISecurityGroup64F4145F": Anything,
     "VPCCodeArtifactRepoA711606D": Anything,
     "VPCCodeArtifactRepoSecurityGroupADDB69B7": Anything,
-    "VPCEFS6144880F": Anything,
-    "VPCEFSSecurityGroupAFB450D8": Anything,
     "VPCIsolatedSubnet1RouteTableAssociationA2D18F7C": Anything,
     "VPCIsolatedSubnet1RouteTableEB156210": Anything,
     "VPCIsolatedSubnet1SubnetEBD00FC6": Anything,
@@ -1971,12 +1695,6 @@ Object {
   "Parameters": Anything,
   "Resources": Object {
     "Bucket83908E77": Anything,
-    "EFSEFSAP9E813513": Anything,
-    "EFSEfsMountTarget1674E914B": Anything,
-    "EFSEfsMountTarget2A889DFBF": Anything,
-    "EFSEfsSecurityGroup56F189CE": Anything,
-    "EFSEfsSecurityGroupfromTestStackTransliteratorSecurityGroupAA48990AALLTRAFFIC8436D055": Anything,
-    "EFSF3301CFD": Anything,
     "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": Object {
       "DependsOn": Array [
         "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
@@ -2137,39 +1855,9 @@ Object {
         "Environment": Object {
           "Variables": Object {
             "HEADER_SPAN": "true",
-            "NPM_CACHE": "/mnt/efs/npm-cache",
             "TARGET_LANGUAGE": "python",
-            "TMPDIR": "/mnt/efs",
           },
         },
-        "FileSystemConfigs": Array [
-          Object {
-            "Arn": Object {
-              "Fn::Join": Array [
-                "",
-                Array [
-                  "arn:",
-                  Object {
-                    "Ref": "AWS::Partition",
-                  },
-                  ":elasticfilesystem:",
-                  Object {
-                    "Ref": "AWS::Region",
-                  },
-                  ":",
-                  Object {
-                    "Ref": "AWS::AccountId",
-                  },
-                  ":access-point/",
-                  Object {
-                    "Ref": "EFSEFSAP9E813513",
-                  },
-                ],
-              ],
-            },
-            "LocalMountPath": "/mnt/efs",
-          },
-        ],
         "Handler": "index.handler",
         "MemorySize": 10240,
         "Role": Object {
@@ -2182,24 +1870,6 @@ Object {
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "PassThrough",
-        },
-        "VpcConfig": Object {
-          "SecurityGroupIds": Array [
-            Object {
-              "Fn::GetAtt": Array [
-                "TransliteratorSecurityGroup52541706",
-                "GroupId",
-              ],
-            },
-          ],
-          "SubnetIds": Array [
-            Object {
-              "Ref": "VPCPrivateSubnet1Subnet8BCA10E0",
-            },
-            Object {
-              "Ref": "VPCPrivateSubnet2SubnetCFCDAA7A",
-            },
-          ],
         },
       },
       "Type": "AWS::Lambda::Function",
@@ -2227,22 +1897,6 @@ Object {
       },
       "Type": "Custom::LogRetention",
     },
-    "TransliteratorSecurityGroup52541706": Object {
-      "Properties": Object {
-        "GroupDescription": "Automatic security group for Lambda Function TestStackTransliterator9D9D4864",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "VPCB9E5F0B4",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
     "TransliteratorServiceRoleDE4FF5F3": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
@@ -2267,18 +1921,6 @@ Object {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
               ],
             ],
           },
@@ -2460,29 +2102,6 @@ Object {
       },
       "Type": "AWS::IAM::Policy",
     },
-    "VPCB9E5F0B4": Anything,
-    "VPCIGWB7E252D3": Anything,
-    "VPCPrivateSubnet1DefaultRouteAE1D6490": Anything,
-    "VPCPrivateSubnet1RouteTableAssociation347902D1": Anything,
-    "VPCPrivateSubnet1RouteTableBE8A6027": Anything,
-    "VPCPrivateSubnet1Subnet8BCA10E0": Anything,
-    "VPCPrivateSubnet2DefaultRouteF4F5CFD2": Anything,
-    "VPCPrivateSubnet2RouteTable0A19E10E": Anything,
-    "VPCPrivateSubnet2RouteTableAssociation0C73D413": Anything,
-    "VPCPrivateSubnet2SubnetCFCDAA7A": Anything,
-    "VPCPublicSubnet1DefaultRoute91CEF279": Anything,
-    "VPCPublicSubnet1EIP6AD938E8": Anything,
-    "VPCPublicSubnet1NATGatewayE0556630": Anything,
-    "VPCPublicSubnet1RouteTableAssociation0B0896DC": Anything,
-    "VPCPublicSubnet1RouteTableFEE4B781": Anything,
-    "VPCPublicSubnet1SubnetB4246D30": Anything,
-    "VPCPublicSubnet2DefaultRouteB7481BBA": Anything,
-    "VPCPublicSubnet2EIP4947BC00": Anything,
-    "VPCPublicSubnet2NATGateway3C070193": Anything,
-    "VPCPublicSubnet2RouteTable6F1A15F1": Anything,
-    "VPCPublicSubnet2RouteTableAssociation5A808732": Anything,
-    "VPCPublicSubnet2Subnet74179F39": Anything,
-    "VPCVPCGW99B986DC": Anything,
   },
 }
 `;

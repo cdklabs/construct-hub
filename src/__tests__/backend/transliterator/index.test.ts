@@ -1,6 +1,5 @@
 import '@aws-cdk/assert/jest';
 import { GatewayVpcEndpointAwsService, InterfaceVpcEndpointAwsService, SubnetType, Vpc } from '@aws-cdk/aws-ec2';
-import { FileSystem } from '@aws-cdk/aws-efs';
 import { Bucket } from '@aws-cdk/aws-s3';
 import { App, CfnResource, Construct, Fn, IConstruct, Stack } from '@aws-cdk/core';
 import { DocumentationLanguage } from '../../../backend/shared/language';
@@ -16,24 +15,19 @@ test('basic use', () => {
   const monitoring = new Monitoring(stack, 'Monitoring', {
     alarmActions: { highSeverity: 'high-sev', normalSeverity: 'normal-sev' },
   });
-  const vpc = new Vpc(stack, 'VPC');
-  const efsFileSystem = new FileSystem(stack, 'EFS', { vpc });
-  const efsAccessPoint = efsFileSystem.addAccessPoint('EFS-AP');
 
   // WHEN
   new Transliterator(stack, 'Transliterator', {
     bucket,
-    efsAccessPoint: efsAccessPoint,
     language: DocumentationLanguage.PYTHON,
     monitoring,
-    vpc,
   });
 
   // THEN
   expect(app.synth().getStackByName(stack.stackName).template).toMatchSnapshot({
     Outputs: expect.anything(),
     Parameters: expect.anything(),
-    Resources: ignoreResources(stack, bucket, monitoring, vpc, efsFileSystem, efsAccessPoint),
+    Resources: ignoreResources(stack, bucket, monitoring),
   });
 });
 
@@ -45,19 +39,14 @@ test('CodeArtifact repository', () => {
   const monitoring = new Monitoring(stack, 'Monitoring', {
     alarmActions: { highSeverity: 'high-sev', normalSeverity: 'normal-sev' },
   });
-  const vpc = new Vpc(stack, 'VPC');
-  const efsFileSystem = new FileSystem(stack, 'EFS', { vpc });
-  const efsAccessPoint = efsFileSystem.addAccessPoint('EFS-AP');
   const codeArtifact = new Repository(stack, 'CodeArtifact');
 
   // WHEN
   new Transliterator(stack, 'Transliterator', {
     bucket,
     codeArtifact,
-    efsAccessPoint,
     language: DocumentationLanguage.PYTHON,
     monitoring,
-    vpc,
   });
 
   // THEN
@@ -73,7 +62,7 @@ test('CodeArtifact repository', () => {
   expect(app.synth().getStackByName(stack.stackName).template).toMatchSnapshot({
     Outputs: expect.anything(),
     Parameters: expect.anything(),
-    Resources: ignoreResources(stack, bucket, monitoring, codeArtifact, vpc, efsFileSystem, efsAccessPoint),
+    Resources: ignoreResources(stack, bucket, monitoring, codeArtifact),
   });
 });
 
@@ -86,16 +75,11 @@ test('VPC Endpoints', () => {
     alarmActions: { highSeverity: 'high-sev', normalSeverity: 'normal-sev' },
   });
   const vpc = new Vpc(stack, 'VPC', { subnetConfiguration: [{ name: 'Isolated', subnetType: SubnetType.ISOLATED }] });
-  const efsAccessPoint = new FileSystem(stack, 'EFS', { vpc, vpcSubnets: { subnetType: SubnetType.ISOLATED } })
-    .addAccessPoint('EFS-AP');
   const codeArtifactApi = vpc.addInterfaceEndpoint('CodeArtifact.API', {
     service: new InterfaceVpcEndpointAwsService('codeartifact.api'),
   });
   const codeArtifact = vpc.addInterfaceEndpoint('CodeArtifact.Repo', {
     service: new InterfaceVpcEndpointAwsService('codeartifact.repositories'),
-  });
-  const elasticFileSystem = vpc.addInterfaceEndpoint('EFS', {
-    service: InterfaceVpcEndpointAwsService.ELASTIC_FILESYSTEM,
   });
   const s3 = vpc.addGatewayEndpoint('S3', {
     service: GatewayVpcEndpointAwsService.S3,
@@ -104,11 +88,10 @@ test('VPC Endpoints', () => {
   // WHEN
   new Transliterator(stack, 'Transliterator', {
     bucket,
-    efsAccessPoint: efsAccessPoint,
     language: DocumentationLanguage.PYTHON,
     monitoring,
     vpc,
-    vpcEndpoints: { codeArtifactApi, codeArtifact, elasticFileSystem, s3 },
+    vpcEndpoints: { codeArtifactApi, codeArtifact, s3 },
     vpcSubnets: { subnetType: SubnetType.ISOLATED },
   });
 
@@ -137,16 +120,11 @@ test('VPC Endpoints and CodeArtifact repository', () => {
     alarmActions: { highSeverity: 'high-sev', normalSeverity: 'normal-sev' },
   });
   const vpc = new Vpc(stack, 'VPC', { subnetConfiguration: [{ name: 'Isolated', subnetType: SubnetType.ISOLATED }] });
-  const efsFileSystem = new FileSystem(stack, 'EFS', { vpc, vpcSubnets: { subnetType: SubnetType.ISOLATED } });
-  const efsAccessPoint = efsFileSystem.addAccessPoint('EFS-AP');
   const codeArtifactApi = vpc.addInterfaceEndpoint('CodeArtifact.API', {
     service: new InterfaceVpcEndpointAwsService('codeartifact.api'),
   });
   const codeArtifact = vpc.addInterfaceEndpoint('CodeArtifact.Repo', {
     service: new InterfaceVpcEndpointAwsService('codeartifact.repositories'),
-  });
-  const elasticFileSystem = vpc.addInterfaceEndpoint('EFS', {
-    service: InterfaceVpcEndpointAwsService.ELASTIC_FILESYSTEM,
   });
   const s3 = vpc.addGatewayEndpoint('S3', {
     service: GatewayVpcEndpointAwsService.S3,
@@ -156,11 +134,10 @@ test('VPC Endpoints and CodeArtifact repository', () => {
   new Transliterator(stack, 'Transliterator', {
     bucket,
     codeArtifact: repository,
-    efsAccessPoint,
     language: DocumentationLanguage.PYTHON,
     monitoring,
     vpc,
-    vpcEndpoints: { codeArtifactApi, codeArtifact, elasticFileSystem, s3 },
+    vpcEndpoints: { codeArtifactApi, codeArtifact, s3 },
     vpcSubnets: { subnetType: SubnetType.ISOLATED },
   });
 
@@ -178,7 +155,7 @@ test('VPC Endpoints and CodeArtifact repository', () => {
   expect(app.synth().getStackByName(stack.stackName).template).toMatchSnapshot({
     Outputs: expect.anything(),
     Parameters: expect.anything(),
-    Resources: ignoreResources(stack, bucket, repository, monitoring, vpc, efsFileSystem, efsAccessPoint),
+    Resources: ignoreResources(stack, bucket, repository, monitoring, vpc),
   });
 });
 
