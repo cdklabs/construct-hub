@@ -11,7 +11,6 @@ const peerDeps = [
   '@aws-cdk/aws-cloudwatch',
   '@aws-cdk/aws-codeartifact',
   '@aws-cdk/aws-ec2',
-  '@aws-cdk/aws-efs',
   '@aws-cdk/aws-events',
   '@aws-cdk/aws-events-targets',
   '@aws-cdk/assets',
