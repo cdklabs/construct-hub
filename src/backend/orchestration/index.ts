@@ -1,26 +1,20 @@
 import { ComparisonOperator, MathExpression } from '@aws-cdk/aws-cloudwatch';
-import { Port } from '@aws-cdk/aws-ec2';
-import { FileSystem, IAccessPoint, LifecyclePolicy, PerformanceMode, ThroughputMode } from '@aws-cdk/aws-efs';
-import { Rule, Schedule } from '@aws-cdk/aws-events';
-import { LambdaFunction } from '@aws-cdk/aws-events-targets';
-import { Effect, PolicyStatement } from '@aws-cdk/aws-iam';
-import { CfnFunction, IFunction, Tracing } from '@aws-cdk/aws-lambda';
+import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Choice, Condition, IStateMachine, JsonPath, Parallel, Pass, StateMachine, StateMachineType, Succeed, TaskInput } from '@aws-cdk/aws-stepfunctions';
 import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
-import { Construct, Duration, RemovalPolicy } from '@aws-cdk/core';
+import { Construct, Duration } from '@aws-cdk/core';
 import { sqsQueueUrl, stateMachineUrl } from '../../deep-link';
 import { CatalogBuilder } from '../catalog-builder';
 import { DenyList } from '../deny-list';
 import { DocumentationLanguage } from '../shared/language';
 import { Transliterator, TransliteratorProps } from '../transliterator';
-import { CleanUpEfs } from './clean-up-efs';
 import { RedriveStateMachine } from './redrive-state-machine';
 import { ReprocessAll } from './reprocess-all';
 
 const SUPPORTED_LANGUAGES = [DocumentationLanguage.PYTHON, DocumentationLanguage.TYPESCRIPT];
 
-export interface OrchestrationProps extends Omit<TransliteratorProps, 'efsAccessPoint' | 'language'>{
+export interface OrchestrationProps extends Omit<TransliteratorProps, 'language'>{
   /**
    * The deny list.
    */
@@ -109,10 +103,14 @@ export class Orchestration extends Construct {
     })
       // This has a concurrency of 1, so we want to aggressively retry being throttled here.
       .addRetry({ errors: ['Lambda.TooManyRequestsException'], interval: Duration.seconds(30), maxAttempts: 5 })
-      .addCatch(new Pass(this, 'Failed to add to catalog.json', {
+      .addCatch(new Pass(this, 'Add to catalog.json failure', {
         parameters: { 'error.$': 'States.StringToJson($.Cause)' },
         resultPath: '$.error',
-      }).next(sendToDeadLetterQueue));
+      }).next(sendToDeadLetterQueue), { errors: ['States.TaskFailed'] })
+      .addCatch(new Pass(this, 'Add to catalog.json fault', {
+        parameters: { 'error.$': '$.Cause' },
+        resultPath: '$.error',
+      }).next(sendToDeadLetterQueue), { errors: ['States.ALL'] });
 
     const docGenResultsKey = 'DocGen';
     const sendToDlqIfNeeded = new Choice(this, 'Any Failure?')
@@ -123,8 +121,6 @@ export class Orchestration extends Construct {
         sendToDeadLetterQueue,
       )
       .otherwise(new Succeed(this, 'Success'));
-
-    const efsAccessPoint = this.newEfsAccessPoint(props);
 
     const definition = new Pass(this, 'Track Execution Infos', {
       inputPath: '$$.Execution',
@@ -139,7 +135,7 @@ export class Orchestration extends Construct {
       new Parallel(this, 'DocGen', { resultPath: `$.${docGenResultsKey}` })
         .branch(...SUPPORTED_LANGUAGES.map((language) =>
           new tasks.LambdaInvoke(this, `Generate ${language} docs`, {
-            lambdaFunction: new Transliterator(this, `DocGen-${language}`, { ...props, efsAccessPoint, language }).function,
+            lambdaFunction: new Transliterator(this, `DocGen-${language}`, { ...props, language }).function,
             outputPath: '$.result',
             resultSelector: {
               result: {
@@ -149,12 +145,11 @@ export class Orchestration extends Construct {
             },
           }).addRetry({ errors: ['Lambda.TooManyRequestsException'], interval: Duration.seconds(30), maxAttempts: 5 })
             .addCatch(
-              new Pass(this, `Failed ${language}`, {
-                parameters: {
-                  'error.$': 'States.StringToJson($.Cause)',
-                  language,
-                },
-              }),
+              new Pass(this, `Generate ${language} docs failure`, { parameters: { 'error.$': 'States.StringToJson($.Cause)', language } }),
+            )
+            .addCatch(
+              new Pass(this, `Generate ${language} docs fault`, { parameters: { 'error.$': '$.Cause', language } }),
+              { errors: ['States.ALL'] },
             ),
         ))
         .next(new Choice(this, 'Any Success?')
@@ -170,12 +165,14 @@ export class Orchestration extends Construct {
     this.stateMachine = new StateMachine(this, 'Resource', {
       definition,
       stateMachineType: StateMachineType.STANDARD,
-      timeout: Duration.hours(1),
+      timeout: Duration.days(1), // Ample time for retries, etc...
       tracingEnabled: true,
     });
 
-    // Ensure the State Machine does not get to run before the VPC can be used.
-    this.stateMachine.node.addDependency(props.vpc.internetConnectivityEstablished);
+    if (props.vpc) {
+      // Ensure the State Machine does not get to run before the VPC can be used.
+      this.stateMachine.node.addDependency(props.vpc.internetConnectivityEstablished);
+    }
 
     props.monitoring.addHighSeverityAlarm(
       'Backend Orchestration Failed',
@@ -222,67 +219,5 @@ export class Orchestration extends Construct {
     });
     props.bucket.grantRead(this.reprocessAllFunction);
     this.stateMachine.grantStartExecution(this.reprocessAllFunction);
-  }
-
-  private newEfsAccessPoint(props: OrchestrationProps): IAccessPoint {
-    const fs = new FileSystem(this, 'FileSystem', {
-      encrypted: true,
-      lifecyclePolicy: LifecyclePolicy.AFTER_7_DAYS,
-      performanceMode: PerformanceMode.GENERAL_PURPOSE,
-      removalPolicy: RemovalPolicy.DESTROY, // The data is 100% transient
-      throughputMode: ThroughputMode.BURSTING,
-      vpc: props.vpc,
-      vpcSubnets: props.vpcSubnets,
-    });
-    const efsAccessPoint = fs.addAccessPoint('AccessPoint', {
-      createAcl: {
-        ownerGid: '1000',
-        ownerUid: '1000',
-        permissions: '0777',
-      },
-      path: '/lambda-shared',
-      posixUser: {
-        uid: '1000',
-        gid: '1000',
-      },
-    });
-    efsAccessPoint.node.addDependency(fs.mountTargetsAvailable);
-
-    const efsMountPath = '/mnt/efs';
-    const cleanUp = new CleanUpEfs(this, 'EFSCleanUp', {
-      description: '[ConstructHub/CleanUpEFS] Cleans up leftover files from an EFS file system',
-      environment: {
-        EFS_MOUNT_PATH: efsMountPath,
-        IGNORE_DIRS: `${efsMountPath}${Transliterator.SHARED_NPM_CACHE_PATH}`,
-      },
-      memorySize: 1_024,
-      timeout: Duration.minutes(15),
-      vpc: props.vpc,
-      vpcSubnets: props.vpcSubnets,
-    });
-    // TODO: The @aws-cdk/aws-lambda library does not support EFS mounts yet T_T
-    (cleanUp.node.defaultChild! as CfnFunction).addPropertyOverride('FileSystemConfigs', [{
-      Arn: efsAccessPoint.accessPointArn,
-      LocalMountPath: efsMountPath,
-    }]);
-    fs.connections.allowFrom(cleanUp, Port.allTraffic());
-
-    const rule = new Rule(this, 'CleanUpEFSTrigger', { description: `Runs ${cleanUp.functionName} every hour`, schedule: Schedule.rate(Duration.hours(1)) });
-    rule.addTarget(new LambdaFunction(cleanUp));
-
-    if (props.vpcEndpoints) {
-      props.vpcEndpoints.elasticFileSystem.addToPolicy(new PolicyStatement({
-        effect: Effect.ALLOW,
-        actions: ['elasticfilesystem:ClientMount', 'elasticfilesystem:ClientWrite'],
-        conditions: {
-          Bool: { 'aws:SecureTransport': 'true' },
-          ArnEquals: { 'elasticfilesystem:AccessPointArn': efsAccessPoint.accessPointArn },
-        },
-        principals: [cleanUp.grantPrincipal],
-        resources: [fs.fileSystemArn],
-      }));
-    }
-
-    return efsAccessPoint;
   }
 }

@@ -866,142 +866,6 @@ Resources:
         - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
         - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
       VpcEndpointType: Interface
-  ConstructHubLambdaVPCEFSSecurityGroupF8F622CB:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: dev/ConstructHub/Lambda-VPC/EFS/SecurityGroup
-      SecurityGroupEgress:
-        - CidrIp: 0.0.0.0/0
-          Description: Allow all outbound traffic by default
-          IpProtocol: "-1"
-      SecurityGroupIngress:
-        - CidrIp:
-            Fn::GetAtt:
-              - ConstructHubLambdaVPCE85ABF51
-              - CidrBlock
-          Description:
-            Fn::Join:
-              - ""
-              - - "from "
-                - Fn::GetAtt:
-                    - ConstructHubLambdaVPCE85ABF51
-                    - CidrBlock
-                - :443
-          FromPort: 443
-          IpProtocol: tcp
-          ToPort: 443
-      Tags:
-        - Key: Name
-          Value: dev/ConstructHub/Lambda-VPC
-      VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
-  ConstructHubLambdaVPCEFSD3E408F7:
-    Type: AWS::EC2::VPCEndpoint
-    Properties:
-      ServiceName:
-        Fn::Join:
-          - ""
-          - - com.amazonaws.
-            - Ref: AWS::Region
-            - .elasticfilesystem
-      VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
-      PolicyDocument:
-        Statement:
-          - Action:
-              - elasticfilesystem:ClientMount
-              - elasticfilesystem:ClientWrite
-            Condition:
-              Bool:
-                aws:SecureTransport: "true"
-              ArnEquals:
-                elasticfilesystem:AccessPointArn:
-                  Fn::Join:
-                    - ""
-                    - - "arn:"
-                      - Ref: AWS::Partition
-                      - ":elasticfilesystem:"
-                      - Ref: AWS::Region
-                      - ":"
-                      - Ref: AWS::AccountId
-                      - :access-point/
-                      - Ref: ConstructHubOrchestrationFileSystemAccessPoint77C6EF7B
-            Effect: Allow
-            Principal:
-              AWS:
-                Fn::GetAtt:
-                  - ConstructHubOrchestrationEFSCleanUpServiceRole56AA94B9
-                  - Arn
-            Resource:
-              Fn::GetAtt:
-                - ConstructHubOrchestrationFileSystemADB533E6
-                - Arn
-          - Action:
-              - elasticfilesystem:ClientMount
-              - elasticfilesystem:ClientWrite
-            Condition:
-              Bool:
-                aws:SecureTransport: "true"
-              ArnEquals:
-                elasticfilesystem:AccessPointArn:
-                  Fn::Join:
-                    - ""
-                    - - "arn:"
-                      - Ref: AWS::Partition
-                      - ":elasticfilesystem:"
-                      - Ref: AWS::Region
-                      - ":"
-                      - Ref: AWS::AccountId
-                      - :access-point/
-                      - Ref: ConstructHubOrchestrationFileSystemAccessPoint77C6EF7B
-            Effect: Allow
-            Principal:
-              AWS:
-                Fn::GetAtt:
-                  - ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2
-                  - Arn
-            Resource:
-              Fn::GetAtt:
-                - ConstructHubOrchestrationFileSystemADB533E6
-                - Arn
-          - Action:
-              - elasticfilesystem:ClientMount
-              - elasticfilesystem:ClientWrite
-            Condition:
-              Bool:
-                aws:SecureTransport: "true"
-              ArnEquals:
-                elasticfilesystem:AccessPointArn:
-                  Fn::Join:
-                    - ""
-                    - - "arn:"
-                      - Ref: AWS::Partition
-                      - ":elasticfilesystem:"
-                      - Ref: AWS::Region
-                      - ":"
-                      - Ref: AWS::AccountId
-                      - :access-point/
-                      - Ref: ConstructHubOrchestrationFileSystemAccessPoint77C6EF7B
-            Effect: Allow
-            Principal:
-              AWS:
-                Fn::GetAtt:
-                  - ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19
-                  - Arn
-            Resource:
-              Fn::GetAtt:
-                - ConstructHubOrchestrationFileSystemADB533E6
-                - Arn
-        Version: 2012-10-17
-      PrivateDnsEnabled: true
-      SecurityGroupIds:
-        - Fn::GetAtt:
-            - ConstructHubLambdaVPCEFSSecurityGroupF8F622CB
-            - GroupId
-      SubnetIds:
-        - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
-        - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
-      VpcEndpointType: Interface
   ConstructHubLambdaVPCS3E3D830AE:
     Type: AWS::EC2::VPCEndpoint
     Properties:
@@ -1741,233 +1605,6 @@ Resources:
           - - /aws/lambda/
             - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
       RetentionInDays: 3653
-  ConstructHubOrchestrationFileSystemADB533E6:
-    Type: AWS::EFS::FileSystem
-    Properties:
-      Encrypted: true
-      FileSystemTags:
-        - Key: Name
-          Value: dev/ConstructHub/Orchestration/FileSystem
-      LifecyclePolicies:
-        - TransitionToIA: AFTER_7_DAYS
-      PerformanceMode: generalPurpose
-      ThroughputMode: bursting
-    UpdateReplacePolicy: Delete
-    DeletionPolicy: Delete
-  ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: dev/ConstructHub/Orchestration/FileSystem/EfsSecurityGroup
-      SecurityGroupEgress:
-        - CidrIp: 0.0.0.0/0
-          Description: Allow all outbound traffic by default
-          IpProtocol: "-1"
-      Tags:
-        - Key: Name
-          Value: dev/ConstructHub/Orchestration/FileSystem
-      VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
-  ConstructHubOrchestrationFileSystemEfsSecurityGroupfromdevConstructHubOrchestrationEFSCleanUpSecurityGroup4C1E01CFALLTRAFFIC5D0E438C:
-    Type: AWS::EC2::SecurityGroupIngress
-    Properties:
-      IpProtocol: "-1"
-      Description: from
-        devConstructHubOrchestrationEFSCleanUpSecurityGroup4C1E01CF:ALL TRAFFIC
-      GroupId:
-        Fn::GetAtt:
-          - ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A
-          - GroupId
-      SourceSecurityGroupId:
-        Fn::GetAtt:
-          - ConstructHubOrchestrationEFSCleanUpSecurityGroup61914A8D
-          - GroupId
-  ConstructHubOrchestrationFileSystemEfsSecurityGroupfromdevConstructHubOrchestrationDocGenpythonSecurityGroup46671D7AALLTRAFFIC376DFF6C:
-    Type: AWS::EC2::SecurityGroupIngress
-    Properties:
-      IpProtocol: "-1"
-      Description: from
-        devConstructHubOrchestrationDocGenpythonSecurityGroup46671D7A:ALL
-        TRAFFIC
-      GroupId:
-        Fn::GetAtt:
-          - ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A
-          - GroupId
-      SourceSecurityGroupId:
-        Fn::GetAtt:
-          - ConstructHubOrchestrationDocGenpythonSecurityGroup5820AD9B
-          - GroupId
-  ConstructHubOrchestrationFileSystemEfsSecurityGroupfromdevConstructHubOrchestrationDocGentypescriptSecurityGroup89E62213ALLTRAFFIC14BF9029:
-    Type: AWS::EC2::SecurityGroupIngress
-    Properties:
-      IpProtocol: "-1"
-      Description: from
-        devConstructHubOrchestrationDocGentypescriptSecurityGroup89E62213:ALL
-        TRAFFIC
-      GroupId:
-        Fn::GetAtt:
-          - ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A
-          - GroupId
-      SourceSecurityGroupId:
-        Fn::GetAtt:
-          - ConstructHubOrchestrationDocGentypescriptSecurityGroupDD0CDD88
-          - GroupId
-  ConstructHubOrchestrationFileSystemEfsMountTarget149FD6F15:
-    Type: AWS::EFS::MountTarget
-    Properties:
-      FileSystemId:
-        Ref: ConstructHubOrchestrationFileSystemADB533E6
-      SecurityGroups:
-        - Fn::GetAtt:
-            - ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A
-            - GroupId
-      SubnetId:
-        Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
-  ConstructHubOrchestrationFileSystemEfsMountTarget23DA818AD:
-    Type: AWS::EFS::MountTarget
-    Properties:
-      FileSystemId:
-        Ref: ConstructHubOrchestrationFileSystemADB533E6
-      SecurityGroups:
-        - Fn::GetAtt:
-            - ConstructHubOrchestrationFileSystemEfsSecurityGroupBB6DCF1A
-            - GroupId
-      SubnetId:
-        Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
-  ConstructHubOrchestrationFileSystemAccessPoint77C6EF7B:
-    Type: AWS::EFS::AccessPoint
-    Properties:
-      FileSystemId:
-        Ref: ConstructHubOrchestrationFileSystemADB533E6
-      PosixUser:
-        Gid: "1000"
-        Uid: "1000"
-      RootDirectory:
-        CreationInfo:
-          OwnerGid: "1000"
-          OwnerUid: "1000"
-          Permissions: "0777"
-        Path: /lambda-shared
-    DependsOn:
-      - ConstructHubOrchestrationFileSystemEfsMountTarget149FD6F15
-      - ConstructHubOrchestrationFileSystemEfsMountTarget23DA818AD
-  ConstructHubOrchestrationEFSCleanUpServiceRole56AA94B9:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Action: sts:AssumeRole
-            Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-        Version: 2012-10-17
-      ManagedPolicyArns:
-        - Fn::Join:
-            - ""
-            - - "arn:"
-              - Ref: AWS::Partition
-              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-        - Fn::Join:
-            - ""
-            - - "arn:"
-              - Ref: AWS::Partition
-              - :iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
-  ConstructHubOrchestrationEFSCleanUpSecurityGroup61914A8D:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Automatic security group for Lambda Function
-        devConstructHubOrchestrationEFSCleanUp6438B7A9
-      SecurityGroupEgress:
-        - CidrIp: 0.0.0.0/0
-          Description: Allow all outbound traffic by default
-          IpProtocol: "-1"
-      VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
-  ConstructHubOrchestrationEFSCleanUpAEF55F55:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket:
-          Ref: AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98S3BucketF611EFC9
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98S3VersionKey9E90DFEA
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98S3VersionKey9E90DFEA
-      Role:
-        Fn::GetAtt:
-          - ConstructHubOrchestrationEFSCleanUpServiceRole56AA94B9
-          - Arn
-      Description: "[ConstructHub/CleanUpEFS] Cleans up leftover files from an EFS
-        file system"
-      Environment:
-        Variables:
-          EFS_MOUNT_PATH: /mnt/efs
-          IGNORE_DIRS: /mnt/efs/npm-cache
-      FileSystemConfigs:
-        - Arn:
-            Fn::Join:
-              - ""
-              - - "arn:"
-                - Ref: AWS::Partition
-                - ":elasticfilesystem:"
-                - Ref: AWS::Region
-                - ":"
-                - Ref: AWS::AccountId
-                - :access-point/
-                - Ref: ConstructHubOrchestrationFileSystemAccessPoint77C6EF7B
-          LocalMountPath: /mnt/efs
-      Handler: index.handler
-      MemorySize: 1024
-      Runtime: nodejs14.x
-      Timeout: 900
-      VpcConfig:
-        SecurityGroupIds:
-          - Fn::GetAtt:
-              - ConstructHubOrchestrationEFSCleanUpSecurityGroup61914A8D
-              - GroupId
-        SubnetIds:
-          - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
-          - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
-    DependsOn:
-      - ConstructHubOrchestrationEFSCleanUpServiceRole56AA94B9
-  ConstructHubOrchestrationCleanUpEFSTrigger7CBD4AE3:
-    Type: AWS::Events::Rule
-    Properties:
-      Description:
-        Fn::Join:
-          - ""
-          - - "Runs "
-            - Ref: ConstructHubOrchestrationEFSCleanUpAEF55F55
-            - " every hour"
-      ScheduleExpression: rate(1 hour)
-      State: ENABLED
-      Targets:
-        - Arn:
-            Fn::GetAtt:
-              - ConstructHubOrchestrationEFSCleanUpAEF55F55
-              - Arn
-          Id: Target0
-  ConstructHubOrchestrationCleanUpEFSTriggerAllowEventRuledevConstructHubOrchestrationEFSCleanUp6438B7A9380E8E7C:
-    Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      FunctionName:
-        Fn::GetAtt:
-          - ConstructHubOrchestrationEFSCleanUpAEF55F55
-          - Arn
-      Principal: events.amazonaws.com
-      SourceArn:
-        Fn::GetAtt:
-          - ConstructHubOrchestrationCleanUpEFSTrigger7CBD4AE3
-          - Arn
   ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2:
     Type: AWS::IAM::Role
     Properties:
@@ -2157,19 +1794,6 @@ Resources:
             Fn::GetAtt:
               - ConstructHubCodeArtifactGetEndpoint9A458FEF
               - repositoryEndpoint
-      FileSystemConfigs:
-        - Arn:
-            Fn::Join:
-              - ""
-              - - "arn:"
-                - Ref: AWS::Partition
-                - ":elasticfilesystem:"
-                - Ref: AWS::Region
-                - ":"
-                - Ref: AWS::AccountId
-                - :access-point/
-                - Ref: ConstructHubOrchestrationFileSystemAccessPoint77C6EF7B
-          LocalMountPath: /mnt/efs
       Handler: index.handler
       MemorySize: 10240
       Runtime: nodejs14.x
@@ -2389,19 +2013,6 @@ Resources:
             Fn::GetAtt:
               - ConstructHubCodeArtifactGetEndpoint9A458FEF
               - repositoryEndpoint
-      FileSystemConfigs:
-        - Arn:
-            Fn::Join:
-              - ""
-              - - "arn:"
-                - Ref: AWS::Partition
-                - ":elasticfilesystem:"
-                - Ref: AWS::Region
-                - ":"
-                - Ref: AWS::AccountId
-                - :access-point/
-                - Ref: ConstructHubOrchestrationFileSystemAccessPoint77C6EF7B
-          LocalMountPath: /mnt/efs
       Handler: index.handler
       MemorySize: 10240
       Runtime: nodejs14.x
@@ -2505,46 +2116,61 @@ Resources:
               Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"DocGen"},"DocGen":{"Type":"Parallel","ResultPath":"$.DocGen","Next":"Any
               Success?","Branches":[{"StartAt":"Generate python
               docs","States":{"Generate python
-              docs":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"Failed
-              python"}],"Type":"Task","OutputPath":"$.result","ResultSelector":{"result":{"language":{"lang":"python"},"success.$":"$.Payload"}},"Resource":"arn:'
+              docs":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"Generate
+              python docs
+              failure"},{"ErrorEquals":["States.ALL"],"Next":"Generate python
+              docs
+              fault"}],"Type":"Task","OutputPath":"$.result","ResultSelector":{"result":{"language":{"lang":"python"},"success.$":"$.Payload"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::lambda:invoke","Parameters":{"FunctionName":"
             - Fn::GetAtt:
                 - ConstructHubOrchestrationDocGenpython77179663
                 - Arn
-            - '","Payload.$":"$"}},"Failed
-              python":{"Type":"Pass","Parameters":{"error.$":"States.StringToJson($.Cause)","language":{"lang":"python"}},"End":true}}},{"StartAt":"Generate
+            - '","Payload.$":"$"}},"Generate python docs
+              failure":{"Type":"Pass","Parameters":{"error.$":"States.StringToJson($.Cause)","language":{"lang":"python"}},"End":true},"Generate
+              python docs
+              fault":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"python"}},"End":true}}},{"StartAt":"Generate
               typescript docs","States":{"Generate typescript
-              docs":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"Failed
-              typescript"}],"Type":"Task","OutputPath":"$.result","ResultSelector":{"result":{"language":{"lang":"typescript"},"success.$":"$.Payload"}},"Resource":"arn:'
+              docs":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"Generate
+              typescript docs
+              failure"},{"ErrorEquals":["States.ALL"],"Next":"Generate
+              typescript docs
+              fault"}],"Type":"Task","OutputPath":"$.result","ResultSelector":{"result":{"language":{"lang":"typescript"},"success.$":"$.Payload"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::lambda:invoke","Parameters":{"FunctionName":"
             - Fn::GetAtt:
                 - ConstructHubOrchestrationDocGentypescriptF9C30384
                 - Arn
-            - '","Payload.$":"$"}},"Failed
-              typescript":{"Type":"Pass","Parameters":{"error.$":"States.StringToJson($.Cause)","language":{"lang":"typescript"}},"End":true}}}]},"Any
+            - '","Payload.$":"$"}},"Generate typescript docs
+              failure":{"Type":"Pass","Parameters":{"error.$":"States.StringToJson($.Cause)","language":{"lang":"typescript"}},"End":true},"Generate
+              typescript docs
+              fault":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"typescript"}},"End":true}}}]},"Any
               Success?":{"Type":"Choice","Choices":[{"Or":[{"Variable":"$.DocGen[0].error","IsPresent":false},{"Variable":"$.DocGen[1].error","IsPresent":false}],"Next":"Add
               to catalog.json"}],"Default":"Any Failure?"},"Any
               Failure?":{"Type":"Choice","Choices":[{"Or":[{"Variable":"$.DocGen[0].error","IsPresent":true},{"Variable":"$.DocGen[1].error","IsPresent":true}],"Next":"Send
               to Dead Letter Queue"}],"Default":"Success"},"Add to
               catalog.json":{"Next":"Any
-              Failure?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"Failed
-              to add to
-              catalog.json"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:'
+              Failure?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.TaskFailed"],"Next":"Add
+              to catalog.json
+              failure"},{"ErrorEquals":["States.ALL"],"Next":"Add to
+              catalog.json
+              fault"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::lambda:invoke","Parameters":{"FunctionName":"
             - Fn::GetAtt:
                 - ConstructHubOrchestrationCatalogBuilder7C964951
                 - Arn
-            - '","Payload.$":"$"}},"Failed to add to
-              catalog.json":{"Type":"Pass","ResultPath":"$.error","Parameters":{"error.$":"States.StringToJson($.Cause)"},"Next":"Send
+            - '","Payload.$":"$"}},"Add to catalog.json
+              failure":{"Type":"Pass","ResultPath":"$.error","Parameters":{"error.$":"States.StringToJson($.Cause)"},"Next":"Send
               to Dead Letter Queue"},"Send to Dead Letter
               Queue":{"End":true,"Type":"Task","ResultPath":null,"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::sqs:sendMessage","Parameters":{"QueueUrl":"
             - Ref: ConstructHubOrchestrationDLQ9C6D9BD4
-            - '","MessageBody.$":"$"}},"Success":{"Type":"Succeed"}},"TimeoutSeconds":3600}'
+            - '","MessageBody.$":"$"}},"Add to catalog.json
+              fault":{"Type":"Pass","ResultPath":"$.error","Parameters":{"error.$":"$.Cause"},"Next":"Send
+              to Dead Letter
+              Queue"},"Success":{"Type":"Succeed"}},"TimeoutSeconds":86400}'
       StateMachineType: STANDARD
       TracingConfiguration:
         Enabled: true
@@ -4639,18 +4265,6 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24"
-  AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98S3BucketF611EFC9:
-    Type: String
-    Description: S3 bucket for asset
-      "2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98"
-  AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98S3VersionKey9E90DFEA:
-    Type: String
-    Description: S3 key for asset version
-      "2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98"
-  AssetParameters2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98ArtifactHashD4AC1828:
-    Type: String
-    Description: Artifact hash for asset
-      "2427515f2f4227148e0ead251eb761b6c838e97be3bf77f18cb425949b71bf98"
   AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3Bucket1DAE9912:
     Type: String
     Description: S3 bucket for asset
