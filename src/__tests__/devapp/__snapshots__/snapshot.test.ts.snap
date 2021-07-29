@@ -736,7 +736,7 @@ Resources:
             Principal:
               AWS:
                 Fn::GetAtt:
-                  - ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2
+                  - ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A
                   - Arn
             Resource: "*"
           - Action:
@@ -746,34 +746,7 @@ Resources:
             Principal:
               AWS:
                 Fn::GetAtt:
-                  - ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2
-                  - Arn
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubCodeArtifactDomainFC30B796
-                  - Arn
-              - Fn::GetAtt:
-                  - ConstructHubCodeArtifact1188409E
-                  - Arn
-          - Action: sts:GetServiceBearerToken
-            Condition:
-              StringEquals:
-                sts:AWSServiceName: codeartifact.amazonaws.com
-            Effect: Allow
-            Principal:
-              AWS:
-                Fn::GetAtt:
-                  - ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19
-                  - Arn
-            Resource: "*"
-          - Action:
-              - codeartifact:GetAuthorizationToken
-              - codeartifact:GetRepositoryEndpoint
-            Effect: Allow
-            Principal:
-              AWS:
-                Fn::GetAtt:
-                  - ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19
+                  - ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A
                   - Arn
             Resource:
               - Fn::GetAtt:
@@ -839,18 +812,7 @@ Resources:
             Principal:
               AWS:
                 Fn::GetAtt:
-                  - ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2
-                  - Arn
-            Resource:
-              Fn::GetAtt:
-                - ConstructHubCodeArtifact1188409E
-                - Arn
-          - Action: codeartifact:ReadFromRepository
-            Effect: Allow
-            Principal:
-              AWS:
-                Fn::GetAtt:
-                  - ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19
+                  - ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A
                   - Arn
             Resource:
               Fn::GetAtt:
@@ -861,6 +823,194 @@ Resources:
       SecurityGroupIds:
         - Fn::GetAtt:
             - ConstructHubLambdaVPCCodeArtifactSecurityGroup81DA2A6B
+            - GroupId
+      SubnetIds:
+        - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
+        - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
+      VpcEndpointType: Interface
+  ConstructHubLambdaVPCCloudWatchLogsSecurityGroup2DDE0C8C:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: dev/ConstructHub/Lambda-VPC/CloudWatch.Logs/SecurityGroup
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      SecurityGroupIngress:
+        - CidrIp:
+            Fn::GetAtt:
+              - ConstructHubLambdaVPCE85ABF51
+              - CidrBlock
+          Description:
+            Fn::Join:
+              - ""
+              - - "from "
+                - Fn::GetAtt:
+                    - ConstructHubLambdaVPCE85ABF51
+                    - CidrBlock
+                - :443
+          FromPort: 443
+          IpProtocol: tcp
+          ToPort: 443
+      Tags:
+        - Key: Name
+          Value: dev/ConstructHub/Lambda-VPC
+      VpcId:
+        Ref: ConstructHubLambdaVPCE85ABF51
+  ConstructHubLambdaVPCCloudWatchLogsE401CF75:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName:
+        Fn::Join:
+          - ""
+          - - com.amazonaws.
+            - Ref: AWS::Region
+            - .logs
+      VpcId:
+        Ref: ConstructHubLambdaVPCE85ABF51
+      PolicyDocument:
+        Statement:
+          - Action:
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::GetAtt:
+                  - ConstructHubOrchestrationTransliteratorTaskDefinitionExecutionRoleB2DBF946
+                  - Arn
+            Resource: "*"
+            Sid: Allow-Logging
+        Version: 2012-10-17
+      PrivateDnsEnabled: true
+      SecurityGroupIds:
+        - Fn::GetAtt:
+            - ConstructHubLambdaVPCCloudWatchLogsSecurityGroup2DDE0C8C
+            - GroupId
+      SubnetIds:
+        - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
+        - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
+      VpcEndpointType: Interface
+  ConstructHubLambdaVPCECRAPISecurityGroupA3F344BC:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: dev/ConstructHub/Lambda-VPC/ECR.API/SecurityGroup
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      SecurityGroupIngress:
+        - CidrIp:
+            Fn::GetAtt:
+              - ConstructHubLambdaVPCE85ABF51
+              - CidrBlock
+          Description:
+            Fn::Join:
+              - ""
+              - - "from "
+                - Fn::GetAtt:
+                    - ConstructHubLambdaVPCE85ABF51
+                    - CidrBlock
+                - :443
+          FromPort: 443
+          IpProtocol: tcp
+          ToPort: 443
+      Tags:
+        - Key: Name
+          Value: dev/ConstructHub/Lambda-VPC
+      VpcId:
+        Ref: ConstructHubLambdaVPCE85ABF51
+  ConstructHubLambdaVPCECRAPI8A74C5DC:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName:
+        Fn::Join:
+          - ""
+          - - com.amazonaws.
+            - Ref: AWS::Region
+            - .ecr.api
+      VpcId:
+        Ref: ConstructHubLambdaVPCE85ABF51
+      PolicyDocument:
+        Statement:
+          - Action: ecr:GetAuthorizationToken
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::GetAtt:
+                  - ConstructHubOrchestrationTransliteratorTaskDefinitionExecutionRoleB2DBF946
+                  - Arn
+            Resource: "*"
+            Sid: Allow-ECR-ReadOnly
+        Version: 2012-10-17
+      PrivateDnsEnabled: true
+      SecurityGroupIds:
+        - Fn::GetAtt:
+            - ConstructHubLambdaVPCECRAPISecurityGroupA3F344BC
+            - GroupId
+      SubnetIds:
+        - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
+        - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
+      VpcEndpointType: Interface
+  ConstructHubLambdaVPCECRDockerSecurityGroup62F11080:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: dev/ConstructHub/Lambda-VPC/ECR.Docker/SecurityGroup
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      SecurityGroupIngress:
+        - CidrIp:
+            Fn::GetAtt:
+              - ConstructHubLambdaVPCE85ABF51
+              - CidrBlock
+          Description:
+            Fn::Join:
+              - ""
+              - - "from "
+                - Fn::GetAtt:
+                    - ConstructHubLambdaVPCE85ABF51
+                    - CidrBlock
+                - :443
+          FromPort: 443
+          IpProtocol: tcp
+          ToPort: 443
+      Tags:
+        - Key: Name
+          Value: dev/ConstructHub/Lambda-VPC
+      VpcId:
+        Ref: ConstructHubLambdaVPCE85ABF51
+  ConstructHubLambdaVPCECRDocker6B5A9047:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName:
+        Fn::Join:
+          - ""
+          - - com.amazonaws.
+            - Ref: AWS::Region
+            - .ecr.dkr
+      VpcId:
+        Ref: ConstructHubLambdaVPCE85ABF51
+      PolicyDocument:
+        Statement:
+          - Action:
+              - ecr:BatchCheckLayerAvailability
+              - ecr:GetDownloadUrlForLayer
+              - ecr:BatchGetImage
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::GetAtt:
+                  - ConstructHubOrchestrationTransliteratorTaskDefinitionExecutionRoleB2DBF946
+                  - Arn
+            Resource: "*"
+            Sid: Allow-ECR-ReadOnly
+        Version: 2012-10-17
+      PrivateDnsEnabled: true
+      SecurityGroupIds:
+        - Fn::GetAtt:
+            - ConstructHubLambdaVPCECRDockerSecurityGroup62F11080
             - GroupId
       SubnetIds:
         - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
@@ -884,13 +1034,18 @@ Resources:
             Principal:
               AWS: "*"
             Resource:
-              Fn::Join:
-                - ""
-                - - Fn::GetAtt:
-                      - ConstructHubCodeArtifactDescribeDomain6ABCBF4B
-                      - domain.s3BucketArn
-                  - /*
-            Sid: Allow-CodeArtifact-Bucket
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubCodeArtifactDescribeDomain6ABCBF4B
+                        - domain.s3BucketArn
+                    - /*
+              - Fn::Join:
+                  - ""
+                  - - arn:aws:s3:::prod-
+                    - Ref: AWS::Region
+                    - -starport-layer-bucket/*
+            Sid: Allow-CodeArtifact-and-ECR
           - Action:
               - s3:GetObject*
               - s3:GetBucket*
@@ -908,74 +1063,6 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/assembly.json
-          - Action:
-              - s3:Abort*
-              - s3:DeleteObject*
-              - s3:PutObject*
-            Effect: Allow
-            Principal:
-              AWS: "*"
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-python.md
-          - Action:
-              - s3:Abort*
-              - s3:DeleteObject*
-              - s3:PutObject*
-            Effect: Allow
-            Principal:
-              AWS: "*"
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-*-python.md
-          - Action:
-              - s3:Abort*
-              - s3:DeleteObject*
-              - s3:PutObject*
-            Effect: Allow
-            Principal:
-              AWS: "*"
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-python.md.not-supported
-          - Action:
-              - s3:Abort*
-              - s3:DeleteObject*
-              - s3:PutObject*
-            Effect: Allow
-            Principal:
-              AWS: "*"
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-*-python.md.not-supported
           - Action:
               - s3:Abort*
               - s3:DeleteObject*
@@ -1044,11 +1131,143 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/docs-*-typescript.md.not-supported
+          - Action:
+              - s3:Abort*
+              - s3:DeleteObject*
+              - s3:PutObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-python.md
+          - Action:
+              - s3:Abort*
+              - s3:DeleteObject*
+              - s3:PutObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-*-python.md
+          - Action:
+              - s3:Abort*
+              - s3:DeleteObject*
+              - s3:PutObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-python.md.not-supported
+          - Action:
+              - s3:Abort*
+              - s3:DeleteObject*
+              - s3:PutObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-*-python.md.not-supported
         Version: 2012-10-17
       RouteTableIds:
         - Ref: ConstructHubLambdaVPCIsolatedSubnet1RouteTable65529AB4
         - Ref: ConstructHubLambdaVPCIsolatedSubnet2RouteTable57ABF8F6
       VpcEndpointType: Gateway
+  ConstructHubLambdaVPCStepFunctionsSecurityGroup7870779C:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: dev/ConstructHub/Lambda-VPC/StepFunctions/SecurityGroup
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      SecurityGroupIngress:
+        - CidrIp:
+            Fn::GetAtt:
+              - ConstructHubLambdaVPCE85ABF51
+              - CidrBlock
+          Description:
+            Fn::Join:
+              - ""
+              - - "from "
+                - Fn::GetAtt:
+                    - ConstructHubLambdaVPCE85ABF51
+                    - CidrBlock
+                - :443
+          FromPort: 443
+          IpProtocol: tcp
+          ToPort: 443
+      Tags:
+        - Key: Name
+          Value: dev/ConstructHub/Lambda-VPC
+      VpcId:
+        Ref: ConstructHubLambdaVPCE85ABF51
+  ConstructHubLambdaVPCStepFunctions5DBDA356:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName:
+        Fn::Join:
+          - ""
+          - - com.amazonaws.
+            - Ref: AWS::Region
+            - .states
+      VpcId:
+        Ref: ConstructHubLambdaVPCE85ABF51
+      PolicyDocument:
+        Statement:
+          - Action:
+              - states:SendTaskFailure
+              - states:SendTaskHeartbeat
+              - states:SendTaskSuccess
+            Effect: Allow
+            Principal:
+              AWS:
+                Fn::GetAtt:
+                  - ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A
+                  - Arn
+            Resource: "*"
+            Sid: Allow-StepFunctions-Callbacks
+        Version: 2012-10-17
+      PrivateDnsEnabled: true
+      SecurityGroupIds:
+        - Fn::GetAtt:
+            - ConstructHubLambdaVPCStepFunctionsSecurityGroup7870779C
+            - GroupId
+      SubnetIds:
+        - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
+        - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
+      VpcEndpointType: Interface
   ConstructHubDenyListBucketNotifications2269EB2A:
     Type: Custom::S3BucketNotifications
     Properties:
@@ -1605,8 +1824,23 @@ Resources:
           - ""
           - - /aws/lambda/
             - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
-      RetentionInDays: 3653
-  ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2:
+      RetentionInDays: 7
+  ConstructHubOrchestrationCluster3D6F0081:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterSettings:
+        - Name: containerInsights
+          Value: enabled
+  ConstructHubOrchestrationCluster4C9C8AA6:
+    Type: AWS::ECS::ClusterCapacityProviderAssociations
+    Properties:
+      CapacityProviders:
+        - FARGATE
+        - FARGATE_SPOT
+      Cluster:
+        Ref: ConstructHubOrchestrationCluster3D6F0081
+      DefaultCapacityProviderStrategy: []
+  ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -1614,246 +1848,17 @@ Resources:
           - Action: sts:AssumeRole
             Effect: Allow
             Principal:
-              Service: lambda.amazonaws.com
+              Service: ecs-tasks.amazonaws.com
         Version: 2012-10-17
-      ManagedPolicyArns:
-        - Fn::Join:
-            - ""
-            - - "arn:"
-              - Ref: AWS::Partition
-              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-        - Fn::Join:
-            - ""
-            - - "arn:"
-              - Ref: AWS::Partition
-              - :iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
-  ConstructHubOrchestrationDocGenpythonServiceRoleDefaultPolicy7A9DA724:
+  ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleDefaultPolicyE0EED0F8:
     Type: AWS::IAM::Policy
     Properties:
       PolicyDocument:
         Statement:
           - Action:
-              - xray:PutTraceSegments
-              - xray:PutTelemetryRecords
-            Effect: Allow
-            Resource: "*"
-          - Action: sts:GetServiceBearerToken
-            Condition:
-              StringEquals:
-                sts:AWSServiceName: codeartifact.amazonaws.com
-            Effect: Allow
-            Resource: "*"
-          - Action:
-              - codeartifact:GetAuthorizationToken
-              - codeartifact:GetRepositoryEndpoint
-              - codeartifact:ReadFromRepository
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubCodeArtifactDomainFC30B796
-                  - Arn
-              - Fn::GetAtt:
-                  - ConstructHubCodeArtifact1188409E
-                  - Arn
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/assembly.json
-          - Action:
-              - s3:DeleteObject*
-              - s3:PutObject*
-              - s3:Abort*
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-python.md
-          - Action:
-              - s3:DeleteObject*
-              - s3:PutObject*
-              - s3:Abort*
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-*-python.md
-          - Action:
-              - s3:DeleteObject*
-              - s3:PutObject*
-              - s3:Abort*
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-python.md.not-supported
-          - Action:
-              - s3:DeleteObject*
-              - s3:PutObject*
-              - s3:Abort*
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-*-python.md.not-supported
-        Version: 2012-10-17
-      PolicyName: ConstructHubOrchestrationDocGenpythonServiceRoleDefaultPolicy7A9DA724
-      Roles:
-        - Ref: ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2
-  ConstructHubOrchestrationDocGenpythonSecurityGroup5820AD9B:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      GroupDescription: Automatic security group for Lambda Function
-        devConstructHubOrchestrationDocGenpython3F2037E7
-      SecurityGroupEgress:
-        - CidrIp: 0.0.0.0/0
-          Description: Allow all outbound traffic by default
-          IpProtocol: "-1"
-      VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
-  ConstructHubOrchestrationDocGenpython77179663:
-    Type: AWS::Lambda::Function
-    Properties:
-      Code:
-        S3Bucket:
-          Ref: AssetParameters1a645d5b9c5a72db05546d72cd5507f0dcd65b3b35bb2d72ed825520f728b274S3Bucket1FFE023A
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters1a645d5b9c5a72db05546d72cd5507f0dcd65b3b35bb2d72ed825520f728b274S3VersionKeyD2323C13
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters1a645d5b9c5a72db05546d72cd5507f0dcd65b3b35bb2d72ed825520f728b274S3VersionKeyD2323C13
-      Role:
-        Fn::GetAtt:
-          - ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2
-          - Arn
-      Description: Creates python documentation from jsii-enabled npm packages
-      Environment:
-        Variables:
-          HEADER_SPAN: "true"
-          TARGET_LANGUAGE: python
-          CODE_ARTIFACT_API_ENDPOINT:
-            Fn::Select:
-              - 1
-              - Fn::Split:
-                  - ":"
-                  - Fn::Select:
-                      - 0
-                      - Fn::GetAtt:
-                          - ConstructHubLambdaVPCCodeArtifactAPI0A2356B9
-                          - DnsEntries
-          CODE_ARTIFACT_DOMAIN_NAME:
-            Fn::GetAtt:
-              - ConstructHubCodeArtifact1188409E
-              - DomainName
-          CODE_ARTIFACT_DOMAIN_OWNER:
-            Fn::GetAtt:
-              - ConstructHubCodeArtifact1188409E
-              - DomainOwner
-          CODE_ARTIFACT_REPOSITORY_ENDPOINT:
-            Fn::GetAtt:
-              - ConstructHubCodeArtifactGetEndpoint9A458FEF
-              - repositoryEndpoint
-      Handler: index.handler
-      MemorySize: 10240
-      Runtime: nodejs14.x
-      Timeout: 900
-      TracingConfig:
-        Mode: PassThrough
-      VpcConfig:
-        SecurityGroupIds:
-          - Fn::GetAtt:
-              - ConstructHubOrchestrationDocGenpythonSecurityGroup5820AD9B
-              - GroupId
-        SubnetIds:
-          - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
-          - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
-    DependsOn:
-      - ConstructHubOrchestrationDocGenpythonServiceRoleDefaultPolicy7A9DA724
-      - ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2
-  ConstructHubOrchestrationDocGenpythonLogRetention31242A5D:
-    Type: Custom::LogRetention
-    Properties:
-      ServiceToken:
-        Fn::GetAtt:
-          - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A
-          - Arn
-      LogGroupName:
-        Fn::Join:
-          - ""
-          - - /aws/lambda/
-            - Ref: ConstructHubOrchestrationDocGenpython77179663
-      RetentionInDays: 3653
-  ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Action: sts:AssumeRole
-            Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-        Version: 2012-10-17
-      ManagedPolicyArns:
-        - Fn::Join:
-            - ""
-            - - "arn:"
-              - Ref: AWS::Partition
-              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-        - Fn::Join:
-            - ""
-            - - "arn:"
-              - Ref: AWS::Partition
-              - :iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
-  ConstructHubOrchestrationDocGentypescriptServiceRoleDefaultPolicyEBA45F12:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyDocument:
-        Statement:
-          - Action:
-              - xray:PutTraceSegments
-              - xray:PutTelemetryRecords
+              - states:SendTaskFailure
+              - states:SendTaskHeartbeat
+              - states:SendTaskSuccess
             Effect: Allow
             Resource: "*"
           - Action: sts:GetServiceBearerToken
@@ -1949,101 +1954,207 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/docs-*-typescript.md.not-supported
+          - Action:
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-python.md
+          - Action:
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-*-python.md
+          - Action:
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-python.md.not-supported
+          - Action:
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-*-python.md.not-supported
         Version: 2012-10-17
-      PolicyName: ConstructHubOrchestrationDocGentypescriptServiceRoleDefaultPolicyEBA45F12
+      PolicyName: ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleDefaultPolicyE0EED0F8
       Roles:
-        - Ref: ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19
-  ConstructHubOrchestrationDocGentypescriptSecurityGroupDD0CDD88:
+        - Ref: ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A
+  ConstructHubOrchestrationTransliteratorTaskDefinition45CDA566:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      ContainerDefinitions:
+        - Environment:
+            - Name: HEADER_SPAN
+              Value: "true"
+            - Name: CODE_ARTIFACT_API_ENDPOINT
+              Value:
+                Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - ":"
+                      - Fn::Select:
+                          - 0
+                          - Fn::GetAtt:
+                              - ConstructHubLambdaVPCCodeArtifactAPI0A2356B9
+                              - DnsEntries
+            - Name: CODE_ARTIFACT_DOMAIN_NAME
+              Value:
+                Fn::GetAtt:
+                  - ConstructHubCodeArtifact1188409E
+                  - DomainName
+            - Name: CODE_ARTIFACT_DOMAIN_OWNER
+              Value:
+                Fn::GetAtt:
+                  - ConstructHubCodeArtifact1188409E
+                  - DomainOwner
+            - Name: CODE_ARTIFACT_REPOSITORY_ENDPOINT
+              Value:
+                Fn::GetAtt:
+                  - ConstructHubCodeArtifactGetEndpoint9A458FEF
+                  - repositoryEndpoint
+          Essential: true
+          Image:
+            Fn::Join:
+              - ""
+              - - Ref: AWS::AccountId
+                - .dkr.ecr.
+                - Ref: AWS::Region
+                - .
+                - Ref: AWS::URLSuffix
+                - /aws-cdk/assets:00007848e83a18d7d8249726c01c61bbccc3987a59395fda9c1ca4826b838585
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group:
+                Ref: ConstructHubOrchestrationTransliteratorLogGroupAC505EF1
+              awslogs-stream-prefix: transliterator
+              awslogs-region:
+                Ref: AWS::Region
+          Name: Resource
+      Cpu: "4096"
+      ExecutionRoleArn:
+        Fn::GetAtt:
+          - ConstructHubOrchestrationTransliteratorTaskDefinitionExecutionRoleB2DBF946
+          - Arn
+      Family: devConstructHubOrchestrationTransliteratorTaskDefinitionBB251CCC
+      Memory: "8192"
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      TaskRoleArn:
+        Fn::GetAtt:
+          - ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A
+          - Arn
+  ConstructHubOrchestrationTransliteratorTaskDefinitionExecutionRoleB2DBF946:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+        Version: 2012-10-17
+  ConstructHubOrchestrationTransliteratorTaskDefinitionExecutionRoleDefaultPolicyBDBF6E5D:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - ecr:BatchCheckLayerAvailability
+              - ecr:GetDownloadUrlForLayer
+              - ecr:BatchGetImage
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - ":ecr:"
+                  - Ref: AWS::Region
+                  - ":"
+                  - Ref: AWS::AccountId
+                  - :repository/aws-cdk/assets
+          - Action: ecr:GetAuthorizationToken
+            Effect: Allow
+            Resource: "*"
+          - Action:
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ConstructHubOrchestrationTransliteratorLogGroupAC505EF1
+                - Arn
+        Version: 2012-10-17
+      PolicyName: ConstructHubOrchestrationTransliteratorTaskDefinitionExecutionRoleDefaultPolicyBDBF6E5D
+      Roles:
+        - Ref: ConstructHubOrchestrationTransliteratorTaskDefinitionExecutionRoleB2DBF946
+  ConstructHubOrchestrationTransliteratorLogGroupAC505EF1:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 7
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+  ConstructHubOrchestrationGeneratepythondocsSecurityGroupAAB68FC2:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: Automatic security group for Lambda Function
-        devConstructHubOrchestrationDocGentypescript2264926A
+      GroupDescription: dev/ConstructHub/Orchestration/Generate python docs/SecurityGroup
       SecurityGroupEgress:
         - CidrIp: 0.0.0.0/0
           Description: Allow all outbound traffic by default
           IpProtocol: "-1"
       VpcId:
         Ref: ConstructHubLambdaVPCE85ABF51
-  ConstructHubOrchestrationDocGentypescriptF9C30384:
-    Type: AWS::Lambda::Function
+  ConstructHubOrchestrationGeneratetypescriptdocsSecurityGroup8FFF1DF2:
+    Type: AWS::EC2::SecurityGroup
     Properties:
-      Code:
-        S3Bucket:
-          Ref: AssetParameters1a645d5b9c5a72db05546d72cd5507f0dcd65b3b35bb2d72ed825520f728b274S3Bucket1FFE023A
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters1a645d5b9c5a72db05546d72cd5507f0dcd65b3b35bb2d72ed825520f728b274S3VersionKeyD2323C13
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters1a645d5b9c5a72db05546d72cd5507f0dcd65b3b35bb2d72ed825520f728b274S3VersionKeyD2323C13
-      Role:
-        Fn::GetAtt:
-          - ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19
-          - Arn
-      Description: Creates typescript documentation from jsii-enabled npm packages
-      Environment:
-        Variables:
-          HEADER_SPAN: "true"
-          TARGET_LANGUAGE: typescript
-          CODE_ARTIFACT_API_ENDPOINT:
-            Fn::Select:
-              - 1
-              - Fn::Split:
-                  - ":"
-                  - Fn::Select:
-                      - 0
-                      - Fn::GetAtt:
-                          - ConstructHubLambdaVPCCodeArtifactAPI0A2356B9
-                          - DnsEntries
-          CODE_ARTIFACT_DOMAIN_NAME:
-            Fn::GetAtt:
-              - ConstructHubCodeArtifact1188409E
-              - DomainName
-          CODE_ARTIFACT_DOMAIN_OWNER:
-            Fn::GetAtt:
-              - ConstructHubCodeArtifact1188409E
-              - DomainOwner
-          CODE_ARTIFACT_REPOSITORY_ENDPOINT:
-            Fn::GetAtt:
-              - ConstructHubCodeArtifactGetEndpoint9A458FEF
-              - repositoryEndpoint
-      Handler: index.handler
-      MemorySize: 10240
-      Runtime: nodejs14.x
-      Timeout: 900
-      TracingConfig:
-        Mode: PassThrough
-      VpcConfig:
-        SecurityGroupIds:
-          - Fn::GetAtt:
-              - ConstructHubOrchestrationDocGentypescriptSecurityGroupDD0CDD88
-              - GroupId
-        SubnetIds:
-          - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
-          - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
-    DependsOn:
-      - ConstructHubOrchestrationDocGentypescriptServiceRoleDefaultPolicyEBA45F12
-      - ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19
-  ConstructHubOrchestrationDocGentypescriptLogRetentionDB3B5194:
-    Type: Custom::LogRetention
-    Properties:
-      ServiceToken:
-        Fn::GetAtt:
-          - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A
-          - Arn
-      LogGroupName:
-        Fn::Join:
-          - ""
-          - - /aws/lambda/
-            - Ref: ConstructHubOrchestrationDocGentypescriptF9C30384
-      RetentionInDays: 3653
+      GroupDescription: dev/ConstructHub/Orchestration/Generate typescript docs/SecurityGroup
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      VpcId:
+        Ref: ConstructHubLambdaVPCE85ABF51
   ConstructHubOrchestrationRoleF4CF6987:
     Type: AWS::IAM::Role
     Properties:
@@ -2085,18 +2196,69 @@ Resources:
               Fn::GetAtt:
                 - ConstructHubOrchestrationDLQ9C6D9BD4
                 - Arn
-          - Action: lambda:InvokeFunction
+          - Action: ecs:RunTask
             Effect: Allow
             Resource:
-              Fn::GetAtt:
-                - ConstructHubOrchestrationDocGenpython77179663
-                - Arn
-          - Action: lambda:InvokeFunction
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Fn::Select:
+                      - 1
+                      - Fn::Split:
+                          - ":"
+                          - Ref: ConstructHubOrchestrationTransliteratorTaskDefinition45CDA566
+                  - ":"
+                  - Fn::Select:
+                      - 2
+                      - Fn::Split:
+                          - ":"
+                          - Ref: ConstructHubOrchestrationTransliteratorTaskDefinition45CDA566
+                  - ":"
+                  - Fn::Select:
+                      - 3
+                      - Fn::Split:
+                          - ":"
+                          - Ref: ConstructHubOrchestrationTransliteratorTaskDefinition45CDA566
+                  - ":"
+                  - Fn::Select:
+                      - 4
+                      - Fn::Split:
+                          - ":"
+                          - Ref: ConstructHubOrchestrationTransliteratorTaskDefinition45CDA566
+                  - ":"
+                  - Fn::Select:
+                      - 0
+                      - Fn::Split:
+                          - /
+                          - Fn::Select:
+                              - 5
+                              - Fn::Split:
+                                  - ":"
+                                  - Ref: ConstructHubOrchestrationTransliteratorTaskDefinition45CDA566
+                  - /
+                  - Fn::Select:
+                      - 1
+                      - Fn::Split:
+                          - /
+                          - Fn::Select:
+                              - 5
+                              - Fn::Split:
+                                  - ":"
+                                  - Ref: ConstructHubOrchestrationTransliteratorTaskDefinition45CDA566
+          - Action:
+              - ecs:StopTask
+              - ecs:DescribeTasks
+            Effect: Allow
+            Resource: "*"
+          - Action: iam:PassRole
             Effect: Allow
             Resource:
-              Fn::GetAtt:
-                - ConstructHubOrchestrationDocGentypescriptF9C30384
-                - Arn
+              - Fn::GetAtt:
+                  - ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A
+                  - Arn
+              - Fn::GetAtt:
+                  - ConstructHubOrchestrationTransliteratorTaskDefinitionExecutionRoleB2DBF946
+                  - Arn
         Version: 2012-10-17
       PolicyName: ConstructHubOrchestrationRoleDefaultPolicyEACD181F
       Roles:
@@ -2115,41 +2277,77 @@ Resources:
           - ""
           - - '{"StartAt":"Track Execution Infos","States":{"Track Execution
               Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"DocGen"},"DocGen":{"Type":"Parallel","ResultPath":"$.DocGen","Next":"Any
-              Success?","Branches":[{"StartAt":"Generate python
-              docs","States":{"Generate python
-              docs":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":30}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"Next":"\\"Generate
-              python docs\\"
-              throttled"},{"ErrorEquals":["States.TaskFailed"],"Next":"\\"Generate
+              Success?","Branches":[{"StartAt":"Prepare
+              python","States":{"Prepare
+              python":{"Type":"Pass","ResultPath":"$","Parameters":{"command":{"bucket.$":"$.bucket","assembly.$":"$.assembly","$TaskExecution.$":"$.$TaskExecution"}},"Next":"Stringify
+              python input"},"Stringify python
+              input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
+              python docs"},"Generate python
+              docs":{"End":true,"Retry":[{"ErrorEquals":["ECS.AmazonECSException"],"IntervalSeconds":60,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
+              python docs\\" timed
+              out"},{"ErrorEquals":["ECS.AmazonECSException"],"Next":"\\"Generate
+              python docs\\" service
+              error"},{"ErrorEquals":["States.TaskFailed"],"Next":"\\"Generate
               python docs\\"
               failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate python
               docs\\"
-              fault"}],"Type":"Task","OutputPath":"$.result","ResultSelector":{"result":{"language":{"lang":"python"},"success.$":"$.Payload"}},"Resource":"arn:'
+              fault"}],"Type":"Task","HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"python"},"success.$":"$"}},"Resource":"arn:'
             - Ref: AWS::Partition
-            - :states:::lambda:invoke","Parameters":{"FunctionName":"
+            - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
-                - ConstructHubOrchestrationDocGenpython77179663
+                - ConstructHubOrchestrationCluster3D6F0081
                 - Arn
-            - '","Payload.$":"$"}},"\\"Generate python docs\\"
-              throttled":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"python"}},"End":true},"\\"Generate
+            - '","TaskDefinition":"devConstructHubOrchestrationTransliteratorTaskDefinitionBB251CCC","NetworkConfiguration":{"AwsvpcConfiguration":{"Subnets":["'
+            - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
+            - '","'
+            - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
+            - '"],"SecurityGroups":["'
+            - Fn::GetAtt:
+                - ConstructHubOrchestrationGeneratepythondocsSecurityGroupAAB68FC2
+                - GroupId
+            - '"]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"TARGET_LANGUAGE","Value":"python"},{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"\\"Generate
+              python docs\\" timed
+              out":{"Type":"Pass","Parameters":{"error":"Timed
+              out!","language":{"lang":"python"}},"End":true},"\\"Generate python
+              docs\\" service
+              error":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"python"}},"End":true},"\\"Generate
               python docs\\"
               failure":{"Type":"Pass","Parameters":{"error.$":"States.StringToJson($.Cause)","language":{"lang":"python"}},"End":true},"\\"Generate
               python docs\\"
-              fault":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"python"}},"End":true}}},{"StartAt":"Generate
-              typescript docs","States":{"Generate typescript
-              docs":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"IntervalSeconds":30}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"Next":"\\"Generate
-              typescript docs\\"
-              throttled"},{"ErrorEquals":["States.TaskFailed"],"Next":"\\"Generate
+              fault":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"python"}},"End":true}}},{"StartAt":"Prepare
+              typescript","States":{"Prepare
+              typescript":{"Type":"Pass","ResultPath":"$","Parameters":{"command":{"bucket.$":"$.bucket","assembly.$":"$.assembly","$TaskExecution.$":"$.$TaskExecution"}},"Next":"Stringify
+              typescript input"},"Stringify typescript
+              input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
+              typescript docs"},"Generate typescript
+              docs":{"End":true,"Retry":[{"ErrorEquals":["ECS.AmazonECSException"],"IntervalSeconds":60,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
+              typescript docs\\" timed
+              out"},{"ErrorEquals":["ECS.AmazonECSException"],"Next":"\\"Generate
+              typescript docs\\" service
+              error"},{"ErrorEquals":["States.TaskFailed"],"Next":"\\"Generate
               typescript docs\\"
               failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate
               typescript docs\\"
-              fault"}],"Type":"Task","OutputPath":"$.result","ResultSelector":{"result":{"language":{"lang":"typescript"},"success.$":"$.Payload"}},"Resource":"arn:'
+              fault"}],"Type":"Task","HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"typescript"},"success.$":"$"}},"Resource":"arn:'
             - Ref: AWS::Partition
-            - :states:::lambda:invoke","Parameters":{"FunctionName":"
+            - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
-                - ConstructHubOrchestrationDocGentypescriptF9C30384
+                - ConstructHubOrchestrationCluster3D6F0081
                 - Arn
-            - '","Payload.$":"$"}},"\\"Generate typescript docs\\"
-              throttled":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"typescript"}},"End":true},"\\"Generate
+            - '","TaskDefinition":"devConstructHubOrchestrationTransliteratorTaskDefinitionBB251CCC","NetworkConfiguration":{"AwsvpcConfiguration":{"Subnets":["'
+            - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
+            - '","'
+            - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
+            - '"],"SecurityGroups":["'
+            - Fn::GetAtt:
+                - ConstructHubOrchestrationGeneratetypescriptdocsSecurityGroup8FFF1DF2
+                - GroupId
+            - '"]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"TARGET_LANGUAGE","Value":"typescript"},{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"\\"Generate
+              typescript docs\\" timed
+              out":{"Type":"Pass","Parameters":{"error":"Timed
+              out!","language":{"lang":"typescript"}},"End":true},"\\"Generate
+              typescript docs\\" service
+              error":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"typescript"}},"End":true},"\\"Generate
               typescript docs\\"
               failure":{"Type":"Pass","Parameters":{"error.$":"States.StringToJson($.Cause)","language":{"lang":"typescript"}},"End":true},"\\"Generate
               typescript docs\\"
@@ -2539,6 +2737,19 @@ Resources:
     DependsOn:
       - ConstructHubIngestionServiceRoleDefaultPolicyC0D2B6F2
       - ConstructHubIngestionServiceRole6380BAB6
+  ConstructHubIngestionLogRetention98263C90:
+    Type: Custom::LogRetention
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A
+          - Arn
+      LogGroupName:
+        Fn::Join:
+          - ""
+          - - /aws/lambda/
+            - Ref: ConstructHubIngestion407909CE
+      RetentionInDays: 7
   ConstructHubIngestionSqsEventSourcedevConstructHubIngestionQueue9A801AAF9844496F:
     Type: AWS::Lambda::EventSourceMapping
     Properties:
@@ -2941,6 +3152,19 @@ Resources:
     DependsOn:
       - ConstructHubInventoryCanaryServiceRoleDefaultPolicy144783F1
       - ConstructHubInventoryCanaryServiceRole7684EDDE
+  ConstructHubInventoryCanaryLogRetention8B1B5364:
+    Type: Custom::LogRetention
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A
+          - Arn
+      LogGroupName:
+        Fn::Join:
+          - ""
+          - - /aws/lambda/
+            - Ref: ConstructHubInventoryCanary63D899BC
+      RetentionInDays: 7
   ConstructHubInventoryCanaryScheduleRule79F2F8D8:
     Type: AWS::Events::Rule
     Properties:
@@ -4055,18 +4279,6 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24"
-  AssetParameters1a645d5b9c5a72db05546d72cd5507f0dcd65b3b35bb2d72ed825520f728b274S3Bucket1FFE023A:
-    Type: String
-    Description: S3 bucket for asset
-      "1a645d5b9c5a72db05546d72cd5507f0dcd65b3b35bb2d72ed825520f728b274"
-  AssetParameters1a645d5b9c5a72db05546d72cd5507f0dcd65b3b35bb2d72ed825520f728b274S3VersionKeyD2323C13:
-    Type: String
-    Description: S3 key for asset version
-      "1a645d5b9c5a72db05546d72cd5507f0dcd65b3b35bb2d72ed825520f728b274"
-  AssetParameters1a645d5b9c5a72db05546d72cd5507f0dcd65b3b35bb2d72ed825520f728b274ArtifactHashC9C173C9:
-    Type: String
-    Description: Artifact hash for asset
-      "1a645d5b9c5a72db05546d72cd5507f0dcd65b3b35bb2d72ed825520f728b274"
   AssetParameters8265ccdf680d2fc53b19193e2b93340a27f335cc3be02b673f0742d7700fd6acS3Bucket9B1F28E2:
     Type: String
     Description: S3 bucket for asset

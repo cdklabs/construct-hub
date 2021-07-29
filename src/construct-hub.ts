@@ -1,10 +1,11 @@
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as iam from '@aws-cdk/aws-iam';
 import { AnyPrincipal, Effect, PolicyStatement } from '@aws-cdk/aws-iam';
+import { RetentionDays } from '@aws-cdk/aws-logs';
 import * as s3 from '@aws-cdk/aws-s3';
 import { BlockPublicAccess } from '@aws-cdk/aws-s3';
 import * as sqs from '@aws-cdk/aws-sqs';
-import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
+import { Construct as CoreConstruct, Duration, Stack } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { AlarmActions, Domain } from './api';
 import { DenyList, Discovery, Ingestion } from './backend';
@@ -32,18 +33,25 @@ export interface ConstructHubProps {
   readonly alarmActions?: AlarmActions;
 
   /**
-   * Whether sensitive Lambda functions (which operate on un-trusted complex
-   * data, such as the transliterator, which operates with externally-sourced
-   * npm package tarballs) should run in network-isolated environments. This
-   * implies the creation of additonal resources, including:
+   * Whether compute environments for sensitive tasks (which operate on
+   * un-trusted complex data, such as the transliterator, which operates with
+   * externally-sourced npm package tarballs) should run in network-isolated
+   * environments. This implies the creation of additonal resources, including:
    *
    * - A VPC with only isolated subnets.
-   * - VPC Endpoints (CodeArtifact, CodeArtifact API, S3)
+   * - VPC Endpoints (CloudWatch Logs, CodeArtifact, CodeArtifact API, S3, ...)
    * - A CodeArtifact Repository with an external connection to npmjs.com
    *
    * @default true
    */
-  readonly isolateLambdas?: boolean;
+  readonly isolateSensitiveTasks?: boolean;
+
+  /**
+   * How long to retain CloudWatch logs for.
+   *
+   * @defaults RetentionDays.TEN_YEARS
+   */
+  readonly logRetention?: RetentionDays;
 
   /**
    * The name of the CloudWatch dashboard that represents the health of backend
@@ -91,46 +99,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     const codeArtifact = new Repository(this, 'CodeArtifact', { description: 'Proxy to npmjs.com for ConstructHub' });
 
-    const vpc = (props.isolateLambdas ?? true)
-      ? new ec2.Vpc(this, 'Lambda-VPC', {
-        enableDnsHostnames: true,
-        enableDnsSupport: true,
-        natGateways: 0,
-        // Pre-allocating PUBLIC / PRIVATE / INTERNAL subnets, regardless of use, so we don't create
-        // a whole new VPC if we ever need to introduce subnets of these types.
-        subnetConfiguration: [
-        // If there is a PRIVATE subnet, there must also have a PUBLIC subnet (for NAT gateways).
-          { name: 'Public', subnetType: ec2.SubnetType.PUBLIC, reserved: true },
-          { name: 'Private', subnetType: ec2.SubnetType.PRIVATE, reserved: true },
-          { name: 'Isolated', subnetType: ec2.SubnetType.ISOLATED },
-        ],
-      })
-      : undefined;
-    // We'll only use VPC endpoints if we are configured to run in an ISOLATED subnet.
-    const vpcEndpoints = vpc && {
-      codeArtifactApi: vpc.addInterfaceEndpoint('CodeArtifact.API', {
-        privateDnsEnabled: false,
-        service: new ec2.InterfaceVpcEndpointAwsService('codeartifact.api'),
-        subnets: { subnetType: ec2.SubnetType.ISOLATED },
-      }),
-      codeArtifact: vpc.addInterfaceEndpoint('CodeArtifact', {
-        privateDnsEnabled: true,
-        service: new ec2.InterfaceVpcEndpointAwsService('codeartifact.repositories'),
-        subnets: { subnetType: ec2.SubnetType.ISOLATED },
-      }),
-      s3: vpc.addGatewayEndpoint('S3', {
-        service: ec2.GatewayVpcEndpointAwsService.S3,
-        subnets: [{ subnetType: ec2.SubnetType.ISOLATED }],
-      }),
-    };
-    // The S3 access is necessary for the CodeArtifact VPC endpoint to be used.
-    vpcEndpoints?.s3.addToPolicy(new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: ['s3:GetObject'],
-      resources: [`${codeArtifact.s3BucketArn}/*`],
-      principals: [new AnyPrincipal()],
-      sid: 'Allow-CodeArtifact-Bucket',
-    }));
+    const { vpc, vpcEndpoints, vpcSubnets } = this.createVpc(props, codeArtifact);
 
     const denyList = new DenyList(this, 'DenyList', {
       rules: props.denyList ?? [],
@@ -143,21 +112,22 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       denyList: denyList,
       bucket: packageData,
       codeArtifact,
+      logRetention: props.logRetention,
       monitoring,
       vpc,
       vpcEndpoints,
-      vpcSubnets: { subnetType: ec2.SubnetType.ISOLATED },
+      vpcSubnets,
     });
 
     // rebuild the catalog when the deny list changes.
     denyList.prune.onChangeInvoke(orchestration.catalogBuilder);
 
-    this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData, orchestration, monitoring });
+    this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData, orchestration, logRetention: props.logRetention, monitoring });
 
-    const discovery = new Discovery(this, 'Discovery', { queue: this.ingestion.queue, monitoring, denyList });
+    const discovery = new Discovery(this, 'Discovery', { queue: this.ingestion.queue, monitoring, logRetention: props.logRetention, denyList });
     discovery.bucket.grantRead(this.ingestion);
 
-    const inventory = new Inventory(this, 'InventoryCanary', { bucket: packageData, monitoring });
+    const inventory = new Inventory(this, 'InventoryCanary', { bucket: packageData, logRetention: props.logRetention, monitoring });
 
     new BackendDashboard(this, 'BackendDashboard', {
       packageData,
@@ -182,5 +152,87 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
   public get ingestionQueue(): sqs.IQueue {
     return this.ingestion.queue;
+  }
+
+  private createVpc(props: ConstructHubProps, codeArtifact: Repository) {
+    if (props.isolateSensitiveTasks === false) {
+      return { vpc: undefined, vpcEndpoints: undefined, vpcSubnets: undefined };
+    }
+
+    const vpc = new ec2.Vpc(this, 'Lambda-VPC', {
+      enableDnsHostnames: true,
+      enableDnsSupport: true,
+      natGateways: 0,
+      // Pre-allocating PUBLIC / PRIVATE / INTERNAL subnets, regardless of use, so we don't create
+      // a whole new VPC if we ever need to introduce subnets of these types.
+      subnetConfiguration: [
+        // If there is a PRIVATE subnet, there must also have a PUBLIC subnet (for NAT gateways).
+        { name: 'Public', subnetType: ec2.SubnetType.PUBLIC, reserved: true },
+        { name: 'Private', subnetType: ec2.SubnetType.PRIVATE, reserved: true },
+        { name: 'Isolated', subnetType: ec2.SubnetType.ISOLATED },
+      ],
+    });
+    const vpcSubnets = { subnetType: ec2.SubnetType.ISOLATED };
+    // We'll only use VPC endpoints if we are configured to run in an ISOLATED subnet.
+    const vpcEndpoints = {
+      codeArtifactApi: vpc.addInterfaceEndpoint('CodeArtifact.API', {
+        privateDnsEnabled: false,
+        service: new ec2.InterfaceVpcEndpointAwsService('codeartifact.api'),
+        subnets: vpcSubnets,
+      }),
+      codeArtifact: vpc.addInterfaceEndpoint('CodeArtifact', {
+        privateDnsEnabled: true,
+        service: new ec2.InterfaceVpcEndpointAwsService('codeartifact.repositories'),
+        subnets: vpcSubnets,
+      }),
+      // This is needed so that ECS workloads can use the awslogs driver
+      cloudWatchLogs: vpc.addInterfaceEndpoint('CloudWatch.Logs', {
+        privateDnsEnabled: true,
+        service: ec2.InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
+        subnets: vpcSubnets,
+      }),
+      // These are needed for ECS workloads to be able to pull images
+      ecrApi: vpc.addInterfaceEndpoint('ECR.API', {
+        privateDnsEnabled: true,
+        service: ec2.InterfaceVpcEndpointAwsService.ECR,
+        subnets: vpcSubnets,
+      }),
+      ecr: vpc.addInterfaceEndpoint('ECR.Docker', {
+        privateDnsEnabled: true,
+        service: ec2.InterfaceVpcEndpointAwsService.ECR_DOCKER,
+        subnets: vpcSubnets,
+      }),
+      // This is needed (among others) for CodeArtifact registry usage
+      s3: vpc.addGatewayEndpoint('S3', {
+        service: ec2.GatewayVpcEndpointAwsService.S3,
+        subnets: [vpcSubnets],
+      }),
+      // This is useful for getting results from ECS tasks within workflows
+      stepFunctions: vpc.addInterfaceEndpoint('StepFunctions', {
+        privateDnsEnabled: true,
+        service: ec2.InterfaceVpcEndpointAwsService.STEP_FUNCTIONS,
+        subnets: vpcSubnets,
+      }),
+    };
+
+    // The S3 access is necessary for the CodeArtifact Repository and ECR Docker
+    // endpoints to be used (they serve objects from S3).
+    vpcEndpoints.s3.addToPolicy(new PolicyStatement({
+      effect: Effect.ALLOW,
+      actions: ['s3:GetObject'],
+      resources: [
+        // The in-region CodeArtifact S3 Bucket
+        `${codeArtifact.s3BucketArn}/*`,
+        // The in-region ECR layer bucket
+        `arn:aws:s3:::prod-${Stack.of(this).region}-starport-layer-bucket/*`,
+      ],
+      // It doesn't seem we can constrain principals for these grants (unclear
+      // which principal those calls are made from, or if that is something we
+      // could name here).
+      principals: [new AnyPrincipal()],
+      sid: 'Allow-CodeArtifact-and-ECR',
+    }));
+
+    return { vpc, vpcEndpoints, vpcSubnets };
   }
 }

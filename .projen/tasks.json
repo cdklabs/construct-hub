@@ -82,9 +82,6 @@
           "spawn": "bundle:reprocess-all"
         },
         {
-          "spawn": "bundle:transliterator"
-        },
-        {
           "spawn": "bundle:certificate-monitor"
         },
         {
@@ -92,6 +89,9 @@
         },
         {
           "spawn": "bundle:handler"
+        },
+        {
+          "spawn": "bundle:transliterator"
         }
       ]
     },
@@ -190,7 +190,7 @@
       },
       "steps": [
         {
-          "exec": "npm-check-updates --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk'"
+          "exec": "npm-check-updates --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk'"
         },
         {
           "exec": "yarn install --check-files"
@@ -323,9 +323,6 @@
           "spawn": "bundle:reprocess-all"
         },
         {
-          "spawn": "bundle:transliterator"
-        },
-        {
           "spawn": "bundle:certificate-monitor"
         },
         {
@@ -333,6 +330,9 @@
         },
         {
           "spawn": "bundle:handler"
+        },
+        {
+          "spawn": "bundle:transliterator"
         }
       ]
     },
@@ -485,15 +485,6 @@
         }
       ]
     },
-    "bundle:transliterator": {
-      "name": "bundle:transliterator",
-      "description": "Create an AWS Lambda bundle from src/backend/transliterator/transliterator.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/backend/transliterator/transliterator.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/transliterator/transliterator.bundle/index.js\" --external:aws-sdk"
-        }
-      ]
-    },
     "bundle:certificate-monitor": {
       "name": "bundle:certificate-monitor",
       "description": "Create an AWS Lambda bundle from src/monitored-certificate/certificate-monitor.lambda.ts",
@@ -518,6 +509,15 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/webapp/cache-invalidator/handler.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/webapp/cache-invalidator/handler.bundle/index.js\" --external:aws-sdk"
+        }
+      ]
+    },
+    "bundle:transliterator": {
+      "name": "bundle:transliterator",
+      "description": "Create an AWS Fargate bundle from src/backend/transliterator/transliterator.fargate.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/transliterator/transliterator.fargate.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/transliterator/transliterator.bundle/index.js\""
         }
       ]
     },

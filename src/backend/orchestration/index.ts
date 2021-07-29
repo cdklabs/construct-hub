@@ -1,20 +1,63 @@
 import { ComparisonOperator, MathExpression } from '@aws-cdk/aws-cloudwatch';
+import { SubnetSelection, Vpc } from '@aws-cdk/aws-ec2';
+import { Cluster } from '@aws-cdk/aws-ecs';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
+import { RetentionDays } from '@aws-cdk/aws-logs';
+import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Choice, Condition, IStateMachine, JsonPath, Parallel, Pass, StateMachine, StateMachineType, Succeed, TaskInput } from '@aws-cdk/aws-stepfunctions';
 import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
 import { Construct, Duration } from '@aws-cdk/core';
+import { Repository } from '../../codeartifact/repository';
 import { sqsQueueUrl, stateMachineUrl } from '../../deep-link';
+import { Monitoring } from '../../monitoring';
 import { CatalogBuilder } from '../catalog-builder';
 import { DenyList } from '../deny-list';
 import { DocumentationLanguage } from '../shared/language';
-import { Transliterator, TransliteratorProps } from '../transliterator';
+import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
 import { RedriveStateMachine } from './redrive-state-machine';
 import { ReprocessAll } from './reprocess-all';
 
 const SUPPORTED_LANGUAGES = [DocumentationLanguage.PYTHON, DocumentationLanguage.TYPESCRIPT];
 
-export interface OrchestrationProps extends Omit<TransliteratorProps, 'language'>{
+export interface OrchestrationProps {
+  /**
+   * The bucket in which to source assemblies to transliterate.
+   */
+  readonly bucket: IBucket;
+
+  /**
+   * The CodeArtifact registry to use for regular operations.
+   */
+  readonly codeArtifact?: Repository;
+
+  /**
+   * The monitoring handler to register alarms with.
+   */
+  readonly monitoring: Monitoring;
+
+  /**
+   * The VPC in which to place networked resources.
+   */
+  readonly vpc?: Vpc;
+
+  /**
+   * The VPC subnet selection to use.
+   */
+  readonly vpcSubnets?: SubnetSelection;
+
+  /**
+   * VPC endpoints to use for interacting with CodeArtifact and S3.
+   */
+  readonly vpcEndpoints?: TransliteratorVpcEndpoints;
+
+  /**
+   * How long should execution logs be retained?
+   *
+   * @default RetentionDays.TEN_YEARS
+   */
+  readonly logRetention?: RetentionDays;
+
   /**
    * The deny list.
    */
@@ -133,6 +176,14 @@ export class Orchestration extends Construct {
       )
       .otherwise(new Succeed(this, 'Success'));
 
+    const cluster = new Cluster(this, 'Cluster', {
+      containerInsights: true,
+      enableFargateCapacityProviders: true,
+      vpc: props.vpc,
+    });
+
+    const transliterator = new Transliterator(this, 'Transliterator', props);
+
     const definition = new Pass(this, 'Track Execution Infos', {
       inputPath: '$$.Execution',
       parameters: {
@@ -144,30 +195,43 @@ export class Orchestration extends Construct {
       resultPath: '$.$TaskExecution',
     }).next(
       new Parallel(this, 'DocGen', { resultPath: `$.${docGenResultsKey}` })
-        .branch(...SUPPORTED_LANGUAGES.map((language) =>
-          new tasks.LambdaInvoke(this, `Generate ${language} docs`, {
-            lambdaFunction: new Transliterator(this, `DocGen-${language}`, { ...props, language }).function,
-            outputPath: '$.result',
-            resultSelector: {
-              result: {
-                'language': language,
-                'success.$': '$.Payload',
-              },
-            },
-          }).addRetry({ interval: Duration.seconds(30) })
-            .addCatch(
-              new Pass(this, `"Generate ${language} docs" throttled`, { parameters: { 'error.$': '$.Cause', language } }),
-              { errors: ['Lambda.TooManyRequestsException'] },
-            )
-            .addCatch(
-              new Pass(this, `"Generate ${language} docs" failure`, { parameters: { 'error.$': 'States.StringToJson($.Cause)', language } }),
-              { errors: ['States.TaskFailed'] },
-            )
-            .addCatch(
-              new Pass(this, `"Generate ${language} docs" fault`, { parameters: { 'error.$': '$.Cause', language } }),
-              { errors: ['States.ALL'] },
-            ),
-        ))
+        .branch(...SUPPORTED_LANGUAGES.map((language) => {
+
+          // We have to prepare the input to be a JSON string, within an array, because this is what the ECS task expects.
+          // Unfortunately, we have to split this in two Pass states, because I don't know how to make it work otherwise.
+          return new Pass(this, `Prepare ${language}`, {
+            parameters: { command: { 'bucket.$': '$.bucket', 'assembly.$': '$.assembly', '$TaskExecution.$': '$.$TaskExecution' } },
+            resultPath: '$',
+          })
+            .next(new Pass(this, `Stringify ${language} input`, {
+              parameters: { 'commands.$': 'States.Array(States.JsonToString($.command))' },
+              resultPath: '$',
+            })
+              .next(transliterator.createEcsRunTask(this, `Generate ${language} docs`, {
+                cluster,
+                inputPath: '$.commands',
+                language,
+                resultSelector: { result: { 'language': language, 'success.$': '$' } },
+                vpcSubnets: props.vpcSubnets,
+              })
+                .addRetry({ errors: ['ECS.AmazonECSException'], interval: Duration.minutes(1), maxAttempts: 5 })
+                .addCatch(
+                  new Pass(this, `"Generate ${language} docs" timed out`, { parameters: { error: 'Timed out!', language } }),
+                  { errors: ['States.Timeout'] },
+                )
+                .addCatch(
+                  new Pass(this, `"Generate ${language} docs" service error`, { parameters: { 'error.$': '$.Cause', language } }),
+                  { errors: ['ECS.AmazonECSException'] },
+                )
+                .addCatch(
+                  new Pass(this, `"Generate ${language} docs" failure`, { parameters: { 'error.$': 'States.StringToJson($.Cause)', language } }),
+                  { errors: ['States.TaskFailed'] },
+                )
+                .addCatch(
+                  new Pass(this, `"Generate ${language} docs" fault`, { parameters: { 'error.$': '$.Cause', language } }),
+                  { errors: ['States.ALL'] },
+                )));
+        }))
         .next(new Choice(this, 'Any Success?')
           .when(
             Condition.or(

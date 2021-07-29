@@ -11,6 +11,7 @@ const peerDeps = [
   '@aws-cdk/aws-cloudwatch',
   '@aws-cdk/aws-codeartifact',
   '@aws-cdk/aws-ec2',
+  '@aws-cdk/aws-ecs',
   '@aws-cdk/aws-events',
   '@aws-cdk/aws-events-targets',
   '@aws-cdk/assets',
@@ -349,6 +350,123 @@ function newLambdaHandler(entrypoint, trigger) {
   console.error(`${base}: bundle task "${bundle.name}"`);
 }
 
+function newFargateContainer(entrypoint) {
+  if (!entrypoint.startsWith(project.srcdir)) {
+    throw new Error(`${entrypoint} must be under ${project.srcdir}`);
+  }
+
+  if (!entrypoint.endsWith('.fargate.ts')) {
+    throw new Error(`${entrypoint} must have a .fargate.ts extension`);
+  }
+
+  entrypoint = relative(project.srcdir, entrypoint);
+
+  const base = basename(entrypoint, '.fargate.ts');
+  const dir = join(dirname(entrypoint), base);
+  const entry = `${project.srcdir}/${entrypoint}`;
+  const infra = `${project.srcdir}/${dir}.ts`;
+  const outdir = `${project.libdir}/${dir}.bundle`;
+  const bash = `${outdir}/entrypoint.sh`;
+  const outfile = `${outdir}/index.js`;
+  const dockerfile = `${outdir}/Dockerfile`;
+  const className = pascalCase(basename(dir));
+  const propsName = `${className}Props`;
+
+  const ts = new SourceCode(project, infra);
+  ts.line(`// ${FileBase.PROJEN_MARKER}`);
+  ts.line('import * as path from \'path\';');
+  ts.line('import * as ecs from \'@aws-cdk/aws-ecs\';');
+  ts.line('import * as iam from \'@aws-cdk/aws-iam\';');
+  ts.line('import { Construct } from \'@aws-cdk/core\';');
+  ts.line();
+  ts.open(`export interface ${propsName} extends Omit<ecs.ContainerDefinitionOptions, 'image'> {`);
+  ts.line('readonly taskDefinition: ecs.FargateTaskDefinition;');
+  ts.close('}');
+  ts.line();
+  ts.open(`export class ${className} extends ecs.ContainerDefinition {`);
+  ts.open(`public constructor(scope: Construct, id: string, props: ${propsName}) {`);
+  ts.open('super(scope, id, {');
+  ts.line('...props,');
+  ts.line(`image: ecs.ContainerImage.fromAsset(path.join(__dirname, '${basename(outdir)}')),`);
+  ts.close('});');
+  ts.line();
+  ts.open('props.taskDefinition.taskRole.addToPrincipalPolicy(new iam.PolicyStatement({');
+  ts.line('effect: iam.Effect.ALLOW,');
+  ts.open('actions: [');
+  ts.line('\'states:SendTaskFailure\',');
+  ts.line('\'states:SendTaskHeartbeat\',');
+  ts.line('\'states:SendTaskSuccess\',');
+  ts.close('],');
+  ts.line('resources: [\'*\'],');
+  ts.close('}));');
+  ts.close('}');
+  ts.close('}');
+
+  const sh = new SourceCode(project, bash);
+  sh.line('#!/bin/bash');
+  sh.line(`# ${FileBase.PROJEN_MARKER}`);
+  sh.line('exec node <<-EOF');
+  sh.line('const { env } = require(\'process\');');
+  sh.line('const { StepFunctions } = require(\'aws-sdk\');');
+  sh.line('const { handler } = require(\'/bundle/index.js\');');
+  sh.line('const sfn = new StepFunctions();');
+  sh.line('const taskToken = env.SFN_TASK_TOKEN;');
+  // A heartbeat is sent every minute to StepFunctions
+  sh.open('const sendHeartbeat = () => sfn.sendTaskHeartbeat({ taskToken }).promise().then(');
+  sh.line('() => console.log(\'Successfully sent task heartbeat!\'),');
+  sh.line('(reason) => console.error(\'Failed to send task heartbeat:\', reason),');
+  sh.close(');');
+  // ... immediately at task start
+  sh.line('sendHeartbeat();');
+  // ... then every minute
+  sh.line('const heartbeat = setInterval(sendHeartbeat, 60000);');
+  // Wrapped in an `async` IIFE, so that the result is guaranteed to be a promise
+  sh.line('(async () => handler($@))()');
+  // Sending a success to StepFunctions right away
+  sh.open('  .then((value) => {');
+  sh.line('  console.log(\'Handler result:\', JSON.stringify(value, null, 2));');
+  sh.line('  return sfn.sendTaskSuccess({ output: JSON.stringify(value), taskToken }).promise()');
+  sh.close('  })');
+  // In case of errors, send task failure to StepFunctions
+  sh.open('  .catch((reason) => {');
+  sh.line('  console.error(\'Execution error:\', reason);');
+  sh.line('  return sfn.sendTaskFailure({ cause: JSON.stringify(reason), error: reason.name ?? reason.constructor.name ?? \'Error\', taskToken }).promise();');
+  sh.close('  })');
+  // Stop the heartbeat once we're all done...
+  sh.line('  .finally(() => clearInterval(heartbeat));');
+  sh.line('EOF');
+
+  const df = new SourceCode(project, dockerfile);
+  df.line(`# ${FileBase.PROJEN_MARKER}`);
+  df.line('FROM node:14-slim'); // Minimum possible footprint to run node stuff...
+  df.line();
+  df.line('COPY ./entrypoint.sh /bundle/entrypoint.sh');
+  df.line('COPY ./index.js      /bundle/index.js');
+  df.line('COPY ./Dockerfile    /bundle/Dockerfile');
+  df.line();
+  // The entry point requires aws-sdk to be available, so we install it locally.
+  df.line('RUN npm install --no-save aws-sdk@^2.957.0');
+  df.line();
+  df.line('ENTRYPOINT ["/bin/bash", "/bundle/entrypoint.sh"]');
+
+  const bundle = project.addTask(`bundle:${base}`, {
+    description: `Create an AWS Fargate bundle from ${entry}`,
+    exec: [
+      'esbuild',
+      '--bundle',
+      entry,
+      '--target="node14"',
+      '--platform="node"',
+      `--outfile="${outfile}"`,
+    ].join(' '),
+  });
+
+  project.compileTask.spawn(bundle);
+  bundleTask.spawn(bundle);
+  console.error(`${base}: construct "${className}" under "${infra}"`);
+  console.error(`${base}: bundle task "${bundle.name}"`);
+}
+
 /**
  * Auto-discovers all lambda functions.
  */
@@ -357,7 +475,6 @@ function discoverLambdas() {
   project.eslint.allowDevDeps('src/**/*.lambda.ts');
   // Allow .lambda-shared code to import dev-deps (these are not entry points, but are shared by several lambdas)
   project.eslint.allowDevDeps('src/**/*.lambda-shared.ts');
-  project.addDevDeps('glob');
   for (const entry of glob.sync('src/**/*.lambda.ts')) {
     const trigger = basename(entry).startsWith('trigger.');
     newLambdaHandler(entry, trigger);
@@ -371,18 +488,31 @@ function discoverLambdas() {
   }
 }
 
+function discoverFargateContainers() {
+  // allow .fargate code to import dev-deps (since they are only needed during bundling)
+  project.eslint.allowDevDeps('src/**/*.fargate.ts');
+
+  for (const entry of glob.sync('src/**/*.fargate.ts')) {
+    newFargateContainer(entry);
+  }
+}
+
 // extract the "build/" directory from "construct-hub-webapp" into "./website"
 // and bundle it with this library. this way, we are only taking a
 // dev-dependency on the webapp instead of a normal/bundled dependency.
 project.addDevDeps('construct-hub-webapp');
 project.addDevDeps('cdk-triggers');
+
 project.compileTask.prependExec('cp -r ./node_modules/construct-hub-webapp/build ./website');
 project.compileTask.prependExec('rm -rf ./website');
 project.npmignore.addPatterns('!/website'); // <-- include in tarball
 project.gitignore.addPatterns('/website'); // <-- don't commit
 
 addDevApp();
+
+project.addDevDeps('glob');
 discoverLambdas();
+discoverFargateContainers();
 discoverIntegrationTests();
 
 project.synth();

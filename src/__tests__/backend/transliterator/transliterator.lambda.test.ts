@@ -7,7 +7,7 @@ import { Documentation } from 'jsii-docgen';
 import type { TransliteratorInput } from '../../../backend/payload-schema';
 import { reset } from '../../../backend/shared/aws.lambda-shared';
 import * as constants from '../../../backend/shared/constants';
-import { handler } from '../../../backend/transliterator/transliterator.lambda';
+import { handler } from '../../../backend/transliterator/transliterator.fargate';
 
 jest.mock('child_process');
 jest.mock('jsii-docgen');
@@ -78,7 +78,7 @@ describe('VPC Endpoints', () => {
     // mock the file uploads
     mockPutDocs('/docs-typescript.md');
 
-    const created = await handler(event, {} as any);
+    const created = await handler(event);
     expect(created.length).toEqual(1);
     expect(created[0].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-typescript.md`);
     // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -121,7 +121,7 @@ test('uploads a file per language (scoped package)', async () => {
   // mock the file uploads
   mockPutDocs('/docs-typescript.md');
 
-  const created = await handler(event, {} as any);
+  const created = await handler(event);
   expect(created.length).toEqual(1);
   expect(created[0].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-typescript.md`);
 
@@ -161,7 +161,7 @@ test('uploads a file per submodule (unscoped package)', async () => {
     '/docs-sub2-typescript.md',
   );
 
-  const created = await handler(event, {} as any);
+  const created = await handler(event);
 
   expect(created.map(({ key }) => key)).toEqual([
     `data/${packageName}/v${packageVersion}/docs-typescript.md`,
@@ -218,7 +218,7 @@ describe('markers for un-supported languages', () => {
       `/docs-sub2-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
     );
 
-    const created = await handler(event, {} as any);
+    const created = await handler(event);
 
     expect(created.map(({ key }) => key)).toEqual([
       `data/${packageName}/v${packageVersion}/docs-python.md${constants.NOT_SUPPORTED_SUFFIX}`,

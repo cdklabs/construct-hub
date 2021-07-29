@@ -17,12 +17,12 @@ test('minimal usage', () => {
   expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
 
-test('with non-isolated lambdas', () => {
+test('with non-isolated execution', () => {
   const app = new App();
   const stack = new Stack(app, 'Test');
   new ConstructHub(stack, 'ConstructHub', {
     alarmActions: dummyAlarmAction,
-    isolateLambdas: false,
+    isolateSensitiveTasks: false,
   });
   expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
