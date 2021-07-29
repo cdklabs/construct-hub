@@ -37,7 +37,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
   const denyList = await DenyListClient.newClient();
 
-  const marker = await loadLastTransactionMarker(1_800_000 /* @aws-cdk/cdk initial release was at 1_846_709 */);
+  const marker = await loadLastTransactionMarker(4_401_405 /* around December 30, 2019 */);
 
   const config: Nano.ChangesReaderOptions = {
     includeDocs: true,
