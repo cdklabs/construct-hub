@@ -1,5 +1,5 @@
 export const METRICS_NAMESPACE = 'ConstructHub/Discovery';
-export const DISCOVERY_MARKER_KEY = 'couchdb-last-transaction-id';
+export const DISCOVERY_MARKER_KEY = 'couchdb-last-transaction-id.1';
 
 export const enum MetricName {
   BATCH_PROCESSING_TIME = 'BatchProcessingTime',
