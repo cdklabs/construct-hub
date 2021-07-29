@@ -1749,7 +1749,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3Bucket1DAE9912
+          Ref: AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3Bucket858942A6
         S3Key:
           Fn::Join:
             - ""
@@ -1757,12 +1757,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448
+                      - Ref: AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448
+                      - Ref: AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2
@@ -1968,7 +1968,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3Bucket1DAE9912
+          Ref: AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3Bucket858942A6
         S3Key:
           Fn::Join:
             - ""
@@ -1976,12 +1976,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448
+                      - Ref: AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448
+                      - Ref: AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19
@@ -2116,7 +2116,7 @@ Resources:
               Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"DocGen"},"DocGen":{"Type":"Parallel","ResultPath":"$.DocGen","Next":"Any
               Success?","Branches":[{"StartAt":"Generate python
               docs","States":{"Generate python
-              docs":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"Generate
+              docs":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.TaskFailed"],"Next":"Generate
               python docs
               failure"},{"ErrorEquals":["States.ALL"],"Next":"Generate python
               docs
@@ -2131,7 +2131,7 @@ Resources:
               python docs
               fault":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"python"}},"End":true}}},{"StartAt":"Generate
               typescript docs","States":{"Generate typescript
-              docs":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"Generate
+              docs":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.TaskFailed"],"Next":"Generate
               typescript docs
               failure"},{"ErrorEquals":["States.ALL"],"Next":"Generate
               typescript docs
@@ -4265,18 +4265,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24"
-  AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3Bucket1DAE9912:
+  AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3Bucket858942A6:
     Type: String
     Description: S3 bucket for asset
-      "03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2d"
-  AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448:
+      "2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10"
+  AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D:
     Type: String
     Description: S3 key for asset version
-      "03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2d"
-  AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dArtifactHashC6AF90F4:
+      "2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10"
+  AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10ArtifactHash09A818A5:
     Type: String
     Description: Artifact hash for asset
-      "03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2d"
+      "2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10"
   AssetParametersaed78bc431dd6cdac01afad951cec010f57f9d972c3f748c3ceeb5ca096544fdS3Bucket2D90B8C0:
     Type: String
     Description: S3 bucket for asset

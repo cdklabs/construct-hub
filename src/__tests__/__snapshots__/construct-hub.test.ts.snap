@@ -33,18 +33,6 @@ Object {
     },
   },
   "Parameters": Object {
-    "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dArtifactHashC6AF90F4": Object {
-      "Description": "Artifact hash for asset \\"03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2d\\"",
-      "Type": "String",
-    },
-    "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3Bucket1DAE9912": Object {
-      "Description": "S3 bucket for asset \\"03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2d\\"",
-      "Type": "String",
-    },
-    "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448": Object {
-      "Description": "S3 key for asset version \\"03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2d\\"",
-      "Type": "String",
-    },
     "AssetParameters1d7017a5f14f23879368baefdcf78df25ef61f705764835814420d8d966ac1a3ArtifactHash3B103794": Object {
       "Description": "Artifact hash for asset \\"1d7017a5f14f23879368baefdcf78df25ef61f705764835814420d8d966ac1a3\\"",
       "Type": "String",
@@ -67,6 +55,18 @@ Object {
     },
     "AssetParameters2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663S3VersionKey156B584D": Object {
       "Description": "S3 key for asset version \\"2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663\\"",
+      "Type": "String",
+    },
+    "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10ArtifactHash09A818A5": Object {
+      "Description": "Artifact hash for asset \\"2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10\\"",
+      "Type": "String",
+    },
+    "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3Bucket858942A6": Object {
+      "Description": "S3 bucket for asset \\"2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10\\"",
+      "Type": "String",
+    },
+    "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D": Object {
+      "Description": "S3 key for asset version \\"2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10\\"",
       "Type": "String",
     },
     "AssetParameters3f0904d942cba1c2ad2d9f21b06dbd02db287c8438c6d3424de68e3fbbab9b58ArtifactHashABC42124": Object {
@@ -4508,7 +4508,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Track Execution Infos\\",\\"States\\":{\\"Track Execution Infos\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.$TaskExecution\\",\\"InputPath\\":\\"$$.Execution\\",\\"Parameters\\":{\\"Id.$\\":\\"$.Id\\",\\"Name.$\\":\\"$.Name\\",\\"RoleArn.$\\":\\"$.RoleArn\\",\\"StartTime.$\\":\\"$.StartTime\\"},\\"Next\\":\\"DocGen\\"},\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"ResultPath\\":\\"$.DocGen\\",\\"Next\\":\\"Any Success?\\",\\"Branches\\":[{\\"StartAt\\":\\"Generate python docs\\",\\"States\\":{\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate python docs failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate python docs fault\\"}],\\"Type\\":\\"Task\\",\\"OutputPath\\":\\"$.result\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"python\\"},\\"success.$\\":\\"$.Payload\\"}},\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Track Execution Infos\\",\\"States\\":{\\"Track Execution Infos\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.$TaskExecution\\",\\"InputPath\\":\\"$$.Execution\\",\\"Parameters\\":{\\"Id.$\\":\\"$.Id\\",\\"Name.$\\":\\"$.Name\\",\\"RoleArn.$\\":\\"$.RoleArn\\",\\"StartTime.$\\":\\"$.StartTime\\"},\\"Next\\":\\"DocGen\\"},\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"ResultPath\\":\\"$.DocGen\\",\\"Next\\":\\"Any Success?\\",\\"Branches\\":[{\\"StartAt\\":\\"Generate python docs\\",\\"States\\":{\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"Generate python docs failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate python docs fault\\"}],\\"Type\\":\\"Task\\",\\"OutputPath\\":\\"$.result\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"python\\"},\\"success.$\\":\\"$.Payload\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -4519,7 +4519,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}},\\"Generate python docs failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"Generate python docs fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Generate typescript docs\\",\\"States\\":{\\"Generate typescript docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate typescript docs failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate typescript docs fault\\"}],\\"Type\\":\\"Task\\",\\"OutputPath\\":\\"$.result\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"typescript\\"},\\"success.$\\":\\"$.Payload\\"}},\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}},\\"Generate python docs failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"Generate python docs fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Generate typescript docs\\",\\"States\\":{\\"Generate typescript docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"Generate typescript docs failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate typescript docs fault\\"}],\\"Type\\":\\"Task\\",\\"OutputPath\\":\\"$.result\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"typescript\\"},\\"success.$\\":\\"$.Payload\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -4898,7 +4898,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3Bucket1DAE9912",
+            "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3Bucket858942A6",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -4911,7 +4911,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448",
+                          "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D",
                         },
                       ],
                     },
@@ -4924,7 +4924,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448",
+                          "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D",
                         },
                       ],
                     },
@@ -5310,7 +5310,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3Bucket1DAE9912",
+            "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3Bucket858942A6",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -5323,7 +5323,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448",
+                          "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D",
                         },
                       ],
                     },
@@ -5336,7 +5336,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448",
+                          "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D",
                         },
                       ],
                     },
@@ -7269,18 +7269,6 @@ Object {
     },
   },
   "Parameters": Object {
-    "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dArtifactHashC6AF90F4": Object {
-      "Description": "Artifact hash for asset \\"03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2d\\"",
-      "Type": "String",
-    },
-    "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3Bucket1DAE9912": Object {
-      "Description": "S3 bucket for asset \\"03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2d\\"",
-      "Type": "String",
-    },
-    "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448": Object {
-      "Description": "S3 key for asset version \\"03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2d\\"",
-      "Type": "String",
-    },
     "AssetParameters1d7017a5f14f23879368baefdcf78df25ef61f705764835814420d8d966ac1a3ArtifactHash3B103794": Object {
       "Description": "Artifact hash for asset \\"1d7017a5f14f23879368baefdcf78df25ef61f705764835814420d8d966ac1a3\\"",
       "Type": "String",
@@ -7303,6 +7291,18 @@ Object {
     },
     "AssetParameters2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663S3VersionKey156B584D": Object {
       "Description": "S3 key for asset version \\"2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663\\"",
+      "Type": "String",
+    },
+    "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10ArtifactHash09A818A5": Object {
+      "Description": "Artifact hash for asset \\"2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10\\"",
+      "Type": "String",
+    },
+    "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3Bucket858942A6": Object {
+      "Description": "S3 bucket for asset \\"2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10\\"",
+      "Type": "String",
+    },
+    "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D": Object {
+      "Description": "S3 key for asset version \\"2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10\\"",
       "Type": "String",
     },
     "AssetParameters3f0904d942cba1c2ad2d9f21b06dbd02db287c8438c6d3424de68e3fbbab9b58ArtifactHashABC42124": Object {
@@ -11939,7 +11939,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Track Execution Infos\\",\\"States\\":{\\"Track Execution Infos\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.$TaskExecution\\",\\"InputPath\\":\\"$$.Execution\\",\\"Parameters\\":{\\"Id.$\\":\\"$.Id\\",\\"Name.$\\":\\"$.Name\\",\\"RoleArn.$\\":\\"$.RoleArn\\",\\"StartTime.$\\":\\"$.StartTime\\"},\\"Next\\":\\"DocGen\\"},\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"ResultPath\\":\\"$.DocGen\\",\\"Next\\":\\"Any Success?\\",\\"Branches\\":[{\\"StartAt\\":\\"Generate python docs\\",\\"States\\":{\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate python docs failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate python docs fault\\"}],\\"Type\\":\\"Task\\",\\"OutputPath\\":\\"$.result\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"python\\"},\\"success.$\\":\\"$.Payload\\"}},\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Track Execution Infos\\",\\"States\\":{\\"Track Execution Infos\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.$TaskExecution\\",\\"InputPath\\":\\"$$.Execution\\",\\"Parameters\\":{\\"Id.$\\":\\"$.Id\\",\\"Name.$\\":\\"$.Name\\",\\"RoleArn.$\\":\\"$.RoleArn\\",\\"StartTime.$\\":\\"$.StartTime\\"},\\"Next\\":\\"DocGen\\"},\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"ResultPath\\":\\"$.DocGen\\",\\"Next\\":\\"Any Success?\\",\\"Branches\\":[{\\"StartAt\\":\\"Generate python docs\\",\\"States\\":{\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"Generate python docs failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate python docs fault\\"}],\\"Type\\":\\"Task\\",\\"OutputPath\\":\\"$.result\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"python\\"},\\"success.$\\":\\"$.Payload\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -11950,7 +11950,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}},\\"Generate python docs failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"Generate python docs fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Generate typescript docs\\",\\"States\\":{\\"Generate typescript docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate typescript docs failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate typescript docs fault\\"}],\\"Type\\":\\"Task\\",\\"OutputPath\\":\\"$.result\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"typescript\\"},\\"success.$\\":\\"$.Payload\\"}},\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}},\\"Generate python docs failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"Generate python docs fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Generate typescript docs\\",\\"States\\":{\\"Generate typescript docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"Generate typescript docs failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate typescript docs fault\\"}],\\"Type\\":\\"Task\\",\\"OutputPath\\":\\"$.result\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"typescript\\"},\\"success.$\\":\\"$.Payload\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -12329,7 +12329,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3Bucket1DAE9912",
+            "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3Bucket858942A6",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -12342,7 +12342,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448",
+                          "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D",
                         },
                       ],
                     },
@@ -12355,7 +12355,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448",
+                          "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D",
                         },
                       ],
                     },
@@ -12741,7 +12741,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3Bucket1DAE9912",
+            "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3Bucket858942A6",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -12754,7 +12754,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448",
+                          "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D",
                         },
                       ],
                     },
@@ -12767,7 +12767,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448",
+                          "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D",
                         },
                       ],
                     },
@@ -14968,18 +14968,6 @@ Object {
     },
   },
   "Parameters": Object {
-    "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dArtifactHashC6AF90F4": Object {
-      "Description": "Artifact hash for asset \\"03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2d\\"",
-      "Type": "String",
-    },
-    "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3Bucket1DAE9912": Object {
-      "Description": "S3 bucket for asset \\"03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2d\\"",
-      "Type": "String",
-    },
-    "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448": Object {
-      "Description": "S3 key for asset version \\"03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2d\\"",
-      "Type": "String",
-    },
     "AssetParameters1d7017a5f14f23879368baefdcf78df25ef61f705764835814420d8d966ac1a3ArtifactHash3B103794": Object {
       "Description": "Artifact hash for asset \\"1d7017a5f14f23879368baefdcf78df25ef61f705764835814420d8d966ac1a3\\"",
       "Type": "String",
@@ -15002,6 +14990,18 @@ Object {
     },
     "AssetParameters2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663S3VersionKey156B584D": Object {
       "Description": "S3 key for asset version \\"2387e2a5aac8a82d8f3b728ab91d58b1153f4c7e84bc90dbb0de6d445cd1c663\\"",
+      "Type": "String",
+    },
+    "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10ArtifactHash09A818A5": Object {
+      "Description": "Artifact hash for asset \\"2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10\\"",
+      "Type": "String",
+    },
+    "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3Bucket858942A6": Object {
+      "Description": "S3 bucket for asset \\"2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10\\"",
+      "Type": "String",
+    },
+    "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D": Object {
+      "Description": "S3 key for asset version \\"2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10\\"",
       "Type": "String",
     },
     "AssetParameters3f0904d942cba1c2ad2d9f21b06dbd02db287c8438c6d3424de68e3fbbab9b58ArtifactHashABC42124": Object {
@@ -18557,7 +18557,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Track Execution Infos\\",\\"States\\":{\\"Track Execution Infos\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.$TaskExecution\\",\\"InputPath\\":\\"$$.Execution\\",\\"Parameters\\":{\\"Id.$\\":\\"$.Id\\",\\"Name.$\\":\\"$.Name\\",\\"RoleArn.$\\":\\"$.RoleArn\\",\\"StartTime.$\\":\\"$.StartTime\\"},\\"Next\\":\\"DocGen\\"},\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"ResultPath\\":\\"$.DocGen\\",\\"Next\\":\\"Any Success?\\",\\"Branches\\":[{\\"StartAt\\":\\"Generate python docs\\",\\"States\\":{\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate python docs failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate python docs fault\\"}],\\"Type\\":\\"Task\\",\\"OutputPath\\":\\"$.result\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"python\\"},\\"success.$\\":\\"$.Payload\\"}},\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Track Execution Infos\\",\\"States\\":{\\"Track Execution Infos\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.$TaskExecution\\",\\"InputPath\\":\\"$$.Execution\\",\\"Parameters\\":{\\"Id.$\\":\\"$.Id\\",\\"Name.$\\":\\"$.Name\\",\\"RoleArn.$\\":\\"$.RoleArn\\",\\"StartTime.$\\":\\"$.StartTime\\"},\\"Next\\":\\"DocGen\\"},\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"ResultPath\\":\\"$.DocGen\\",\\"Next\\":\\"Any Success?\\",\\"Branches\\":[{\\"StartAt\\":\\"Generate python docs\\",\\"States\\":{\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"Generate python docs failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate python docs fault\\"}],\\"Type\\":\\"Task\\",\\"OutputPath\\":\\"$.result\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"python\\"},\\"success.$\\":\\"$.Payload\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -18568,7 +18568,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}},\\"Generate python docs failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"Generate python docs fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Generate typescript docs\\",\\"States\\":{\\"Generate typescript docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate typescript docs failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate typescript docs fault\\"}],\\"Type\\":\\"Task\\",\\"OutputPath\\":\\"$.result\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"typescript\\"},\\"success.$\\":\\"$.Payload\\"}},\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}},\\"Generate python docs failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"Generate python docs fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Generate typescript docs\\",\\"States\\":{\\"Generate typescript docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":30,\\"MaxAttempts\\":5}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"Generate typescript docs failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"Generate typescript docs fault\\"}],\\"Type\\":\\"Task\\",\\"OutputPath\\":\\"$.result\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"typescript\\"},\\"success.$\\":\\"$.Payload\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -18947,7 +18947,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3Bucket1DAE9912",
+            "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3Bucket858942A6",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -18960,7 +18960,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448",
+                          "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D",
                         },
                       ],
                     },
@@ -18973,7 +18973,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448",
+                          "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D",
                         },
                       ],
                     },
@@ -19292,7 +19292,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3Bucket1DAE9912",
+            "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3Bucket858942A6",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -19305,7 +19305,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448",
+                          "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D",
                         },
                       ],
                     },
@@ -19318,7 +19318,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters03678b09f31a72a74b76eed819876abeb113799bc9e5d52d943b413de6d0df2dS3VersionKey9174B448",
+                          "Ref": "AssetParameters2c3ee27ea0b2e0dfc541ca11cf7a0ab61d970514754102c7e6ac46f2d7f21a10S3VersionKey8D3BB56D",
                         },
                       ],
                     },
