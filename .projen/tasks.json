@@ -67,7 +67,10 @@
           "spawn": "bundle:prune-queue-handler"
         },
         {
-          "spawn": "bundle:discovery"
+          "spawn": "bundle:follow"
+        },
+        {
+          "spawn": "bundle:stage"
         },
         {
           "spawn": "bundle:ingestion"
@@ -308,7 +311,10 @@
           "spawn": "bundle:prune-queue-handler"
         },
         {
-          "spawn": "bundle:discovery"
+          "spawn": "bundle:follow"
+        },
+        {
+          "spawn": "bundle:stage"
         },
         {
           "spawn": "bundle:ingestion"
@@ -440,12 +446,21 @@
         }
       ]
     },
-    "bundle:discovery": {
-      "name": "bundle:discovery",
-      "description": "Create an AWS Lambda bundle from src/backend/discovery/discovery.lambda.ts",
+    "bundle:follow": {
+      "name": "bundle:follow",
+      "description": "Create an AWS Lambda bundle from src/backend/discovery/follow.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/discovery/discovery.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/discovery/discovery.bundle/index.js\" --external:aws-sdk"
+          "exec": "esbuild --bundle src/backend/discovery/follow.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/discovery/follow.bundle/index.js\" --external:aws-sdk"
+        }
+      ]
+    },
+    "bundle:stage": {
+      "name": "bundle:stage",
+      "description": "Create an AWS Lambda bundle from src/backend/discovery/stage.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/discovery/stage.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/discovery/stage.bundle/index.js\" --external:aws-sdk"
         }
       ]
     },

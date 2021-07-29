@@ -1,4 +1,5 @@
 export const METRICS_NAMESPACE = 'ConstructHub/Discovery';
+export const DISCOVERY_MARKER_KEY = 'couchdb-last-transaction-id';
 
 export const enum MetricName {
   BATCH_PROCESSING_TIME = 'BatchProcessingTime',
@@ -9,7 +10,6 @@ export const enum MetricName {
   PACKAGE_VERSION_COUNT = 'PackageVersionCount',
   RELEVANT_PACKAGE_VERSIONS = 'RelevantPackageVersions',
   REMAINING_TIME = 'RemainingTime',
-  STAGING_FAILURE_COUNT = 'StagingFailureCount',
   STAGING_TIME = 'StagingTime',
   UNPROCESSABLE_ENTITY = 'UnprocessableEntity',
 

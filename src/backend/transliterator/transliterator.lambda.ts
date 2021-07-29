@@ -1,6 +1,6 @@
 import * as os from 'os';
 import * as path from 'path';
-// eslint-disable-next-line import/no-unresolved
+
 import type { Context } from 'aws-lambda';
 import { PromiseResult } from 'aws-sdk/lib/request';
 import * as fs from 'fs-extra';
