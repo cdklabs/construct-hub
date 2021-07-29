@@ -146,6 +146,7 @@ export class Orchestration extends Construct {
           }).addRetry({ errors: ['Lambda.TooManyRequestsException'], interval: Duration.seconds(30), maxAttempts: 5 })
             .addCatch(
               new Pass(this, `Generate ${language} docs failure`, { parameters: { 'error.$': 'States.StringToJson($.Cause)', language } }),
+              { errors: ['States.TaskFailed'] },
             )
             .addCatch(
               new Pass(this, `Generate ${language} docs fault`, { parameters: { 'error.$': '$.Cause', language } }),
