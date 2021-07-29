@@ -2116,7 +2116,7 @@ Resources:
               Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"DocGen"},"DocGen":{"Type":"Parallel","ResultPath":"$.DocGen","Next":"Any
               Success?","Branches":[{"StartAt":"Generate python
               docs","States":{"Generate python
-              docs":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"Generate
+              docs":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.TaskFailed"],"Next":"Generate
               python docs
               failure"},{"ErrorEquals":["States.ALL"],"Next":"Generate python
               docs
@@ -2131,7 +2131,7 @@ Resources:
               python docs
               fault":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"python"}},"End":true}}},{"StartAt":"Generate
               typescript docs","States":{"Generate typescript
-              docs":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.ALL"],"Next":"Generate
+              docs":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":30,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.TaskFailed"],"Next":"Generate
               typescript docs
               failure"},{"ErrorEquals":["States.ALL"],"Next":"Generate
               typescript docs
