@@ -91,19 +91,21 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     const codeArtifact = new Repository(this, 'CodeArtifact', { description: 'Proxy to npmjs.com for ConstructHub' });
 
-    const vpc = (props.isolateLambdas ?? true) ? new ec2.Vpc(this, 'Lambda-VPC', {
-      enableDnsHostnames: true,
-      enableDnsSupport: true,
-      natGateways: 0,
-      // Pre-allocating PUBLIC / PRIVATE / INTERNAL subnets, regardless of use, so we don't create
-      // a whole new VPC if we ever need to introduce subnets of these types.
-      subnetConfiguration: [
+    const vpc = (props.isolateLambdas ?? true)
+      ? new ec2.Vpc(this, 'Lambda-VPC', {
+        enableDnsHostnames: true,
+        enableDnsSupport: true,
+        natGateways: 0,
+        // Pre-allocating PUBLIC / PRIVATE / INTERNAL subnets, regardless of use, so we don't create
+        // a whole new VPC if we ever need to introduce subnets of these types.
+        subnetConfiguration: [
         // If there is a PRIVATE subnet, there must also have a PUBLIC subnet (for NAT gateways).
-        { name: 'Public', subnetType: ec2.SubnetType.PUBLIC, reserved: true },
-        { name: 'Private', subnetType: ec2.SubnetType.PRIVATE, reserved: true },
-        { name: 'Isolated', subnetType: ec2.SubnetType.ISOLATED },
-      ],
-    }):undefined;
+          { name: 'Public', subnetType: ec2.SubnetType.PUBLIC, reserved: true },
+          { name: 'Private', subnetType: ec2.SubnetType.PRIVATE, reserved: true },
+          { name: 'Isolated', subnetType: ec2.SubnetType.ISOLATED },
+        ],
+      })
+      : undefined;
     // We'll only use VPC endpoints if we are configured to run in an ISOLATED subnet.
     const vpcEndpoints = vpc && {
       codeArtifactApi: vpc.addInterfaceEndpoint('CodeArtifact.API', {
