@@ -126,7 +126,7 @@ export class Ingestion extends Construct implements IGrantable {
           `Direct link to the function: ${lambdaFunctionUrl(this.function)}`,
         ].join('\n'),
         comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-        evaluationPeriods: 1,
+        evaluationPeriods: 2,
         threshold: 1,
       }),
     );

@@ -134,7 +134,7 @@ export class Discovery extends Construct {
           `Direct link to Lambda function: ${lambdaFunctionUrl(this.follow)}`,
         ].join('\n'),
         comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-        evaluationPeriods: 1,
+        evaluationPeriods: 2,
         threshold: 1,
       });
     this.alarmNoInvocations = this.follow.metricInvocations({ period: Duration.minutes(15) })

@@ -84,7 +84,7 @@ export class Inventory extends Construct {
           `Direct link to function: ${lambdaFunctionUrl(this.canary)}`,
         ].join('\n'),
         comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-        evaluationPeriods: 1,
+        evaluationPeriods: 2,
         threshold: 1,
       }),
     );
