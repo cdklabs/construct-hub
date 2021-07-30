@@ -51,7 +51,7 @@ export interface AlarmActions {
    * This must be an ARN that can be used with CloudWatch alarms.
    * @see https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-actions
    */
-   readonly highSeverityAction?: IAlarmAction;
+  readonly highSeverityAction?: IAlarmAction;
 
   /**
    * The ARN of the CloudWatch alarm action to take for alarms of normal
@@ -72,5 +72,5 @@ export interface AlarmActions {
    *
    * @default - no actions are taken in response to alarms of normal severity
    */
-   readonly normalSeverityAction?: IAlarmAction;
+  readonly normalSeverityAction?: IAlarmAction;
 }
