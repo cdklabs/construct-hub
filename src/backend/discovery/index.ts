@@ -60,7 +60,7 @@ export class Discovery extends Construct {
 
   public readonly function: IFunction;
 
-  private readonly timeout = Duration.minutes(15);
+  private readonly timeout = Duration.minutes(5);
 
   public constructor(scope: Construct, id: string, props: DiscoveryProps) {
     super(scope, id);
@@ -76,7 +76,7 @@ export class Discovery extends Construct {
       ],
     });
 
-    // Note: the handler is designed to stop processing more batches about 2 minutes ahead of the timeout.
+    // Note: the handler is designed to stop processing more batches about 30 seconds ahead of the timeout.
     const handler = new Handler(this, 'Default', {
       description: '[ConstructHub/Discovery] Periodically query npm.js index for new construct libraries',
       environment: {
@@ -107,7 +107,7 @@ export class Discovery extends Construct {
         `Direct link to Lambda function: ${lambdaFunctionUrl(this.function)}`,
       ].join('\n'),
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      evaluationPeriods: 1,
+      evaluationPeriods: 2,
       threshold: 1,
     });
     this.alarmNoInvocations = this.function.metricInvocations({ period: Duration.minutes(15) })
