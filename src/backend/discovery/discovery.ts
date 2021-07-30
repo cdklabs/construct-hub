@@ -3,17 +3,17 @@ import * as path from 'path';
 import * as lambda from '@aws-cdk/aws-lambda';
 import { Construct } from '@aws-cdk/core';
 
-export interface StageProps extends lambda.FunctionOptions {
+export interface DiscoveryProps extends lambda.FunctionOptions {
 }
 
-export class Stage extends lambda.Function {
-  constructor(scope: Construct, id: string, props?: StageProps) {
+export class Discovery extends lambda.Function {
+  constructor(scope: Construct, id: string, props?: DiscoveryProps) {
     super(scope, id, {
-      description: 'backend/discovery/stage.lambda.ts',
+      description: 'backend/discovery/discovery.lambda.ts',
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '/stage.bundle')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '/discovery.bundle')),
     });
   }
 }
