@@ -67,11 +67,23 @@ import { AlarmActions } from 'construct-hub'
 const alarmActions: AlarmActions = { ... }
 ```
 
-##### `highSeverity`<sup>Required</sup> <a name="construct-hub.AlarmActions.property.highSeverity"></a>
+##### `highSeverity`<sup>Optional</sup> <a name="construct-hub.AlarmActions.property.highSeverity"></a>
 
 - *Type:* `string`
 
 The ARN of the CloudWatch alarm action to take for alarms of high-severity alarms.
+
+This must be an ARN that can be used with CloudWatch alarms.
+
+> https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-actions
+
+---
+
+##### `highSeverityAction`<sup>Optional</sup> <a name="construct-hub.AlarmActions.property.highSeverityAction"></a>
+
+- *Type:* [`@aws-cdk/aws-cloudwatch.IAlarmAction`](#@aws-cdk/aws-cloudwatch.IAlarmAction)
+
+The CloudWatch alarm action to take for alarms of high-severity alarms.
 
 This must be an ARN that can be used with CloudWatch alarms.
 
@@ -85,6 +97,19 @@ This must be an ARN that can be used with CloudWatch alarms.
 - *Default:* no actions are taken in response to alarms of normal severity
 
 The ARN of the CloudWatch alarm action to take for alarms of normal severity.
+
+This must be an ARN that can be used with CloudWatch alarms.
+
+> https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-actions
+
+---
+
+##### `normalSeverityAction`<sup>Optional</sup> <a name="construct-hub.AlarmActions.property.normalSeverityAction"></a>
+
+- *Type:* [`@aws-cdk/aws-cloudwatch.IAlarmAction`](#@aws-cdk/aws-cloudwatch.IAlarmAction)
+- *Default:* no actions are taken in response to alarms of normal severity
+
+The CloudWatch alarm action to take for alarms of normal severity.
 
 This must be an ARN that can be used with CloudWatch alarms.
 

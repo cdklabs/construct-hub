@@ -43,6 +43,7 @@ export class Monitoring extends Construct {
     this.watchful = new Watchful(this, 'Watchful', {
       // alarms that come from watchful are all considered normal severity
       alarmActionArns: this.alarmActions?.normalSeverity ? [this.alarmActions.normalSeverity] : [],
+      alarmActions: this.alarmActions?.normalSeverityAction ? [this.alarmActions.normalSeverityAction] : [],
     });
 
     this.highSeverityDashboard = new cw.Dashboard(this, 'HighSeverityDashboard');
@@ -53,11 +54,15 @@ export class Monitoring extends Construct {
    * @param alarm
    */
   public addHighSeverityAlarm(title: string, alarm: cw.Alarm) {
-    const highSeverityAction = this.alarmActions?.highSeverity;
-    if (highSeverityAction) {
+    const highSeverityActionArn = this.alarmActions?.highSeverity;
+    if (highSeverityActionArn) {
       alarm.addAlarmAction({
-        bind: () => ({ alarmActionArn: highSeverityAction }),
+        bind: () => ({ alarmActionArn: highSeverityActionArn }),
       });
+    }
+    const highSeverityAction = this.alarmActions?.highSeverityAction;
+    if (highSeverityAction) {
+      alarm.addAlarmAction(highSeverityAction);
     }
 
     this.highSeverityDashboard.addWidgets(new cw.AlarmWidget({

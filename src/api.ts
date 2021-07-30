@@ -1,6 +1,7 @@
 // this file includes types that are part of the library's public API
 
 import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
+import { IAlarmAction } from '@aws-cdk/aws-cloudwatch';
 import * as route53 from '@aws-cdk/aws-route53';
 
 export * from './backend/deny-list/api';
@@ -42,7 +43,15 @@ export interface AlarmActions {
    * This must be an ARN that can be used with CloudWatch alarms.
    * @see https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-actions
    */
-  readonly highSeverity: string;
+  readonly highSeverity?: string;
+
+  /**
+   * The CloudWatch alarm action to take for alarms of high-severity alarms.
+   *
+   * This must be an ARN that can be used with CloudWatch alarms.
+   * @see https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-actions
+   */
+  readonly highSeverityAction?: IAlarmAction;
 
   /**
    * The ARN of the CloudWatch alarm action to take for alarms of normal
@@ -54,4 +63,14 @@ export interface AlarmActions {
    * @default - no actions are taken in response to alarms of normal severity
    */
   readonly normalSeverity?: string;
+
+  /**
+   * The CloudWatch alarm action to take for alarms of normal severity.
+   *
+   * This must be an ARN that can be used with CloudWatch alarms.
+   * @see https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html#alarms-and-actions
+   *
+   * @default - no actions are taken in response to alarms of normal severity
+   */
+  readonly normalSeverityAction?: IAlarmAction;
 }
