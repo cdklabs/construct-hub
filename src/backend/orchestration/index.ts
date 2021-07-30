@@ -67,6 +67,7 @@ export class Orchestration extends Construct {
       'Backend Orchestration Dead-Letter Queue is not empty',
       new MathExpression({
         expression: 'm1 + m2',
+        label: 'Dead-Letter Queue not empty',
         usingMetrics: {
           m1: this.deadLetterQueue.metricApproximateNumberOfMessagesVisible({ period: Duration.minutes(1) }),
           m2: this.deadLetterQueue.metricApproximateNumberOfMessagesNotVisible({ period: Duration.minutes(1) }),
@@ -102,12 +103,22 @@ export class Orchestration extends Construct {
       },
     })
       // This has a concurrency of 1, so we want to aggressively retry being throttled here.
-      .addRetry({ errors: ['Lambda.TooManyRequestsException'], interval: Duration.seconds(30), maxAttempts: 5 })
-      .addCatch(new Pass(this, 'Add to catalog.json failure', {
-        parameters: { 'error.$': 'States.StringToJson($.Cause)' },
-        resultPath: '$.error',
-      }).next(sendToDeadLetterQueue), { errors: ['States.TaskFailed'] })
-      .addCatch(new Pass(this, 'Add to catalog.json fault', {
+      .addRetry({ errors: ['Lambda.TooManyRequestsException'], interval: Duration.minutes(1), maxAttempts: 5 })
+      .addCatch(
+        new Pass(this, '"Add to catalog.json" throttled', {
+          parameters: { 'error.$': '$.Cause' },
+          resultPath: '$.error',
+        }).next(sendToDeadLetterQueue),
+        { errors: ['Lambda.TooManyRequestsException'] },
+      )
+      .addCatch(
+        new Pass(this, '"Add to catalog.json" failure', {
+          parameters: { 'error.$': 'States.StringToJson($.Cause)' },
+          resultPath: '$.error',
+        }).next(sendToDeadLetterQueue),
+        { errors: ['States.TaskFailed'] },
+      )
+      .addCatch(new Pass(this, '"Add to catalog.json" fault', {
         parameters: { 'error.$': '$.Cause' },
         resultPath: '$.error',
       }).next(sendToDeadLetterQueue), { errors: ['States.ALL'] });
@@ -145,11 +156,15 @@ export class Orchestration extends Construct {
             },
           }).addRetry({ errors: ['Lambda.TooManyRequestsException'], interval: Duration.seconds(30), maxAttempts: 5 })
             .addCatch(
-              new Pass(this, `Generate ${language} docs failure`, { parameters: { 'error.$': 'States.StringToJson($.Cause)', language } }),
+              new Pass(this, `"Generate ${language} docs" throttled`, { parameters: { 'error.$': '$.Cause', language } }),
+              { errors: ['Lambda.TooManyRequestsException'] },
+            )
+            .addCatch(
+              new Pass(this, `"Generate ${language} docs" failure`, { parameters: { 'error.$': 'States.StringToJson($.Cause)', language } }),
               { errors: ['States.TaskFailed'] },
             )
             .addCatch(
-              new Pass(this, `Generate ${language} docs fault`, { parameters: { 'error.$': '$.Cause', language } }),
+              new Pass(this, `"Generate ${language} docs" fault`, { parameters: { 'error.$': '$.Cause', language } }),
               { errors: ['States.ALL'] },
             ),
         ))
