@@ -39,7 +39,7 @@ const cdkCli = 'aws-cdk';
 
 const project = new JsiiProject({
   name: 'construct-hub',
-  description: 'A construct library that model Construct Hub instances.',
+  description: 'A construct library that models Construct Hub instances.',
   keywords: ['aws', 'aws-cdk', 'constructs', 'construct-hub'],
   license: 'Apache-2.0',
   stability: 'experimental',
