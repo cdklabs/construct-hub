@@ -19,7 +19,7 @@ const normalizeNPMMetadata = require('normalize-registry-metadata');
 
 const TIMEOUT_MILLISECONDS = 10_000;
 const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set(['cdk', 'aws-cdk', 'cdk8s', 'cdktf']);
-const MARKER_FILE_NAME = 'couchdb-last-transaction-id';
+const MARKER_FILE_NAME = 'couchdb-last-transaction-id.2';
 const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
 
 // Configure embedded metrics format
