@@ -1,4 +1,4 @@
-import { Alarm, ComparisonOperator, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
+import { Alarm, ComparisonOperator, Metric, MetricOptions, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
@@ -99,7 +99,7 @@ export class Discovery extends Construct {
       targets: [new LambdaFunction(this.function)],
     });
 
-    this.alarmErrors = this.function.metricErrors({ period: Duration.minutes(15) }).createAlarm(this, 'ErrorsAlarm', {
+    this.alarmErrors = this.function.metricErrors().createAlarm(this, 'ErrorsAlarm', {
       alarmName: `${this.node.path}/Errors`,
       alarmDescription: [
         'The discovery function (on npmjs.com) failed to run',
@@ -107,10 +107,11 @@ export class Discovery extends Construct {
         `Direct link to Lambda function: ${lambdaFunctionUrl(this.function)}`,
       ].join('\n'),
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      evaluationPeriods: 2,
+      evaluationPeriods: 3,
       threshold: 1,
+      treatMissingData: TreatMissingData.MISSING,
     });
-    this.alarmNoInvocations = this.function.metricInvocations({ period: Duration.minutes(15) })
+    this.alarmNoInvocations = this.function.metricInvocations()
       .createAlarm(this, 'NoInvocationsAlarm', {
         alarmName: `${this.node.path}/NotRunning`,
         alarmDescription: [
@@ -119,8 +120,9 @@ export class Discovery extends Construct {
           `Direct link to Lambda function: ${lambdaFunctionUrl(this.function)}`,
         ].join('\n'),
         comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
-        evaluationPeriods: 1,
+        evaluationPeriods: 2,
         threshold: 1,
+        treatMissingData: TreatMissingData.BREACHING,
       });
 
     props.monitoring.addHighSeverityAlarm('Discovery Failures', this.alarmErrors);
