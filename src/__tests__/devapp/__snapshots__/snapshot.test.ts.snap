@@ -2823,7 +2823,7 @@ Resources:
     Type: AWS::CloudWatch::Alarm
     Properties:
       ComparisonOperator: GreaterThanOrEqualToThreshold
-      EvaluationPeriods: 2
+      EvaluationPeriods: 3
       AlarmDescription:
         Fn::Join:
           - ""
@@ -2839,14 +2839,15 @@ Resources:
             Ref: ConstructHubDiscoveryD6EEC2B8
       MetricName: Errors
       Namespace: AWS/Lambda
-      Period: 900
+      Period: 300
       Statistic: Sum
       Threshold: 1
+      TreatMissingData: missing
   ConstructHubDiscoveryNoInvocationsAlarm6F5E3A99:
     Type: AWS::CloudWatch::Alarm
     Properties:
       ComparisonOperator: LessThanThreshold
-      EvaluationPeriods: 1
+      EvaluationPeriods: 2
       AlarmDescription:
         Fn::Join:
           - ""
@@ -2862,9 +2863,10 @@ Resources:
             Ref: ConstructHubDiscoveryD6EEC2B8
       MetricName: Invocations
       Namespace: AWS/Lambda
-      Period: 900
+      Period: 300
       Statistic: Sum
       Threshold: 1
+      TreatMissingData: breaching
   ConstructHubInventoryCanaryServiceRole7684EDDE:
     Type: AWS::IAM::Role
     Properties:
