@@ -107,17 +107,10 @@ export class WebApp extends Construct {
     // "website" contains the static react app
     const webappDir = path.join(__dirname, '..', '..', 'website');
 
-    new s3deploy.BucketDeployment(this, 'BucketDeployment', {
-      sources: [s3deploy.Source.asset(webappDir, { exclude: ['index.html'] })],
+    new s3deploy.BucketDeployment(this, 'DeployWebsite', {
+      sources: [s3deploy.Source.asset(webappDir)],
       destinationBucket: this.bucket,
-      prune: false,
-    });
-
-    new s3deploy.BucketDeployment(this, 'HTMLBucketDeployment', {
-      sources: [s3deploy.Source.asset(webappDir, { exclude: ['*', '!index.html'] })],
-      destinationBucket: this.bucket,
-      cacheControl: [s3deploy.CacheControl.noCache()],
-      prune: false,
+      distribution: this.distribution,
     });
 
     new CfnOutput(this, 'DomainName', {
