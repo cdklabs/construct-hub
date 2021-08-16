@@ -106,6 +106,7 @@ export class WebApp extends Construct {
 
     // "website" contains the static react app
     const webappDir = path.join(__dirname, '..', '..', 'website');
+
     new s3deploy.BucketDeployment(this, 'DeployWebsite', {
       sources: [s3deploy.Source.asset(webappDir)],
       destinationBucket: this.bucket,
