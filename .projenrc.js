@@ -350,18 +350,18 @@ function newLambdaHandler(entrypoint, trigger) {
   console.error(`${base}: bundle task "${bundle.name}"`);
 }
 
-function newFargateContainer(entrypoint) {
+function newEcsTask(entrypoint) {
   if (!entrypoint.startsWith(project.srcdir)) {
     throw new Error(`${entrypoint} must be under ${project.srcdir}`);
   }
 
-  if (!entrypoint.endsWith('.fargate.ts')) {
-    throw new Error(`${entrypoint} must have a .fargate.ts extension`);
+  if (!entrypoint.endsWith('.ecstask.ts')) {
+    throw new Error(`${entrypoint} must have a .ecstask.ts extension`);
   }
 
   entrypoint = relative(project.srcdir, entrypoint);
 
-  const base = basename(entrypoint, '.fargate.ts');
+  const base = basename(entrypoint, '.ecstask.ts');
   const dir = join(dirname(entrypoint), base);
   const entry = `${project.srcdir}/${entrypoint}`;
   const infra = `${project.srcdir}/${dir}.ts`;
@@ -490,12 +490,12 @@ function discoverLambdas() {
   }
 }
 
-function discoverFargateContainers() {
+function discoverEcsTasks() {
   // allow .fargate code to import dev-deps (since they are only needed during bundling)
-  project.eslint.allowDevDeps('src/**/*.fargate.ts');
+  project.eslint.allowDevDeps('src/**/*.ecstask.ts');
 
-  for (const entry of glob.sync('src/**/*.fargate.ts')) {
-    newFargateContainer(entry);
+  for (const entry of glob.sync('src/**/*.ecstask.ts')) {
+    newEcsTask(entry);
   }
 }
 
@@ -514,7 +514,7 @@ addDevApp();
 
 project.addDevDeps('glob');
 discoverLambdas();
-discoverFargateContainers();
+discoverEcsTasks();
 discoverIntegrationTests();
 
 project.synth();

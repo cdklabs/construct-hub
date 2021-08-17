@@ -7,7 +7,7 @@ import { Documentation } from 'jsii-docgen';
 import type { TransliteratorInput } from '../../../backend/payload-schema';
 import { reset } from '../../../backend/shared/aws.lambda-shared';
 import * as constants from '../../../backend/shared/constants';
-import { handler } from '../../../backend/transliterator/transliterator.fargate';
+import { handler } from '../../../backend/transliterator/transliterator.ecstask';
 
 jest.mock('child_process');
 jest.mock('jsii-docgen');
