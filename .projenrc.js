@@ -412,7 +412,7 @@ function newEcsTask(entrypoint) {
   sh.line('const sfn = new StepFunctions();');
   sh.line('const taskToken = env.SFN_TASK_TOKEN;');
   // Remove the SFN_TASK_TOKEN from the environment, so arbitrary code does not get to use it to mess up with our state machine's state
-  sh.line(`delete env.SFN_TASK_TOKEN;`);
+  sh.line('delete env.SFN_TASK_TOKEN;');
   // A heartbeat is sent every minute to StepFunctions
   sh.open('const sendHeartbeat = () => sfn.sendTaskHeartbeat({ taskToken }).promise().then(');
   sh.line('() => console.log(\'Successfully sent task heartbeat!\'),');
