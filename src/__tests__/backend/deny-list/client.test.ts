@@ -7,12 +7,12 @@ import * as aws from '../../../backend/shared/aws.lambda-shared';
 
 const sample: Record<string, DenyListRule> = {
   'foo/v1.2.3': {
-    package: 'foo',
+    packageName: 'foo',
     version: '1.2.3',
     reason: 'bar',
   },
   'bar': {
-    package: 'bar',
+    packageName: 'bar',
     reason: 'hello bar',
   },
 };
@@ -89,7 +89,7 @@ describe('lookup', () => {
 
   test('match specific package + version', () => {
     expect(client.lookup('foo', '1.2.3')).toStrictEqual({
-      package: 'foo',
+      packageName: 'foo',
       version: '1.2.3',
       reason: 'bar',
     });
@@ -97,7 +97,7 @@ describe('lookup', () => {
 
   test('match any version', () => {
     const expected = {
-      package: 'bar',
+      packageName: 'bar',
       reason: 'hello bar',
     };
 

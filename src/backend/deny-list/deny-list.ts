@@ -10,7 +10,7 @@ import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
-import { DenyListRule } from './api';
+import { DenyListRule, IDenyList } from './api';
 import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY, MetricName, METRICS_NAMESPACE } from './constants';
 import { createDenyListMap } from './create-map';
 import { Prune } from './prune';
@@ -62,7 +62,7 @@ export interface DenyListProps {
 /**
  * Manages the construct hub deny list.
  */
-export class DenyList extends Construct {
+export class DenyList extends Construct implements IDenyList {
   /**
    * The S3 bucket that contains the deny list.
    */

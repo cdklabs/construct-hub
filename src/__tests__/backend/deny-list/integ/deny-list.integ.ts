@@ -32,8 +32,8 @@ const denylist = new DenyList(stack, 'DenyList', {
   packageDataBucket: packageData,
   packageDataKeyPrefix: STORAGE_KEY_PREFIX,
   rules: [
-    { package: 'mypackage', reason: '"mypackage" is deprecated' },
-    { package: 'your', version: '1.2.3', reason: 'v1.2.3 of "your" has a security issue' },
+    { packageName: 'mypackage', reason: '"mypackage" is deprecated' },
+    { packageName: 'your', version: '1.2.3', reason: 'v1.2.3 of "your" has a security issue' },
   ],
 });
 

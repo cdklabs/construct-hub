@@ -7,7 +7,7 @@ import * as sqs from '@aws-cdk/aws-sqs';
 import { Construct as CoreConstruct, Duration } from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { AlarmActions, Domain } from './api';
-import { DenyList, Discovery, Ingestion } from './backend';
+import { DenyList, Ingestion, NpmJs } from './backend';
 import { BackendDashboard } from './backend-dashboard';
 import { DenyListRule } from './backend/deny-list/api';
 import { Inventory } from './backend/inventory';
@@ -15,6 +15,7 @@ import { Orchestration } from './backend/orchestration';
 import { CATALOG_KEY, STORAGE_KEY_PREFIX } from './backend/shared/constants';
 import { Repository } from './codeartifact/repository';
 import { Monitoring } from './monitoring';
+import { IPackageSource } from './package-source';
 import { WebApp } from './webapp';
 
 /**
@@ -57,6 +58,13 @@ export interface ConstructHubProps {
    * @default []
    */
   readonly denyList?: DenyListRule[];
+
+  /**
+   * The package sources to register with this ConstructHub instance.
+   *
+   * @default - a standard npmjs.com package source will be configured.
+   */
+  readonly packageSources?: IPackageSource[];
 }
 
 /**
@@ -154,15 +162,22 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData, orchestration, monitoring });
 
-    const discovery = new Discovery(this, 'Discovery', { queue: this.ingestion.queue, monitoring, denyList });
-    discovery.bucket.grantRead(this.ingestion);
-
     const inventory = new Inventory(this, 'InventoryCanary', { bucket: packageData, monitoring });
+
+    const sources = new CoreConstruct(this, 'Sources');
+    const packageSources = (props.packageSources ?? [new NpmJs()])
+      .map(source => source.bind(sources, {
+        denyList,
+        ingestion: this.ingestion,
+        monitoring,
+        queue: this.ingestion.queue,
+        repository: codeArtifact,
+      }));
 
     new BackendDashboard(this, 'BackendDashboard', {
       packageData,
       dashboardName: props.backendDashboardName,
-      discovery,
+      packageSources,
       ingestion: this.ingestion,
       inventory,
       orchestration,

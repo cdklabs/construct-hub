@@ -20,12 +20,12 @@ const MOCK_DENY_LIST_BUCKET = 'deny-list-bucket-name';
 const MOCK_DENY_LIST_OBJECT = 'my-deny-list.json';
 const MOCK_DENY_LIST_MAP: DenyListMap = {
   'name/v0.0.0-pre': {
-    package: 'name',
+    packageName: 'name',
     version: '0.0.0-pre',
     reason: 'blocked version',
   },
   '@foo/blocked': {
-    package: '@foo/blocked',
+    packageName: '@foo/blocked',
     reason: 'block all version of this package please',
   },
 };

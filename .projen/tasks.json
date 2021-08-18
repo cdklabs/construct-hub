@@ -67,9 +67,6 @@
           "spawn": "bundle:prune-queue-handler"
         },
         {
-          "spawn": "bundle:discovery"
-        },
-        {
           "spawn": "bundle:ingestion"
         },
         {
@@ -89,6 +86,12 @@
         },
         {
           "spawn": "bundle:http-get-function"
+        },
+        {
+          "spawn": "bundle:code-artifact-forwarder"
+        },
+        {
+          "spawn": "bundle:npm-js-follower"
         },
         {
           "spawn": "bundle:handler"
@@ -320,9 +323,6 @@
           "spawn": "bundle:prune-queue-handler"
         },
         {
-          "spawn": "bundle:discovery"
-        },
-        {
           "spawn": "bundle:ingestion"
         },
         {
@@ -342,6 +342,12 @@
         },
         {
           "spawn": "bundle:http-get-function"
+        },
+        {
+          "spawn": "bundle:code-artifact-forwarder"
+        },
+        {
+          "spawn": "bundle:npm-js-follower"
         },
         {
           "spawn": "bundle:handler"
@@ -452,15 +458,6 @@
         }
       ]
     },
-    "bundle:discovery": {
-      "name": "bundle:discovery",
-      "description": "Create an AWS Lambda bundle from src/backend/discovery/discovery.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/backend/discovery/discovery.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/discovery/discovery.bundle/index.js\" --external:aws-sdk"
-        }
-      ]
-    },
     "bundle:ingestion": {
       "name": "bundle:ingestion",
       "description": "Create an AWS Lambda bundle from src/backend/ingestion/ingestion.lambda.ts",
@@ -521,6 +518,24 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/monitoring/http-get-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitoring/http-get-function.bundle/index.js\" --external:aws-sdk"
+        }
+      ]
+    },
+    "bundle:code-artifact-forwarder": {
+      "name": "bundle:code-artifact-forwarder",
+      "description": "Create an AWS Lambda bundle from src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/codeartifact/code-artifact-forwarder.bundle/index.js\" --external:aws-sdk"
+        }
+      ]
+    },
+    "bundle:npm-js-follower": {
+      "name": "bundle:npm-js-follower",
+      "description": "Create an AWS Lambda bundle from src/package-sources/npmjs/npm-js-follower.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/npmjs/npm-js-follower.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/npm-js-follower.bundle/index.js\" --external:aws-sdk"
         }
       ]
     },

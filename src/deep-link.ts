@@ -1,8 +1,13 @@
+import { CfnRepository } from '@aws-cdk/aws-codeartifact';
 import { IFunction } from '@aws-cdk/aws-lambda';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue } from '@aws-cdk/aws-sqs';
 import { IStateMachine } from '@aws-cdk/aws-stepfunctions';
 import { Stack } from '@aws-cdk/core';
+
+export function codeArtifactRepositoryUrl(repository: CfnRepository) {
+  return `/codesuite/codeartifact/d/${repository.attrDomainOwner}/${repository.attrDomainName}/r/${repository.attrName}`;
+}
 
 export function lambdaFunctionUrl(lambda: IFunction): string {
   return `/lambda/home#/functions/${lambda.functionName}`;

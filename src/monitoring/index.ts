@@ -2,6 +2,7 @@ import * as cw from '@aws-cdk/aws-cloudwatch';
 import { Construct } from '@aws-cdk/core';
 import { Watchful } from 'cdk-watchful';
 import { AlarmActions } from '../api';
+import { IMonitoring } from './api';
 import { WebCanary } from './web-canary';
 
 /**
@@ -23,7 +24,7 @@ export interface MonitoringProps {
  * Components should use the APIs of this module to add watchful monitors,
  * and add canaries and alarms as needed.
  */
-export class Monitoring extends Construct {
+export class Monitoring extends Construct implements IMonitoring {
   private alarmActions?: AlarmActions;
 
   /**
