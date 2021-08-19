@@ -8,8 +8,8 @@ import type { Context, ScheduledEvent } from 'aws-lambda';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import Nano = require('nano');
 import { DenyListClient } from '../deny-list/client.lambda-shared';
+import { LicenseListClient } from '../license-list/client.lambda-shared';
 import * as aws from '../shared/aws.lambda-shared';
-import { ELIGIBLE_LICENSES } from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
@@ -43,6 +43,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
   const queueUrl = requireEnv('QUEUE_URL');
 
   const denyList = await DenyListClient.newClient();
+  const licenseList = await LicenseListClient.newClient();
 
   const initialMarker = await loadLastTransactionMarker(1_800_000 /* @aws-cdk/cdk initial release was at 1_846_709 */);
 
@@ -96,7 +97,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
           // Obtain the modified package version from the update event, and filter
           // out packages that are not of interest to us (not construct libraries).
-          const versionInfos = getRelevantVersionInfos(batch, metrics, denyList);
+          const versionInfos = getRelevantVersionInfos(batch, metrics, denyList, licenseList);
           console.log(`Identified ${versionInfos.length} relevant package version update(s)`);
           metrics.putMetric(MetricName.RELEVANT_PACKAGE_VERSIONS, versionInfos.length, Unit.Count);
 
@@ -295,6 +296,7 @@ function getRelevantVersionInfos(
   changes: readonly Change[],
   metrics: MetricsLogger,
   denyList: DenyListClient,
+  licenseList: LicenseListClient,
 ): readonly UpdatedVersion[] {
 
   const result = new Array<UpdatedVersion>();
@@ -357,9 +359,9 @@ function getRelevantVersionInfos(
           }
 
           metrics.putMetric(MetricName.PACKAGE_VERSION_AGE, Date.now() - modified.getTime(), Unit.Milliseconds);
-          const isEligible = usesEligibleLicenses(infos);
+          const isEligible = licenseList.lookup(infos.license ?? 'UNLICENSED') != null;
           metrics.putMetric(MetricName.INELIGIBLE_LICENSE, isEligible ? 0 : 1, Unit.Count);
-          if (usesEligibleLicenses(infos)) {
+          if (isEligible) {
             result.push({ infos, modified, seq: change.seq });
           } else {
             console.log(`[${change.seq}] Package "${change.doc.name}@${version}" does not use allow-listed license: ${infos.license ?? 'UNLICENSED'}`);
@@ -381,10 +383,6 @@ function getRelevantVersionInfos(
       || infos.name === 'aws-cdk-lib'
       || infos.name.startsWith('@aws-cdk')
       || infos.keywords?.some((kw) => CONSTRUCT_KEYWORDS.has(kw));
-  }
-
-  function usesEligibleLicenses({ license }: VersionInfo): boolean {
-    return ELIGIBLE_LICENSES.has(license?.toUpperCase() ?? 'UNLICENSED');
   }
 }
 

@@ -10,10 +10,16 @@ import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { DenyList } from '../deny-list';
+import { LicenseList } from '../license-list';
 import { MetricName, METRICS_NAMESPACE, S3KeyPrefix } from './constants.lambda-shared';
 import { Discovery as Handler } from './discovery';
 
 export interface DiscoveryProps {
+  /**
+   * The list of licenses allowed in this ConstructHub instance.
+   */
+  readonly licenseList: LicenseList;
+
   /**
    * The monitoring handler to register alarms with.
    */
@@ -93,6 +99,7 @@ export class Discovery extends Construct {
     this.bucket.grantReadWrite(this.function);
     props.queue.grantSendMessages(this.function);
     props.denyList.grantRead(handler);
+    props.licenseList.grantRead(handler);
 
     new Rule(this, 'ScheduleRule', {
       schedule: Schedule.rate(this.timeout),

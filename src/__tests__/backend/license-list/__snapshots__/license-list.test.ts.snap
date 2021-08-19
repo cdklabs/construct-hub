@@ -1,0 +1,3097 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`All licenses 1`] = `
+Object {
+  "Parameters": Object {
+    "AssetParametersa92894d22928d265d3537c5c9b50280e517a898a2347b76f7d2db1e279cb62afArtifactHashB1A6470D": Object {
+      "Description": "Artifact hash for asset \\"a92894d22928d265d3537c5c9b50280e517a898a2347b76f7d2db1e279cb62af\\"",
+      "Type": "String",
+    },
+    "AssetParametersa92894d22928d265d3537c5c9b50280e517a898a2347b76f7d2db1e279cb62afS3BucketB6DEA3A3": Object {
+      "Description": "S3 bucket for asset \\"a92894d22928d265d3537c5c9b50280e517a898a2347b76f7d2db1e279cb62af\\"",
+      "Type": "String",
+    },
+    "AssetParametersa92894d22928d265d3537c5c9b50280e517a898a2347b76f7d2db1e279cb62afS3VersionKey4BB04672": Object {
+      "Description": "S3 key for asset version \\"a92894d22928d265d3537c5c9b50280e517a898a2347b76f7d2db1e279cb62af\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfArtifactHash85F58E48": Object {
+      "Description": "Artifact hash for asset \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C": Object {
+      "Description": "S3 bucket for asset \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70": Object {
+      "Description": "S3 key for asset version \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
+      "Description": "Artifact hash for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7": Object {
+      "Description": "S3 bucket for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F": Object {
+      "Description": "S3 key for asset version \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": Object {
+      "DependsOn": Array [
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Handler": "index.handler",
+        "Layers": Array [
+          Object {
+            "Ref": "LicenseListAwsCliLayer2B699F60",
+          },
+        ],
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.6",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParametersa92894d22928d265d3537c5c9b50280e517a898a2347b76f7d2db1e279cb62afS3BucketB6DEA3A3",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParametersa92894d22928d265d3537c5c9b50280e517a898a2347b76f7d2db1e279cb62afS3BucketB6DEA3A3",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "Roles": Array [
+          Object {
+            "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "Function76856677": Object {
+      "DependsOn": Array [
+        "FunctionServiceRoleDefaultPolicy2F49994A",
+        "FunctionServiceRole675BB04A",
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "ZipFile": "/* ... */",
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "LICENSE_LIST_BUCKET_NAME": Object {
+              "Ref": "LicenseListBucket4788F382",
+            },
+            "LICENSE_LIST_OBJECT_KEY": "alowed-licenses.json",
+          },
+        },
+        "Handler": "index.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "FunctionServiceRole675BB04A",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "FunctionServiceRole675BB04A": Object {
+      "DependsOn": Array [
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "FunctionServiceRoleDefaultPolicy2F49994A": Object {
+      "DependsOn": Array [
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "FunctionServiceRoleDefaultPolicy2F49994A",
+        "Roles": Array [
+          Object {
+            "Ref": "FunctionServiceRole675BB04A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LicenseListAwsCliLayer2B699F60": Object {
+      "Properties": Object {
+        "Content": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "/opt/awscli/aws",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "LicenseListBucket4788F382": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "LicenseListBucketPolicy652A4F9E": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "LicenseListBucket4788F382",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "LicenseListCustomResourceB6ED7EB0": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "DestinationBucketName": Object {
+          "Ref": "LicenseListBucket4788F382",
+        },
+        "Prune": true,
+        "RetainOnDelete": false,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn",
+          ],
+        },
+        "SourceBucketNames": Array [
+          Object {
+            "Ref": "AssetParametersa92894d22928d265d3537c5c9b50280e517a898a2347b76f7d2db1e279cb62afS3BucketB6DEA3A3",
+          },
+        ],
+        "SourceObjectKeys": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersa92894d22928d265d3537c5c9b50280e517a898a2347b76f7d2db1e279cb62afS3VersionKey4BB04672",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersa92894d22928d265d3537c5c9b50280e517a898a2347b76f7d2db1e279cb62afS3VersionKey4BB04672",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "Custom::CDKBucketDeployment",
+      "UpdateReplacePolicy": "Delete",
+    },
+  },
+}
+`;
+
+exports[`Apache licenses only 1`] = `
+Object {
+  "Parameters": Object {
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfArtifactHash85F58E48": Object {
+      "Description": "Artifact hash for asset \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C": Object {
+      "Description": "S3 bucket for asset \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70": Object {
+      "Description": "S3 key for asset version \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
+      "Description": "Artifact hash for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7": Object {
+      "Description": "S3 bucket for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F": Object {
+      "Description": "S3 key for asset version \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+    "AssetParametersfc8477d910f26517d615b8a6146f80243bc4d1fb06cac7e12887263809ae45e9ArtifactHash714F68E4": Object {
+      "Description": "Artifact hash for asset \\"fc8477d910f26517d615b8a6146f80243bc4d1fb06cac7e12887263809ae45e9\\"",
+      "Type": "String",
+    },
+    "AssetParametersfc8477d910f26517d615b8a6146f80243bc4d1fb06cac7e12887263809ae45e9S3Bucket9B7EE6D7": Object {
+      "Description": "S3 bucket for asset \\"fc8477d910f26517d615b8a6146f80243bc4d1fb06cac7e12887263809ae45e9\\"",
+      "Type": "String",
+    },
+    "AssetParametersfc8477d910f26517d615b8a6146f80243bc4d1fb06cac7e12887263809ae45e9S3VersionKeyDB4C5EE3": Object {
+      "Description": "S3 key for asset version \\"fc8477d910f26517d615b8a6146f80243bc4d1fb06cac7e12887263809ae45e9\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": Object {
+      "DependsOn": Array [
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Handler": "index.handler",
+        "Layers": Array [
+          Object {
+            "Ref": "LicenseListAwsCliLayer2B699F60",
+          },
+        ],
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.6",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParametersfc8477d910f26517d615b8a6146f80243bc4d1fb06cac7e12887263809ae45e9S3Bucket9B7EE6D7",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParametersfc8477d910f26517d615b8a6146f80243bc4d1fb06cac7e12887263809ae45e9S3Bucket9B7EE6D7",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "Roles": Array [
+          Object {
+            "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "Function76856677": Object {
+      "DependsOn": Array [
+        "FunctionServiceRoleDefaultPolicy2F49994A",
+        "FunctionServiceRole675BB04A",
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "ZipFile": "/* ... */",
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "LICENSE_LIST_BUCKET_NAME": Object {
+              "Ref": "LicenseListBucket4788F382",
+            },
+            "LICENSE_LIST_OBJECT_KEY": "alowed-licenses.json",
+          },
+        },
+        "Handler": "index.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "FunctionServiceRole675BB04A",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "FunctionServiceRole675BB04A": Object {
+      "DependsOn": Array [
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "FunctionServiceRoleDefaultPolicy2F49994A": Object {
+      "DependsOn": Array [
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "FunctionServiceRoleDefaultPolicy2F49994A",
+        "Roles": Array [
+          Object {
+            "Ref": "FunctionServiceRole675BB04A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LicenseListAwsCliLayer2B699F60": Object {
+      "Properties": Object {
+        "Content": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "/opt/awscli/aws",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "LicenseListBucket4788F382": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "LicenseListBucketPolicy652A4F9E": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "LicenseListBucket4788F382",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "LicenseListCustomResourceB6ED7EB0": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "DestinationBucketName": Object {
+          "Ref": "LicenseListBucket4788F382",
+        },
+        "Prune": true,
+        "RetainOnDelete": false,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn",
+          ],
+        },
+        "SourceBucketNames": Array [
+          Object {
+            "Ref": "AssetParametersfc8477d910f26517d615b8a6146f80243bc4d1fb06cac7e12887263809ae45e9S3Bucket9B7EE6D7",
+          },
+        ],
+        "SourceObjectKeys": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersfc8477d910f26517d615b8a6146f80243bc4d1fb06cac7e12887263809ae45e9S3VersionKeyDB4C5EE3",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersfc8477d910f26517d615b8a6146f80243bc4d1fb06cac7e12887263809ae45e9S3VersionKeyDB4C5EE3",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "Custom::CDKBucketDeployment",
+      "UpdateReplacePolicy": "Delete",
+    },
+  },
+}
+`;
+
+exports[`BSD licenses only 1`] = `
+Object {
+  "Parameters": Object {
+    "AssetParameters38be299f449c9513eff981eece0f969ab0f1c1d43bdc2d0576368b8108ebf63fArtifactHashB46177F5": Object {
+      "Description": "Artifact hash for asset \\"38be299f449c9513eff981eece0f969ab0f1c1d43bdc2d0576368b8108ebf63f\\"",
+      "Type": "String",
+    },
+    "AssetParameters38be299f449c9513eff981eece0f969ab0f1c1d43bdc2d0576368b8108ebf63fS3BucketB1E75392": Object {
+      "Description": "S3 bucket for asset \\"38be299f449c9513eff981eece0f969ab0f1c1d43bdc2d0576368b8108ebf63f\\"",
+      "Type": "String",
+    },
+    "AssetParameters38be299f449c9513eff981eece0f969ab0f1c1d43bdc2d0576368b8108ebf63fS3VersionKeyB4779943": Object {
+      "Description": "S3 key for asset version \\"38be299f449c9513eff981eece0f969ab0f1c1d43bdc2d0576368b8108ebf63f\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfArtifactHash85F58E48": Object {
+      "Description": "Artifact hash for asset \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C": Object {
+      "Description": "S3 bucket for asset \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70": Object {
+      "Description": "S3 key for asset version \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
+      "Description": "Artifact hash for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7": Object {
+      "Description": "S3 bucket for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F": Object {
+      "Description": "S3 key for asset version \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": Object {
+      "DependsOn": Array [
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Handler": "index.handler",
+        "Layers": Array [
+          Object {
+            "Ref": "LicenseListAwsCliLayer2B699F60",
+          },
+        ],
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.6",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters38be299f449c9513eff981eece0f969ab0f1c1d43bdc2d0576368b8108ebf63fS3BucketB1E75392",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters38be299f449c9513eff981eece0f969ab0f1c1d43bdc2d0576368b8108ebf63fS3BucketB1E75392",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "Roles": Array [
+          Object {
+            "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "Function76856677": Object {
+      "DependsOn": Array [
+        "FunctionServiceRoleDefaultPolicy2F49994A",
+        "FunctionServiceRole675BB04A",
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "ZipFile": "/* ... */",
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "LICENSE_LIST_BUCKET_NAME": Object {
+              "Ref": "LicenseListBucket4788F382",
+            },
+            "LICENSE_LIST_OBJECT_KEY": "alowed-licenses.json",
+          },
+        },
+        "Handler": "index.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "FunctionServiceRole675BB04A",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "FunctionServiceRole675BB04A": Object {
+      "DependsOn": Array [
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "FunctionServiceRoleDefaultPolicy2F49994A": Object {
+      "DependsOn": Array [
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "FunctionServiceRoleDefaultPolicy2F49994A",
+        "Roles": Array [
+          Object {
+            "Ref": "FunctionServiceRole675BB04A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LicenseListAwsCliLayer2B699F60": Object {
+      "Properties": Object {
+        "Content": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "/opt/awscli/aws",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "LicenseListBucket4788F382": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "LicenseListBucketPolicy652A4F9E": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "LicenseListBucket4788F382",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "LicenseListCustomResourceB6ED7EB0": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "DestinationBucketName": Object {
+          "Ref": "LicenseListBucket4788F382",
+        },
+        "Prune": true,
+        "RetainOnDelete": false,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn",
+          ],
+        },
+        "SourceBucketNames": Array [
+          Object {
+            "Ref": "AssetParameters38be299f449c9513eff981eece0f969ab0f1c1d43bdc2d0576368b8108ebf63fS3BucketB1E75392",
+          },
+        ],
+        "SourceObjectKeys": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters38be299f449c9513eff981eece0f969ab0f1c1d43bdc2d0576368b8108ebf63fS3VersionKeyB4779943",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters38be299f449c9513eff981eece0f969ab0f1c1d43bdc2d0576368b8108ebf63fS3VersionKeyB4779943",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "Custom::CDKBucketDeployment",
+      "UpdateReplacePolicy": "Delete",
+    },
+  },
+}
+`;
+
+exports[`MIT licenses only 1`] = `
+Object {
+  "Parameters": Object {
+    "AssetParameters0ece072017090c4a1c71add97e583be2990a1a2d274674720304494056a7ad25ArtifactHash338351AA": Object {
+      "Description": "Artifact hash for asset \\"0ece072017090c4a1c71add97e583be2990a1a2d274674720304494056a7ad25\\"",
+      "Type": "String",
+    },
+    "AssetParameters0ece072017090c4a1c71add97e583be2990a1a2d274674720304494056a7ad25S3Bucket27F7431A": Object {
+      "Description": "S3 bucket for asset \\"0ece072017090c4a1c71add97e583be2990a1a2d274674720304494056a7ad25\\"",
+      "Type": "String",
+    },
+    "AssetParameters0ece072017090c4a1c71add97e583be2990a1a2d274674720304494056a7ad25S3VersionKey7BB8BEDA": Object {
+      "Description": "S3 key for asset version \\"0ece072017090c4a1c71add97e583be2990a1a2d274674720304494056a7ad25\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfArtifactHash85F58E48": Object {
+      "Description": "Artifact hash for asset \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C": Object {
+      "Description": "S3 bucket for asset \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70": Object {
+      "Description": "S3 key for asset version \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
+      "Description": "Artifact hash for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7": Object {
+      "Description": "S3 bucket for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F": Object {
+      "Description": "S3 key for asset version \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": Object {
+      "DependsOn": Array [
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Handler": "index.handler",
+        "Layers": Array [
+          Object {
+            "Ref": "LicenseListAwsCliLayer2B699F60",
+          },
+        ],
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.6",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters0ece072017090c4a1c71add97e583be2990a1a2d274674720304494056a7ad25S3Bucket27F7431A",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters0ece072017090c4a1c71add97e583be2990a1a2d274674720304494056a7ad25S3Bucket27F7431A",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "Roles": Array [
+          Object {
+            "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "Function76856677": Object {
+      "DependsOn": Array [
+        "FunctionServiceRoleDefaultPolicy2F49994A",
+        "FunctionServiceRole675BB04A",
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "ZipFile": "/* ... */",
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "LICENSE_LIST_BUCKET_NAME": Object {
+              "Ref": "LicenseListBucket4788F382",
+            },
+            "LICENSE_LIST_OBJECT_KEY": "alowed-licenses.json",
+          },
+        },
+        "Handler": "index.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "FunctionServiceRole675BB04A",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "FunctionServiceRole675BB04A": Object {
+      "DependsOn": Array [
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "FunctionServiceRoleDefaultPolicy2F49994A": Object {
+      "DependsOn": Array [
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "FunctionServiceRoleDefaultPolicy2F49994A",
+        "Roles": Array [
+          Object {
+            "Ref": "FunctionServiceRole675BB04A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LicenseListAwsCliLayer2B699F60": Object {
+      "Properties": Object {
+        "Content": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "/opt/awscli/aws",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "LicenseListBucket4788F382": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "LicenseListBucketPolicy652A4F9E": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "LicenseListBucket4788F382",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "LicenseListCustomResourceB6ED7EB0": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "DestinationBucketName": Object {
+          "Ref": "LicenseListBucket4788F382",
+        },
+        "Prune": true,
+        "RetainOnDelete": false,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn",
+          ],
+        },
+        "SourceBucketNames": Array [
+          Object {
+            "Ref": "AssetParameters0ece072017090c4a1c71add97e583be2990a1a2d274674720304494056a7ad25S3Bucket27F7431A",
+          },
+        ],
+        "SourceObjectKeys": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters0ece072017090c4a1c71add97e583be2990a1a2d274674720304494056a7ad25S3VersionKey7BB8BEDA",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters0ece072017090c4a1c71add97e583be2990a1a2d274674720304494056a7ad25S3VersionKey7BB8BEDA",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "Custom::CDKBucketDeployment",
+      "UpdateReplacePolicy": "Delete",
+    },
+  },
+}
+`;
+
+exports[`OSI-Approved licenses only 1`] = `
+Object {
+  "Parameters": Object {
+    "AssetParameters6c58a11ccf506389f1e59accc9728edc327aa0244b391504aa014953db07fd0bArtifactHash7AC15817": Object {
+      "Description": "Artifact hash for asset \\"6c58a11ccf506389f1e59accc9728edc327aa0244b391504aa014953db07fd0b\\"",
+      "Type": "String",
+    },
+    "AssetParameters6c58a11ccf506389f1e59accc9728edc327aa0244b391504aa014953db07fd0bS3Bucket6974FD60": Object {
+      "Description": "S3 bucket for asset \\"6c58a11ccf506389f1e59accc9728edc327aa0244b391504aa014953db07fd0b\\"",
+      "Type": "String",
+    },
+    "AssetParameters6c58a11ccf506389f1e59accc9728edc327aa0244b391504aa014953db07fd0bS3VersionKeyC03BFDA5": Object {
+      "Description": "S3 key for asset version \\"6c58a11ccf506389f1e59accc9728edc327aa0244b391504aa014953db07fd0b\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfArtifactHash85F58E48": Object {
+      "Description": "Artifact hash for asset \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C": Object {
+      "Description": "S3 bucket for asset \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70": Object {
+      "Description": "S3 key for asset version \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
+      "Description": "Artifact hash for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7": Object {
+      "Description": "S3 bucket for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F": Object {
+      "Description": "S3 key for asset version \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": Object {
+      "DependsOn": Array [
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Handler": "index.handler",
+        "Layers": Array [
+          Object {
+            "Ref": "LicenseListAwsCliLayer2B699F60",
+          },
+        ],
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.6",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters6c58a11ccf506389f1e59accc9728edc327aa0244b391504aa014953db07fd0bS3Bucket6974FD60",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters6c58a11ccf506389f1e59accc9728edc327aa0244b391504aa014953db07fd0bS3Bucket6974FD60",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "Roles": Array [
+          Object {
+            "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "Function76856677": Object {
+      "DependsOn": Array [
+        "FunctionServiceRoleDefaultPolicy2F49994A",
+        "FunctionServiceRole675BB04A",
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "ZipFile": "/* ... */",
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "LICENSE_LIST_BUCKET_NAME": Object {
+              "Ref": "LicenseListBucket4788F382",
+            },
+            "LICENSE_LIST_OBJECT_KEY": "alowed-licenses.json",
+          },
+        },
+        "Handler": "index.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "FunctionServiceRole675BB04A",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "FunctionServiceRole675BB04A": Object {
+      "DependsOn": Array [
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "FunctionServiceRoleDefaultPolicy2F49994A": Object {
+      "DependsOn": Array [
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "FunctionServiceRoleDefaultPolicy2F49994A",
+        "Roles": Array [
+          Object {
+            "Ref": "FunctionServiceRole675BB04A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LicenseListAwsCliLayer2B699F60": Object {
+      "Properties": Object {
+        "Content": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "/opt/awscli/aws",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "LicenseListBucket4788F382": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "LicenseListBucketPolicy652A4F9E": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "LicenseListBucket4788F382",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "LicenseListCustomResourceB6ED7EB0": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "DestinationBucketName": Object {
+          "Ref": "LicenseListBucket4788F382",
+        },
+        "Prune": true,
+        "RetainOnDelete": false,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn",
+          ],
+        },
+        "SourceBucketNames": Array [
+          Object {
+            "Ref": "AssetParameters6c58a11ccf506389f1e59accc9728edc327aa0244b391504aa014953db07fd0bS3Bucket6974FD60",
+          },
+        ],
+        "SourceObjectKeys": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters6c58a11ccf506389f1e59accc9728edc327aa0244b391504aa014953db07fd0bS3VersionKeyC03BFDA5",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters6c58a11ccf506389f1e59accc9728edc327aa0244b391504aa014953db07fd0bS3VersionKeyC03BFDA5",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "Custom::CDKBucketDeployment",
+      "UpdateReplacePolicy": "Delete",
+    },
+  },
+}
+`;
+
+exports[`empty set 1`] = `
+Object {
+  "Parameters": Object {
+    "AssetParameters6a8b6a33cc8ee9c49cdcf518c4f763b9cd7b77946415ac5434f3f3c621dc9791ArtifactHashB4295CDB": Object {
+      "Description": "Artifact hash for asset \\"6a8b6a33cc8ee9c49cdcf518c4f763b9cd7b77946415ac5434f3f3c621dc9791\\"",
+      "Type": "String",
+    },
+    "AssetParameters6a8b6a33cc8ee9c49cdcf518c4f763b9cd7b77946415ac5434f3f3c621dc9791S3BucketF5DCA57C": Object {
+      "Description": "S3 bucket for asset \\"6a8b6a33cc8ee9c49cdcf518c4f763b9cd7b77946415ac5434f3f3c621dc9791\\"",
+      "Type": "String",
+    },
+    "AssetParameters6a8b6a33cc8ee9c49cdcf518c4f763b9cd7b77946415ac5434f3f3c621dc9791S3VersionKeyC04D2E98": Object {
+      "Description": "S3 key for asset version \\"6a8b6a33cc8ee9c49cdcf518c4f763b9cd7b77946415ac5434f3f3c621dc9791\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfArtifactHash85F58E48": Object {
+      "Description": "Artifact hash for asset \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C": Object {
+      "Description": "S3 bucket for asset \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70": Object {
+      "Description": "S3 key for asset version \\"c24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cf\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
+      "Description": "Artifact hash for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7": Object {
+      "Description": "S3 bucket for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F": Object {
+      "Description": "S3 key for asset version \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": Object {
+      "DependsOn": Array [
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3Bucket55EFA30C",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersc24b999656e4fe6c609c31bae56a1cf4717a405619c3aa6ba1bc686b8c2c86cfS3VersionKey60329B70",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Handler": "index.handler",
+        "Layers": Array [
+          Object {
+            "Ref": "LicenseListAwsCliLayer2B699F60",
+          },
+        ],
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.6",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters6a8b6a33cc8ee9c49cdcf518c4f763b9cd7b77946415ac5434f3f3c621dc9791S3BucketF5DCA57C",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters6a8b6a33cc8ee9c49cdcf518c4f763b9cd7b77946415ac5434f3f3c621dc9791S3BucketF5DCA57C",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "Roles": Array [
+          Object {
+            "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "Function76856677": Object {
+      "DependsOn": Array [
+        "FunctionServiceRoleDefaultPolicy2F49994A",
+        "FunctionServiceRole675BB04A",
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "ZipFile": "/* ... */",
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "LICENSE_LIST_BUCKET_NAME": Object {
+              "Ref": "LicenseListBucket4788F382",
+            },
+            "LICENSE_LIST_OBJECT_KEY": "alowed-licenses.json",
+          },
+        },
+        "Handler": "index.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "FunctionServiceRole675BB04A",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "FunctionServiceRole675BB04A": Object {
+      "DependsOn": Array [
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "FunctionServiceRoleDefaultPolicy2F49994A": Object {
+      "DependsOn": Array [
+        "LicenseListAwsCliLayer2B699F60",
+        "LicenseListCustomResourceB6ED7EB0",
+      ],
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "FunctionServiceRoleDefaultPolicy2F49994A",
+        "Roles": Array [
+          Object {
+            "Ref": "FunctionServiceRole675BB04A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LicenseListAwsCliLayer2B699F60": Object {
+      "Properties": Object {
+        "Content": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "/opt/awscli/aws",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "LicenseListBucket4788F382": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "LicenseListBucketPolicy652A4F9E": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "LicenseListBucket4788F382",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListBucket4788F382",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListBucket4788F382",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "LicenseListCustomResourceB6ED7EB0": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "DestinationBucketName": Object {
+          "Ref": "LicenseListBucket4788F382",
+        },
+        "Prune": true,
+        "RetainOnDelete": false,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn",
+          ],
+        },
+        "SourceBucketNames": Array [
+          Object {
+            "Ref": "AssetParameters6a8b6a33cc8ee9c49cdcf518c4f763b9cd7b77946415ac5434f3f3c621dc9791S3BucketF5DCA57C",
+          },
+        ],
+        "SourceObjectKeys": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters6a8b6a33cc8ee9c49cdcf518c4f763b9cd7b77946415ac5434f3f3c621dc9791S3VersionKeyC04D2E98",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters6a8b6a33cc8ee9c49cdcf518c4f763b9cd7b77946415ac5434f3f3c621dc9791S3VersionKeyC04D2E98",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "Custom::CDKBucketDeployment",
+      "UpdateReplacePolicy": "Delete",
+    },
+  },
+}
+`;
