@@ -29,6 +29,9 @@ export class DevStack extends Stack {
       ],
       backendDashboardName: 'construct-hub-backend',
       isolateLambdas,
+      appConfig: {
+        disableFAQ: true,
+      },
     });
   }
 }

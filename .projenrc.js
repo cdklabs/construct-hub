@@ -371,17 +371,19 @@ function discoverLambdas() {
   }
 }
 
-// extract the "build/" directory from "construct-hub-webapp" into "./website"
-// and bundle it with this library. this way, we are only taking a
-// dev-dependency on the webapp instead of a normal/bundled dependency.
-project.addDevDeps('construct-hub-webapp');
+
+function addWebappConfig() {
+  project.addBundledDeps('construct-hub-webapp');
+  project.gitignore.addPatterns('/scripts/app-config.ts');
+  project.npmignore.addPatterns('/scripts/app-config.ts', '!/scripts/builder.js');
+  project.npmignore.addPatterns('/website'); // <-- don't include in tarball
+  project.gitignore.addPatterns('/website'); // <-- don't commit
+}
+
 project.addDevDeps('cdk-triggers');
-project.compileTask.prependExec('cp -r ./node_modules/construct-hub-webapp/build ./website');
-project.compileTask.prependExec('rm -rf ./website');
-project.npmignore.addPatterns('!/website'); // <-- include in tarball
-project.gitignore.addPatterns('/website'); // <-- don't commit
 
 addDevApp();
+addWebappConfig();
 discoverLambdas();
 discoverIntegrationTests();
 

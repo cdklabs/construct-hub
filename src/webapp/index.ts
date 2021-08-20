@@ -1,3 +1,4 @@
+import { execSync } from 'child_process';
 import * as path from 'path';
 import * as cloudfront from '@aws-cdk/aws-cloudfront';
 import * as origins from '@aws-cdk/aws-cloudfront-origins';
@@ -10,7 +11,11 @@ import { Domain } from '../api';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
 import { CacheInvalidator } from './cache-invalidator';
+import { Config, AppConfig } from './config';
 import { ResponseFunction } from './response-function';
+
+// To make JSII happy
+export type { AppConfig } from './config';
 
 export interface WebAppProps {
   /**
@@ -28,6 +33,8 @@ export interface WebAppProps {
    * The bucket containing package data.
    */
   readonly packageData: s3.Bucket;
+
+  readonly appConfig?: AppConfig;
 }
 
 export class WebApp extends Construct {
@@ -35,6 +42,13 @@ export class WebApp extends Construct {
   public readonly distribution: cloudfront.Distribution;
   public constructor(scope: Construct, id: string, props: WebAppProps) {
     super(scope, id);
+
+    new Config(props.appConfig).write();
+
+    execSync(
+      `node ${path.join(__dirname, '..', '..', 'scripts', 'builder.js')}`,
+      { stdio: 'inherit' },
+    );
 
     this.bucket = new s3.Bucket(this, 'WebsiteBucket', {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
@@ -50,20 +64,25 @@ export class WebApp extends Construct {
     const behaviorOptions = {
       compress: true,
       cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-      functionAssociations: [{
-        function: new ResponseFunction(this, functionId, {
-          functionName: functionId,
-        }),
-        eventType: cloudfront.FunctionEventType.VIEWER_RESPONSE,
-      }],
+      functionAssociations: [
+        {
+          function: new ResponseFunction(this, functionId, {
+            functionName: functionId,
+          }),
+          eventType: cloudfront.FunctionEventType.VIEWER_RESPONSE,
+        },
+      ],
     };
 
     this.distribution = new cloudfront.Distribution(this, 'Distribution', {
-      defaultBehavior: { origin: new origins.S3Origin(this.bucket), ...behaviorOptions },
+      defaultBehavior: {
+        origin: new origins.S3Origin(this.bucket),
+        ...behaviorOptions,
+      },
       domainNames: props.domain ? [props.domain.zone.zoneName] : undefined,
       certificate: props.domain ? props.domain.cert : undefined,
       defaultRootObject: 'index.html',
-      errorResponses: [404, 403].map(httpStatus => ({
+      errorResponses: [404, 403].map((httpStatus) => ({
         httpStatus,
         responseHttpStatus: 200,
         responsePagePath: '/index.html',
@@ -73,23 +92,34 @@ export class WebApp extends Construct {
 
     const jsiiObjOrigin = new origins.S3Origin(props.packageData);
     this.distribution.addBehavior('/data/*', jsiiObjOrigin, behaviorOptions);
-    this.distribution.addBehavior('/catalog.json', jsiiObjOrigin, behaviorOptions);
+    this.distribution.addBehavior(
+      '/catalog.json',
+      jsiiObjOrigin,
+      behaviorOptions,
+    );
 
-    new CacheInvalidator(this, 'CacheInvalidator', { bucket: props.packageData, distribution: this.distribution });
+    new CacheInvalidator(this, 'CacheInvalidator', {
+      bucket: props.packageData,
+      distribution: this.distribution,
+    });
 
     // if we use a domain, and A records with a CloudFront alias
     if (props.domain) {
       // IPv4
       new r53.ARecord(this, 'ARecord', {
         zone: props.domain.zone,
-        target: r53.RecordTarget.fromAlias(new r53targets.CloudFrontTarget(this.distribution)),
+        target: r53.RecordTarget.fromAlias(
+          new r53targets.CloudFrontTarget(this.distribution),
+        ),
         comment: 'Created by the AWS CDK',
       });
 
       // IPv6
       new r53.AaaaRecord(this, 'AaaaRecord', {
         zone: props.domain.zone,
-        target: r53.RecordTarget.fromAlias(new r53targets.CloudFrontTarget(this.distribution)),
+        target: r53.RecordTarget.fromAlias(
+          new r53targets.CloudFrontTarget(this.distribution),
+        ),
         comment: 'Created by the AWS CDK',
       });
 
@@ -99,8 +129,14 @@ export class WebApp extends Construct {
           certificate: props.domain.cert,
           domainName: props.domain.zone.zoneName,
         });
-        props.monitoring.addHighSeverityAlarm('ACM Certificate Expiry', monitored.alarmAcmCertificateExpiresSoon);
-        props.monitoring.addHighSeverityAlarm('Endpoint Certificate Expiry', monitored.alarmEndpointCertificateExpiresSoon);
+        props.monitoring.addHighSeverityAlarm(
+          'ACM Certificate Expiry',
+          monitored.alarmAcmCertificateExpiresSoon,
+        );
+        props.monitoring.addHighSeverityAlarm(
+          'Endpoint Certificate Expiry',
+          monitored.alarmEndpointCertificateExpiresSoon,
+        );
       }
     }
 
@@ -119,6 +155,9 @@ export class WebApp extends Construct {
     });
 
     // add a canary that pings our home page and alarms if it returns errors.
-    props.monitoring.addWebCanary('Home Page', `https://${this.distribution.domainName}`);
+    props.monitoring.addWebCanary(
+      'Home Page',
+      `https://${this.distribution.domainName}`,
+    );
   }
 }

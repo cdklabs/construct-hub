@@ -117,6 +117,30 @@ This must be an ARN that can be used with CloudWatch alarms.
 
 ---
 
+### AppConfig <a name="construct-hub.AppConfig"></a>
+
+The construct-facing config interface.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { AppConfig } from 'construct-hub'
+
+const appConfig: AppConfig = { ... }
+```
+
+##### `disableFAQ`<sup>Optional</sup> <a name="construct-hub.AppConfig.property.disableFAQ"></a>
+
+- *Type:* `boolean`
+
+---
+
+##### `hasAnalytics`<sup>Optional</sup> <a name="construct-hub.AppConfig.property.hasAnalytics"></a>
+
+- *Type:* `boolean`
+
+---
+
 ### ConstructHubProps <a name="construct-hub.ConstructHubProps"></a>
 
 Props for `ConstructHub`.
@@ -134,6 +158,14 @@ const constructHubProps: ConstructHubProps = { ... }
 - *Type:* [`construct-hub.AlarmActions`](#construct-hub.AlarmActions)
 
 Actions to perform when alarms are set.
+
+---
+
+##### `appConfig`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.appConfig"></a>
+
+- *Type:* [`construct-hub.AppConfig`](#construct-hub.AppConfig)
+
+An object representing the web app config.
 
 ---
 

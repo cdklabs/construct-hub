@@ -15,7 +15,9 @@ import { Orchestration } from './backend/orchestration';
 import { CATALOG_KEY, STORAGE_KEY_PREFIX } from './backend/shared/constants';
 import { Repository } from './codeartifact/repository';
 import { Monitoring } from './monitoring';
-import { WebApp } from './webapp';
+import { WebApp, WebAppProps } from './webapp';
+
+export type { AppConfig } from './webapp';
 
 /**
  * Props for `ConstructHub`.
@@ -57,6 +59,11 @@ export interface ConstructHubProps {
    * @default []
    */
   readonly denyList?: DenyListRule[];
+
+  /**
+   * An object representing the web app config.
+   */
+  readonly appConfig?: WebAppProps['appConfig'];
 }
 
 /**
@@ -170,6 +177,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     });
 
     new WebApp(this, 'WebApp', {
+      appConfig: props.appConfig,
       domain: props.domain,
       monitoring,
       packageData,
