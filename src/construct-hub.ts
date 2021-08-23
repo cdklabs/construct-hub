@@ -11,10 +11,12 @@ import { DenyList, Discovery, Ingestion } from './backend';
 import { BackendDashboard } from './backend-dashboard';
 import { DenyListRule } from './backend/deny-list/api';
 import { Inventory } from './backend/inventory';
+import { LicenseList } from './backend/license-list';
 import { Orchestration } from './backend/orchestration';
 import { CATALOG_KEY, STORAGE_KEY_PREFIX } from './backend/shared/constants';
 import { Repository } from './codeartifact/repository';
 import { Monitoring } from './monitoring';
+import { SpdxLicense } from './spdx-license';
 import { WebApp } from './webapp';
 
 /**
@@ -57,6 +59,13 @@ export interface ConstructHubProps {
    * @default []
    */
   readonly denyList?: DenyListRule[];
+
+  /**
+   * The allowed licenses for packages indexed by this instance of ConstructHub.
+   *
+   * @default [...SpdxLicense.apache(),...SpdxLicense.bsd(),...SpdxLicense.mit()]
+   */
+  readonly allowedLicenses?: SpdxLicense[];
 }
 
 /**
@@ -140,9 +149,9 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     });
 
     const orchestration = new Orchestration(this, 'Orchestration', {
-      denyList: denyList,
       bucket: packageData,
       codeArtifact,
+      denyList,
       monitoring,
       vpc,
       vpcEndpoints,
@@ -154,7 +163,10 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData, orchestration, monitoring });
 
-    const discovery = new Discovery(this, 'Discovery', { queue: this.ingestion.queue, monitoring, denyList });
+    const licenseList = new LicenseList(this, 'LicenseList', {
+      licenses: props.allowedLicenses ?? [...SpdxLicense.apache(), ...SpdxLicense.bsd(), ...SpdxLicense.mit()],
+    });
+    const discovery = new Discovery(this, 'Discovery', { queue: this.ingestion.queue, licenseList, monitoring, denyList });
     discovery.bucket.grantRead(this.ingestion);
 
     const inventory = new Inventory(this, 'InventoryCanary', { bucket: packageData, monitoring });
