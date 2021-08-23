@@ -2728,7 +2728,7 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParameters40523f3183ff4bc71ca1fa8b728d7878ac4eeaf3804e325ed8b49ec50ff5eae7S3Bucket6D96EB5B
+        - Ref: AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658S3BucketF36A877E
       SourceObjectKeys:
         - Fn::Join:
             - ""
@@ -2736,12 +2736,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters40523f3183ff4bc71ca1fa8b728d7878ac4eeaf3804e325ed8b49ec50ff5eae7S3VersionKey04B7F495
+                      - Ref: AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658S3VersionKeyF7596361
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters40523f3183ff4bc71ca1fa8b728d7878ac4eeaf3804e325ed8b49ec50ff5eae7S3VersionKey04B7F495
+                      - Ref: AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658S3VersionKeyF7596361
       DestinationBucketName:
         Ref: ConstructHubLicenseListBucket9334047F
       RetainOnDelete: false
@@ -2921,7 +2921,7 @@ Resources:
           DENY_LIST_OBJECT_KEY: deny-list.json
           LICENSE_LIST_BUCKET_NAME:
             Ref: ConstructHubLicenseListBucket9334047F
-          LICENSE_LIST_OBJECT_KEY: alowed-licenses.json
+          LICENSE_LIST_OBJECT_KEY: allowed-licenses.json
       Handler: index.handler
       MemorySize: 10240
       ReservedConcurrentExecutions: 1
@@ -3809,13 +3809,13 @@ Resources:
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters40523f3183ff4bc71ca1fa8b728d7878ac4eeaf3804e325ed8b49ec50ff5eae7S3Bucket6D96EB5B
+                    - Ref: AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658S3BucketF36A877E
               - Fn::Join:
                   - ""
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters40523f3183ff4bc71ca1fa8b728d7878ac4eeaf3804e325ed8b49ec50ff5eae7S3Bucket6D96EB5B
+                    - Ref: AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658S3BucketF36A877E
                     - /*
           - Action:
               - s3:GetObject*
@@ -4283,18 +4283,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "88b9c4e86fb761ff8204bd9f186782e3b41949811fab1ae1625e92bf5f7996df"
-  AssetParameters40523f3183ff4bc71ca1fa8b728d7878ac4eeaf3804e325ed8b49ec50ff5eae7S3Bucket6D96EB5B:
+  AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658S3BucketF36A877E:
     Type: String
     Description: S3 bucket for asset
-      "40523f3183ff4bc71ca1fa8b728d7878ac4eeaf3804e325ed8b49ec50ff5eae7"
-  AssetParameters40523f3183ff4bc71ca1fa8b728d7878ac4eeaf3804e325ed8b49ec50ff5eae7S3VersionKey04B7F495:
+      "2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658"
+  AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658S3VersionKeyF7596361:
     Type: String
     Description: S3 key for asset version
-      "40523f3183ff4bc71ca1fa8b728d7878ac4eeaf3804e325ed8b49ec50ff5eae7"
-  AssetParameters40523f3183ff4bc71ca1fa8b728d7878ac4eeaf3804e325ed8b49ec50ff5eae7ArtifactHash0331070F:
+      "2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658"
+  AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658ArtifactHashA026490C:
     Type: String
     Description: Artifact hash for asset
-      "40523f3183ff4bc71ca1fa8b728d7878ac4eeaf3804e325ed8b49ec50ff5eae7"
+      "2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658"
   AssetParameters0437791f3640cc823828ae0679adc153a7a8cb6d31c196c557bb3198b9d12d77S3Bucket89E68333:
     Type: String
     Description: S3 bucket for asset
