@@ -28,7 +28,7 @@ export class LicenseList extends Construct {
   /**
    * The object key i which the license list is stored.
    */
-  public readonly objectKey = 'alowed-licenses.json';
+  public readonly objectKey = 'allowed-licenses.json';
 
   private readonly upload: s3deploy.BucketDeployment;
 
