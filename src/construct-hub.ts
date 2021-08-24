@@ -19,7 +19,7 @@ import { Monitoring } from './monitoring';
 import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
 import { SpdxLicense } from './spdx-license';
-import { WebApp } from './webapp';
+import { WebApp, CustomLinkConfig } from './webapp';
 
 /**
  * Props for `ConstructHub`.
@@ -75,6 +75,13 @@ export interface ConstructHubProps {
    * @default [...SpdxLicense.apache(),...SpdxLicense.bsd(),...SpdxLicense.mit()]
    */
   readonly allowedLicenses?: SpdxLicense[];
+
+  /**
+   * Custom package link config
+   *
+   * @default use standard links on package details page
+   */
+  readonly packageLinks?: CustomLinkConfig[];
 }
 
 /**
@@ -170,7 +177,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     // rebuild the catalog when the deny list changes.
     denyList.prune.onChangeInvoke(orchestration.catalogBuilder);
 
-    this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData, orchestration, monitoring });
+    this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData, orchestration, monitoring, packageLinks: props.packageLinks });
 
     const licenseList = new LicenseList(this, 'LicenseList', {
       licenses: props.allowedLicenses ?? [...SpdxLicense.apache(), ...SpdxLicense.bsd(), ...SpdxLicense.mit()],
@@ -200,6 +207,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     new WebApp(this, 'WebApp', {
       domain: props.domain,
+      packageLinks: props.packageLinks,
       monitoring,
       packageData,
     });

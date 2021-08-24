@@ -187,12 +187,56 @@ implies the creation of additonal resources, including:
 
 ---
 
+##### `packageLinks`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.packageLinks"></a>
+
+- *Type:* [`construct-hub.CustomLinkConfig`](#construct-hub.CustomLinkConfig)[]
+- *Default:* use standard links on package details page
+
+Custom package link config.
+
+---
+
 ##### `packageSources`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.packageSources"></a>
 
 - *Type:* [`construct-hub.IPackageSource`](#construct-hub.IPackageSource)[]
 - *Default:* a standard npmjs.com package source will be configured.
 
 The package sources to register with this ConstructHub instance.
+
+---
+
+### CustomLinkConfig <a name="construct-hub.CustomLinkConfig"></a>
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { CustomLinkConfig } from 'construct-hub'
+
+const customLinkConfig: CustomLinkConfig = { ... }
+```
+
+##### `name`<sup>Required</sup> <a name="construct-hub.CustomLinkConfig.property.name"></a>
+
+- *Type:* `string`
+
+The name of the link, appears before the ":".
+
+---
+
+##### `value`<sup>Required</sup> <a name="construct-hub.CustomLinkConfig.property.value"></a>
+
+- *Type:* `string`
+
+The location of the value inside a module's package.json.
+
+---
+
+##### `displayText`<sup>Optional</sup> <a name="construct-hub.CustomLinkConfig.property.displayText"></a>
+
+- *Type:* `string`
+- *Default:* the url of the link
+
+optional text to display as the hyperlink text.
 
 ---
 

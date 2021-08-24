@@ -502,8 +502,6 @@ function generateSpdxLicenseEnum() {
 // dev-dependency on the webapp instead of a normal/bundled dependency.
 project.addDevDeps('construct-hub-webapp');
 project.addDevDeps('cdk-triggers');
-project.compileTask.prependExec('cp -r ./node_modules/construct-hub-webapp/build ./website');
-project.compileTask.prependExec('rm -rf ./website');
 project.npmignore.addPatterns('!/website'); // <-- include in tarball
 project.gitignore.addPatterns('/website'); // <-- don't commit
 

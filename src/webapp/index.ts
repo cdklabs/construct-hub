@@ -1,4 +1,4 @@
-import * as path from 'path';
+// import * as path from 'path';
 import * as cloudfront from '@aws-cdk/aws-cloudfront';
 import * as origins from '@aws-cdk/aws-cloudfront-origins';
 import * as r53 from '@aws-cdk/aws-route53';
@@ -9,8 +9,10 @@ import { CfnOutput, Construct } from '@aws-cdk/core';
 import { Domain } from '../api';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
+import { WebAppBuilder, CustomLinkConfig } from './builder';
 import { CacheInvalidator } from './cache-invalidator';
 import { ResponseFunction } from './response-function';
+export { CustomLinkConfig } from './builder';
 
 export interface WebAppProps {
   /**
@@ -28,6 +30,23 @@ export interface WebAppProps {
    * The bucket containing package data.
    */
   readonly packageData: s3.Bucket;
+
+  /**
+   * Whether to load client side analytics script.
+   * @default false
+   */
+  readonly analytics?: boolean;
+
+  /**
+   * Whether FAQ is displayed or not
+   * @default false
+   */
+  readonly faq?: boolean;
+
+  /**
+   * Custom package link config
+   */
+  readonly packageLinks?: CustomLinkConfig[];
 }
 
 export class WebApp extends Construct {
@@ -105,10 +124,16 @@ export class WebApp extends Construct {
     }
 
     // "website" contains the static react app
-    const webappDir = path.join(__dirname, '..', '..', 'website');
+    const webappBuilder = new WebAppBuilder({
+      analytics: props.analytics,
+      faq: props.faq,
+      packageLinks: props.packageLinks,
+    });
+    // webAppBuilder.build();
+    // const webappDir = path.join(__dirname, '..', '..', 'website');
 
     new s3deploy.BucketDeployment(this, 'DeployWebsite', {
-      sources: [s3deploy.Source.asset(webappDir)],
+      sources: [s3deploy.Source.asset(webappBuilder.outDir)],
       destinationBucket: this.bucket,
       distribution: this.distribution,
     });

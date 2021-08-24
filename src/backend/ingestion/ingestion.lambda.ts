@@ -6,6 +6,7 @@ import { validateAssembly } from '@jsii/spec';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, SQSEvent } from 'aws-lambda';
+import { CustomLinkConfig } from '../../webapp';
 import type { StateMachineInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
@@ -66,7 +67,7 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
       metrics.putMetric(MetricName.INVALID_TARBALL, 1, Unit.Count);
       return;
     }
-    const metadata = { date: payload.time, licenseText: licenseText?.toString('utf-8') };
+
 
     let packageLicense: string;
     let packageName: string;
@@ -84,7 +85,7 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
     }
 
     // Ensure the `.jsii` name, version & license corresponds to those in `package.json`
-    const { name: packageJsonName, version: packageJsonVersion, license: packageJsonLicense } = JSON.parse(packageJson.toString('utf-8'));
+    const { name: packageJsonName, version: packageJsonVersion, license: packageJsonLicense, constructHub } = JSON.parse(packageJson.toString('utf-8'));
     if (packageJsonName !== packageName || packageJsonVersion !== packageVersion || packageJsonLicense !== packageLicense) {
       console.log(`Ignoring package with mismatched name, version, and/or license (${packageJsonName}@${packageJsonVersion} is ${packageJsonLicense} !== ${packageName}@${packageVersion} is ${packageLicense})`);
       metrics.putMetric(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 1, Unit.Count);
@@ -95,6 +96,19 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
     // Did we identify a license file or not?
     metrics.putMetric(MetricName.FOUND_LICENSE_FILE, licenseText != null ? 1 : 0, Unit.Count);
 
+
+    // Add custom links content to metdata for display on the frontend
+    const allowedLinks: CustomLinkConfig[] = JSON.parse(process.env.CUSTOM_LINKS ?? '[]');
+
+    const packageLinks = allowedLinks.reduce((accum: CustomLinkConfig[], { value, ...rest }) => {
+      const pkgValue = constructHub?.links[value];
+      if (pkgValue) {
+        return [...accum, { ...rest, value: pkgValue }];
+      }
+      return accum;
+    }, []);
+    
+    const metadata = { date: payload.time, licenseText: licenseText?.toString('utf-8'), packageLinks };
     const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(packageName, packageVersion);
     console.log(`Writing assembly at ${assemblyKey}`);
     console.log(`Writing package at  ${packageKey}`);

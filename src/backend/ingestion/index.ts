@@ -7,6 +7,7 @@ import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
+import { CustomLinkConfig } from '../../webapp';
 import { Orchestration } from '../orchestration';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { Ingestion as Handler } from './ingestion';
@@ -27,6 +28,11 @@ export interface IngestionProps {
    * successfully registered.
    */
   readonly orchestration: Orchestration;
+
+  /**
+   * Custom package link config
+   */
+  readonly packageLinks?: CustomLinkConfig[];
 }
 
 /**
@@ -74,11 +80,13 @@ export class Ingestion extends Construct implements IGrantable {
       visibilityTimeout: Duration.minutes(15),
     });
 
+    const customLinksAllowList = JSON.stringify(props.packageLinks ?? {});
     const handler = new Handler(this, 'Default', {
       description: '[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub',
       environment: {
         BUCKET_NAME: props.bucket.bucketName,
         STATE_MACHINE_ARN: props.orchestration.stateMachine.stateMachineArn,
+        CUSTOM_LINKS: customLinksAllowList,
       },
       memorySize: 10_240, // Currently the maximum possible setting
       timeout: Duration.minutes(15),
