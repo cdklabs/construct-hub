@@ -321,14 +321,54 @@ export class Orchestration extends Construct {
     });
   }
 
+  public metricEcsCpuReserved(opts?: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'CpuReserved',
+      namespace: 'ECS/ContainerInsights',
+    });
+  }
+
+  public metricEcsCpuUtilized(opts?: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'CpuUtilized',
+      namespace: 'ECS/ContainerInsights',
+    });
+  }
+
   public metricEcsCpuUtilization(opts?: MathExpressionOptions): MathExpression {
     return new MathExpression({
       ...opts,
       expression: '100 * FILL(mCpuUtilized, 0) / FILL(mCpuReserved, REPEAT)',
       usingMetrics: {
-        mCpuReserved: (this.ecsCluster as Cluster).metricCpuReservation({ statistic: Statistic.MAXIMUM }),
-        mCpuUtilized: (this.ecsCluster as Cluster).metricCpuUtilization({ statistic: Statistic.MAXIMUM }),
+        mCpuReserved: this.metricEcsCpuReserved(),
+        mCpuUtilized: this.metricEcsCpuUtilized(),
       },
+    });
+  }
+
+  public metricEcsMemoryReserved(opts?: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'MemoryReserved',
+      namespace: 'ECS/ContainerInsights',
+    });
+  }
+
+  public metricEcsMemoryUtilized(opts?: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'MemoryUtilized',
+      namespace: 'ECS/ContainerInsights',
     });
   }
 
@@ -337,8 +377,8 @@ export class Orchestration extends Construct {
       ...opts,
       expression: '100 * FILL(mMemoryUtilized, 0) / FILL(mMemoryReserved, REPEAT)',
       usingMetrics: {
-        mMemoryReserved: (this.ecsCluster as Cluster).metricMemoryReservation({ statistic: Statistic.MAXIMUM }),
-        mMemoryUtilized: (this.ecsCluster as Cluster).metricMemoryUtilization({ statistic: Statistic.MAXIMUM }),
+        mMemoryReserved: this.metricEcsMemoryReserved(),
+        mMemoryUtilized: this.metricEcsMemoryUtilized(),
       },
     });
   }

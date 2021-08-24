@@ -1,4 +1,4 @@
-import { Dashboard, GraphWidget, GraphWidgetView, TextWidget, IWidget } from '@aws-cdk/aws-cloudwatch';
+import { Dashboard, GraphWidget, GraphWidgetView, TextWidget, IWidget, MathExpression, Metric, Statistic } from '@aws-cdk/aws-cloudwatch';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 import { DenyList } from './backend/deny-list';
@@ -35,7 +35,7 @@ export class BackendDashboard extends Construct {
             markdown: [
               '# Catalog Overview',
               '',
-              `[button:Package Data](${s3ObjectUrl(props.packageData)})`,
+              `[button:primary:Package Data](${s3ObjectUrl(props.packageData)})`,
               `[button:Catalog Builder](${lambdaFunctionUrl(props.orchestration.catalogBuilder)})`,
             ].join('\n'),
           }),
@@ -75,7 +75,7 @@ export class BackendDashboard extends Construct {
             markdown: [
               '# Ingestion Function',
               '',
-              `[button:Search Log Group](${lambdaSearchLogGroupUrl(props.ingestion.function)})`,
+              `[button:primary:Search Log Group](${lambdaSearchLogGroupUrl(props.ingestion.function)})`,
               `[button:DLQ](${sqsQueueUrl(props.ingestion.deadLetterQueue)})`,
             ].join('\n'),
           }),
@@ -161,7 +161,7 @@ export class BackendDashboard extends Construct {
               [
                 '# Orchestration',
                 '',
-                `[button:State Machine](${stateMachineUrl(props.orchestration.stateMachine)})`,
+                `[button:primary:State Machine](${stateMachineUrl(props.orchestration.stateMachine)})`,
                 `[button:DLQ](${sqsQueueUrl(props.orchestration.deadLetterQueue)})`,
                 `[button:Redrive DLQ](${lambdaFunctionUrl(props.orchestration.redriveFunction)})`,
                 `[button:Reprocess](${lambdaFunctionUrl(props.orchestration.reprocessAllFunction)})`,
@@ -223,7 +223,7 @@ export class BackendDashboard extends Construct {
               [
                 '# Deny List',
                 '',
-                `[button:Deny List Object](${s3ObjectUrl(props.denyList.bucket, props.denyList.objectKey)})`,
+                `[button:primary:Deny List Object](${s3ObjectUrl(props.denyList.bucket, props.denyList.objectKey)})`,
                 `[button:Prune Function](${lambdaFunctionUrl(props.denyList.prune.pruneHandler)})`,
                 `[button:Prune Logs](${lambdaSearchLogGroupUrl(props.denyList.prune.pruneHandler)})`,
                 `[button:Delete Queue](${sqsQueueUrl(props.denyList.prune.queue)})`,
@@ -273,13 +273,31 @@ export class BackendDashboard extends Construct {
         ].join('\n'),
       }),
     ];
+    const mFargateUsage = new Metric({
+      dimensionsMap: {
+        Class: 'None',
+        Resource: 'OnDemand',
+        Service: 'Fargate',
+        Type: 'Resource',
+      },
+      metricName: 'ResourceCount',
+      namespace: 'AWS/Usage',
+      statistic: Statistic.MAXIMUM,
+    });
+
     yield [
       new GraphWidget({
         height: 6,
         width: 12,
-        title: 'ECS Resoruces',
+        title: 'ECS Resources',
         left: [
           orchestration.metricEcsTaskCount({ label: 'Task Count' }),
+          mFargateUsage.with({ label: 'Fargate Usage (On-Demand)' }),
+          new MathExpression({
+            expression: 'SERVICE_QUOTA(mFargateUsage)',
+            label: 'Fargate Quota (On-Demand)',
+            usingMetrics: { mFargateUsage, },
+          }),
         ],
         leftYAxis: { min: 0 },
         right: [
