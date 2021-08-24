@@ -116,6 +116,11 @@ export class DenyList extends Construct implements IDenyList {
         events: [s3.EventType.OBJECT_CREATED],
         filters: [{ prefix: this.objectKey, suffix: this.objectKey }],
       }));
+
+      // add an explicit dep between upload and the bucket scope which can now
+      // also include the bucket notification resource. otherwise, the first
+      // upload will not trigger a prune
+      this.upload.node.addDependency(this.bucket);
     }
 
     // trigger prune periodically (every 5 minutes) - just in case
@@ -126,11 +131,6 @@ export class DenyList extends Construct implements IDenyList {
         targets: [new targets.LambdaFunction(this.prune.pruneHandler)],
       });
     }
-
-    // add an explicit dep between upload and the bucket scope which can now
-    // also include the bucket notification resource. otherwise, the first
-    // upload will not trigger a prune
-    this.upload.node.addDependency(this.bucket);
   }
 
   /**
@@ -141,8 +141,6 @@ export class DenyList extends Construct implements IDenyList {
     handler.addEnvironment(ENV_DENY_LIST_BUCKET_NAME, this.bucket.bucketName);
     handler.addEnvironment(ENV_DENY_LIST_OBJECT_KEY, this.objectKey);
     this.bucket.grantRead(handler);
-    // The handler now depends on the deny-list having been uploaded
-    handler.node.addDependency(this.upload);
   }
 
   /**

@@ -841,8 +841,6 @@ def submit_response(event: dict, context, response_status: str, error_message: s
     },
     "DenyListPrunePruneHandler5F946B07": Object {
       "DependsOn": Array [
-        "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
-        "DenyListBucketDeploymentCustomResource68E58740",
         "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E",
         "DenyListPrunePruneHandlerServiceRole234C8EF9",
       ],
@@ -920,10 +918,6 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::Lambda::Function",
     },
     "DenyListPrunePruneHandlerServiceRole234C8EF9": Object {
-      "DependsOn": Array [
-        "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
-        "DenyListBucketDeploymentCustomResource68E58740",
-      ],
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -955,10 +949,6 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::IAM::Role",
     },
     "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E": Object {
-      "DependsOn": Array [
-        "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
-        "DenyListBucketDeploymentCustomResource68E58740",
-      ],
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
