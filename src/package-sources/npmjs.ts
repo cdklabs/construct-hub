@@ -76,7 +76,7 @@ export class NpmJs implements IPackageSource {
     });
     monitoring.addHighSeverityAlarm('NpmJs/Follower Failures', failureAlarm);
 
-    const notRunningAlarm = follower.metricErrors().createAlarm(scope, 'NpmJs/Follower/NotRunning', {
+    const notRunningAlarm = follower.metricInvocations().createAlarm(scope, 'NpmJs/Follower/NotRunning', {
       alarmName: `${scope.node.path}/NpmJs/Follower/NotRunning`,
       alarmDescription: [
         'The NpmJs follower function is not running!',
