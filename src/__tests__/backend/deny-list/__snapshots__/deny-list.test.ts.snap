@@ -562,7 +562,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::Lambda::Permission",
     },
     "DenyListBucketC1C9D3D9": Object {
-      "DeletionPolicy": "Retain",
+      "DeletionPolicy": "Delete",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -584,7 +584,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Retain",
+      "UpdateReplacePolicy": "Delete",
     },
     "DenyListBucketDeploymentAwsCliLayer4F94CAE9": Object {
       "DependsOn": Array [
@@ -649,6 +649,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "Ref": "DenyListBucketC1C9D3D9",
         },
         "Prune": true,
+        "RetainOnDelete": false,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -840,6 +841,8 @@ def submit_response(event: dict, context, response_status: str, error_message: s
     },
     "DenyListPrunePruneHandler5F946B07": Object {
       "DependsOn": Array [
+        "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
+        "DenyListBucketDeploymentCustomResource68E58740",
         "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E",
         "DenyListPrunePruneHandlerServiceRole234C8EF9",
       ],
@@ -917,6 +920,10 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::Lambda::Function",
     },
     "DenyListPrunePruneHandlerServiceRole234C8EF9": Object {
+      "DependsOn": Array [
+        "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
+        "DenyListBucketDeploymentCustomResource68E58740",
+      ],
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -948,6 +955,10 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::IAM::Role",
     },
     "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E": Object {
+      "DependsOn": Array [
+        "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
+        "DenyListBucketDeploymentCustomResource68E58740",
+      ],
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [

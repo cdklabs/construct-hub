@@ -921,8 +921,8 @@
           "Status": "Enabled"
         }
       },
-      "UpdateReplacePolicy": "Retain",
-      "DeletionPolicy": "Retain",
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/Bucket/Resource"
       }
@@ -1109,6 +1109,7 @@
         "DestinationBucketName": {
           "Ref": "DenyListBucketC1C9D3D9"
         },
+        "RetainOnDelete": false,
         "Prune": true
       },
       "DependsOn": [
@@ -1164,6 +1165,10 @@
           }
         ]
       },
+      "DependsOn": [
+        "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
+        "DenyListBucketDeploymentCustomResource68E58740"
+      ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneHandler/ServiceRole/Resource"
       }
@@ -1267,6 +1272,10 @@
           }
         ]
       },
+      "DependsOn": [
+        "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
+        "DenyListBucketDeploymentCustomResource68E58740"
+      ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneHandler/ServiceRole/DefaultPolicy/Resource"
       }
@@ -1345,6 +1354,8 @@
         "Timeout": 900
       },
       "DependsOn": [
+        "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
+        "DenyListBucketDeploymentCustomResource68E58740",
         "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E",
         "DenyListPrunePruneHandlerServiceRole234C8EF9"
       ],
@@ -1777,6 +1788,10 @@
           }
         ]
       },
+      "DependsOn": [
+        "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
+        "DenyListBucketDeploymentCustomResource68E58740"
+      ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/ClientTest/ServiceRole/Resource"
       }
@@ -1826,6 +1841,10 @@
           }
         ]
       },
+      "DependsOn": [
+        "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
+        "DenyListBucketDeploymentCustomResource68E58740"
+      ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/ClientTest/ServiceRole/DefaultPolicy/Resource"
       }
@@ -1895,7 +1914,9 @@
       },
       "DependsOn": [
         "ClientTestServiceRoleDefaultPolicy3CB30A97",
-        "ClientTestServiceRole4F7802CF"
+        "ClientTestServiceRole4F7802CF",
+        "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
+        "DenyListBucketDeploymentCustomResource68E58740"
       ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/ClientTest/Resource",
@@ -1913,7 +1934,7 @@
           ]
         },
         "HandlerArn": {
-          "Ref": "ClientTestCurrentVersionAB7E7F6529e01c8b11d584574078cfdc2af6fba4"
+          "Ref": "ClientTestCurrentVersionAB7E7F653b61d5a851dd2736d6229988734e8991"
         }
       },
       "DependsOn": [
@@ -1940,13 +1961,17 @@
         "aws:cdk:path": "TestDenyList/ClientTest/Trigger/Resource/Default"
       }
     },
-    "ClientTestCurrentVersionAB7E7F6529e01c8b11d584574078cfdc2af6fba4": {
+    "ClientTestCurrentVersionAB7E7F653b61d5a851dd2736d6229988734e8991": {
       "Type": "AWS::Lambda::Version",
       "Properties": {
         "FunctionName": {
           "Ref": "ClientTestBE4CEC14"
         }
       },
+      "DependsOn": [
+        "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
+        "DenyListBucketDeploymentCustomResource68E58740"
+      ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/ClientTest/CurrentVersion/Resource"
       }
