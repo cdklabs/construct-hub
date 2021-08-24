@@ -327,7 +327,7 @@ export class Orchestration extends Construct {
       expression: '100 * FILL(mCpuUtilized, 0) / FILL(mCpuReserved, REPEAT)',
       usingMetrics: {
         mCpuReserved: (this.ecsCluster as Cluster).metricCpuReservation({ statistic: Statistic.MAXIMUM }),
-        metricEcsCpuUtilized: (this.ecsCluster as Cluster).metricCpuUtilization({ statistic: Statistic.MAXIMUM }),
+        mCpuUtilized: (this.ecsCluster as Cluster).metricCpuUtilization({ statistic: Statistic.MAXIMUM }),
       },
     });
   }
