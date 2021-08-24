@@ -187,6 +187,15 @@ implies the creation of additonal resources, including:
 
 ---
 
+##### `packageSources`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.packageSources"></a>
+
+- *Type:* [`construct-hub.IPackageSource`](#construct-hub.IPackageSource)[]
+- *Default:* a standard npmjs.com package source will be configured.
+
+The package sources to register with this ConstructHub instance.
+
+---
+
 ### DenyListMap <a name="construct-hub.DenyListMap"></a>
 
 The contents of the deny list file in S3.
@@ -211,7 +220,7 @@ import { DenyListRule } from 'construct-hub'
 const denyListRule: DenyListRule = { ... }
 ```
 
-##### `package`<sup>Required</sup> <a name="construct-hub.DenyListRule.property.package"></a>
+##### `packageName`<sup>Required</sup> <a name="construct-hub.DenyListRule.property.packageName"></a>
 
 - *Type:* `string`
 
@@ -275,6 +284,161 @@ The root domain name where this instance of Construct Hub will be served.
 - *Default:* true
 
 Whether the certificate should be monitored for expiration, meaning high severity alarms will be raised if it is due to expire in less than 45 days.
+
+---
+
+### LinkedResource <a name="construct-hub.LinkedResource"></a>
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { LinkedResource } from 'construct-hub'
+
+const linkedResource: LinkedResource = { ... }
+```
+
+##### `name`<sup>Required</sup> <a name="construct-hub.LinkedResource.property.name"></a>
+
+- *Type:* `string`
+
+The name of the linked resource.
+
+---
+
+##### `url`<sup>Required</sup> <a name="construct-hub.LinkedResource.property.url"></a>
+
+- *Type:* `string`
+
+The URL where the linked resource can be found.
+
+---
+
+##### `primary`<sup>Optional</sup> <a name="construct-hub.LinkedResource.property.primary"></a>
+
+- *Type:* `boolean`
+
+Whether this is the primary resource of the bound package source.
+
+It is not
+necessary that there is one, and there could be multiple primary resources.
+The buttons for those will be rendered with a different style on the
+dashboard.
+
+---
+
+### PackageSourceBindOptions <a name="construct-hub.PackageSourceBindOptions"></a>
+
+Options for binding a package source.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { PackageSourceBindOptions } from 'construct-hub'
+
+const packageSourceBindOptions: PackageSourceBindOptions = { ... }
+```
+
+##### `ingestion`<sup>Required</sup> <a name="construct-hub.PackageSourceBindOptions.property.ingestion"></a>
+
+- *Type:* [`@aws-cdk/aws-iam.IGrantable`](#@aws-cdk/aws-iam.IGrantable)
+
+The `IGrantable` that will process downstream messages from the bound package source.
+
+It needs to be granted permissions to read package data
+from the URLs sent to the `queue`.
+
+---
+
+##### `licenseList`<sup>Required</sup> <a name="construct-hub.PackageSourceBindOptions.property.licenseList"></a>
+
+- *Type:* [`construct-hub.ILicenseList`](#construct-hub.ILicenseList)
+
+The license list applied by the bound Construct Hub instance.
+
+This can be
+used to filter down the package only to those which will pass the license
+filter.
+
+---
+
+##### `monitoring`<sup>Required</sup> <a name="construct-hub.PackageSourceBindOptions.property.monitoring"></a>
+
+- *Type:* [`construct-hub.IMonitoring`](#construct-hub.IMonitoring)
+
+The monitoring instance to use for registering alarms, etc.
+
+---
+
+##### `queue`<sup>Required</sup> <a name="construct-hub.PackageSourceBindOptions.property.queue"></a>
+
+- *Type:* [`@aws-cdk/aws-sqs.IQueue`](#@aws-cdk/aws-sqs.IQueue)
+
+The SQS queue to which messages should be sent.
+
+Sent objects should match
+the package discovery schema.
+
+---
+
+##### `denyList`<sup>Optional</sup> <a name="construct-hub.PackageSourceBindOptions.property.denyList"></a>
+
+- *Type:* [`construct-hub.IDenyList`](#construct-hub.IDenyList)
+
+The configured `DenyList` for the bound Construct Hub instance, if any.
+
+---
+
+##### `repository`<sup>Optional</sup> <a name="construct-hub.PackageSourceBindOptions.property.repository"></a>
+
+- *Type:* [`construct-hub.IRepository`](#construct-hub.IRepository)
+
+The CodeArtifact repository that is internally used by ConstructHub.
+
+This
+may be undefined if no CodeArtifact repository is internally used.
+
+---
+
+### PackageSourceBindResult <a name="construct-hub.PackageSourceBindResult"></a>
+
+The result of binding a package source.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { PackageSourceBindResult } from 'construct-hub'
+
+const packageSourceBindResult: PackageSourceBindResult = { ... }
+```
+
+##### `dashboardWidgets`<sup>Required</sup> <a name="construct-hub.PackageSourceBindResult.property.dashboardWidgets"></a>
+
+- *Type:* [`@aws-cdk/aws-cloudwatch.IWidget`](#@aws-cdk/aws-cloudwatch.IWidget)[][]
+
+Widgets to add to the operator dashbaord for monitoring the health of the bound package source.
+
+It is not necessary for this list of widgets to
+include a title section (this will be added automatically). One array
+represents a row of widgets on the dashboard.
+
+---
+
+##### `name`<sup>Required</sup> <a name="construct-hub.PackageSourceBindResult.property.name"></a>
+
+- *Type:* `string`
+
+The name of the bound package source.
+
+It will be used to render operator
+dashboards (so it should be a meaningful identification of the source).
+
+---
+
+##### `links`<sup>Optional</sup> <a name="construct-hub.PackageSourceBindResult.property.links"></a>
+
+- *Type:* [`construct-hub.LinkedResource`](#construct-hub.LinkedResource)[]
+
+An optional list of linked resources to be displayed on the monitoring dashboard.
 
 ---
 
@@ -4826,6 +4990,132 @@ Zope Public License 2.0.
 Zope Public License 2.1.
 
 > http://old.zope.org/Resources/ZPL/
+
+---
+
+## Protocols <a name="Protocols"></a>
+
+### IDenyList <a name="construct-hub.IDenyList"></a>
+
+- *Implemented By:* [`construct-hub.IDenyList`](#construct-hub.IDenyList)
+
+DenyList features exposed to extension points.
+
+#### Methods <a name="Methods"></a>
+
+##### `grantRead` <a name="construct-hub.IDenyList.grantRead"></a>
+
+```typescript
+public grantRead(handler: Function)
+```
+
+###### `handler`<sup>Required</sup> <a name="construct-hub.IDenyList.parameter.handler"></a>
+
+- *Type:* [`@aws-cdk/aws-lambda.Function`](#@aws-cdk/aws-lambda.Function)
+
+---
+
+
+### ILicenseList <a name="construct-hub.ILicenseList"></a>
+
+- *Implemented By:* [`construct-hub.ILicenseList`](#construct-hub.ILicenseList)
+
+#### Methods <a name="Methods"></a>
+
+##### `grantRead` <a name="construct-hub.ILicenseList.grantRead"></a>
+
+```typescript
+public grantRead(handler: Function)
+```
+
+###### `handler`<sup>Required</sup> <a name="construct-hub.ILicenseList.parameter.handler"></a>
+
+- *Type:* [`@aws-cdk/aws-lambda.Function`](#@aws-cdk/aws-lambda.Function)
+
+---
+
+
+### IMonitoring <a name="construct-hub.IMonitoring"></a>
+
+- *Implemented By:* [`construct-hub.IMonitoring`](#construct-hub.IMonitoring)
+
+ConstructHub monitoring features exposed to extension points.
+
+#### Methods <a name="Methods"></a>
+
+##### `addHighSeverityAlarm` <a name="construct-hub.IMonitoring.addHighSeverityAlarm"></a>
+
+```typescript
+public addHighSeverityAlarm(title: string, alarm: Alarm)
+```
+
+###### `title`<sup>Required</sup> <a name="construct-hub.IMonitoring.parameter.title"></a>
+
+- *Type:* `string`
+
+a user-friendly title for the alarm (will be rendered on the high-severity CloudWatch dashboard).
+
+---
+
+###### `alarm`<sup>Required</sup> <a name="construct-hub.IMonitoring.parameter.alarm"></a>
+
+- *Type:* [`@aws-cdk/aws-cloudwatch.Alarm`](#@aws-cdk/aws-cloudwatch.Alarm)
+
+the alarm to be added to the high-severity dashboard.
+
+---
+
+
+### IPackageSource <a name="construct-hub.IPackageSource"></a>
+
+- *Implemented By:* [`construct-hub.sources.CodeArtifact`](#construct-hub.sources.CodeArtifact), [`construct-hub.sources.NpmJs`](#construct-hub.sources.NpmJs), [`construct-hub.IPackageSource`](#construct-hub.IPackageSource)
+
+A package source for ConstructHub.
+
+#### Methods <a name="Methods"></a>
+
+##### `bind` <a name="construct-hub.IPackageSource.bind"></a>
+
+```typescript
+public bind(scope: Construct, opts: PackageSourceBindOptions)
+```
+
+###### `scope`<sup>Required</sup> <a name="construct-hub.IPackageSource.parameter.scope"></a>
+
+- *Type:* [`@aws-cdk/core.Construct`](#@aws-cdk/core.Construct)
+
+the construct scope in which the binding happens.
+
+---
+
+###### `opts`<sup>Required</sup> <a name="construct-hub.IPackageSource.parameter.opts"></a>
+
+- *Type:* [`construct-hub.PackageSourceBindOptions`](#construct-hub.PackageSourceBindOptions)
+
+options for binding the package source.
+
+---
+
+
+### IRepository <a name="construct-hub.IRepository"></a>
+
+- *Implemented By:* [`construct-hub.IRepository`](#construct-hub.IRepository)
+
+The CodeArtifact repository API exposed to extensions.
+
+#### Methods <a name="Methods"></a>
+
+##### `addExternalConnection` <a name="construct-hub.IRepository.addExternalConnection"></a>
+
+```typescript
+public addExternalConnection(id: string)
+```
+
+###### `id`<sup>Required</sup> <a name="construct-hub.IRepository.parameter.id"></a>
+
+- *Type:* `string`
+
+the id of the external connection (i.e: `public:npmjs`).
 
 ---
 

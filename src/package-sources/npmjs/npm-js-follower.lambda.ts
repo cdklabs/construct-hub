@@ -7,19 +7,18 @@ import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, ScheduledEvent } from 'aws-lambda';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import Nano = require('nano');
-import { DenyListClient } from '../deny-list/client.lambda-shared';
-import { LicenseListClient } from '../license-list/client.lambda-shared';
-import * as aws from '../shared/aws.lambda-shared';
-import { requireEnv } from '../shared/env.lambda-shared';
-import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
-import { integrity } from '../shared/integrity.lambda-shared';
-import { MetricName, METRICS_NAMESPACE, S3KeyPrefix } from './constants.lambda-shared';
+import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
+import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
+import * as aws from '../../backend/shared/aws.lambda-shared';
+import { requireEnv } from '../../backend/shared/env.lambda-shared';
+import { IngestionInput } from '../../backend/shared/ingestion-input.lambda-shared';
+import { integrity } from '../../backend/shared/integrity.lambda-shared';
+import { MetricName, MARKER_FILE_NAME, METRICS_NAMESPACE, S3KeyPrefix } from './constants.lambda-shared';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const normalizeNPMMetadata = require('normalize-registry-metadata');
 
 const TIMEOUT_MILLISECONDS = 10_000;
 const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set(['cdk', 'aws-cdk', 'cdk8s', 'cdktf']);
-const MARKER_FILE_NAME = 'couchdb-last-transaction-id.2';
 const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
 
 // Configure embedded metrics format

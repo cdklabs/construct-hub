@@ -6,6 +6,7 @@ import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
 import { Construct, RemovalPolicy } from '@aws-cdk/core';
 import { SpdxLicense } from '../../spdx-license';
+import { ILicenseList } from './api';
 import { EnvironmentVariables } from './constants';
 
 export interface LicenseListProps {
@@ -19,7 +20,7 @@ export interface LicenseListProps {
  * A list of licenses, which can be used to control filter packages before
  * indexing.
  */
-export class LicenseList extends Construct {
+export class LicenseList extends Construct implements ILicenseList {
   /**
    * The S3 bucket in which the license list is stored.
    */

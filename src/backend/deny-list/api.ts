@@ -1,3 +1,4 @@
+import type { Function } from '@aws-cdk/aws-lambda';
 
 /**
  * An entry in the list of packages blocked from display in the construct hub.
@@ -6,7 +7,7 @@ export interface DenyListRule {
   /**
    * The name of the package to block (npm).
    */
-  readonly package: string;
+  readonly packageName: string;
 
   /**
    * The package version to block (must be a valid version such as "1.0.3").
@@ -31,3 +32,14 @@ export interface DenyListMap {
    */
   readonly [key: string]: DenyListRule;
 };
+
+/**
+ * DenyList features exposed to extension points.
+ */
+export interface IDenyList {
+  /**
+   * Grants an AWS Lambda function permissions to read the deny list, and adds
+   * the relevant environment variables expected by the `DenyListClient`.
+   */
+  grantRead(handler: Function): void;
+}

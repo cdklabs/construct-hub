@@ -1,19 +1,18 @@
 import { createHash } from 'crypto';
 import { basename, extname } from 'path';
 import { URL } from 'url';
-import { createGunzip } from 'zlib';
 
 import { validateAssembly } from '@jsii/spec';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, SQSEvent } from 'aws-lambda';
-import { extract } from 'tar-stream';
 import type { StateMachineInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
+import { extractObjects } from '../shared/tarball.lambda-shared';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 
 Configuration.environmentOverride = Environments.Lambda;
@@ -50,72 +49,18 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
       throw new Error(`Integrity check failed: ${payload.integrity} !== ${integrityCheck}`);
     }
 
-    const tar = await gunzip(Buffer.from(tarball.Body!));
     let dotJsii: Buffer;
-    let licenseText: Buffer | undefined;
     let packageJson: Buffer;
+    let licenseText: Buffer | undefined;
     try {
-      const extracted = await new Promise<{ dotJsii: Buffer; licenseText?: Buffer; packageJson: Buffer }>((ok, ko) => {
-        let dotJsiiBuffer: Buffer | undefined;
-        let licenseTextBuffer: Buffer | undefined;
-        let packageJsonData: Buffer | undefined;
-        const extractor = extract({ filenameEncoding: 'utf-8' })
-          .once('error', (reason) => {
-            ko(reason);
-          })
-          .once('finish', () => {
-            if (dotJsiiBuffer == null) {
-              ko(new Error('No .jsii file found in tarball!'));
-            } else if (packageJsonData == null) {
-              ko(new Error('No package.json file found in tarball!'));
-            } else {
-              ok({ dotJsii: dotJsiiBuffer, licenseText: licenseTextBuffer, packageJson: packageJsonData });
-            }
-          })
-          .on('entry', (headers, stream, next) => {
-            const chunks = new Array<Buffer>();
-            if (headers.name === 'package/.jsii') {
-              return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
-                .once('error', ko)
-                .once('end', () => {
-                  dotJsiiBuffer = Buffer.concat(chunks);
-                  // Skip on next runLoop iteration so we avoid filling the stack.
-                  setImmediate(next);
-                })
-                .resume();
-            } else if (headers.name === 'package/package.json') {
-              return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
-                .once('error', ko)
-                .once('end', () => {
-                  packageJsonData = Buffer.concat(chunks);
-                  // Skip on next runLoop iteration so we avoid filling the stack.
-                  setImmediate(next);
-                })
-                .resume();
-            } else if (isLicenseFile(headers.name)) {
-              return stream.on('data', (chunk) => chunks.push(Buffer.from(chunk)))
-                .once('error', ko)
-                .once('end', () => {
-                  licenseTextBuffer = Buffer.concat(chunks);
-                  // Skip on next runLoop iteration so we avoid filling the stack.
-                  setImmediate(next);
-                })
-                .resume();
-            }
-            // Skip on next runLoop iteration so we avoid filling the stack.
-            return setImmediate(next);
-          });
-        extractor.write(tar, (err) => {
-          if (err != null) {
-            ko(err);
-          }
-          extractor.end();
-        });
-      });
-      dotJsii = extracted.dotJsii;
-      licenseText = extracted.licenseText;
-      packageJson = extracted.packageJson;
-      metrics.putMetric(MetricName.INVALID_TARBALL, 0, Unit.Count);
+      ({ dotJsii, packageJson, licenseText } = await extractObjects(
+        Buffer.from(tarball.Body!),
+        {
+          dotJsii: { path: 'package/.jsii', required: true },
+          packageJson: { path: 'package/package.json', required: true },
+          licenseText: { filter: isLicenseFile },
+        },
+      ));
     } catch (err) {
       console.error(`Invalid tarball content: ${err}`);
       metrics.putMetric(MetricName.INVALID_TARBALL, 1, Unit.Count);
@@ -228,16 +173,6 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
 
   return result;
 });
-
-function gunzip(data: Buffer): Promise<Buffer> {
-  const chunks = new Array<Buffer>();
-  return new Promise<Buffer>((ok, ko) =>
-    createGunzip()
-      .once('error', ko)
-      .on('data', (chunk) => chunks.push(Buffer.from(chunk)))
-      .once('end', () => ok(Buffer.concat(chunks)))
-      .end(data));
-}
 
 /**
  * Checks whether the provided file name corresponds to a license file or not.

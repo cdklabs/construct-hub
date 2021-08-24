@@ -1,0 +1,907 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`default configuration 1`] = `
+Object {
+  "Parameters": Object {
+    "AssetParameters765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780ArtifactHashF016C853": Object {
+      "Description": "Artifact hash for asset \\"765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780\\"",
+      "Type": "String",
+    },
+    "AssetParameters765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780S3Bucket06D4DF53": Object {
+      "Description": "S3 bucket for asset \\"765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780\\"",
+      "Type": "String",
+    },
+    "AssetParameters765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780S3VersionKey2451EC16": Object {
+      "Description": "S3 key for asset version \\"765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "MockIngestionRole7B5CD59F": Object {
+      "Type": "AWS::IAM::User",
+    },
+    "MockIngestionRoleDefaultPolicy9E551219": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "fakepathtorepositoryStagingBucketF571B2BA",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "fakepathtorepositoryStagingBucketF571B2BA",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "MockIngestionRoleDefaultPolicy9E551219",
+        "Users": Array [
+          Object {
+            "Ref": "MockIngestionRole7B5CD59F",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "fakepathtorepositoryDLQAE116084": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 1209600,
+        "VisibilityTimeout": 900,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "fakepathtorepositoryEventBridgeAllowEventRuleTestfakepathtorepositoryForwarderDE3B2A6D81A22B29": Object {
+      "DependsOn": Array [
+        "fakepathtorepositoryForwarderDLQNotEmpty0ABFCB5C",
+        "fakepathtorepositoryForwarderFailure6381F356",
+      ],
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "fakepathtorepositoryForwarder90BF304A",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "fakepathtorepositoryEventBridgeCAB0C06A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "fakepathtorepositoryEventBridgeCAB0C06A": Object {
+      "DependsOn": Array [
+        "fakepathtorepositoryForwarderDLQNotEmpty0ABFCB5C",
+        "fakepathtorepositoryForwarderFailure6381F356",
+      ],
+      "Properties": Object {
+        "Description": "Test/CodeArtifact/123456789012:mock-domain-name/mock-repository-name/EventBridge",
+        "EventPattern": Object {
+          "detail": Object {
+            "domainName": "mock-domain-name",
+            "domainOwner": "123456789012",
+            "packageFormat": "npm",
+            "repositoryName": "mock-repository-name",
+          },
+          "detail-type": Array [
+            "CodeArtifact Package Version State Change",
+          ],
+          "source": Array [
+            "aws.codeartifact",
+          ],
+        },
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "fakepathtorepositoryForwarder90BF304A",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "fakepathtorepositoryForwarder90BF304A": Object {
+      "DependsOn": Array [
+        "fakepathtorepositoryForwarderServiceRoleDefaultPolicy238521BA",
+        "fakepathtorepositoryForwarderServiceRole3D1A3F1B",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780S3Bucket06D4DF53",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780S3VersionKey2451EC16",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780S3VersionKey2451EC16",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "DeadLetterConfig": Object {
+          "TargetArn": Object {
+            "Fn::GetAtt": Array [
+              "fakepathtorepositoryDLQAE116084",
+              "Arn",
+            ],
+          },
+        },
+        "Description": "[Test/CodeArtifact/123456789012:mock-domain-name/mock-repository-name] Handle CodeArtifact EventBridge events",
+        "Environment": Object {
+          "Variables": Object {
+            "BUCKET_NAME": Object {
+              "Ref": "fakepathtorepositoryStagingBucketF571B2BA",
+            },
+            "QUEUE_URL": "https://fake-queue-url/phony",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "fakepathtorepositoryForwarderServiceRole3D1A3F1B",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 60,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "fakepathtorepositoryForwarderDLQNotEmpty0ABFCB5C": Object {
+      "Properties": Object {
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The CodeArtifact fowarder for 123456789012:mock-domain-name/mock-repository-name is failing/n/nLink to the lambda function: /lambda/home#/functions/",
+              Object {
+                "Ref": "fakepathtorepositoryForwarder90BF304A",
+              },
+              "/nLink to the dead letter queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              Object {
+                "Fn::GetAtt": Array [
+                  "fakepathtorepositoryDLQAE116084",
+                  "QueueName",
+                ],
+              },
+            ],
+          ],
+        },
+        "AlarmName": "Test/CodeArtifact/123456789012:mock-domain-name/mock-repository-name/DLQNotEmpty",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": Array [
+          Object {
+            "Expression": "mVisible + mHidden",
+            "Id": "expr_1",
+          },
+          Object {
+            "Id": "mVisible",
+            "MetricStat": Object {
+              "Metric": Object {
+                "Dimensions": Array [
+                  Object {
+                    "Name": "QueueName",
+                    "Value": Object {
+                      "Fn::GetAtt": Array [
+                        "fakepathtorepositoryDLQAE116084",
+                        "QueueName",
+                      ],
+                    },
+                  },
+                ],
+                "MetricName": "ApproximateNumberOfMessagesVisible",
+                "Namespace": "AWS/SQS",
+              },
+              "Period": 300,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+          Object {
+            "Id": "mHidden",
+            "MetricStat": Object {
+              "Metric": Object {
+                "Dimensions": Array [
+                  Object {
+                    "Name": "QueueName",
+                    "Value": Object {
+                      "Fn::GetAtt": Array [
+                        "fakepathtorepositoryDLQAE116084",
+                        "QueueName",
+                      ],
+                    },
+                  },
+                ],
+                "MetricName": "ApproximateNumberOfMessagesNotVisible",
+                "Namespace": "AWS/SQS",
+              },
+              "Period": 300,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "fakepathtorepositoryForwarderFailure6381F356": Object {
+      "Properties": Object {
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The CodeArtifact fowarder for 123456789012:mock-domain-name/mock-repository-name is failing
+
+Link to the lambda function: /lambda/home#/functions/",
+              Object {
+                "Ref": "fakepathtorepositoryForwarder90BF304A",
+              },
+            ],
+          ],
+        },
+        "AlarmName": "Test/CodeArtifact/123456789012:mock-domain-name/mock-repository-name/Forwarder",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "FunctionName",
+            "Value": Object {
+              "Ref": "fakepathtorepositoryForwarder90BF304A",
+            },
+          },
+        ],
+        "EvaluationPeriods": 3,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "missing",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "fakepathtorepositoryForwarderServiceRole3D1A3F1B": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "fakepathtorepositoryForwarderServiceRoleDefaultPolicy238521BA": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "fakepathtorepositoryDLQAE116084",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "fakepathtorepositoryStagingBucketF571B2BA",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "fakepathtorepositoryStagingBucketF571B2BA",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "codeartifact:GetPackageVersionAsset",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":codeartifact:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":package/mock-domain-name/mock-repository-name/npm/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "fakepathtorepositoryForwarderServiceRoleDefaultPolicy238521BA",
+        "Roles": Array [
+          Object {
+            "Ref": "fakepathtorepositoryForwarderServiceRole3D1A3F1B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "fakepathtorepositoryStagingBucketF571B2BA": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "ExpirationInDays": 30,
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "fakepathtorepositoryStagingBucketPolicy737DE541": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "fakepathtorepositoryStagingBucketF571B2BA",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "fakepathtorepositoryStagingBucketF571B2BA",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "fakepathtorepositoryStagingBucketF571B2BA",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+  },
+}
+`;
+
+exports[`user-provided staging bucket 1`] = `
+Object {
+  "Parameters": Object {
+    "AssetParameters765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780ArtifactHashF016C853": Object {
+      "Description": "Artifact hash for asset \\"765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780\\"",
+      "Type": "String",
+    },
+    "AssetParameters765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780S3Bucket06D4DF53": Object {
+      "Description": "S3 bucket for asset \\"765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780\\"",
+      "Type": "String",
+    },
+    "AssetParameters765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780S3VersionKey2451EC16": Object {
+      "Description": "S3 key for asset version \\"765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "fakepathtorepositoryDLQAE116084": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 1209600,
+        "VisibilityTimeout": 900,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "fakepathtorepositoryEventBridgeAllowEventRuleTestfakepathtorepositoryForwarderDE3B2A6D81A22B29": Object {
+      "DependsOn": Array [
+        "fakepathtorepositoryForwarderDLQNotEmpty0ABFCB5C",
+        "fakepathtorepositoryForwarderFailure6381F356",
+      ],
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "fakepathtorepositoryForwarder90BF304A",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "fakepathtorepositoryEventBridgeCAB0C06A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "fakepathtorepositoryEventBridgeCAB0C06A": Object {
+      "DependsOn": Array [
+        "fakepathtorepositoryForwarderDLQNotEmpty0ABFCB5C",
+        "fakepathtorepositoryForwarderFailure6381F356",
+      ],
+      "Properties": Object {
+        "Description": "Test/CodeArtifact/123456789012:mock-domain-name/mock-repository-name/EventBridge",
+        "EventPattern": Object {
+          "detail": Object {
+            "domainName": "mock-domain-name",
+            "domainOwner": "123456789012",
+            "packageFormat": "npm",
+            "repositoryName": "mock-repository-name",
+          },
+          "detail-type": Array [
+            "CodeArtifact Package Version State Change",
+          ],
+          "source": Array [
+            "aws.codeartifact",
+          ],
+        },
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "fakepathtorepositoryForwarder90BF304A",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "fakepathtorepositoryForwarder90BF304A": Object {
+      "DependsOn": Array [
+        "fakepathtorepositoryForwarderServiceRoleDefaultPolicy238521BA",
+        "fakepathtorepositoryForwarderServiceRole3D1A3F1B",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780S3Bucket06D4DF53",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780S3VersionKey2451EC16",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters765bb2f76f6c6598c1310df2b36061c91c6a4e3852395acfbe8370ced27e5780S3VersionKey2451EC16",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "DeadLetterConfig": Object {
+          "TargetArn": Object {
+            "Fn::GetAtt": Array [
+              "fakepathtorepositoryDLQAE116084",
+              "Arn",
+            ],
+          },
+        },
+        "Description": "[Test/CodeArtifact/123456789012:mock-domain-name/mock-repository-name] Handle CodeArtifact EventBridge events",
+        "Environment": Object {
+          "Variables": Object {
+            "BUCKET_NAME": "mock-bucket",
+            "QUEUE_URL": "https://fake-queue-url/phony",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "fakepathtorepositoryForwarderServiceRole3D1A3F1B",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 60,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "fakepathtorepositoryForwarderDLQNotEmpty0ABFCB5C": Object {
+      "Properties": Object {
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The CodeArtifact fowarder for 123456789012:mock-domain-name/mock-repository-name is failing/n/nLink to the lambda function: /lambda/home#/functions/",
+              Object {
+                "Ref": "fakepathtorepositoryForwarder90BF304A",
+              },
+              "/nLink to the dead letter queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              Object {
+                "Fn::GetAtt": Array [
+                  "fakepathtorepositoryDLQAE116084",
+                  "QueueName",
+                ],
+              },
+            ],
+          ],
+        },
+        "AlarmName": "Test/CodeArtifact/123456789012:mock-domain-name/mock-repository-name/DLQNotEmpty",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": Array [
+          Object {
+            "Expression": "mVisible + mHidden",
+            "Id": "expr_1",
+          },
+          Object {
+            "Id": "mVisible",
+            "MetricStat": Object {
+              "Metric": Object {
+                "Dimensions": Array [
+                  Object {
+                    "Name": "QueueName",
+                    "Value": Object {
+                      "Fn::GetAtt": Array [
+                        "fakepathtorepositoryDLQAE116084",
+                        "QueueName",
+                      ],
+                    },
+                  },
+                ],
+                "MetricName": "ApproximateNumberOfMessagesVisible",
+                "Namespace": "AWS/SQS",
+              },
+              "Period": 300,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+          Object {
+            "Id": "mHidden",
+            "MetricStat": Object {
+              "Metric": Object {
+                "Dimensions": Array [
+                  Object {
+                    "Name": "QueueName",
+                    "Value": Object {
+                      "Fn::GetAtt": Array [
+                        "fakepathtorepositoryDLQAE116084",
+                        "QueueName",
+                      ],
+                    },
+                  },
+                ],
+                "MetricName": "ApproximateNumberOfMessagesNotVisible",
+                "Namespace": "AWS/SQS",
+              },
+              "Period": 300,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "fakepathtorepositoryForwarderFailure6381F356": Object {
+      "Properties": Object {
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The CodeArtifact fowarder for 123456789012:mock-domain-name/mock-repository-name is failing
+
+Link to the lambda function: /lambda/home#/functions/",
+              Object {
+                "Ref": "fakepathtorepositoryForwarder90BF304A",
+              },
+            ],
+          ],
+        },
+        "AlarmName": "Test/CodeArtifact/123456789012:mock-domain-name/mock-repository-name/Forwarder",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "FunctionName",
+            "Value": Object {
+              "Ref": "fakepathtorepositoryForwarder90BF304A",
+            },
+          },
+        ],
+        "EvaluationPeriods": 3,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "missing",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "fakepathtorepositoryForwarderServiceRole3D1A3F1B": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "fakepathtorepositoryForwarderServiceRoleDefaultPolicy238521BA": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "fakepathtorepositoryDLQAE116084",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": "codeartifact:GetPackageVersionAsset",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":codeartifact:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":package/mock-domain-name/mock-repository-name/npm/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "fakepathtorepositoryForwarderServiceRoleDefaultPolicy238521BA",
+        "Roles": Array [
+          Object {
+            "Ref": "fakepathtorepositoryForwarderServiceRole3D1A3F1B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+  },
+}
+`;

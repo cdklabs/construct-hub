@@ -1,8 +1,9 @@
 import { CfnDomain, CfnRepository } from '@aws-cdk/aws-codeartifact';
 import { InterfaceVpcEndpoint } from '@aws-cdk/aws-ec2';
 import { Effect, Grant, IGrantable, PolicyStatement } from '@aws-cdk/aws-iam';
-import { Construct, IConstruct } from '@aws-cdk/core';
+import { Construct, IConstruct, Lazy } from '@aws-cdk/core';
 import { AwsCustomResource, AwsCustomResourcePolicy, PhysicalResourceId } from '@aws-cdk/custom-resources';
+import * as api from './api';
 
 export interface RepositoryProps {
   /**
@@ -25,7 +26,7 @@ export interface RepositoryProps {
   readonly repositoryName?: string;
 }
 
-export interface IRepository extends IConstruct {
+export interface IRepository extends IConstruct, api.IRepository {
   /** The ARN of the CodeArtifact Domain that contains the repository. */
   readonly repositoryDomainArn: string;
 
@@ -55,7 +56,7 @@ export interface IRepository extends IConstruct {
 }
 
 /**
- * A CodeArtifact repository with an npmjs.com upstream connection.
+ * A CodeArtifact repository.
  */
 export class Repository extends Construct implements IRepository {
   /**
@@ -83,6 +84,8 @@ export class Repository extends Construct implements IRepository {
    */
   public readonly repositoryName: string;
 
+  readonly #externalConnections = new Array<string>();
+
   #repositoryNpmEndpoint?: string;
   #s3BucketArn?: string;
 
@@ -95,7 +98,7 @@ export class Repository extends Construct implements IRepository {
     const repository = new CfnRepository(this, 'Default', {
       description: props?.description,
       domainName: domain.attrName,
-      externalConnections: ['public:npmjs'],
+      externalConnections: Lazy.list({ produce: () => this.#externalConnections.length > 0 ? this.#externalConnections : undefined }),
       repositoryName: props?.repositoryName ?? domainName,
     });
 
@@ -104,6 +107,17 @@ export class Repository extends Construct implements IRepository {
     this.repositoryDomainOwner = repository.attrDomainOwner;
     this.repositoryArn = repository.attrArn;
     this.repositoryName = repository.attrName;
+  }
+
+  /**
+   * Adds an external connection to this repository.
+   *
+   * @param id the id of the external connection (i.e: `public:npmjs`).
+   */
+  public addExternalConnection(id: string): void {
+    if (!this.#externalConnections.includes(id)) {
+      this.#externalConnections.push(id);
+    }
   }
 
   /**
@@ -184,15 +198,15 @@ export class Repository extends Construct implements IRepository {
    * Obtains a view of this repository that is intended to be accessed though
    * VPC endpoints.
    *
-   * @param api          an `InterfaceVpcEndpoint` to the `codeartifact.api`
+   * @param apiEndpoint  an `InterfaceVpcEndpoint` to the `codeartifact.api`
    *                     service.
-   * @param repositories an `InterfaceVpcEndpoint` to the
-   *                    `codeartifact.repositories` service.
+   * @param repoEndpoint an `InterfaceVpcEndpoint` to the
+   *                     `codeartifact.repositories` service.
    *
    * @returns a view of this repository that appropriately grants permissions on
    *          the VPC endpoint policies, too.
    */
-  public throughVpcEndpoint(api: InterfaceVpcEndpoint, repositories: InterfaceVpcEndpoint): IRepository {
+  public throughVpcEndpoint(apiEndpoint: InterfaceVpcEndpoint, repoEndpoint: InterfaceVpcEndpoint): IRepository {
     return new Proxy(this, {
       get(target, property, _receiver) {
         if (property === 'grantReadFromRepository') {
@@ -217,20 +231,20 @@ export class Repository extends Construct implements IRepository {
     function decoratedGrantReadFromRepository(this: Repository, grantee: IGrantable): Grant {
       const mainGrant = this.grantReadFromRepository(grantee);
       if (mainGrant.success) {
-        api.addToPolicy(new PolicyStatement({
+        apiEndpoint.addToPolicy(new PolicyStatement({
           effect: Effect.ALLOW,
           actions: ['sts:GetServiceBearerToken'],
           conditions: { StringEquals: { 'sts:AWSServiceName': 'codeartifact.amazonaws.com' } },
           resources: ['*'], // STS does not support resource-specified permissions
           principals: [grantee.grantPrincipal],
         }));
-        api.addToPolicy(new PolicyStatement({
+        apiEndpoint.addToPolicy(new PolicyStatement({
           effect: Effect.ALLOW,
           actions: ['codeartifact:GetAuthorizationToken', 'codeartifact:GetRepositoryEndpoint'],
           resources: [this.repositoryDomainArn, this.repositoryArn],
           principals: [grantee.grantPrincipal],
         }));
-        repositories.addToPolicy(new PolicyStatement({
+        repoEndpoint.addToPolicy(new PolicyStatement({
           effect: Effect.ALLOW,
           actions: ['codeartifact:ReadFromRepository'],
           resources: [this.repositoryArn],

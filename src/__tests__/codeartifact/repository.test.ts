@@ -31,9 +31,39 @@ test('basic usage', () => {
             ],
           },
           RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
-          ExternalConnections: [
-            'public:npmjs',
-          ],
+        },
+      },
+    },
+  }, MatchStyle.SUPERSET);
+});
+
+test('external connection', () => {
+  // GIVEN
+  const stack = new Stack();
+
+  // WHEN
+  new Repository(stack, 'Repo').addExternalConnection('public:npmjs');
+
+  // THEN
+  expect(stack).toMatchTemplate({
+    Resources: {
+      RepoDomainC79FB030: {
+        Type: 'AWS::CodeArtifact::Domain',
+        Properties: {
+          DomainName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
+        },
+      },
+      Repo: {
+        Type: 'AWS::CodeArtifact::Repository',
+        Properties: {
+          DomainName: {
+            'Fn::GetAtt': [
+              'RepoDomainC79FB030',
+              'Name',
+            ],
+          },
+          RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
+          ExternalConnections: ['public:npmjs'],
         },
       },
     },
@@ -66,9 +96,6 @@ test('custom domain name', () => {
             ],
           },
           RepositoryName: 'custom-domain',
-          ExternalConnections: [
-            'public:npmjs',
-          ],
         },
       },
     },
@@ -101,9 +128,6 @@ test('custom repository name', () => {
             ],
           },
           RepositoryName: 'custom-repo',
-          ExternalConnections: [
-            'public:npmjs',
-          ],
         },
       },
     },
@@ -136,9 +160,6 @@ test('custom domain & repository name', () => {
             ],
           },
           RepositoryName: 'custom-repo',
-          ExternalConnections: [
-            'public:npmjs',
-          ],
         },
       },
     },

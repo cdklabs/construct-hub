@@ -1,4 +1,4 @@
-export const METRICS_NAMESPACE = 'ConstructHub/Discovery';
+export const METRICS_NAMESPACE = 'ConstructHub/PackageSource/NpmJs/Follower';
 
 export const enum MetricName {
   BATCH_PROCESSING_TIME = 'BatchProcessingTime',
@@ -30,3 +30,8 @@ export const enum S3KeyPrefix {
    */
   STAGED_KEY_PREFIX = 'staged/',
 }
+
+/**
+ * The name of the object that contains the last transaction marker.
+ */
+export const MARKER_FILE_NAME = 'couchdb-last-transaction-id.2';
