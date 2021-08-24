@@ -1,19 +1,18 @@
-import { createHash } from 'crypto';
-
-import { Dashboard, MathExpression, GraphWidget, GraphWidgetView, PeriodOverride, TextWidget, Metric, IWidget } from '@aws-cdk/aws-cloudwatch';
+import { Dashboard, GraphWidget, GraphWidgetView, PeriodOverride, TextWidget, IWidget } from '@aws-cdk/aws-cloudwatch';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 import { DenyList } from './backend/deny-list';
-import { Discovery } from './backend/discovery';
 import { Ingestion } from './backend/ingestion';
 import { Inventory } from './backend/inventory';
 import { Orchestration } from './backend/orchestration';
 import { DocumentationLanguage } from './backend/shared/language';
 import { lambdaFunctionUrl, lambdaSearchLogGroupUrl, s3ObjectUrl, sqsQueueUrl, stateMachineUrl } from './deep-link';
+import { fillMetric } from './metric-utils';
+import { PackageSourceBindResult } from './package-source';
 
 export interface BackendDashboardProps {
   readonly dashboardName?: string;
-  readonly discovery: Discovery;
+  readonly packageSources: PackageSourceBindResult[];
   readonly ingestion: Ingestion;
   readonly orchestration: Orchestration;
   readonly inventory: Inventory;
@@ -68,50 +67,7 @@ export class BackendDashboard extends Construct {
           }),
         ],
         ...this.catalogOverviewLanguageSections(props.inventory),
-        [
-          new TextWidget({
-            height: 2,
-            width: 24,
-            markdown: [
-              '# Discovery Function',
-              '',
-              `[button:Search Log Group](${lambdaSearchLogGroupUrl(props.discovery.function)})`,
-            ].join('\n'),
-          }),
-        ],
-        [
-          new GraphWidget({
-            height: 6,
-            width: 12,
-            title: 'Function Health',
-            left: [
-              fillMetric(props.discovery.function.metricInvocations({ label: 'Invocations' })),
-              fillMetric(props.discovery.function.metricErrors({ label: 'Errors' })),
-            ],
-            leftYAxis: { min: 0 },
-            right: [
-              props.discovery.metricRemainingTime({ label: 'Remaining Time' }),
-            ],
-            rightYAxis: { min: 0 },
-            period: Duration.minutes(15),
-          }),
-          new GraphWidget({
-            height: 6,
-            width: 12,
-            title: 'CouchDB Follower',
-            left: [
-              props.discovery.metricChangeCount({ label: 'Change Count' }),
-              props.discovery.metricUnprocessableEntity({ label: 'Unprocessable' }),
-            ],
-            leftYAxis: { min: 0 },
-            right: [
-              fillMetric(props.discovery.metricNpmJsChangeAge({ label: 'Lag to npmjs.com' }), 'REPEAT'),
-              fillMetric(props.discovery.metricPackageVersionAge({ label: 'Package Version Age' }), 'REPEAT'),
-            ],
-            rightYAxis: { label: 'Milliseconds', min: 0, showUnits: false },
-            period: Duration.minutes(15),
-          }),
-        ],
+        ...renderPackageSourcesWidgets(props.packageSources),
         [
           new TextWidget({
             height: 2,
@@ -357,19 +313,21 @@ export class BackendDashboard extends Construct {
   }
 }
 
-function fillMetric(metric: Metric, value: number | 'REPEAT' = 0): MathExpression {
-  // We assume namespace + name is enough to uniquely identify a metric here.
-  // This is true locally at this time, but in case this ever changes, consider
-  // also processing dimensions and period.
-  const h = createHash('sha256')
-    .update(metric.namespace)
-    .update('\0')
-    .update(metric.metricName)
-    .digest('hex');
-  const metricName = `m${h}`;
-  return new MathExpression({
-    expression: `FILL(${metricName}, ${value})`,
-    label: metric.label,
-    usingMetrics: { [metricName]: metric },
-  });
+function* renderPackageSourcesWidgets(packageSources: PackageSourceBindResult[]): Generator<IWidget[], undefined, undefined> {
+  for (const packageSource of packageSources) {
+    yield [
+      new TextWidget({
+        height: 2,
+        width: 24,
+        markdown: [
+          `# ${packageSource.name}`,
+          '',
+          ...(packageSource.links ?? [])
+            .map(({ name, primary, url }) => `[${primary ? 'button:primary' : 'button'}:${name}](${url})`),
+        ].join('\n'),
+      }),
+    ];
+    yield* packageSource.dashboardWidgets;
+  }
+  return;
 }

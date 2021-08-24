@@ -9,7 +9,8 @@ const AWS = AWSXRay.captureAWS(_AWS);
 let _s3: AWS.S3 | undefined;
 let _sqs: AWS.SQS | undefined;
 let _sfn: AWS.StepFunctions | undefined;
-let _lambda: AWS.Lambda | undefined;;
+let _lambda: AWS.Lambda | undefined;
+let _codeArtifact: AWS.CodeArtifact | undefined;
 
 export function s3(): AWS.S3 {
   if (_s3 == null) {
@@ -58,10 +59,17 @@ export function lambda(): AWS.Lambda {
   return _lambda;
 }
 
+export function codeArtifact(): AWS.CodeArtifact {
+  if (_codeArtifact == null) {
+    _codeArtifact = new AWS.CodeArtifact();
+  }
+  return _codeArtifact;
+}
+
 /**
  * Resets all clients vended by this module. This is useful in unit tests when
  * `aws-sdk-mocks` is used, so that new mocks are injected as intended.
  */
 export function reset(): void {
-  _s3 = _sqs = _sfn = _lambda = undefined;
+  _s3 = _sqs = _sfn = _lambda = _codeArtifact = undefined;
 }

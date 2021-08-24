@@ -23,10 +23,10 @@ export class DevStack extends Stack {
 
     new ConstructHub(this, 'ConstructHub', {
       denyList: [
-        { package: '@aws-cdk/cdk', reason: 'This package has been deprecated in favor of @aws-cdk/core' },
-        { package: 'cdk-foo-bar', reason: 'Dummy package' },
-        { package: 'cdk-lambda-subminute', version: '0.1.31', reason: 'test' },
-        { package: 'cdk-ecr-image-scan-notify', version: '0.0.192', reason: 'test number 2' },
+        { packageName: '@aws-cdk/cdk', reason: 'This package has been deprecated in favor of @aws-cdk/core' },
+        { packageName: 'cdk-foo-bar', reason: 'Dummy package' },
+        { packageName: 'cdk-lambda-subminute', version: '0.1.31', reason: 'test' },
+        { packageName: 'cdk-ecr-image-scan-notify', version: '0.0.192', reason: 'test number 2' },
       ],
       backendDashboardName: 'construct-hub-backend',
       isolateSensitiveTasks,
