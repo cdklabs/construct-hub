@@ -1212,9 +1212,6 @@ Resources:
             - - "arn:"
               - Ref: AWS::Partition
               - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-    DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
   ConstructHubDenyListPrunePruneHandlerServiceRoleDefaultPolicy416BC8DA:
     Type: AWS::IAM::Policy
     Properties:
@@ -1269,9 +1266,6 @@ Resources:
       PolicyName: ConstructHubDenyListPrunePruneHandlerServiceRoleDefaultPolicy416BC8DA
       Roles:
         - Ref: ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE
-    DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
   ConstructHubDenyListPrunePruneHandler30B33551:
     Type: AWS::Lambda::Function
     Properties:
@@ -1314,8 +1308,6 @@ Resources:
       Runtime: nodejs14.x
       Timeout: 900
     DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
       - ConstructHubDenyListPrunePruneHandlerServiceRoleDefaultPolicy416BC8DA
       - ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE
   ConstructHubDenyListPrunePruneQueueHandlerServiceRoleC10AC418:
@@ -1510,9 +1502,6 @@ Resources:
             - - "arn:"
               - Ref: AWS::Partition
               - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-    DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
   ConstructHubOrchestrationCatalogBuilderServiceRoleDefaultPolicyDA5D5AA5:
     Type: AWS::IAM::Policy
     Properties:
@@ -1560,9 +1549,6 @@ Resources:
       PolicyName: ConstructHubOrchestrationCatalogBuilderServiceRoleDefaultPolicyDA5D5AA5
       Roles:
         - Ref: ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
-    DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
   ConstructHubOrchestrationCatalogBuilder7C964951:
     Type: AWS::Lambda::Function
     Properties:
@@ -1606,8 +1592,6 @@ Resources:
       TracingConfig:
         Mode: PassThrough
     DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
       - ConstructHubOrchestrationCatalogBuilderServiceRoleDefaultPolicyDA5D5AA5
       - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
   ConstructHubOrchestrationCatalogBuilderLogRetention04ED6996:
@@ -1623,9 +1607,6 @@ Resources:
           - - /aws/lambda/
             - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
       RetentionInDays: 3653
-    DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
   ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2:
     Type: AWS::IAM::Role
     Properties:
@@ -1770,7 +1751,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3Bucket9F5C49D7
+          Ref: AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3Bucket465251CA
         S3Key:
           Fn::Join:
             - ""
@@ -1778,12 +1759,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9
+                      - Ref: AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9
+                      - Ref: AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2
@@ -1989,7 +1970,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3Bucket9F5C49D7
+          Ref: AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3Bucket465251CA
         S3Key:
           Fn::Join:
             - ""
@@ -1997,12 +1978,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9
+                      - Ref: AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9
+                      - Ref: AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationDocGentypescriptServiceRoleB56C2B19
@@ -2955,8 +2936,6 @@ Resources:
               - Ref: AWS::Partition
               - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
     DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
       - ConstructHubLicenseListAwsCliLayer59592811
       - ConstructHubLicenseListCustomResource323F0FD4
   ConstructHubSourcesNpmJsServiceRoleDefaultPolicy65FBFA22:
@@ -3031,8 +3010,6 @@ Resources:
       Roles:
         - Ref: ConstructHubSourcesNpmJsServiceRoleAC3F7AA6
     DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
       - ConstructHubLicenseListAwsCliLayer59592811
       - ConstructHubLicenseListCustomResource323F0FD4
   ConstructHubSourcesNpmJs15A77D2D:
@@ -3080,8 +3057,6 @@ Resources:
       TracingConfig:
         Mode: Active
     DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
       - ConstructHubLicenseListAwsCliLayer59592811
       - ConstructHubLicenseListCustomResource323F0FD4
       - ConstructHubSourcesNpmJsServiceRoleDefaultPolicy65FBFA22
@@ -4245,18 +4220,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24"
-  AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3Bucket9F5C49D7:
+  AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3Bucket465251CA:
     Type: String
     Description: S3 bucket for asset
-      "8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9"
-  AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9:
+      "85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929b"
+  AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C:
     Type: String
     Description: S3 key for asset version
-      "8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9"
-  AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9ArtifactHash7A6CE4F0:
+      "85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929b"
+  AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bArtifactHashAC589578:
     Type: String
     Description: Artifact hash for asset
-      "8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9"
+      "85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929b"
   AssetParameters8265ccdf680d2fc53b19193e2b93340a27f335cc3be02b673f0742d7700fd6acS3Bucket9B1F28E2:
     Type: String
     Description: S3 bucket for asset
