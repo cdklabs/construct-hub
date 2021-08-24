@@ -296,7 +296,7 @@ export class BackendDashboard extends Construct {
           new MathExpression({
             expression: 'SERVICE_QUOTA(mFargateUsage)',
             label: 'Fargate Quota (On-Demand)',
-            usingMetrics: { mFargateUsage, },
+            usingMetrics: { mFargateUsage },
           }),
         ],
         leftYAxis: { min: 0 },

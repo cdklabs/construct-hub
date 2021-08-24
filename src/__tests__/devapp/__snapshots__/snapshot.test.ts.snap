@@ -1060,10 +1060,6 @@ Resources:
       PolicyDocument:
         Statement:
           - Action: s3:GetObject
-            Condition:
-              StringEquals:
-                aws:SourceAccount:
-                  Ref: AWS::AccountId
             Effect: Allow
             Principal:
               AWS: "*"
@@ -1405,11 +1401,6 @@ Resources:
                       - "||"
                       - Ref: AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F
       Description: /opt/awscli/aws
-    DependsOn:
-      - ConstructHubDenyListBucketAllowBucketNotificationsTodevConstructHubDenyListPrunePruneHandler8F0BBF5E2222C5D6
-      - ConstructHubDenyListBucketNotifications2269EB2A
-      - ConstructHubDenyListBucketPolicyA1878E10
-      - ConstructHubDenyListBucket1B3C2C2E
   ConstructHubDenyListBucketDeploymentCustomResourceF835956B:
     Type: Custom::CDKBucketDeployment
     Properties:
@@ -1437,10 +1428,7 @@ Resources:
       RetainOnDelete: false
       Prune: true
     DependsOn:
-      - ConstructHubDenyListBucketAllowBucketNotificationsTodevConstructHubDenyListPrunePruneHandler8F0BBF5E2222C5D6
       - ConstructHubDenyListBucketNotifications2269EB2A
-      - ConstructHubDenyListBucketPolicyA1878E10
-      - ConstructHubDenyListBucket1B3C2C2E
     UpdateReplacePolicy: Delete
     DeletionPolicy: Delete
   ConstructHubDenyListPruneDeleteQueueBBF60185:
@@ -1465,9 +1453,6 @@ Resources:
             - - "arn:"
               - Ref: AWS::Partition
               - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-    DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
   ConstructHubDenyListPrunePruneHandlerServiceRoleDefaultPolicy416BC8DA:
     Type: AWS::IAM::Policy
     Properties:
@@ -1522,9 +1507,6 @@ Resources:
       PolicyName: ConstructHubDenyListPrunePruneHandlerServiceRoleDefaultPolicy416BC8DA
       Roles:
         - Ref: ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE
-    DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
   ConstructHubDenyListPrunePruneHandler30B33551:
     Type: AWS::Lambda::Function
     Properties:
@@ -1567,8 +1549,6 @@ Resources:
       Runtime: nodejs14.x
       Timeout: 900
     DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
       - ConstructHubDenyListPrunePruneHandlerServiceRoleDefaultPolicy416BC8DA
       - ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE
   ConstructHubDenyListPrunePruneQueueHandlerServiceRoleC10AC418:
@@ -1763,9 +1743,6 @@ Resources:
             - - "arn:"
               - Ref: AWS::Partition
               - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-    DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
   ConstructHubOrchestrationCatalogBuilderServiceRoleDefaultPolicyDA5D5AA5:
     Type: AWS::IAM::Policy
     Properties:
@@ -1813,9 +1790,6 @@ Resources:
       PolicyName: ConstructHubOrchestrationCatalogBuilderServiceRoleDefaultPolicyDA5D5AA5
       Roles:
         - Ref: ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
-    DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
   ConstructHubOrchestrationCatalogBuilder7C964951:
     Type: AWS::Lambda::Function
     Properties:
@@ -1859,8 +1833,6 @@ Resources:
       TracingConfig:
         Mode: PassThrough
     DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
       - ConstructHubOrchestrationCatalogBuilderServiceRoleDefaultPolicyDA5D5AA5
       - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
   ConstructHubOrchestrationCatalogBuilderLogRetention04ED6996:
@@ -1876,9 +1848,6 @@ Resources:
           - - /aws/lambda/
             - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
       RetentionInDays: 7
-    DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
   ConstructHubOrchestrationCluster3D6F0081:
     Type: AWS::ECS::Cluster
     Properties:
@@ -2337,7 +2306,7 @@ Resources:
               python input"},"Stringify python
               input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
               python docs"},"Generate python
-              docs":{"End":true,"Retry":[{"ErrorEquals":["ECS.AmazonECSException"],"IntervalSeconds":60,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
+              docs":{"End":true,"Retry":[{"ErrorEquals":["ECS.AmazonECSException"],"IntervalSeconds":60,"MaxAttempts":60,"BackoffRate":1}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
               python docs\\" timed
               out"},{"ErrorEquals":["ECS.AmazonECSException"],"Next":"\\"Generate
               python docs\\" service
@@ -2374,7 +2343,7 @@ Resources:
               typescript input"},"Stringify typescript
               input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
               typescript docs"},"Generate typescript
-              docs":{"End":true,"Retry":[{"ErrorEquals":["ECS.AmazonECSException"],"IntervalSeconds":60,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
+              docs":{"End":true,"Retry":[{"ErrorEquals":["ECS.AmazonECSException"],"IntervalSeconds":60,"MaxAttempts":60,"BackoffRate":1}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
               typescript docs\\" timed
               out"},{"ErrorEquals":["ECS.AmazonECSException"],"Next":"\\"Generate
               typescript docs\\" service
@@ -2411,7 +2380,7 @@ Resources:
               Failure?":{"Type":"Choice","Choices":[{"Or":[{"Variable":"$.DocGen[0].error","IsPresent":true},{"Variable":"$.DocGen[1].error","IsPresent":true}],"Next":"Send
               to Dead Letter Queue"}],"Default":"Success"},"Add to
               catalog.json":{"Next":"Any
-              Failure?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":5}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"Next":"\\"Add
+              Failure?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":60,"BackoffRate":1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"Next":"\\"Add
               to catalog.json\\"
               throttled"},{"ErrorEquals":["States.TaskFailed"],"Next":"\\"Add to
               catalog.json\\"
@@ -3050,8 +3019,6 @@ Resources:
               - Ref: AWS::Partition
               - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
     DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
       - ConstructHubLicenseListAwsCliLayer59592811
       - ConstructHubLicenseListCustomResource323F0FD4
   ConstructHubSourcesNpmJsServiceRoleDefaultPolicy65FBFA22:
@@ -3126,8 +3093,6 @@ Resources:
       Roles:
         - Ref: ConstructHubSourcesNpmJsServiceRoleAC3F7AA6
     DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
       - ConstructHubLicenseListAwsCliLayer59592811
       - ConstructHubLicenseListCustomResource323F0FD4
   ConstructHubSourcesNpmJs15A77D2D:
@@ -3175,8 +3140,6 @@ Resources:
       TracingConfig:
         Mode: Active
     DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
       - ConstructHubLicenseListAwsCliLayer59592811
       - ConstructHubLicenseListCustomResource323F0FD4
       - ConstructHubSourcesNpmJsServiceRoleDefaultPolicy65FBFA22
@@ -3430,8 +3393,8 @@ Resources:
       DashboardBody:
         Fn::Join:
           - ""
-          - - '{"periodOverride":"inherit","widgets":[{"type":"text","width":24,"height":2,"x":0,"y":0,"properties":{"markdown":"#
-              Catalog Overview\\n\\n[button:Package Data](/s3/buckets/'
+          - - '{"start":"-P1W","widgets":[{"type":"text","width":24,"height":2,"x":0,"y":0,"properties":{"markdown":"#
+              Catalog Overview\\n\\n[button:primary:Package Data](/s3/buckets/'
             - Ref: ConstructHubPackageDataDC5EF35E
             - )\\n[button:Catalog Builder](/lambda/home#/functions/
             - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
@@ -3457,23 +3420,28 @@ Resources:
             - )\\n[button:Transliterator ECS Cluster](/ecs/home#/clusters/
             - Ref: ConstructHubOrchestrationCluster3D6F0081
             - /tasks)"}},{"type":"metric","width":12,"height":6,"x":0,"y":10,"properties":{"view":"timeSeries","title":"ECS
-              Resoruces","region":"
+              Resources","region":"
             - Ref: AWS::Region
             - '","metrics":[["ECS/ContainerInsights","TaskCount","ClusterName","'
             - Ref: ConstructHubOrchestrationCluster3D6F0081
-            - '",{"label":"Task Count","stat":"Sum"}],[{"label":"CPU
+            - '",{"label":"Task
+              Count","stat":"Sum"}],["AWS/Usage","ResourceCount","Class","None","Resource","OnDemand","Service","Fargate","Type","Resource",{"label":"Fargate
+              Usage
+              (On-Demand)","stat":"Maximum","id":"mFargateUsage"}],[{"label":"Fargate
+              Quota
+              (On-Demand)","expression":"SERVICE_QUOTA(mFargateUsage)"}],[{"label":"CPU
               Utilization","expression":"100 * FILL(mCpuUtilized, 0) /
               FILL(mCpuReserved,
-              REPEAT)","yAxis":"right"}],["AWS/ECS","CPUReservation","ClusterName","'
+              REPEAT)","yAxis":"right"}],["ECS/ContainerInsights","CpuReserved","ClusterName","'
             - Ref: ConstructHubOrchestrationCluster3D6F0081
-            - '",{"stat":"Maximum","visible":false,"id":"mCpuReserved"}],["AWS/ECS","CPUUtilization","ClusterName","'
+            - '",{"stat":"Maximum","visible":false,"id":"mCpuReserved"}],["ECS/ContainerInsights","CpuUtilized","ClusterName","'
             - Ref: ConstructHubOrchestrationCluster3D6F0081
-            - '",{"stat":"Maximum","visible":false,"id":"metricEcsCpuUtilized"}],[{"label":"Memory
+            - '",{"stat":"Maximum","visible":false,"id":"mCpuUtilized"}],[{"label":"Memory
               Utilization","expression":"100 * FILL(mMemoryUtilized, 0) /
               FILL(mMemoryReserved,
-              REPEAT)","yAxis":"right"}],["AWS/ECS","MemoryReservation","ClusterName","'
+              REPEAT)","yAxis":"right"}],["ECS/ContainerInsights","MemoryReserved","ClusterName","'
             - Ref: ConstructHubOrchestrationCluster3D6F0081
-            - '",{"stat":"Maximum","visible":false,"id":"mMemoryReserved"}],["AWS/ECS","MemoryUtilization","ClusterName","'
+            - '",{"stat":"Maximum","visible":false,"id":"mMemoryReserved"}],["ECS/ContainerInsights","MemoryUtilized","ClusterName","'
             - Ref: ConstructHubOrchestrationCluster3D6F0081
             - '",{"stat":"Maximum","visible":false,"id":"mMemoryUtilized"}]],"yAxis":{"left":{"min":0},"right":{"label":"Percent","min":0,"max":100,"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":10,"properties":{"view":"timeSeries","title":"ECS
               Networking","region":"'
@@ -3543,7 +3511,7 @@ Resources:
               REPEAT)","yAxis":"right"}],["ConstructHub/PackageSource/NpmJs/Follower","PackageVersionAge",{"label":"Package
               Version
               Age","stat":"Maximum","visible":false,"id":"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4"}]],"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":900}},{"type":"text","width":24,"height":2,"x":0,"y":38,"properties":{"markdown":"#
-              Ingestion Function\\n\\n[button:Search Log
+              Ingestion Function\\n\\n[button:primary:Search Log
               Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f'
             - Ref: ConstructHubIngestion407909CE
             - /log-events)\\n[button:DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.
@@ -3620,8 +3588,11 @@ Resources:
                 - ConstructHubIngestionDLQ3E96A5F2
                 - QueueName
             - '",{"label":"Oldest Message
-              Age","stat":"Maximum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":52,"properties":{"markdown":"#
-              Orchestration\\n\\n[button:State
+              Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10
+              days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14
+              days (DLQ
+              Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":52,"properties":{"markdown":"#
+              Orchestration\\n\\n[button:primary:State
               Machine](/states/home#/statemachines/view/'
             - Ref: ConstructHubOrchestration39161A46
             - )\\n[button:DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.
@@ -3679,8 +3650,11 @@ Resources:
                 - ConstructHubOrchestrationDLQ9C6D9BD4
                 - QueueName
             - '",{"label":"Oldest Message
-              Age","stat":"Maximum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":60,"properties":{"markdown":"#
-              Deny List\\n\\n[button:Deny List Object](/s3/object/'
+              Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10
+              days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14
+              days (DLQ
+              Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":60,"properties":{"markdown":"#
+              Deny List\\n\\n[button:primary:Deny List Object](/s3/object/'
             - Ref: ConstructHubDenyListBucket1B3C2C2E
             - ?prefix=deny-list.json)\\n[button:Prune
               Function](/lambda/home#/functions/
