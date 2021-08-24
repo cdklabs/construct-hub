@@ -1,11 +1,11 @@
 import { GatewayVpcEndpoint, InterfaceVpcEndpoint, SubnetSelection } from '@aws-cdk/aws-ec2';
 import { ContainerDefinition, FargatePlatformVersion, FargateTaskDefinition, ICluster, LogDrivers } from '@aws-cdk/aws-ecs';
 import { Effect, PolicyStatement } from '@aws-cdk/aws-iam';
-import { RetentionDays } from '@aws-cdk/aws-logs';
+import { ILogGroup, LogGroup, RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { IntegrationPattern, JsonPath, TaskStateBaseProps } from '@aws-cdk/aws-stepfunctions';
 import { EcsFargateLaunchTarget, EcsRunTask } from '@aws-cdk/aws-stepfunctions-tasks';
-import { Construct, Duration, Fn } from '@aws-cdk/core';
+import { ArnFormat, Construct, Duration, Fn, Stack } from '@aws-cdk/core';
 import { Repository } from '../../codeartifact/repository';
 import { Monitoring } from '../../monitoring';
 import * as s3 from '../../s3';
@@ -84,6 +84,7 @@ export interface TransliteratorVpcEndpoints {
  */
 export class Transliterator extends Construct {
   public readonly containerDefinition: ContainerDefinition;
+  public readonly logGroup: ILogGroup
 
   public get taskDefinition() {
     return this.containerDefinition.taskDefinition;
@@ -121,9 +122,10 @@ export class Transliterator extends Construct {
       environment.CODE_ARTIFACT_REPOSITORY_ENDPOINT = props.codeArtifact.repositoryNpmEndpoint;
     }
 
+    this.logGroup = new LogGroup(this, 'LogGroup', { retention: props.logRetention });
     this.containerDefinition = new Container(this, 'Resource', {
       environment,
-      logging: LogDrivers.awsLogs({ logRetention: props.logRetention, streamPrefix: 'transliterator' }),
+      logging: LogDrivers.awsLogs({ logGroup: this.logGroup, streamPrefix: 'transliterator' }),
       taskDefinition: new FargateTaskDefinition(this, 'TaskDefinition', {
         cpu: 4_096,
         memoryLimitMiB: 8_192,
@@ -147,7 +149,7 @@ export class Transliterator extends Construct {
       actions: [
         'ecr:GetAuthorizationToken',
       ],
-      resources: ['*'],
+      resources: ['*'], // Action does not support resource scoping
       principals: [executionRole],
       sid: 'Allow-ECR-ReadOnly',
     }));
@@ -158,7 +160,8 @@ export class Transliterator extends Construct {
         'ecr:GetDownloadUrlForLayer',
         'ecr:BatchGetImage',
       ],
-      resources: ['*'],
+      // We cannot get the ECR repository info from an asset... So scoping down to same-account repositories instead...
+      resources: [Stack.of(this).formatArn({ service: 'ecr', resource: 'repository', arnFormat: ArnFormat.SLASH_RESOURCE_NAME, resourceName: '*' })],
       principals: [executionRole],
       sid: 'Allow-ECR-ReadOnly',
     }));
@@ -169,7 +172,10 @@ export class Transliterator extends Construct {
         'logs:CreateLogStream',
         'logs:PutLogEvents',
       ],
-      resources: ['*'],
+      resources: [
+        Stack.of(this).formatArn({ service: 'logs', resource: 'log-group', arnFormat: ArnFormat.COLON_RESOURCE_NAME, resourceName: this.logGroup.logGroupName }),
+        Stack.of(this).formatArn({ service: 'logs', resource: 'log-group', arnFormat: ArnFormat.COLON_RESOURCE_NAME, resourceName: `${this.logGroup.logGroupName}:log-stream:*` }),
+      ],
       principals: [executionRole],
       sid: 'Allow-Logging',
     }));
@@ -181,7 +187,7 @@ export class Transliterator extends Construct {
         'states:SendTaskHeartbeat',
         'states:SendTaskSuccess',
       ],
-      resources: ['*'],
+      resources: ['*'], // Actions don't support resource scoping
       principals: [this.taskDefinition.taskRole],
       sid: 'Allow-StepFunctions-Callbacks',
     }));

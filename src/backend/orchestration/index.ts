@@ -1,6 +1,6 @@
-import { ComparisonOperator, MathExpression } from '@aws-cdk/aws-cloudwatch';
+import { ComparisonOperator, MathExpression, MathExpressionOptions, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
 import { SubnetSelection, Vpc } from '@aws-cdk/aws-ec2';
-import { Cluster } from '@aws-cdk/aws-ecs';
+import { Cluster, ICluster } from '@aws-cdk/aws-ecs';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
@@ -97,6 +97,16 @@ export class Orchestration extends Construct {
    */
   public readonly catalogBuilder: IFunction;
 
+  /**
+   * The ECS cluster used to run tasks.
+   */
+  public readonly ecsCluster: ICluster;
+
+  /**
+   * The transliterator used by this orchestration workflow.
+   */
+  public readonly transliterator: Transliterator;
+
   public constructor(scope: Construct, id: string, props: OrchestrationProps) {
     super(scope, id);
 
@@ -176,13 +186,13 @@ export class Orchestration extends Construct {
       )
       .otherwise(new Succeed(this, 'Success'));
 
-    const cluster = new Cluster(this, 'Cluster', {
+    this.ecsCluster = new Cluster(this, 'Cluster', {
       containerInsights: true,
       enableFargateCapacityProviders: true,
       vpc: props.vpc,
     });
 
-    const transliterator = new Transliterator(this, 'Transliterator', props);
+    this.transliterator = new Transliterator(this, 'Transliterator', props);
 
     const definition = new Pass(this, 'Track Execution Infos', {
       inputPath: '$$.Execution',
@@ -207,8 +217,8 @@ export class Orchestration extends Construct {
               parameters: { 'commands.$': 'States.Array(States.JsonToString($.command))' },
               resultPath: '$',
             })
-              .next(transliterator.createEcsRunTask(this, `Generate ${language} docs`, {
-                cluster,
+              .next(this.transliterator.createEcsRunTask(this, `Generate ${language} docs`, {
+                cluster: this.ecsCluster,
                 inputPath: '$.commands',
                 language,
                 resultSelector: { result: { 'language': language, 'success.$': '$' } },
@@ -299,5 +309,57 @@ export class Orchestration extends Construct {
     });
     props.bucket.grantRead(this.reprocessAllFunction);
     this.stateMachine.grantStartExecution(this.reprocessAllFunction);
+  }
+
+  public metricEcsTaskCount(opts: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.SUM,
+      ...opts,
+      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'TaskCount',
+      namespace: 'ECS/ContainerInsights',
+    });
+  }
+
+  public metricEcsCpuUtilization(opts?: MathExpressionOptions): MathExpression {
+    return new MathExpression({
+      ...opts,
+      expression: '100 * FILL(mCpuUtilized, 0) / FILL(mCpuReserved, REPEAT)',
+      usingMetrics: {
+        mCpuReserved: (this.ecsCluster as Cluster).metricCpuReservation({ statistic: Statistic.MAXIMUM }),
+        metricEcsCpuUtilized: (this.ecsCluster as Cluster).metricCpuUtilization({ statistic: Statistic.MAXIMUM }),
+      },
+    });
+  }
+
+  public metricEcsMemoryUtilization(opts?: MathExpressionOptions): MathExpression {
+    return new MathExpression({
+      ...opts,
+      expression: '100 * FILL(mMemoryUtilized, 0) / FILL(mMemoryReserved, REPEAT)',
+      usingMetrics: {
+        mMemoryReserved: (this.ecsCluster as Cluster).metricMemoryReservation({ statistic: Statistic.MAXIMUM }),
+        mMemoryUtilized: (this.ecsCluster as Cluster).metricMemoryUtilization({ statistic: Statistic.MAXIMUM }),
+      },
+    });
+  }
+
+  public metricEcsNetworkRxBytes(opts?: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'NetworkRxBytes',
+      namespace: 'ECS/ContainerInsights',
+    });
+  }
+
+  public metricEcsNetworkTxBytes(opts?: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'NetworkTxBytes',
+      namespace: 'ECS/ContainerInsights',
+    });
   }
 }

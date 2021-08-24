@@ -260,6 +260,13 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       // which principal those calls are made from, or if that is something we
       // could name here).
       principals: [new AnyPrincipal()],
+      // So we scope this down to only calls originating from the current
+      // account, as a protection against confused deputy attacks.
+      conditions: {
+        StringEquals: {
+          'aws:SourceAccount': Stack.of(this).account,
+        },
+      },
       sid: 'Allow-CodeArtifact-and-ECR',
     }));
 

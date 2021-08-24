@@ -1,4 +1,4 @@
-import { Dashboard, GraphWidget, GraphWidgetView, PeriodOverride, TextWidget, IWidget } from '@aws-cdk/aws-cloudwatch';
+import { Dashboard, GraphWidget, GraphWidgetView, TextWidget, IWidget } from '@aws-cdk/aws-cloudwatch';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 import { DenyList } from './backend/deny-list';
@@ -6,7 +6,7 @@ import { Ingestion } from './backend/ingestion';
 import { Inventory } from './backend/inventory';
 import { Orchestration } from './backend/orchestration';
 import { DocumentationLanguage } from './backend/shared/language';
-import { lambdaFunctionUrl, lambdaSearchLogGroupUrl, s3ObjectUrl, sqsQueueUrl, stateMachineUrl } from './deep-link';
+import { ecsClusterUrl, lambdaFunctionUrl, lambdaSearchLogGroupUrl, logGroupUrl, s3ObjectUrl, sqsQueueUrl, stateMachineUrl } from './deep-link';
 import { fillMetric } from './metric-utils';
 import { PackageSourceBindResult } from './package-source';
 
@@ -26,7 +26,7 @@ export class BackendDashboard extends Construct {
 
     new Dashboard(this, 'Resource', {
       dashboardName: props.dashboardName,
-      periodOverride: PeriodOverride.INHERIT,
+      start: '-P1W', // Show 1 week by default
       widgets: [
         [
           new TextWidget({
@@ -66,7 +66,7 @@ export class BackendDashboard extends Construct {
             leftYAxis: { min: 0 },
           }),
         ],
-        ...this.catalogOverviewLanguageSections(props.inventory),
+        ...this.catalogOverviewLanguageSections(props),
         ...renderPackageSourcesWidgets(props.packageSources),
         [
           new TextWidget({
@@ -140,6 +140,15 @@ export class BackendDashboard extends Construct {
             right: [
               props.ingestion.deadLetterQueue.metricApproximateAgeOfOldestMessage({ label: 'Oldest Message Age' }),
             ],
+            rightAnnotations: [{
+              color: '#ff7f0e',
+              label: '10 days',
+              value: Duration.days(10).toSeconds(),
+            }, {
+              color: '#ff0000',
+              label: '14 days (DLQ Retention)',
+              value: Duration.days(14).toSeconds(),
+            }],
             rightYAxis: { min: 0 },
             period: Duration.minutes(1),
           }),
@@ -190,11 +199,19 @@ export class BackendDashboard extends Construct {
             right: [
               props.orchestration.deadLetterQueue.metricApproximateAgeOfOldestMessage({ label: 'Oldest Message Age' }),
             ],
+            rightAnnotations: [{
+              color: '#ff7f0e',
+              label: '10 days',
+              value: Duration.days(10).toSeconds(),
+            }, {
+              color: '#ff0000',
+              label: '14 days (DLQ Retention)',
+              value: Duration.days(14).toSeconds(),
+            }],
             rightYAxis: { min: 0 },
             period: Duration.minutes(1),
           }),
         ],
-
 
         // deny list
         // ----------------------------------------------
@@ -243,14 +260,46 @@ export class BackendDashboard extends Construct {
     });
   }
 
-  private *catalogOverviewLanguageSections(inventory: Inventory): Generator<IWidget[]> {
+  private *catalogOverviewLanguageSections({ inventory, orchestration }: BackendDashboardProps): Generator<IWidget[]> {
     yield [
       new TextWidget({
         height: 2,
         width: 24,
-        markdown: '# Documentation Generation',
+        markdown: [
+          '# Documentation Generation',
+          '',
+          `[button:primary:Transliterator Logs](${logGroupUrl(orchestration.transliterator.logGroup)})`,
+          `[button:Transliterator ECS Cluster](${ecsClusterUrl(orchestration.ecsCluster)})`,
+        ].join('\n'),
       }),
     ];
+    yield [
+      new GraphWidget({
+        height: 6,
+        width: 12,
+        title: 'ECS Resoruces',
+        left: [
+          orchestration.metricEcsTaskCount({ label: 'Task Count' }),
+        ],
+        leftYAxis: { min: 0 },
+        right: [
+          orchestration.metricEcsCpuUtilization({ label: 'CPU Utilization' }),
+          orchestration.metricEcsMemoryUtilization({ label: 'Memory Utilization' }),
+        ],
+        rightYAxis: { label: 'Percent', min: 0, max: 100, showUnits: false },
+      }),
+      new GraphWidget({
+        height: 6,
+        width: 12,
+        title: 'ECS Networking',
+        left: [
+          orchestration.metricEcsNetworkRxBytes({ label: 'Received Bytes' }),
+          orchestration.metricEcsNetworkTxBytes({ label: 'Transmitted Bytes' }),
+        ],
+        leftYAxis: { min: 0 },
+      }),
+    ];
+
     for (const language of DocumentationLanguage.ALL) {
       yield [
         new TextWidget({
