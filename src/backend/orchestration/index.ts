@@ -156,7 +156,7 @@ export class Orchestration extends Construct {
       },
     })
       // This has a concurrency of 1, so we want to aggressively retry being throttled here.
-      .addRetry({ errors: ['Lambda.TooManyRequestsException'], interval: Duration.minutes(1), maxAttempts: 5 })
+      .addRetry({ errors: ['Lambda.TooManyRequestsException'], interval: Duration.minutes(1), backoffRate: 1, maxAttempts: 60 })
       .addCatch(
         new Pass(this, '"Add to catalog.json" throttled', {
           parameters: { 'error.$': '$.Cause' },
@@ -224,7 +224,7 @@ export class Orchestration extends Construct {
                 resultSelector: { result: { 'language': language, 'success.$': '$' } },
                 vpcSubnets: props.vpcSubnets,
               })
-                .addRetry({ errors: ['ECS.AmazonECSException'], interval: Duration.minutes(1), maxAttempts: 5 })
+                .addRetry({ errors: ['ECS.AmazonECSException'], interval: Duration.minutes(1), backoffRate: 1, maxAttempts: 60 })
                 .addCatch(
                   new Pass(this, `"Generate ${language} docs" timed out`, { parameters: { error: 'Timed out!', language } }),
                   { errors: ['States.Timeout'] },
