@@ -3,8 +3,8 @@ import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, EventBridgeEvent } from 'aws-lambda';
 
 import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
+import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
 import * as aws from '../../backend/shared/aws.lambda-shared';
-import { ELIGIBLE_LICENSES } from '../../backend/shared/constants';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
 import { IngestionInput } from '../../backend/shared/ingestion-input.lambda-shared';
 import { integrity } from '../../backend/shared/integrity.lambda-shared';
@@ -69,7 +69,8 @@ export const handler = metricScope((metrics) => async (event: EventBridgeEvent<t
   }
 
   const metadata = JSON.parse(packageJson.toString('utf-8'));
-  const eligibleLicense = ELIGIBLE_LICENSES.has(metadata.license?.toUpperCase() ?? 'UNLICENSED');
+  const licenseList = await LicenseListClient.newClient();
+  const eligibleLicense = licenseList.lookup(metadata.license ?? 'UNLICENSED');
   metrics.putMetric(MetricName.INELIGIBLE_LICENSE, eligibleLicense ? 0 : 1, Unit.Count);
   if (!eligibleLicense) {
     console.log(`Package "${packageName}@${event.detail.packageVersion}" does not use allow-listed license: ${metadata.license ?? 'UNLICENSED'}`);

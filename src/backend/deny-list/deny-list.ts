@@ -8,7 +8,7 @@ import * as lambda from '@aws-cdk/aws-lambda';
 import { S3EventSource } from '@aws-cdk/aws-lambda-event-sources';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
-import { Construct, Duration } from '@aws-cdk/core';
+import { Construct, Duration, RemovalPolicy } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
 import { DenyListRule, IDenyList } from './api';
 import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY, MetricName, METRICS_NAMESPACE } from './constants';
@@ -78,21 +78,26 @@ export class DenyList extends Construct implements IDenyList {
    */
   public readonly prune: Prune;
 
+  private readonly upload: s3deploy.BucketDeployment;
+
   constructor(scope: Construct, id: string, props: DenyListProps) {
     super(scope, id);
 
     this.bucket = new s3.Bucket(this, 'Bucket', {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       encryption: s3.BucketEncryption.S3_MANAGED,
-      versioned: true,
       enforceSSL: true,
+      removalPolicy: RemovalPolicy.DESTROY,
+      versioned: true,
     });
 
     const directory = this.writeToFile(props.rules, this.objectKey);
 
     // upload the deny list to the bucket
-    const upload = new s3deploy.BucketDeployment(this, 'BucketDeployment', {
+    this.upload = new s3deploy.BucketDeployment(this, 'BucketDeployment', {
       destinationBucket: this.bucket,
+      prune: true,
+      retainOnDelete: false,
       sources: [s3deploy.Source.asset(directory)],
     });
 
@@ -125,7 +130,7 @@ export class DenyList extends Construct implements IDenyList {
     // add an explicit dep between upload and the bucket scope which can now
     // also include the bucket notification resource. otherwise, the first
     // upload will not trigger a prune
-    upload.node.addDependency(this.bucket);
+    this.upload.node.addDependency(this.bucket);
   }
 
   /**
@@ -136,6 +141,8 @@ export class DenyList extends Construct implements IDenyList {
     handler.addEnvironment(ENV_DENY_LIST_BUCKET_NAME, this.bucket.bucketName);
     handler.addEnvironment(ENV_DENY_LIST_OBJECT_KEY, this.objectKey);
     this.bucket.grantRead(handler);
+    // The handler now depends on the deny-list having been uploaded
+    handler.node.addDependency(this.upload);
   }
 
   /**

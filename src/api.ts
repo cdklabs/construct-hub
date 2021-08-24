@@ -5,6 +5,7 @@ import { IAlarmAction } from '@aws-cdk/aws-cloudwatch';
 import * as route53 from '@aws-cdk/aws-route53';
 
 export * from './backend/deny-list/api';
+export * from './backend/license-list/api';
 export * from './codeartifact/api';
 export * from './monitoring/api';
 

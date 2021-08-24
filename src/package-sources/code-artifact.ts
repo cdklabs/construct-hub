@@ -33,7 +33,7 @@ export class CodeArtifact implements IPackageSource {
   public constructor(private readonly props: CodeArtifactProps) {
   }
 
-  public bind(scope: Construct, { denyList, ingestion, monitoring, queue }: PackageSourceBindOptions): PackageSourceBindResult {
+  public bind(scope: Construct, { denyList, ingestion, licenseList, monitoring, queue }: PackageSourceBindOptions): PackageSourceBindResult {
     const idPrefix = this.props.repository.node.path;
     const repositoryId = `${this.props.repository.attrDomainOwner}:${this.props.repository.attrDomainName}/${this.props.repository.attrName}`;
 
@@ -63,6 +63,7 @@ export class CodeArtifact implements IPackageSource {
     });
     bucket.grantReadWrite(forwarder);
     denyList?.grantRead(forwarder);
+    licenseList.grantRead(forwarder);
     queue.grantSendMessages(forwarder);
     forwarder.addToRolePolicy(new PolicyStatement({
       effect: Effect.ALLOW,

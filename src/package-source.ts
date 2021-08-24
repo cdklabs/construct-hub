@@ -3,6 +3,7 @@ import { IGrantable } from '@aws-cdk/aws-iam';
 import { IQueue } from '@aws-cdk/aws-sqs';
 import { Construct } from '@aws-cdk/core';
 import { IDenyList } from './backend/deny-list/api';
+import { ILicenseList } from './backend/license-list/api';
 import { IRepository } from './codeartifact/api';
 import { IMonitoring } from './monitoring/api';
 
@@ -37,6 +38,13 @@ export interface PackageSourceBindOptions {
    * from the URLs sent to the `queue`.
    */
   readonly ingestion: IGrantable;
+
+  /**
+   * The license list applied by the bound Construct Hub instance. This can be
+   * used to filter down the package only to those which will pass the license
+   * filter.
+   */
+  readonly licenseList: ILicenseList;
 
   /**
    * The monitoring instance to use for registering alarms, etc.

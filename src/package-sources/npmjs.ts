@@ -26,7 +26,10 @@ export interface NpmJsProps {
 export class NpmJs implements IPackageSource {
   public constructor(private readonly props: NpmJsProps = {}) {}
 
-  public bind(scope: Construct, { denyList, ingestion, monitoring, queue, repository }: PackageSourceBindOptions): PackageSourceBindResult {
+  public bind(
+    scope: Construct,
+    { denyList, ingestion, licenseList, monitoring, queue, repository }: PackageSourceBindOptions,
+  ): PackageSourceBindResult {
     repository?.addExternalConnection('public:npmjs');
 
     const bucket = this.props.stagingBucket || new Bucket(scope, 'NpmJs/StagingBucket', {
@@ -51,6 +54,7 @@ export class NpmJs implements IPackageSource {
     bucket.grantReadWrite(follower);
     queue.grantSendMessages(follower);
     denyList?.grantRead(follower);
+    licenseList.grantRead(follower);
 
     const rule = new Rule(scope, 'NpmJs/Schedule', {
       description: `${scope.node.path}/NpmJs/Schedule`,

@@ -29,7 +29,7 @@ export async function extractObjects<S extends Selector>(tgz: Buffer, selector: 
             continue;
           }
           if (!(name in result)) {
-            const err = new Error(`Missing required entry in tarball: ${name} (${path ?? '<dynamic>'}`);
+            const err = new Error(`Missing required entry in tarball: ${name} (${path ?? '<dynamic>'})`);
             Error.captureStackTrace(err);
             ko(err);
             return;

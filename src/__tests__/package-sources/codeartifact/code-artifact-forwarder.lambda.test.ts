@@ -3,6 +3,7 @@ import type { Context } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import * as denyListClient from '../../../backend/deny-list/client.lambda-shared';
+import * as licenseListClient from '../../../backend/license-list/client.lambda-shared';
 import { reset } from '../../../backend/shared/aws.lambda-shared';
 import * as env from '../../../backend/shared/env.lambda-shared';
 import { integrity } from '../../../backend/shared/integrity.lambda-shared';
@@ -33,6 +34,15 @@ jest.mock('../../../backend/deny-list/client.lambda-shared');
   .mockName('DenyListClient.newClient')
   .mockImplementation(() => Promise.resolve(safeMock<denyListClient.DenyListClient>('mockDenyListClient', {
     lookup: mockDenyListClientLookup,
+  })));
+
+const mockLicenseListLookup: jest.MockedFunction<licenseListClient.LicenseListClient['lookup']> = jest.fn()
+  .mockName('mockLicenseListClient.lookup');
+jest.mock('../../../backend/license-list/client.lambda-shared');
+(licenseListClient.LicenseListClient.newClient as jest.MockedFunction<typeof licenseListClient.LicenseListClient.newClient>)
+  .mockName('LicenseListClient.newClient')
+  .mockImplementation(() => Promise.resolve(safeMock<licenseListClient.LicenseListClient>('mockLicenseListClient', {
+    lookup: mockLicenseListLookup,
   })));
 
 jest.mock('../../../backend/shared/tarball.lambda-shared');
@@ -107,6 +117,8 @@ test('happy path', async () => {
     };
   });
 
+  mockLicenseListLookup.mockReturnValueOnce('Apache-2.0');
+
   const stagingKey = `@${detail.packageNamespace}/${detail.packageName}/${detail.packageVersion}/${mockGetPackageVersionAssetResult.packageVersionRevision}/package.tgz`;
   AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
     try {
@@ -165,6 +177,7 @@ test('happy path', async () => {
   // THEN
   await expect(handler(request, mockContext)).resolves.toEqual(mockSendMessageResult);
   expect(mockDenyListClientLookup).toHaveBeenCalledWith('@pkg-namespace/pkg-name', '1.2.3-dev.1337');
+  return expect(mockLicenseListLookup).toHaveBeenCalledWith('Apache-2.0');
 });
 
 test('no license (i.e: UNLICENSED)', async () => {
@@ -216,7 +229,8 @@ test('no license (i.e: UNLICENSED)', async () => {
   const request: RequestType = safeMock<RequestType>('request', { time: new Date().toISOString(), detail });
 
   // THEN
-  return expect(handler(request, mockContext)).resolves.toBeUndefined();
+  await expect(handler(request, mockContext)).resolves.toBeUndefined();
+  return expect(mockLicenseListLookup).toHaveBeenCalledWith('UNLICENSED');
 });
 
 test('ineligible license', async () => {
@@ -268,7 +282,8 @@ test('ineligible license', async () => {
   const request: RequestType = safeMock<RequestType>('request', { time: new Date().toISOString(), detail });
 
   // THEN
-  return expect(handler(request, mockContext)).resolves.toBeUndefined();
+  await expect(handler(request, mockContext)).resolves.toBeUndefined();
+  return expect(mockLicenseListLookup).toHaveBeenCalledWith('Phony-MOCK');
 });
 
 test('not a jsii package', async () => {
