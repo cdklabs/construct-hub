@@ -85,7 +85,7 @@ ConstructHub provides two package source implementations: `NpmJs` and
   > CodeArtifact repository, the operator should manually inject all relevant
   > packages from said repository into the ingestion queue.
   >
-  > A managed back-fill procedure will be provided in the future.
+  > :construction: A managed back-fill procedure will be provided in the future.
 
   - A **high-severity** alarm triggers if the CodeArtifact Forwarder function
     encounters failures.

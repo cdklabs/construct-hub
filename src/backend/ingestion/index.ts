@@ -7,6 +7,7 @@ import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
+import { RUNBOOK_URL } from '../../runbook-url';
 import { Orchestration } from '../orchestration';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { Ingestion as Handler } from './ingestion';
@@ -108,6 +109,8 @@ export class Ingestion extends Construct implements IGrantable {
         alarmDescription: [
           'The dead-letter queue for the Ingestion function is not empty!',
           '',
+          `RunBook: ${RUNBOOK_URL}`,
+          '',
           `Direct link to the queue: ${sqsQueueUrl(this.deadLetterQueue)}`,
           `Direct link to the function: ${lambdaFunctionUrl(this.function)}`,
         ].join('\n'),
@@ -124,6 +127,8 @@ export class Ingestion extends Construct implements IGrantable {
         alarmName: `${this.node.path}/Failure`,
         alarmDescription: [
           'The Ingestion function is failing!',
+          '',
+          `RunBook: ${RUNBOOK_URL}`,
           '',
           `Direct link to the function: ${lambdaFunctionUrl(this.function)}`,
         ].join('\n'),

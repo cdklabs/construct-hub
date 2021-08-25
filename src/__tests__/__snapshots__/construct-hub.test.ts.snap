@@ -105,16 +105,16 @@ Object {
       "Description": "S3 key for asset version \\"8265ccdf680d2fc53b19193e2b93340a27f335cc3be02b673f0742d7700fd6ac\\"",
       "Type": "String",
     },
-    "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9ArtifactHash7A6CE4F0": Object {
-      "Description": "Artifact hash for asset \\"8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9\\"",
+    "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bArtifactHashAC589578": Object {
+      "Description": "Artifact hash for asset \\"85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929b\\"",
       "Type": "String",
     },
-    "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3Bucket9F5C49D7": Object {
-      "Description": "S3 bucket for asset \\"8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9\\"",
+    "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3Bucket465251CA": Object {
+      "Description": "S3 bucket for asset \\"85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929b\\"",
       "Type": "String",
     },
-    "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9": Object {
-      "Description": "S3 key for asset version \\"8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9\\"",
+    "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C": Object {
+      "Description": "S3 key for asset version \\"85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929b\\"",
       "Type": "String",
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064ArtifactHashEA963870": Object {
@@ -526,7 +526,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationCatalogBuilder7C964951",
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size\\",\\"region\\":\\"",
+              ")\\\\n[button:Inventory Canary](/lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubInventoryCanary63D899BC",
+              },
+              ")\\\\n[button:Search Canary Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              Object {
+                "Ref": "ConstructHubInventoryCanary63D899BC",
+              },
+              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -1782,6 +1790,8 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             Array [
               "The dead-letter queue for the Ingestion function is not empty!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to the queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
               Object {
                 "Ref": "AWS::Region",
@@ -1875,6 +1885,8 @@ Direct link to the function: /lambda/home#/functions/",
             "",
             Array [
               "The Ingestion function is failing!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to the function: /lambda/home#/functions/",
               Object {
@@ -2183,6 +2195,8 @@ Direct link to the function: /lambda/home#/functions/",
             Array [
               "The inventory canary is failing!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubInventoryCanary63D899BC",
@@ -2219,6 +2233,8 @@ Direct link to function: /lambda/home#/functions/",
             "",
             Array [
               "The inventory canary is not running!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to function: /lambda/home#/functions/",
               Object {
@@ -4282,6 +4298,8 @@ Direct link to function: /lambda/home#/functions/",
             Array [
               "Backend orchestration dead-letter queue is not empty.
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
               Object {
                 "Ref": "AWS::Region",
@@ -4370,7 +4388,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3Bucket9F5C49D7",
+            "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3Bucket465251CA",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -4383,7 +4401,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9",
+                          "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C",
                         },
                       ],
                     },
@@ -4396,7 +4414,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9",
+                          "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C",
                         },
                       ],
                     },
@@ -4782,7 +4800,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3Bucket9F5C49D7",
+            "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3Bucket465251CA",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -4795,7 +4813,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9",
+                          "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C",
                         },
                       ],
                     },
@@ -4808,7 +4826,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9",
+                          "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C",
                         },
                       ],
                     },
@@ -5196,6 +5214,8 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
             "",
             Array [
               "Backend orchestration failed!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to state machine: /states/home#/statemachines/view/",
               Object {
@@ -5925,6 +5945,8 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             Array [
               "The NpmJs follower function failed!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to Lambda function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
@@ -5966,6 +5988,8 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "",
             Array [
               "The NpmJs follower function is not running!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to Lambda function: /lambda/home#/functions/",
               Object {
@@ -7362,16 +7386,16 @@ Object {
       "Description": "S3 key for asset version \\"8265ccdf680d2fc53b19193e2b93340a27f335cc3be02b673f0742d7700fd6ac\\"",
       "Type": "String",
     },
-    "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9ArtifactHash7A6CE4F0": Object {
-      "Description": "Artifact hash for asset \\"8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9\\"",
+    "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bArtifactHashAC589578": Object {
+      "Description": "Artifact hash for asset \\"85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929b\\"",
       "Type": "String",
     },
-    "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3Bucket9F5C49D7": Object {
-      "Description": "S3 bucket for asset \\"8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9\\"",
+    "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3Bucket465251CA": Object {
+      "Description": "S3 bucket for asset \\"85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929b\\"",
       "Type": "String",
     },
-    "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9": Object {
-      "Description": "S3 key for asset version \\"8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9\\"",
+    "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C": Object {
+      "Description": "S3 key for asset version \\"85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929b\\"",
       "Type": "String",
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064ArtifactHashEA963870": Object {
@@ -7932,7 +7956,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationCatalogBuilder7C964951",
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size\\",\\"region\\":\\"",
+              ")\\\\n[button:Inventory Canary](/lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubInventoryCanary63D899BC",
+              },
+              ")\\\\n[button:Search Canary Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              Object {
+                "Ref": "ConstructHubInventoryCanary63D899BC",
+              },
+              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -9188,6 +9220,8 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             Array [
               "The dead-letter queue for the Ingestion function is not empty!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to the queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
               Object {
                 "Ref": "AWS::Region",
@@ -9281,6 +9315,8 @@ Direct link to the function: /lambda/home#/functions/",
             "",
             Array [
               "The Ingestion function is failing!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to the function: /lambda/home#/functions/",
               Object {
@@ -9589,6 +9625,8 @@ Direct link to the function: /lambda/home#/functions/",
             Array [
               "The inventory canary is failing!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubInventoryCanary63D899BC",
@@ -9625,6 +9663,8 @@ Direct link to function: /lambda/home#/functions/",
             "",
             Array [
               "The inventory canary is not running!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to function: /lambda/home#/functions/",
               Object {
@@ -11710,6 +11750,8 @@ Direct link to function: /lambda/home#/functions/",
             Array [
               "Backend orchestration dead-letter queue is not empty.
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
               Object {
                 "Ref": "AWS::Region",
@@ -11798,7 +11840,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3Bucket9F5C49D7",
+            "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3Bucket465251CA",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -11811,7 +11853,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9",
+                          "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C",
                         },
                       ],
                     },
@@ -11824,7 +11866,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9",
+                          "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C",
                         },
                       ],
                     },
@@ -12210,7 +12252,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3Bucket9F5C49D7",
+            "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3Bucket465251CA",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -12223,7 +12265,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9",
+                          "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C",
                         },
                       ],
                     },
@@ -12236,7 +12278,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9",
+                          "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C",
                         },
                       ],
                     },
@@ -12624,6 +12666,8 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
             "",
             Array [
               "Backend orchestration failed!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to state machine: /states/home#/statemachines/view/",
               Object {
@@ -13353,6 +13397,8 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             Array [
               "The NpmJs follower function failed!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to Lambda function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
@@ -13394,6 +13440,8 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "",
             Array [
               "The NpmJs follower function is not running!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to Lambda function: /lambda/home#/functions/",
               Object {
@@ -15034,16 +15082,16 @@ Object {
       "Description": "S3 key for asset version \\"8265ccdf680d2fc53b19193e2b93340a27f335cc3be02b673f0742d7700fd6ac\\"",
       "Type": "String",
     },
-    "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9ArtifactHash7A6CE4F0": Object {
-      "Description": "Artifact hash for asset \\"8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9\\"",
+    "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bArtifactHashAC589578": Object {
+      "Description": "Artifact hash for asset \\"85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929b\\"",
       "Type": "String",
     },
-    "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3Bucket9F5C49D7": Object {
-      "Description": "S3 bucket for asset \\"8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9\\"",
+    "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3Bucket465251CA": Object {
+      "Description": "S3 bucket for asset \\"85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929b\\"",
       "Type": "String",
     },
-    "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9": Object {
-      "Description": "S3 key for asset version \\"8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9\\"",
+    "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C": Object {
+      "Description": "S3 key for asset version \\"85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929b\\"",
       "Type": "String",
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064ArtifactHashEA963870": Object {
@@ -15455,7 +15503,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationCatalogBuilder7C964951",
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size\\",\\"region\\":\\"",
+              ")\\\\n[button:Inventory Canary](/lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubInventoryCanary63D899BC",
+              },
+              ")\\\\n[button:Search Canary Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              Object {
+                "Ref": "ConstructHubInventoryCanary63D899BC",
+              },
+              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -16646,6 +16702,8 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             Array [
               "The dead-letter queue for the Ingestion function is not empty!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to the queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
               Object {
                 "Ref": "AWS::Region",
@@ -16739,6 +16797,8 @@ Direct link to the function: /lambda/home#/functions/",
             "",
             Array [
               "The Ingestion function is failing!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to the function: /lambda/home#/functions/",
               Object {
@@ -17047,6 +17107,8 @@ Direct link to the function: /lambda/home#/functions/",
             Array [
               "The inventory canary is failing!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubInventoryCanary63D899BC",
@@ -17083,6 +17145,8 @@ Direct link to function: /lambda/home#/functions/",
             "",
             Array [
               "The inventory canary is not running!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to function: /lambda/home#/functions/",
               Object {
@@ -18325,6 +18389,8 @@ Direct link to function: /lambda/home#/functions/",
             Array [
               "Backend orchestration dead-letter queue is not empty.
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
               Object {
                 "Ref": "AWS::Region",
@@ -18413,7 +18479,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3Bucket9F5C49D7",
+            "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3Bucket465251CA",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -18426,7 +18492,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9",
+                          "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C",
                         },
                       ],
                     },
@@ -18439,7 +18505,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9",
+                          "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C",
                         },
                       ],
                     },
@@ -18758,7 +18824,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3Bucket9F5C49D7",
+            "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3Bucket465251CA",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -18771,7 +18837,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9",
+                          "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C",
                         },
                       ],
                     },
@@ -18784,7 +18850,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8788b02d861e52e91768589d39161b6231f16d00156288e15ec5f08a6d8dfaa9S3VersionKey8747EBE9",
+                          "Ref": "AssetParameters85eefa7d9d6acf4735110477b7910949a4c569ab77d089dac8d8611f3a8f929bS3VersionKey5D320B9C",
                         },
                       ],
                     },
@@ -19105,6 +19171,8 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
             "",
             Array [
               "Backend orchestration failed!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to state machine: /states/home#/statemachines/view/",
               Object {
@@ -19828,6 +19896,8 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             Array [
               "The NpmJs follower function failed!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to Lambda function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
@@ -19869,6 +19939,8 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "",
             Array [
               "The NpmJs follower function is not running!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to Lambda function: /lambda/home#/functions/",
               Object {
