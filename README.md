@@ -194,6 +194,14 @@ ConstructHub provides two package source implementations: `NpmJs` and
   stores the current CouchDB sequence ID in a specific object in the S3 bucket
   used for staging packages.
 
+  > Back-filling is automatic for the `NpmJs` source. Upon initial deployment,
+  > it will start scanning the CouchDB `_changes` stream around transaction ID
+  > `1_800_000`, which is around the time of the initial developer preview
+  > release of the AWS CDK. Should there be a need to re-run a backfill of this
+  > source, the transaction marker object in S3 can be deleted to roll back to
+  > that initial transaction. The marker object is linked from the backend
+  > dashboard.
+
   - A **high-severity** alarm triggers if the NpmJs Follower is not running at
     the scheduled cadence, or if it encounters failures for more than
     `15 minutes`.
@@ -222,6 +230,13 @@ ConstructHub provides two package source implementations: `NpmJs` and
   Lambda Function verifies the package version from the event is eligible for
   ConstructHub (i.e: it is a `jsii` package, using an allowed license, etc...)
   before staging it in an S3 bucket, then notifying the ingestion SQS Queue.
+
+  > No backfill provision is currently implemented for the `CodeArtifact`
+  > source. If a ConstructHub instance is started off from a pre-existing
+  > CodeArtifact repository, the operator should manually inject all relevant
+  > packages from said repository into the ingestion queue.
+  >
+  > A managed back-fill procedure will be provided in the future.
 
   - A **high-severity** alarm triggers if the CodeArtifact Forwarder function
     encounters failures.
