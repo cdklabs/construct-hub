@@ -17,6 +17,19 @@ test('minimal usage', () => {
   expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
 
+test('piggy-backing on an existing CodeArtifact domain', () => {
+  const app = new App();
+  const stack = new Stack(app, 'Test');
+  new ConstructHub(stack, 'ConstructHub', {
+    alarmActions: dummyAlarmAction,
+    codeArtifactDomain: {
+      name: 'existing-domain-name',
+      upstreams: ['repo-1', 'repo-2'],
+    },
+  });
+  expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+});
+
 test('with non-isolated lambdas', () => {
   const app = new App();
   const stack = new Stack(app, 'Test');
