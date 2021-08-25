@@ -10,16 +10,22 @@ Most of the investigation instructions in this document refer to the *backend
 dashboard* of ConstructHub. Operators should ensure this dashboard is always
 readily available.
 
+--------------------------------------------------------------------------------
+
 ## ConstructHub Alarms
 
 ### `ConstructHub/Ingestion/DLQNotEmpty`
-[#a-in-dlq]: #constructhub-ingestion-dlqnotempty
 
 #### Description
 
 This alarm goes off when the dead-letter queue for the ingestion function is not
 empty. This means messages send by package sources to the ingestion SQS queue
 have failed processing through the ingestion function.
+
+> :warning: Messages in the dead-letter queue can only be persisted there for up
+> to **14 days**. If a problem cannot be investigated and resolved within this
+> time frame, it is recommended to copy those messages out to persistent storage
+> for later re-processing.
 
 #### Investigation
 
@@ -84,8 +90,9 @@ The alarm will automatically go back to green once the Lambda function stops
 failing.
 
 Some of the ingestion queue messages may however have made it to the dead-letter
-queue, and caused the [`ConstructHub/Ingestion/DLQNotEmpty`][#a-in-dlq] alarm to
-go off.
+queue, and caused the
+[`ConstructHub/Ingestion/DLQNotEmpty`](#constructhubingestiondlqnotempty) alarm
+to go off.
 
 ### `ConstructHub/InventoryCanary/Failures`
 
@@ -106,6 +113,11 @@ go off.
 ### `ConstructHub/Orchestration/DLQ/NotEmpty`
 
 #### Description
+
+> :warning: Messages in the dead-letter queue can only be persisted there for up
+> to **14 days**. If a problem cannot be investigated and resolved within this
+> time frame, it is recommended to copy those messages out to persistent storage
+> for later re-processing.
 
 #### Investigation
 
@@ -134,6 +146,8 @@ go off.
 #### Investigation
 
 #### Resolution
+
+--------------------------------------------------------------------------------
 
 ## Recommendations
 
