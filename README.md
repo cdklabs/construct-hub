@@ -45,7 +45,7 @@ const stack = new Stack(app, 'StackName', { /* ... */ });
 new ConstructHub(stack, 'ConstructHub');
 ```
 
-### Persionalization
+### Personalization
 
 #### Using a custom domain name
 
@@ -223,7 +223,7 @@ ConstructHub provides two package source implementations: `NpmJs` and
   ConstructHub (i.e: it is a `jsii` package, using an allowed license, etc...)
   before staging it in an S3 bucket, then notifying the ingestion SQS Queue.
 
-  - A **high-severity** alarm triggers if the CodeArtifact Fowarder function
+  - A **high-severity** alarm triggers if the CodeArtifact Forwarder function
     encounters failures.
 
   - Troubleshooting the CodeArtifact Forwarder can be done by inspecting its log
@@ -324,7 +324,7 @@ already indexed at the time it is added to the deny-list, all indexed assets for
 it will be deleted by a *prune* Lambda Function.
 
 A **high-severity** alarm triggers if the *prune* function does not run at the
-configured cadence, or if ti encounters failures.
+configured cadence, or if it encounters failures.
 
 Troubleshooting can be done by inspecting the log traces it produces in
 CloudWatch Logs, or by looking at service maps in the X-Ray console.
