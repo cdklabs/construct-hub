@@ -75,6 +75,7 @@ export class BackendDashboard extends Construct {
             markdown: [
               '# Ingestion Function',
               '',
+              `[button:Ingestion Function](${lambdaFunctionUrl(props.ingestion.function)})`,
               `[button:Search Log Group](${lambdaSearchLogGroupUrl(props.ingestion.function)})`,
               `[button:DLQ](${sqsQueueUrl(props.ingestion.deadLetterQueue)})`,
             ].join('\n'),

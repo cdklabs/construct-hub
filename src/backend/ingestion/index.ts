@@ -1,4 +1,4 @@
-import { ComparisonOperator, MathExpression, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
+import { ComparisonOperator, MathExpression, Metric, MetricOptions, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
 import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
@@ -114,6 +114,8 @@ export class Ingestion extends Construct implements IGrantable {
         comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
         evaluationPeriods: 1,
         threshold: 1,
+        // SQS does not emit metrics if the queue has been empty for a while, which is GOOD.
+        treatMissingData: TreatMissingData.NOT_BREACHING,
       }),
     );
     props.monitoring.addHighSeverityAlarm(
@@ -128,6 +130,8 @@ export class Ingestion extends Construct implements IGrantable {
         comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
         evaluationPeriods: 2,
         threshold: 1,
+        // Lambda only emits metrics when the function is invoked. No invokation => no errors.
+        treatMissingData: TreatMissingData.NOT_BREACHING,
       }),
     );
   }
