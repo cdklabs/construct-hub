@@ -2636,6 +2636,7 @@ Resources:
             Stat: Maximum
           ReturnData: false
       Threshold: 1
+      TreatMissingData: notBreaching
   ConstructHubIngestionFailureAlarm9D0028DD:
     Type: AWS::CloudWatch::Alarm
     Properties:
@@ -2659,6 +2660,7 @@ Resources:
       Period: 300
       Statistic: Sum
       Threshold: 1
+      TreatMissingData: notBreaching
   ConstructHubLicenseListBucket9334047F:
     Type: AWS::S3::Bucket
     Properties:
@@ -3249,8 +3251,11 @@ Resources:
               REPEAT)","yAxis":"right"}],["ConstructHub/PackageSource/NpmJs/Follower","PackageVersionAge",{"label":"Package
               Version
               Age","stat":"Maximum","visible":false,"id":"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4"}]],"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":900}},{"type":"text","width":24,"height":2,"x":0,"y":32,"properties":{"markdown":"#
-              Ingestion Function\\n\\n[button:Search Log
-              Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f'
+              Ingestion Function\\n\\n[button:Ingestion
+              Function](/lambda/home#/functions/'
+            - Ref: ConstructHubIngestion407909CE
+            - )\\n[button:Search Log
+              Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f
             - Ref: ConstructHubIngestion407909CE
             - /log-events)\\n[button:DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.
             - Ref: AWS::Region
