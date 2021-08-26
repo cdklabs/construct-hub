@@ -1212,9 +1212,6 @@ Resources:
             - - "arn:"
               - Ref: AWS::Partition
               - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-    DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
   ConstructHubDenyListPrunePruneHandlerServiceRoleDefaultPolicy416BC8DA:
     Type: AWS::IAM::Policy
     Properties:
@@ -1269,9 +1266,6 @@ Resources:
       PolicyName: ConstructHubDenyListPrunePruneHandlerServiceRoleDefaultPolicy416BC8DA
       Roles:
         - Ref: ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE
-    DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
   ConstructHubDenyListPrunePruneHandler30B33551:
     Type: AWS::Lambda::Function
     Properties:
@@ -1314,8 +1308,6 @@ Resources:
       Runtime: nodejs14.x
       Timeout: 900
     DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
       - ConstructHubDenyListPrunePruneHandlerServiceRoleDefaultPolicy416BC8DA
       - ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE
   ConstructHubDenyListPrunePruneQueueHandlerServiceRoleC10AC418:
@@ -1514,9 +1506,6 @@ Resources:
             - - "arn:"
               - Ref: AWS::Partition
               - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-    DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
   ConstructHubOrchestrationCatalogBuilderServiceRoleDefaultPolicyDA5D5AA5:
     Type: AWS::IAM::Policy
     Properties:
@@ -1564,9 +1553,6 @@ Resources:
       PolicyName: ConstructHubOrchestrationCatalogBuilderServiceRoleDefaultPolicyDA5D5AA5
       Roles:
         - Ref: ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
-    DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
   ConstructHubOrchestrationCatalogBuilder7C964951:
     Type: AWS::Lambda::Function
     Properties:
@@ -1610,8 +1596,6 @@ Resources:
       TracingConfig:
         Mode: PassThrough
     DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
       - ConstructHubOrchestrationCatalogBuilderServiceRoleDefaultPolicyDA5D5AA5
       - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
   ConstructHubOrchestrationCatalogBuilderLogRetention04ED6996:
@@ -1627,9 +1611,6 @@ Resources:
           - - /aws/lambda/
             - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
       RetentionInDays: 3653
-    DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
   ConstructHubOrchestrationDocGenpythonServiceRoleD16CBDB2:
     Type: AWS::IAM::Role
     Properties:
@@ -2981,8 +2962,6 @@ Resources:
               - Ref: AWS::Partition
               - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
     DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
       - ConstructHubLicenseListAwsCliLayer59592811
       - ConstructHubLicenseListCustomResource323F0FD4
   ConstructHubSourcesNpmJsServiceRoleDefaultPolicy65FBFA22:
@@ -3057,8 +3036,6 @@ Resources:
       Roles:
         - Ref: ConstructHubSourcesNpmJsServiceRoleAC3F7AA6
     DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
       - ConstructHubLicenseListAwsCliLayer59592811
       - ConstructHubLicenseListCustomResource323F0FD4
   ConstructHubSourcesNpmJs15A77D2D:
@@ -3106,8 +3083,6 @@ Resources:
       TracingConfig:
         Mode: Active
     DependsOn:
-      - ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      - ConstructHubDenyListBucketDeploymentCustomResourceF835956B
       - ConstructHubLicenseListAwsCliLayer59592811
       - ConstructHubLicenseListCustomResource323F0FD4
       - ConstructHubSourcesNpmJsServiceRoleDefaultPolicy65FBFA22
@@ -3191,7 +3166,7 @@ Resources:
         - Name: FunctionName
           Value:
             Ref: ConstructHubSourcesNpmJs15A77D2D
-      MetricName: Errors
+      MetricName: Invocations
       Namespace: AWS/Lambda
       Period: 300
       Statistic: Sum

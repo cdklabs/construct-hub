@@ -117,6 +117,34 @@ This must be an ARN that can be used with CloudWatch alarms.
 
 ---
 
+### CodeArtifactDomainProps <a name="construct-hub.CodeArtifactDomainProps"></a>
+
+Information pertaining to an existing CodeArtifact Domain.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { CodeArtifactDomainProps } from 'construct-hub'
+
+const codeArtifactDomainProps: CodeArtifactDomainProps = { ... }
+```
+
+##### `name`<sup>Required</sup> <a name="construct-hub.CodeArtifactDomainProps.property.name"></a>
+
+- *Type:* `string`
+
+The name of the CodeArtifact domain.
+
+---
+
+##### `upstreams`<sup>Optional</sup> <a name="construct-hub.CodeArtifactDomainProps.property.upstreams"></a>
+
+- *Type:* `string`[]
+
+Any upstream repositories in this CodeArtifact domain that should be configured on the internal CodeArtifact repository.
+
+---
+
 ### ConstructHubProps <a name="construct-hub.ConstructHubProps"></a>
 
 Props for `ConstructHub`.
@@ -151,6 +179,18 @@ The allowed licenses for packages indexed by this instance of ConstructHub.
 - *Type:* `string`
 
 The name of the CloudWatch dashboard that represents the health of backend systems.
+
+---
+
+##### `codeArtifactDomain`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.codeArtifactDomain"></a>
+
+- *Type:* [`construct-hub.CodeArtifactDomainProps`](#construct-hub.CodeArtifactDomainProps)
+- *Default:* none.
+
+When using a CodeArtifact package source, it is often desirable to have ConstructHub provision it's internal CodeArtifact repository in the same CodeArtifact domain, and to configure the package source repository as an upstream of the internal repository.
+
+This way, all packages in the source
+are available to ConstructHub's backend processing.
 
 ---
 

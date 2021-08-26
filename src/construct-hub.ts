@@ -75,6 +75,33 @@ export interface ConstructHubProps {
    * @default [...SpdxLicense.apache(),...SpdxLicense.bsd(),...SpdxLicense.mit()]
    */
   readonly allowedLicenses?: SpdxLicense[];
+
+  /**
+   * When using a CodeArtifact package source, it is often desirable to have
+   * ConstructHub provision it's internal CodeArtifact repository in the same
+   * CodeArtifact domain, and to configure the package source repository as an
+   * upstream of the internal repository. This way, all packages in the source
+   * are available to ConstructHub's backend processing.
+   *
+   * @default - none.
+   */
+  readonly codeArtifactDomain?: CodeArtifactDomainProps;
+}
+
+/**
+ * Information pertaining to an existing CodeArtifact Domain.
+ */
+export interface CodeArtifactDomainProps {
+  /**
+   * The name of the CodeArtifact domain.
+   */
+  readonly name: string;
+
+  /**
+   * Any upstream repositories in this CodeArtifact domain that should be
+   * configured on the internal CodeArtifact repository.
+   */
+  readonly upstreams?: string[];
 }
 
 /**
@@ -107,7 +134,12 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       versioned: true,
     });
 
-    const codeArtifact = new Repository(this, 'CodeArtifact', { description: 'Proxy to npmjs.com for ConstructHub' });
+    const codeArtifact = new Repository(this, 'CodeArtifact', {
+      description: 'Proxy to npmjs.com for ConstructHub',
+      domainName: props.codeArtifactDomain?.name,
+      domainExists: props.codeArtifactDomain != null,
+      upstreams: props.codeArtifactDomain?.upstreams,
+    });
 
     const vpc = (props.isolateLambdas ?? true)
       ? new ec2.Vpc(this, 'Lambda-VPC', {
