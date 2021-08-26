@@ -1,7 +1,7 @@
 const { basename, join, dirname, relative } = require('path');
 const Case = require('case');
 const glob = require('glob');
-const { SourceCode, FileBase, JsonFile, JsiiProject, DependenciesUpgradeMechanism } = require('projen');
+const { SourceCode, FileBase, JsonFile, JsiiProject, DependenciesUpgradeMechanism, TextFile } = require('projen');
 const spdx = require('spdx-license-list');
 
 const peerDeps = [

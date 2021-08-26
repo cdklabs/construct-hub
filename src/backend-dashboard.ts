@@ -37,6 +37,8 @@ export class BackendDashboard extends Construct {
               '',
               `[button:Package Data](${s3ObjectUrl(props.packageData)})`,
               `[button:Catalog Builder](${lambdaFunctionUrl(props.orchestration.catalogBuilder)})`,
+              `[button:Inventory Canary](${lambdaFunctionUrl(props.inventory.function)})`,
+              `[button:Search Canary Log Group](${lambdaSearchLogGroupUrl(props.inventory.function)})`,
             ].join('\n'),
           }),
         ],
@@ -75,6 +77,7 @@ export class BackendDashboard extends Construct {
             markdown: [
               '# Ingestion Function',
               '',
+              `[button:Ingestion Function](${lambdaFunctionUrl(props.ingestion.function)})`,
               `[button:Search Log Group](${lambdaSearchLogGroupUrl(props.ingestion.function)})`,
               `[button:DLQ](${sqsQueueUrl(props.ingestion.deadLetterQueue)})`,
             ].join('\n'),

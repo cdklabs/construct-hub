@@ -1,4 +1,4 @@
-import { ComparisonOperator, MathExpression, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
+import { ComparisonOperator, MathExpression, Metric, MetricOptions, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
 import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
@@ -7,6 +7,7 @@ import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
+import { RUNBOOK_URL } from '../../runbook-url';
 import { Orchestration } from '../orchestration';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { Ingestion as Handler } from './ingestion';
@@ -108,12 +109,16 @@ export class Ingestion extends Construct implements IGrantable {
         alarmDescription: [
           'The dead-letter queue for the Ingestion function is not empty!',
           '',
+          `RunBook: ${RUNBOOK_URL}`,
+          '',
           `Direct link to the queue: ${sqsQueueUrl(this.deadLetterQueue)}`,
           `Direct link to the function: ${lambdaFunctionUrl(this.function)}`,
         ].join('\n'),
         comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
         evaluationPeriods: 1,
         threshold: 1,
+        // SQS does not emit metrics if the queue has been empty for a while, which is GOOD.
+        treatMissingData: TreatMissingData.NOT_BREACHING,
       }),
     );
     props.monitoring.addHighSeverityAlarm(
@@ -123,11 +128,15 @@ export class Ingestion extends Construct implements IGrantable {
         alarmDescription: [
           'The Ingestion function is failing!',
           '',
+          `RunBook: ${RUNBOOK_URL}`,
+          '',
           `Direct link to the function: ${lambdaFunctionUrl(this.function)}`,
         ].join('\n'),
         comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
         evaluationPeriods: 2,
         threshold: 1,
+        // Lambda only emits metrics when the function is invoked. No invokation => no errors.
+        treatMissingData: TreatMissingData.NOT_BREACHING,
       }),
     );
   }

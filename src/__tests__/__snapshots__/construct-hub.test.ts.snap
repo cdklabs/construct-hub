@@ -526,7 +526,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationCatalogBuilder7C964951",
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size\\",\\"region\\":\\"",
+              ")\\\\n[button:Inventory Canary](/lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubInventoryCanary63D899BC",
+              },
+              ")\\\\n[button:Search Canary Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              Object {
+                "Ref": "ConstructHubInventoryCanary63D899BC",
+              },
+              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -590,7 +598,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":32,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Search Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":32,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubIngestion407909CE",
+              },
+              ")\\\\n[button:Search Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -1768,6 +1780,8 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             Array [
               "The dead-letter queue for the Ingestion function is not empty!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to the queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
               Object {
                 "Ref": "AWS::Region",
@@ -1847,6 +1861,7 @@ Direct link to the function: /lambda/home#/functions/",
           },
         ],
         "Threshold": 1,
+        "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
@@ -1860,6 +1875,8 @@ Direct link to the function: /lambda/home#/functions/",
             "",
             Array [
               "The Ingestion function is failing!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to the function: /lambda/home#/functions/",
               Object {
@@ -1884,6 +1901,7 @@ Direct link to the function: /lambda/home#/functions/",
         "Period": 300,
         "Statistic": "Sum",
         "Threshold": 1,
+        "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
@@ -2167,6 +2185,8 @@ Direct link to the function: /lambda/home#/functions/",
             Array [
               "The inventory canary is failing!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubInventoryCanary63D899BC",
@@ -2203,6 +2223,8 @@ Direct link to function: /lambda/home#/functions/",
             "",
             Array [
               "The inventory canary is not running!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to function: /lambda/home#/functions/",
               Object {
@@ -4252,6 +4274,8 @@ Direct link to function: /lambda/home#/functions/",
             Array [
               "Backend orchestration dead-letter queue is not empty.
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
               Object {
                 "Ref": "AWS::Region",
@@ -5167,6 +5191,8 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
             Array [
               "Backend orchestration failed!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to state machine: /states/home#/statemachines/view/",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
@@ -5893,6 +5919,8 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             Array [
               "The NpmJs follower function failed!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to Lambda function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
@@ -5934,6 +5962,8 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "",
             Array [
               "The NpmJs follower function is not running!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to Lambda function: /lambda/home#/functions/",
               Object {
@@ -7713,7 +7743,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationCatalogBuilder7C964951",
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size\\",\\"region\\":\\"",
+              ")\\\\n[button:Inventory Canary](/lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubInventoryCanary63D899BC",
+              },
+              ")\\\\n[button:Search Canary Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              Object {
+                "Ref": "ConstructHubInventoryCanary63D899BC",
+              },
+              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -7777,7 +7815,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":32,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Search Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":32,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubIngestion407909CE",
+              },
+              ")\\\\n[button:Search Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -8962,6 +9004,8 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             Array [
               "The dead-letter queue for the Ingestion function is not empty!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to the queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
               Object {
                 "Ref": "AWS::Region",
@@ -9041,6 +9085,7 @@ Direct link to the function: /lambda/home#/functions/",
           },
         ],
         "Threshold": 1,
+        "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
@@ -9054,6 +9099,8 @@ Direct link to the function: /lambda/home#/functions/",
             "",
             Array [
               "The Ingestion function is failing!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to the function: /lambda/home#/functions/",
               Object {
@@ -9078,6 +9125,7 @@ Direct link to the function: /lambda/home#/functions/",
         "Period": 300,
         "Statistic": "Sum",
         "Threshold": 1,
+        "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
@@ -9361,6 +9409,8 @@ Direct link to the function: /lambda/home#/functions/",
             Array [
               "The inventory canary is failing!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubInventoryCanary63D899BC",
@@ -9397,6 +9447,8 @@ Direct link to function: /lambda/home#/functions/",
             "",
             Array [
               "The inventory canary is not running!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to function: /lambda/home#/functions/",
               Object {
@@ -11474,6 +11526,8 @@ Direct link to function: /lambda/home#/functions/",
             Array [
               "Backend orchestration dead-letter queue is not empty.
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
               Object {
                 "Ref": "AWS::Region",
@@ -12417,6 +12471,8 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
             Array [
               "Backend orchestration failed!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to state machine: /states/home#/statemachines/view/",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
@@ -13143,6 +13199,8 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             Array [
               "The NpmJs follower function failed!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to Lambda function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
@@ -13184,6 +13242,8 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "",
             Array [
               "The NpmJs follower function is not running!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to Lambda function: /lambda/home#/functions/",
               Object {
@@ -15146,7 +15206,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationCatalogBuilder7C964951",
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size\\",\\"region\\":\\"",
+              ")\\\\n[button:Inventory Canary](/lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubInventoryCanary63D899BC",
+              },
+              ")\\\\n[button:Search Canary Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              Object {
+                "Ref": "ConstructHubInventoryCanary63D899BC",
+              },
+              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -15210,7 +15278,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":32,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Search Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":32,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubIngestion407909CE",
+              },
+              ")\\\\n[button:Search Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -16388,6 +16460,8 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             Array [
               "The dead-letter queue for the Ingestion function is not empty!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to the queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
               Object {
                 "Ref": "AWS::Region",
@@ -16467,6 +16541,7 @@ Direct link to the function: /lambda/home#/functions/",
           },
         ],
         "Threshold": 1,
+        "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
@@ -16480,6 +16555,8 @@ Direct link to the function: /lambda/home#/functions/",
             "",
             Array [
               "The Ingestion function is failing!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to the function: /lambda/home#/functions/",
               Object {
@@ -16504,6 +16581,7 @@ Direct link to the function: /lambda/home#/functions/",
         "Period": 300,
         "Statistic": "Sum",
         "Threshold": 1,
+        "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
@@ -16787,6 +16865,8 @@ Direct link to the function: /lambda/home#/functions/",
             Array [
               "The inventory canary is failing!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubInventoryCanary63D899BC",
@@ -16823,6 +16903,8 @@ Direct link to function: /lambda/home#/functions/",
             "",
             Array [
               "The inventory canary is not running!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to function: /lambda/home#/functions/",
               Object {
@@ -18894,6 +18976,8 @@ Direct link to function: /lambda/home#/functions/",
             Array [
               "Backend orchestration dead-letter queue is not empty.
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
               Object {
                 "Ref": "AWS::Region",
@@ -19809,6 +19893,8 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
             Array [
               "Backend orchestration failed!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to state machine: /states/home#/statemachines/view/",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
@@ -20535,6 +20621,8 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             Array [
               "The NpmJs follower function failed!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to Lambda function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
@@ -20576,6 +20664,8 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "",
             Array [
               "The NpmJs follower function is not running!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to Lambda function: /lambda/home#/functions/",
               Object {
@@ -22633,7 +22723,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationCatalogBuilder7C964951",
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size\\",\\"region\\":\\"",
+              ")\\\\n[button:Inventory Canary](/lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubInventoryCanary63D899BC",
+              },
+              ")\\\\n[button:Search Canary Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              Object {
+                "Ref": "ConstructHubInventoryCanary63D899BC",
+              },
+              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -22697,7 +22795,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":32,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Search Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":32,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubIngestion407909CE",
+              },
+              ")\\\\n[button:Search Log Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -23810,6 +23912,8 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             Array [
               "The dead-letter queue for the Ingestion function is not empty!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to the queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
               Object {
                 "Ref": "AWS::Region",
@@ -23889,6 +23993,7 @@ Direct link to the function: /lambda/home#/functions/",
           },
         ],
         "Threshold": 1,
+        "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
@@ -23902,6 +24007,8 @@ Direct link to the function: /lambda/home#/functions/",
             "",
             Array [
               "The Ingestion function is failing!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to the function: /lambda/home#/functions/",
               Object {
@@ -23926,6 +24033,7 @@ Direct link to the function: /lambda/home#/functions/",
         "Period": 300,
         "Statistic": "Sum",
         "Threshold": 1,
+        "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
@@ -24209,6 +24317,8 @@ Direct link to the function: /lambda/home#/functions/",
             Array [
               "The inventory canary is failing!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubInventoryCanary63D899BC",
@@ -24245,6 +24355,8 @@ Direct link to function: /lambda/home#/functions/",
             "",
             Array [
               "The inventory canary is not running!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to function: /lambda/home#/functions/",
               Object {
@@ -25473,6 +25585,8 @@ Direct link to function: /lambda/home#/functions/",
             Array [
               "Backend orchestration dead-letter queue is not empty.
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
               Object {
                 "Ref": "AWS::Region",
@@ -26254,6 +26368,8 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
             Array [
               "Backend orchestration failed!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to state machine: /states/home#/statemachines/view/",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
@@ -26974,6 +27090,8 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             Array [
               "The NpmJs follower function failed!
 
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 Direct link to Lambda function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
@@ -27015,6 +27133,8 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "",
             Array [
               "The NpmJs follower function is not running!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 Direct link to Lambda function: /lambda/home#/functions/",
               Object {

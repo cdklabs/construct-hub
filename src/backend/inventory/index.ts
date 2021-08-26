@@ -1,11 +1,13 @@
 import { ComparisonOperator, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
+import { IFunction } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
+import { RUNBOOK_URL } from '../../runbook-url';
 import { DocumentationLanguage } from '../shared/language';
 import { Canary } from './canary';
 import { METRICS_NAMESPACE, MetricName, LANGUAGE_DIMENSION } from './constants';
@@ -67,6 +69,8 @@ export class Inventory extends Construct {
         alarmDescription: [
           'The inventory canary is not running!',
           '',
+          `RunBook: ${RUNBOOK_URL}`,
+          '',
           `Direct link to function: ${lambdaFunctionUrl(this.canary)}`,
         ].join('\n'),
         comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
@@ -81,6 +85,8 @@ export class Inventory extends Construct {
         alarmDescription: [
           'The inventory canary is failing!',
           '',
+          `RunBook: ${RUNBOOK_URL}`,
+          '',
           `Direct link to function: ${lambdaFunctionUrl(this.canary)}`,
         ].join('\n'),
         comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
@@ -88,6 +94,10 @@ export class Inventory extends Construct {
         threshold: 1,
       }),
     );
+  }
+
+  public get function(): IFunction {
+    return this.canary;
   }
 
   public metricMissingPackageMetadataCount(opts?: MetricOptions): Metric {

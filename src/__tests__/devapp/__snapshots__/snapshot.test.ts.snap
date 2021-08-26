@@ -1438,8 +1438,12 @@ Resources:
       AlarmDescription:
         Fn::Join:
           - ""
-          - - |-
+          - - >-
               Backend orchestration dead-letter queue is not empty.
+
+
+              RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 
               Direct link to queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.
             - Ref: AWS::Region
@@ -2200,8 +2204,12 @@ Resources:
       AlarmDescription:
         Fn::Join:
           - ""
-          - - |-
+          - - >-
               Backend orchestration failed!
+
+
+              RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 
               Direct link to state machine: /states/home#/statemachines/view/
             - Ref: ConstructHubOrchestration39161A46
@@ -2569,8 +2577,12 @@ Resources:
       AlarmDescription:
         Fn::Join:
           - ""
-          - - |-
+          - - >-
               The dead-letter queue for the Ingestion function is not empty!
+
+
+              RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 
               Direct link to the queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.
             - Ref: AWS::Region
@@ -2617,6 +2629,7 @@ Resources:
             Stat: Maximum
           ReturnData: false
       Threshold: 1
+      TreatMissingData: notBreaching
   ConstructHubIngestionFailureAlarm9D0028DD:
     Type: AWS::CloudWatch::Alarm
     Properties:
@@ -2625,8 +2638,12 @@ Resources:
       AlarmDescription:
         Fn::Join:
           - ""
-          - - |-
+          - - >-
               The Ingestion function is failing!
+
+
+              RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 
               Direct link to the function: /lambda/home#/functions/
             - Ref: ConstructHubIngestion407909CE
@@ -2640,6 +2657,7 @@ Resources:
       Period: 300
       Statistic: Sum
       Threshold: 1
+      TreatMissingData: notBreaching
   ConstructHubLicenseListBucket9334047F:
     Type: AWS::S3::Bucket
     Properties:
@@ -2841,8 +2859,12 @@ Resources:
       AlarmDescription:
         Fn::Join:
           - ""
-          - - |-
+          - - >-
               The inventory canary is not running!
+
+
+              RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 
               Direct link to function: /lambda/home#/functions/
             - Ref: ConstructHubInventoryCanary63D899BC
@@ -2864,8 +2886,12 @@ Resources:
       AlarmDescription:
         Fn::Join:
           - ""
-          - - |-
+          - - >-
               The inventory canary is failing!
+
+
+              RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 
               Direct link to function: /lambda/home#/functions/
             - Ref: ConstructHubInventoryCanary63D899BC
@@ -3098,8 +3124,12 @@ Resources:
       AlarmDescription:
         Fn::Join:
           - ""
-          - - |-
+          - - >-
               The NpmJs follower function failed!
+
+
+              RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 
               Direct link to Lambda function: /lambda/home#/functions/
             - Ref: ConstructHubSourcesNpmJs15A77D2D
@@ -3122,8 +3152,12 @@ Resources:
       AlarmDescription:
         Fn::Join:
           - ""
-          - - |-
+          - - >-
               The NpmJs follower function is not running!
+
+
+              RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
 
               Direct link to Lambda function: /lambda/home#/functions/
             - Ref: ConstructHubSourcesNpmJs15A77D2D
@@ -3152,7 +3186,12 @@ Resources:
             - Ref: ConstructHubPackageDataDC5EF35E
             - )\\n[button:Catalog Builder](/lambda/home#/functions/
             - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
-            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":2,"properties":{"view":"timeSeries","title":"Catalog
+            - )\\n[button:Inventory Canary](/lambda/home#/functions/
+            - Ref: ConstructHubInventoryCanary63D899BC
+            - )\\n[button:Search Canary Log
+              Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f
+            - Ref: ConstructHubInventoryCanary63D899BC
+            - /log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":2,"properties":{"view":"timeSeries","title":"Catalog
               Size","region":"
             - Ref: AWS::Region
             - '","metrics":[["ConstructHub/Inventory","SubmoduleCount",{"label":"Submodules","stat":"Maximum"}],["ConstructHub/Inventory","PackageVersionCount",{"label":"Package
@@ -3224,8 +3263,11 @@ Resources:
               REPEAT)","yAxis":"right"}],["ConstructHub/PackageSource/NpmJs/Follower","PackageVersionAge",{"label":"Package
               Version
               Age","stat":"Maximum","visible":false,"id":"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4"}]],"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":900}},{"type":"text","width":24,"height":2,"x":0,"y":32,"properties":{"markdown":"#
-              Ingestion Function\\n\\n[button:Search Log
-              Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f'
+              Ingestion Function\\n\\n[button:Ingestion
+              Function](/lambda/home#/functions/'
+            - Ref: ConstructHubIngestion407909CE
+            - )\\n[button:Search Log
+              Group](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f
             - Ref: ConstructHubIngestion407909CE
             - /log-events)\\n[button:DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.
             - Ref: AWS::Region
