@@ -8,7 +8,7 @@
 
 Construct Hub.
 
-#### Initializer <a name="construct-hub.ConstructHub.Initializer"></a>
+#### Initializers <a name="construct-hub.ConstructHub.Initializer"></a>
 
 ```typescript
 import { ConstructHub } from 'construct-hub'
