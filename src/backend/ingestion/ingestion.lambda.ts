@@ -6,6 +6,7 @@ import { validateAssembly } from '@jsii/spec';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, SQSEvent } from 'aws-lambda';
+import type { PackageLinkConfig } from '../../webapp';
 import type { StateMachineInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
@@ -18,161 +19,242 @@ import { MetricName, METRICS_NAMESPACE } from './constants';
 Configuration.environmentOverride = Environments.Lambda;
 Configuration.namespace = METRICS_NAMESPACE;
 
-export const handler = metricScope((metrics) => async (event: SQSEvent, context: Context) => {
-  console.log(`Event: ${JSON.stringify(event, null, 2)}`);
+export const handler = metricScope(
+  (metrics) => async (event: SQSEvent, context: Context) => {
+    console.log(`Event: ${JSON.stringify(event, null, 2)}`);
 
-  // Clear out the default dimensions, we won't need them.
-  metrics.setDimensions();
+    // Clear out the default dimensions, we won't need them.
+    metrics.setDimensions();
 
-  const BUCKET_NAME = requireEnv('BUCKET_NAME');
-  const STATE_MACHINE_ARN = requireEnv('STATE_MACHINE_ARN');
+    const BUCKET_NAME = requireEnv('BUCKET_NAME');
+    const STATE_MACHINE_ARN = requireEnv('STATE_MACHINE_ARN');
+    const PACKAGE_LINKS = requireEnv('PACKAGE_LINKS');
 
-  const result = new Array<string>();
+    const result = new Array<string>();
 
-  for (const record of event.Records ?? []) {
-    const payload = JSON.parse(record.body) as IngestionInput;
+    for (const record of event.Records ?? []) {
+      const payload = JSON.parse(record.body) as IngestionInput;
 
-    const tarballUri = new URL(payload.tarballUri);
-    if (tarballUri.protocol !== 's3:') {
-      throw new Error(`Unsupported protocol in URI: ${tarballUri}`);
-    }
-    const tarball = await aws.s3().getObject({
-      // Note: we drop anything after the first `.` in the host, as we only care about the bucket name.
-      Bucket: tarballUri.host.split('.')[0],
-      // Note: the pathname part is absolute, so we strip the leading `/`.
-      Key: tarballUri.pathname.replace(/^\//, ''),
-      VersionId: tarballUri.searchParams.get('versionId') ?? undefined,
-    }).promise();
+      const tarballUri = new URL(payload.tarballUri);
+      if (tarballUri.protocol !== 's3:') {
+        throw new Error(`Unsupported protocol in URI: ${tarballUri}`);
+      }
+      const tarball = await aws
+        .s3()
+        .getObject({
+          // Note: we drop anything after the first `.` in the host, as we only care about the bucket name.
+          Bucket: tarballUri.host.split('.')[0],
+          // Note: the pathname part is absolute, so we strip the leading `/`.
+          Key: tarballUri.pathname.replace(/^\//, ''),
+          VersionId: tarballUri.searchParams.get('versionId') ?? undefined,
+        })
+        .promise();
 
-    const integrityCheck = integrity(payload, Buffer.from(tarball.Body!));
-    if (payload.integrity !== integrityCheck) {
-      throw new Error(`Integrity check failed: ${payload.integrity} !== ${integrityCheck}`);
-    }
+      const integrityCheck = integrity(payload, Buffer.from(tarball.Body!));
+      if (payload.integrity !== integrityCheck) {
+        throw new Error(
+          `Integrity check failed: ${payload.integrity} !== ${integrityCheck}`,
+        );
+      }
 
-    let dotJsii: Buffer;
-    let packageJson: Buffer;
-    let licenseText: Buffer | undefined;
-    try {
-      ({ dotJsii, packageJson, licenseText } = await extractObjects(
-        Buffer.from(tarball.Body!),
-        {
-          dotJsii: { path: 'package/.jsii', required: true },
-          packageJson: { path: 'package/package.json', required: true },
-          licenseText: { filter: isLicenseFile },
+      let dotJsii: Buffer;
+      let packageJson: Buffer;
+      let licenseText: Buffer | undefined;
+      try {
+        ({ dotJsii, packageJson, licenseText } = await extractObjects(
+          Buffer.from(tarball.Body!),
+          {
+            dotJsii: { path: 'package/.jsii', required: true },
+            packageJson: { path: 'package/package.json', required: true },
+            licenseText: { filter: isLicenseFile },
+          },
+        ));
+      } catch (err) {
+        console.error(`Invalid tarball content: ${err}`);
+        metrics.putMetric(MetricName.INVALID_TARBALL, 1, Unit.Count);
+        return;
+      }
+
+      let packageLicense: string;
+      let packageName: string;
+      let packageVersion: string;
+      try {
+        const { license, name, version } = validateAssembly(
+          JSON.parse(dotJsii.toString('utf-8')),
+        );
+        packageLicense = license;
+        packageName = name;
+        packageVersion = version;
+        metrics.putMetric(MetricName.INVALID_ASSEMBLY, 0, Unit.Count);
+      } catch (ex) {
+        console.error(
+          `Package does not contain a valid assembly -- ignoring: ${ex}`,
+        );
+        metrics.putMetric(MetricName.INVALID_ASSEMBLY, 1, Unit.Count);
+        return;
+      }
+
+      // Ensure the `.jsii` name, version & license corresponds to those in `package.json`
+      const {
+        name: packageJsonName,
+        version: packageJsonVersion,
+        license: packageJsonLicense,
+        constructHub,
+      } = JSON.parse(packageJson.toString('utf-8'));
+      if (
+        packageJsonName !== packageName ||
+        packageJsonVersion !== packageVersion ||
+        packageJsonLicense !== packageLicense
+      ) {
+        console.log(
+          `Ignoring package with mismatched name, version, and/or license (${packageJsonName}@${packageJsonVersion} is ${packageJsonLicense} !== ${packageName}@${packageVersion} is ${packageLicense})`,
+        );
+        metrics.putMetric(
+          MetricName.MISMATCHED_IDENTITY_REJECTIONS,
+          1,
+          Unit.Count,
+        );
+        continue;
+      }
+      metrics.putMetric(
+        MetricName.MISMATCHED_IDENTITY_REJECTIONS,
+        0,
+        Unit.Count,
+      );
+
+      // Did we identify a license file or not?
+      metrics.putMetric(
+        MetricName.FOUND_LICENSE_FILE,
+        licenseText != null ? 1 : 0,
+        Unit.Count,
+      );
+
+      // Add custom links content to metdata for display on the frontend
+      const allowedLinks: PackageLinkConfig[] = JSON.parse(PACKAGE_LINKS);
+
+      const packageLinks = allowedLinks.reduce((accum, { value, domains }) => {
+        const pkgValue = constructHub?.packageLinks[value];
+
+        if (!pkgValue) {
+          return accum;
+        }
+
+        // check if value is in allowed domains list
+        const url = new URL(pkgValue);
+        if (domains?.length && !domains.includes(url.host)) {
+          return accum;
+        }
+
+        // if no allow list is provided
+        return { accum, [value]: pkgValue };
+      }, {});
+
+      const metadata = {
+        date: payload.time,
+        licenseText: licenseText?.toString('utf-8'),
+        packageLinks,
+      };
+
+      const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(
+        packageName,
+        packageVersion,
+      );
+      console.log(`Writing assembly at ${assemblyKey}`);
+      console.log(`Writing package at  ${packageKey}`);
+      console.log(`Writing metadata at  ${metadataKey}`);
+
+      // we upload the metadata file first because the catalog builder depends on
+      // it and is triggered by the assembly file upload.
+      console.log(
+        `${packageName}@${packageVersion} | Uploading package and metadata files`,
+      );
+      const [pkg, storedMetadata] = await Promise.all([
+        aws
+          .s3()
+          .putObject({
+            Bucket: BUCKET_NAME,
+            Key: packageKey,
+            Body: tarball.Body,
+            CacheControl: 'public',
+            ContentType: 'application/octet-stream',
+            Metadata: {
+              'Lambda-Log-Group': context.logGroupName,
+              'Lambda-Log-Stream': context.logStreamName,
+              'Lambda-Run-Id': context.awsRequestId,
+            },
+          })
+          .promise(),
+        aws
+          .s3()
+          .putObject({
+            Bucket: BUCKET_NAME,
+            Key: metadataKey,
+            Body: JSON.stringify(metadata),
+            CacheControl: 'public',
+            ContentType: 'application/json',
+            Metadata: {
+              'Lambda-Log-Group': context.logGroupName,
+              'Lambda-Log-Stream': context.logStreamName,
+              'Lambda-Run-Id': context.awsRequestId,
+            },
+          })
+          .promise(),
+      ]);
+
+      // now we can upload the assembly.
+      console.log(`${packageName}@${packageVersion} | Uploading assembly file`);
+      const assembly = await aws
+        .s3()
+        .putObject({
+          Bucket: BUCKET_NAME,
+          Key: assemblyKey,
+          Body: dotJsii,
+          CacheControl: 'public',
+          ContentType: 'application/json',
+          Metadata: {
+            'Lambda-Log-Group': context.logGroupName,
+            'Lambda-Log-Stream': context.logStreamName,
+            'Lambda-Run-Id': context.awsRequestId,
+          },
+        })
+        .promise();
+
+      const created: StateMachineInput = {
+        bucket: BUCKET_NAME,
+        assembly: {
+          key: assemblyKey,
+          versionId: assembly.VersionId,
         },
-      ));
-    } catch (err) {
-      console.error(`Invalid tarball content: ${err}`);
-      metrics.putMetric(MetricName.INVALID_TARBALL, 1, Unit.Count);
-      return;
-    }
-    const metadata = { date: payload.time, licenseText: licenseText?.toString('utf-8') };
-
-    let packageLicense: string;
-    let packageName: string;
-    let packageVersion: string;
-    try {
-      const { license, name, version } = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
-      packageLicense = license;
-      packageName = name;
-      packageVersion = version;
-      metrics.putMetric(MetricName.INVALID_ASSEMBLY, 0, Unit.Count);
-    } catch (ex) {
-      console.error(`Package does not contain a valid assembly -- ignoring: ${ex}`);
-      metrics.putMetric(MetricName.INVALID_ASSEMBLY, 1, Unit.Count);
-      return;
-    }
-
-    // Ensure the `.jsii` name, version & license corresponds to those in `package.json`
-    const { name: packageJsonName, version: packageJsonVersion, license: packageJsonLicense } = JSON.parse(packageJson.toString('utf-8'));
-    if (packageJsonName !== packageName || packageJsonVersion !== packageVersion || packageJsonLicense !== packageLicense) {
-      console.log(`Ignoring package with mismatched name, version, and/or license (${packageJsonName}@${packageJsonVersion} is ${packageJsonLicense} !== ${packageName}@${packageVersion} is ${packageLicense})`);
-      metrics.putMetric(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 1, Unit.Count);
-      continue;
-    }
-    metrics.putMetric(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 0, Unit.Count);
-
-    // Did we identify a license file or not?
-    metrics.putMetric(MetricName.FOUND_LICENSE_FILE, licenseText != null ? 1 : 0, Unit.Count);
-
-    const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(packageName, packageVersion);
-    console.log(`Writing assembly at ${assemblyKey}`);
-    console.log(`Writing package at  ${packageKey}`);
-    console.log(`Writing metadata at  ${metadataKey}`);
-
-    // we upload the metadata file first because the catalog builder depends on
-    // it and is triggered by the assembly file upload.
-    console.log(`${packageName}@${packageVersion} | Uploading package and metadata files`);
-    const [pkg, storedMetadata] = await Promise.all([
-      aws.s3().putObject({
-        Bucket: BUCKET_NAME,
-        Key: packageKey,
-        Body: tarball.Body,
-        CacheControl: 'public',
-        ContentType: 'application/octet-stream',
-        Metadata: {
-          'Lambda-Log-Group': context.logGroupName,
-          'Lambda-Log-Stream': context.logStreamName,
-          'Lambda-Run-Id': context.awsRequestId,
+        package: {
+          key: packageKey,
+          versionId: pkg.VersionId,
         },
-      }).promise(),
-      aws.s3().putObject({
-        Bucket: BUCKET_NAME,
-        Key: metadataKey,
-        Body: JSON.stringify(metadata),
-        CacheControl: 'public',
-        ContentType: 'application/json',
-        Metadata: {
-          'Lambda-Log-Group': context.logGroupName,
-          'Lambda-Log-Stream': context.logStreamName,
-          'Lambda-Run-Id': context.awsRequestId,
+        metadata: {
+          key: metadataKey,
+          versionId: storedMetadata.VersionId,
         },
-      }).promise(),
-    ]);
+      };
+      console.log(`Created objects: ${JSON.stringify(created, null, 2)}`);
 
-    // now we can upload the assembly.
-    console.log(`${packageName}@${packageVersion} | Uploading assembly file`);
-    const assembly = await aws.s3().putObject({
-      Bucket: BUCKET_NAME,
-      Key: assemblyKey,
-      Body: dotJsii,
-      CacheControl: 'public',
-      ContentType: 'application/json',
-      Metadata: {
-        'Lambda-Log-Group': context.logGroupName,
-        'Lambda-Log-Stream': context.logStreamName,
-        'Lambda-Run-Id': context.awsRequestId,
-      },
-    }).promise();
+      const sfn = await aws
+        .stepFunctions()
+        .startExecution({
+          input: JSON.stringify(created),
+          name: sfnExecutionNameFromParts(
+            packageName,
+            `v${packageVersion}`,
+            context.awsRequestId,
+          ),
+          stateMachineArn: STATE_MACHINE_ARN,
+        })
+        .promise();
+      console.log(`Started StateMachine execution: ${sfn.executionArn}`);
+      result.push(sfn.executionArn);
+    }
 
-    const created: StateMachineInput = {
-      bucket: BUCKET_NAME,
-      assembly: {
-        key: assemblyKey,
-        versionId: assembly.VersionId,
-      },
-      package: {
-        key: packageKey,
-        versionId: pkg.VersionId,
-      },
-      metadata: {
-        key: metadataKey,
-        versionId: storedMetadata.VersionId,
-      },
-    };
-    console.log(`Created objects: ${JSON.stringify(created, null, 2)}`);
-
-    const sfn = await aws.stepFunctions().startExecution({
-      input: JSON.stringify(created),
-      name: sfnExecutionNameFromParts(packageName, `v${packageVersion}`, context.awsRequestId),
-      stateMachineArn: STATE_MACHINE_ARN,
-    }).promise();
-    console.log(`Started StateMachine execution: ${sfn.executionArn}`);
-    result.push(sfn.executionArn);
-  }
-
-  return result;
-});
+    return result;
+  },
+);
 
 /**
  * Checks whether the provided file name corresponds to a license file or not.
@@ -185,10 +267,11 @@ export const handler = metricScope((metrics) => async (event: SQSEvent, context:
 function isLicenseFile(fileName: string): boolean {
   const ext = extname(fileName);
   const possibleExtensions = new Set(['', '.md', '.txt']);
-  return possibleExtensions.has(ext.toLowerCase())
-    && basename(fileName, ext).toUpperCase() === 'LICENSE';
+  return (
+    possibleExtensions.has(ext.toLowerCase()) &&
+    basename(fileName, ext).toUpperCase() === 'LICENSE'
+  );
 }
-
 
 /**
  * Creates a StepFunction execution request name based on the provided parts.
@@ -197,10 +280,13 @@ function isLicenseFile(fileName: string): boolean {
  * CloudWatch Logging can be enabled. The resulting name is very likely to
  * be unique for a given input.
  */
-function sfnExecutionNameFromParts(first: string, ...rest: readonly string[]): string {
+function sfnExecutionNameFromParts(
+  first: string,
+  ...rest: readonly string[]
+): string {
   const parts = [first, ...rest];
   const name = parts
-    .map((part) => part.replace(/[^a-z0-9_-]+/ig, '_'))
+    .map((part) => part.replace(/[^a-z0-9_-]+/gi, '_'))
     .join('_')
     .replace(/^_/g, '')
     .replace(/_{2,}/g, '_');
@@ -208,7 +294,7 @@ function sfnExecutionNameFromParts(first: string, ...rest: readonly string[]): s
     return name;
   }
   const suffix = createHash('sha256')
-  // The hash is computed based on input arguments, to maximize unicity
+    // The hash is computed based on input arguments, to maximize unicity
     .update(parts.join('_'))
     .digest('hex')
     .substring(0, 6);

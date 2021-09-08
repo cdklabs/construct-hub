@@ -42,6 +42,7 @@ afterEach((done) => {
 test('basic happy case', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
+  const mockPackageLinks = '[]';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -51,6 +52,9 @@ test('basic happy case', async () => {
     }
     if (name === 'STATE_MACHINE_ARN') {
       return mockStateMachineArn;
+    }
+    if (name === 'PACKAGE_LINKS') {
+      return mockPackageLinks;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -115,7 +119,7 @@ test('basic happy case', async () => {
           break;
         case metadataKey:
           expect(req.ContentType).toBe('application/json');
-          expect(Buffer.from(req.Body!)).toEqual(Buffer.from(JSON.stringify({ date: time })));
+          expect(Buffer.from(req.Body!)).toEqual(Buffer.from(JSON.stringify({ date: time, packageLinks: {} })));
           mockMetadataCreated = true;
           break;
         case packageKey:
@@ -176,6 +180,7 @@ test('basic happy case', async () => {
 test('basic happy case with license file', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
+  const mockPackageLinks = '[]';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -185,6 +190,9 @@ test('basic happy case with license file', async () => {
     }
     if (name === 'STATE_MACHINE_ARN') {
       return mockStateMachineArn;
+    }
+    if (name === 'PACKAGE_LINKS') {
+      return mockPackageLinks;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -251,7 +259,7 @@ test('basic happy case with license file', async () => {
           break;
         case metadataKey:
           expect(req.ContentType).toBe('application/json');
-          expect(Buffer.from(req.Body!)).toEqual(Buffer.from(JSON.stringify({ date: time, licenseText: fakeLicense })));
+          expect(Buffer.from(req.Body!)).toEqual(Buffer.from(JSON.stringify({ date: time, licenseText: fakeLicense, packageLinks: {} })));
           mockMetadataCreated = true;
           break;
         case packageKey:
@@ -315,6 +323,7 @@ test('basic happy case with license file', async () => {
 test('mismatched package name', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
+  const mockPackageLinks = '[]';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -324,6 +333,9 @@ test('mismatched package name', async () => {
     }
     if (name === 'STATE_MACHINE_ARN') {
       return mockStateMachineArn;
+    }
+    if (name === 'PACKAGE_LINKS') {
+      return mockPackageLinks;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -399,6 +411,7 @@ test('mismatched package name', async () => {
 test('mismatched package version', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
+  const mockPackageLinks = '[]';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -408,6 +421,9 @@ test('mismatched package version', async () => {
     }
     if (name === 'STATE_MACHINE_ARN') {
       return mockStateMachineArn;
+    }
+    if (name === 'PACKAGE_LINKS') {
+      return mockPackageLinks;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -483,6 +499,7 @@ test('mismatched package version', async () => {
 test('mismatched package license', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
+  const mockPackageLinks = '[]';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -492,6 +509,9 @@ test('mismatched package license', async () => {
     }
     if (name === 'STATE_MACHINE_ARN') {
       return mockStateMachineArn;
+    }
+    if (name === 'PACKAGE_LINKS') {
+      return mockPackageLinks;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -567,6 +587,7 @@ test('mismatched package license', async () => {
 test('missing .jsii file', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
+  const mockPackageLinks = '[]';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -576,6 +597,9 @@ test('missing .jsii file', async () => {
     }
     if (name === 'STATE_MACHINE_ARN') {
       return mockStateMachineArn;
+    }
+    if (name === 'PACKAGE_LINKS') {
+      return mockPackageLinks;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -647,6 +671,7 @@ test('missing .jsii file', async () => {
 test('missing package.json file', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
+  const mockPackageLinks = '[]';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -656,6 +681,9 @@ test('missing package.json file', async () => {
     }
     if (name === 'STATE_MACHINE_ARN') {
       return mockStateMachineArn;
+    }
+    if (name === 'PACKAGE_LINKS') {
+      return mockPackageLinks;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });

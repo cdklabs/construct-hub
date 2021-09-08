@@ -227,6 +227,14 @@ implies the creation of additonal resources, including:
 
 ---
 
+##### `packageLinks`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.packageLinks"></a>
+
+- *Type:* [`construct-hub.PackageLinkConfig`](#construct-hub.PackageLinkConfig)[]
+
+Configuration for custom package page links.
+
+---
+
 ##### `packageSources`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.packageSources"></a>
 
 - *Type:* [`construct-hub.IPackageSource`](#construct-hub.IPackageSource)[]
@@ -363,6 +371,50 @@ It is not
 necessary that there is one, and there could be multiple primary resources.
 The buttons for those will be rendered with a different style on the
 dashboard.
+
+---
+
+### PackageLinkConfig <a name="construct-hub.PackageLinkConfig"></a>
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { PackageLinkConfig } from 'construct-hub'
+
+const packageLinkConfig: PackageLinkConfig = { ... }
+```
+
+##### `name`<sup>Required</sup> <a name="construct-hub.PackageLinkConfig.property.name"></a>
+
+- *Type:* `string`
+
+The name of the link, appears before the ":".
+
+---
+
+##### `value`<sup>Required</sup> <a name="construct-hub.PackageLinkConfig.property.value"></a>
+
+- *Type:* `string`
+
+The location of the value inside the constructHub.packageLinks key of a module's package.json.
+
+---
+
+##### `displayText`<sup>Optional</sup> <a name="construct-hub.PackageLinkConfig.property.displayText"></a>
+
+- *Type:* `string`
+- *Default:* the url of the link
+
+optional text to display as the hyperlink text.
+
+---
+
+##### `domains`<sup>Optional</sup> <a name="construct-hub.PackageLinkConfig.property.domains"></a>
+
+- *Type:* `string`[]
+- *Default:* all domains allowed
+
+allowList of domains for this link.
 
 ---
 

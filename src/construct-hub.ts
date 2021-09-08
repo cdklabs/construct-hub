@@ -19,7 +19,7 @@ import { Monitoring } from './monitoring';
 import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
 import { SpdxLicense } from './spdx-license';
-import { WebApp } from './webapp';
+import { WebApp, PackageLinkConfig } from './webapp';
 
 /**
  * Props for `ConstructHub`.
@@ -86,6 +86,11 @@ export interface ConstructHubProps {
    * @default - none.
    */
   readonly codeArtifactDomain?: CodeArtifactDomainProps;
+
+  /**
+   * Configuration for custom package page links.
+   */
+  readonly packageLinks?: PackageLinkConfig[];
 }
 
 /**
@@ -110,7 +115,11 @@ export interface CodeArtifactDomainProps {
 export class ConstructHub extends CoreConstruct implements iam.IGrantable {
   private readonly ingestion: Ingestion;
 
-  public constructor(scope: Construct, id: string, props: ConstructHubProps = {}) {
+  public constructor(
+    scope: Construct,
+    id: string,
+    props: ConstructHubProps = {},
+  ) {
     super(scope, id);
 
     const monitoring = new Monitoring(this, 'Monitoring', {
@@ -125,9 +134,19 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
         // Abort multi-part uploads after 1 day
         { abortIncompleteMultipartUploadAfter: Duration.days(1) },
         // Transition non-current object versions to IA after 1 month
-        { noncurrentVersionTransitions: [{ storageClass: s3.StorageClass.INFREQUENT_ACCESS, transitionAfter: Duration.days(31) }] },
+        {
+          noncurrentVersionTransitions: [
+            {
+              storageClass: s3.StorageClass.INFREQUENT_ACCESS,
+              transitionAfter: Duration.days(31),
+            },
+          ],
+        },
         // Permanently delete non-current object versions after 3 months
-        { noncurrentVersionExpiration: Duration.days(90), expiredObjectDeleteMarker: true },
+        {
+          noncurrentVersionExpiration: Duration.days(90),
+          expiredObjectDeleteMarker: true,
+        },
         // Permanently delete non-current versions of catalog.json earlier
         { noncurrentVersionExpiration: Duration.days(7), prefix: CATALOG_KEY },
       ],
@@ -141,21 +160,30 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       upstreams: props.codeArtifactDomain?.upstreams,
     });
 
-    const vpc = (props.isolateLambdas ?? true)
-      ? new ec2.Vpc(this, 'Lambda-VPC', {
-        enableDnsHostnames: true,
-        enableDnsSupport: true,
-        natGateways: 0,
-        // Pre-allocating PUBLIC / PRIVATE / INTERNAL subnets, regardless of use, so we don't create
-        // a whole new VPC if we ever need to introduce subnets of these types.
-        subnetConfiguration: [
-        // If there is a PRIVATE subnet, there must also have a PUBLIC subnet (for NAT gateways).
-          { name: 'Public', subnetType: ec2.SubnetType.PUBLIC, reserved: true },
-          { name: 'Private', subnetType: ec2.SubnetType.PRIVATE, reserved: true },
-          { name: 'Isolated', subnetType: ec2.SubnetType.ISOLATED },
-        ],
-      })
-      : undefined;
+    const vpc =
+      props.isolateLambdas ?? true
+        ? new ec2.Vpc(this, 'Lambda-VPC', {
+          enableDnsHostnames: true,
+          enableDnsSupport: true,
+          natGateways: 0,
+          // Pre-allocating PUBLIC / PRIVATE / INTERNAL subnets, regardless of use, so we don't create
+          // a whole new VPC if we ever need to introduce subnets of these types.
+          subnetConfiguration: [
+            // If there is a PRIVATE subnet, there must also have a PUBLIC subnet (for NAT gateways).
+            {
+              name: 'Public',
+              subnetType: ec2.SubnetType.PUBLIC,
+              reserved: true,
+            },
+            {
+              name: 'Private',
+              subnetType: ec2.SubnetType.PRIVATE,
+              reserved: true,
+            },
+            { name: 'Isolated', subnetType: ec2.SubnetType.ISOLATED },
+          ],
+        })
+        : undefined;
     // We'll only use VPC endpoints if we are configured to run in an ISOLATED subnet.
     const vpcEndpoints = vpc && {
       codeArtifactApi: vpc.addInterfaceEndpoint('CodeArtifact.API', {
@@ -165,7 +193,9 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       }),
       codeArtifact: vpc.addInterfaceEndpoint('CodeArtifact', {
         privateDnsEnabled: true,
-        service: new ec2.InterfaceVpcEndpointAwsService('codeartifact.repositories'),
+        service: new ec2.InterfaceVpcEndpointAwsService(
+          'codeartifact.repositories',
+        ),
         subnets: { subnetType: ec2.SubnetType.ISOLATED },
       }),
       s3: vpc.addGatewayEndpoint('S3', {
@@ -174,13 +204,15 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       }),
     };
     // The S3 access is necessary for the CodeArtifact VPC endpoint to be used.
-    vpcEndpoints?.s3.addToPolicy(new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: ['s3:GetObject'],
-      resources: [`${codeArtifact.s3BucketArn}/*`],
-      principals: [new AnyPrincipal()],
-      sid: 'Allow-CodeArtifact-Bucket',
-    }));
+    vpcEndpoints?.s3.addToPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['s3:GetObject'],
+        resources: [`${codeArtifact.s3BucketArn}/*`],
+        principals: [new AnyPrincipal()],
+        sid: 'Allow-CodeArtifact-Bucket',
+      }),
+    );
 
     const denyList = new DenyList(this, 'DenyList', {
       rules: props.denyList ?? [],
@@ -202,23 +234,37 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     // rebuild the catalog when the deny list changes.
     denyList.prune.onChangeInvoke(orchestration.catalogBuilder);
 
-    this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData, orchestration, monitoring });
+    this.ingestion = new Ingestion(this, 'Ingestion', {
+      bucket: packageData,
+      orchestration,
+      monitoring,
+      packageLinks: props.packageLinks,
+    });
 
     const licenseList = new LicenseList(this, 'LicenseList', {
-      licenses: props.allowedLicenses ?? [...SpdxLicense.apache(), ...SpdxLicense.bsd(), ...SpdxLicense.mit()],
+      licenses: props.allowedLicenses ?? [
+        ...SpdxLicense.apache(),
+        ...SpdxLicense.bsd(),
+        ...SpdxLicense.mit(),
+      ],
     });
-    const inventory = new Inventory(this, 'InventoryCanary', { bucket: packageData, monitoring });
+    const inventory = new Inventory(this, 'InventoryCanary', {
+      bucket: packageData,
+      monitoring,
+    });
 
     const sources = new CoreConstruct(this, 'Sources');
-    const packageSources = (props.packageSources ?? [new NpmJs()])
-      .map(source => source.bind(sources, {
-        denyList,
-        ingestion: this.ingestion,
-        licenseList,
-        monitoring,
-        queue: this.ingestion.queue,
-        repository: codeArtifact,
-      }));
+    const packageSources = (props.packageSources ?? [new NpmJs()]).map(
+      (source) =>
+        source.bind(sources, {
+          denyList,
+          ingestion: this.ingestion,
+          licenseList,
+          monitoring,
+          queue: this.ingestion.queue,
+          repository: codeArtifact,
+        }),
+    );
 
     new BackendDashboard(this, 'BackendDashboard', {
       packageData,

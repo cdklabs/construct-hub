@@ -10,7 +10,35 @@ import { Domain } from '../api';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
 import { CacheInvalidator } from './cache-invalidator';
+import { WebappConfig } from './config';
 import { ResponseFunction } from './response-function';
+
+export interface PackageLinkConfig {
+  /**
+   * The name of the link, appears before the ":"
+   */
+  readonly name: string;
+
+  /**
+   * The location of the value inside the constructHub.packageLinks
+   * key of a module's package.json
+   */
+  readonly value: string;
+
+  /**
+   * optional text to display as the hyperlink text
+   *
+   * @default the url of the link
+   */
+  readonly displayText?: string;
+
+  /**
+   * allowList of domains for this link
+   *
+   * @default all domains allowed
+   */
+  readonly domains?: string[];
+}
 
 export interface WebAppProps {
   /**
@@ -28,6 +56,11 @@ export interface WebAppProps {
    * The bucket containing package data.
    */
   readonly packageData: s3.Bucket;
+
+  /**
+   * Configuration for custom package page links.
+   */
+  readonly packageLinks?: PackageLinkConfig[];
 }
 
 export class WebApp extends Construct {
@@ -111,6 +144,19 @@ export class WebApp extends Construct {
       sources: [s3deploy.Source.asset(webappDir)],
       destinationBucket: this.bucket,
       distribution: this.distribution,
+      prune: false,
+    });
+
+    // Generate config.json to customize frontend behavior
+    const config = new WebappConfig({
+      packageLinks: props.packageLinks,
+    });
+
+    new s3deploy.BucketDeployment(this, 'DeployWebsiteConfig', {
+      sources: [s3deploy.Source.asset(config.dir)],
+      destinationBucket: this.bucket,
+      distribution: this.distribution,
+      prune: false,
     });
 
     new CfnOutput(this, 'DomainName', {

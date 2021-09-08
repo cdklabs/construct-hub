@@ -8,6 +8,7 @@ import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { RUNBOOK_URL } from '../../runbook-url';
+import type { PackageLinkConfig } from '../../webapp';
 import { Orchestration } from '../orchestration';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { Ingestion as Handler } from './ingestion';
@@ -28,6 +29,11 @@ export interface IngestionProps {
    * successfully registered.
    */
   readonly orchestration: Orchestration;
+
+  /**
+   * Configuration for custom package page links.
+   */
+  readonly packageLinks?: PackageLinkConfig[];
 }
 
 /**
@@ -80,6 +86,7 @@ export class Ingestion extends Construct implements IGrantable {
       environment: {
         BUCKET_NAME: props.bucket.bucketName,
         STATE_MACHINE_ARN: props.orchestration.stateMachine.stateMachineArn,
+        PACKAGE_LINKS: JSON.stringify(props.packageLinks ?? []),
       },
       memorySize: 10_240, // Currently the maximum possible setting
       timeout: Duration.minutes(15),
