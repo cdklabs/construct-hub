@@ -30,13 +30,8 @@ export class WebappConfig {
   }
 
   private get frontendConfig(): FrontendConfig {
-    return {
-      // Remove domains allow list from frontend config
-      packageLinks: (this.props.packageLinks ?? []).map(
-        ({ domains: _, ...rest }) => {
-          return rest;
-        },
-      ),
-    };
+    const packageLinks = this.props.packageLinks ?? [];
+    const withoutDomains = packageLinks.map(({ domains, ...rest }) => rest);
+    return { packageLinks: withoutDomains };
   }
 }
