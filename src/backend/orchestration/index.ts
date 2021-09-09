@@ -13,7 +13,7 @@ import { Transliterator, TransliteratorProps } from '../transliterator';
 import { RedriveStateMachine } from './redrive-state-machine';
 import { ReprocessAll } from './reprocess-all';
 
-const SUPPORTED_LANGUAGES = [DocumentationLanguage.PYTHON, DocumentationLanguage.TYPESCRIPT];
+const SUPPORTED_LANGUAGES = [DocumentationLanguage.PYTHON, DocumentationLanguage.TYPESCRIPT, DocumentationLanguage.JAVA];
 
 export interface OrchestrationProps extends Omit<TransliteratorProps, 'language'>{
   /**
