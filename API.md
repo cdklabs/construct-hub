@@ -388,7 +388,7 @@ const packageLinkConfig: PackageLinkConfig = { ... }
 
 - *Type:* `string`
 
-The name of the link, appears before the ":".
+The name of the link, appears before the ":" on the website.
 
 ---
 
