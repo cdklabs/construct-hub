@@ -15,7 +15,7 @@ import { ResponseFunction } from './response-function';
 
 export interface PackageLinkConfig {
   /**
-   * The name of the link, appears before the ":"
+   * The name of the link, appears before the ":" on the website
    */
   readonly name: string;
 
