@@ -146,7 +146,7 @@ export const handler = metricScope(
         }
 
         // if no allow list is provided
-        return { accum, [value]: pkgValue };
+        return { ...accum, [value]: pkgValue };
       }, {});
 
       const metadata = {
