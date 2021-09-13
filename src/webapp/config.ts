@@ -4,9 +4,9 @@ import { join } from 'path';
 import { PackageLinkConfig } from '.';
 
 interface FrontendPackageLinkConfig {
-  name: string;
-  value: string;
-  displayText?: string;
+  linkLabel: string;
+  configKey: string;
+  linkText?: string;
 }
 
 interface FrontendConfig {
@@ -31,7 +31,7 @@ export class WebappConfig {
 
   private get frontendConfig(): FrontendConfig {
     const packageLinks = this.props.packageLinks ?? [];
-    const withoutDomains = packageLinks.map(({ domains, ...rest }) => rest);
+    const withoutDomains = packageLinks.map(({ allowedDomains, ...rest }) => rest);
     return { packageLinks: withoutDomains };
   }
 }

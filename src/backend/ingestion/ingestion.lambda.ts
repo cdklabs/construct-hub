@@ -132,8 +132,8 @@ export const handler = metricScope(
       // Add custom links content to metdata for display on the frontend
       const allowedLinks: PackageLinkConfig[] = JSON.parse(PACKAGE_LINKS);
 
-      const packageLinks = allowedLinks.reduce((accum, { value, domains }) => {
-        const pkgValue = constructHub?.packageLinks[value];
+      const packageLinks = allowedLinks.reduce((accum, { configKey, allowedDomains }) => {
+        const pkgValue = constructHub?.packageLinks[configKey];
 
         if (!pkgValue) {
           return accum;
@@ -141,12 +141,12 @@ export const handler = metricScope(
 
         // check if value is in allowed domains list
         const url = new URL(pkgValue);
-        if (domains?.length && !domains.includes(url.host)) {
+        if (allowedDomains?.length && !allowedDomains.includes(url.host)) {
           return accum;
         }
 
         // if no allow list is provided
-        return { ...accum, [value]: pkgValue };
+        return { ...accum, [configKey]: pkgValue };
       }, {});
 
       const metadata = {

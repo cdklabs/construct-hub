@@ -17,27 +17,27 @@ export interface PackageLinkConfig {
   /**
    * The name of the link, appears before the ":" on the website
    */
-  readonly name: string;
+  readonly linkLabel: string;
 
   /**
    * The location of the value inside the constructHub.packageLinks
    * key of a module's package.json
    */
-  readonly value: string;
+  readonly configKey: string;
 
   /**
    * optional text to display as the hyperlink text
    *
    * @default the url of the link
    */
-  readonly displayText?: string;
+  readonly linkText?: string;
 
   /**
    * allowList of domains for this link
    *
    * @default all domains allowed
    */
-  readonly domains?: string[];
+  readonly allowedDomains?: string[];
 }
 
 export interface WebAppProps {

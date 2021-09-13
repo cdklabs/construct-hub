@@ -320,20 +320,20 @@ test('basic happy case with license file', async () => {
   expect(mockPutMetric).toHaveBeenCalledWith(MetricName.FOUND_LICENSE_FILE, 1, 'Count');
 });
 
-test.only('basic happy case with custom package links', async () => {
+test('basic happy case with custom package links', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockPackageLinks = JSON.stringify([{
-    name: 'PackageLink',
-    value: 'PackageLinkKey',
+    linkLabel: 'PackageLink',
+    configKey: 'PackageLinkKey',
   }, {
-    name: 'PackageLinkDomain',
-    value: 'PackageLinkDomainKey',
-    domains: ['somehost.com'],
+    linkLabel: 'PackageLinkDomain',
+    configKey: 'PackageLinkDomainKey',
+    allowedDomains: ['somehost.com'],
   }, {
-    name: 'PackageLinkBadDomain',
-    value: 'PackageLinkBadDomainKey',
-    domains: ['somehost.com'],
+    linkLabel: 'PackageLinkBadDomain',
+    configKey: 'PackageLinkBadDomainKey',
+    allowedDomains: ['somehost.com'],
   }]);
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports

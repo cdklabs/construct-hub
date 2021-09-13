@@ -159,6 +159,45 @@ you may set the `isolateLambdas` setting to `false`.
    navigate a ConstructHub instance when they are reacting to an alarm or bug
    report.
 
+### :nail_care: Customizing the frontend
+
+There are a number of customizations available in order to make your private
+construct hub better tailored to your organization.
+
+#### Package Links
+
+Configuring package links allows you to replace the `Repository`, `License`,
+and `Registry` links on the package details page with whatever you choose.
+
+For example:
+```ts
+new ConstructHub(this, "ConstructHub", {
+  ...myProps,
+  packageLinks: [{
+    linkLabel: 'Service Level Agreement',
+    configKey: 'SLA',
+  }, {
+    linkLabel: 'Contact',
+    configKey: 'Contact',
+    linkText: 'Email Me!',
+    allowedDomains: ['me.com'],
+  }]
+});
+```
+
+This would allow publishers to add the following to their package.json:
+
+```json
+"constructHub": {
+  "packageLinks": {
+    "SLA": "https://support.mypackage.com",
+    "Contact": "me.com/contact"
+  }
+}
+```
+
+Then the links on the corresponding package page would show these items as
+configured.
 
 ## :raised_hand: Contributing
 

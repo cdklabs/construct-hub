@@ -384,15 +384,7 @@ import { PackageLinkConfig } from 'construct-hub'
 const packageLinkConfig: PackageLinkConfig = { ... }
 ```
 
-##### `name`<sup>Required</sup> <a name="construct-hub.PackageLinkConfig.property.name"></a>
-
-- *Type:* `string`
-
-The name of the link, appears before the ":" on the website.
-
----
-
-##### `value`<sup>Required</sup> <a name="construct-hub.PackageLinkConfig.property.value"></a>
+##### `configKey`<sup>Required</sup> <a name="construct-hub.PackageLinkConfig.property.configKey"></a>
 
 - *Type:* `string`
 
@@ -400,21 +392,29 @@ The location of the value inside the constructHub.packageLinks key of a module's
 
 ---
 
-##### `displayText`<sup>Optional</sup> <a name="construct-hub.PackageLinkConfig.property.displayText"></a>
+##### `linkLabel`<sup>Required</sup> <a name="construct-hub.PackageLinkConfig.property.linkLabel"></a>
 
 - *Type:* `string`
-- *Default:* the url of the link
 
-optional text to display as the hyperlink text.
+The name of the link, appears before the ":" on the website.
 
 ---
 
-##### `domains`<sup>Optional</sup> <a name="construct-hub.PackageLinkConfig.property.domains"></a>
+##### `allowedDomains`<sup>Optional</sup> <a name="construct-hub.PackageLinkConfig.property.allowedDomains"></a>
 
 - *Type:* `string`[]
 - *Default:* all domains allowed
 
 allowList of domains for this link.
+
+---
+
+##### `linkText`<sup>Optional</sup> <a name="construct-hub.PackageLinkConfig.property.linkText"></a>
+
+- *Type:* `string`
+- *Default:* the url of the link
+
+optional text to display as the hyperlink text.
 
 ---
 
