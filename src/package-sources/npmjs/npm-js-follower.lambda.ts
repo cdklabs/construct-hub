@@ -243,7 +243,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
     return new Promise<Buffer>((ok, ko) => {
       https.get(url, (response) => {
         if (response.statusCode !== 200) {
-          throw new Error(`Unsuccessful GET: ${response.statusCode} - ${response.statusMessage}`);
+          ko(new Error(`Unsuccessful GET: ${response.statusCode} - ${response.statusMessage}`));
         }
 
         let body = Buffer.alloc(0);

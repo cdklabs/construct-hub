@@ -13,9 +13,18 @@ export class DocumentationLanguage {
   public static readonly PYTHON = new DocumentationLanguage('python');
 
   /**
+   * Java.
+   */
+  public static readonly JAVA = new DocumentationLanguage('java');
+
+  /**
    * All supported languages.
    */
-  public static readonly ALL = [DocumentationLanguage.TYPESCRIPT, DocumentationLanguage.PYTHON] as const;
+  public static readonly ALL = [
+    DocumentationLanguage.TYPESCRIPT,
+    DocumentationLanguage.PYTHON,
+    DocumentationLanguage.JAVA,
+  ] as const;
 
   /**
    * Transform a literal string to the `DocumentationLanguage` object.
@@ -28,8 +37,10 @@ export class DocumentationLanguage {
         return DocumentationLanguage.TYPESCRIPT;
       case DocumentationLanguage.PYTHON.toString():
         return DocumentationLanguage.PYTHON;
+      case DocumentationLanguage.JAVA.toString():
+        return DocumentationLanguage.JAVA;
       default:
-        throw new UnsupportedLanguageError(lang, [DocumentationLanguage.TYPESCRIPT, DocumentationLanguage.PYTHON]);
+        throw new UnsupportedLanguageError(lang, DocumentationLanguage.ALL);
     }
   }
 
@@ -41,7 +52,7 @@ export class DocumentationLanguage {
 }
 
 export class UnsupportedLanguageError extends Error {
-  constructor(lang: string, supported: DocumentationLanguage[]) {
+  constructor(lang: string, supported: readonly DocumentationLanguage[]) {
     super(`Unsupported language: ${lang}. Supported languages are: [${supported}]`);
   }
 }

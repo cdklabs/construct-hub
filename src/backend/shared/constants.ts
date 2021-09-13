@@ -37,6 +37,11 @@ export const DOCS_KEY_SUFFIX_TYPESCRIPT = docsKeySuffix(DocumentationLanguage.TY
 export const DOCS_KEY_SUFFIX_PYTHON = docsKeySuffix(DocumentationLanguage.PYTHON);
 
 /**
+ * The key suffix for a Python doc artifact (root module).
+ */
+export const DOCS_KEY_SUFFIX_JAVA = docsKeySuffix(DocumentationLanguage.JAVA);
+
+/**
  * The key suffix matching any documentation artifact.
  */
 export const DOCS_KEY_SUFFIX_ANY = docsKeySuffix('*');
