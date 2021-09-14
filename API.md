@@ -40,6 +40,10 @@ new ConstructHub(scope: Construct, id: string, props?: ConstructHubProps)
 
 ##### `grantPrincipal`<sup>Required</sup> <a name="construct-hub.ConstructHub.property.grantPrincipal"></a>
 
+```typescript
+public readonly grantPrincipal: IPrincipal;
+```
+
 - *Type:* [`@aws-cdk/aws-iam.IPrincipal`](#@aws-cdk/aws-iam.IPrincipal)
 
 The principal to grant permissions to.
@@ -47,6 +51,10 @@ The principal to grant permissions to.
 ---
 
 ##### `ingestionQueue`<sup>Required</sup> <a name="construct-hub.ConstructHub.property.ingestionQueue"></a>
+
+```typescript
+public readonly ingestionQueue: IQueue;
+```
 
 - *Type:* [`@aws-cdk/aws-sqs.IQueue`](#@aws-cdk/aws-sqs.IQueue)
 
@@ -69,6 +77,10 @@ const alarmActions: AlarmActions = { ... }
 
 ##### `highSeverity`<sup>Optional</sup> <a name="construct-hub.AlarmActions.property.highSeverity"></a>
 
+```typescript
+public readonly highSeverity: string;
+```
+
 - *Type:* `string`
 
 The ARN of the CloudWatch alarm action to take for alarms of high-severity alarms.
@@ -80,6 +92,10 @@ This must be an ARN that can be used with CloudWatch alarms.
 ---
 
 ##### `highSeverityAction`<sup>Optional</sup> <a name="construct-hub.AlarmActions.property.highSeverityAction"></a>
+
+```typescript
+public readonly highSeverityAction: IAlarmAction;
+```
 
 - *Type:* [`@aws-cdk/aws-cloudwatch.IAlarmAction`](#@aws-cdk/aws-cloudwatch.IAlarmAction)
 
@@ -93,6 +109,10 @@ This must be an ARN that can be used with CloudWatch alarms.
 
 ##### `normalSeverity`<sup>Optional</sup> <a name="construct-hub.AlarmActions.property.normalSeverity"></a>
 
+```typescript
+public readonly normalSeverity: string;
+```
+
 - *Type:* `string`
 - *Default:* no actions are taken in response to alarms of normal severity
 
@@ -105,6 +125,10 @@ This must be an ARN that can be used with CloudWatch alarms.
 ---
 
 ##### `normalSeverityAction`<sup>Optional</sup> <a name="construct-hub.AlarmActions.property.normalSeverityAction"></a>
+
+```typescript
+public readonly normalSeverityAction: IAlarmAction;
+```
 
 - *Type:* [`@aws-cdk/aws-cloudwatch.IAlarmAction`](#@aws-cdk/aws-cloudwatch.IAlarmAction)
 - *Default:* no actions are taken in response to alarms of normal severity
@@ -131,6 +155,10 @@ const codeArtifactDomainProps: CodeArtifactDomainProps = { ... }
 
 ##### `name`<sup>Required</sup> <a name="construct-hub.CodeArtifactDomainProps.property.name"></a>
 
+```typescript
+public readonly name: string;
+```
+
 - *Type:* `string`
 
 The name of the CodeArtifact domain.
@@ -138,6 +166,10 @@ The name of the CodeArtifact domain.
 ---
 
 ##### `upstreams`<sup>Optional</sup> <a name="construct-hub.CodeArtifactDomainProps.property.upstreams"></a>
+
+```typescript
+public readonly upstreams: string[];
+```
 
 - *Type:* `string`[]
 
@@ -159,6 +191,10 @@ const constructHubProps: ConstructHubProps = { ... }
 
 ##### `alarmActions`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.alarmActions"></a>
 
+```typescript
+public readonly alarmActions: AlarmActions;
+```
+
 - *Type:* [`construct-hub.AlarmActions`](#construct-hub.AlarmActions)
 
 Actions to perform when alarms are set.
@@ -166,6 +202,10 @@ Actions to perform when alarms are set.
 ---
 
 ##### `allowedLicenses`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.allowedLicenses"></a>
+
+```typescript
+public readonly allowedLicenses: SpdxLicense[];
+```
 
 - *Type:* [`construct-hub.SpdxLicense`](#construct-hub.SpdxLicense)[]
 - *Default:* [...SpdxLicense.apache(),...SpdxLicense.bsd(),...SpdxLicense.mit()]
@@ -176,6 +216,10 @@ The allowed licenses for packages indexed by this instance of ConstructHub.
 
 ##### `backendDashboardName`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.backendDashboardName"></a>
 
+```typescript
+public readonly backendDashboardName: string;
+```
+
 - *Type:* `string`
 
 The name of the CloudWatch dashboard that represents the health of backend systems.
@@ -183,6 +227,10 @@ The name of the CloudWatch dashboard that represents the health of backend syste
 ---
 
 ##### `codeArtifactDomain`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.codeArtifactDomain"></a>
+
+```typescript
+public readonly codeArtifactDomain: CodeArtifactDomainProps;
+```
 
 - *Type:* [`construct-hub.CodeArtifactDomainProps`](#construct-hub.CodeArtifactDomainProps)
 - *Default:* none.
@@ -196,6 +244,10 @@ are available to ConstructHub's backend processing.
 
 ##### `denyList`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.denyList"></a>
 
+```typescript
+public readonly denyList: DenyListRule[];
+```
+
 - *Type:* [`construct-hub.DenyListRule`](#construct-hub.DenyListRule)[]
 - *Default:* []
 
@@ -205,6 +257,10 @@ A list of packages to block from the construct hub.
 
 ##### `domain`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.domain"></a>
 
+```typescript
+public readonly domain: Domain;
+```
+
 - *Type:* [`construct-hub.Domain`](#construct-hub.Domain)
 
 Connect the hub to a domain (requires a hosted zone and a certificate).
@@ -212,6 +268,10 @@ Connect the hub to a domain (requires a hosted zone and a certificate).
 ---
 
 ##### `isolateLambdas`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.isolateLambdas"></a>
+
+```typescript
+public readonly isolateLambdas: boolean;
+```
 
 - *Type:* `boolean`
 - *Default:* true
@@ -228,6 +288,10 @@ implies the creation of additonal resources, including:
 ---
 
 ##### `packageSources`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.packageSources"></a>
+
+```typescript
+public readonly packageSources: IPackageSource[];
+```
 
 - *Type:* [`construct-hub.IPackageSource`](#construct-hub.IPackageSource)[]
 - *Default:* a standard npmjs.com package source will be configured.
@@ -262,6 +326,10 @@ const denyListRule: DenyListRule = { ... }
 
 ##### `packageName`<sup>Required</sup> <a name="construct-hub.DenyListRule.property.packageName"></a>
 
+```typescript
+public readonly packageName: string;
+```
+
 - *Type:* `string`
 
 The name of the package to block (npm).
@@ -269,6 +337,10 @@ The name of the package to block (npm).
 ---
 
 ##### `reason`<sup>Required</sup> <a name="construct-hub.DenyListRule.property.reason"></a>
+
+```typescript
+public readonly reason: string;
+```
 
 - *Type:* `string`
 
@@ -280,6 +352,10 @@ emitted to the construct hub logs.
 ---
 
 ##### `version`<sup>Optional</sup> <a name="construct-hub.DenyListRule.property.version"></a>
+
+```typescript
+public readonly version: string;
+```
 
 - *Type:* `string`
 - *Default:* all versions of this package are blocked.
@@ -302,6 +378,10 @@ const domain: Domain = { ... }
 
 ##### `cert`<sup>Required</sup> <a name="construct-hub.Domain.property.cert"></a>
 
+```typescript
+public readonly cert: ICertificate;
+```
+
 - *Type:* [`@aws-cdk/aws-certificatemanager.ICertificate`](#@aws-cdk/aws-certificatemanager.ICertificate)
 - *Default:* a DNS-Validated certificate will be provisioned using the
   provided `hostedZone`.
@@ -312,6 +392,10 @@ The certificate to use for serving the Construct Hub over a custom domain.
 
 ##### `zone`<sup>Required</sup> <a name="construct-hub.Domain.property.zone"></a>
 
+```typescript
+public readonly zone: IHostedZone;
+```
+
 - *Type:* [`@aws-cdk/aws-route53.IHostedZone`](#@aws-cdk/aws-route53.IHostedZone)
 
 The root domain name where this instance of Construct Hub will be served.
@@ -319,6 +403,10 @@ The root domain name where this instance of Construct Hub will be served.
 ---
 
 ##### `monitorCertificateExpiration`<sup>Optional</sup> <a name="construct-hub.Domain.property.monitorCertificateExpiration"></a>
+
+```typescript
+public readonly monitorCertificateExpiration: boolean;
+```
 
 - *Type:* `boolean`
 - *Default:* true
@@ -339,6 +427,10 @@ const linkedResource: LinkedResource = { ... }
 
 ##### `name`<sup>Required</sup> <a name="construct-hub.LinkedResource.property.name"></a>
 
+```typescript
+public readonly name: string;
+```
+
 - *Type:* `string`
 
 The name of the linked resource.
@@ -347,6 +439,10 @@ The name of the linked resource.
 
 ##### `url`<sup>Required</sup> <a name="construct-hub.LinkedResource.property.url"></a>
 
+```typescript
+public readonly url: string;
+```
+
 - *Type:* `string`
 
 The URL where the linked resource can be found.
@@ -354,6 +450,10 @@ The URL where the linked resource can be found.
 ---
 
 ##### `primary`<sup>Optional</sup> <a name="construct-hub.LinkedResource.property.primary"></a>
+
+```typescript
+public readonly primary: boolean;
+```
 
 - *Type:* `boolean`
 
@@ -380,6 +480,10 @@ const packageSourceBindOptions: PackageSourceBindOptions = { ... }
 
 ##### `ingestion`<sup>Required</sup> <a name="construct-hub.PackageSourceBindOptions.property.ingestion"></a>
 
+```typescript
+public readonly ingestion: IGrantable;
+```
+
 - *Type:* [`@aws-cdk/aws-iam.IGrantable`](#@aws-cdk/aws-iam.IGrantable)
 
 The `IGrantable` that will process downstream messages from the bound package source.
@@ -390,6 +494,10 @@ from the URLs sent to the `queue`.
 ---
 
 ##### `licenseList`<sup>Required</sup> <a name="construct-hub.PackageSourceBindOptions.property.licenseList"></a>
+
+```typescript
+public readonly licenseList: ILicenseList;
+```
 
 - *Type:* [`construct-hub.ILicenseList`](#construct-hub.ILicenseList)
 
@@ -403,6 +511,10 @@ filter.
 
 ##### `monitoring`<sup>Required</sup> <a name="construct-hub.PackageSourceBindOptions.property.monitoring"></a>
 
+```typescript
+public readonly monitoring: IMonitoring;
+```
+
 - *Type:* [`construct-hub.IMonitoring`](#construct-hub.IMonitoring)
 
 The monitoring instance to use for registering alarms, etc.
@@ -410,6 +522,10 @@ The monitoring instance to use for registering alarms, etc.
 ---
 
 ##### `queue`<sup>Required</sup> <a name="construct-hub.PackageSourceBindOptions.property.queue"></a>
+
+```typescript
+public readonly queue: IQueue;
+```
 
 - *Type:* [`@aws-cdk/aws-sqs.IQueue`](#@aws-cdk/aws-sqs.IQueue)
 
@@ -422,6 +538,10 @@ the package discovery schema.
 
 ##### `denyList`<sup>Optional</sup> <a name="construct-hub.PackageSourceBindOptions.property.denyList"></a>
 
+```typescript
+public readonly denyList: IDenyList;
+```
+
 - *Type:* [`construct-hub.IDenyList`](#construct-hub.IDenyList)
 
 The configured `DenyList` for the bound Construct Hub instance, if any.
@@ -429,6 +549,10 @@ The configured `DenyList` for the bound Construct Hub instance, if any.
 ---
 
 ##### `repository`<sup>Optional</sup> <a name="construct-hub.PackageSourceBindOptions.property.repository"></a>
+
+```typescript
+public readonly repository: IRepository;
+```
 
 - *Type:* [`construct-hub.IRepository`](#construct-hub.IRepository)
 
@@ -453,6 +577,10 @@ const packageSourceBindResult: PackageSourceBindResult = { ... }
 
 ##### `dashboardWidgets`<sup>Required</sup> <a name="construct-hub.PackageSourceBindResult.property.dashboardWidgets"></a>
 
+```typescript
+public readonly dashboardWidgets: IWidget[][];
+```
+
 - *Type:* [`@aws-cdk/aws-cloudwatch.IWidget`](#@aws-cdk/aws-cloudwatch.IWidget)[][]
 
 Widgets to add to the operator dashbaord for monitoring the health of the bound package source.
@@ -465,6 +593,10 @@ represents a row of widgets on the dashboard.
 
 ##### `name`<sup>Required</sup> <a name="construct-hub.PackageSourceBindResult.property.name"></a>
 
+```typescript
+public readonly name: string;
+```
+
 - *Type:* `string`
 
 The name of the bound package source.
@@ -475,6 +607,10 @@ dashboards (so it should be a meaningful identification of the source).
 ---
 
 ##### `links`<sup>Optional</sup> <a name="construct-hub.PackageSourceBindResult.property.links"></a>
+
+```typescript
+public readonly links: LinkedResource[];
+```
 
 - *Type:* [`construct-hub.LinkedResource`](#construct-hub.LinkedResource)[]
 
@@ -534,6 +670,10 @@ SpdxLicense.osiApproved()
 #### Properties <a name="Properties"></a>
 
 ##### `id`<sup>Required</sup> <a name="construct-hub.SpdxLicense.property.id"></a>
+
+```typescript
+public readonly id: string;
+```
 
 - *Type:* `string`
 
