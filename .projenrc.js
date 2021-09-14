@@ -79,7 +79,7 @@ const project = new JsiiProject({
 
   peerDeps: peerDeps,
 
-  minNodeVersion: '12.0.0',
+  minNodeVersion: '12.20.0',
 
   pullRequestTemplateContents: [
     '',
