@@ -287,6 +287,18 @@ implies the creation of additonal resources, including:
 
 ---
 
+##### `packageLinks`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.packageLinks"></a>
+
+```typescript
+public readonly packageLinks: PackageLinkConfig[];
+```
+
+- *Type:* [`construct-hub.PackageLinkConfig`](#construct-hub.PackageLinkConfig)[]
+
+Configuration for custom package page links.
+
+---
+
 ##### `packageSources`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.packageSources"></a>
 
 ```typescript
@@ -463,6 +475,66 @@ It is not
 necessary that there is one, and there could be multiple primary resources.
 The buttons for those will be rendered with a different style on the
 dashboard.
+
+---
+
+### PackageLinkConfig <a name="construct-hub.PackageLinkConfig"></a>
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { PackageLinkConfig } from 'construct-hub'
+
+const packageLinkConfig: PackageLinkConfig = { ... }
+```
+
+##### `configKey`<sup>Required</sup> <a name="construct-hub.PackageLinkConfig.property.configKey"></a>
+
+```typescript
+public readonly configKey: string;
+```
+
+- *Type:* `string`
+
+The location of the value inside the constructHub.packageLinks key of a module's package.json.
+
+---
+
+##### `linkLabel`<sup>Required</sup> <a name="construct-hub.PackageLinkConfig.property.linkLabel"></a>
+
+```typescript
+public readonly linkLabel: string;
+```
+
+- *Type:* `string`
+
+The name of the link, appears before the ":" on the website.
+
+---
+
+##### `allowedDomains`<sup>Optional</sup> <a name="construct-hub.PackageLinkConfig.property.allowedDomains"></a>
+
+```typescript
+public readonly allowedDomains: string[];
+```
+
+- *Type:* `string`[]
+- *Default:* all domains allowed
+
+allowList of domains for this link.
+
+---
+
+##### `linkText`<sup>Optional</sup> <a name="construct-hub.PackageLinkConfig.property.linkText"></a>
+
+```typescript
+public readonly linkText: string;
+```
+
+- *Type:* `string`
+- *Default:* the url of the link
+
+optional text to display as the hyperlink text.
 
 ---
 
