@@ -2,10 +2,11 @@ import { createHash } from 'crypto';
 import { basename, extname } from 'path';
 import { URL } from 'url';
 
-import { validateAssembly } from '@jsii/spec';
+import { Assembly, validateAssembly } from '@jsii/spec';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, SQSEvent } from 'aws-lambda';
+import { SemVer } from 'semver';
 import type { PackageLinkConfig } from '../../webapp';
 import type { StateMachineInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
@@ -75,13 +76,16 @@ export const handler = metricScope(
         return;
       }
 
+      let constructFramework: ConstructFramework | undefined;
       let packageLicense: string;
       let packageName: string;
       let packageVersion: string;
       try {
-        const { license, name, version } = validateAssembly(
+        const assembly = validateAssembly(
           JSON.parse(dotJsii.toString('utf-8')),
         );
+        constructFramework = detectConstructFramework(assembly);
+        const { license, name, version } = assembly;
         packageLicense = license;
         packageName = name;
         packageVersion = version;
@@ -150,6 +154,7 @@ export const handler = metricScope(
       }, {});
 
       const metadata = {
+        constructFramework,
         date: payload.time,
         licenseText: licenseText?.toString('utf-8'),
         packageLinks,
@@ -255,6 +260,66 @@ export const handler = metricScope(
     return result;
   },
 );
+
+interface ConstructFramework {
+  /**
+   * The name of the construct framework.
+   */
+  readonly name: 'aws-cdk' | 'cdk8s' | 'cdktf';
+
+  /**
+   * The major version of the construct framework that is used, if it could be
+   * identified.
+   */
+  readonly majorVersion?: number;
+}
+
+/**
+ * Determines the Construct framework used by the provided assembly.
+ *
+ * @param assembly the assembly for which a construct framework should be
+ *                 identified.
+ *
+ * @returns a construct framework if one could be identified.
+ */
+function detectConstructFramework(assembly: Assembly): ConstructFramework | undefined {
+  let name: ConstructFramework['name'] | undefined;
+  let majorVersion: number | undefined;
+  let majorVersionAmbiguous = false;
+  for (const depName of Object.keys(assembly.dependencyClosure ?? {})) {
+    if (depName.startsWith('@aws-cdk/')) {
+      if (name && name !== 'aws-cdk') {
+        // Identified multiple candidates, so returning undefined...
+        return undefined;
+      }
+      name = 'aws-cdk';
+    } else if (depName.startsWith('@cdktf/')) {
+      if (name && name !== 'cdktf') {
+        // Identified multiple candidates, so returning undefined...
+        return undefined;
+      }
+      name = 'cdktf';
+    } else if (depName === 'cdk8s' || depName === 'cdk8s-plus') {
+      if (name && name !== 'cdk8s') {
+        // Identified multiple candidates, so returning undefined...
+        return undefined;
+      }
+      name = 'cdk8s';
+    } else {
+      continue;
+    }
+    const depVersion = assembly.dependencies?.[depName];
+    if (depVersion) {
+      const major = new SemVer(depVersion).major;
+      if (majorVersion != null && majorVersion !== major) {
+        // Identified multiple candidates, so this is ambiguous...
+        majorVersionAmbiguous = true;
+      }
+      majorVersion = major;
+    }
+  }
+  return name && { name, majorVersion: majorVersionAmbiguous ? undefined : majorVersion };
+}
 
 /**
  * Checks whether the provided file name corresponds to a license file or not.
