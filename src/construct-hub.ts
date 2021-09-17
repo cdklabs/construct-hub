@@ -20,7 +20,7 @@ import { Monitoring } from './monitoring';
 import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
 import { SpdxLicense } from './spdx-license';
-import { WebApp } from './webapp';
+import { WebApp, PackageLinkConfig } from './webapp';
 
 /**
  * Props for `ConstructHub`.
@@ -83,6 +83,38 @@ export interface ConstructHubProps {
    * @default [...SpdxLicense.apache(),...SpdxLicense.bsd(),...SpdxLicense.mit()]
    */
   readonly allowedLicenses?: SpdxLicense[];
+
+  /**
+   * When using a CodeArtifact package source, it is often desirable to have
+   * ConstructHub provision it's internal CodeArtifact repository in the same
+   * CodeArtifact domain, and to configure the package source repository as an
+   * upstream of the internal repository. This way, all packages in the source
+   * are available to ConstructHub's backend processing.
+   *
+   * @default - none.
+   */
+  readonly codeArtifactDomain?: CodeArtifactDomainProps;
+
+  /**
+   * Configuration for custom package page links.
+   */
+  readonly packageLinks?: PackageLinkConfig[];
+}
+
+/**
+ * Information pertaining to an existing CodeArtifact Domain.
+ */
+export interface CodeArtifactDomainProps {
+  /**
+   * The name of the CodeArtifact domain.
+   */
+  readonly name: string;
+
+  /**
+   * Any upstream repositories in this CodeArtifact domain that should be
+   * configured on the internal CodeArtifact repository.
+   */
+  readonly upstreams?: string[];
 }
 
 /**
@@ -91,7 +123,11 @@ export interface ConstructHubProps {
 export class ConstructHub extends CoreConstruct implements iam.IGrantable {
   private readonly ingestion: Ingestion;
 
-  public constructor(scope: Construct, id: string, props: ConstructHubProps = {}) {
+  public constructor(
+    scope: Construct,
+    id: string,
+    props: ConstructHubProps = {},
+  ) {
     super(scope, id);
 
     const monitoring = new Monitoring(this, 'Monitoring', {
@@ -106,16 +142,31 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
         // Abort multi-part uploads after 1 day
         { abortIncompleteMultipartUploadAfter: Duration.days(1) },
         // Transition non-current object versions to IA after 1 month
-        { noncurrentVersionTransitions: [{ storageClass: s3.StorageClass.INFREQUENT_ACCESS, transitionAfter: Duration.days(31) }] },
+        {
+          noncurrentVersionTransitions: [
+            {
+              storageClass: s3.StorageClass.INFREQUENT_ACCESS,
+              transitionAfter: Duration.days(31),
+            },
+          ],
+        },
         // Permanently delete non-current object versions after 3 months
-        { noncurrentVersionExpiration: Duration.days(90), expiredObjectDeleteMarker: true },
+        {
+          noncurrentVersionExpiration: Duration.days(90),
+          expiredObjectDeleteMarker: true,
+        },
         // Permanently delete non-current versions of catalog.json earlier
         { noncurrentVersionExpiration: Duration.days(7), prefix: CATALOG_KEY },
       ],
       versioned: true,
     });
 
-    const codeArtifact = new Repository(this, 'CodeArtifact', { description: 'Proxy to npmjs.com for ConstructHub' });
+    const codeArtifact = new Repository(this, 'CodeArtifact', {
+      description: 'Proxy to npmjs.com for ConstructHub',
+      domainName: props.codeArtifactDomain?.name,
+      domainExists: props.codeArtifactDomain != null,
+      upstreams: props.codeArtifactDomain?.upstreams,
+    });
 
     const { vpc, vpcEndpoints, vpcSubnets } = this.createVpc(props, codeArtifact);
 
@@ -140,22 +191,34 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     // rebuild the catalog when the deny list changes.
     denyList.prune.onChangeInvoke(orchestration.catalogBuilder);
 
-    this.ingestion = new Ingestion(this, 'Ingestion', { bucket: packageData, orchestration, logRetention: props.logRetention, monitoring });
+    this.ingestion = new Ingestion(this, 'Ingestion', {
+      bucket: packageData,
+      orchestration,
+      logRetention: props.logRetention,
+      monitoring,
+      packageLinks: props.packageLinks,
+    });
 
     const licenseList = new LicenseList(this, 'LicenseList', {
-      licenses: props.allowedLicenses ?? [...SpdxLicense.apache(), ...SpdxLicense.bsd(), ...SpdxLicense.mit()],
+      licenses: props.allowedLicenses ?? [
+        ...SpdxLicense.apache(),
+        ...SpdxLicense.bsd(),
+        ...SpdxLicense.mit(),
+      ],
     });
 
     const sources = new CoreConstruct(this, 'Sources');
-    const packageSources = (props.packageSources ?? [new NpmJs()])
-      .map(source => source.bind(sources, {
-        denyList,
-        ingestion: this.ingestion,
-        licenseList,
-        monitoring,
-        queue: this.ingestion.queue,
-        repository: codeArtifact,
-      }));
+    const packageSources = (props.packageSources ?? [new NpmJs()]).map(
+      (source) =>
+        source.bind(sources, {
+          denyList,
+          ingestion: this.ingestion,
+          licenseList,
+          monitoring,
+          queue: this.ingestion.queue,
+          repository: codeArtifact,
+        }),
+    );
 
     const inventory = new Inventory(this, 'InventoryCanary', { bucket: packageData, logRetention: props.logRetention, monitoring });
 

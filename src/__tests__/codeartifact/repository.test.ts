@@ -37,6 +37,28 @@ test('basic usage', () => {
   }, MatchStyle.SUPERSET);
 });
 
+test('using upstreams', () => {
+  // GIVEN
+  const stack = new Stack();
+
+  // WHEN
+  new Repository(stack, 'Repo', { domainExists: true, domainName: 'test-domain', upstreams: ['upstream-1', 'upstream-2'] });
+
+  // THEN
+  expect(stack).toMatchTemplate({
+    Resources: {
+      Repo: {
+        Type: 'AWS::CodeArtifact::Repository',
+        Properties: {
+          DomainName: 'test-domain',
+          RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
+          Upstreams: ['upstream-1', 'upstream-2'],
+        },
+      },
+    },
+  }, MatchStyle.SUPERSET);
+});
+
 test('external connection', () => {
   // GIVEN
   const stack = new Stack();
@@ -95,7 +117,7 @@ test('custom domain name', () => {
               'Name',
             ],
           },
-          RepositoryName: 'custom-domain',
+          RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
         },
       },
     },

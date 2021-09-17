@@ -7,7 +7,7 @@ import { Tracing } from '@aws-cdk/aws-lambda';
 import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
 import { Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { ArnFormat, Aws, Construct, Duration, Stack } from '@aws-cdk/core';
-import { codeArtifactRepositoryUrl, lambdaFunctionUrl, sqsQueueUrl } from '../deep-link';
+import { codeArtifactRepositoryUrl, lambdaFunctionUrl, lambdaSearchLogGroupUrl, sqsQueueUrl } from '../deep-link';
 import { fillMetric } from '../metric-utils';
 import type { IPackageSource, PackageSourceBindOptions, PackageSourceBindResult } from '../package-source';
 import { CodeArtifactForwarder } from './codeartifact/code-artifact-forwarder';
@@ -98,7 +98,7 @@ export class CodeArtifact implements IPackageSource {
       targets: [new LambdaFunction(forwarder)],
     });
 
-    const failureAlarm = forwarder.metricErrors().createAlarm(scope, `${idPrefix}/Forwarder/Failure`, {
+    const failureAlarm = forwarder.metricErrors().createAlarm(scope, `${idPrefix}/Forwarder/Failures`, {
       alarmName: `${scope.node.path}/CodeArtifact/${repositoryId}/Forwarder`,
       alarmDescription: [
         `The CodeArtifact fowarder for ${repositoryId} is failing`,
@@ -145,7 +145,10 @@ export class CodeArtifact implements IPackageSource {
         name: 'Forwarder Function',
         url: lambdaFunctionUrl(forwarder),
       }, {
-        name: 'Forwarder Dead-Letter Queue',
+        name: 'Search Log group',
+        url: lambdaSearchLogGroupUrl(forwarder),
+      }, {
+        name: 'DLQ',
         url: sqsQueueUrl(dlq),
       }],
       dashboardWidgets: [

@@ -11,6 +11,7 @@ import { Construct, Duration } from '@aws-cdk/core';
 import { Repository } from '../../codeartifact/repository';
 import { sqsQueueUrl, stateMachineUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
+import { RUNBOOK_URL } from '../../runbook-url';
 import { CatalogBuilder } from '../catalog-builder';
 import { DenyList } from '../deny-list';
 import { DocumentationLanguage } from '../shared/language';
@@ -18,7 +19,7 @@ import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
 import { RedriveStateMachine } from './redrive-state-machine';
 import { ReprocessAll } from './reprocess-all';
 
-const SUPPORTED_LANGUAGES = [DocumentationLanguage.PYTHON, DocumentationLanguage.TYPESCRIPT];
+const SUPPORTED_LANGUAGES = [DocumentationLanguage.PYTHON, DocumentationLanguage.TYPESCRIPT, DocumentationLanguage.JAVA];
 
 export interface OrchestrationProps {
   /**
@@ -129,6 +130,8 @@ export class Orchestration extends Construct {
         alarmName: `${this.deadLetterQueue.node.path}/NotEmpty`,
         alarmDescription: [
           'Backend orchestration dead-letter queue is not empty.',
+          '',
+          `RunBook: ${RUNBOOK_URL}`,
           '',
           `Direct link to queue: ${sqsQueueUrl(this.deadLetterQueue)}`,
           'Warning: State Machines executions that sent messages to the DLQ will not show as "failed".',
@@ -271,6 +274,8 @@ export class Orchestration extends Construct {
           alarmName: `${this.stateMachine.node.path}/${this.stateMachine.metricFailed().metricName}`,
           alarmDescription: [
             'Backend orchestration failed!',
+            '',
+            `RunBook: ${RUNBOOK_URL}`,
             '',
             `Direct link to state machine: ${stateMachineUrl(this.stateMachine)}`,
             'Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!',

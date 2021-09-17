@@ -7,6 +7,7 @@ import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl, s3ObjectUrl } from '../deep-link';
 import { fillMetric } from '../metric-utils';
 import type { IPackageSource, PackageSourceBindOptions, PackageSourceBindResult } from '../package-source';
+import { RUNBOOK_URL } from '../runbook-url';
 import { MARKER_FILE_NAME, METRICS_NAMESPACE, MetricName, S3KeyPrefix } from './npmjs/constants.lambda-shared';
 
 import { NpmJsFollower } from './npmjs/npm-js-follower';
@@ -67,6 +68,8 @@ export class NpmJs implements IPackageSource {
       alarmDescription: [
         'The NpmJs follower function failed!',
         '',
+        `RunBook: ${RUNBOOK_URL}`,
+        '',
         `Direct link to Lambda function: ${lambdaFunctionUrl(follower)}`,
       ].join('\n'),
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
@@ -76,10 +79,12 @@ export class NpmJs implements IPackageSource {
     });
     monitoring.addHighSeverityAlarm('NpmJs/Follower Failures', failureAlarm);
 
-    const notRunningAlarm = follower.metricErrors().createAlarm(scope, 'NpmJs/Follower/NotRunning', {
+    const notRunningAlarm = follower.metricInvocations().createAlarm(scope, 'NpmJs/Follower/NotRunning', {
       alarmName: `${scope.node.path}/NpmJs/Follower/NotRunning`,
       alarmDescription: [
         'The NpmJs follower function is not running!',
+        '',
+        `RunBook: ${RUNBOOK_URL}`,
         '',
         `Direct link to Lambda function: ${lambdaFunctionUrl(follower)}`,
       ].join('\n'),
