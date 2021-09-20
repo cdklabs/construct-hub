@@ -2,7 +2,6 @@ import '@aws-cdk/assert/jest';
 import { GatewayVpcEndpointAwsService, InterfaceVpcEndpointAwsService, SubnetType, Vpc } from '@aws-cdk/aws-ec2';
 import { Bucket } from '@aws-cdk/aws-s3';
 import { App, CfnResource, Construct, Fn, IConstruct, Stack } from '@aws-cdk/core';
-import { DocumentationLanguage } from '../../../backend/shared/language';
 import { Transliterator } from '../../../backend/transliterator';
 import { Repository } from '../../../codeartifact/repository';
 import { Monitoring } from '../../../monitoring';
@@ -19,14 +18,12 @@ test('basic use', () => {
   // WHEN
   new Transliterator(stack, 'Transliterator', {
     bucket,
-    language: DocumentationLanguage.PYTHON,
     monitoring,
   });
 
   // THEN
   expect(app.synth().getStackByName(stack.stackName).template).toMatchSnapshot({
     Outputs: expect.anything(),
-    Parameters: expect.anything(),
     Resources: ignoreResources(stack, bucket, monitoring),
   });
 });
@@ -45,19 +42,19 @@ test('CodeArtifact repository', () => {
   new Transliterator(stack, 'Transliterator', {
     bucket,
     codeArtifact,
-    language: DocumentationLanguage.PYTHON,
     monitoring,
   });
 
   // THEN
-  expect(stack).toHaveResourceLike('AWS::Lambda::Function', {
-    Environment: {
-      Variables: stack.resolve({
-        CODE_ARTIFACT_DOMAIN_NAME: codeArtifact.repositoryDomainName,
-        CODE_ARTIFACT_DOMAIN_OWNER: codeArtifact.repositoryDomainOwner,
-        CODE_ARTIFACT_REPOSITORY_ENDPOINT: codeArtifact.repositoryNpmEndpoint,
-      }),
-    },
+  expect(stack).toHaveResourceLike('AWS::ECS::TaskDefinition', {
+    ContainerDefinitions: [{
+      Environment: stack.resolve([
+        { Name: 'HEADER_SPAN', Value: 'true' },
+        { Name: 'CODE_ARTIFACT_DOMAIN_NAME', Value: codeArtifact.repositoryDomainName },
+        { Name: 'CODE_ARTIFACT_DOMAIN_OWNER', Value: codeArtifact.repositoryDomainOwner },
+        { Name: 'CODE_ARTIFACT_REPOSITORY_ENDPOINT', Value: codeArtifact.repositoryNpmEndpoint },
+      ]),
+    }],
   });
   expect(app.synth().getStackByName(stack.stackName).template).toMatchSnapshot({
     Outputs: expect.anything(),
@@ -75,37 +72,46 @@ test('VPC Endpoints', () => {
     alarmActions: { highSeverity: 'high-sev', normalSeverity: 'normal-sev' },
   });
   const vpc = new Vpc(stack, 'VPC', { subnetConfiguration: [{ name: 'Isolated', subnetType: SubnetType.ISOLATED }] });
+  const cloudWatchLogs = vpc.addInterfaceEndpoint('CloudWatch.Logs', {
+    service: InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
+  });
   const codeArtifactApi = vpc.addInterfaceEndpoint('CodeArtifact.API', {
     service: new InterfaceVpcEndpointAwsService('codeartifact.api'),
   });
   const codeArtifact = vpc.addInterfaceEndpoint('CodeArtifact.Repo', {
     service: new InterfaceVpcEndpointAwsService('codeartifact.repositories'),
   });
+  const ecrApi = vpc.addInterfaceEndpoint('ECR.API', {
+    service: InterfaceVpcEndpointAwsService.ECR,
+  });
+  const ecr = vpc.addInterfaceEndpoint('ECR', {
+    service: InterfaceVpcEndpointAwsService.ECR_DOCKER,
+  });
   const s3 = vpc.addGatewayEndpoint('S3', {
     service: GatewayVpcEndpointAwsService.S3,
+  });
+  const stepFunctions = vpc.addInterfaceEndpoint('StepFunctions', {
+    service: InterfaceVpcEndpointAwsService.STEP_FUNCTIONS,
   });
 
   // WHEN
   new Transliterator(stack, 'Transliterator', {
     bucket,
-    language: DocumentationLanguage.PYTHON,
     monitoring,
-    vpc,
-    vpcEndpoints: { codeArtifactApi, codeArtifact, s3 },
-    vpcSubnets: { subnetType: SubnetType.ISOLATED },
+    vpcEndpoints: { cloudWatchLogs, codeArtifactApi, codeArtifact, ecr, ecrApi, s3, stepFunctions },
   });
 
   // THEN
-  expect(stack).toHaveResourceLike('AWS::Lambda::Function', {
-    Environment: {
-      Variables: stack.resolve({
-        CODE_ARTIFACT_API_ENDPOINT: Fn.select(1, Fn.split(':', Fn.select(0, codeArtifactApi.vpcEndpointDnsEntries))),
-      }),
-    },
+  expect(stack).toHaveResourceLike('AWS::ECS::TaskDefinition', {
+    ContainerDefinitions: [{
+      Environment: stack.resolve([
+        { Name: 'HEADER_SPAN', Value: 'true' },
+        { Name: 'CODE_ARTIFACT_API_ENDPOINT', Value: Fn.select(1, Fn.split(':', Fn.select(0, codeArtifactApi.vpcEndpointDnsEntries))) },
+      ]),
+    }],
   });
   expect(app.synth().getStackByName(stack.stackName).template).toMatchSnapshot({
     Outputs: expect.anything(),
-    Parameters: expect.anything(),
     Resources: ignoreResources(stack, bucket, monitoring, vpc),
   });
 });
@@ -123,38 +129,47 @@ test('VPC Endpoints and CodeArtifact repository', () => {
   const codeArtifactApi = vpc.addInterfaceEndpoint('CodeArtifact.API', {
     service: new InterfaceVpcEndpointAwsService('codeartifact.api'),
   });
+  const cloudWatchLogs = vpc.addInterfaceEndpoint('CloudWatch.Logs', {
+    service: InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
+  });
   const codeArtifact = vpc.addInterfaceEndpoint('CodeArtifact.Repo', {
     service: new InterfaceVpcEndpointAwsService('codeartifact.repositories'),
   });
+  const ecrApi = vpc.addInterfaceEndpoint('ECR.API', {
+    service: InterfaceVpcEndpointAwsService.ECR,
+  });
+  const ecr = vpc.addInterfaceEndpoint('ECR', {
+    service: InterfaceVpcEndpointAwsService.ECR_DOCKER,
+  });
   const s3 = vpc.addGatewayEndpoint('S3', {
     service: GatewayVpcEndpointAwsService.S3,
+  });
+  const stepFunctions = vpc.addInterfaceEndpoint('StepFunctions', {
+    service: InterfaceVpcEndpointAwsService.STEP_FUNCTIONS,
   });
 
   // WHEN
   new Transliterator(stack, 'Transliterator', {
     bucket,
     codeArtifact: repository,
-    language: DocumentationLanguage.PYTHON,
     monitoring,
-    vpc,
-    vpcEndpoints: { codeArtifactApi, codeArtifact, s3 },
-    vpcSubnets: { subnetType: SubnetType.ISOLATED },
+    vpcEndpoints: { cloudWatchLogs, codeArtifactApi, codeArtifact, ecr, ecrApi, s3, stepFunctions },
   });
 
   // THEN
-  expect(stack).toHaveResourceLike('AWS::Lambda::Function', {
-    Environment: {
-      Variables: stack.resolve({
-        CODE_ARTIFACT_DOMAIN_NAME: repository.repositoryDomainName,
-        CODE_ARTIFACT_DOMAIN_OWNER: repository.repositoryDomainOwner,
-        CODE_ARTIFACT_REPOSITORY_ENDPOINT: repository.repositoryNpmEndpoint,
-        CODE_ARTIFACT_API_ENDPOINT: Fn.select(1, Fn.split(':', Fn.select(0, codeArtifactApi.vpcEndpointDnsEntries))),
-      }),
-    },
+  expect(stack).toHaveResourceLike('AWS::ECS::TaskDefinition', {
+    ContainerDefinitions: [{
+      Environment: stack.resolve([
+        { Name: 'HEADER_SPAN', Value: 'true' },
+        { Name: 'CODE_ARTIFACT_API_ENDPOINT', Value: Fn.select(1, Fn.split(':', Fn.select(0, codeArtifactApi.vpcEndpointDnsEntries))) },
+        { Name: 'CODE_ARTIFACT_DOMAIN_NAME', Value: repository.repositoryDomainName },
+        { Name: 'CODE_ARTIFACT_DOMAIN_OWNER', Value: repository.repositoryDomainOwner },
+        { Name: 'CODE_ARTIFACT_REPOSITORY_ENDPOINT', Value: repository.repositoryNpmEndpoint },
+      ]),
+    }],
   });
   expect(app.synth().getStackByName(stack.stackName).template).toMatchSnapshot({
     Outputs: expect.anything(),
-    Parameters: expect.anything(),
     Resources: ignoreResources(stack, bucket, repository, monitoring, vpc),
   });
 });
