@@ -21,6 +21,24 @@ import { ReprocessAll } from './reprocess-all';
 
 const SUPPORTED_LANGUAGES = [DocumentationLanguage.PYTHON, DocumentationLanguage.TYPESCRIPT, DocumentationLanguage.JAVA];
 
+/**
+ * This retry policy is used for all items in the state machine and allows ample
+ * retry attempts in order to avoid having to implement a custom backpressure
+ * handling mehanism.
+ *
+ * This is meant as a stop-gap until we can implement a more resilient system,
+ * which likely will involve more SQS queues, but will probably need to be
+ * throughoutly vetted before it is rolled out everywhere.
+ *
+ * After 30 attempts, given the parameters, the last attempt will wait just
+ * under 16 minutes, which should be enough for currently running Lambda
+ * functions to complete (or time out after 15 minutes). The total time spent
+ * waiting between retries by this time is just over 3 hours. This is a lot of
+ * time, but in extreme burst situations (i.e: reprocessing everything), this
+ * is actually a good thing.
+ */
+const THROTTLE_RETRY_POLICY = { backoffRate: 1.1, interval: Duration.minutes(1), maxAttempts: 30 };
+
 export interface OrchestrationProps {
   /**
    * The bucket in which to source assemblies to transliterate.
@@ -159,7 +177,7 @@ export class Orchestration extends Construct {
       },
     })
       // This has a concurrency of 1, so we want to aggressively retry being throttled here.
-      .addRetry({ errors: ['Lambda.TooManyRequestsException'], interval: Duration.minutes(1), backoffRate: 1, maxAttempts: 60 })
+      .addRetry({ errors: ['Lambda.TooManyRequestsException'], ...THROTTLE_RETRY_POLICY })
       .addCatch(
         new Pass(this, '"Add to catalog.json" throttled', {
           parameters: { 'error.$': '$.Cause' },
@@ -228,7 +246,10 @@ export class Orchestration extends Construct {
                 resultSelector: { result: { 'language': language, 'success.$': '$' } },
                 vpcSubnets: props.vpcSubnets,
               })
-                .addRetry({ errors: ['ECS.AmazonECSException'], interval: Duration.minutes(1), backoffRate: 1, maxAttempts: 60 })
+                // Do not retry NoSpaceLeftOnDevice errors, these are typically not transient.
+                .addRetry({ errors: ['jsii-docgen.NoSpaceLeftOnDevice'], maxAttempts: 0 })
+                .addRetry({ errors: ['ECS.AmazonECSException'], ...THROTTLE_RETRY_POLICY })
+                .addRetry({ maxAttempts: 3 })
                 .addCatch(
                   new Pass(this, `"Generate ${language} docs" timed out`, { parameters: { error: 'Timed out!', language } }),
                   { errors: ['States.Timeout'] },
