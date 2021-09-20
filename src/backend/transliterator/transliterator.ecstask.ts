@@ -17,8 +17,9 @@ const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]
 
 /**
  * This function receives an S3 event, and for each record, proceeds to download
- * the `.jsii` assembly the event refers to, transliterates it to Python, then
- * uploads the resulting `.jsii.python` object to S3.
+ * the `.jsii` assembly the event refers to, transliterates it to the language,
+ * configured in `TARGET_LANGUAGE`, and uploads the resulting `.jsii.<lang>`
+ * object to S3.
  *
  * @param event   an S3 event payload
  * @param context a Lambda execution context

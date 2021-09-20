@@ -96,7 +96,7 @@ export class Ingestion extends Construct implements IGrantable {
         STATE_MACHINE_ARN: props.orchestration.stateMachine.stateMachineArn,
         PACKAGE_LINKS: JSON.stringify(props.packageLinks ?? []),
       },
-      logRetention: props.logRetention,
+      logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 10_240, // Currently the maximum possible setting
       timeout: Duration.minutes(15),
       tracing: Tracing.ACTIVE,

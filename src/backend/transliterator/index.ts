@@ -134,7 +134,7 @@ export class Transliterator extends Construct {
 
     repository?.grantReadFromRepository(this.taskDefinition.taskRole);
 
-    // The handler reads & writes to this bucket.
+    // The task handler reads & writes to this bucket.
     bucket.grantRead(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.ASSEMBLY_KEY_SUFFIX}`);
     for (const language of DocumentationLanguage.ALL) {
       bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}`);

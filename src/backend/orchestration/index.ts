@@ -210,7 +210,8 @@ export class Orchestration extends Construct {
       new Parallel(this, 'DocGen', { resultPath: `$.${docGenResultsKey}` })
         .branch(...SUPPORTED_LANGUAGES.map((language) => {
 
-          // We have to prepare the input to be a JSON string, within an array, because this is what the ECS task expects.
+          // We have to prepare the input to be a JSON string, within an array, because the ECS task integration expects
+          // an array of strings (the model if that of a CLI invocation).
           // Unfortunately, we have to split this in two Pass states, because I don't know how to make it work otherwise.
           return new Pass(this, `Prepare ${language}`, {
             parameters: { command: { 'bucket.$': '$.bucket', 'assembly.$': '$.assembly', '$TaskExecution.$': '$.$TaskExecution' } },
@@ -349,6 +350,9 @@ export class Orchestration extends Construct {
   public metricEcsCpuUtilization(opts?: MathExpressionOptions): MathExpression {
     return new MathExpression({
       ...opts,
+      // Calculates the % CPU utilization from the CPU units utilization &
+      // reservation. FILL is used to make a non-sparse time-series (the metrics
+      // are not emitted if no task runs)
       expression: '100 * FILL(mCpuUtilized, 0) / FILL(mCpuReserved, REPEAT)',
       usingMetrics: {
         mCpuReserved: this.metricEcsCpuReserved(),
@@ -380,6 +384,9 @@ export class Orchestration extends Construct {
   public metricEcsMemoryUtilization(opts?: MathExpressionOptions): MathExpression {
     return new MathExpression({
       ...opts,
+      // Calculates the % memory utilization from the RAM utilization &
+      // reservation. FILL is used to make a non-sparse time-series (the metrics
+      // are not emitted if no task runs)
       expression: '100 * FILL(mMemoryUtilized, 0) / FILL(mMemoryReserved, REPEAT)',
       usingMetrics: {
         mMemoryReserved: this.metricEcsMemoryReserved(),
