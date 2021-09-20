@@ -1,8 +1,6 @@
 import * as os from 'os';
 import * as path from 'path';
-// eslint-disable-next-line import/no-unresolved
-import type { Context } from 'aws-lambda';
-import { PromiseResult } from 'aws-sdk/lib/request';
+import type { PromiseResult } from 'aws-sdk/lib/request';
 import * as fs from 'fs-extra';
 import * as docgen from 'jsii-docgen';
 
@@ -19,15 +17,16 @@ const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]
 
 /**
  * This function receives an S3 event, and for each record, proceeds to download
- * the `.jsii` assembly the event refers to, transliterates it to Python, then
- * uploads the resulting `.jsii.python` object to S3.
+ * the `.jsii` assembly the event refers to, transliterates it to the language,
+ * configured in `TARGET_LANGUAGE`, and uploads the resulting `.jsii.<lang>`
+ * object to S3.
  *
  * @param event   an S3 event payload
  * @param context a Lambda execution context
  *
  * @returns nothing
  */
-export function handler(event: TransliteratorInput, context: Context): Promise<S3Object[]> {
+export function handler(event: TransliteratorInput): Promise<S3Object[]> {
   console.log(JSON.stringify(event, null, 2));
   // We'll need a writable $HOME directory, or this won't work well, because
   // npm will try to write stuff like the `.npmrc` or package caches in there
@@ -81,7 +80,7 @@ export function handler(event: TransliteratorInput, context: Context): Promise<S
       console.log(`Assembly targets: ${JSON.stringify(assembly.targets, null, 2)}`);
       for (const submodule of [undefined, ...submodules]) {
         const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(language), submodule)) + constants.NOT_SUPPORTED_SUFFIX;
-        const response = await uploadFile(context, event.bucket, key, event.assembly.versionId);
+        const response = await uploadFile(event.bucket, key, event.assembly.versionId);
         created.push({ bucket: event.bucket, key, versionId: response.VersionId });
       }
       return created;
@@ -97,7 +96,7 @@ export function handler(event: TransliteratorInput, context: Context): Promise<S
         const page = docs.render({ submodule, linkFormatter: linkFormatter(docs) }).render();
         const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(lang), submodule));
         console.log(`Uploading ${key}`);
-        const upload = uploadFile(context, event.bucket, key, event.assembly.versionId, page);
+        const upload = uploadFile(event.bucket, key, event.assembly.versionId, page);
         uploads.set(key, upload);
       }
 
@@ -134,7 +133,7 @@ async function ensureWritableHome<T>(cb: () => Promise<T>): Promise<T> {
   }
 }
 
-function uploadFile(context: Context, bucket: string, key: string, sourceVersionId?: string, body?: AWS.S3.Body) {
+function uploadFile(bucket: string, key: string, sourceVersionId?: string, body?: AWS.S3.Body) {
   return aws.s3().putObject({
     Bucket: bucket,
     Key: key,
@@ -143,9 +142,6 @@ function uploadFile(context: Context, bucket: string, key: string, sourceVersion
     ContentType: 'text/markdown; charset=UTF-8',
     Metadata: {
       'Origin-Version-Id': sourceVersionId ?? 'N/A',
-      'Lambda-Log-Group': context.logGroupName,
-      'Lambda-Log-Stream': context.logStreamName,
-      'Lambda-Run-Id': context.awsRequestId,
     },
   }).promise();
 }

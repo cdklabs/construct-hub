@@ -1,15 +1,21 @@
-import { ComparisonOperator, MathExpression } from '@aws-cdk/aws-cloudwatch';
+import { ComparisonOperator, MathExpression, MathExpressionOptions, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
+import { SubnetSelection, Vpc } from '@aws-cdk/aws-ec2';
+import { Cluster, ICluster } from '@aws-cdk/aws-ecs';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
+import { RetentionDays } from '@aws-cdk/aws-logs';
+import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Choice, Condition, IStateMachine, JsonPath, Parallel, Pass, StateMachine, StateMachineType, Succeed, TaskInput } from '@aws-cdk/aws-stepfunctions';
 import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
 import { Construct, Duration } from '@aws-cdk/core';
+import { Repository } from '../../codeartifact/repository';
 import { sqsQueueUrl, stateMachineUrl } from '../../deep-link';
+import { Monitoring } from '../../monitoring';
 import { RUNBOOK_URL } from '../../runbook-url';
 import { CatalogBuilder } from '../catalog-builder';
 import { DenyList } from '../deny-list';
 import { DocumentationLanguage } from '../shared/language';
-import { Transliterator, TransliteratorProps } from '../transliterator';
+import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
 import { RedriveStateMachine } from './redrive-state-machine';
 import { ReprocessAll } from './reprocess-all';
 
@@ -33,7 +39,44 @@ const SUPPORTED_LANGUAGES = [DocumentationLanguage.PYTHON, DocumentationLanguage
  */
 const THROTTLE_RETRY_POLICY = { backoffRate: 1.1, interval: Duration.minutes(1), maxAttempts: 30 };
 
-export interface OrchestrationProps extends Omit<TransliteratorProps, 'language'>{
+export interface OrchestrationProps {
+  /**
+   * The bucket in which to source assemblies to transliterate.
+   */
+  readonly bucket: IBucket;
+
+  /**
+   * The CodeArtifact registry to use for regular operations.
+   */
+  readonly codeArtifact?: Repository;
+
+  /**
+   * The monitoring handler to register alarms with.
+   */
+  readonly monitoring: Monitoring;
+
+  /**
+   * The VPC in which to place networked resources.
+   */
+  readonly vpc?: Vpc;
+
+  /**
+   * The VPC subnet selection to use.
+   */
+  readonly vpcSubnets?: SubnetSelection;
+
+  /**
+   * VPC endpoints to use for interacting with CodeArtifact and S3.
+   */
+  readonly vpcEndpoints?: TransliteratorVpcEndpoints;
+
+  /**
+   * How long should execution logs be retained?
+   *
+   * @default RetentionDays.TEN_YEARS
+   */
+  readonly logRetention?: RetentionDays;
+
   /**
    * The deny list.
    */
@@ -72,6 +115,16 @@ export class Orchestration extends Construct {
    * The function that builds the catalog.
    */
   public readonly catalogBuilder: IFunction;
+
+  /**
+   * The ECS cluster used to run tasks.
+   */
+  public readonly ecsCluster: ICluster;
+
+  /**
+   * The transliterator used by this orchestration workflow.
+   */
+  public readonly transliterator: Transliterator;
 
   public constructor(scope: Construct, id: string, props: OrchestrationProps) {
     super(scope, id);
@@ -154,6 +207,14 @@ export class Orchestration extends Construct {
       )
       .otherwise(new Succeed(this, 'Success'));
 
+    this.ecsCluster = new Cluster(this, 'Cluster', {
+      containerInsights: true,
+      enableFargateCapacityProviders: true,
+      vpc: props.vpc,
+    });
+
+    this.transliterator = new Transliterator(this, 'Transliterator', props);
+
     const definition = new Pass(this, 'Track Execution Infos', {
       inputPath: '$$.Execution',
       parameters: {
@@ -165,36 +226,47 @@ export class Orchestration extends Construct {
       resultPath: '$.$TaskExecution',
     }).next(
       new Parallel(this, 'DocGen', { resultPath: `$.${docGenResultsKey}` })
-        .branch(...SUPPORTED_LANGUAGES.map((language) =>
-          new tasks.LambdaInvoke(this, `Generate ${language} docs`, {
-            lambdaFunction: new Transliterator(this, `DocGen-${language}`, { ...props, language }).function,
-            outputPath: '$.result',
-            resultSelector: {
-              result: {
-                'language': language,
-                'success.$': '$.Payload',
-              },
-            },
+        .branch(...SUPPORTED_LANGUAGES.map((language) => {
+
+          // We have to prepare the input to be a JSON string, within an array, because the ECS task integration expects
+          // an array of strings (the model if that of a CLI invocation).
+          // Unfortunately, we have to split this in two Pass states, because I don't know how to make it work otherwise.
+          return new Pass(this, `Prepare ${language}`, {
+            parameters: { command: { 'bucket.$': '$.bucket', 'assembly.$': '$.assembly', '$TaskExecution.$': '$.$TaskExecution' } },
+            resultPath: '$',
           })
-            // Do not retry NoSpaceLeftOnDevice errors, these are typically not transient.
-            .addRetry({ errors: ['jsii-docgen.NoSpaceLeftOnDevice'], maxAttempts: 0 })
-            // Aggressively retry throttle errors using the canned policy
-            .addRetry({ errors: ['Lambda.TooManyRequestsException'], ...THROTTLE_RETRY_POLICY })
-            // Retry other errors with less enthusiasm (may or may not be transient)
-            .addRetry({ interval: Duration.seconds(30) })
-            .addCatch(
-              new Pass(this, `"Generate ${language} docs" throttled`, { parameters: { 'error.$': '$.Cause', language } }),
-              { errors: ['Lambda.TooManyRequestsException'] },
-            )
-            .addCatch(
-              new Pass(this, `"Generate ${language} docs" failure`, { parameters: { 'error.$': 'States.StringToJson($.Cause)', language } }),
-              { errors: ['States.TaskFailed'] },
-            )
-            .addCatch(
-              new Pass(this, `"Generate ${language} docs" fault`, { parameters: { 'error.$': '$.Cause', language } }),
-              { errors: ['States.ALL'] },
-            ),
-        ))
+            .next(new Pass(this, `Stringify ${language} input`, {
+              parameters: { 'commands.$': 'States.Array(States.JsonToString($.command))' },
+              resultPath: '$',
+            })
+              .next(this.transliterator.createEcsRunTask(this, `Generate ${language} docs`, {
+                cluster: this.ecsCluster,
+                inputPath: '$.commands',
+                language,
+                resultSelector: { result: { 'language': language, 'success.$': '$' } },
+                vpcSubnets: props.vpcSubnets,
+              })
+                // Do not retry NoSpaceLeftOnDevice errors, these are typically not transient.
+                .addRetry({ errors: ['jsii-docgen.NoSpaceLeftOnDevice'], maxAttempts: 0 })
+                .addRetry({ errors: ['ECS.AmazonECSException'], ...THROTTLE_RETRY_POLICY })
+                .addRetry({ maxAttempts: 3 })
+                .addCatch(
+                  new Pass(this, `"Generate ${language} docs" timed out`, { parameters: { error: 'Timed out!', language } }),
+                  { errors: ['States.Timeout'] },
+                )
+                .addCatch(
+                  new Pass(this, `"Generate ${language} docs" service error`, { parameters: { 'error.$': '$.Cause', language } }),
+                  { errors: ['ECS.AmazonECSException'] },
+                )
+                .addCatch(
+                  new Pass(this, `"Generate ${language} docs" failure`, { parameters: { 'error.$': 'States.StringToJson($.Cause)', language } }),
+                  { errors: ['States.TaskFailed'] },
+                )
+                .addCatch(
+                  new Pass(this, `"Generate ${language} docs" fault`, { parameters: { 'error.$': '$.Cause', language } }),
+                  { errors: ['States.ALL'] },
+                )));
+        }))
         .next(new Choice(this, 'Any Success?')
           .when(
             Condition.or(
@@ -264,5 +336,103 @@ export class Orchestration extends Construct {
     });
     props.bucket.grantRead(this.reprocessAllFunction);
     this.stateMachine.grantStartExecution(this.reprocessAllFunction);
+  }
+
+  public metricEcsTaskCount(opts: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.SUM,
+      ...opts,
+      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'TaskCount',
+      namespace: 'ECS/ContainerInsights',
+    });
+  }
+
+  public metricEcsCpuReserved(opts?: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'CpuReserved',
+      namespace: 'ECS/ContainerInsights',
+    });
+  }
+
+  public metricEcsCpuUtilized(opts?: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'CpuUtilized',
+      namespace: 'ECS/ContainerInsights',
+    });
+  }
+
+  public metricEcsCpuUtilization(opts?: MathExpressionOptions): MathExpression {
+    return new MathExpression({
+      ...opts,
+      // Calculates the % CPU utilization from the CPU units utilization &
+      // reservation. FILL is used to make a non-sparse time-series (the metrics
+      // are not emitted if no task runs)
+      expression: '100 * FILL(mCpuUtilized, 0) / FILL(mCpuReserved, REPEAT)',
+      usingMetrics: {
+        mCpuReserved: this.metricEcsCpuReserved(),
+        mCpuUtilized: this.metricEcsCpuUtilized(),
+      },
+    });
+  }
+
+  public metricEcsMemoryReserved(opts?: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'MemoryReserved',
+      namespace: 'ECS/ContainerInsights',
+    });
+  }
+
+  public metricEcsMemoryUtilized(opts?: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'MemoryUtilized',
+      namespace: 'ECS/ContainerInsights',
+    });
+  }
+
+  public metricEcsMemoryUtilization(opts?: MathExpressionOptions): MathExpression {
+    return new MathExpression({
+      ...opts,
+      // Calculates the % memory utilization from the RAM utilization &
+      // reservation. FILL is used to make a non-sparse time-series (the metrics
+      // are not emitted if no task runs)
+      expression: '100 * FILL(mMemoryUtilized, 0) / FILL(mMemoryReserved, REPEAT)',
+      usingMetrics: {
+        mMemoryReserved: this.metricEcsMemoryReserved(),
+        mMemoryUtilized: this.metricEcsMemoryUtilized(),
+      },
+    });
+  }
+
+  public metricEcsNetworkRxBytes(opts?: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'NetworkRxBytes',
+      namespace: 'ECS/ContainerInsights',
+    });
+  }
+
+  public metricEcsNetworkTxBytes(opts?: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'NetworkTxBytes',
+      namespace: 'ECS/ContainerInsights',
+    });
   }
 }
