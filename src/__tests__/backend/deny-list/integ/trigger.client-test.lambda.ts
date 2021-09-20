@@ -1,13 +1,14 @@
 import * as assert from 'assert';
+import { DenyListRule } from '../../../..';
 import { DenyListClient } from '../../../../backend/deny-list/client.lambda-shared';
 
-const RULE1 = {
-  package: 'mypackage',
+const RULE1: DenyListRule = {
+  packageName: 'mypackage',
   reason: '"mypackage" is deprecated',
 };
 
-const RULE2 = {
-  package: 'your',
+const RULE2: DenyListRule = {
+  packageName: 'your',
   version: '1.2.3',
   reason: 'v1.2.3 of "your" has a security issue',
 };
