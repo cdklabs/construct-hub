@@ -441,14 +441,21 @@ function newEcsTask(entrypoint) {
 
   const df = new SourceCode(project, dockerfile);
   df.line(`# ${FileBase.PROJEN_MARKER}`);
-  df.line('FROM node:14-slim'); // Minimum possible footprint to run node stuff...
+  // Based off amazonlinux:2 for... reasons. (Do not change!)
+  df.line('FROM public.ecr.aws/amazonlinux/amazonlinux:2');
+  df.line();
+  // Install node 14+ the regular way...
+  df.line('RUN curl -sL https://rpm.nodesource.com/setup_14.x | sudo bash - \\');
+  df.line(' && yum install -y nodejs \\');
+  // The entry point requires aws-sdk to be available, so we install it locally.
+  df.line(' && npm install --no-save aws-sdk@^2.957.0 \\');
+  // Clean up the yum cache in the interest of image size
+  df.line(' && yum clean all \\');
+  df.line(' && rm -rf /var/cache/yum');
   df.line();
   df.line('COPY ./entrypoint.sh /bundle/entrypoint.sh');
   df.line('COPY ./index.js      /bundle/index.js');
   df.line('COPY ./Dockerfile    /bundle/Dockerfile');
-  df.line();
-  // The entry point requires aws-sdk to be available, so we install it locally.
-  df.line('RUN npm install --no-save aws-sdk@^2.957.0');
   df.line();
   df.line('ENTRYPOINT ["/bin/bash", "/bundle/entrypoint.sh"]');
 
