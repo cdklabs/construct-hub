@@ -10,6 +10,7 @@ import { MetricName } from '../../../backend/ingestion/constants';
 import { reset } from '../../../backend/shared/aws.lambda-shared';
 import * as constants from '../../../backend/shared/constants';
 import type { requireEnv } from '../../../backend/shared/env.lambda-shared';
+import { TagCondition } from '../../../package-tag';
 
 jest.mock('zlib');
 jest.mock('aws-embedded-metrics');
@@ -43,6 +44,7 @@ test('basic happy case', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockPackageLinks = '[]';
+  const mockPackageTags = '[]';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -55,6 +57,9 @@ test('basic happy case', async () => {
     }
     if (name === 'PACKAGE_LINKS') {
       return mockPackageLinks;
+    }
+    if (name === 'PACKAGE_TAGS') {
+      return mockPackageTags;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -119,7 +124,7 @@ test('basic happy case', async () => {
           break;
         case metadataKey:
           expect(req.ContentType).toBe('application/json');
-          expect(Buffer.from(req.Body!)).toEqual(Buffer.from(JSON.stringify({ date: time, packageLinks: {} })));
+          expect(Buffer.from(req.Body!)).toEqual(Buffer.from(JSON.stringify({ date: time, packageLinks: {}, packageTags: [] })));
           mockMetadataCreated = true;
           break;
         case packageKey:
@@ -181,6 +186,7 @@ test('basic happy case with license file', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockPackageLinks = '[]';
+  const mockPackageTags = '[]';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -193,6 +199,9 @@ test('basic happy case with license file', async () => {
     }
     if (name === 'PACKAGE_LINKS') {
       return mockPackageLinks;
+    }
+    if (name === 'PACKAGE_TAGS') {
+      return mockPackageTags;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -259,7 +268,13 @@ test('basic happy case with license file', async () => {
           break;
         case metadataKey:
           expect(req.ContentType).toBe('application/json');
-          expect(Buffer.from(req.Body!)).toEqual(Buffer.from(JSON.stringify({ date: time, licenseText: fakeLicense, packageLinks: {} })));
+          expect(Buffer.from(req.Body!))
+            .toEqual(Buffer.from(JSON.stringify({
+              date: time,
+              licenseText: fakeLicense,
+              packageLinks: {},
+              packageTags: [],
+            })));
           mockMetadataCreated = true;
           break;
         case packageKey:
@@ -323,6 +338,7 @@ test('basic happy case with license file', async () => {
 test('basic happy case with custom package links', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
+  const mockPackageTags = '[]';
   const mockPackageLinks = JSON.stringify([{
     linkLabel: 'PackageLink',
     configKey: 'PackageLinkKey',
@@ -347,6 +363,9 @@ test('basic happy case with custom package links', async () => {
     }
     if (name === 'PACKAGE_LINKS') {
       return mockPackageLinks;
+    }
+    if (name === 'PACKAGE_TAGS') {
+      return mockPackageTags;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -431,6 +450,192 @@ test('basic happy case with custom package links', async () => {
               PackageLinkDomainKey: packageLinkValue,
             // no bad domain key since validation fails
             },
+            packageTags: [],
+          })));
+          mockMetadataCreated = true;
+          break;
+        case packageKey:
+          expect(req.ContentType).toBe('application/octet-stream');
+          expect(req.Body).toEqual(fakeTarGz);
+          mockTarballCreated = true;
+          break;
+        default:
+          fail(`Unexpected key: "${req.Key}"`);
+      }
+    } catch (e) {
+      return cb(e);
+    }
+    return cb(null, { VersionId: `${req.Key}-NewVersion` });
+  });
+
+  const executionArn = 'Fake-Execution-Arn';
+  AWSMock.mock('StepFunctions', 'startExecution', (req: AWS.StepFunctions.StartExecutionInput, cb: Response<AWS.StepFunctions.StartExecutionOutput>) => {
+    try {
+      expect(req.stateMachineArn).toBe(mockStateMachineArn);
+      expect(JSON.parse(req.input!)).toEqual({
+        bucket: mockBucketName,
+        assembly: { key: assemblyKey, versionId: `${assemblyKey}-NewVersion` },
+        metadata: { key: metadataKey, versionId: `${metadataKey}-NewVersion` },
+        package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+      });
+    } catch (e) {
+      return cb(e);
+    }
+    return cb(null, { executionArn, startDate: new Date() });
+  });
+
+  const event: SQSEvent = {
+    Records: [{
+      attributes: {} as any,
+      awsRegion: 'test-bermuda-1',
+      body: JSON.stringify({ tarballUri, integrity, time }),
+      eventSource: 'sqs',
+      eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
+      md5OfBody: 'Fake-MD5-Of-Body',
+      messageAttributes: {},
+      messageId: 'Fake-Message-ID',
+      receiptHandle: 'Fake-Receipt-Handke',
+    }],
+  };
+
+  // We require the handler here so that any mocks to metricScope are set up
+  // prior to the handler being created.
+  //
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  await expect(require('../../../backend/ingestion/ingestion.lambda').handler(event, context))
+    .resolves.toEqual([executionArn]);
+
+  expect(mockPutMetric).toHaveBeenCalledWith(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 0, 'Count');
+  expect(mockPutMetric).toHaveBeenCalledWith(MetricName.FOUND_LICENSE_FILE, 0, 'Count');
+});
+
+test('basic happy case with custom tags', async () => {
+  const packageName = '@package-scope/package-name';
+  const mockBucketName = 'fake-bucket';
+  const mockStateMachineArn = 'fake-state-machine-arn';
+  const mockPackageLinks = '[]';
+
+  // Some true and false tags to assert against in output
+  const mockTrueCondition = TagCondition.eqls(['name'], packageName);
+  const mockFalseCondition = TagCondition.eqls(['name'], 'BadPackageName');
+
+  //
+  const trueTags = {
+    basic: mockTrueCondition,
+    or: TagCondition.or(mockTrueCondition, mockFalseCondition),
+    and: TagCondition.and(mockTrueCondition, mockTrueCondition),
+    not: TagCondition.not(mockFalseCondition),
+  };
+
+  const falseTags = {
+    basic: mockFalseCondition,
+    or: TagCondition.or(mockFalseCondition, mockFalseCondition),
+    and: TagCondition.and(mockTrueCondition, mockFalseCondition),
+    not: TagCondition.not(mockTrueCondition),
+  };
+
+  // Useful for later since we need this ordered array to assert against
+  const trueEntries = Object.entries(trueTags);
+  const tagMaker = (prefix: string, tags: [string, TagCondition][]) =>
+    tags
+      .map(
+        ([key, cond]: [string, TagCondition]) => ({
+          condition: cond.bind(),
+          label: `${prefix}_${key}`,
+        }),
+      );
+
+  const mockPackageTags = JSON.stringify([
+    ...tagMaker('true', trueEntries),
+    ...tagMaker('false', Object.entries(falseTags)),
+  ]);
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
+  mockRequireEnv.mockImplementation((name) => {
+    if (name === 'BUCKET_NAME') {
+      return mockBucketName;
+    }
+    if (name === 'STATE_MACHINE_ARN') {
+      return mockStateMachineArn;
+    }
+    if (name === 'PACKAGE_LINKS') {
+      return mockPackageLinks;
+    }
+    if (name === 'PACKAGE_TAGS') {
+      return mockPackageTags;
+    }
+    throw new Error(`Bad environment variable: "${name}"`);
+  });
+
+  const stagingBucket = 'staging-bucket';
+  const stagingKey = 'staging-key';
+  const stagingVersion = 'staging-version-id';
+  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
+  const fakeTar = Buffer.from('fake-tarball-content');
+  const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
+  const time = '2021-07-12T15:18:00.000000+02:00';
+  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
+  const packageVersion = '1.2.3-pre.4';
+  const packageLicense = 'Apache-2.0';
+  const fakeDotJsii = JSON.stringify(fakeAssembly(packageName, packageVersion, packageLicense));
+
+  const context: Context = {
+    awsRequestId: 'Fake-Request-ID',
+    logGroupName: 'Fake-Log-Group',
+    logStreamName: 'Fake-Log-Stream',
+  } as any;
+
+  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+    try {
+      expect(req.Bucket).toBe(stagingBucket);
+      expect(req.Key).toBe(stagingKey);
+      expect(req.VersionId).toBe(stagingVersion);
+    } catch (e) {
+      return cb(e);
+    }
+    return cb(null, { Body: fakeTarGz });
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<typeof createGunzip>;
+  mockCreateGunzip.mockImplementation(() => new FakeGunzip(fakeTarGz, fakeTar) as any);
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockExtract = require('tar-stream').extract as jest.MockedFunction<typeof extract>;
+  mockExtract.mockImplementation(() => new FakeExtract(fakeTar, {
+    'package/.jsii': fakeDotJsii,
+    'package/index.js': '// Ignore me!',
+    'package/package.json': JSON.stringify({
+      name: packageName,
+      version: packageVersion,
+      license: packageLicense,
+    }),
+  }) as any);
+
+  let mockTarballCreated = false;
+  let mockMetadataCreated = false;
+  const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(packageName, packageVersion);
+  AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
+    try {
+      expect(req.Bucket).toBe(mockBucketName);
+      expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+      expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
+      expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+      switch (req.Key) {
+        case assemblyKey:
+          expect(req.ContentType).toBe('application/json');
+          expect(req.Body).toEqual(Buffer.from(fakeDotJsii));
+          // Must be created strictly after the tarball and metadata files have been uploaded.
+          expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+          break;
+        case metadataKey:
+          expect(req.ContentType).toBe('application/json');
+          expect(Buffer.from(req.Body!)).toEqual(Buffer.from(JSON.stringify({
+            date: time,
+            packageLinks: {},
+            // only includes true tags
+            packageTags: trueEntries.map(([name]) => ({ label: `true_${name}` })),
           })));
           mockMetadataCreated = true;
           break;
@@ -493,6 +698,7 @@ test('mismatched package name', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockPackageLinks = '[]';
+  const mockPackageTags = '[]';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -505,6 +711,9 @@ test('mismatched package name', async () => {
     }
     if (name === 'PACKAGE_LINKS') {
       return mockPackageLinks;
+    }
+    if (name === 'PACKAGE_TAGS') {
+      return mockPackageTags;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -581,6 +790,7 @@ test('mismatched package version', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockPackageLinks = '[]';
+  const mockPackageTags = '[]';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -593,6 +803,9 @@ test('mismatched package version', async () => {
     }
     if (name === 'PACKAGE_LINKS') {
       return mockPackageLinks;
+    }
+    if (name === 'PACKAGE_TAGS') {
+      return mockPackageTags;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -669,6 +882,7 @@ test('mismatched package license', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockPackageLinks = '[]';
+  const mockPackageTags = '[]';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -681,6 +895,9 @@ test('mismatched package license', async () => {
     }
     if (name === 'PACKAGE_LINKS') {
       return mockPackageLinks;
+    }
+    if (name === 'PACKAGE_TAGS') {
+      return mockPackageTags;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -757,6 +974,7 @@ test('missing .jsii file', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockPackageLinks = '[]';
+  const mockPackageTags = '[]';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -769,6 +987,9 @@ test('missing .jsii file', async () => {
     }
     if (name === 'PACKAGE_LINKS') {
       return mockPackageLinks;
+    }
+    if (name === 'PACKAGE_TAGS') {
+      return mockPackageTags;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -841,6 +1062,7 @@ test('missing package.json file', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
   const mockPackageLinks = '[]';
+  const mockPackageTags = '[]';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -853,6 +1075,9 @@ test('missing package.json file', async () => {
     }
     if (name === 'PACKAGE_LINKS') {
       return mockPackageLinks;
+    }
+    if (name === 'PACKAGE_TAGS') {
+      return mockPackageTags;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
