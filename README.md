@@ -175,7 +175,7 @@ new ConstructHub(this, "ConstructHub", {
   packageTags: [{
     label: 'Official',
     color: '#00FF00',
-    condition: TagCondition.eqls(['name'], 'construct-hub'),
+    condition: TagCondition.fieldEq(['name'], 'construct-hub'),
   }]
 });
 ```
@@ -190,8 +190,8 @@ new ConstructHub(this, "ConstructHub", {
     label: 'Official',
     color: '#00FF00',
     condition: TagCondition.or(
-      TagCondition.eqls(['name'], 'construct-hub'),
-      TagCondition.eqls(['name'], 'construct-hub-webapp'),
+      TagCondition.fieldEq(['name'], 'construct-hub'),
+      TagCondition.fieldEq(['name'], 'construct-hub-webapp'),
     ),
   }]
 });
@@ -199,13 +199,13 @@ new ConstructHub(this, "ConstructHub", {
 // or more succintly if you have a long list
 condition: TagCondition.or(
   ...['construct-hub', 'construct-hub-webapp', '...',]
-    .map(name => TagCondition.eqls(['name'], name))
+    .map(name => TagCondition.fieldEq(['name'], name))
 ),
 ```
 
 You can assert against any value within package json including nested ones.
 ```ts
-TagCondition.eqls(['constructHub', 'nested', 'key'], 'value');
+TagCondition.fieldEq(['constructHub', 'nested', 'key'], 'value');
 
 // checks
 packageJson?.constructHub?.nested?.key === value;
