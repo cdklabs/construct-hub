@@ -1,8 +1,4 @@
-/**
- * Configuration for applying custom tags to relevant packages. Custom tags are
- * displayed on the package details page, and can be used for searching.
- */
-export interface PackageTagConfig {
+interface PackageTagBase {
   /**
    * The label for the tag being applied
    */
@@ -12,7 +8,13 @@ export interface PackageTagConfig {
    * The hex value string for the color of the tag when displayed
    */
   readonly color?: string;
+}
 
+/**
+ * Configuration for applying custom tags to relevant packages. Custom tags are
+ * displayed on the package details page, and can be used for searching.
+ */
+export interface PackageTagConfig extends PackageTagBase {
   /**
    * The description of the logic that dictates whether the
    * package has the tag applied.
@@ -34,9 +36,7 @@ export interface TagConditionConfig {
  * Serialized tag declaration to be passed to lambdas via environment
  * variables.
  */
-export interface PackageTag {
-  readonly label: string;
-  readonly color?: string;
+export interface PackageTag extends PackageTagBase{
   readonly condition: TagConditionConfig;
 }
 

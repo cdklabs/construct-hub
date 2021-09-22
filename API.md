@@ -743,6 +743,8 @@ public readonly label: string;
 
 - *Type:* `string`
 
+The label for the tag being applied.
+
 ---
 
 ##### `color`<sup>Optional</sup> <a name="construct-hub.PackageTag.property.color"></a>
@@ -752,6 +754,8 @@ public readonly color: string;
 ```
 
 - *Type:* `string`
+
+The hex value string for the color of the tag when displayed.
 
 ---
 
