@@ -23,11 +23,11 @@ export interface PackageTagConfig {
 /**
  * Serialized config for a tag condition
  */
-export interface ConditionConfig {
+export interface TagConditionConfig {
   readonly type: TagConditionLogicType | TagConditionPredicateType;
   readonly key?: string[];
   readonly value?: string;
-  readonly children?: ConditionConfig[];
+  readonly children?: TagConditionConfig[];
 }
 
 /**
@@ -37,32 +37,47 @@ export interface ConditionConfig {
 export interface PackageTag {
   readonly label: string;
   readonly color?: string;
-  readonly condition: ConditionConfig;
+  readonly condition: TagConditionConfig;
 }
 
 /**
  * Condition for applying a custom tag to a package.
  */
 export abstract class TagCondition {
+  /**
+   * Create an && condition which applies only when all condition arguments are
+   * true.
+   */
   static and(...conds: TagCondition[]): TagCondition {
     return new TagConditionLogic(TagConditionLogicType.AND, conds);
   }
 
+  /**
+   * Create an || condition which applies if any of the condition arguments are
+   * true.
+   */
   static or(...conds: TagCondition[]): TagCondition {
     return new TagConditionLogic(TagConditionLogicType.OR, conds);
   }
 
+  /**
+   * Create a ! condition which applies if the condition argument is false
+   */
   static not(...conds: TagCondition[]): TagCondition {
     return new TagConditionLogic(TagConditionLogicType.NOT, conds);
   }
 
-  static eqls(key: string[], value: any): TagCondition {
+  /**
+   * Create a === condition which applies if the specified field within the
+   * package's package.json is equal to the passed value. Nested fields can
+   * accessed by passing multiple keys. `['key1', 'key2']` will access
+   * `packageJson?.field1?.field2`.
+   */
+  static fieldEq(key: string[], value: any): TagCondition {
     return new TagConditionPredicate(TagConditionPredicateType.EQUALS, key, value);
   }
 
-  public abstract readonly type: TagConditionLogicType | TagConditionPredicateType;
-
-  public abstract bind(): ConditionConfig;
+  public abstract bind(): TagConditionConfig;
 }
 
 /**
@@ -83,7 +98,7 @@ class TagConditionLogic extends TagCondition {
     super();
   }
 
-  public bind(): ConditionConfig {
+  public bind(): TagConditionConfig {
     return {
       type: this.type,
       children: this.children.map(cond => cond.bind()),
@@ -108,7 +123,7 @@ class TagConditionPredicate extends TagCondition {
     super();
   }
 
-  public bind(): ConditionConfig {
+  public bind(): TagConditionConfig {
     return {
       type: this.type,
       key: this.key,

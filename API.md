@@ -177,58 +177,6 @@ Any upstream repositories in this CodeArtifact domain that should be configured 
 
 ---
 
-### ConditionConfig <a name="construct-hub.ConditionConfig"></a>
-
-Serialized config for a tag condition.
-
-#### Initializer <a name="[object Object].Initializer"></a>
-
-```typescript
-import { ConditionConfig } from 'construct-hub'
-
-const conditionConfig: ConditionConfig = { ... }
-```
-
-##### `type`<sup>Required</sup> <a name="construct-hub.ConditionConfig.property.type"></a>
-
-```typescript
-public readonly type: TagConditionLogicType | TagConditionPredicateType;
-```
-
-- *Type:* [`construct-hub.TagConditionLogicType`](#construct-hub.TagConditionLogicType) | [`construct-hub.TagConditionPredicateType`](#construct-hub.TagConditionPredicateType)
-
----
-
-##### `children`<sup>Optional</sup> <a name="construct-hub.ConditionConfig.property.children"></a>
-
-```typescript
-public readonly children: ConditionConfig[];
-```
-
-- *Type:* [`construct-hub.ConditionConfig`](#construct-hub.ConditionConfig)[]
-
----
-
-##### `key`<sup>Optional</sup> <a name="construct-hub.ConditionConfig.property.key"></a>
-
-```typescript
-public readonly key: string[];
-```
-
-- *Type:* `string`[]
-
----
-
-##### `value`<sup>Optional</sup> <a name="construct-hub.ConditionConfig.property.value"></a>
-
-```typescript
-public readonly value: string;
-```
-
-- *Type:* `string`
-
----
-
 ### ConstructHubProps <a name="construct-hub.ConstructHubProps"></a>
 
 Props for `ConstructHub`.
@@ -780,10 +728,10 @@ const packageTag: PackageTag = { ... }
 ##### `condition`<sup>Required</sup> <a name="construct-hub.PackageTag.property.condition"></a>
 
 ```typescript
-public readonly condition: ConditionConfig;
+public readonly condition: TagConditionConfig;
 ```
 
-- *Type:* [`construct-hub.ConditionConfig`](#construct-hub.ConditionConfig)
+- *Type:* [`construct-hub.TagConditionConfig`](#construct-hub.TagConditionConfig)
 
 ---
 
@@ -855,6 +803,58 @@ public readonly color: string;
 - *Type:* `string`
 
 The hex value string for the color of the tag when displayed.
+
+---
+
+### TagConditionConfig <a name="construct-hub.TagConditionConfig"></a>
+
+Serialized config for a tag condition.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { TagConditionConfig } from 'construct-hub'
+
+const tagConditionConfig: TagConditionConfig = { ... }
+```
+
+##### `type`<sup>Required</sup> <a name="construct-hub.TagConditionConfig.property.type"></a>
+
+```typescript
+public readonly type: TagConditionLogicType | TagConditionPredicateType;
+```
+
+- *Type:* [`construct-hub.TagConditionLogicType`](#construct-hub.TagConditionLogicType) | [`construct-hub.TagConditionPredicateType`](#construct-hub.TagConditionPredicateType)
+
+---
+
+##### `children`<sup>Optional</sup> <a name="construct-hub.TagConditionConfig.property.children"></a>
+
+```typescript
+public readonly children: TagConditionConfig[];
+```
+
+- *Type:* [`construct-hub.TagConditionConfig`](#construct-hub.TagConditionConfig)[]
+
+---
+
+##### `key`<sup>Optional</sup> <a name="construct-hub.TagConditionConfig.property.key"></a>
+
+```typescript
+public readonly key: string[];
+```
+
+- *Type:* `string`[]
+
+---
+
+##### `value`<sup>Optional</sup> <a name="construct-hub.TagConditionConfig.property.value"></a>
+
+```typescript
+public readonly value: string;
+```
+
+- *Type:* `string`
 
 ---
 
@@ -5449,12 +5449,12 @@ TagCondition.and(conds: TagCondition)
 
 ---
 
-##### `eqls` <a name="construct-hub.TagCondition.eqls"></a>
+##### `fieldEq` <a name="construct-hub.TagCondition.fieldEq"></a>
 
 ```typescript
 import { TagCondition } from 'construct-hub'
 
-TagCondition.eqls(key: string[], value: any)
+TagCondition.fieldEq(key: string[], value: any)
 ```
 
 ###### `key`<sup>Required</sup> <a name="construct-hub.TagCondition.parameter.key"></a>
@@ -5497,17 +5497,6 @@ TagCondition.or(conds: TagCondition)
 
 ---
 
-#### Properties <a name="Properties"></a>
-
-##### `type`<sup>Required</sup> <a name="construct-hub.TagCondition.property.type"></a>
-
-```typescript
-public readonly type: TagConditionLogicType | TagConditionPredicateType;
-```
-
-- *Type:* [`construct-hub.TagConditionLogicType`](#construct-hub.TagConditionLogicType) | [`construct-hub.TagConditionPredicateType`](#construct-hub.TagConditionPredicateType)
-
----
 
 
 ## Protocols <a name="Protocols"></a>

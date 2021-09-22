@@ -516,10 +516,11 @@ test('basic happy case with custom tags', async () => {
   const mockPackageLinks = '[]';
 
   // Some true and false tags to assert against in output
-  const mockTrueCondition = TagCondition.eqls(['name'], packageName);
-  const mockFalseCondition = TagCondition.eqls(['name'], 'BadPackageName');
+  const mockTrueCondition = TagCondition.fieldEq(['name'], packageName);
+  const mockFalseCondition = TagCondition.fieldEq(['name'], 'BadPackageName');
 
-  //
+  // Combinations of conditions that resolve to true, tags should be included
+  // in output with label `true_${key}`.
   const trueTags = {
     basic: mockTrueCondition,
     or: TagCondition.or(mockTrueCondition, mockFalseCondition),
@@ -527,6 +528,8 @@ test('basic happy case with custom tags', async () => {
     not: TagCondition.not(mockFalseCondition),
   };
 
+  // Combinations of conditions that resolve to false, tags should not be
+  // included in output.
   const falseTags = {
     basic: mockFalseCondition,
     or: TagCondition.or(mockFalseCondition, mockFalseCondition),
