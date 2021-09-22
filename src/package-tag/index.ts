@@ -92,8 +92,8 @@ export enum TagConditionLogicType {
 class TagConditionLogic extends TagCondition {
   public readonly isLogic = true;
   public constructor(
-    public readonly type: TagConditionLogicType,
-    public readonly children: TagCondition[],
+    private readonly type: TagConditionLogicType,
+    private readonly children: TagCondition[],
   ) {
     super();
   }

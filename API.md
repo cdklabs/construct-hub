@@ -5495,6 +5495,8 @@ TagCondition.or(conds: TagCondition)
 
 ### TagConditionField <a name="construct-hub.TagConditionField"></a>
 
+Target a field to use in logic to dictate whether a tag is relevant.
+
 #### Initializers <a name="construct-hub.TagConditionField.Initializer"></a>
 
 ```typescript
