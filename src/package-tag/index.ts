@@ -68,13 +68,13 @@ export abstract class TagCondition {
   }
 
   /**
-   * Create a === condition which applies if the specified field within the
-   * package's package.json is equal to the passed value. Nested fields can
-   * accessed by passing multiple keys. `['key1', 'key2']` will access
+   * Target a field within the `package.json` to assert against. Nested fields
+   * can be accessed by passing multiple keys.
+   * `TagCondition.field('key1', 'key2')` will access
    * `packageJson?.field1?.field2`.
    */
-  static fieldEq(key: string[], value: any): TagCondition {
-    return new TagConditionPredicate(TagConditionPredicateType.EQUALS, key, value);
+  static field(...keys: string[]): TagConditionField {
+    return new TagConditionField(keys);
   }
 
   public abstract bind(): TagConditionConfig;
@@ -116,9 +116,9 @@ export enum TagConditionPredicateType {
 class TagConditionPredicate extends TagCondition {
   public readonly isPredicate = true;
   public constructor(
-    public readonly type: TagConditionPredicateType,
-    public readonly key: string[],
-    public readonly value: string,
+    private readonly type: TagConditionPredicateType,
+    private readonly key: string[],
+    private readonly value: string,
   ) {
     super();
   }
@@ -129,5 +129,24 @@ class TagConditionPredicate extends TagCondition {
       key: this.key,
       value: this.value,
     };
+  }
+}
+
+/**
+ * Target a field to use in logic to dictate whether a tag is relevant.
+ */
+export class TagConditionField {
+  public constructor(private readonly field: string[]) {}
+
+  /**
+   * Create a === condition which applies if the specified field within the
+   * package's package.json is equal to the passed value.
+   */
+  public eq(value: any): TagCondition {
+    return new TagConditionPredicate(
+      TagConditionPredicateType.EQUALS,
+      this.field,
+      value,
+    );
   }
 }

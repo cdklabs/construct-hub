@@ -5449,23 +5449,17 @@ TagCondition.and(conds: TagCondition)
 
 ---
 
-##### `fieldEq` <a name="construct-hub.TagCondition.fieldEq"></a>
+##### `field` <a name="construct-hub.TagCondition.field"></a>
 
 ```typescript
 import { TagCondition } from 'construct-hub'
 
-TagCondition.fieldEq(key: string[], value: any)
+TagCondition.field(keys: string)
 ```
 
-###### `key`<sup>Required</sup> <a name="construct-hub.TagCondition.parameter.key"></a>
+###### `keys`<sup>Required</sup> <a name="construct-hub.TagCondition.parameter.keys"></a>
 
-- *Type:* `string`[]
-
----
-
-###### `value`<sup>Required</sup> <a name="construct-hub.TagCondition.parameter.value"></a>
-
-- *Type:* `any`
+- *Type:* `string`
 
 ---
 
@@ -5496,6 +5490,39 @@ TagCondition.or(conds: TagCondition)
 - *Type:* [`construct-hub.TagCondition`](#construct-hub.TagCondition)
 
 ---
+
+
+
+### TagConditionField <a name="construct-hub.TagConditionField"></a>
+
+#### Initializers <a name="construct-hub.TagConditionField.Initializer"></a>
+
+```typescript
+import { TagConditionField } from 'construct-hub'
+
+new TagConditionField(field: string[])
+```
+
+##### `field`<sup>Required</sup> <a name="construct-hub.TagConditionField.parameter.field"></a>
+
+- *Type:* `string`[]
+
+---
+
+#### Methods <a name="Methods"></a>
+
+##### `eq` <a name="construct-hub.TagConditionField.eq"></a>
+
+```typescript
+public eq(value: any)
+```
+
+###### `value`<sup>Required</sup> <a name="construct-hub.TagConditionField.parameter.value"></a>
+
+- *Type:* `any`
+
+---
+
 
 
 

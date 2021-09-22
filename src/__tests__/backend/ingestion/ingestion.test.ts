@@ -516,8 +516,8 @@ test('basic happy case with custom tags', async () => {
   const mockPackageLinks = '[]';
 
   // Some true and false tags to assert against in output
-  const mockTrueCondition = TagCondition.fieldEq(['name'], packageName);
-  const mockFalseCondition = TagCondition.fieldEq(['name'], 'BadPackageName');
+  const mockTrueCondition = TagCondition.field('name').eq(packageName);
+  const mockFalseCondition = TagCondition.field('name').eq('BadPackageName');
 
   // Combinations of conditions that resolve to true, tags should be included
   // in output with label `true_${key}`.
