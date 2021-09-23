@@ -89,7 +89,7 @@ const project = new JsiiProject({
     '*By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license*',
   ],
 
-  projenUpgradeSecret: 'CDK_AUTOMATION_GITHUB_TOKEN',
+  projenUpgradeSecret: 'PROJEN_GITHUB_TOKEN',
 
   releaseToNpm: true,
 
@@ -121,7 +121,7 @@ const project = new JsiiProject({
   // Exclude handler images from TypeScript compier path
   excludeTypescript: ['resources/**'],
   autoApproveOptions: {
-    allowedUsernames: ['aws-cdk-automation'],
+    allowedUsernames: ['cdklabs-automation'],
     secret: 'GITHUB_TOKEN',
   },
   autoApproveUpgrades: true,
@@ -130,7 +130,7 @@ const project = new JsiiProject({
     ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve'],
-      secret: 'CDK_AUTOMATION_GITHUB_TOKEN',
+      secret: 'PROJEN_GITHUB_TOKEN',
       container: {
         image: 'jsii/superchain',
       },
