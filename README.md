@@ -166,7 +166,10 @@ construct hub better tailored to your organization.
 
 #### Package Tags
 
-Configuring package tags allows you to compute additional labels to be applied to packages. These can be used to indicate to users which packages are owned the trusted organizations, or any other arbitrary conditions, and can be referenced while searching.
+Configuring package tags allows you to compute additional labels to be applied
+to packages. These can be used to indicate to users which packages are owned by
+trusted organizations, or any other arbitrary conditions, and can be referenced
+while searching.
 
 For example:
 ```ts
@@ -180,7 +183,8 @@ new ConstructHub(this, "ConstructHub", {
 });
 ```
 
-The above example will result in packages with the `name` of `construct-hub` to receive the `Official` tag, which is colored green.
+The above example will result in packages with the `name` of `construct-hub` to
+receive the `Official` tag, which is colored green.
 
 Combinations of conditions are also supported:
 ```ts

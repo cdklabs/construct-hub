@@ -8,7 +8,7 @@ import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
-import { PackageTag } from '../../package-tag';
+import { PackageTagConfig } from '../../package-tag';
 import { RUNBOOK_URL } from '../../runbook-url';
 import type { PackageLinkConfig } from '../../webapp';
 import { Orchestration } from '../orchestration';
@@ -47,7 +47,7 @@ export interface IngestionProps {
   /**
    * Serialized configuration for custom package tags.
    */
-  readonly packageTags?: PackageTag[];
+  readonly packageTags?: PackageTagConfig[];
 }
 
 /**

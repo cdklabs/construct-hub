@@ -326,10 +326,10 @@ The package sources to register with this ConstructHub instance.
 ##### `packageTags`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.packageTags"></a>
 
 ```typescript
-public readonly packageTags: PackageTagConfig[];
+public readonly packageTags: PackageTag[];
 ```
 
-- *Type:* [`construct-hub.PackageTagConfig`](#construct-hub.PackageTagConfig)[]
+- *Type:* [`construct-hub.PackageTag`](#construct-hub.PackageTag)[]
 
 Configuration for custom package tags.
 
@@ -715,7 +715,10 @@ An optional list of linked resources to be displayed on the monitoring dashboard
 
 ### PackageTag <a name="construct-hub.PackageTag"></a>
 
-Serialized tag declaration to be passed to lambdas via environment variables.
+Configuration for applying custom tags to relevant packages.
+
+Custom tags are
+displayed on the package details page, and can be used for searching.
 
 #### Initializer <a name="[object Object].Initializer"></a>
 
@@ -728,10 +731,12 @@ const packageTag: PackageTag = { ... }
 ##### `condition`<sup>Required</sup> <a name="construct-hub.PackageTag.property.condition"></a>
 
 ```typescript
-public readonly condition: TagConditionConfig;
+public readonly condition: TagCondition;
 ```
 
-- *Type:* [`construct-hub.TagConditionConfig`](#construct-hub.TagConditionConfig)
+- *Type:* [`construct-hub.TagCondition`](#construct-hub.TagCondition)
+
+The description of the logic that dictates whether the package has the tag applied.
 
 ---
 
@@ -761,10 +766,7 @@ The hex value string for the color of the tag when displayed.
 
 ### PackageTagConfig <a name="construct-hub.PackageTagConfig"></a>
 
-Configuration for applying custom tags to relevant packages.
-
-Custom tags are
-displayed on the package details page, and can be used for searching.
+Serialized tag declaration to be passed to lambdas via environment variables.
 
 #### Initializer <a name="[object Object].Initializer"></a>
 
@@ -777,12 +779,10 @@ const packageTagConfig: PackageTagConfig = { ... }
 ##### `condition`<sup>Required</sup> <a name="construct-hub.PackageTagConfig.property.condition"></a>
 
 ```typescript
-public readonly condition: TagCondition;
+public readonly condition: TagConditionConfig;
 ```
 
-- *Type:* [`construct-hub.TagCondition`](#construct-hub.TagCondition)
-
-The description of the logic that dictates whether the package has the tag applied.
+- *Type:* [`construct-hub.TagConditionConfig`](#construct-hub.TagConditionConfig)
 
 ---
 
@@ -825,10 +825,10 @@ const tagConditionConfig: TagConditionConfig = { ... }
 ##### `type`<sup>Required</sup> <a name="construct-hub.TagConditionConfig.property.type"></a>
 
 ```typescript
-public readonly type: TagConditionLogicType | TagConditionPredicateType;
+public readonly type: TagConditionLogicType;
 ```
 
-- *Type:* [`construct-hub.TagConditionLogicType`](#construct-hub.TagConditionLogicType) | [`construct-hub.TagConditionPredicateType`](#construct-hub.TagConditionPredicateType)
+- *Type:* [`construct-hub.TagConditionLogicType`](#construct-hub.TagConditionLogicType)
 
 ---
 
@@ -5663,7 +5663,7 @@ the id of the external connection (i.e: `public:npmjs`).
 
 ### TagConditionLogicType <a name="TagConditionLogicType"></a>
 
-Logic operators for combining predicate logic.
+Logic operators for performing specific conditional logic.
 
 #### `AND` <a name="construct-hub.TagConditionLogicType.AND"></a>
 
@@ -5680,11 +5680,7 @@ Logic operators for combining predicate logic.
 ---
 
 
-### TagConditionPredicateType <a name="TagConditionPredicateType"></a>
-
-The type of logic used to predicate a tag's presence.
-
-#### `EQUALS` <a name="construct-hub.TagConditionPredicateType.EQUALS"></a>
+#### `EQUALS` <a name="construct-hub.TagConditionLogicType.EQUALS"></a>
 
 ---
 

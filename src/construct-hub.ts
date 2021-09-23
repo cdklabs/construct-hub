@@ -19,7 +19,7 @@ import { Repository } from './codeartifact/repository';
 import { Monitoring } from './monitoring';
 import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
-import { PackageTagConfig } from './package-tag';
+import { PackageTag } from './package-tag';
 import { SpdxLicense } from './spdx-license';
 import { WebApp, PackageLinkConfig } from './webapp';
 
@@ -104,7 +104,7 @@ export interface ConstructHubProps {
   /**
    * Configuration for custom package tags
    */
-  readonly packageTags?: PackageTagConfig[];
+  readonly packageTags?: PackageTag[];
 }
 
 /**
@@ -251,7 +251,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       monitoring,
       packageData,
       packageLinks: props.packageLinks,
-      packageTags: props.packageTags,
+      packageTags: packageTagsSerialized,
     });
   }
 

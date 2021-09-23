@@ -14,7 +14,7 @@ interface PackageTagBase {
  * Configuration for applying custom tags to relevant packages. Custom tags are
  * displayed on the package details page, and can be used for searching.
  */
-export interface PackageTagConfig extends PackageTagBase {
+export interface PackageTag extends PackageTagBase {
   /**
    * The description of the logic that dictates whether the
    * package has the tag applied.
@@ -26,7 +26,7 @@ export interface PackageTagConfig extends PackageTagBase {
  * Serialized config for a tag condition
  */
 export interface TagConditionConfig {
-  readonly type: TagConditionLogicType | TagConditionPredicateType;
+  readonly type: TagConditionLogicType;
   readonly key?: string[];
   readonly value?: string;
   readonly children?: TagConditionConfig[];
@@ -36,7 +36,7 @@ export interface TagConditionConfig {
  * Serialized tag declaration to be passed to lambdas via environment
  * variables.
  */
-export interface PackageTag extends PackageTagBase{
+export interface PackageTagConfig extends PackageTagBase {
   readonly condition: TagConditionConfig;
 }
 
@@ -71,7 +71,7 @@ export abstract class TagCondition {
    * Target a field within the `package.json` to assert against. Nested fields
    * can be accessed by passing multiple keys.
    * `TagCondition.field('key1', 'key2')` will access
-   * `packageJson?.field1?.field2`.
+   * `packageJson?.key1?.key2`.
    */
   static field(...keys: string[]): TagConditionField {
     return new TagConditionField(keys);
@@ -81,12 +81,13 @@ export abstract class TagCondition {
 }
 
 /**
- * Logic operators for combining predicate logic
+ * Logic operators for performing specific conditional logic.
  */
 export enum TagConditionLogicType {
   AND = 'AND',
   OR = 'OR',
   NOT = 'NOT',
+  EQUALS = 'EQUALS',
 }
 
 class TagConditionLogic extends TagCondition {
@@ -106,17 +107,10 @@ class TagConditionLogic extends TagCondition {
   }
 }
 
-/**
- * The type of logic used to predicate a tag's presence
- */
-export enum TagConditionPredicateType {
-  EQUALS = 'EQUALS',
-}
-
 class TagConditionPredicate extends TagCondition {
   public readonly isPredicate = true;
   public constructor(
-    private readonly type: TagConditionPredicateType,
+    private readonly type: TagConditionLogicType,
     private readonly key: string[],
     private readonly value: string,
   ) {
@@ -144,7 +138,7 @@ export class TagConditionField {
    */
   public eq(value: any): TagCondition {
     return new TagConditionPredicate(
-      TagConditionPredicateType.EQUALS,
+      TagConditionLogicType.EQUALS,
       this.field,
       value,
     );

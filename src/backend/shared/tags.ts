@@ -1,4 +1,4 @@
-import { TagConditionConfig, TagConditionLogicType, TagConditionPredicateType } from '../../package-tag';
+import { TagConditionConfig, TagConditionLogicType } from '../../package-tag';
 
 /**
  * Checks whether a tag's condition applies to a package by computing declared
@@ -31,7 +31,7 @@ export function isTagApplicable(config: TagConditionConfig, pkg: object): boolea
 
     return !isTagApplicable(cond, pkg);
 
-  } else if (config.type === TagConditionPredicateType.EQUALS) {
+  } else if (config.type === TagConditionLogicType.EQUALS) {
     const val = config.key?.reduce(
       (accum: any, key) => (accum ? accum[key] : undefined),
       pkg,

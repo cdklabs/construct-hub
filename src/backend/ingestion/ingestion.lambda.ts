@@ -6,7 +6,7 @@ import { validateAssembly } from '@jsii/spec';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, SQSEvent } from 'aws-lambda';
-import type { PackageTag } from '../../package-tag';
+import type { PackageTagConfig } from '../../package-tag';
 import type { PackageLinkConfig } from '../../webapp';
 import type { StateMachineInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
@@ -154,8 +154,8 @@ export const handler = metricScope(
       }, {});
 
       // Add computed tags to metadata
-      const packageTagsConfig: PackageTag[] = JSON.parse(PACKAGE_TAGS);
-      const packageTags = packageTagsConfig.reduce((accum: Array<Omit<PackageTag, 'condition'>>, tagConfig) => {
+      const packageTagsConfig: PackageTagConfig[] = JSON.parse(PACKAGE_TAGS);
+      const packageTags = packageTagsConfig.reduce((accum: Array<Omit<PackageTagConfig, 'condition'>>, tagConfig) => {
         const { condition, ...tagData } = tagConfig;
         if (isTagApplicable(condition, packageJsonObj)) {
           return [...accum, tagData];
