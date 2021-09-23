@@ -9,6 +9,7 @@ import { CfnOutput, Construct } from '@aws-cdk/core';
 import { Domain } from '../api';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
+import { PackageTagConfig } from '../package-tag';
 import { CacheInvalidator } from './cache-invalidator';
 import { WebappConfig } from './config';
 import { ResponseFunction } from './response-function';
@@ -61,6 +62,11 @@ export interface WebAppProps {
    * Configuration for custom package page links.
    */
   readonly packageLinks?: PackageLinkConfig[];
+
+  /**
+   * Configuration for custom package tags
+   */
+  readonly packageTags?: PackageTagConfig[];
 }
 
 export class WebApp extends Construct {
@@ -150,6 +156,7 @@ export class WebApp extends Construct {
     // Generate config.json to customize frontend behavior
     const config = new WebappConfig({
       packageLinks: props.packageLinks,
+      packageTags: props.packageTags,
     });
 
     new s3deploy.BucketDeployment(this, 'DeployWebsiteConfig', {

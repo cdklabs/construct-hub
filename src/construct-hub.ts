@@ -19,6 +19,7 @@ import { Repository } from './codeartifact/repository';
 import { Monitoring } from './monitoring';
 import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
+import { PackageTag } from './package-tag';
 import { SpdxLicense } from './spdx-license';
 import { WebApp, PackageLinkConfig } from './webapp';
 
@@ -99,6 +100,11 @@ export interface ConstructHubProps {
    * Configuration for custom package page links.
    */
   readonly packageLinks?: PackageLinkConfig[];
+
+  /**
+   * Configuration for custom package tags
+   */
+  readonly packageTags?: PackageTag[];
 }
 
 /**
@@ -191,12 +197,20 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     // rebuild the catalog when the deny list changes.
     denyList.prune.onChangeInvoke(orchestration.catalogBuilder);
 
+    const packageTagsSerialized = props.packageTags?.map((config) => {
+      return {
+        ...config,
+        condition: config.condition.bind(),
+      };
+    }) ?? [];
+
     this.ingestion = new Ingestion(this, 'Ingestion', {
       bucket: packageData,
       orchestration,
       logRetention: props.logRetention,
       monitoring,
       packageLinks: props.packageLinks,
+      packageTags: packageTagsSerialized,
     });
 
     const licenseList = new LicenseList(this, 'LicenseList', {
@@ -236,6 +250,8 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       domain: props.domain,
       monitoring,
       packageData,
+      packageLinks: props.packageLinks,
+      packageTags: packageTagsSerialized,
     });
   }
 
