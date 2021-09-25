@@ -445,7 +445,7 @@ function newEcsTask(entrypoint) {
   df.line('FROM public.ecr.aws/amazonlinux/amazonlinux:2');
   df.line();
   // Install node 14+ the regular way...
-  df.line('RUN curl -sL https://rpm.nodesource.com/setup_14.x | sudo bash - \\');
+  df.line('RUN curl -sL https://rpm.nodesource.com/setup_14.x | bash - \\');
   df.line(' && yum install -y nodejs \\');
   // The entry point requires aws-sdk to be available, so we install it locally.
   df.line(' && npm install --no-save aws-sdk@^2.957.0 \\');
