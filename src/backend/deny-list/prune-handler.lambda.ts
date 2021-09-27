@@ -1,5 +1,4 @@
 import { Configuration, metricScope, Unit } from 'aws-embedded-metrics';
-import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import * as AWS from 'aws-sdk';
 import * as clients from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
@@ -11,7 +10,6 @@ const sqs = clients.sqs();
 const lambda = clients.lambda();
 
 // Configure embedded metrics format
-Configuration.environmentOverride = Environments.Lambda;
 Configuration.namespace = METRICS_NAMESPACE;
 
 export async function handler(event: unknown) {

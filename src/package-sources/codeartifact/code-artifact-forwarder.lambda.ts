@@ -1,5 +1,4 @@
-import { Configuration, metricScope, Unit } from 'aws-embedded-metrics';
-import Environments from 'aws-embedded-metrics/lib/environment/Environments';
+import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context, EventBridgeEvent } from 'aws-lambda';
 
 import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
@@ -12,8 +11,6 @@ import { extractObjects } from '../../backend/shared/tarball.lambda-shared';
 import { METRICS_NAMESPACE, MetricName, DOMAIN_OWNER_DIMENSION, DOMAIN_NAME_DIMENSION, REPOSITORY_NAME_DIMENSION } from './constants.lambda-shared';
 
 const DETAIL_TYPE = 'CodeArtifact Package Version State Change' as const;
-
-Configuration.environmentOverride = Environments.Lambda;
 
 export const handler = metricScope((metrics) => async (event: EventBridgeEvent<typeof DETAIL_TYPE, CodeArtifactDetail>, context: Context) => {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);

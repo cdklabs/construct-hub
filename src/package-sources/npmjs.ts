@@ -43,6 +43,7 @@ export class NpmJs implements IPackageSource {
     const follower = new NpmJsFollower(scope, 'NpmJs', {
       description: `[${scope.node.path}/NpmJs] Periodically query npmjs.com index for new packages`,
       environment: {
+        AWS_EMF_ENVIRONMENT: 'Local',
         BUCKET_NAME: bucket.bucketName,
         QUEUE_URL: queue.queueUrl,
       },
