@@ -94,6 +94,9 @@
           "spawn": "bundle:handler"
         },
         {
+          "spawn": "bundle:file-uploader"
+        },
+        {
           "spawn": "bundle:transliterator"
         }
       ]
@@ -209,13 +212,13 @@
       },
       "steps": [
         {
-          "exec": "npm-check-updates --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk'"
+          "exec": "npm-check-updates --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,cdk-triggers,constructs,@aws-cdk/assert,aws-cdk'"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case cdk-triggers construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak json-schema nano normalize-registry-metadata npm-check-updates projen semver spdx-license-list standard-version tar-stream typescript yaml"
+          "exec": "yarn upgrade @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak json-schema nano normalize-registry-metadata npm-check-updates projen semver spdx-license-list standard-version tar-stream typescript yaml"
         },
         {
           "exec": "npx projen"
@@ -352,6 +355,9 @@
         },
         {
           "spawn": "bundle:handler"
+        },
+        {
+          "spawn": "bundle:file-uploader"
         },
         {
           "spawn": "bundle:transliterator"
@@ -540,6 +546,15 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/webapp/cache-invalidator/handler.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/webapp/cache-invalidator/handler.bundle/index.js\" --external:aws-sdk"
+        }
+      ]
+    },
+    "bundle:file-uploader": {
+      "name": "bundle:file-uploader",
+      "description": "Create an AWS Lambda bundle from src/webapp/live-config/file-uploader.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/webapp/live-config/file-uploader.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/webapp/live-config/file-uploader.bundle/index.js\" --external:aws-sdk"
         }
       ]
     },

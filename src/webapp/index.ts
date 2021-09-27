@@ -12,6 +12,7 @@ import { Monitoring } from '../monitoring';
 import { PackageTagConfig } from '../package-tag';
 import { CacheInvalidator } from './cache-invalidator';
 import { WebappConfig } from './config';
+import { LiveConfig } from './live-config';
 import { ResponseFunction } from './response-function';
 
 export interface PackageLinkConfig {
@@ -165,6 +166,11 @@ export class WebApp extends Construct {
       distribution: this.distribution,
       prune: false,
     });
+
+    // Generate bucket for managing live configuration options
+    const liveConfig = new LiveConfig(this, 'LiveConfig');
+    const liveConfigOrigin = new origins.S3Origin(liveConfig.bucket);
+    this.distribution.addBehavior('/config/*', liveConfigOrigin);
 
     new CfnOutput(this, 'DomainName', {
       value: this.distribution.domainName,

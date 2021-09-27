@@ -33,6 +33,7 @@ const peerDeps = [
   '@aws-cdk/custom-resources',
   '@aws-cdk/cx-api',
   'cdk-watchful',
+  'cdk-triggers',
   'constructs',
 ];
 
@@ -636,7 +637,6 @@ function generateSpdxLicenseEnum() {
 // and bundle it with this library. this way, we are only taking a
 // dev-dependency on the webapp instead of a normal/bundled dependency.
 project.addDevDeps('construct-hub-webapp');
-project.addDevDeps('cdk-triggers');
 
 project.compileTask.prependExec('cp -r ./node_modules/construct-hub-webapp/build ./website');
 project.compileTask.prependExec('rm -rf ./website');

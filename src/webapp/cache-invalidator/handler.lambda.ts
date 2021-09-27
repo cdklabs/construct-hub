@@ -28,7 +28,7 @@ export async function handler(event: S3Event, context: Context) {
   })();
 
   const cf = new AWS.CloudFront();
-  const invalidationRequet: AWS.CloudFront.CreateInvalidationRequest = {
+  const invalidationRequest: AWS.CloudFront.CreateInvalidationRequest = {
     DistributionId: DISTRIBUTION_ID,
     InvalidationBatch: {
       Paths: {
@@ -38,8 +38,8 @@ export async function handler(event: S3Event, context: Context) {
       CallerReference: context.awsRequestId,
     },
   };
-  console.log(JSON.stringify({ invalidationRequet }));
-  const invalidationResponse = cf.createInvalidation(invalidationRequet).promise();
+  console.log(JSON.stringify({ invalidationRequet: invalidationRequest }));
+  const invalidationResponse = cf.createInvalidation(invalidationRequest).promise();
   console.log(JSON.stringify({ invalidationResponse }));
   return invalidationResponse;
 }
