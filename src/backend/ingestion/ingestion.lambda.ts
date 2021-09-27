@@ -261,11 +261,17 @@ export const handler = metricScope(
   },
 );
 
+const enum ConstructFrameworkName {
+  AWS_CDK = 'aws-cdk',
+  CDK8S = 'cdk8s',
+  CDKTF = 'cdktf',
+}
+
 interface ConstructFramework {
   /**
    * The name of the construct framework.
    */
-  readonly name: 'aws-cdk' | 'cdk8s' | 'cdktf';
+  readonly name: ConstructFrameworkName;
 
   /**
    * The major version of the construct framework that is used, if it could be
@@ -288,23 +294,23 @@ function detectConstructFramework(assembly: Assembly): ConstructFramework | unde
   let majorVersionAmbiguous = false;
   for (const depName of Object.keys(assembly.dependencyClosure ?? {})) {
     if (depName.startsWith('@aws-cdk/')) {
-      if (name && name !== 'aws-cdk') {
+      if (name && name !== ConstructFrameworkName.AWS_CDK) {
         // Identified multiple candidates, so returning undefined...
         return undefined;
       }
-      name = 'aws-cdk';
+      name = ConstructFrameworkName.AWS_CDK;
     } else if (depName.startsWith('@cdktf/')) {
-      if (name && name !== 'cdktf') {
+      if (name && name !== ConstructFrameworkName.CDKTF) {
         // Identified multiple candidates, so returning undefined...
         return undefined;
       }
-      name = 'cdktf';
+      name = ConstructFrameworkName.CDKTF;
     } else if (depName === 'cdk8s' || depName === 'cdk8s-plus') {
-      if (name && name !== 'cdk8s') {
+      if (name && name !== ConstructFrameworkName.CDK8S) {
         // Identified multiple candidates, so returning undefined...
         return undefined;
       }
-      name = 'cdk8s';
+      name = ConstructFrameworkName.CDK8S;
     } else {
       continue;
     }
