@@ -182,12 +182,13 @@ test('initial build', () => {
 
 describe('incremental build', () => {
 
-  const npmMetadata = { date: 'Thu, 17 Jun 2021 01:52:04 GMT' };
+  const shortNpmMetadata = { date: 'Thu, 17 Jun 2021 01:52:04 GMT' };
+  const npmMetadata = { ...shortNpmMetadata, licenseText: 'Should not be in catalog.json!' };
   const initialScopePackageV2 = {
     description: 'Package @scope/package, version 2.3.4',
     languages: { foo: 'bar' },
     major: 2,
-    metadata: npmMetadata,
+    metadata: shortNpmMetadata,
     name: '@scope/package',
     version: '2.3.4',
   };
@@ -195,7 +196,7 @@ describe('incremental build', () => {
     description: 'Package name, version 1.0.0',
     languages: { foo: 'bar' },
     major: 1,
-    metadata: npmMetadata,
+    metadata: shortNpmMetadata,
     name: 'name',
     version: '1.0.0',
   };
@@ -203,14 +204,16 @@ describe('incremental build', () => {
     description: 'Package name, version 2.0.0-pre.10',
     languages: { foo: 'bar' },
     major: 2,
-    metadata: npmMetadata,
+    metadata: shortNpmMetadata,
     name: 'name',
     version: '2.0.0-pre.10',
   };
+  const initialPackages = [initialScopePackageV2, initialNameV1, initialNameV2];
   const initialCatalog = {
     packages: [
       initialScopePackageV2,
-      initialNameV1,
+      // Adding some junk in there to validate it is cleaned up...
+      { ...initialNameV1, metadata: { ...initialNameV1.metadata, licenseText: npmMetadata.licenseText } },
       initialNameV2,
     ],
     updatedAt: new Date().toISOString(),
@@ -268,7 +271,7 @@ describe('incremental build', () => {
             description: 'Package @scope/package, version 1.2.3',
             languages: { foo: 'bar' },
             major: 1,
-            metadata: npmMetadata,
+            metadata: shortNpmMetadata,
             name: '@scope/package',
             version: '1.2.3',
           },
@@ -400,7 +403,7 @@ describe('incremental build', () => {
         expect(req.ContentType).toBe('application/json');
         expect(req.Metadata).toHaveProperty('Package-Count', '3');
         const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
-        expect(body.packages).toEqual(initialCatalog.packages);
+        expect(body.packages).toEqual(initialPackages);
         expect(Date.parse(body.updatedAt)).toBeDefined();
       } catch (e) {
         return cb(e);
@@ -461,7 +464,7 @@ describe('incremental build', () => {
         expect(req.ContentType).toBe('application/json');
         expect(req.Metadata).toHaveProperty('Package-Count', '3');
         const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
-        expect(body.packages).toEqual(initialCatalog.packages);
+        expect(body.packages).toEqual(initialPackages);
         expect(Date.parse(body.updatedAt)).toBeDefined();
       } catch (e) {
         return cb(e);
@@ -522,7 +525,7 @@ describe('incremental build', () => {
         expect(req.ContentType).toBe('application/json');
         expect(req.Metadata).toHaveProperty('Package-Count', '3');
         const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
-        expect(body.packages).toEqual(initialCatalog.packages);
+        expect(body.packages).toEqual(initialPackages);
         expect(Date.parse(body.updatedAt)).toBeDefined();
       } catch (e) {
         return cb(e);

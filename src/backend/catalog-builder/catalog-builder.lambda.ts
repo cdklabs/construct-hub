@@ -101,6 +101,15 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     metrics.putMetric('RegisteredPackagesMajorVersion', catalog.packages.length, Unit.Count);
   })();
 
+
+  // Clean up existing entries if necessary. In particular, remove the license texts as they make
+  // the catalog unnecessarily large, and may hinder some search queries' result quality.
+  for (const entry of catalog.packages) {
+    if (entry.metadata) {
+      delete (entry.metadata as any).licenseText;
+    }
+  }
+
   // Upload the result to S3 and exit.
   return aws.s3().putObject({
     Bucket: BUCKET_NAME,

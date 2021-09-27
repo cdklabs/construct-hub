@@ -381,7 +381,24 @@ function getRelevantVersionInfos(
     return infos.name === 'construct'
       || infos.name === 'aws-cdk-lib'
       || infos.name.startsWith('@aws-cdk')
-      || infos.keywords?.some((kw) => CONSTRUCT_KEYWORDS.has(kw));
+      || infos.keywords?.some((kw) => CONSTRUCT_KEYWORDS.has(kw))
+      || Object.keys(infos.dependencies ?? {}).some(isConstructFrameworkPackage)
+      || Object.keys(infos.devDependencies ?? {}).some(isConstructFrameworkPackage)
+      || Object.keys(infos.peerDependencies ?? {}).some(isConstructFrameworkPackage);
+  }
+
+  /**
+   * Package is one of the known construct framework's first party packages:
+   * - @aws-cdk/*
+   * - @cdktf/*
+   * - cdk8s or cdk8s-plus
+   */
+  function isConstructFrameworkPackage(name: string): boolean {
+    // NOTE: Prefix matching should only be used for @scope/ names.
+    return name.startsWith('@aws-cdk/')
+      || name.startsWith('@cdktf/')
+      || name === 'cdk8s'
+      || name === 'cdk8s-plus';
   }
 }
 
@@ -390,8 +407,9 @@ function getRelevantVersionInfos(
   * @see https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md#version
   */
 interface VersionInfo {
-  readonly devDependencies: { readonly [name: string]: string };
-  readonly dependencies: { readonly [name: string]: string };
+  readonly dependencies?: { readonly [name: string]: string };
+  readonly devDependencies?: { readonly [name: string]: string };
+  readonly peerDependencies?: { readonly [name: string]: string };
   readonly jsii: unknown;
   readonly license?: string;
   readonly name: string;

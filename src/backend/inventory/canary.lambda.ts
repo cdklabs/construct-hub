@@ -149,8 +149,8 @@ export async function handler(event: ScheduledEvent, _context: Context) {
     metrics.putMetric(MetricName.UNKNOWN_OBJECT_COUNT, unknownObjects.length, Unit.Count);
   })();
 
-  for (const [language, data] of perLanguage.entries()) {
-    await metricScope((metrics) => () => {
+  for (const entry of perLanguage.entries()) {
+    await metricScope((metrics) => ([language, data]: [DocumentationLanguage, PerLanguageData]) => {
       metrics.setDimensions({ [LANGUAGE_DIMENSION]: language.toString() });
 
       for (const forStatus of [PerLanguageStatus.SUPPORTED, PerLanguageStatus.UNSUPPORTED, PerLanguageStatus.MISSING]) {
@@ -162,7 +162,7 @@ export async function handler(event: ScheduledEvent, _context: Context) {
           metrics.putMetric(metricName, filtered.length, Unit.Count);
         }
       }
-    })();
+    })(entry);
   }
 }
 
