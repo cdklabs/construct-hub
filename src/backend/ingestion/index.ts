@@ -98,10 +98,11 @@ export class Ingestion extends Construct implements IGrantable {
     const handler = new Handler(this, 'Default', {
       description: '[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub',
       environment: {
+        AWS_EMF_ENVIRONMENT: 'Local',
         BUCKET_NAME: props.bucket.bucketName,
-        STATE_MACHINE_ARN: props.orchestration.stateMachine.stateMachineArn,
         PACKAGE_LINKS: JSON.stringify(props.packageLinks ?? []),
         PACKAGE_TAGS: JSON.stringify(props.packageTags ?? []),
+        STATE_MACHINE_ARN: props.orchestration.stateMachine.stateMachineArn,
       },
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 10_240, // Currently the maximum possible setting

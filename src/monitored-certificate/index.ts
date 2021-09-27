@@ -68,9 +68,10 @@ export class MonitoredCertificate extends Construct {
     const dynamicMonitor = new CertificateMonitor(this, 'Monitor', {
       description: `Monitors the days to expiry of the certificate used to serve ${props.domainName}`,
       environment: {
+        AWS_EMF_ENVIRONMENT: 'Local',
         HTTPS_ENDPOINT: props.domainName,
-        METRIC_NAMESPACE: this.endpointMetricNamespace,
         METRIC_NAME: this.endpointMetricName,
+        METRIC_NAMESPACE: this.endpointMetricNamespace,
       },
       memorySize: 1_024,
       timeout: Duration.minutes(5),

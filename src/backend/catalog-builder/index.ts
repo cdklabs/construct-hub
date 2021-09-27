@@ -44,6 +44,7 @@ export class CatalogBuilder extends Construct {
       description: `Creates the catalog.json object in ${props.bucket.bucketName}`,
       environment: {
         BUCKET_NAME: props.bucket.bucketName,
+        AWS_EMF_ENVIRONMENT: 'Local',
       },
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 10_240, // Currently the maximum possible setting

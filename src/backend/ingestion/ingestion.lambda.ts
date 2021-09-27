@@ -4,7 +4,6 @@ import { URL } from 'url';
 
 import { Assembly, validateAssembly } from '@jsii/spec';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
-import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, SQSEvent } from 'aws-lambda';
 import { SemVer } from 'semver';
 import type { PackageTagConfig } from '../../package-tag';
@@ -19,7 +18,6 @@ import { isTagApplicable } from '../shared/tags';
 import { extractObjects } from '../shared/tarball.lambda-shared';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 
-Configuration.environmentOverride = Environments.Lambda;
 Configuration.namespace = METRICS_NAMESPACE;
 
 export const handler = metricScope(

@@ -50,7 +50,10 @@ export class Inventory extends Construct {
 
     this.canary = new Canary(this, 'Resource', {
       description: '[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages',
-      environment: { BUCKET_NAME: props.bucket.bucketName },
+      environment: {
+        AWS_EMF_ENVIRONMENT: 'Local',
+        BUCKET_NAME: props.bucket.bucketName,
+      },
       logRetention: props.logRetention,
       memorySize: 10_240,
       timeout: rate,

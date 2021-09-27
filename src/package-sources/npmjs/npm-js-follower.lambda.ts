@@ -3,7 +3,6 @@ import * as https from 'https';
 import { URL } from 'url';
 
 import { metricScope, Configuration, MetricsLogger, Unit } from 'aws-embedded-metrics';
-import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, ScheduledEvent } from 'aws-lambda';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 import Nano = require('nano');
@@ -22,7 +21,6 @@ const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set(['cdk', 'aws-cdk', 'awsc
 const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
 
 // Configure embedded metrics format
-Configuration.environmentOverride = Environments.Lambda;
 Configuration.namespace = METRICS_NAMESPACE;
 
 /**
