@@ -54,6 +54,7 @@ export class CodeArtifact implements IPackageSource {
       deadLetterQueue: dlq,
       description: `[${scope.node.path}/CodeArtifact/${repositoryId}] Handle CodeArtifact EventBridge events`,
       environment: {
+        AWS_EMF_ENVIRONMENT: 'Local',
         BUCKET_NAME: bucket.bucketName,
         QUEUE_URL: queue.queueUrl,
       },

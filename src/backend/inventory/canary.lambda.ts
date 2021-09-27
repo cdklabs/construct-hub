@@ -1,5 +1,4 @@
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
-import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, ScheduledEvent } from 'aws-lambda';
 import { SemVer } from 'semver';
 import * as aws from '../shared/aws.lambda-shared';
@@ -8,7 +7,6 @@ import { requireEnv } from '../shared/env.lambda-shared';
 import { DocumentationLanguage } from '../shared/language';
 import { METRICS_NAMESPACE, MetricName, LANGUAGE_DIMENSION } from './constants';
 
-Configuration.environmentOverride = Environments.Lambda;
 Configuration.namespace = METRICS_NAMESPACE;
 
 export async function handler(event: ScheduledEvent, _context: Context) {
@@ -149,8 +147,8 @@ export async function handler(event: ScheduledEvent, _context: Context) {
     metrics.putMetric(MetricName.UNKNOWN_OBJECT_COUNT, unknownObjects.length, Unit.Count);
   })();
 
-  for (const [language, data] of perLanguage.entries()) {
-    await metricScope((metrics) => () => {
+  for (const entry of perLanguage.entries()) {
+    await metricScope((metrics) => ([language, data]: [DocumentationLanguage, PerLanguageData]) => {
       metrics.setDimensions({ [LANGUAGE_DIMENSION]: language.toString() });
 
       for (const forStatus of [PerLanguageStatus.SUPPORTED, PerLanguageStatus.UNSUPPORTED, PerLanguageStatus.MISSING]) {
@@ -162,7 +160,7 @@ export async function handler(event: ScheduledEvent, _context: Context) {
           metrics.putMetric(metricName, filtered.length, Unit.Count);
         }
       }
-    })();
+    })(entry);
   }
 }
 

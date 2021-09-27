@@ -446,7 +446,7 @@ function newEcsTask(entrypoint) {
   df.line();
   // Install node 14+ the regular way...
   df.line('RUN curl -sL https://rpm.nodesource.com/setup_14.x | bash - \\');
-  df.line(' && yum install -y nodejs \\');
+  df.line(' && yum install -y git nodejs \\');
   // The entry point requires aws-sdk to be available, so we install it locally.
   df.line(' && npm install --no-save aws-sdk@^2.957.0 \\');
   // Clean up the yum cache in the interest of image size
