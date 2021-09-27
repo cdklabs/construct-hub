@@ -8,7 +8,7 @@ import * as lambda from '@aws-cdk/aws-lambda';
 import { S3EventSource } from '@aws-cdk/aws-lambda-event-sources';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
-import { Construct, Duration, RemovalPolicy } from '@aws-cdk/core';
+import { Construct, Duration, IConstruct, RemovalPolicy } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
 import { DenyListRule, IDenyList } from './api';
 import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY, MetricName, METRICS_NAMESPACE } from './constants';
@@ -78,7 +78,11 @@ export class DenyList extends Construct implements IDenyList {
    */
   public readonly prune: Prune;
 
-  private readonly upload: s3deploy.BucketDeployment;
+  /**
+   * A construct which can be depended on to determine when the deny list has
+   * been uploaded.
+   */
+  private readonly uploadReady: IConstruct;
 
   constructor(scope: Construct, id: string, props: DenyListProps) {
     super(scope, id);
@@ -94,12 +98,13 @@ export class DenyList extends Construct implements IDenyList {
     const directory = this.writeToFile(props.rules, this.objectKey);
 
     // upload the deny list to the bucket
-    this.upload = new s3deploy.BucketDeployment(this, 'BucketDeployment', {
+    const upload = new s3deploy.BucketDeployment(this, 'BucketDeployment', {
       destinationBucket: this.bucket,
       prune: true,
       retainOnDelete: false,
       sources: [s3deploy.Source.asset(directory)],
     });
+    this.uploadReady = upload.node.findChild('CustomResource');
 
     this.prune = new Prune(this, 'Prune', {
       packageDataBucket: props.packageDataBucket,
@@ -117,10 +122,11 @@ export class DenyList extends Construct implements IDenyList {
         filters: [{ prefix: this.objectKey, suffix: this.objectKey }],
       }));
 
-      // add an explicit dep between upload and the bucket scope which can now
-      // also include the bucket notification resource. otherwise, the first
-      // upload will not trigger a prune
-      this.upload.node.addDependency(this.bucket);
+      // Add an explicit dep between upload and the bucket notification. We are
+      // not using the whole bucket scope to reduce the likelihood of a
+      // dependency cycle.
+      const notificationsReady = this.bucket.node.findChild('Notifications');
+      this.uploadReady.node.addDependency(notificationsReady);
     }
 
     // trigger prune periodically (every 5 minutes) - just in case

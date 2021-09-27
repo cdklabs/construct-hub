@@ -12,6 +12,7 @@ const peerDeps = [
   '@aws-cdk/aws-cloudwatch',
   '@aws-cdk/aws-codeartifact',
   '@aws-cdk/aws-ec2',
+  '@aws-cdk/aws-ecs',
   '@aws-cdk/aws-events',
   '@aws-cdk/aws-events-targets',
   '@aws-cdk/assets',
@@ -88,7 +89,7 @@ const project = new JsiiProject({
     '*By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license*',
   ],
 
-  projenUpgradeSecret: 'CDK_AUTOMATION_GITHUB_TOKEN',
+  projenUpgradeSecret: 'PROJEN_GITHUB_TOKEN',
 
   releaseToNpm: true,
 
@@ -120,7 +121,7 @@ const project = new JsiiProject({
   // Exclude handler images from TypeScript compier path
   excludeTypescript: ['resources/**'],
   autoApproveOptions: {
-    allowedUsernames: ['aws-cdk-automation'],
+    allowedUsernames: ['cdklabs-automation'],
     secret: 'GITHUB_TOKEN',
   },
   autoApproveUpgrades: true,
@@ -129,7 +130,7 @@ const project = new JsiiProject({
     ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve'],
-      secret: 'CDK_AUTOMATION_GITHUB_TOKEN',
+      secret: 'PROJEN_GITHUB_TOKEN',
       container: {
         image: 'jsii/superchain',
       },
@@ -350,6 +351,132 @@ function newLambdaHandler(entrypoint, trigger) {
   console.error(`${base}: bundle task "${bundle.name}"`);
 }
 
+function newEcsTask(entrypoint) {
+  if (!entrypoint.startsWith(project.srcdir)) {
+    throw new Error(`${entrypoint} must be under ${project.srcdir}`);
+  }
+
+  if (!entrypoint.endsWith('.ecstask.ts')) {
+    throw new Error(`${entrypoint} must have a .ecstask.ts extension`);
+  }
+
+  entrypoint = relative(project.srcdir, entrypoint);
+
+  const base = basename(entrypoint, '.ecstask.ts');
+  const dir = join(dirname(entrypoint), base);
+  const entry = `${project.srcdir}/${entrypoint}`;
+  const infra = `${project.srcdir}/${dir}.ts`;
+  const outdir = `${project.libdir}/${dir}.bundle`;
+  const bash = `${outdir}/entrypoint.sh`;
+  const outfile = `${outdir}/index.js`;
+  const dockerfile = `${outdir}/Dockerfile`;
+  const className = Case.pascal(basename(dir));
+  const propsName = `${className}Props`;
+
+  const ts = new SourceCode(project, infra);
+  ts.line(`// ${FileBase.PROJEN_MARKER}`);
+  ts.line('import * as path from \'path\';');
+  ts.line('import * as ecs from \'@aws-cdk/aws-ecs\';');
+  ts.line('import * as iam from \'@aws-cdk/aws-iam\';');
+  ts.line('import { Construct } from \'@aws-cdk/core\';');
+  ts.line();
+  ts.open(`export interface ${propsName} extends Omit<ecs.ContainerDefinitionOptions, 'image'> {`);
+  ts.line('readonly taskDefinition: ecs.FargateTaskDefinition;');
+  ts.close('}');
+  ts.line();
+  ts.open(`export class ${className} extends ecs.ContainerDefinition {`);
+  ts.open(`public constructor(scope: Construct, id: string, props: ${propsName}) {`);
+  ts.open('super(scope, id, {');
+  ts.line('...props,');
+  ts.line(`image: ecs.ContainerImage.fromAsset(path.join(__dirname, '${basename(outdir)}')),`);
+  ts.close('});');
+  ts.line();
+  ts.open('props.taskDefinition.taskRole.addToPrincipalPolicy(new iam.PolicyStatement({');
+  ts.line('effect: iam.Effect.ALLOW,');
+  ts.open('actions: [');
+  ts.line('\'states:SendTaskFailure\',');
+  ts.line('\'states:SendTaskHeartbeat\',');
+  ts.line('\'states:SendTaskSuccess\',');
+  ts.close('],');
+  ts.line('resources: [\'*\'],');
+  ts.close('}));');
+  ts.close('}');
+  ts.close('}');
+
+  const sh = new SourceCode(project, bash);
+  sh.line('#!/bin/bash');
+  sh.line(`# ${FileBase.PROJEN_MARKER}`);
+  sh.line('exec node <<-EOF');
+  sh.line('const { env } = require(\'process\');');
+  sh.line('const { StepFunctions } = require(\'aws-sdk\');');
+  sh.line('const { handler } = require(\'/bundle/index.js\');');
+  sh.line('const sfn = new StepFunctions();');
+  sh.line('const taskToken = env.SFN_TASK_TOKEN;');
+  // Remove the SFN_TASK_TOKEN from the environment, so arbitrary code does not get to use it to mess up with our state machine's state
+  sh.line('delete env.SFN_TASK_TOKEN;');
+  // A heartbeat is sent every minute to StepFunctions
+  sh.open('const sendHeartbeat = () => sfn.sendTaskHeartbeat({ taskToken }).promise().then(');
+  sh.line('() => console.log(\'Successfully sent task heartbeat!\'),');
+  sh.line('(reason) => console.error(\'Failed to send task heartbeat:\', reason),');
+  sh.close(');');
+  // ... immediately at task start
+  sh.line('sendHeartbeat();');
+  // ... then every minute
+  sh.line('const heartbeat = setInterval(sendHeartbeat, 60000);');
+  // Wrapped in an `async` IIFE, so that the result is guaranteed to be a promise
+  sh.line('(async () => handler($@))()');
+  // Sending a success to StepFunctions right away
+  sh.open('  .then((value) => {');
+  sh.line('  console.log(\'Handler result:\', JSON.stringify(value, null, 2));');
+  sh.line('  return sfn.sendTaskSuccess({ output: JSON.stringify(value), taskToken }).promise()');
+  sh.close('  })');
+  // In case of errors, send task failure to StepFunctions
+  sh.open('  .catch((reason) => {');
+  sh.line('  console.error(\'Execution error:\', reason);');
+  sh.line('  return sfn.sendTaskFailure({ cause: JSON.stringify(reason), error: reason.name ?? reason.constructor.name ?? \'Error\', taskToken }).promise();');
+  sh.close('  })');
+  // Stop the heartbeat once we're all done...
+  sh.line('  .finally(() => clearInterval(heartbeat));');
+  sh.line('EOF');
+
+  const df = new SourceCode(project, dockerfile);
+  df.line(`# ${FileBase.PROJEN_MARKER}`);
+  // Based off amazonlinux:2 for... reasons. (Do not change!)
+  df.line('FROM public.ecr.aws/amazonlinux/amazonlinux:2');
+  df.line();
+  // Install node 14+ the regular way...
+  df.line('RUN curl -sL https://rpm.nodesource.com/setup_14.x | bash - \\');
+  df.line(' && yum install -y nodejs \\');
+  // The entry point requires aws-sdk to be available, so we install it locally.
+  df.line(' && npm install --no-save aws-sdk@^2.957.0 \\');
+  // Clean up the yum cache in the interest of image size
+  df.line(' && yum clean all \\');
+  df.line(' && rm -rf /var/cache/yum');
+  df.line();
+  df.line('COPY ./entrypoint.sh /bundle/entrypoint.sh');
+  df.line('COPY ./index.js      /bundle/index.js');
+  df.line('COPY ./Dockerfile    /bundle/Dockerfile');
+  df.line();
+  df.line('ENTRYPOINT ["/bin/bash", "/bundle/entrypoint.sh"]');
+
+  const bundle = project.addTask(`bundle:${base}`, {
+    description: `Create an AWS Fargate bundle from ${entry}`,
+    exec: [
+      'esbuild',
+      '--bundle',
+      entry,
+      '--target="node14"',
+      '--platform="node"',
+      `--outfile="${outfile}"`,
+    ].join(' '),
+  });
+
+  project.compileTask.spawn(bundle);
+  bundleTask.spawn(bundle);
+  console.error(`${base}: construct "${className}" under "${infra}"`);
+  console.error(`${base}: bundle task "${bundle.name}"`);
+}
+
 /**
  * Auto-discovers all lambda functions.
  */
@@ -358,7 +485,6 @@ function discoverLambdas() {
   project.eslint.allowDevDeps('src/**/*.lambda.ts');
   // Allow .lambda-shared code to import dev-deps (these are not entry points, but are shared by several lambdas)
   project.eslint.allowDevDeps('src/**/*.lambda-shared.ts');
-  project.addDevDeps('glob');
   for (const entry of glob.sync('src/**/*.lambda.ts')) {
     const trigger = basename(entry).startsWith('trigger.');
     newLambdaHandler(entry, trigger);
@@ -369,6 +495,15 @@ function discoverLambdas() {
   const noUnresolvedRule = project.eslint && project.eslint.rules['import/no-unresolved'];
   if (noUnresolvedRule != null) {
     noUnresolvedRule[1] = { ...noUnresolvedRule[1] || {}, ignore: [...(noUnresolvedRule[1] || {}).ignore || [], 'aws-lambda'] };
+  }
+}
+
+function discoverEcsTasks() {
+  // allow .fargate code to import dev-deps (since they are only needed during bundling)
+  project.eslint.allowDevDeps('src/**/*.ecstask.ts');
+
+  for (const entry of glob.sync('src/**/*.ecstask.ts')) {
+    newEcsTask(entry);
   }
 }
 
@@ -502,13 +637,17 @@ function generateSpdxLicenseEnum() {
 // dev-dependency on the webapp instead of a normal/bundled dependency.
 project.addDevDeps('construct-hub-webapp');
 project.addDevDeps('cdk-triggers');
+
 project.compileTask.prependExec('cp -r ./node_modules/construct-hub-webapp/build ./website');
 project.compileTask.prependExec('rm -rf ./website');
 project.npmignore.addPatterns('!/website'); // <-- include in tarball
 project.gitignore.addPatterns('/website'); // <-- don't commit
 
 addDevApp();
+
+project.addDevDeps('glob');
 discoverLambdas();
+discoverEcsTasks();
 discoverIntegrationTests();
 
 generateSpdxLicenseEnum();

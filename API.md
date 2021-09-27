@@ -267,23 +267,34 @@ Connect the hub to a domain (requires a hosted zone and a certificate).
 
 ---
 
-##### `isolateLambdas`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.isolateLambdas"></a>
+##### `isolateSensitiveTasks`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.isolateSensitiveTasks"></a>
 
 ```typescript
-public readonly isolateLambdas: boolean;
+public readonly isolateSensitiveTasks: boolean;
 ```
 
 - *Type:* `boolean`
 - *Default:* true
 
-Whether sensitive Lambda functions (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments.
+Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments.
 
-This
-implies the creation of additonal resources, including:
+This implies the creation of additonal resources, including:
 
 - A VPC with only isolated subnets.
-- VPC Endpoints (CodeArtifact, CodeArtifact API, S3)
+- VPC Endpoints (CloudWatch Logs, CodeArtifact, CodeArtifact API, S3, ...)
 - A CodeArtifact Repository with an external connection to npmjs.com
+
+---
+
+##### `logRetention`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.logRetention"></a>
+
+```typescript
+public readonly logRetention: RetentionDays;
+```
+
+- *Type:* [`@aws-cdk/aws-logs.RetentionDays`](#@aws-cdk/aws-logs.RetentionDays)
+
+How long to retain CloudWatch logs for.
 
 ---
 
@@ -309,6 +320,18 @@ public readonly packageSources: IPackageSource[];
 - *Default:* a standard npmjs.com package source will be configured.
 
 The package sources to register with this ConstructHub instance.
+
+---
+
+##### `packageTags`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.packageTags"></a>
+
+```typescript
+public readonly packageTags: PackageTag[];
+```
+
+- *Type:* [`construct-hub.PackageTag`](#construct-hub.PackageTag)[]
+
+Configuration for custom package tags.
 
 ---
 
@@ -687,6 +710,155 @@ public readonly links: LinkedResource[];
 - *Type:* [`construct-hub.LinkedResource`](#construct-hub.LinkedResource)[]
 
 An optional list of linked resources to be displayed on the monitoring dashboard.
+
+---
+
+### PackageTag <a name="construct-hub.PackageTag"></a>
+
+Configuration for applying custom tags to relevant packages.
+
+Custom tags are
+displayed on the package details page, and can be used for searching.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { PackageTag } from 'construct-hub'
+
+const packageTag: PackageTag = { ... }
+```
+
+##### `condition`<sup>Required</sup> <a name="construct-hub.PackageTag.property.condition"></a>
+
+```typescript
+public readonly condition: TagCondition;
+```
+
+- *Type:* [`construct-hub.TagCondition`](#construct-hub.TagCondition)
+
+The description of the logic that dictates whether the package has the tag applied.
+
+---
+
+##### `label`<sup>Required</sup> <a name="construct-hub.PackageTag.property.label"></a>
+
+```typescript
+public readonly label: string;
+```
+
+- *Type:* `string`
+
+The label for the tag being applied.
+
+---
+
+##### `color`<sup>Optional</sup> <a name="construct-hub.PackageTag.property.color"></a>
+
+```typescript
+public readonly color: string;
+```
+
+- *Type:* `string`
+
+The hex value string for the color of the tag when displayed.
+
+---
+
+### PackageTagConfig <a name="construct-hub.PackageTagConfig"></a>
+
+Serialized tag declaration to be passed to lambdas via environment variables.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { PackageTagConfig } from 'construct-hub'
+
+const packageTagConfig: PackageTagConfig = { ... }
+```
+
+##### `condition`<sup>Required</sup> <a name="construct-hub.PackageTagConfig.property.condition"></a>
+
+```typescript
+public readonly condition: TagConditionConfig;
+```
+
+- *Type:* [`construct-hub.TagConditionConfig`](#construct-hub.TagConditionConfig)
+
+---
+
+##### `label`<sup>Required</sup> <a name="construct-hub.PackageTagConfig.property.label"></a>
+
+```typescript
+public readonly label: string;
+```
+
+- *Type:* `string`
+
+The label for the tag being applied.
+
+---
+
+##### `color`<sup>Optional</sup> <a name="construct-hub.PackageTagConfig.property.color"></a>
+
+```typescript
+public readonly color: string;
+```
+
+- *Type:* `string`
+
+The hex value string for the color of the tag when displayed.
+
+---
+
+### TagConditionConfig <a name="construct-hub.TagConditionConfig"></a>
+
+Serialized config for a tag condition.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { TagConditionConfig } from 'construct-hub'
+
+const tagConditionConfig: TagConditionConfig = { ... }
+```
+
+##### `type`<sup>Required</sup> <a name="construct-hub.TagConditionConfig.property.type"></a>
+
+```typescript
+public readonly type: TagConditionLogicType;
+```
+
+- *Type:* [`construct-hub.TagConditionLogicType`](#construct-hub.TagConditionLogicType)
+
+---
+
+##### `children`<sup>Optional</sup> <a name="construct-hub.TagConditionConfig.property.children"></a>
+
+```typescript
+public readonly children: TagConditionConfig[];
+```
+
+- *Type:* [`construct-hub.TagConditionConfig`](#construct-hub.TagConditionConfig)[]
+
+---
+
+##### `key`<sup>Optional</sup> <a name="construct-hub.TagConditionConfig.property.key"></a>
+
+```typescript
+public readonly key: string[];
+```
+
+- *Type:* `string`[]
+
+---
+
+##### `value`<sup>Optional</sup> <a name="construct-hub.TagConditionConfig.property.value"></a>
+
+```typescript
+public readonly value: string;
+```
+
+- *Type:* `string`
 
 ---
 
@@ -5245,6 +5417,121 @@ Zope Public License 2.1.
 
 ---
 
+### TagCondition <a name="construct-hub.TagCondition"></a>
+
+Condition for applying a custom tag to a package.
+
+#### Initializers <a name="construct-hub.TagCondition.Initializer"></a>
+
+```typescript
+import { TagCondition } from 'construct-hub'
+
+new TagCondition()
+```
+
+#### Methods <a name="Methods"></a>
+
+##### `bind` <a name="construct-hub.TagCondition.bind"></a>
+
+```typescript
+public bind()
+```
+
+#### Static Functions <a name="Static Functions"></a>
+
+##### `and` <a name="construct-hub.TagCondition.and"></a>
+
+```typescript
+import { TagCondition } from 'construct-hub'
+
+TagCondition.and(conds: TagCondition)
+```
+
+###### `conds`<sup>Required</sup> <a name="construct-hub.TagCondition.parameter.conds"></a>
+
+- *Type:* [`construct-hub.TagCondition`](#construct-hub.TagCondition)
+
+---
+
+##### `field` <a name="construct-hub.TagCondition.field"></a>
+
+```typescript
+import { TagCondition } from 'construct-hub'
+
+TagCondition.field(keys: string)
+```
+
+###### `keys`<sup>Required</sup> <a name="construct-hub.TagCondition.parameter.keys"></a>
+
+- *Type:* `string`
+
+---
+
+##### `not` <a name="construct-hub.TagCondition.not"></a>
+
+```typescript
+import { TagCondition } from 'construct-hub'
+
+TagCondition.not(conds: TagCondition)
+```
+
+###### `conds`<sup>Required</sup> <a name="construct-hub.TagCondition.parameter.conds"></a>
+
+- *Type:* [`construct-hub.TagCondition`](#construct-hub.TagCondition)
+
+---
+
+##### `or` <a name="construct-hub.TagCondition.or"></a>
+
+```typescript
+import { TagCondition } from 'construct-hub'
+
+TagCondition.or(conds: TagCondition)
+```
+
+###### `conds`<sup>Required</sup> <a name="construct-hub.TagCondition.parameter.conds"></a>
+
+- *Type:* [`construct-hub.TagCondition`](#construct-hub.TagCondition)
+
+---
+
+
+
+### TagConditionField <a name="construct-hub.TagConditionField"></a>
+
+Target a field to use in logic to dictate whether a tag is relevant.
+
+#### Initializers <a name="construct-hub.TagConditionField.Initializer"></a>
+
+```typescript
+import { TagConditionField } from 'construct-hub'
+
+new TagConditionField(field: string[])
+```
+
+##### `field`<sup>Required</sup> <a name="construct-hub.TagConditionField.parameter.field"></a>
+
+- *Type:* `string`[]
+
+---
+
+#### Methods <a name="Methods"></a>
+
+##### `eq` <a name="construct-hub.TagConditionField.eq"></a>
+
+```typescript
+public eq(value: any)
+```
+
+###### `value`<sup>Required</sup> <a name="construct-hub.TagConditionField.parameter.value"></a>
+
+- *Type:* `any`
+
+---
+
+
+
+
 ## Protocols <a name="Protocols"></a>
 
 ### IDenyList <a name="construct-hub.IDenyList"></a>
@@ -5371,4 +5658,29 @@ the id of the external connection (i.e: `public:npmjs`).
 
 ---
 
+
+## Enums <a name="Enums"></a>
+
+### TagConditionLogicType <a name="TagConditionLogicType"></a>
+
+Logic operators for performing specific conditional logic.
+
+#### `AND` <a name="construct-hub.TagConditionLogicType.AND"></a>
+
+---
+
+
+#### `OR` <a name="construct-hub.TagConditionLogicType.OR"></a>
+
+---
+
+
+#### `NOT` <a name="construct-hub.TagConditionLogicType.NOT"></a>
+
+---
+
+
+#### `EQUALS` <a name="construct-hub.TagConditionLogicType.EQUALS"></a>
+
+---
 

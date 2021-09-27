@@ -7,6 +7,7 @@ import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import Environments from 'aws-embedded-metrics/lib/environment/Environments';
 import type { Context, SQSEvent } from 'aws-lambda';
 import { SemVer } from 'semver';
+import type { PackageTagConfig } from '../../package-tag';
 import type { PackageLinkConfig } from '../../webapp';
 import type { StateMachineInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
@@ -14,6 +15,7 @@ import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
+import { isTagApplicable } from '../shared/tags';
 import { extractObjects } from '../shared/tarball.lambda-shared';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 
@@ -30,6 +32,7 @@ export const handler = metricScope(
     const BUCKET_NAME = requireEnv('BUCKET_NAME');
     const STATE_MACHINE_ARN = requireEnv('STATE_MACHINE_ARN');
     const PACKAGE_LINKS = requireEnv('PACKAGE_LINKS');
+    const PACKAGE_TAGS = requireEnv('PACKAGE_TAGS');
 
     const result = new Array<string>();
 
@@ -99,12 +102,13 @@ export const handler = metricScope(
       }
 
       // Ensure the `.jsii` name, version & license corresponds to those in `package.json`
+      const packageJsonObj = JSON.parse(packageJson.toString('utf-8'));
       const {
         name: packageJsonName,
         version: packageJsonVersion,
         license: packageJsonLicense,
         constructHub,
-      } = JSON.parse(packageJson.toString('utf-8'));
+      } = packageJsonObj;
       if (
         packageJsonName !== packageName ||
         packageJsonVersion !== packageVersion ||
@@ -153,11 +157,23 @@ export const handler = metricScope(
         return { ...accum, [configKey]: pkgValue };
       }, {});
 
+      // Add computed tags to metadata
+      const packageTagsConfig: PackageTagConfig[] = JSON.parse(PACKAGE_TAGS);
+      const packageTags = packageTagsConfig.reduce((accum: Array<Omit<PackageTagConfig, 'condition'>>, tagConfig) => {
+        const { condition, ...tagData } = tagConfig;
+        if (isTagApplicable(condition, packageJsonObj)) {
+          return [...accum, tagData];
+        }
+
+        return accum;
+      }, []);
+
       const metadata = {
         constructFramework,
         date: payload.time,
         licenseText: licenseText?.toString('utf-8'),
         packageLinks,
+        packageTags,
       };
 
       const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(

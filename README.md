@@ -164,6 +164,57 @@ you may set the `isolateLambdas` setting to `false`.
 There are a number of customizations available in order to make your private
 construct hub better tailored to your organization.
 
+#### Package Tags
+
+Configuring package tags allows you to compute additional labels to be applied
+to packages. These can be used to indicate to users which packages are owned by
+trusted organizations, or any other arbitrary conditions, and can be referenced
+while searching.
+
+For example:
+```ts
+new ConstructHub(this, "ConstructHub", {
+  ...myProps,
+  packageTags: [{
+    label: 'Official',
+    color: '#00FF00',
+    condition: TagCondition.field('name').eq('construct-hub'),
+  }]
+});
+```
+
+The above example will result in packages with the `name` of `construct-hub` to
+receive the `Official` tag, which is colored green.
+
+Combinations of conditions are also supported:
+```ts
+new ConstructHub(this, "ConstructHub", {
+  ...myProps,
+  packageTags: [{
+    label: 'Official',
+    color: '#00FF00',
+    condition: TagCondition.or(
+      TagCondition.field('name').eq('construct-hub'),
+      TagCondition.field('name').eq('construct-hub-webapp'),
+    ),
+  }]
+});
+
+// or more succintly if you have a long list
+condition: TagCondition.or(
+  ...['construct-hub', 'construct-hub-webapp', '...',]
+    .map(name => TagCondition.field('name').eq(name))
+),
+```
+
+You can assert against any value within package json including nested ones.
+```ts
+TagCondition.field('constructHub', 'nested', 'key').eq('value');
+
+// checks
+packageJson?.constructHub?.nested?.key === value;
+```
+
 #### Package Links
 
 Configuring package links allows you to replace the `Repository`, `License`,

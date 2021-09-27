@@ -2,11 +2,13 @@ import { ComparisonOperator, MathExpression, Metric, MetricOptions, Statistic, T
 import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
+import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
+import { PackageTagConfig } from '../../package-tag';
 import { RUNBOOK_URL } from '../../runbook-url';
 import type { PackageLinkConfig } from '../../webapp';
 import { Orchestration } from '../orchestration';
@@ -31,9 +33,21 @@ export interface IngestionProps {
   readonly orchestration: Orchestration;
 
   /**
+   * How long to retain the CloudWatch logs.
+   *
+   * @default RetentionDays.TEN_YEARS
+   */
+  readonly logRetention?: RetentionDays;
+
+  /**
    * Configuration for custom package page links.
    */
   readonly packageLinks?: PackageLinkConfig[];
+
+  /**
+   * Serialized configuration for custom package tags.
+   */
+  readonly packageTags?: PackageTagConfig[];
 }
 
 /**
@@ -87,7 +101,9 @@ export class Ingestion extends Construct implements IGrantable {
         BUCKET_NAME: props.bucket.bucketName,
         STATE_MACHINE_ARN: props.orchestration.stateMachine.stateMachineArn,
         PACKAGE_LINKS: JSON.stringify(props.packageLinks ?? []),
+        PACKAGE_TAGS: JSON.stringify(props.packageTags ?? []),
       },
+      logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 10_240, // Currently the maximum possible setting
       timeout: Duration.minutes(15),
       tracing: Tracing.ACTIVE,

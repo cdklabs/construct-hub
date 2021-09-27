@@ -18,7 +18,7 @@ import { MetricName, MARKER_FILE_NAME, METRICS_NAMESPACE, S3KeyPrefix } from './
 const normalizeNPMMetadata = require('normalize-registry-metadata');
 
 const TIMEOUT_MILLISECONDS = 10_000;
-const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set(['cdk', 'aws-cdk', 'cdk8s', 'cdktf']);
+const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set(['cdk', 'aws-cdk', 'awscdk', 'cdk8s', 'cdktf']);
 const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
 
 // Configure embedded metrics format

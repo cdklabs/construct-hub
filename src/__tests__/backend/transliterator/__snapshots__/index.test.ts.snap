@@ -12,7 +12,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersf3d3a3cc7f26921b237eff24fc5dd7aef8f0465a1f376b8f7918eb3d4b3e8797S3BucketBEE108A9",
+            "Ref": "AssetParameters4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbcS3Bucket02FC0B28",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -25,7 +25,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersf3d3a3cc7f26921b237eff24fc5dd7aef8f0465a1f376b8f7918eb3d4b3e8797S3VersionKeyA877E3C9",
+                          "Ref": "AssetParameters4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbcS3VersionKey547E84F8",
                         },
                       ],
                     },
@@ -38,7 +38,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersf3d3a3cc7f26921b237eff24fc5dd7aef8f0465a1f376b8f7918eb3d4b3e8797S3VersionKeyA877E3C9",
+                          "Ref": "AssetParameters4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbcS3VersionKey547E84F8",
                         },
                       ],
                     },
@@ -96,62 +96,111 @@ Object {
     "CodeArtifactDomainDB0947A4": Anything,
     "CodeArtifactGetEndpoint0223B4AF": Anything,
     "CodeArtifactGetEndpointCustomResourcePolicy9A5E4C87": Anything,
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": Object {
-      "DependsOn": Array [
-        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
-        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-      ],
+    "MonitoringHighSeverityDashboard17D9CD74": Anything,
+    "MonitoringWatchfulDashboard9EB9FD4D": Anything,
+    "TransliteratorLogGroup09734787": Object {
+      "DeletionPolicy": "Retain",
       "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3Bucket4D46ABB5",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861",
-                        },
-                      ],
-                    },
+        "RetentionInDays": 731,
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "TransliteratorTaskDefinition16158D86": Object {
+      "Properties": Object {
+        "ContainerDefinitions": Array [
+          Object {
+            "Environment": Array [
+              Object {
+                "Name": "HEADER_SPAN",
+                "Value": "true",
+              },
+              Object {
+                "Name": "CODE_ARTIFACT_DOMAIN_NAME",
+                "Value": Object {
+                  "Fn::GetAtt": Array [
+                    "CodeArtifact",
+                    "DomainName",
                   ],
                 },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861",
-                        },
-                      ],
-                    },
+              },
+              Object {
+                "Name": "CODE_ARTIFACT_DOMAIN_OWNER",
+                "Value": Object {
+                  "Fn::GetAtt": Array [
+                    "CodeArtifact",
+                    "DomainOwner",
                   ],
                 },
-              ],
+              },
+              Object {
+                "Name": "CODE_ARTIFACT_REPOSITORY_ENDPOINT",
+                "Value": Object {
+                  "Fn::GetAtt": Array [
+                    "CodeArtifactGetEndpoint0223B4AF",
+                    "repositoryEndpoint",
+                  ],
+                },
+              },
             ],
+            "Essential": true,
+            "Image": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  Object {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ".dkr.ecr.",
+                  Object {
+                    "Ref": "AWS::Region",
+                  },
+                  ".",
+                  Object {
+                    "Ref": "AWS::URLSuffix",
+                  },
+                  "/aws-cdk/assets:1d526c8b8a7d0b21c6e2dba8c620d6979757d6d37ca50404dc84c93fcf4d4bbf",
+                ],
+              ],
+            },
+            "LogConfiguration": Object {
+              "LogDriver": "awslogs",
+              "Options": Object {
+                "awslogs-group": Object {
+                  "Ref": "TransliteratorLogGroup09734787",
+                },
+                "awslogs-region": Object {
+                  "Ref": "AWS::Region",
+                },
+                "awslogs-stream-prefix": "transliterator",
+              },
+            },
+            "Name": "Resource",
           },
-        },
-        "Handler": "index.handler",
-        "Role": Object {
+        ],
+        "Cpu": "4096",
+        "ExecutionRoleArn": Object {
           "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+            "TransliteratorTaskDefinitionExecutionRole9E3F5F1A",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Family": "TestStackTransliteratorTaskDefinitionE3A8C6E4",
+        "Memory": "8192",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": Array [
+          "FARGATE",
+        ],
+        "TaskRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "TransliteratorTaskDefinitionTaskRole9D702381",
+            "Arn",
+          ],
+        },
       },
-      "Type": "AWS::Lambda::Function",
+      "Type": "AWS::ECS::TaskDefinition",
     },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": Object {
+    "TransliteratorTaskDefinitionExecutionRole9E3F5F1A": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -159,164 +208,78 @@ Object {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
               "Principal": Object {
-                "Service": "lambda.amazonaws.com",
+                "Service": "ecs-tasks.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
       },
       "Type": "AWS::IAM::Role",
     },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": Object {
+    "TransliteratorTaskDefinitionExecutionRoleDefaultPolicyEF9F768F": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
             Object {
               "Action": Array [
-                "logs:PutRetentionPolicy",
-                "logs:DeleteRetentionPolicy",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
               ],
               "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":ecr:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":repository/aws-cdk/assets",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
               "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "TransliteratorLogGroup09734787",
+                  "Arn",
+                ],
+              },
             },
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+        "PolicyName": "TransliteratorTaskDefinitionExecutionRoleDefaultPolicyEF9F768F",
         "Roles": Array [
           Object {
-            "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+            "Ref": "TransliteratorTaskDefinitionExecutionRole9E3F5F1A",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "MonitoringHighSeverityDashboard17D9CD74": Anything,
-    "MonitoringWatchfulDashboard9EB9FD4D": Anything,
-    "Transliterator6462E4D2": Object {
-      "DependsOn": Array [
-        "TransliteratorServiceRoleDefaultPolicy44A1392F",
-        "TransliteratorServiceRoleDE4FF5F3",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParametersf423cdcb96bbac82e564cc869f924aa9f9cb3af223fd2b3b3d8987fdf94ba604S3Bucket18A96FBD",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersf423cdcb96bbac82e564cc869f924aa9f9cb3af223fd2b3b3d8987fdf94ba604S3VersionKey69BD507D",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersf423cdcb96bbac82e564cc869f924aa9f9cb3af223fd2b3b3d8987fdf94ba604S3VersionKey69BD507D",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "Description": "Creates python documentation from jsii-enabled npm packages",
-        "Environment": Object {
-          "Variables": Object {
-            "CODE_ARTIFACT_DOMAIN_NAME": Object {
-              "Fn::GetAtt": Array [
-                "CodeArtifact",
-                "DomainName",
-              ],
-            },
-            "CODE_ARTIFACT_DOMAIN_OWNER": Object {
-              "Fn::GetAtt": Array [
-                "CodeArtifact",
-                "DomainOwner",
-              ],
-            },
-            "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
-              "Fn::GetAtt": Array [
-                "CodeArtifactGetEndpoint0223B4AF",
-                "repositoryEndpoint",
-              ],
-            },
-            "HEADER_SPAN": "true",
-            "TARGET_LANGUAGE": "python",
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 10240,
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratorServiceRoleDE4FF5F3",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "TracingConfig": Object {
-          "Mode": "PassThrough",
-        },
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "TransliteratorLogRetention2FE858DC": Object {
-      "Properties": Object {
-        "LogGroupName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "/aws/lambda/",
-              Object {
-                "Ref": "Transliterator6462E4D2",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 3653,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-    },
-    "TransliteratorServiceRoleDE4FF5F3": Object {
+    "TransliteratorTaskDefinitionTaskRole9D702381": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -324,37 +287,24 @@ Object {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
               "Principal": Object {
-                "Service": "lambda.amazonaws.com",
+                "Service": "ecs-tasks.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
       },
       "Type": "AWS::IAM::Role",
     },
-    "TransliteratorServiceRoleDefaultPolicy44A1392F": Object {
+    "TransliteratorTaskDefinitionTaskRoleDefaultPolicy9436F5AA": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
             Object {
               "Action": Array [
-                "xray:PutTraceSegments",
-                "xray:PutTelemetryRecords",
+                "states:SendTaskFailure",
+                "states:SendTaskHeartbeat",
+                "states:SendTaskSuccess",
               ],
               "Effect": "Allow",
               "Resource": "*",
@@ -416,6 +366,126 @@ Object {
                         ],
                       },
                       "/data/*/assembly.json",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-typescript.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-typescript.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-typescript.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-typescript.md.not-supported",
                     ],
                   ],
                 },
@@ -541,13 +611,133 @@ Object {
                 },
               ],
             },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-java.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-java.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-java.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-java.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "TransliteratorServiceRoleDefaultPolicy44A1392F",
+        "PolicyName": "TransliteratorTaskDefinitionTaskRoleDefaultPolicy9436F5AA",
         "Roles": Array [
           Object {
-            "Ref": "TransliteratorServiceRoleDE4FF5F3",
+            "Ref": "TransliteratorTaskDefinitionTaskRole9D702381",
           },
         ],
       },
@@ -560,267 +750,110 @@ Object {
 exports[`VPC Endpoints 1`] = `
 Object {
   "Outputs": Anything,
-  "Parameters": Anything,
   "Resources": Object {
     "Bucket83908E77": Anything,
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": Object {
-      "DependsOn": Array [
-        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
-        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3Bucket4D46ABB5",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "Handler": "index.handler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
-                "logs:PutRetentionPolicy",
-                "logs:DeleteRetentionPolicy",
-              ],
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
-        "Roles": Array [
-          Object {
-            "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
     "MonitoringHighSeverityDashboard17D9CD74": Anything,
     "MonitoringWatchfulDashboard9EB9FD4D": Anything,
-    "Transliterator6462E4D2": Object {
-      "DependsOn": Array [
-        "TransliteratorServiceRoleDefaultPolicy44A1392F",
-        "TransliteratorServiceRoleDE4FF5F3",
-      ],
+    "TransliteratorLogGroup09734787": Object {
+      "DeletionPolicy": "Retain",
       "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParametersf423cdcb96bbac82e564cc869f924aa9f9cb3af223fd2b3b3d8987fdf94ba604S3Bucket18A96FBD",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersf423cdcb96bbac82e564cc869f924aa9f9cb3af223fd2b3b3d8987fdf94ba604S3VersionKey69BD507D",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
+        "RetentionInDays": 731,
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "TransliteratorTaskDefinition16158D86": Object {
+      "Properties": Object {
+        "ContainerDefinitions": Array [
+          Object {
+            "Environment": Array [
+              Object {
+                "Name": "HEADER_SPAN",
+                "Value": "true",
+              },
+              Object {
+                "Name": "CODE_ARTIFACT_API_ENDPOINT",
+                "Value": Object {
                   "Fn::Select": Array [
                     1,
                     Object {
                       "Fn::Split": Array [
-                        "||",
+                        ":",
                         Object {
-                          "Ref": "AssetParametersf423cdcb96bbac82e564cc869f924aa9f9cb3af223fd2b3b3d8987fdf94ba604S3VersionKey69BD507D",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "Description": "Creates python documentation from jsii-enabled npm packages",
-        "Environment": Object {
-          "Variables": Object {
-            "CODE_ARTIFACT_API_ENDPOINT": Object {
-              "Fn::Select": Array [
-                1,
-                Object {
-                  "Fn::Split": Array [
-                    ":",
-                    Object {
-                      "Fn::Select": Array [
-                        0,
-                        Object {
-                          "Fn::GetAtt": Array [
-                            "VPCCodeArtifactAPIA2ABC3E9",
-                            "DnsEntries",
+                          "Fn::Select": Array [
+                            0,
+                            Object {
+                              "Fn::GetAtt": Array [
+                                "VPCCodeArtifactAPIA2ABC3E9",
+                                "DnsEntries",
+                              ],
+                            },
                           ],
                         },
                       ],
                     },
                   ],
                 },
-              ],
-            },
-            "HEADER_SPAN": "true",
-            "TARGET_LANGUAGE": "python",
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 10240,
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratorServiceRoleDE4FF5F3",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "TracingConfig": Object {
-          "Mode": "PassThrough",
-        },
-        "VpcConfig": Object {
-          "SecurityGroupIds": Array [
-            Object {
-              "Fn::GetAtt": Array [
-                "TransliteratorSecurityGroup52541706",
-                "GroupId",
-              ],
-            },
-          ],
-          "SubnetIds": Array [
-            Object {
-              "Ref": "VPCIsolatedSubnet1SubnetEBD00FC6",
-            },
-            Object {
-              "Ref": "VPCIsolatedSubnet2Subnet4B1C8CAA",
-            },
-          ],
-        },
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "TransliteratorLogRetention2FE858DC": Object {
-      "Properties": Object {
-        "LogGroupName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "/aws/lambda/",
-              Object {
-                "Ref": "Transliterator6462E4D2",
               },
             ],
+            "Essential": true,
+            "Image": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  Object {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ".dkr.ecr.",
+                  Object {
+                    "Ref": "AWS::Region",
+                  },
+                  ".",
+                  Object {
+                    "Ref": "AWS::URLSuffix",
+                  },
+                  "/aws-cdk/assets:1d526c8b8a7d0b21c6e2dba8c620d6979757d6d37ca50404dc84c93fcf4d4bbf",
+                ],
+              ],
+            },
+            "LogConfiguration": Object {
+              "LogDriver": "awslogs",
+              "Options": Object {
+                "awslogs-group": Object {
+                  "Ref": "TransliteratorLogGroup09734787",
+                },
+                "awslogs-region": Object {
+                  "Ref": "AWS::Region",
+                },
+                "awslogs-stream-prefix": "transliterator",
+              },
+            },
+            "Name": "Resource",
+          },
+        ],
+        "Cpu": "4096",
+        "ExecutionRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "TransliteratorTaskDefinitionExecutionRole9E3F5F1A",
+            "Arn",
           ],
         },
-        "RetentionInDays": 3653,
-        "ServiceToken": Object {
+        "Family": "TestStackTransliteratorTaskDefinitionE3A8C6E4",
+        "Memory": "8192",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": Array [
+          "FARGATE",
+        ],
+        "TaskRoleArn": Object {
           "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "TransliteratorTaskDefinitionTaskRole9D702381",
             "Arn",
           ],
         },
       },
-      "Type": "Custom::LogRetention",
+      "Type": "AWS::ECS::TaskDefinition",
     },
-    "TransliteratorSecurityGroup52541706": Object {
-      "Properties": Object {
-        "GroupDescription": "Automatic security group for Lambda Function TestStackTransliterator9D9D4864",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "VPCB9E5F0B4",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "TransliteratorServiceRoleDE4FF5F3": Object {
+    "TransliteratorTaskDefinitionExecutionRole9E3F5F1A": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -828,49 +861,103 @@ Object {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
               "Principal": Object {
-                "Service": "lambda.amazonaws.com",
+                "Service": "ecs-tasks.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
-              ],
-            ],
-          },
-        ],
       },
       "Type": "AWS::IAM::Role",
     },
-    "TransliteratorServiceRoleDefaultPolicy44A1392F": Object {
+    "TransliteratorTaskDefinitionExecutionRoleDefaultPolicyEF9F768F": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
             Object {
               "Action": Array [
-                "xray:PutTraceSegments",
-                "xray:PutTelemetryRecords",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":ecr:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":repository/aws-cdk/assets",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "TransliteratorLogGroup09734787",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "TransliteratorTaskDefinitionExecutionRoleDefaultPolicyEF9F768F",
+        "Roles": Array [
+          Object {
+            "Ref": "TransliteratorTaskDefinitionExecutionRole9E3F5F1A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "TransliteratorTaskDefinitionTaskRole9D702381": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "TransliteratorTaskDefinitionTaskRoleDefaultPolicy9436F5AA": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "states:SendTaskFailure",
+                "states:SendTaskHeartbeat",
+                "states:SendTaskSuccess",
               ],
               "Effect": "Allow",
               "Resource": "*",
@@ -900,6 +987,126 @@ Object {
                         ],
                       },
                       "/data/*/assembly.json",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-typescript.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-typescript.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-typescript.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-typescript.md.not-supported",
                     ],
                   ],
                 },
@@ -1025,23 +1232,149 @@ Object {
                 },
               ],
             },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-java.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-java.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-java.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-java.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "TransliteratorServiceRoleDefaultPolicy44A1392F",
+        "PolicyName": "TransliteratorTaskDefinitionTaskRoleDefaultPolicy9436F5AA",
         "Roles": Array [
           Object {
-            "Ref": "TransliteratorServiceRoleDE4FF5F3",
+            "Ref": "TransliteratorTaskDefinitionTaskRole9D702381",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
     "VPCB9E5F0B4": Anything,
+    "VPCCloudWatchLogsAF00FE1E": Anything,
+    "VPCCloudWatchLogsSecurityGroupBD4AAD5D": Anything,
     "VPCCodeArtifactAPIA2ABC3E9": Anything,
     "VPCCodeArtifactAPISecurityGroup64F4145F": Anything,
     "VPCCodeArtifactRepoA711606D": Anything,
     "VPCCodeArtifactRepoSecurityGroupADDB69B7": Anything,
+    "VPCECR6A7B7D8F": Anything,
+    "VPCECRAPI3780F3E2": Anything,
+    "VPCECRAPISecurityGroupF418D050": Anything,
+    "VPCECRSecurityGroupC83C5513": Anything,
     "VPCIsolatedSubnet1RouteTableAssociationA2D18F7C": Anything,
     "VPCIsolatedSubnet1RouteTableEB156210": Anything,
     "VPCIsolatedSubnet1SubnetEBD00FC6": Anything,
@@ -1049,6 +1382,8 @@ Object {
     "VPCIsolatedSubnet2RouteTableAssociation7BF8E0EB": Anything,
     "VPCIsolatedSubnet2Subnet4B1C8CAA": Anything,
     "VPCS3CC6C5EE4": Anything,
+    "VPCStepFunctions960F37B8": Anything,
+    "VPCStepFunctionsSecurityGroup4B81069A": Anything,
   },
 }
 `;
@@ -1056,7 +1391,20 @@ Object {
 exports[`VPC Endpoints and CodeArtifact repository 1`] = `
 Object {
   "Outputs": Anything,
-  "Parameters": Anything,
+  "Parameters": Object {
+    "AssetParameters4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbcArtifactHashF236251A": Object {
+      "Description": "Artifact hash for asset \\"4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbc\\"",
+      "Type": "String",
+    },
+    "AssetParameters4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbcS3Bucket02FC0B28": Object {
+      "Description": "S3 bucket for asset \\"4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbc\\"",
+      "Type": "String",
+    },
+    "AssetParameters4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbcS3VersionKey547E84F8": Object {
+      "Description": "S3 key for asset version \\"4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbc\\"",
+      "Type": "String",
+    },
+  },
   "Resources": Object {
     "AWS679f53fac002430cb0da5b7982bd22872D164C4C": Object {
       "DependsOn": Array [
@@ -1065,7 +1413,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersf3d3a3cc7f26921b237eff24fc5dd7aef8f0465a1f376b8f7918eb3d4b3e8797S3BucketBEE108A9",
+            "Ref": "AssetParameters4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbcS3Bucket02FC0B28",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -1078,7 +1426,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersf3d3a3cc7f26921b237eff24fc5dd7aef8f0465a1f376b8f7918eb3d4b3e8797S3VersionKeyA877E3C9",
+                          "Ref": "AssetParameters4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbcS3VersionKey547E84F8",
                         },
                       ],
                     },
@@ -1091,7 +1439,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersf3d3a3cc7f26921b237eff24fc5dd7aef8f0465a1f376b8f7918eb3d4b3e8797S3VersionKeyA877E3C9",
+                          "Ref": "AssetParameters4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbcS3VersionKey547E84F8",
                         },
                       ],
                     },
@@ -1149,282 +1497,135 @@ Object {
     "CodeArtifactDomainDB0947A4": Anything,
     "CodeArtifactGetEndpoint0223B4AF": Anything,
     "CodeArtifactGetEndpointCustomResourcePolicy9A5E4C87": Anything,
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": Object {
-      "DependsOn": Array [
-        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
-        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3Bucket4D46ABB5",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "Handler": "index.handler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
-                "logs:PutRetentionPolicy",
-                "logs:DeleteRetentionPolicy",
-              ],
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
-        "Roles": Array [
-          Object {
-            "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
     "MonitoringHighSeverityDashboard17D9CD74": Anything,
     "MonitoringWatchfulDashboard9EB9FD4D": Anything,
-    "Transliterator6462E4D2": Object {
-      "DependsOn": Array [
-        "TransliteratorServiceRoleDefaultPolicy44A1392F",
-        "TransliteratorServiceRoleDE4FF5F3",
-      ],
+    "TransliteratorLogGroup09734787": Object {
+      "DeletionPolicy": "Retain",
       "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParametersf423cdcb96bbac82e564cc869f924aa9f9cb3af223fd2b3b3d8987fdf94ba604S3Bucket18A96FBD",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersf423cdcb96bbac82e564cc869f924aa9f9cb3af223fd2b3b3d8987fdf94ba604S3VersionKey69BD507D",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
+        "RetentionInDays": 731,
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "TransliteratorTaskDefinition16158D86": Object {
+      "Properties": Object {
+        "ContainerDefinitions": Array [
+          Object {
+            "Environment": Array [
+              Object {
+                "Name": "HEADER_SPAN",
+                "Value": "true",
+              },
+              Object {
+                "Name": "CODE_ARTIFACT_API_ENDPOINT",
+                "Value": Object {
                   "Fn::Select": Array [
                     1,
                     Object {
                       "Fn::Split": Array [
-                        "||",
+                        ":",
                         Object {
-                          "Ref": "AssetParametersf423cdcb96bbac82e564cc869f924aa9f9cb3af223fd2b3b3d8987fdf94ba604S3VersionKey69BD507D",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "Description": "Creates python documentation from jsii-enabled npm packages",
-        "Environment": Object {
-          "Variables": Object {
-            "CODE_ARTIFACT_API_ENDPOINT": Object {
-              "Fn::Select": Array [
-                1,
-                Object {
-                  "Fn::Split": Array [
-                    ":",
-                    Object {
-                      "Fn::Select": Array [
-                        0,
-                        Object {
-                          "Fn::GetAtt": Array [
-                            "VPCCodeArtifactAPIA2ABC3E9",
-                            "DnsEntries",
+                          "Fn::Select": Array [
+                            0,
+                            Object {
+                              "Fn::GetAtt": Array [
+                                "VPCCodeArtifactAPIA2ABC3E9",
+                                "DnsEntries",
+                              ],
+                            },
                           ],
                         },
                       ],
                     },
                   ],
                 },
-              ],
-            },
-            "CODE_ARTIFACT_DOMAIN_NAME": Object {
-              "Fn::GetAtt": Array [
-                "CodeArtifact",
-                "DomainName",
-              ],
-            },
-            "CODE_ARTIFACT_DOMAIN_OWNER": Object {
-              "Fn::GetAtt": Array [
-                "CodeArtifact",
-                "DomainOwner",
-              ],
-            },
-            "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
-              "Fn::GetAtt": Array [
-                "CodeArtifactGetEndpoint0223B4AF",
-                "repositoryEndpoint",
-              ],
-            },
-            "HEADER_SPAN": "true",
-            "TARGET_LANGUAGE": "python",
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 10240,
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratorServiceRoleDE4FF5F3",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "TracingConfig": Object {
-          "Mode": "PassThrough",
-        },
-        "VpcConfig": Object {
-          "SecurityGroupIds": Array [
-            Object {
-              "Fn::GetAtt": Array [
-                "TransliteratorSecurityGroup52541706",
-                "GroupId",
-              ],
-            },
-          ],
-          "SubnetIds": Array [
-            Object {
-              "Ref": "VPCIsolatedSubnet1SubnetEBD00FC6",
-            },
-            Object {
-              "Ref": "VPCIsolatedSubnet2Subnet4B1C8CAA",
-            },
-          ],
-        },
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "TransliteratorLogRetention2FE858DC": Object {
-      "Properties": Object {
-        "LogGroupName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "/aws/lambda/",
+              },
               Object {
-                "Ref": "Transliterator6462E4D2",
+                "Name": "CODE_ARTIFACT_DOMAIN_NAME",
+                "Value": Object {
+                  "Fn::GetAtt": Array [
+                    "CodeArtifact",
+                    "DomainName",
+                  ],
+                },
+              },
+              Object {
+                "Name": "CODE_ARTIFACT_DOMAIN_OWNER",
+                "Value": Object {
+                  "Fn::GetAtt": Array [
+                    "CodeArtifact",
+                    "DomainOwner",
+                  ],
+                },
+              },
+              Object {
+                "Name": "CODE_ARTIFACT_REPOSITORY_ENDPOINT",
+                "Value": Object {
+                  "Fn::GetAtt": Array [
+                    "CodeArtifactGetEndpoint0223B4AF",
+                    "repositoryEndpoint",
+                  ],
+                },
               },
             ],
+            "Essential": true,
+            "Image": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  Object {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ".dkr.ecr.",
+                  Object {
+                    "Ref": "AWS::Region",
+                  },
+                  ".",
+                  Object {
+                    "Ref": "AWS::URLSuffix",
+                  },
+                  "/aws-cdk/assets:1d526c8b8a7d0b21c6e2dba8c620d6979757d6d37ca50404dc84c93fcf4d4bbf",
+                ],
+              ],
+            },
+            "LogConfiguration": Object {
+              "LogDriver": "awslogs",
+              "Options": Object {
+                "awslogs-group": Object {
+                  "Ref": "TransliteratorLogGroup09734787",
+                },
+                "awslogs-region": Object {
+                  "Ref": "AWS::Region",
+                },
+                "awslogs-stream-prefix": "transliterator",
+              },
+            },
+            "Name": "Resource",
+          },
+        ],
+        "Cpu": "4096",
+        "ExecutionRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "TransliteratorTaskDefinitionExecutionRole9E3F5F1A",
+            "Arn",
           ],
         },
-        "RetentionInDays": 3653,
-        "ServiceToken": Object {
+        "Family": "TestStackTransliteratorTaskDefinitionE3A8C6E4",
+        "Memory": "8192",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": Array [
+          "FARGATE",
+        ],
+        "TaskRoleArn": Object {
           "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "TransliteratorTaskDefinitionTaskRole9D702381",
             "Arn",
           ],
         },
       },
-      "Type": "Custom::LogRetention",
+      "Type": "AWS::ECS::TaskDefinition",
     },
-    "TransliteratorSecurityGroup52541706": Object {
-      "Properties": Object {
-        "GroupDescription": "Automatic security group for Lambda Function TestStackTransliterator9D9D4864",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": "0.0.0.0/0",
-            "Description": "Allow all outbound traffic by default",
-            "IpProtocol": "-1",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "VPCB9E5F0B4",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
-    "TransliteratorServiceRoleDE4FF5F3": Object {
+    "TransliteratorTaskDefinitionExecutionRole9E3F5F1A": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -1432,49 +1633,103 @@ Object {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
               "Principal": Object {
-                "Service": "lambda.amazonaws.com",
+                "Service": "ecs-tasks.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole",
-              ],
-            ],
-          },
-        ],
       },
       "Type": "AWS::IAM::Role",
     },
-    "TransliteratorServiceRoleDefaultPolicy44A1392F": Object {
+    "TransliteratorTaskDefinitionExecutionRoleDefaultPolicyEF9F768F": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
             Object {
               "Action": Array [
-                "xray:PutTraceSegments",
-                "xray:PutTelemetryRecords",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":ecr:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":repository/aws-cdk/assets",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "TransliteratorLogGroup09734787",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "TransliteratorTaskDefinitionExecutionRoleDefaultPolicyEF9F768F",
+        "Roles": Array [
+          Object {
+            "Ref": "TransliteratorTaskDefinitionExecutionRole9E3F5F1A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "TransliteratorTaskDefinitionTaskRole9D702381": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "ecs-tasks.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "TransliteratorTaskDefinitionTaskRoleDefaultPolicy9436F5AA": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "states:SendTaskFailure",
+                "states:SendTaskHeartbeat",
+                "states:SendTaskSuccess",
               ],
               "Effect": "Allow",
               "Resource": "*",
@@ -1565,6 +1820,126 @@ Object {
                           "Arn",
                         ],
                       },
+                      "/data/*/docs-typescript.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-typescript.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-typescript.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-typescript.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
                       "/data/*/docs-python.md",
                     ],
                   ],
@@ -1661,23 +2036,149 @@ Object {
                 },
               ],
             },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-java.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-java.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-java.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-java.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "TransliteratorServiceRoleDefaultPolicy44A1392F",
+        "PolicyName": "TransliteratorTaskDefinitionTaskRoleDefaultPolicy9436F5AA",
         "Roles": Array [
           Object {
-            "Ref": "TransliteratorServiceRoleDE4FF5F3",
+            "Ref": "TransliteratorTaskDefinitionTaskRole9D702381",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
     "VPCB9E5F0B4": Anything,
+    "VPCCloudWatchLogsAF00FE1E": Anything,
+    "VPCCloudWatchLogsSecurityGroupBD4AAD5D": Anything,
     "VPCCodeArtifactAPIA2ABC3E9": Anything,
     "VPCCodeArtifactAPISecurityGroup64F4145F": Anything,
     "VPCCodeArtifactRepoA711606D": Anything,
     "VPCCodeArtifactRepoSecurityGroupADDB69B7": Anything,
+    "VPCECR6A7B7D8F": Anything,
+    "VPCECRAPI3780F3E2": Anything,
+    "VPCECRAPISecurityGroupF418D050": Anything,
+    "VPCECRSecurityGroupC83C5513": Anything,
     "VPCIsolatedSubnet1RouteTableAssociationA2D18F7C": Anything,
     "VPCIsolatedSubnet1RouteTableEB156210": Anything,
     "VPCIsolatedSubnet1SubnetEBD00FC6": Anything,
@@ -1685,6 +2186,8 @@ Object {
     "VPCIsolatedSubnet2RouteTableAssociation7BF8E0EB": Anything,
     "VPCIsolatedSubnet2Subnet4B1C8CAA": Anything,
     "VPCS3CC6C5EE4": Anything,
+    "VPCStepFunctions960F37B8": Anything,
+    "VPCStepFunctionsSecurityGroup4B81069A": Anything,
   },
 }
 `;
@@ -1692,65 +2195,86 @@ Object {
 exports[`basic use 1`] = `
 Object {
   "Outputs": Anything,
-  "Parameters": Anything,
   "Resources": Object {
     "Bucket83908E77": Anything,
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": Object {
-      "DependsOn": Array [
-        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
-        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
-      ],
+    "MonitoringHighSeverityDashboard17D9CD74": Anything,
+    "MonitoringWatchfulDashboard9EB9FD4D": Anything,
+    "TransliteratorLogGroup09734787": Object {
+      "DeletionPolicy": "Retain",
       "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3Bucket4D46ABB5",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
+        "RetentionInDays": 731,
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "TransliteratorTaskDefinition16158D86": Object {
+      "Properties": Object {
+        "ContainerDefinitions": Array [
+          Object {
+            "Environment": Array [
+              Object {
+                "Name": "HEADER_SPAN",
+                "Value": "true",
+              },
             ],
+            "Essential": true,
+            "Image": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  Object {
+                    "Ref": "AWS::AccountId",
+                  },
+                  ".dkr.ecr.",
+                  Object {
+                    "Ref": "AWS::Region",
+                  },
+                  ".",
+                  Object {
+                    "Ref": "AWS::URLSuffix",
+                  },
+                  "/aws-cdk/assets:1d526c8b8a7d0b21c6e2dba8c620d6979757d6d37ca50404dc84c93fcf4d4bbf",
+                ],
+              ],
+            },
+            "LogConfiguration": Object {
+              "LogDriver": "awslogs",
+              "Options": Object {
+                "awslogs-group": Object {
+                  "Ref": "TransliteratorLogGroup09734787",
+                },
+                "awslogs-region": Object {
+                  "Ref": "AWS::Region",
+                },
+                "awslogs-stream-prefix": "transliterator",
+              },
+            },
+            "Name": "Resource",
           },
-        },
-        "Handler": "index.handler",
-        "Role": Object {
+        ],
+        "Cpu": "4096",
+        "ExecutionRoleArn": Object {
           "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+            "TransliteratorTaskDefinitionExecutionRole9E3F5F1A",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Family": "TestStackTransliteratorTaskDefinitionE3A8C6E4",
+        "Memory": "8192",
+        "NetworkMode": "awsvpc",
+        "RequiresCompatibilities": Array [
+          "FARGATE",
+        ],
+        "TaskRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "TransliteratorTaskDefinitionTaskRole9D702381",
+            "Arn",
+          ],
+        },
       },
-      "Type": "AWS::Lambda::Function",
+      "Type": "AWS::ECS::TaskDefinition",
     },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": Object {
+    "TransliteratorTaskDefinitionExecutionRole9E3F5F1A": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -1758,146 +2282,78 @@ Object {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
               "Principal": Object {
-                "Service": "lambda.amazonaws.com",
+                "Service": "ecs-tasks.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
       },
       "Type": "AWS::IAM::Role",
     },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": Object {
+    "TransliteratorTaskDefinitionExecutionRoleDefaultPolicyEF9F768F": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
             Object {
               "Action": Array [
-                "logs:PutRetentionPolicy",
-                "logs:DeleteRetentionPolicy",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
               ],
               "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":ecr:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":repository/aws-cdk/assets",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "ecr:GetAuthorizationToken",
+              "Effect": "Allow",
               "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "TransliteratorLogGroup09734787",
+                  "Arn",
+                ],
+              },
             },
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+        "PolicyName": "TransliteratorTaskDefinitionExecutionRoleDefaultPolicyEF9F768F",
         "Roles": Array [
           Object {
-            "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+            "Ref": "TransliteratorTaskDefinitionExecutionRole9E3F5F1A",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "MonitoringHighSeverityDashboard17D9CD74": Anything,
-    "MonitoringWatchfulDashboard9EB9FD4D": Anything,
-    "Transliterator6462E4D2": Object {
-      "DependsOn": Array [
-        "TransliteratorServiceRoleDefaultPolicy44A1392F",
-        "TransliteratorServiceRoleDE4FF5F3",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParametersf423cdcb96bbac82e564cc869f924aa9f9cb3af223fd2b3b3d8987fdf94ba604S3Bucket18A96FBD",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersf423cdcb96bbac82e564cc869f924aa9f9cb3af223fd2b3b3d8987fdf94ba604S3VersionKey69BD507D",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersf423cdcb96bbac82e564cc869f924aa9f9cb3af223fd2b3b3d8987fdf94ba604S3VersionKey69BD507D",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "Description": "Creates python documentation from jsii-enabled npm packages",
-        "Environment": Object {
-          "Variables": Object {
-            "HEADER_SPAN": "true",
-            "TARGET_LANGUAGE": "python",
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 10240,
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "TransliteratorServiceRoleDE4FF5F3",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "TracingConfig": Object {
-          "Mode": "PassThrough",
-        },
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "TransliteratorLogRetention2FE858DC": Object {
-      "Properties": Object {
-        "LogGroupName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "/aws/lambda/",
-              Object {
-                "Ref": "Transliterator6462E4D2",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 3653,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-    },
-    "TransliteratorServiceRoleDE4FF5F3": Object {
+    "TransliteratorTaskDefinitionTaskRole9D702381": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -1905,37 +2361,24 @@ Object {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
               "Principal": Object {
-                "Service": "lambda.amazonaws.com",
+                "Service": "ecs-tasks.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
       },
       "Type": "AWS::IAM::Role",
     },
-    "TransliteratorServiceRoleDefaultPolicy44A1392F": Object {
+    "TransliteratorTaskDefinitionTaskRoleDefaultPolicy9436F5AA": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
             Object {
               "Action": Array [
-                "xray:PutTraceSegments",
-                "xray:PutTelemetryRecords",
+                "states:SendTaskFailure",
+                "states:SendTaskHeartbeat",
+                "states:SendTaskSuccess",
               ],
               "Effect": "Allow",
               "Resource": "*",
@@ -1994,6 +2437,126 @@ Object {
                           "Arn",
                         ],
                       },
+                      "/data/*/docs-typescript.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-typescript.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-typescript.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-typescript.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
                       "/data/*/docs-python.md",
                     ],
                   ],
@@ -2090,13 +2653,133 @@ Object {
                 },
               ],
             },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-java.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-java.md",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-java.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-java.md.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "TransliteratorServiceRoleDefaultPolicy44A1392F",
+        "PolicyName": "TransliteratorTaskDefinitionTaskRoleDefaultPolicy9436F5AA",
         "Roles": Array [
           Object {
-            "Ref": "TransliteratorServiceRoleDE4FF5F3",
+            "Ref": "TransliteratorTaskDefinitionTaskRole9D702381",
           },
         ],
       },
