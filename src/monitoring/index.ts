@@ -73,6 +73,12 @@ export class Monitoring extends Construct implements IMonitoring {
     }));
   }
 
+  public addLowSeverityAlarm(_title: string, alarm: cw.Alarm) {
+    if (this.alarmActions?.normalSeverityAction) {
+      alarm.addAlarmAction(this.alarmActions!.normalSeverityAction);
+    }
+  }
+
   /**
    * Adds a canary that pings a certain URL and raises an alarm in case the URL
    * responds with an error over 80% of the times.

@@ -96,6 +96,23 @@ export class NpmJs implements IPackageSource {
     });
     monitoring.addHighSeverityAlarm('NpmJs/Follower Not Running', notRunningAlarm);
 
+    const noChangeAlarm = this.metricChangeCount().createAlarm(scope, 'NpmJs/Follower/NoChanges', {
+      alarmName: `${scope.node.path}/NpmJs/Follower/NoChanges`,
+      alarmDescription: [
+        'The NpmJs follower function is no discovering any changes from CouchDB!',
+        '',
+        `RunBook: ${RUNBOOK_URL}`,
+        '',
+        `Direct link to Lambda function: ${lambdaFunctionUrl(follower)}`,
+      ].join('\n'),
+      comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+      evaluationPeriods: 2,
+      threshold: 1,
+      // If the metric is not emitted, it can be assumed to be zero.
+      treatMissingData: TreatMissingData.BREACHING,
+    });
+    monitoring.addLowSeverityAlarm('Np npmjs.com changes discovered', noChangeAlarm);
+
     // Finally - the "not running" alarm depends on the schedule (it won't run until the schedule
     // exists!), and the schedule depends on the failure alarm existing (we don't want it to run
     // before we can know it is failing). This means the returned `IDependable` effectively ensures
@@ -142,6 +159,16 @@ export class NpmJs implements IPackageSource {
             rightYAxis: { label: 'Milliseconds', min: 0, showUnits: false },
             period: Duration.minutes(15),
           }),
+        ], [
+          new GraphWidget({
+            height: 6,
+            width: 12,
+            title: 'CouchDB Changes',
+            left: [
+              this.metricLastSeq({ label: 'Last Sequence Number' }),
+            ],
+            period: Duration.minutes(15),
+          }),
         ],
       ],
     };
@@ -169,6 +196,20 @@ export class NpmJs implements IPackageSource {
       statistic: Statistic.SUM,
       ...opts,
       metricName: MetricName.CHANGE_COUNT,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The last sequence number that was processed. This metric can be used to
+   * discover when a sequence reset has happened in the CouchDB instance.
+   */
+  public metricLastSeq(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      metricName: MetricName.LAST_SEQ,
       namespace: METRICS_NAMESPACE,
     });
   }

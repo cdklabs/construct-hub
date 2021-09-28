@@ -81,18 +81,6 @@ Object {
       "Description": "S3 key for asset version \\"23e562858610c23d208e4e3cd9a253f871c51c7cf46387fa4616b3ca310b6532\\"",
       "Type": "String",
     },
-    "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682ArtifactHashF05E9483": Object {
-      "Description": "Artifact hash for asset \\"2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682\\"",
-      "Type": "String",
-    },
-    "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3Bucket561EABCB": Object {
-      "Description": "S3 bucket for asset \\"2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682\\"",
-      "Type": "String",
-    },
-    "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3VersionKey7714F230": Object {
-      "Description": "S3 key for asset version \\"2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682\\"",
-      "Type": "String",
-    },
     "AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658ArtifactHashA026490C": Object {
       "Description": "Artifact hash for asset \\"2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658\\"",
       "Type": "String",
@@ -211,6 +199,18 @@ Object {
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064S3VersionKey5B081B37": Object {
       "Description": "S3 key for asset version \\"8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064\\"",
+      "Type": "String",
+    },
+    "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15ArtifactHash8730BA56": Object {
+      "Description": "Artifact hash for asset \\"9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15\\"",
+      "Type": "String",
+    },
+    "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3Bucket56918E70": Object {
+      "Description": "S3 bucket for asset \\"9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15\\"",
+      "Type": "String",
+    },
+    "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3VersionKey435E8997": Object {
+      "Description": "S3 key for asset version \\"9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15\\"",
       "Type": "String",
     },
     "AssetParametersd5ce621914a7c3f15cf5d46823956ea431a98db7cf8d22b7af369eb6d01413c7ArtifactHashC896926E": Object {
@@ -668,7 +668,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":45,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":45,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Changes\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"LastSeq\\",{\\"label\\":\\"Last Sequence Number\\",\\"stat\\":\\"Maximum\\"}]],\\"yAxis\\":{},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":51,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -691,7 +695,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":47,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -703,7 +707,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":47,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -728,11 +732,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ffa500\\",\\"label\\":\\"10 Minutes\\",\\"value\\":600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Quality\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ffa500\\",\\"label\\":\\"10 Minutes\\",\\"value\\":600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Quality\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"stacked\\":true,\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"label\\":\\"Count\\",\\"min\\":0,\\"showUnits\\":false}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
+              "\\",\\"stacked\\":true,\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"label\\":\\"Count\\",\\"min\\":0,\\"showUnits\\":false}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -757,7 +761,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":59,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:primary:State Machine](/states/home#/statemachines/view/",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":65,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:primary:State Machine](/states/home#/statemachines/view/",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -784,7 +788,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationReprocessAllFF2F2455",
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":61,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -816,7 +820,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":61,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letter Queue\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letter Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -841,7 +845,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":67,\\"properties\\":{\\"markdown\\":\\"# Deny List\\\\n\\\\n[button:primary:Deny List Object](/s3/object/",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":73,\\"properties\\":{\\"markdown\\":\\"# Deny List\\\\n\\\\n[button:primary:Deny List Object](/s3/object/",
               Object {
                 "Ref": "ConstructHubDenyListBucket1B3C2C2E",
               },
@@ -872,7 +876,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubDenyListPrunePruneQueueHandlerF7EB599B",
               },
-              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":69,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Deny List\\",\\"region\\":\\"",
+              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":75,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Deny List\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -883,7 +887,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Deleted Files\\",\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":69,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Prune Function Health\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Deleted Files\\",\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":75,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Prune Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -6606,7 +6610,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3Bucket561EABCB",
+            "Ref": "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3Bucket56918E70",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -6619,7 +6623,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3VersionKey7714F230",
+                          "Ref": "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3VersionKey435E8997",
                         },
                       ],
                     },
@@ -6632,7 +6636,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3VersionKey7714F230",
+                          "Ref": "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3VersionKey435E8997",
                         },
                       ],
                     },
@@ -6716,6 +6720,35 @@ Direct link to Lambda function: /lambda/home#/functions/",
         "Statistic": "Sum",
         "Threshold": 1,
         "TreatMissingData": "missing",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsFollowerNoChanges2CB08C93": Object {
+      "Properties": Object {
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The NpmJs follower function is no discovering any changes from CouchDB!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
+Direct link to Lambda function: /lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJs15A77D2D",
+              },
+            ],
+          ],
+        },
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Follower/NoChanges",
+        "ComparisonOperator": "LessThanThreshold",
+        "EvaluationPeriods": 2,
+        "MetricName": "ChangeCount",
+        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "breaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
@@ -8214,18 +8247,6 @@ Object {
       "Description": "S3 key for asset version \\"23e562858610c23d208e4e3cd9a253f871c51c7cf46387fa4616b3ca310b6532\\"",
       "Type": "String",
     },
-    "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682ArtifactHashF05E9483": Object {
-      "Description": "Artifact hash for asset \\"2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682\\"",
-      "Type": "String",
-    },
-    "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3Bucket561EABCB": Object {
-      "Description": "S3 bucket for asset \\"2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682\\"",
-      "Type": "String",
-    },
-    "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3VersionKey7714F230": Object {
-      "Description": "S3 key for asset version \\"2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682\\"",
-      "Type": "String",
-    },
     "AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658ArtifactHashA026490C": Object {
       "Description": "Artifact hash for asset \\"2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658\\"",
       "Type": "String",
@@ -8344,6 +8365,18 @@ Object {
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064S3VersionKey5B081B37": Object {
       "Description": "S3 key for asset version \\"8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064\\"",
+      "Type": "String",
+    },
+    "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15ArtifactHash8730BA56": Object {
+      "Description": "Artifact hash for asset \\"9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15\\"",
+      "Type": "String",
+    },
+    "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3Bucket56918E70": Object {
+      "Description": "S3 bucket for asset \\"9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15\\"",
+      "Type": "String",
+    },
+    "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3VersionKey435E8997": Object {
+      "Description": "S3 key for asset version \\"9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15\\"",
       "Type": "String",
     },
     "AssetParametersd5ce621914a7c3f15cf5d46823956ea431a98db7cf8d22b7af369eb6d01413c7ArtifactHashC896926E": Object {
@@ -8801,7 +8834,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":45,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":45,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Changes\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"LastSeq\\",{\\"label\\":\\"Last Sequence Number\\",\\"stat\\":\\"Maximum\\"}]],\\"yAxis\\":{},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":51,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -8824,7 +8861,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":47,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -8836,7 +8873,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":47,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -8861,11 +8898,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ffa500\\",\\"label\\":\\"10 Minutes\\",\\"value\\":600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Quality\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ffa500\\",\\"label\\":\\"10 Minutes\\",\\"value\\":600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Quality\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"stacked\\":true,\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"label\\":\\"Count\\",\\"min\\":0,\\"showUnits\\":false}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
+              "\\",\\"stacked\\":true,\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"label\\":\\"Count\\",\\"min\\":0,\\"showUnits\\":false}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -8890,7 +8927,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":59,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:primary:State Machine](/states/home#/statemachines/view/",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":65,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:primary:State Machine](/states/home#/statemachines/view/",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -8917,7 +8954,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationReprocessAllFF2F2455",
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":61,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -8949,7 +8986,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":61,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letter Queue\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letter Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -8974,7 +9011,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":67,\\"properties\\":{\\"markdown\\":\\"# Deny List\\\\n\\\\n[button:primary:Deny List Object](/s3/object/",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":73,\\"properties\\":{\\"markdown\\":\\"# Deny List\\\\n\\\\n[button:primary:Deny List Object](/s3/object/",
               Object {
                 "Ref": "ConstructHubDenyListBucket1B3C2C2E",
               },
@@ -9005,7 +9042,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubDenyListPrunePruneQueueHandlerF7EB599B",
               },
-              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":69,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Deny List\\",\\"region\\":\\"",
+              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":75,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Deny List\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -9016,7 +9053,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Deleted Files\\",\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":69,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Prune Function Health\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Deleted Files\\",\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":75,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Prune Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -14774,7 +14811,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3Bucket561EABCB",
+            "Ref": "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3Bucket56918E70",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -14787,7 +14824,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3VersionKey7714F230",
+                          "Ref": "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3VersionKey435E8997",
                         },
                       ],
                     },
@@ -14800,7 +14837,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3VersionKey7714F230",
+                          "Ref": "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3VersionKey435E8997",
                         },
                       ],
                     },
@@ -14884,6 +14921,35 @@ Direct link to Lambda function: /lambda/home#/functions/",
         "Statistic": "Sum",
         "Threshold": 1,
         "TreatMissingData": "missing",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsFollowerNoChanges2CB08C93": Object {
+      "Properties": Object {
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The NpmJs follower function is no discovering any changes from CouchDB!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
+Direct link to Lambda function: /lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJs15A77D2D",
+              },
+            ],
+          ],
+        },
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Follower/NoChanges",
+        "ComparisonOperator": "LessThanThreshold",
+        "EvaluationPeriods": 2,
+        "MetricName": "ChangeCount",
+        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "breaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
@@ -16392,18 +16458,6 @@ Object {
       "Description": "S3 key for asset version \\"23e562858610c23d208e4e3cd9a253f871c51c7cf46387fa4616b3ca310b6532\\"",
       "Type": "String",
     },
-    "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682ArtifactHashF05E9483": Object {
-      "Description": "Artifact hash for asset \\"2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682\\"",
-      "Type": "String",
-    },
-    "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3Bucket561EABCB": Object {
-      "Description": "S3 bucket for asset \\"2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682\\"",
-      "Type": "String",
-    },
-    "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3VersionKey7714F230": Object {
-      "Description": "S3 key for asset version \\"2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682\\"",
-      "Type": "String",
-    },
     "AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658ArtifactHashA026490C": Object {
       "Description": "Artifact hash for asset \\"2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658\\"",
       "Type": "String",
@@ -16546,6 +16600,18 @@ Object {
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064S3VersionKey5B081B37": Object {
       "Description": "S3 key for asset version \\"8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064\\"",
+      "Type": "String",
+    },
+    "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15ArtifactHash8730BA56": Object {
+      "Description": "Artifact hash for asset \\"9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15\\"",
+      "Type": "String",
+    },
+    "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3Bucket56918E70": Object {
+      "Description": "S3 bucket for asset \\"9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15\\"",
+      "Type": "String",
+    },
+    "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3VersionKey435E8997": Object {
+      "Description": "S3 key for asset version \\"9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15\\"",
       "Type": "String",
     },
     "AssetParametersd5ce621914a7c3f15cf5d46823956ea431a98db7cf8d22b7af369eb6d01413c7ArtifactHashC896926E": Object {
@@ -17152,7 +17218,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":45,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":45,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Changes\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"LastSeq\\",{\\"label\\":\\"Last Sequence Number\\",\\"stat\\":\\"Maximum\\"}]],\\"yAxis\\":{},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":51,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -17175,7 +17245,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":47,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -17187,7 +17257,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":47,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -17212,11 +17282,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ffa500\\",\\"label\\":\\"10 Minutes\\",\\"value\\":600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Quality\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ffa500\\",\\"label\\":\\"10 Minutes\\",\\"value\\":600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Quality\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"stacked\\":true,\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"label\\":\\"Count\\",\\"min\\":0,\\"showUnits\\":false}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
+              "\\",\\"stacked\\":true,\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"label\\":\\"Count\\",\\"min\\":0,\\"showUnits\\":false}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -17241,7 +17311,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":59,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:primary:State Machine](/states/home#/statemachines/view/",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":65,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:primary:State Machine](/states/home#/statemachines/view/",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -17268,7 +17338,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationReprocessAllFF2F2455",
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":61,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -17300,7 +17370,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":61,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letter Queue\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letter Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -17325,7 +17395,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":67,\\"properties\\":{\\"markdown\\":\\"# Deny List\\\\n\\\\n[button:primary:Deny List Object](/s3/object/",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":73,\\"properties\\":{\\"markdown\\":\\"# Deny List\\\\n\\\\n[button:primary:Deny List Object](/s3/object/",
               Object {
                 "Ref": "ConstructHubDenyListBucket1B3C2C2E",
               },
@@ -17356,7 +17426,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubDenyListPrunePruneQueueHandlerF7EB599B",
               },
-              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":69,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Deny List\\",\\"region\\":\\"",
+              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":75,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Deny List\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -17367,7 +17437,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Deleted Files\\",\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":69,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Prune Function Health\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Deleted Files\\",\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":75,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Prune Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -23112,7 +23182,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3Bucket561EABCB",
+            "Ref": "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3Bucket56918E70",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -23125,7 +23195,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3VersionKey7714F230",
+                          "Ref": "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3VersionKey435E8997",
                         },
                       ],
                     },
@@ -23138,7 +23208,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3VersionKey7714F230",
+                          "Ref": "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3VersionKey435E8997",
                         },
                       ],
                     },
@@ -23222,6 +23292,35 @@ Direct link to Lambda function: /lambda/home#/functions/",
         "Statistic": "Sum",
         "Threshold": 1,
         "TreatMissingData": "missing",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsFollowerNoChanges2CB08C93": Object {
+      "Properties": Object {
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The NpmJs follower function is no discovering any changes from CouchDB!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
+Direct link to Lambda function: /lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJs15A77D2D",
+              },
+            ],
+          ],
+        },
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Follower/NoChanges",
+        "ComparisonOperator": "LessThanThreshold",
+        "EvaluationPeriods": 2,
+        "MetricName": "ChangeCount",
+        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "breaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
@@ -24999,18 +25098,6 @@ Object {
       "Description": "S3 key for asset version \\"23e562858610c23d208e4e3cd9a253f871c51c7cf46387fa4616b3ca310b6532\\"",
       "Type": "String",
     },
-    "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682ArtifactHashF05E9483": Object {
-      "Description": "Artifact hash for asset \\"2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682\\"",
-      "Type": "String",
-    },
-    "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3Bucket561EABCB": Object {
-      "Description": "S3 bucket for asset \\"2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682\\"",
-      "Type": "String",
-    },
-    "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3VersionKey7714F230": Object {
-      "Description": "S3 key for asset version \\"2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682\\"",
-      "Type": "String",
-    },
     "AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658ArtifactHashA026490C": Object {
       "Description": "Artifact hash for asset \\"2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658\\"",
       "Type": "String",
@@ -25129,6 +25216,18 @@ Object {
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064S3VersionKey5B081B37": Object {
       "Description": "S3 key for asset version \\"8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064\\"",
+      "Type": "String",
+    },
+    "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15ArtifactHash8730BA56": Object {
+      "Description": "Artifact hash for asset \\"9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15\\"",
+      "Type": "String",
+    },
+    "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3Bucket56918E70": Object {
+      "Description": "S3 bucket for asset \\"9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15\\"",
+      "Type": "String",
+    },
+    "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3VersionKey435E8997": Object {
+      "Description": "S3 key for asset version \\"9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15\\"",
       "Type": "String",
     },
     "AssetParametersd5ce621914a7c3f15cf5d46823956ea431a98db7cf8d22b7af369eb6d01413c7ArtifactHashC896926E": Object {
@@ -25586,7 +25685,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":45,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":45,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Changes\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"LastSeq\\",{\\"label\\":\\"Last Sequence Number\\",\\"stat\\":\\"Maximum\\"}]],\\"yAxis\\":{},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":51,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -25609,7 +25712,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":47,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -25621,7 +25724,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":47,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -25646,11 +25749,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ffa500\\",\\"label\\":\\"10 Minutes\\",\\"value\\":600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Quality\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ffa500\\",\\"label\\":\\"10 Minutes\\",\\"value\\":600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Quality\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"stacked\\":true,\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"label\\":\\"Count\\",\\"min\\":0,\\"showUnits\\":false}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
+              "\\",\\"stacked\\":true,\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"label\\":\\"Count\\",\\"min\\":0,\\"showUnits\\":false}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -25675,7 +25778,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":59,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:primary:State Machine](/states/home#/statemachines/view/",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":65,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:primary:State Machine](/states/home#/statemachines/view/",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -25702,7 +25805,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationReprocessAllFF2F2455",
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":61,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -25734,7 +25837,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":61,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letter Queue\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letter Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -25759,7 +25862,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":67,\\"properties\\":{\\"markdown\\":\\"# Deny List\\\\n\\\\n[button:primary:Deny List Object](/s3/object/",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":73,\\"properties\\":{\\"markdown\\":\\"# Deny List\\\\n\\\\n[button:primary:Deny List Object](/s3/object/",
               Object {
                 "Ref": "ConstructHubDenyListBucket1B3C2C2E",
               },
@@ -25790,7 +25893,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubDenyListPrunePruneQueueHandlerF7EB599B",
               },
-              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":69,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Deny List\\",\\"region\\":\\"",
+              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":75,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Deny List\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -25801,7 +25904,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Deleted Files\\",\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":69,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Prune Function Health\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Deleted Files\\",\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":75,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Prune Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -30404,7 +30507,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3Bucket561EABCB",
+            "Ref": "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3Bucket56918E70",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -30417,7 +30520,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3VersionKey7714F230",
+                          "Ref": "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3VersionKey435E8997",
                         },
                       ],
                     },
@@ -30430,7 +30533,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters2b1e25f5d4e10439276dceec61d65f28759788e6e49f2d73eb90654abc919682S3VersionKey7714F230",
+                          "Ref": "AssetParameters9782718d1a41a2803b480835a4b7f96ccb57e71c9f4bbce458bee3211830dd15S3VersionKey435E8997",
                         },
                       ],
                     },
@@ -30514,6 +30617,35 @@ Direct link to Lambda function: /lambda/home#/functions/",
         "Statistic": "Sum",
         "Threshold": 1,
         "TreatMissingData": "missing",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsFollowerNoChanges2CB08C93": Object {
+      "Properties": Object {
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The NpmJs follower function is no discovering any changes from CouchDB!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
+Direct link to Lambda function: /lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJs15A77D2D",
+              },
+            ],
+          ],
+        },
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Follower/NoChanges",
+        "ComparisonOperator": "LessThanThreshold",
+        "EvaluationPeriods": 2,
+        "MetricName": "ChangeCount",
+        "Namespace": "ConstructHub/PackageSource/NpmJs/Follower",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "breaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },

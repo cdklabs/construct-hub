@@ -4,6 +4,7 @@ export const enum MetricName {
   BATCH_PROCESSING_TIME = 'BatchProcessingTime',
   CHANGE_COUNT = 'ChangeCount',
   INELIGIBLE_LICENSE = 'IneligibleLicense',
+  LAST_SEQ = 'LastSeq',
   NPMJS_CHANGE_AGE = 'NpmJsChangeAge',
   PACKAGE_VERSION_AGE = 'PackageVersionAge',
   PACKAGE_VERSION_COUNT = 'PackageVersionCount',

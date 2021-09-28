@@ -363,6 +363,39 @@ request a quota increase.
 The alarm will automatically go back to green once the Lambda function starts
 running as scheduled again. No further action is needed.
 
+### `ConstructHub/Sources/NpmJs/Follower/NoChanges`
+
+#### Description
+
+This alarm is only provisioned when the `NpmJs` package source is configured. It
+triggers when the function has not registered any changes from the npmjs.com
+registry in 10 minutes.
+
+#### Investigation
+
+The *NpmJs Follower* tracks changes from the CouchDB replica at
+`replicate.npmjs.com/registry`, and uses the `seq` properties to determine what
+changes have already been processed.
+
+Occasionally, the replica instance will be replaced, and the sequence numbers
+will be reset by this action. The *NpmJs Follower* detects this condition and
+rolls back automatically in this case, so this should not trigger this alarm.
+
+Look at `npmjs.com` status updates and announcements. This alarm may go off in
+case a major outage prevents `npmjs.com` from accepting new package version for
+more than 10 minutes. There is nothing you can do in this case.
+
+If this has not happened, review the logs of the *NpmJs Follower* to identify
+any problem.
+
+For additional recommendations for diving into CloudWatch Logs, refer to the
+[Diving into Lambda Function logs in CloudWatch Logs][#lambda-log-dive] section.
+
+#### Resolution
+
+The alarm will automatically go back to green once the Lambda function starts
+reporting `npmjs.com` registry changes again. No further action is needed.
+
 --------------------------------------------------------------------------------
 
 ## :information_source: General Recommendations
