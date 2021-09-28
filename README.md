@@ -252,7 +252,9 @@ configured.
 
 #### Home Page
 
-The home page is divided into sections, each with a header and list of packages. Currently, for a given section you can display either the most recently updated packages, or a curated list of packages.
+The home page is divided into sections, each with a header and list of packages.
+Currently, for a given section you can display either the most recently updated
+packages, or a curated list of packages.
 
 For example:
 ```ts

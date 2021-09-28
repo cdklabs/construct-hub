@@ -82,7 +82,7 @@ export class WebappConfig {
     for (const section of config.sections) {
       if ((section.showPackages !== undefined && section.showLastUpdated !== undefined) ||
           (section.showPackages === undefined && section.showLastUpdated === undefined)) {
-        throw new Error('Only one of showPackages and showPackages field can be provided.');
+        throw new Error('Exactly one of \'showPackages\' and \'showPackages\' should be provided.');
       }
     }
     return config;
