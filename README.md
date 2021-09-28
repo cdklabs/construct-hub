@@ -250,6 +250,34 @@ This would allow publishers to add the following to their package.json:
 Then the links on the corresponding package page would show these items as
 configured.
 
+#### Home Page
+
+The home page is divided into sections, each with a header and list of packages. Currently, for a given section you can display either the most recently updated packages, or a curated list of packages.
+
+For example:
+```ts
+new ConstructHub(this, "ConstructHub", {
+  ...myProps,
+  homeConfig: {
+    sections: [
+      {
+        name: 'Recently updated',
+        showLastUpdated: 4
+      },
+      {
+        name: 'From the AWS CDK',
+        showPackages: [
+          '@aws-cdk/core',
+          '@aws-cdk/s3',
+          '@aws-cdk/lambda',
+          '@aws-cdk/iam'
+        ],
+      }
+    ],
+  }
+});
+```
+
 ## :raised_hand: Contributing
 
 If you are looking to contribute to this project, but don't know where to start,
