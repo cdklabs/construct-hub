@@ -5604,6 +5604,28 @@ the alarm to be added to the high-severity dashboard.
 
 ---
 
+##### `addLowSeverityAlarm` <a name="construct-hub.IMonitoring.addLowSeverityAlarm"></a>
+
+```typescript
+public addLowSeverityAlarm(title: string, alarm: Alarm)
+```
+
+###### `title`<sup>Required</sup> <a name="construct-hub.IMonitoring.parameter.title"></a>
+
+- *Type:* `string`
+
+a user-friendly title for the alarm (not currently used).
+
+---
+
+###### `alarm`<sup>Required</sup> <a name="construct-hub.IMonitoring.parameter.alarm"></a>
+
+- *Type:* [`@aws-cdk/aws-cloudwatch.Alarm`](#@aws-cdk/aws-cloudwatch.Alarm)
+
+the alarm to be added.
+
+---
+
 
 ### IPackageSource <a name="construct-hub.IPackageSource"></a>
 

@@ -42,7 +42,9 @@ export async function handler(event: ScheduledEvent, context: Context) {
   const denyList = await DenyListClient.newClient();
   const licenseList = await LicenseListClient.newClient();
 
-  const initialMarker = await loadLastTransactionMarker(1_800_000 /* @aws-cdk/cdk initial release was at 1_846_709 */);
+  const db = Nano(NPM_REPLICA_REGISTRY_URL).db.use('registry');
+
+  const initialMarker = await loadLastTransactionMarker(db);
 
   const config: Nano.ChangesReaderOptions = {
     includeDocs: true,
@@ -58,9 +60,6 @@ export async function handler(event: ScheduledEvent, context: Context) {
     },
     batchSize: 30,
   };
-
-  const nano = Nano(NPM_REPLICA_REGISTRY_URL);
-  const db = nano.db.use('registry');
 
   // We need to make an explicit Promise here, because otherwise Lambda won't
   // know when it's done...
@@ -129,6 +128,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
           ko(err);
         } finally {
           metrics.putMetric(MetricName.BATCH_PROCESSING_TIME, Date.now() - startTime, Unit.Milliseconds);
+          metrics.putMetric(MetricName.LAST_SEQ, updatedMarker, Unit.None);
         }
       }))
       .once('end', () => {
@@ -141,11 +141,11 @@ export async function handler(event: ScheduledEvent, context: Context) {
   /**
    * Loads the last transaction marker from S3.
    *
-   * @param defaultValue the value to return in case the marker does not exist
+   * @param registry a Nano database corresponding to the Npmjs.com CouchDB instance.
    *
    * @returns the value of the last transaction marker.
    */
-  async function loadLastTransactionMarker(defaultValue: number): Promise<number> {
+  async function loadLastTransactionMarker(registry: Nano.DocumentScope<unknown>): Promise<number> {
     try {
       const response = await aws.s3().getObject({
         Bucket: stagingBucket,
@@ -153,13 +153,20 @@ export async function handler(event: ScheduledEvent, context: Context) {
       }).promise();
       const marker = Number.parseInt(response.Body!.toString('utf-8'), 10);
       console.log(`Read last transaction marker: ${marker}`);
+
+      const dbUpdateSeq = (await registry.info()).update_seq;
+      if (dbUpdateSeq < marker) {
+        console.warn(`Current DB update_seq (${dbUpdateSeq}) is lower than marker (CouchDB instance was likely replaced), resetting to 0!`);
+        return 0;
+      }
+
       return marker;
     } catch (error) {
       if (error.code !== 'NoSuchKey') {
         throw error;
       }
-      console.log(`Marker object (s3://${stagingBucket}/${MARKER_FILE_NAME}) does not exist, starting from the default (${defaultValue})`);
-      return defaultValue;
+      console.warn(`Marker object (s3://${stagingBucket}/${MARKER_FILE_NAME}) does not exist, starting from scratch`);
+      return 0;
     }
   }
 
