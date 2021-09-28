@@ -1,7 +1,7 @@
 import { mkdtempSync, writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import { PackageLinkConfig } from '.';
+import { HomeConfig, PackageLinkConfig } from '.';
 import { PackageTagConfig } from '../package-tag';
 
 interface FrontendPackageLinkConfig {
@@ -15,9 +15,12 @@ interface FrontendPackageTagConfig {
   color?: string;
 }
 
+type FrontendHomeConfig = HomeConfig;
+
 interface FrontendConfig {
   packageLinks?: FrontendPackageLinkConfig[];
   packageTags?: FrontendPackageTagConfig[];
+  homeConfig?: FrontendHomeConfig;
 }
 
 interface WebappConfigProps {
@@ -30,6 +33,12 @@ interface WebappConfigProps {
    * Configuration for custom computed tags.
    */
   readonly packageTags?: PackageTagConfig[];
+
+  /**
+   * Configuration for the home page.
+   * @default - Display the 10 most recently updated packages
+   */
+  readonly homeConfig?: HomeConfig;
 }
 
 export class WebappConfig {
@@ -45,6 +54,7 @@ export class WebappConfig {
     return {
       packageLinks: this.packageLinks,
       packageTags: this.packageTags,
+      homeConfig: this.homeConfig,
     };
   }
 
@@ -58,5 +68,23 @@ export class WebappConfig {
     const packageTags = this.props.packageTags ?? [];
     // remove conditional logic from frontend config
     return packageTags.map(({ condition, ...rest }) => rest);
+  }
+
+  private get homeConfig(): HomeConfig {
+    const config = this.props.homeConfig ?? {
+      sections: [
+        {
+          name: 'Recently updated',
+          showLastUpdated: 10,
+        },
+      ],
+    };
+    for (const section of config.sections) {
+      if ((section.showPackages !== undefined && section.showLastUpdated !== undefined) ||
+          (section.showPackages === undefined && section.showLastUpdated === undefined)) {
+        throw new Error('Only one of showPackages and showPackages field can be provided.');
+      }
+    }
+    return config;
   }
 }

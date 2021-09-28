@@ -267,6 +267,19 @@ Connect the hub to a domain (requires a hosted zone and a certificate).
 
 ---
 
+##### `homeConfig`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.homeConfig"></a>
+
+```typescript
+public readonly homeConfig: HomeConfig;
+```
+
+- *Type:* [`construct-hub.HomeConfig`](#construct-hub.HomeConfig)
+- *Default:* Display the 10 most recently updated packages
+
+Configuration for the home page.
+
+---
+
 ##### `isolateSensitiveTasks`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.isolateSensitiveTasks"></a>
 
 ```typescript
@@ -447,6 +460,82 @@ public readonly monitorCertificateExpiration: boolean;
 - *Default:* true
 
 Whether the certificate should be monitored for expiration, meaning high severity alarms will be raised if it is due to expire in less than 45 days.
+
+---
+
+### HomeConfig <a name="construct-hub.HomeConfig"></a>
+
+Configuration for the home page.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { HomeConfig } from 'construct-hub'
+
+const homeConfig: HomeConfig = { ... }
+```
+
+##### `sections`<sup>Required</sup> <a name="construct-hub.HomeConfig.property.sections"></a>
+
+```typescript
+public readonly sections: HomeSection[];
+```
+
+- *Type:* [`construct-hub.HomeSection`](#construct-hub.HomeSection)[]
+
+Grouped sections of packages on the homepage.
+
+---
+
+### HomeSection <a name="construct-hub.HomeSection"></a>
+
+Customization options for one section of the home page.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { HomeSection } from 'construct-hub'
+
+const homeSection: HomeSection = { ... }
+```
+
+##### `name`<sup>Required</sup> <a name="construct-hub.HomeSection.property.name"></a>
+
+```typescript
+public readonly name: string;
+```
+
+- *Type:* `string`
+
+The name of the section (displayed as a header).
+
+---
+
+##### `showLastUpdated`<sup>Optional</sup> <a name="construct-hub.HomeSection.property.showLastUpdated"></a>
+
+```typescript
+public readonly showLastUpdated: number;
+```
+
+- *Type:* `number`
+
+Show the N most recently updated packages in this section.
+
+Cannot be used with `showPackages`.
+
+---
+
+##### `showPackages`<sup>Optional</sup> <a name="construct-hub.HomeSection.property.showPackages"></a>
+
+```typescript
+public readonly showPackages: string[];
+```
+
+- *Type:* `string`[]
+
+Show an explicit list of packages.
+
+Cannot be used with `showLastUpdated`.
 
 ---
 

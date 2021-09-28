@@ -41,6 +41,38 @@ export interface PackageLinkConfig {
   readonly allowedDomains?: string[];
 }
 
+/**
+ * Configuration for the home page.
+ */
+export interface HomeConfig {
+  /**
+   * Grouped sections of packages on the homepage.
+   */
+  readonly sections: HomeSection[];
+}
+
+/**
+ * Customization options for one section of the home page.
+ */
+export interface HomeSection {
+  /**
+   * The name of the section (displayed as a header).
+   */
+  readonly name: string;
+
+  /**
+   * Show the N most recently updated packages in this section.
+   * Cannot be used with `showPackages`.
+   */
+  readonly showLastUpdated?: number;
+
+  /**
+   * Show an explicit list of packages.
+   * Cannot be used with `showLastUpdated`.
+   */
+  readonly showPackages?: string[];
+}
+
 export interface WebAppProps {
   /**
    * Connect to a domain.
@@ -67,6 +99,12 @@ export interface WebAppProps {
    * Configuration for custom package tags
    */
   readonly packageTags?: PackageTagConfig[];
+
+  /**
+   * Configuration for the home page.
+   * @default - Display the 10 most recently updated packages
+   */
+  readonly homeConfig?: HomeConfig;
 }
 
 export class WebApp extends Construct {
@@ -157,6 +195,7 @@ export class WebApp extends Construct {
     const config = new WebappConfig({
       packageLinks: props.packageLinks,
       packageTags: props.packageTags,
+      homeConfig: props.homeConfig,
     });
 
     new s3deploy.BucketDeployment(this, 'DeployWebsiteConfig', {

@@ -27,7 +27,7 @@ export class LicenseList extends Construct implements ILicenseList {
   public readonly bucket: s3.IBucket;
 
   /**
-   * The object key i which the license list is stored.
+   * The object key in which the license list is stored.
    */
   public readonly objectKey = 'allowed-licenses.json';
 
