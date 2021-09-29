@@ -267,6 +267,19 @@ Connect the hub to a domain (requires a hosted zone and a certificate).
 
 ---
 
+##### `featuredPackages`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.featuredPackages"></a>
+
+```typescript
+public readonly featuredPackages: FeaturedPackages;
+```
+
+- *Type:* [`construct-hub.FeaturedPackages`](#construct-hub.FeaturedPackages)
+- *Default:* Display the 10 most recently updated packages
+
+Configuration for packages to feature on the home page.
+
+---
+
 ##### `isolateSensitiveTasks`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.isolateSensitiveTasks"></a>
 
 ```typescript
@@ -447,6 +460,82 @@ public readonly monitorCertificateExpiration: boolean;
 - *Default:* true
 
 Whether the certificate should be monitored for expiration, meaning high severity alarms will be raised if it is due to expire in less than 45 days.
+
+---
+
+### FeaturedPackages <a name="construct-hub.FeaturedPackages"></a>
+
+Configuration for packages to feature on the home page.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { FeaturedPackages } from 'construct-hub'
+
+const featuredPackages: FeaturedPackages = { ... }
+```
+
+##### `sections`<sup>Required</sup> <a name="construct-hub.FeaturedPackages.property.sections"></a>
+
+```typescript
+public readonly sections: FeaturedPackagesSection[];
+```
+
+- *Type:* [`construct-hub.FeaturedPackagesSection`](#construct-hub.FeaturedPackagesSection)[]
+
+Grouped sections of packages on the homepage.
+
+---
+
+### FeaturedPackagesSection <a name="construct-hub.FeaturedPackagesSection"></a>
+
+Customization options for one section of the home page.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { FeaturedPackagesSection } from 'construct-hub'
+
+const featuredPackagesSection: FeaturedPackagesSection = { ... }
+```
+
+##### `name`<sup>Required</sup> <a name="construct-hub.FeaturedPackagesSection.property.name"></a>
+
+```typescript
+public readonly name: string;
+```
+
+- *Type:* `string`
+
+The name of the section (displayed as a header).
+
+---
+
+##### `showLastUpdated`<sup>Optional</sup> <a name="construct-hub.FeaturedPackagesSection.property.showLastUpdated"></a>
+
+```typescript
+public readonly showLastUpdated: number;
+```
+
+- *Type:* `number`
+
+Show the N most recently updated packages in this section.
+
+Cannot be used with `showPackages`.
+
+---
+
+##### `showPackages`<sup>Optional</sup> <a name="construct-hub.FeaturedPackagesSection.property.showPackages"></a>
+
+```typescript
+public readonly showPackages: string[];
+```
+
+- *Type:* `string`[]
+
+Show an explicit list of packages.
+
+Cannot be used with `showLastUpdated`.
 
 ---
 
