@@ -42,19 +42,19 @@ export interface PackageLinkConfig {
 }
 
 /**
- * Configuration for the home page.
+ * Configuration for packages to feature on the home page.
  */
-export interface HomeConfig {
+export interface FeaturedPackages {
   /**
    * Grouped sections of packages on the homepage.
    */
-  readonly sections: HomeSection[];
+  readonly sections: FeaturedPackagesSection[];
 }
 
 /**
  * Customization options for one section of the home page.
  */
-export interface HomeSection {
+export interface FeaturedPackagesSection {
   /**
    * The name of the section (displayed as a header).
    */
@@ -101,10 +101,10 @@ export interface WebAppProps {
   readonly packageTags?: PackageTagConfig[];
 
   /**
-   * Configuration for the home page.
+   * Configuration for packages to feature on the home page.
    * @default - Display the 10 most recently updated packages
    */
-  readonly homeConfig?: HomeConfig;
+  readonly featuredPackages?: FeaturedPackages;
 }
 
 export class WebApp extends Construct {
@@ -195,7 +195,7 @@ export class WebApp extends Construct {
     const config = new WebappConfig({
       packageLinks: props.packageLinks,
       packageTags: props.packageTags,
-      homeConfig: props.homeConfig,
+      featuredPackages: props.featuredPackages,
     });
 
     new s3deploy.BucketDeployment(this, 'DeployWebsiteConfig', {

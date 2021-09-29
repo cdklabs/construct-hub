@@ -1,7 +1,7 @@
 import { mkdtempSync, writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import { HomeConfig, PackageLinkConfig } from '.';
+import { FeaturedPackages, PackageLinkConfig } from '.';
 import { PackageTagConfig } from '../package-tag';
 
 interface FrontendPackageLinkConfig {
@@ -15,12 +15,12 @@ interface FrontendPackageTagConfig {
   color?: string;
 }
 
-type FrontendHomeConfig = HomeConfig;
+type FrontendFeaturedPackagesConfig = FeaturedPackages;
 
 interface FrontendConfig {
   packageLinks?: FrontendPackageLinkConfig[];
   packageTags?: FrontendPackageTagConfig[];
-  homeConfig?: FrontendHomeConfig;
+  featuredPackages?: FrontendFeaturedPackagesConfig;
 }
 
 interface WebappConfigProps {
@@ -35,10 +35,10 @@ interface WebappConfigProps {
   readonly packageTags?: PackageTagConfig[];
 
   /**
-   * Configuration for the home page.
+   * Configuration for packages to feature on the home page.
    * @default - Display the 10 most recently updated packages
    */
-  readonly homeConfig?: HomeConfig;
+  readonly featuredPackages?: FeaturedPackages;
 }
 
 export class WebappConfig {
@@ -54,7 +54,7 @@ export class WebappConfig {
     return {
       packageLinks: this.packageLinks,
       packageTags: this.packageTags,
-      homeConfig: this.homeConfig,
+      featuredPackages: this.featuredPackages,
     };
   }
 
@@ -70,8 +70,8 @@ export class WebappConfig {
     return packageTags.map(({ condition, ...rest }) => rest);
   }
 
-  private get homeConfig(): HomeConfig {
-    const config = this.props.homeConfig ?? {
+  private get featuredPackages(): FrontendFeaturedPackagesConfig {
+    const config = this.props.featuredPackages ?? {
       sections: [
         {
           name: 'Recently updated',

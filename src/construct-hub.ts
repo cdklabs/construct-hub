@@ -21,7 +21,7 @@ import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
 import { PackageTag } from './package-tag';
 import { SpdxLicense } from './spdx-license';
-import { WebApp, PackageLinkConfig, HomeConfig } from './webapp';
+import { WebApp, PackageLinkConfig, FeaturedPackages } from './webapp';
 
 /**
  * Props for `ConstructHub`.
@@ -107,10 +107,10 @@ export interface ConstructHubProps {
   readonly packageTags?: PackageTag[];
 
   /**
-   * Configuration for the home page.
+   * Configuration for packages to feature on the home page.
    * @default - Display the 10 most recently updated packages
    */
-  readonly homeConfig?: HomeConfig;
+  readonly featuredPackages?: FeaturedPackages;
 }
 
 /**
@@ -258,7 +258,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       packageData,
       packageLinks: props.packageLinks,
       packageTags: packageTagsSerialized,
-      homeConfig: props.homeConfig,
+      featuredPackages: props.featuredPackages,
     });
   }
 

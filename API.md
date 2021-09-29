@@ -267,16 +267,16 @@ Connect the hub to a domain (requires a hosted zone and a certificate).
 
 ---
 
-##### `homeConfig`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.homeConfig"></a>
+##### `featuredPackages`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.featuredPackages"></a>
 
 ```typescript
-public readonly homeConfig: HomeConfig;
+public readonly featuredPackages: FeaturedPackages;
 ```
 
-- *Type:* [`construct-hub.HomeConfig`](#construct-hub.HomeConfig)
+- *Type:* [`construct-hub.FeaturedPackages`](#construct-hub.FeaturedPackages)
 - *Default:* Display the 10 most recently updated packages
 
-Configuration for the home page.
+Configuration for packages to feature on the home page.
 
 ---
 
@@ -463,43 +463,43 @@ Whether the certificate should be monitored for expiration, meaning high severit
 
 ---
 
-### HomeConfig <a name="construct-hub.HomeConfig"></a>
+### FeaturedPackages <a name="construct-hub.FeaturedPackages"></a>
 
-Configuration for the home page.
+Configuration for packages to feature on the home page.
 
 #### Initializer <a name="[object Object].Initializer"></a>
 
 ```typescript
-import { HomeConfig } from 'construct-hub'
+import { FeaturedPackages } from 'construct-hub'
 
-const homeConfig: HomeConfig = { ... }
+const featuredPackages: FeaturedPackages = { ... }
 ```
 
-##### `sections`<sup>Required</sup> <a name="construct-hub.HomeConfig.property.sections"></a>
+##### `sections`<sup>Required</sup> <a name="construct-hub.FeaturedPackages.property.sections"></a>
 
 ```typescript
-public readonly sections: HomeSection[];
+public readonly sections: FeaturedPackagesSection[];
 ```
 
-- *Type:* [`construct-hub.HomeSection`](#construct-hub.HomeSection)[]
+- *Type:* [`construct-hub.FeaturedPackagesSection`](#construct-hub.FeaturedPackagesSection)[]
 
 Grouped sections of packages on the homepage.
 
 ---
 
-### HomeSection <a name="construct-hub.HomeSection"></a>
+### FeaturedPackagesSection <a name="construct-hub.FeaturedPackagesSection"></a>
 
 Customization options for one section of the home page.
 
 #### Initializer <a name="[object Object].Initializer"></a>
 
 ```typescript
-import { HomeSection } from 'construct-hub'
+import { FeaturedPackagesSection } from 'construct-hub'
 
-const homeSection: HomeSection = { ... }
+const featuredPackagesSection: FeaturedPackagesSection = { ... }
 ```
 
-##### `name`<sup>Required</sup> <a name="construct-hub.HomeSection.property.name"></a>
+##### `name`<sup>Required</sup> <a name="construct-hub.FeaturedPackagesSection.property.name"></a>
 
 ```typescript
 public readonly name: string;
@@ -511,7 +511,7 @@ The name of the section (displayed as a header).
 
 ---
 
-##### `showLastUpdated`<sup>Optional</sup> <a name="construct-hub.HomeSection.property.showLastUpdated"></a>
+##### `showLastUpdated`<sup>Optional</sup> <a name="construct-hub.FeaturedPackagesSection.property.showLastUpdated"></a>
 
 ```typescript
 public readonly showLastUpdated: number;
@@ -525,7 +525,7 @@ Cannot be used with `showPackages`.
 
 ---
 
-##### `showPackages`<sup>Optional</sup> <a name="construct-hub.HomeSection.property.showPackages"></a>
+##### `showPackages`<sup>Optional</sup> <a name="construct-hub.FeaturedPackagesSection.property.showPackages"></a>
 
 ```typescript
 public readonly showPackages: string[];
