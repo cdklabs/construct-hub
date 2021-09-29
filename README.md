@@ -260,7 +260,7 @@ For example:
 ```ts
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
-  homeConfig: {
+  featuredPackages: {
     sections: [
       {
         name: 'Recently updated',
