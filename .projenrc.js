@@ -445,8 +445,9 @@ function newEcsTask(entrypoint) {
   // Based off amazonlinux:2 for... reasons. (Do not change!)
   df.line('FROM public.ecr.aws/amazonlinux/amazonlinux:2');
   df.line();
-  // Install node 14+ the regular way...
-  df.line('RUN curl -sL https://rpm.nodesource.com/setup_16.x | bash - \\');
+  // Install node the regular way...
+  df.line('RUN curl -sL https://rpm.nodesource.com/setup_lts.x | bash - \\');
+  df.line(' && yum update -y \\');
   df.line(' && yum install -y git nodejs \\');
   // The entry point requires aws-sdk to be available, so we install it locally.
   df.line(' && npm install --no-save aws-sdk@^2.957.0 \\');
@@ -472,7 +473,7 @@ function newEcsTask(entrypoint) {
       'esbuild',
       '--bundle',
       entry,
-      '--target="node16"',
+      '--target="node14"',
       '--platform="node"',
       `--outfile="${outfile}"`,
       '--sourcemap',
