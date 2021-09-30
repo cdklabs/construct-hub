@@ -342,6 +342,7 @@ function newLambdaHandler(entrypoint, trigger) {
       '--platform="node"',
       `--outfile="${outfile}"`,
       '--external:aws-sdk',
+      '--sourcemap',
     ].join(' '),
   });
 
@@ -445,7 +446,7 @@ function newEcsTask(entrypoint) {
   df.line('FROM public.ecr.aws/amazonlinux/amazonlinux:2');
   df.line();
   // Install node 14+ the regular way...
-  df.line('RUN curl -sL https://rpm.nodesource.com/setup_14.x | bash - \\');
+  df.line('RUN curl -sL https://rpm.nodesource.com/setup_16.x | bash - \\');
   df.line(' && yum install -y git nodejs \\');
   // The entry point requires aws-sdk to be available, so we install it locally.
   df.line(' && npm install --no-save aws-sdk@^2.957.0 \\');
@@ -457,6 +458,12 @@ function newEcsTask(entrypoint) {
   df.line('COPY ./index.js      /bundle/index.js');
   df.line('COPY ./Dockerfile    /bundle/Dockerfile');
   df.line();
+  // Override the GIT ssh command to work around git's use of
+  // StrictHostKeyChecking=accept-new, which is not supported by the version of
+  // openssh that ships in amazonlinux:2. For more information, refer to the
+  // following issue: https://github.com/npm/git/issues/31
+  df.line('ENV GIT_SSH_COMMAND=ssh');
+  df.line();
   df.line('ENTRYPOINT ["/bin/bash", "/bundle/entrypoint.sh"]');
 
   const bundle = project.addTask(`bundle:${base}`, {
@@ -465,9 +472,10 @@ function newEcsTask(entrypoint) {
       'esbuild',
       '--bundle',
       entry,
-      '--target="node14"',
+      '--target="node16"',
       '--platform="node"',
       `--outfile="${outfile}"`,
+      '--sourcemap',
     ].join(' '),
   });
 

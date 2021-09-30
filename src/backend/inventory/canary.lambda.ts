@@ -149,6 +149,12 @@ export async function handler(event: ScheduledEvent, _context: Context) {
 
   for (const entry of perLanguage.entries()) {
     await metricScope((metrics) => ([language, data]: [DocumentationLanguage, PerLanguageData]) => {
+      console.log(
+        '',
+        '##################################################',
+        `### Start of data for ${language}`,
+      );
+
       metrics.setDimensions({ [LANGUAGE_DIMENSION]: language.toString() });
 
       for (const forStatus of [PerLanguageStatus.SUPPORTED, PerLanguageStatus.UNSUPPORTED, PerLanguageStatus.MISSING]) {
@@ -160,6 +166,15 @@ export async function handler(event: ScheduledEvent, _context: Context) {
           metrics.putMetric(metricName, filtered.length, Unit.Count);
         }
       }
+
+      // Explicit flush added as it appears some entries are missing otherwise.
+      return metrics.flush().finally(() => {
+        console.log(
+          `### End of data for ${language}`,
+          '##################################################',
+          '',
+        );
+      });
     })(entry);
   }
 }
