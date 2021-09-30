@@ -147,13 +147,11 @@ export async function handler(event: ScheduledEvent, _context: Context) {
     metrics.putMetric(MetricName.UNKNOWN_OBJECT_COUNT, unknownObjects.length, Unit.Count);
   })();
 
-  for (const entry of perLanguage.entries()) {
-    await metricScope((metrics) => ([language, data]: [DocumentationLanguage, PerLanguageData]) => {
-      console.log(
-        '',
-        '##################################################',
-        `### Start of data for ${language}`,
-      );
+  for (const entry of Array.from(perLanguage.entries())) {
+    await metricScope((metrics) => (language: DocumentationLanguage, data: PerLanguageData) => {
+      console.log( '');
+      console.log('##################################################');
+      console.log(`### Start of data for ${language}`);
 
       metrics.setDimensions({ [LANGUAGE_DIMENSION]: language.toString() });
 
@@ -161,21 +159,24 @@ export async function handler(event: ScheduledEvent, _context: Context) {
         for (const [key, statuses] of Object.entries(data)) {
           let filtered = Array.from(statuses.entries()).filter(([, status]) => forStatus === status);
           let metricName = METRIC_NAME_BY_STATUS_AND_GRAIN[forStatus as PerLanguageStatus][key as keyof PerLanguageData];
-          // List out selected packages for posterity (and troubleshooting)
-          console.log(`${forStatus} ${key} for ${language}: ${filtered.map(([name]) => name).join(', ')}`);
+
+          console.log(`${forStatus} ${key} for ${language}: ${filtered.length} entries`);
+          if (forStatus === PerLanguageStatus.MISSING) {
+            // List out selected packages for posterity (and troubleshooting)
+            for (const [name] of filtered) {
+              // Rendering them one-by-one to avoid saturating the CloudWatch logs buffer...
+              console.log(`  -> ${name}`);
+            }
+          }
+
           metrics.putMetric(metricName, filtered.length, Unit.Count);
         }
       }
 
-      // Explicit flush added as it appears some entries are missing otherwise.
-      return metrics.flush().finally(() => {
-        console.log(
-          `### End of data for ${language}`,
-          '##################################################',
-          '',
-        );
-      });
-    })(entry);
+      console.log(`### End of data for ${language}`);
+      console.log('##################################################');
+      console.log('');
+    })(...entry);
   }
 }
 
