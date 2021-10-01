@@ -499,18 +499,6 @@ import { FeaturedPackagesDetail } from 'construct-hub'
 const featuredPackagesDetail: FeaturedPackagesDetail = { ... }
 ```
 
-##### `comment`<sup>Required</sup> <a name="construct-hub.FeaturedPackagesDetail.property.comment"></a>
-
-```typescript
-public readonly comment: string;
-```
-
-- *Type:* `string`
-
-An additional comment to include with the package.
-
----
-
 ##### `name`<sup>Required</sup> <a name="construct-hub.FeaturedPackagesDetail.property.name"></a>
 
 ```typescript
@@ -520,6 +508,18 @@ public readonly name: string;
 - *Type:* `string`
 
 The name of the package.
+
+---
+
+##### `comment`<sup>Optional</sup> <a name="construct-hub.FeaturedPackagesDetail.property.comment"></a>
+
+```typescript
+public readonly comment: string;
+```
+
+- *Type:* `string`
+
+An additional comment to include with the package.
 
 ---
 
