@@ -487,6 +487,42 @@ Grouped sections of packages on the homepage.
 
 ---
 
+### FeaturedPackagesDetail <a name="construct-hub.FeaturedPackagesDetail"></a>
+
+Customization options for a specific package on the home page.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { FeaturedPackagesDetail } from 'construct-hub'
+
+const featuredPackagesDetail: FeaturedPackagesDetail = { ... }
+```
+
+##### `comment`<sup>Required</sup> <a name="construct-hub.FeaturedPackagesDetail.property.comment"></a>
+
+```typescript
+public readonly comment: string;
+```
+
+- *Type:* `string`
+
+An additional comment to include with the package.
+
+---
+
+##### `name`<sup>Required</sup> <a name="construct-hub.FeaturedPackagesDetail.property.name"></a>
+
+```typescript
+public readonly name: string;
+```
+
+- *Type:* `string`
+
+The name of the package.
+
+---
+
 ### FeaturedPackagesSection <a name="construct-hub.FeaturedPackagesSection"></a>
 
 Customization options for one section of the home page.
@@ -528,10 +564,10 @@ Cannot be used with `showPackages`.
 ##### `showPackages`<sup>Optional</sup> <a name="construct-hub.FeaturedPackagesSection.property.showPackages"></a>
 
 ```typescript
-public readonly showPackages: string[];
+public readonly showPackages: FeaturedPackagesDetail[];
 ```
 
-- *Type:* `string`[]
+- *Type:* [`construct-hub.FeaturedPackagesDetail`](#construct-hub.FeaturedPackagesDetail)[]
 
 Show an explicit list of packages.
 
