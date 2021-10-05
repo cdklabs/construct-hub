@@ -60,6 +60,15 @@ export class NpmDownloadsClient {
     });
 
     const data = JSON.parse(result.body);
+    if ('error' in data) {
+      throw new Error(`Could not retrieve download metrics: ${data.error}`);
+    }
+    for (const key of Object.keys(data)) {
+      if (!data[key]) {
+        throw new Error(`Could not retrieve download metrics for package ${key}`);
+      }
+    }
+
     if (packages[0] in data) {
       // multiple packages were returned
       return data;
@@ -72,8 +81,9 @@ export class NpmDownloadsClient {
   }
 
   /**
-   * Returns the number of downloads each package has on npm in the latest period.
+   * Retrieves the number of downloads each package has on npm in the latest period.
    * Output is not guaranteed to be returned in a specific order.
+   * Throws an error if any packages have no metrics.
    */
   async getDownloads(
     packages: string[],

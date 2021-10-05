@@ -159,4 +159,26 @@ describe('getNpmDownloads', () => {
     // and five times to query each scoped package
     expect(fakeGot).toHaveBeenCalledTimes(7);
   });
+
+  test('throws an error if package download count isn\'t available for one package', async () => {
+    // GIVEN
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const fakeGot = require('got') as jest.MockedFunction<Got>;
+    fakeGot.mockImplementation(() => ({ body: JSON.stringify({ error: 'package invalid-pkg not found' }) }) as any);
+    const client = new NpmDownloadsClient(fakeGot);
+
+    // THEN
+    return expect(client.getDownloads(['invalid-pkg'])).rejects.toThrowError(/Could not retrieve download metrics/);
+  });
+
+  test('throws an error if package download count isn\'t available for multiple packages', async () => {
+    // GIVEN
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const fakeGot = require('got') as jest.MockedFunction<Got>;
+    fakeGot.mockImplementation(() => ({ body: JSON.stringify({ 'npm': sampleData.npm, 'invalid-pkg': null }) }) as any);
+    const client = new NpmDownloadsClient(fakeGot);
+
+    // THEN
+    return expect(client.getDownloads(['npm', 'invalid-pkg'])).rejects.toThrowError(/Could not retrieve download metrics/);
+  });
 });
