@@ -77,6 +77,7 @@ export class NpmDownloadsClient {
         return { [packages[0]]: undefined };
       }
     }
+    // bulk package query error
     for (const key of Object.keys(data)) {
       if (!data[key]) {
         if (throwErrors) {
@@ -93,9 +94,7 @@ export class NpmDownloadsClient {
       return data;
     } else {
       // only a single package was returned
-      return {
-        [packages[0]]: data,
-      };
+      return { [packages[0]]: data };
     }
   }
 
