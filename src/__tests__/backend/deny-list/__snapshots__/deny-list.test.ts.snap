@@ -34,18 +34,6 @@ Object {
       "Description": "S3 key for asset version \\"1f6de40da10b415b255c07df709f791e772ffb9f7bdd14ad81fb75643aad24ea\\"",
       "Type": "String",
     },
-    "AssetParameters4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422ArtifactHashF7ACDAC0": Object {
-      "Description": "Artifact hash for asset \\"4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422\\"",
-      "Type": "String",
-    },
-    "AssetParameters4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422S3BucketB10B78EA": Object {
-      "Description": "S3 bucket for asset \\"4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422\\"",
-      "Type": "String",
-    },
-    "AssetParameters4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422S3VersionKeyACFBF6B5": Object {
-      "Description": "S3 key for asset version \\"4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422\\"",
-      "Type": "String",
-    },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064ArtifactHashEA963870": Object {
       "Description": "Artifact hash for asset \\"8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064\\"",
       "Type": "String",
@@ -68,6 +56,18 @@ Object {
     },
     "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F": Object {
       "Description": "S3 key for asset version \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+    "AssetParametersf230c75a404a509aa7f32fc03a9649a3b043cf0281154a5d6e00543137734514ArtifactHashCEFF4CDE": Object {
+      "Description": "Artifact hash for asset \\"f230c75a404a509aa7f32fc03a9649a3b043cf0281154a5d6e00543137734514\\"",
+      "Type": "String",
+    },
+    "AssetParametersf230c75a404a509aa7f32fc03a9649a3b043cf0281154a5d6e00543137734514S3Bucket02DED199": Object {
+      "Description": "S3 bucket for asset \\"f230c75a404a509aa7f32fc03a9649a3b043cf0281154a5d6e00543137734514\\"",
+      "Type": "String",
+    },
+    "AssetParametersf230c75a404a509aa7f32fc03a9649a3b043cf0281154a5d6e00543137734514S3VersionKey483429BA": Object {
+      "Description": "S3 key for asset version \\"f230c75a404a509aa7f32fc03a9649a3b043cf0281154a5d6e00543137734514\\"",
       "Type": "String",
     },
     "AssetParametersf45abf50b8dccc65f1a48e4cf44ac0c98edf836b3e089ab23381d9a00d71ac5eArtifactHashAC9E5385": Object {
@@ -838,7 +838,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422S3BucketB10B78EA",
+            "Ref": "AssetParametersf230c75a404a509aa7f32fc03a9649a3b043cf0281154a5d6e00543137734514S3Bucket02DED199",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -851,7 +851,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422S3VersionKeyACFBF6B5",
+                          "Ref": "AssetParametersf230c75a404a509aa7f32fc03a9649a3b043cf0281154a5d6e00543137734514S3VersionKey483429BA",
                         },
                       ],
                     },
@@ -864,7 +864,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422S3VersionKeyACFBF6B5",
+                          "Ref": "AssetParametersf230c75a404a509aa7f32fc03a9649a3b043cf0281154a5d6e00543137734514S3VersionKey483429BA",
                         },
                       ],
                     },
