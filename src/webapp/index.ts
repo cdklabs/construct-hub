@@ -70,7 +70,22 @@ export interface FeaturedPackagesSection {
    * Show an explicit list of packages.
    * Cannot be used with `showLastUpdated`.
    */
-  readonly showPackages?: string[];
+  readonly showPackages?: FeaturedPackagesDetail[];
+}
+
+/**
+ * Customization options for a specific package on the home page.
+ */
+export interface FeaturedPackagesDetail {
+  /**
+   * The name of the package.
+   */
+  readonly name: string;
+
+  /**
+   * An additional comment to include with the package.
+   */
+  readonly comment?: string;
 }
 
 export interface WebAppProps {
