@@ -181,4 +181,18 @@ describe('getNpmDownloads', () => {
     // THEN
     return expect(client.getDownloads(['npm', 'invalid-pkg'])).rejects.toThrowError(/Could not retrieve download metrics/);
   });
+
+  test('does not throw errors if throwErrors is disabled', async () => {
+    // GIVEN
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const fakeGot = require('got') as jest.MockedFunction<Got>;
+    fakeGot.mockImplementation(() => ({ body: JSON.stringify({ error: 'package invalid-pkg not found' }) }) as any);
+    const client = new NpmDownloadsClient(fakeGot);
+
+    // WHEN
+    const output = await client.getDownloads(['invalid-pkg'], { throwErrors: false });
+
+    // THEN
+    return expect(output).toEqual({});
+  });
 });

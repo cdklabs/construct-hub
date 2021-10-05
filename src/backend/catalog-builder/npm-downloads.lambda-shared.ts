@@ -26,7 +26,7 @@ export interface NpmDownloadsEntry {
   readonly package: string;
 }
 
-export type NpmDownloadsOutput = { [key: string]: NpmDownloadsEntry };
+export type NpmDownloadsOutput = { [key: string]: NpmDownloadsEntry | undefined };
 
 export interface NpmDownloadsOptions {
   /**
@@ -34,6 +34,12 @@ export interface NpmDownloadsOptions {
    * @default NpmDownloadsPeriod.LAST_WEEK
    */
   readonly period?: NpmDownloadsPeriod;
+
+  /**
+   * Throw an error when any package's download metrics are not available.
+   * @default true
+   */
+  readonly throwErrors?: boolean;
 }
 
 export class NpmDownloadsClient {
@@ -49,6 +55,7 @@ export class NpmDownloadsClient {
   private async getDownloadsRaw(
     packages: string[],
     period: NpmDownloadsPeriod,
+    throwErrors: boolean,
   ): Promise<NpmDownloadsOutput> {
     if (packages.length > NpmDownloadsClient.MAX_PACKAGES_PER_QUERY) {
       throw new Error(`Too many packages were provided (max: ${NpmDownloadsClient.MAX_PACKAGES_PER_QUERY})`);
@@ -60,12 +67,24 @@ export class NpmDownloadsClient {
     });
 
     const data = JSON.parse(result.body);
+
+    // single package query error
     if ('error' in data) {
-      throw new Error(`Could not retrieve download metrics: ${data.error}`);
+      if (throwErrors) {
+        throw new Error(`Could not retrieve download metrics: ${data.error}`);
+      } else {
+        console.error(`Could not retrieve download metrics: ${data.error}`);
+        return { [packages[0]]: undefined };
+      }
     }
     for (const key of Object.keys(data)) {
       if (!data[key]) {
-        throw new Error(`Could not retrieve download metrics for package ${key}`);
+        if (throwErrors) {
+          throw new Error(`Could not retrieve download metrics for package ${key}`);
+        } else {
+          console.error(`Could not retrieve download metrics for package ${key}`);
+          data[key] = undefined;
+        }
       }
     }
 
@@ -83,13 +102,16 @@ export class NpmDownloadsClient {
   /**
    * Retrieves the number of downloads each package has on npm in the latest period.
    * Output is not guaranteed to be returned in a specific order.
-   * Throws an error if any packages have no metrics.
+   * If throwErrors option is specified, an error is thrown when a package's
+   * download count is unavailable - otherwise, it's just omitted from
+   * the output.
    */
   async getDownloads(
     packages: string[],
     options: NpmDownloadsOptions = {},
   ): Promise<NpmDownloadsOutput> {
     const period = options.period ?? NpmDownloadsPeriod.LAST_WEEK;
+    const throwErrors = options.throwErrors ?? true;
 
     // separate scoped and unscoped packages since scoped packages are not
     // supported by the bulk query API
@@ -106,11 +128,11 @@ export class NpmDownloadsClient {
     // we could parallelize this, but then it's more likely we get throttled
     const output: NpmDownloadsOutput = {};
     for (const pkg of scopedPackages) {
-      Object.assign(output, await this.getDownloadsRaw([pkg], period));
+      Object.assign(output, await this.getDownloadsRaw([pkg], period, throwErrors));
     }
     for (let i = 0; i < unscopedPackages.length; i += NpmDownloadsClient.MAX_PACKAGES_PER_QUERY) {
       const batch = unscopedPackages.slice(i, i + NpmDownloadsClient.MAX_PACKAGES_PER_QUERY);
-      Object.assign(output, await this.getDownloadsRaw(batch, period));
+      Object.assign(output, await this.getDownloadsRaw(batch, period, throwErrors));
     }
 
     return output;
