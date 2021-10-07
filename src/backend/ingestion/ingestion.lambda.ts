@@ -304,33 +304,38 @@ interface ConstructFramework {
  */
 function detectConstructFramework(assembly: Assembly): ConstructFramework | undefined {
   let name: ConstructFramework['name'] | undefined;
+  let nameAmbiguous = false;
   let majorVersion: number | undefined;
   let majorVersionAmbiguous = false;
   detectConstructFrameworkPackage(assembly.name, assembly.version);
   for (const depName of Object.keys(assembly.dependencyClosure ?? {})) {
-    if (detectConstructFrameworkPackage(depName) === 'ambiguous') {
+    detectConstructFrameworkPackage(depName);
+    if (nameAmbiguous) {
       return undefined;
     }
   }
   return name && { name, majorVersion: majorVersionAmbiguous ? undefined : majorVersion };
 
-  function detectConstructFrameworkPackage(packageName: string, versionRange = assembly.dependencies?.[packageName]): 'ambiguous' | undefined {
+  function detectConstructFrameworkPackage(packageName: string, versionRange = assembly.dependencies?.[packageName]): void {
     if (packageName.startsWith('@aws-cdk/') || packageName === 'aws-cdk-lib' || packageName === 'monocdk') {
       if (name && name !== ConstructFrameworkName.AWS_CDK) {
         // Identified multiple candidates, so returning ambiguous...
-        return 'ambiguous';
+        nameAmbiguous = true;
+        return;
       }
       name = ConstructFrameworkName.AWS_CDK;
     } else if (packageName === 'cdktf') {
       if (name && name !== ConstructFrameworkName.CDKTF) {
         // Identified multiple candidates, so returning ambiguous...
-        return 'ambiguous';
+        nameAmbiguous = true;
+        return;
       }
       name = ConstructFrameworkName.CDKTF;
     } else if (packageName === 'cdk8s') {
       if (name && name !== ConstructFrameworkName.CDK8S) {
         // Identified multiple candidates, so returning ambiguous...
-        return 'ambiguous';
+        nameAmbiguous = true;
+        return;
       }
       name = ConstructFrameworkName.CDK8S;
     } else {
