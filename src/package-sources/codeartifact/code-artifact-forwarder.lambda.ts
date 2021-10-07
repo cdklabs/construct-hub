@@ -5,7 +5,6 @@ import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
 import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
 import * as aws from '../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
-import { IngestionInput } from '../../backend/shared/ingestion-input.lambda-shared';
 import { integrity } from '../../backend/shared/integrity.lambda-shared';
 import { extractObjects } from '../../backend/shared/tarball.lambda-shared';
 import { METRICS_NAMESPACE, MetricName, DOMAIN_OWNER_DIMENSION, DOMAIN_NAME_DIMENSION, REPOSITORY_NAME_DIMENSION } from './constants.lambda-shared';
@@ -87,15 +86,11 @@ export const handler = metricScope((metrics) => async (event: EventBridgeEvent<t
     },
   }).promise();
 
-  const messageBase = {
+  const message = integrity({
     tarballUri: `s3://${stagingBucket}/${stagingKey}`,
     metadata: { resources: event.resources.join(', ') },
     time: event.time,
-  };
-  const message: IngestionInput = {
-    ...messageBase,
-    integrity: integrity(messageBase, tarball),
-  };
+  }, tarball);
   return aws.sqs().sendMessage({
     MessageAttributes: {
       AWS_REQUEST_ID: { DataType: 'String', StringValue: context.awsRequestId },

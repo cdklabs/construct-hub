@@ -10,7 +10,7 @@ import type { IngestionInput } from './ingestion-input.lambda-shared';
  *
  * @returns the computed checksum.
  */
-export function integrity(input: Input, tarball: Buffer, alg = input.integrity?.split('-')[0] ?? 'sha384'): string {
+export function integrity(input: Input, tarball: Buffer, alg = input.integrity?.split('-')[0] ?? 'sha384'): IngestionInput {
   const hash = createHash(alg);
   const addField = (name: string, data: string | Buffer) =>
     //           <SOH>        $name          <STX>        $data          <ETX>
@@ -22,7 +22,10 @@ export function integrity(input: Input, tarball: Buffer, alg = input.integrity?.
   addField('tarball', tarball);
   addField('time', input.time);
 
-  return `${alg}-${hash.digest('base64')}`;
+  return {
+    ...input,
+    integrity: `${alg}-${hash.digest('base64')}`,
+  };
 }
 
 interface Input extends Omit<IngestionInput, 'integrity'> {

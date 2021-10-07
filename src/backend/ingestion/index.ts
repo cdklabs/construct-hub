@@ -1,10 +1,13 @@
 import { ComparisonOperator, MathExpression, Metric, MetricOptions, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
-import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
+import { Effect, IGrantable, IPrincipal, PolicyStatement } from '@aws-cdk/aws-iam';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
+import { StateMachine, TaskStateBase, TaskStateBaseProps, FieldUtils, JsonPath, IntegrationPattern, Choice, Succeed, Condition, Map } from '@aws-cdk/aws-stepfunctions';
+import { LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
+import { integrationResourceArn } from '@aws-cdk/aws-stepfunctions-tasks/lib/private/task-utils';
 import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
@@ -12,8 +15,10 @@ import { PackageTagConfig } from '../../package-tag';
 import { RUNBOOK_URL } from '../../runbook-url';
 import type { PackageLinkConfig } from '../../webapp';
 import { Orchestration } from '../orchestration';
+import { STORAGE_KEY_PREFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX } from '../shared/constants';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { Ingestion as Handler } from './ingestion';
+import { ReIngest } from './re-ingest';
 
 export interface IngestionProps {
   /**
@@ -118,6 +123,21 @@ export class Ingestion extends Construct implements IGrantable {
     // This event source is disabled, and can be used to re-process dead-letter-queue messages
     this.function.addEventSource(new SqsEventSource(this.deadLetterQueue, { batchSize: 1, enabled: false }));
 
+
+    // Reprocess workflow
+    const reprocessQueue = new Queue(this, 'ReprocessQueue', {
+      deadLetterQueue: {
+        maxReceiveCount: 5,
+        queue: this.deadLetterQueue,
+      },
+      encryption: QueueEncryption.KMS_MANAGED,
+      retentionPeriod: this.queueRetentionPeriod,
+      visibilityTimeout: Duration.minutes(15),
+    });
+    props.bucket.grantRead(this.function, `${STORAGE_KEY_PREFIX}*${PACKAGE_KEY_SUFFIX}`);
+    this.function.addEventSource(new SqsEventSource(reprocessQueue, { batchSize: 1 }));
+    new ReprocessIngestionWorkflow(this, 'ReprocessWorkflow', { bucket: props.bucket, queue: reprocessQueue });
+
     this.grantPrincipal = this.function.grantPrincipal;
 
     props.monitoring.addHighSeverityAlarm(
@@ -218,5 +238,123 @@ export class Ingestion extends Construct implements IGrantable {
       metricName: MetricName.MISMATCHED_IDENTITY_REJECTIONS,
       namespace: METRICS_NAMESPACE,
     });
+  }
+}
+
+interface ReprocessIngestionWorkflowProps {
+  readonly bucket: IBucket;
+  readonly queue: IQueue;
+}
+
+/**
+ * A StepFunctions State Machine to reprocess every currently indexed package
+ * through the ingestion function. This should not be frequently required, but
+ * can come in handy at times.
+ */
+class ReprocessIngestionWorkflow extends Construct {
+  public constructor(scope: Construct, id: string, props: ReprocessIngestionWorkflowProps) {
+    super(scope, id);
+
+    const lambdaFunction = new ReIngest(this, 'Function', {
+      description: '[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion',
+      environment: { BUCKET_NAME: props.bucket.bucketName, QUEUE_URL: props.queue.queueUrl },
+      tracing: Tracing.ACTIVE,
+    });
+
+    props.queue.grantSendMessages(lambdaFunction);
+    props.bucket.grantRead(lambdaFunction, `${STORAGE_KEY_PREFIX}*${METADATA_KEY_SUFFIX}`);
+    props.bucket.grantRead(lambdaFunction, `${STORAGE_KEY_PREFIX}*${PACKAGE_KEY_SUFFIX}`);
+
+    const listBucket = new Choice(this, 'Has a NextContinuationToken?')
+      .when(Condition.isPresent('$.response.NextContinuationToken'),
+        new AwsSdkTask(this, 'S3.ListObjectsV2(NextPage)', {
+          service: 's3',
+          action: 'listObjectsV2',
+          iamAction: 'ListBucket',
+          iamResource: props.bucket.bucketArn,
+          parameters: {
+            Bucket: props.bucket.bucketName,
+            ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken'),
+            MaxKeys: 250, // <- Limits the response size, and ensures we don't spawn too many Lambdas at once in the Map state.
+            Prefix: STORAGE_KEY_PREFIX,
+          },
+          resultPath: '$.response',
+        }))
+      .otherwise(new AwsSdkTask(this, 'S3.ListObjectsV2(FirstPage)', {
+        service: 's3',
+        action: 'listObjectsV2',
+        iamAction: 'ListBucket',
+        iamResource: props.bucket.bucketArn,
+        parameters: {
+          Bucket: props.bucket.bucketName,
+          Prefix: STORAGE_KEY_PREFIX,
+        },
+        resultPath: '$.response',
+      })).afterwards();
+
+    const process = new Map(this, 'Process Result', {
+      itemsPath: '$.response.Contents',
+      resultPath: JsonPath.DISCARD,
+    }).iterator(
+      new Choice(this, 'Is metadata object?')
+        .when(
+          Condition.stringMatches('$.Key', `*${METADATA_KEY_SUFFIX}`),
+          new LambdaInvoke(this, 'Send for reprocessing', { lambdaFunction })
+            // Ample retries here... We should never fail because of throttling....
+            .addRetry({ errors: ['Lambda.TooManyRequestsException'], backoffRate: 1.1, interval: Duration.minutes(1), maxAttempts: 30 }),
+        )
+        .otherwise(new Succeed(this, 'Nothing to do')),
+    );
+
+    listBucket.next(process.next(new Choice(this, 'Is there more?')
+      .when(Condition.isPresent('$.response.NextContinuationToken'), listBucket)
+      .otherwise(new Succeed(this, 'All Done'))));
+
+    const stateMachine = new StateMachine(this, 'StateMachine', {
+      definition: listBucket,
+      timeout: Duration.hours(1),
+    });
+
+    props.bucket.grantRead(stateMachine);
+    props.queue.grantSendMessages(stateMachine);
+  }
+}
+
+/**
+ * There is an open PR on CDK to implement this as part of the core framework.
+ * This can be removed once that PR lands.
+ */
+interface AwsSdkTaskProps extends TaskStateBaseProps {
+  readonly service: string;
+  readonly action: string;
+  readonly iamAction?: string;
+  readonly iamResource?: string;
+  readonly parameters?: { [key: string]: any };
+}
+
+class AwsSdkTask extends TaskStateBase {
+  public readonly taskMetrics = undefined;
+
+  public constructor(scope: Construct, id: string, private readonly props: AwsSdkTaskProps) {
+    super(scope, id, props);
+  }
+
+  public get taskPolicies(): PolicyStatement[] {
+    return [new PolicyStatement({
+      effect: Effect.ALLOW,
+      actions: [`${this.props.service}:${this.props.iamAction ?? this.props.action}`],
+      resources: [this.props.iamResource ?? '*'],
+    })];
+  }
+
+  protected _renderTask(): any {
+    return {
+      Resource: integrationResourceArn(
+        'aws-sdk',
+        `${this.props.service}:${this.props.action}`,
+        this.props.integrationPattern ?? IntegrationPattern.REQUEST_RESPONSE,
+      ),
+      Parameters: FieldUtils.renderObject(this.props.parameters ?? {}),
+    };
   }
 }

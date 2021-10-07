@@ -248,7 +248,14 @@ export class Orchestration extends Construct {
               })
                 // Do not retry NoSpaceLeftOnDevice errors, these are typically not transient.
                 .addRetry({ errors: ['jsii-docgen.NoSpaceLeftOnDevice'], maxAttempts: 0 })
-                .addRetry({ errors: ['ECS.AmazonECSException'], ...THROTTLE_RETRY_POLICY })
+                .addRetry({
+                  errors: [
+                    'ECS.AmazonECSException', // Task failed starting, usually due to throttle / out of capacity
+                    'jsii-docgen.NpmError.E429', // HTTP 429 ("Too Many Requests") from CodeArtifact's S3 bucket
+                    'jsii-codgen.NpmError.EPROTO', // Sporadic TLS negotiation failures we see in logs, transient
+                  ],
+                  ...THROTTLE_RETRY_POLICY
+                })
                 .addRetry({ maxAttempts: 3 })
                 .addCatch(
                   new Pass(this, `"Generate ${language} docs" timed out`, { parameters: { error: 'Timed out!', language } }),
