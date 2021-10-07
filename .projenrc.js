@@ -214,7 +214,7 @@ function discoverIntegrationTests() {
 
     const destroy = project.addTask(`integ:${name}:destroy`, {
       description: `destroy integration test ${entry}`,
-      exec: `cdk destroy --app ${snapshotdir}`,
+      exec: `cdk destroy --app ${snapshotdir} --no-version-reporting`,
     });
 
     deploy.spawn(destroy);
