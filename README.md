@@ -101,6 +101,12 @@ responsible for sending notifications to an SQS Queue about newly discovered
 packages. You may refer to the [sources.NpmJs] and [sources.CodeArtifact]
 implementations as a reference for hos this can be done.
 
+By default, download counts of NPM packages will be fetched periodically from
+NPM's public API by a Lambda. Since this is not desirable if you are using a
+private package registry, this is automatically disabled if you specify your own
+value for `packageSources`. (But this can be re-enabled through the
+`fetchPackageStats` property if needed).
+
 [sources.NpmJs]: src/package-sources/npmjs.ts
 [sources.CodeArtifact]: src/package-sources/code-artifact.ts
 
