@@ -40,7 +40,7 @@ export class PackageStats extends Construct {
         BUCKET_NAME: props.bucket.bucketName,
       },
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
-      memorySize: 256, // Currently the maximum possible setting
+      memorySize: 256,
       reservedConcurrentExecutions: 1,
       timeout: Duration.minutes(15),
       tracing: Tracing.PASS_THROUGH,
