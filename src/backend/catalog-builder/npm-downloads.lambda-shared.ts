@@ -64,7 +64,13 @@ export class NpmDownloadsClient {
 
     console.log(`Querying NPM for packages: [${packages.join(',')}]...`);
     const result = await this.got(`${NpmDownloadsClient.NPM_DOWNLOADS_API_URL}/${period}/${packages.join(',')}`, {
-      timeout: 30 * 1000, // 30 seconds
+      timeout: 5 * 1000, // 30 seconds
+    }).catch((err) => {
+      if (throwErrors) {
+        throw err;
+      } else {
+        return { body: JSON.stringify({ error: JSON.stringify(err) }) };
+      }
     });
 
     const data = JSON.parse(result.body);
