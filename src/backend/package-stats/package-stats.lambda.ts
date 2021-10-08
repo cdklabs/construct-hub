@@ -3,11 +3,11 @@ import type { Context } from 'aws-lambda';
 import type { AWSError, S3 } from 'aws-sdk';
 import got from 'got';
 import { CatalogModel, PackageInfo } from '../catalog-builder';
-import { NpmDownloadsClient, NpmDownloadsEntry, NpmDownloadsPeriod } from '../catalog-builder/npm-downloads.lambda-shared';
 import { PackageStatsInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
+import { NpmDownloadsClient, NpmDownloadsEntry, NpmDownloadsPeriod } from './npm-downloads.lambda-shared';
 
 const METRICS_NAMESPACE = 'ConstructHub/PackageStats';
 

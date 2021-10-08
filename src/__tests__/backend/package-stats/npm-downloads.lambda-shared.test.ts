@@ -1,5 +1,5 @@
 import type { Got } from 'got';
-import { NpmDownloadsClient, NpmDownloadsPeriod } from '../../../backend/catalog-builder/npm-downloads.lambda-shared';
+import { NpmDownloadsClient, NpmDownloadsPeriod } from '../../../backend/package-stats/npm-downloads.lambda-shared';
 
 jest.mock('got');
 
