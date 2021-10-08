@@ -2,6 +2,7 @@ import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
+import type { AssemblyTargets } from '@jsii/spec';
 
 import { Monitoring } from '../../monitoring';
 import { DenyList } from '../deny-list';
@@ -60,3 +61,72 @@ export class CatalogBuilder extends Construct {
     props.bucket.grantReadWrite(this.function);
   }
 }
+
+export interface CatalogModel {
+  readonly packages: PackageInfo[];
+  readonly updated: string;
+}
+
+/**
+ * Data format for packages stored in the catalog.
+ */
+export interface PackageInfo {
+  /**
+   * The name of the assembly.
+   */
+  readonly name: string;
+
+  /**
+   * The major version of this assembly, according to SemVer.
+   */
+  readonly major: number;
+
+  /**
+   * The complete SemVer version string for this package's major version stream,
+   * including pre-release identifiers, but excluding additional metadata
+   * (everything starting at `+`, if there is any).
+   */
+  readonly version: string;
+
+  /**
+   * The SPDX license identifier for the package's license.
+   */
+  readonly license: string;
+
+  /**
+   * The list of keywords configured on the package.
+   */
+  readonly keywords: readonly string[];
+
+  /**
+   * Metadata assigned by the discovery function to the latest release of this
+   * package's major version stream, if any.
+   */
+  readonly metadata?: { readonly [key: string]: string };
+
+  /**
+   * The author of the package.
+   */
+  readonly author: {
+    readonly name: string;
+    readonly email?: string;
+    readonly url?: string;
+  };
+
+  /**
+   * The list of languages configured on the package, and the corresponding
+   * configuration.
+   */
+  readonly languages: AssemblyTargets;
+
+  /**
+   * The timestamp at which this version was created.
+   */
+  readonly time: Date;
+
+  /**
+   * The description of the package.
+   */
+  readonly description?: string;
+}
+

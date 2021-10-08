@@ -9,9 +9,8 @@ import { CfnOutput, Construct } from '@aws-cdk/core';
 import { Domain } from '../api';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
-import { PackageTagConfig } from '../package-tag';
 import { CacheInvalidator } from './cache-invalidator';
-import { WebappConfig } from './config';
+import { WebappConfig, WebappConfigProps } from './config';
 import { ResponseFunction } from './response-function';
 
 export interface PackageLinkConfig {
@@ -73,7 +72,7 @@ export interface FeaturedPackagesSection {
   readonly showPackages?: string[];
 }
 
-export interface WebAppProps {
+export interface WebAppProps extends WebappConfigProps {
   /**
    * Connect to a domain.
    * @default - uses the default CloudFront domain.
@@ -89,22 +88,6 @@ export interface WebAppProps {
    * The bucket containing package data.
    */
   readonly packageData: s3.Bucket;
-
-  /**
-   * Configuration for custom package page links.
-   */
-  readonly packageLinks?: PackageLinkConfig[];
-
-  /**
-   * Configuration for custom package tags
-   */
-  readonly packageTags?: PackageTagConfig[];
-
-  /**
-   * Configuration for packages to feature on the home page.
-   * @default - Display the 10 most recently updated packages
-   */
-  readonly featuredPackages?: FeaturedPackages;
 }
 
 export class WebApp extends Construct {
@@ -196,6 +179,7 @@ export class WebApp extends Construct {
       packageLinks: props.packageLinks,
       packageTags: props.packageTags,
       featuredPackages: props.featuredPackages,
+      packageStats: props.packageStats,
     });
 
     new s3deploy.BucketDeployment(this, 'DeployWebsiteConfig', {

@@ -92,6 +92,11 @@ export const NOT_SUPPORTED_SUFFIX = '.not-supported';
 export const CATALOG_KEY = 'catalog.json';
 
 /**
+ * The key for the package stats document.
+ */
+export const STATS_KEY = 'stats.json';
+
+/**
  * A regular expression that can be used to parse out a storage key.
  */
 export const STORAGE_KEY_FORMAT_REGEX = new RegExp(`^${STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`);

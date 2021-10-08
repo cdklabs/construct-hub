@@ -5,7 +5,7 @@ import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
-import { Choice, Condition, IStateMachine, JsonPath, Parallel, Pass, StateMachine, StateMachineType, Succeed, TaskInput } from '@aws-cdk/aws-stepfunctions';
+import { Chain, Choice, Condition, IStateMachine, JsonPath, Parallel, Pass, State, StateMachine, StateMachineType, Succeed, TaskInput } from '@aws-cdk/aws-stepfunctions';
 import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Repository } from '../../codeartifact/repository';
@@ -14,6 +14,7 @@ import { Monitoring } from '../../monitoring';
 import { RUNBOOK_URL } from '../../runbook-url';
 import { CatalogBuilder } from '../catalog-builder';
 import { DenyList } from '../deny-list';
+import { PackageStats } from '../package-stats';
 import { DocumentationLanguage } from '../shared/language';
 import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
 import { RedriveStateMachine } from './redrive-state-machine';
@@ -41,7 +42,8 @@ const THROTTLE_RETRY_POLICY = { backoffRate: 1.1, interval: Duration.minutes(1),
 
 export interface OrchestrationProps {
   /**
-   * The bucket in which to source assemblies to transliterate.
+   * The bucket in which to source assemblies to transliterate, and in which
+   * catalog.json and stats.json are stored.
    */
   readonly bucket: IBucket;
 
@@ -81,6 +83,12 @@ export interface OrchestrationProps {
    * The deny list.
    */
   readonly denyList: DenyList;
+
+  /**
+   * Create a backend component for fetching package stats and saving them
+   * to the object "stats.json" in `bucket`.
+   */
+  readonly packageStats: boolean;
 }
 
 /**
@@ -115,6 +123,11 @@ export class Orchestration extends Construct {
    * The function that builds the catalog.
    */
   public readonly catalogBuilder: IFunction;
+
+  /**
+   * The function that fetches all package download metrics.
+   */
+  public readonly packageStats?: IFunction;
 
   /**
    * The ECS cluster used to run tasks.
@@ -207,6 +220,42 @@ export class Orchestration extends Construct {
       )
       .otherwise(new Succeed(this, 'Success'));
 
+    let updatePackageStats: State;
+    if (props.packageStats) {
+      this.packageStats = new PackageStats(this, 'PackageStats', props).function;
+
+      updatePackageStats = new tasks.LambdaInvoke(this, 'Update stats.json', {
+        lambdaFunction: this.packageStats,
+        resultPath: '$.packageStatsOutput',
+        resultSelector: {
+          'ETag.$': '$.Payload.ETag',
+          'VersionId.$': '$.Payload.VersionId',
+        },
+      })
+        // This has a concurrency of 1, so we want to aggressively retry being throttled here.
+        .addRetry({ errors: ['Lambda.TooManyRequestsException'], ...THROTTLE_RETRY_POLICY })
+        .addCatch(
+          new Pass(this, '"Update stats.json" throttled', {
+            parameters: { 'error.$': '$.Cause' },
+            resultPath: '$.error',
+          }).next(sendToDeadLetterQueue),
+          { errors: ['Lambda.TooManyRequestsException'] },
+        )
+        .addCatch(
+          new Pass(this, '"Update stats.json" failure', {
+            parameters: { 'error.$': 'States.StringToJson($.Cause)' },
+            resultPath: '$.error',
+          }).next(sendToDeadLetterQueue),
+          { errors: ['States.TaskFailed'] },
+        )
+        .addCatch(new Pass(this, '"Update stats.json" fault', {
+          parameters: { 'error.$': '$.Cause' },
+          resultPath: '$.error',
+        }).next(sendToDeadLetterQueue), { errors: ['States.ALL'] });
+    } else {
+      updatePackageStats = new Pass(this, 'NoopPackageStats');
+    }
+
     this.ecsCluster = new Cluster(this, 'Cluster', {
       containerInsights: true,
       enableFargateCapacityProviders: true,
@@ -272,7 +321,7 @@ export class Orchestration extends Construct {
             Condition.or(
               ...SUPPORTED_LANGUAGES.map((_, i) => Condition.isNotPresent(`$.${docGenResultsKey}[${i}].error`)),
             ),
-            addToCatalog.next(sendToDlqIfNeeded),
+            Chain.start(addToCatalog).next(updatePackageStats).next(sendToDlqIfNeeded),
           )
           .otherwise(sendToDlqIfNeeded),
         ));

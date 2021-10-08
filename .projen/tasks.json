@@ -79,6 +79,9 @@
           "spawn": "bundle:reprocess-all"
         },
         {
+          "spawn": "bundle:package-stats"
+        },
+        {
           "spawn": "bundle:certificate-monitor"
         },
         {
@@ -339,6 +342,9 @@
           "spawn": "bundle:reprocess-all"
         },
         {
+          "spawn": "bundle:package-stats"
+        },
+        {
           "spawn": "bundle:certificate-monitor"
         },
         {
@@ -495,6 +501,15 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/backend/orchestration/reprocess-all.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/orchestration/reprocess-all.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:package-stats": {
+      "name": "bundle:package-stats",
+      "description": "Create an AWS Lambda bundle from src/backend/package-stats/package-stats.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats.bundle/index.js\" --external:aws-sdk --sourcemap"
         }
       ]
     },

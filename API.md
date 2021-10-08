@@ -280,6 +280,20 @@ Configuration for packages to feature on the home page.
 
 ---
 
+##### `fetchPackageStats`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.fetchPackageStats"></a>
+
+```typescript
+public readonly fetchPackageStats: boolean;
+```
+
+- *Type:* `boolean`
+- *Default:* true if packageSources is not specified (the defaults are
+used), false otherwise
+
+Configure whether or not the backend should periodically query NPM for the number of downloads a package has in the past week, and display download counts on the web app.
+
+---
+
 ##### `isolateSensitiveTasks`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.isolateSensitiveTasks"></a>
 
 ```typescript

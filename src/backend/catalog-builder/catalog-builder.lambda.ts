@@ -1,11 +1,11 @@
 import { gunzip } from 'zlib';
 
-import type { AssemblyTargets } from '@jsii/spec';
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
 import { AWSError, S3 } from 'aws-sdk';
 import { SemVer } from 'semver';
 import { extract } from 'tar-stream';
+import { CatalogModel, PackageInfo } from '.';
 import { DenyListClient } from '../deny-list/client.lambda-shared';
 import type { CatalogBuilderInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
@@ -73,7 +73,7 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
 
   } else {
     console.log('Catalog found. Loading...');
-    const catalog = JSON.parse(data.Body.toString('utf-8'));
+    const catalog: CatalogModel = JSON.parse(data.Body.toString('utf-8'));
     for (const info of catalog.packages) {
       if (!packages.has(info.name)) {
         packages.set(info.name, new Map());
@@ -227,64 +227,4 @@ async function appendPackage(packages: any, pkgKey: string, bucketName: string, 
     version: pkgMetadata.version,
   });
 
-}
-
-interface PackageInfo {
-  /**
-   * The name of the assembly.
-   */
-  readonly name: string;
-
-  /**
-   * The major version of this assembly, according to SemVer.
-   */
-  readonly major: number;
-
-  /**
-   * The complete SemVer version string for this package's major version stream,
-   * including pre-release identifiers, but excluding additional metadata
-   * (everything starting at `+`, if there is any).
-   */
-  readonly version: string;
-
-  /**
-   * The SPDX license identifier for the package's license.
-   */
-  readonly license: string;
-
-  /**
-   * The list of keywords configured on the package.
-   */
-  readonly keywords: readonly string[];
-
-  /**
-   * Metadata assigned by the discovery function to the latest release of this
-   * package's major version stream, if any.
-   */
-  readonly metadata?: { readonly [key: string]: string };
-
-  /**
-   * The author of the package.
-   */
-  readonly author: {
-    readonly name: string;
-    readonly email?: string;
-    readonly url?: string;
-  };
-
-  /**
-   * The list of languages configured on the package, and the corresponding
-   * configuration.
-   */
-  readonly languages: AssemblyTargets;
-
-  /**
-   * The timestamp at which this version was created.
-   */
-  readonly time: Date;
-
-  /**
-   * The description of the package.
-   */
-  readonly description?: string;
 }

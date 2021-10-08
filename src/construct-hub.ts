@@ -111,6 +111,16 @@ export interface ConstructHubProps {
    * @default - Display the 10 most recently updated packages
    */
   readonly featuredPackages?: FeaturedPackages;
+
+  /**
+   * Configure whether or not the backend should periodically query NPM
+   * for the number of downloads a package has in the past week, and
+   * display download counts on the web app.
+   *
+   * @default - true if packageSources is not specified (the defaults are
+   * used), false otherwise
+   */
+  readonly fetchPackageStats?: boolean;
 }
 
 /**
@@ -189,6 +199,12 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       monitoring: monitoring,
     });
 
+    // disable fetching package stats by default if a different package
+    // source is configured
+    const fetchPackageStats = props.fetchPackageStats ?? (
+      props.packageSources ? false : true
+    );
+
     const orchestration = new Orchestration(this, 'Orchestration', {
       bucket: packageData,
       codeArtifact,
@@ -198,6 +214,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       vpc,
       vpcEndpoints,
       vpcSubnets,
+      packageStats: fetchPackageStats,
     });
 
     // rebuild the catalog when the deny list changes.
@@ -259,6 +276,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       packageLinks: props.packageLinks,
       packageTags: packageTagsSerialized,
       featuredPackages: props.featuredPackages,
+      packageStats: fetchPackageStats,
     });
   }
 
