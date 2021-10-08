@@ -26,7 +26,7 @@ export interface NpmDownloadsEntry {
   readonly package: string;
 }
 
-export type NpmDownloadsOutput = { [key: string]: NpmDownloadsEntry | undefined };
+export type NpmDownloadsOutput = { [key: string]: NpmDownloadsEntry };
 
 export interface NpmDownloadsOptions {
   /**
@@ -62,6 +62,7 @@ export class NpmDownloadsClient {
     }
     if (packages.length === 0) return {};
 
+    console.log(`Querying NPM for packages: [${packages.join(',')}]...`);
     const result = await this.got(`${NpmDownloadsClient.NPM_DOWNLOADS_API_URL}/${period}/${packages.join(',')}`, {
       timeout: 30 * 1000, // 30 seconds
     });
@@ -74,7 +75,7 @@ export class NpmDownloadsClient {
         throw new Error(`Could not retrieve download metrics: ${data.error}`);
       } else {
         console.error(`Could not retrieve download metrics: ${data.error}`);
-        return { [packages[0]]: undefined };
+        return {};
       }
     }
     // bulk package query error
@@ -84,7 +85,7 @@ export class NpmDownloadsClient {
           throw new Error(`Could not retrieve download metrics for package ${key}`);
         } else {
           console.error(`Could not retrieve download metrics for package ${key}`);
-          data[key] = undefined;
+          delete data[key];
         }
       }
     }
