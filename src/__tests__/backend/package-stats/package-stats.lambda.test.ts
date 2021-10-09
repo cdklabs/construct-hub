@@ -72,7 +72,7 @@ test('full build', () => {
   const mockGot = require('got') as jest.MockedFunction<Got>;
   // two API calls to NPM downloads API since one of the packages is scoped
   // so the bulk API can't be used
-  mockGot.mockImplementationOnce(() => ({
+  mockGot.mockImplementationOnce(() => Promise.resolve({
     body: JSON.stringify({
       downloads: 1000,
       package: '@scope/package',
@@ -80,7 +80,7 @@ test('full build', () => {
       end: 'end-date',
     }),
   }) as any);
-  mockGot.mockImplementationOnce(() => ({
+  mockGot.mockImplementationOnce(() => Promise.resolve({
     body: JSON.stringify({
       downloads: 2000,
       package: 'name',
@@ -174,7 +174,7 @@ test('incremental build', () => {
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockGot = require('got') as jest.MockedFunction<Got>;
-  mockGot.mockImplementationOnce(() => ({
+  mockGot.mockImplementationOnce(() => Promise.resolve({
     body: JSON.stringify({
       downloads: 3000,
       package: 'name',
