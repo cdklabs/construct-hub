@@ -254,7 +254,7 @@ export class Orchestration extends Construct {
                     'jsii-docgen.NpmError.E429', // HTTP 429 ("Too Many Requests") from CodeArtifact's S3 bucket
                     'jsii-codgen.NpmError.EPROTO', // Sporadic TLS negotiation failures we see in logs, transient
                   ],
-                  ...THROTTLE_RETRY_POLICY
+                  ...THROTTLE_RETRY_POLICY,
                 })
                 .addRetry({ maxAttempts: 3 })
                 .addCatch(
