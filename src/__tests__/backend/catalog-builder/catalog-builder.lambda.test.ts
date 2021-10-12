@@ -61,7 +61,7 @@ test('initial build', () => {
     try {
       expect(req.Bucket).toBe(mockBucketName);
     } catch (e) {
-      return cb(e as AWSError);
+      return cb(e as any);
     }
 
     if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
@@ -103,7 +103,7 @@ test('initial build', () => {
       expect(req.Bucket).toBe(mockBucketName);
       expect(req.Prefix).toBe(constants.STORAGE_KEY_PREFIX);
     } catch (e) {
-      return cb(e as AWSError);
+      return cb(e as any);
     }
     if (req.ContinuationToken == null) {
       return cb(null, { Contents: mockFirstPage, NextContinuationToken: 'next' });
@@ -111,7 +111,7 @@ test('initial build', () => {
     try {
       expect(req.ContinuationToken).toBe('next');
     } catch (e) {
-      return cb(e as AWSError);
+      return cb(e as any);
     }
     return cb(null, { Contents: mockSecondPage });
   });
@@ -163,7 +163,7 @@ test('initial build', () => {
       ]);
       expect(Date.parse(body.updatedAt)).toBeDefined();
     } catch (e) {
-      return cb(e as AWSError);
+      return cb(e as any);
     }
     return cb(null, mockPutObjectResult);
   });
@@ -230,7 +230,7 @@ describe('incremental build', () => {
       try {
         expect(req.Bucket).toBe(mockBucketName);
       } catch (e) {
-        return cb(e as AWSError);
+        return cb(e as any);
       }
 
       if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
@@ -280,7 +280,7 @@ describe('incremental build', () => {
         ]);
         expect(Date.parse(body.updatedAt)).toBeDefined();
       } catch (e) {
-        return cb(e as AWSError);
+        return cb(e as any);
       }
       return cb(null, mockPutObjectResult);
     });
@@ -303,7 +303,7 @@ describe('incremental build', () => {
       try {
         expect(req.Bucket).toBe(mockBucketName);
       } catch (e) {
-        return cb(e as AWSError);
+        return cb(e as any);
       }
 
       if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
@@ -345,7 +345,7 @@ describe('incremental build', () => {
         ]);
         expect(Date.parse(body.updatedAt)).toBeDefined();
       } catch (e) {
-        return cb(e as AWSError);
+        return cb(e as any);
       }
       return cb(null, mockPutObjectResult);
     });
@@ -368,7 +368,7 @@ describe('incremental build', () => {
       try {
         expect(req.Bucket).toBe(mockBucketName);
       } catch (e) {
-        return cb(e as AWSError);
+        return cb(e as any);
       }
 
       if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
@@ -406,7 +406,7 @@ describe('incremental build', () => {
         expect(body.packages).toEqual(initialPackages);
         expect(Date.parse(body.updatedAt)).toBeDefined();
       } catch (e) {
-        return cb(e as AWSError);
+        return cb(e as any);
       }
       return cb(null, mockPutObjectResult);
     });
@@ -429,7 +429,7 @@ describe('incremental build', () => {
       try {
         expect(req.Bucket).toBe(mockBucketName);
       } catch (e) {
-        return cb(e as AWSError);
+        return cb(e as any);
       }
 
       if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
@@ -467,7 +467,7 @@ describe('incremental build', () => {
         expect(body.packages).toEqual(initialPackages);
         expect(Date.parse(body.updatedAt)).toBeDefined();
       } catch (e) {
-        return cb(e as AWSError);
+        return cb(e as any);
       }
       return cb(null, mockPutObjectResult);
     });
@@ -490,7 +490,7 @@ describe('incremental build', () => {
       try {
         expect(req.Bucket).toBe(mockBucketName);
       } catch (e) {
-        return cb(e as AWSError);
+        return cb(e as any);
       }
 
       if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
@@ -528,7 +528,7 @@ describe('incremental build', () => {
         expect(body.packages).toEqual(initialPackages);
         expect(Date.parse(body.updatedAt)).toBeDefined();
       } catch (e) {
-        return cb(e as AWSError);
+        return cb(e as any);
       }
       return cb(null, mockPutObjectResult);
     });

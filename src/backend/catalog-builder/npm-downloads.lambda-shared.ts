@@ -26,7 +26,7 @@ export interface NpmDownloadsEntry {
   readonly package: string;
 }
 
-export type NpmDownloadsOutput = { [key: string]: NpmDownloadsEntry };
+export type NpmDownloadsOutput = Map<string, NpmDownloadsEntry>;
 
 export interface NpmDownloadsOptions {
   /**
@@ -53,18 +53,21 @@ export class NpmDownloadsClient {
   }
 
   private async getDownloadsRaw(
-    packages: string[],
+    packages: readonly string[],
     period: NpmDownloadsPeriod,
     throwErrors: boolean,
   ): Promise<NpmDownloadsOutput> {
     if (packages.length > NpmDownloadsClient.MAX_PACKAGES_PER_QUERY) {
       throw new Error(`Too many packages were provided (max: ${NpmDownloadsClient.MAX_PACKAGES_PER_QUERY})`);
     }
-    if (packages.length === 0) return {};
+    if (packages.some((pkg) => this.isScopedPackage(pkg)) && packages.length > 1) {
+      throw new Error('Scoped packages aren\'t supported by the bulk query API.');
+    }
+    if (packages.length === 0) return new Map();
 
-    console.log(`Querying NPM for packages: [${packages.join(',')}]...`);
+    console.log(`Querying NPM for ${packages.length} package(s): [${packages.join(', ')}]`);
     const result = await this.got(`${NpmDownloadsClient.NPM_DOWNLOADS_API_URL}/${period}/${packages.join(',')}`, {
-      timeout: 5 * 1000, // 30 seconds
+      timeout: 5 * 1000, // 5 seconds
     }).catch((err) => {
       if (throwErrors) {
         throw err;
@@ -73,20 +76,27 @@ export class NpmDownloadsClient {
       }
     });
 
-    const data = JSON.parse(result.body);
+    const data: NpmApiResult = JSON.parse(result.body);
 
     // single package query error
+    // ex. { "error": "package foo not found" }
     if ('error' in data) {
       if (throwErrors) {
         throw new Error(`Could not retrieve download metrics: ${data.error}`);
       } else {
         console.error(`Could not retrieve download metrics: ${data.error}`);
-        return {};
+        return new Map();
       }
     }
-    // bulk package query error
+
+    // only a single package was returned
+    if (isSingleDownloadsEntry(data)) {
+      return new Map([[packages[0], data]]);
+    }
+
+    // bulk query result
     for (const key of Object.keys(data)) {
-      if (!data[key]) {
+      if (data[key] === null) {
         if (throwErrors) {
           throw new Error(`Could not retrieve download metrics for package ${key}`);
         } else {
@@ -96,13 +106,9 @@ export class NpmDownloadsClient {
       }
     }
 
-    if (packages[0] in data) {
-      // multiple packages were returned
-      return data;
-    } else {
-      // only a single package was returned
-      return { [packages[0]]: data };
-    }
+    // typescript can't figure out that we removed all null values
+    // @ts-ignore
+    return new Map(Object.entries(data));
   }
 
   /**
@@ -112,7 +118,7 @@ export class NpmDownloadsClient {
    * download count is unavailable - otherwise, it's just omitted from
    * the output.
    */
-  async getDownloads(
+  public async getDownloads(
     packages: string[],
     options: NpmDownloadsOptions = {},
   ): Promise<NpmDownloadsOutput> {
@@ -132,19 +138,35 @@ export class NpmDownloadsClient {
     }
 
     // we could parallelize this, but then it's more likely we get throttled
-    const output: NpmDownloadsOutput = {};
+    const output: NpmDownloadsOutput = new Map();
     for (const pkg of scopedPackages) {
-      Object.assign(output, await this.getDownloadsRaw([pkg], period, throwErrors));
+      const partialResults = await this.getDownloadsRaw([pkg], period, throwErrors);
+      for (const [key, value] of partialResults) {
+        output.set(key, value);
+      }
     }
     for (let i = 0; i < unscopedPackages.length; i += NpmDownloadsClient.MAX_PACKAGES_PER_QUERY) {
       const batch = unscopedPackages.slice(i, i + NpmDownloadsClient.MAX_PACKAGES_PER_QUERY);
-      Object.assign(output, await this.getDownloadsRaw(batch, period, throwErrors));
+      const partialResults = await this.getDownloadsRaw(batch, period, throwErrors);
+      for (const [key, value] of partialResults) {
+        output.set(key, value);
+      }
     }
 
     return output;
   }
 
   private isScopedPackage(packageName: string) {
-    return packageName.indexOf('/') !== -1;
+    return packageName.startsWith('@');
   }
+}
+
+// Types for the output of NPM's API.
+type NpmApiResult = NpmApiError | NpmApiSingleResult | NpmApiMultipleResult;
+type NpmApiError = { error: string };
+type NpmApiSingleResult = NpmDownloadsEntry;
+type NpmApiMultipleResult = { [key: string]: NpmApiSingleResult | null };
+
+function isSingleDownloadsEntry(data: any): data is NpmDownloadsEntry {
+  return 'downloads' in data && typeof data.downloads === 'number';
 }
