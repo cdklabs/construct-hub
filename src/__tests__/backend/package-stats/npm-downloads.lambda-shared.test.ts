@@ -3,98 +3,67 @@ import { NpmDownloadsClient, NpmDownloadsPeriod } from '../../../backend/package
 
 jest.mock('got');
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const fakeGot = require('got') as jest.MockedFunction<Got>;
+beforeEach(() => {
+  fakeGot.mockReset();
+});
+
 const sampleData = {
   'npm': {
     downloads: 12345,
     package: 'npm',
-    start: 'start-date',
-    end: 'end-date',
+    start: '2021-10-10',
+    end: '2021-10-10',
   },
   'express': {
     downloads: 23456,
     package: 'express',
-    start: 'start-date',
-    end: 'end-date',
+    start: '2021-10-10',
+    end: '2021-10-10',
   },
   'react': {
     downloads: 34567,
     package: 'react',
-    start: 'start-date',
-    end: 'end-date',
+    start: '2021-10-10',
+    end: '2021-10-10',
   },
   '@aws-cdk/core': {
     downloads: 45678,
     package: '@aws-cdk/core',
-    start: 'start-date',
-    end: 'end-date',
+    start: '2021-10-10',
+    end: '2021-10-10',
   },
   '@aws-cdk/aws-s3': {
     downloads: 56789,
     package: '@aws-cdk/aws-s3',
-    start: 'start-date',
-    end: 'end-date',
+    start: '2021-10-10',
+    end: '2021-10-10',
   },
 };
 
 describe('getNpmDownloads', () => {
-  test('gets the total downloads of a package for the last day', async () => {
+  test.each([
+    NpmDownloadsPeriod.LAST_DAY,
+    NpmDownloadsPeriod.LAST_WEEK,
+    NpmDownloadsPeriod.LAST_MONTH,
+  ])('gets the total downloads of a package for the %s', async (period) => {
     // GIVEN
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const fakeGot = require('got') as jest.MockedFunction<Got>;
-    fakeGot.mockImplementation(() => Promise.resolve({ body: JSON.stringify(sampleData.npm) }) as any);
+    fakeGot.mockImplementation((url: any) => {
+      expect(url).toEqual(`${NpmDownloadsClient.NPM_DOWNLOADS_API_URL}/${period.toString()}/npm`);
+      return Promise.resolve({ body: JSON.stringify(sampleData.npm) }) as any;
+    });
     const client = new NpmDownloadsClient(fakeGot);
 
     // WHEN
-    const output = await client.getDownloads(['npm'], { period: NpmDownloadsPeriod.LAST_DAY });
+    const output = await client.getDownloads(['npm'], { period });
 
     // THEN
-    expect(output).toEqual({ npm: sampleData.npm });
-    expect(fakeGot).lastCalledWith(
-      `${NpmDownloadsClient.NPM_DOWNLOADS_API_URL}/last-day/npm`,
-      expect.anything(),
-    );
-  });
-
-  test('gets the total downloads of a package for the last week', async () => {
-    // GIVEN
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const fakeGot = require('got') as jest.MockedFunction<Got>;
-    fakeGot.mockImplementation(() => Promise.resolve({ body: JSON.stringify(sampleData.npm) }) as any);
-    const client = new NpmDownloadsClient(fakeGot);
-
-    // WHEN
-    const output = await client.getDownloads(['npm'], { period: NpmDownloadsPeriod.LAST_WEEK });
-
-    // THEN
-    expect(output).toEqual({ npm: sampleData.npm });
-    expect(fakeGot).lastCalledWith(
-      `${NpmDownloadsClient.NPM_DOWNLOADS_API_URL}/last-week/npm`,
-      expect.anything(),
-    );
-  });
-
-  test('gets the total downloads of a package for the last month', async () => {
-    // GIVEN
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const fakeGot = require('got') as jest.MockedFunction<Got>;
-    fakeGot.mockImplementation(() => Promise.resolve({ body: JSON.stringify(sampleData.npm) }) as any);
-    const client = new NpmDownloadsClient(fakeGot);
-
-    // WHEN
-    const output = await client.getDownloads(['npm'], { period: NpmDownloadsPeriod.LAST_MONTH });
-
-    // THEN
-    expect(output).toEqual({ npm: sampleData.npm });
-    expect(fakeGot).lastCalledWith(
-      `${NpmDownloadsClient.NPM_DOWNLOADS_API_URL}/last-month/npm`,
-      expect.anything(),
-    );
+    expect(Object.fromEntries(output)).toEqual({ npm: sampleData.npm });
   });
 
   test('makes individual queries for scoped packages', async () => {
     // GIVEN
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const fakeGot = require('got') as jest.MockedFunction<Got>;
     fakeGot.mockImplementation(((url: string) => {
       if (url.endsWith('/last-week/@aws-cdk/core')) {
         return Promise.resolve({ body: JSON.stringify(sampleData['@aws-cdk/core']) });
@@ -118,7 +87,7 @@ describe('getNpmDownloads', () => {
     const output = await client.getDownloads(['npm', 'express', 'react', '@aws-cdk/core', '@aws-cdk/aws-s3']);
 
     // THEN
-    expect(output).toEqual({
+    expect(Object.fromEntries(output)).toEqual({
       '@aws-cdk/core': sampleData['@aws-cdk/core'],
       '@aws-cdk/aws-s3': sampleData['@aws-cdk/aws-s3'],
       'npm': sampleData.npm,
@@ -130,8 +99,6 @@ describe('getNpmDownloads', () => {
   test('batches unscoped packages into bulk queries', async () => {
     // GIVEN
     const numUnscopedPackages = NpmDownloadsClient.MAX_PACKAGES_PER_QUERY + 5;
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const fakeGot = require('got') as jest.MockedFunction<Got>;
     fakeGot.mockImplementation(((url: string) => {
       if (url.endsWith('/last-week/' + Array(128).fill('express').join(','))) {
         return Promise.resolve({ body: JSON.stringify(sampleData.express) });
@@ -151,7 +118,7 @@ describe('getNpmDownloads', () => {
     const output = await client.getDownloads(packages);
 
     // THEN
-    expect(output).toEqual({
+    expect(Object.fromEntries(output)).toEqual({
       '@aws-cdk/core': sampleData['@aws-cdk/core'],
       'express': sampleData.express,
     });
@@ -162,9 +129,7 @@ describe('getNpmDownloads', () => {
 
   test('throws an error if package download count isn\'t available for one package', async () => {
     // GIVEN
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const fakeGot = require('got') as jest.MockedFunction<Got>;
-    fakeGot.mockImplementation(() => Promise.resolve({ body: JSON.stringify({ error: 'package invalid-pkg not found' }) }) as any);
+    fakeGot.mockReturnValueOnce(Promise.resolve({ body: JSON.stringify({ error: 'package invalid-pkg not found' }) }) as any);
     const client = new NpmDownloadsClient(fakeGot);
 
     // THEN
@@ -173,9 +138,7 @@ describe('getNpmDownloads', () => {
 
   test('throws an error if package download count isn\'t available for multiple packages', async () => {
     // GIVEN
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const fakeGot = require('got') as jest.MockedFunction<Got>;
-    fakeGot.mockImplementation(() => Promise.resolve({ body: JSON.stringify({ 'npm': sampleData.npm, 'invalid-pkg': null }) }) as any);
+    fakeGot.mockReturnValueOnce(Promise.resolve({ body: JSON.stringify({ 'npm': sampleData.npm, 'invalid-pkg': null }) }) as any);
     const client = new NpmDownloadsClient(fakeGot);
 
     // THEN
@@ -184,15 +147,13 @@ describe('getNpmDownloads', () => {
 
   test('does not throw errors if throwErrors is disabled', async () => {
     // GIVEN
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const fakeGot = require('got') as jest.MockedFunction<Got>;
-    fakeGot.mockImplementation(() => Promise.resolve({ body: JSON.stringify({ error: 'package invalid-pkg not found' }) }) as any);
+    fakeGot.mockReturnValueOnce(Promise.resolve({ body: JSON.stringify({ error: 'package invalid-pkg not found' }) }) as any);
     const client = new NpmDownloadsClient(fakeGot);
 
     // WHEN
     const output = await client.getDownloads(['invalid-pkg'], { throwErrors: false });
 
     // THEN
-    return expect(output).toEqual({});
+    return expect(output.size).toEqual(0);
   });
 });
