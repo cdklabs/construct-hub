@@ -7,8 +7,6 @@ export interface StateMachineInput {
 
 export type CatalogBuilderInput = Pick<StateMachineInput, 'package'>;
 
-export type PackageStatsInput = Pick<StateMachineInput, 'package'>;
-
 export type TransliteratorInput = Pick<StateMachineInput, 'bucket' | 'assembly'>;
 
 export interface S3ObjectVersion {
