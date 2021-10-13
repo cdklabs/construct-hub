@@ -205,7 +205,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     const fetchPackageStats = props.fetchPackageStats ?? (
       props.packageSources ? false : true
     );
-    new PackageStats(this, 'Stats', {
+    const packageStats = new PackageStats(this, 'Stats', {
       bucket: packageData,
       monitoring,
       logRetention: props.logRetention,
@@ -273,6 +273,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       inventory,
       orchestration,
       denyList,
+      packageStats,
     });
 
     new WebApp(this, 'WebApp', {

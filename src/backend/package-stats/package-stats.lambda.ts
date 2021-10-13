@@ -6,9 +6,8 @@ import { CatalogModel } from '../catalog-builder';
 import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
+import { MetricName, METRICS_NAMESPACE } from './constants';
 import { NpmDownloadsClient, NpmDownloadsEntry, NpmDownloadsPeriod } from './npm-downloads.lambda-shared';
-
-const METRICS_NAMESPACE = 'ConstructHub/PackageStats';
 
 /**
  * Rebuilds the `stats.json` object in the configured S3 bucket.
@@ -59,7 +58,7 @@ export async function handler(event: any, context: Context) {
   console.log(`There are now ${Object.keys(stats.packages).length} packages with NPM stats stored.`);
   await metricScope((metrics) => async () => {
     metrics.setNamespace(METRICS_NAMESPACE);
-    metrics.putMetric('RegisteredPackages', catalog.packages.length, Unit.Count);
+    metrics.putMetric(MetricName.REGISTERED_PACKAGES_WITH_STATS, catalog.packages.length, Unit.Count);
   })();
 
   // Upload the result to S3 and exit.

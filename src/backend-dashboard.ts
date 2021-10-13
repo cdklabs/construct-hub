@@ -5,6 +5,8 @@ import { DenyList } from './backend/deny-list';
 import { Ingestion } from './backend/ingestion';
 import { Inventory } from './backend/inventory';
 import { Orchestration } from './backend/orchestration';
+import { PackageStats } from './backend/package-stats';
+import { STATS_KEY } from './backend/shared/constants';
 import { DocumentationLanguage } from './backend/shared/language';
 import { ecsClusterUrl, lambdaFunctionUrl, lambdaSearchLogGroupUrl, logGroupUrl, s3ObjectUrl, sqsQueueUrl, stateMachineUrl } from './deep-link';
 import { fillMetric } from './metric-utils';
@@ -18,6 +20,7 @@ export interface BackendDashboardProps {
   readonly inventory: Inventory;
   readonly denyList: DenyList;
   readonly packageData: IBucket;
+  readonly packageStats: PackageStats;
 }
 
 export class BackendDashboard extends Construct {
@@ -259,6 +262,33 @@ export class BackendDashboard extends Construct {
           }),
         ],
 
+        // package stats
+        // -----------------------------------
+        [
+          new TextWidget({
+            height: 2,
+            width: 24,
+            markdown:
+              [
+                '# Package Stats',
+                '',
+                `[button:primary:Package Stats Object](${s3ObjectUrl(props.packageStats.bucket, STATS_KEY)})`,
+                `[button:Package Stats Function](${lambdaFunctionUrl(props.packageStats.function)})`,
+                `[button:Package Stats Logs](${lambdaSearchLogGroupUrl(props.packageStats.function)})`,
+              ].join('\n'),
+          }),
+        ],
+        [
+          new GraphWidget({
+            height: 6,
+            width: 12,
+            title: 'Number of Package Stats Recorded',
+            left: [
+              fillMetric(props.packageStats.metricPackagesCount({ label: 'Packages with stats' })),
+            ],
+            leftYAxis: { min: 0 },
+          }),
+        ],
       ],
     });
   }

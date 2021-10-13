@@ -1,10 +1,14 @@
+import { ComparisonOperator, Metric, MetricOptions, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
 import * as events from '@aws-cdk/aws-events';
 import * as targets from '@aws-cdk/aws-events-targets';
-import { Tracing } from '@aws-cdk/aws-lambda';
+import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import type { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
+import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
+import { RUNBOOK_URL } from '../../runbook-url';
+import { MetricName, METRICS_NAMESPACE } from './constants';
 import { PackageStats as Handler } from './package-stats';
 
 export interface PackageStatsProps {
@@ -31,13 +35,18 @@ export interface PackageStatsProps {
  * Builds or re-builds the `stats.json` object in the designated bucket.
  */
 export class PackageStats extends Construct {
+  public readonly bucket: IBucket;
+  public readonly function: IFunction;
+
   public constructor(scope: Construct, id: string, props: PackageStatsProps) {
     super(scope, id);
 
-    const handler = new Handler(this, 'Default', {
+    this.bucket = props.bucket;
+
+    this.function = new Handler(this, 'Default', {
       description: `Creates the stats.json object in ${props.bucket.bucketName}`,
       environment: {
-        BUCKET_NAME: props.bucket.bucketName,
+        BUCKET_NAME: this.bucket.bucketName,
       },
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 256,
@@ -49,8 +58,39 @@ export class PackageStats extends Construct {
     const rule = new events.Rule(this, 'Rule', {
       schedule: events.Schedule.cron({ hour: '6', minute: '0' }), // daily at 6am in some timezone
     });
-    rule.addTarget(new targets.LambdaFunction(handler));
+    rule.addTarget(new targets.LambdaFunction(this.function));
 
-    props.bucket.grantReadWrite(handler);
+    this.bucket.grantReadWrite(this.function);
+
+    const failureAlarm = this.function.metricErrors().createAlarm(scope, 'PackageStats/Failures', {
+      alarmName: `${scope.node.path}/PackageStats/Failures`,
+      alarmDescription: [
+        'The package stats function failed!',
+        '',
+        `RunBook: ${RUNBOOK_URL}`,
+        '',
+        `Direct link to Lambda function: ${lambdaFunctionUrl(this.function)}`,
+      ].join('\n'),
+      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      evaluationPeriods: 1,
+      threshold: 1,
+      treatMissingData: TreatMissingData.MISSING,
+    });
+    props.monitoring.addLowSeverityAlarm('PackageStats Failures', failureAlarm);
+  }
+
+  public metricPackagesCount(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        ['ServiceName']: this.function.functionName,
+        ['LogGroup']: this.function.functionName,
+        ['ServiceType']: 'AWS::Lambda::Function',
+      },
+      metricName: MetricName.REGISTERED_PACKAGES_WITH_STATS,
+      namespace: METRICS_NAMESPACE,
+    });
   }
 }
