@@ -2,8 +2,7 @@ import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
 import type { AWSError, S3 } from 'aws-sdk';
 import got from 'got';
-import { CatalogModel, PackageInfo } from '../catalog-builder';
-import { PackageStatsInput } from '../payload-schema';
+import { CatalogModel } from '../catalog-builder';
 import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
@@ -12,26 +11,18 @@ import { NpmDownloadsClient, NpmDownloadsEntry, NpmDownloadsPeriod } from './npm
 const METRICS_NAMESPACE = 'ConstructHub/PackageStats';
 
 /**
- * Updates or rebuilds the `stats.json` object in the configured S3 bucket.
+ * Rebuilds the `stats.json` object in the configured S3 bucket.
  * Validates that the number of packages on a full rebuild should not decrease
  * significantly (due to network errors from e.g. NPM) - can be ignored
  * by passing { ignoreValidation: true }.
  *
- * @param event configuration for the rebuild job. If a package is provided,
- *              just that package will be updated - otherwise, it is assumed
- *              that the all of the stats are to be regenerated.
+ * @param event configuration for the rebuild job.
  * @param context the lambda context in which this execution runs.
  *
  * @returns the information about the updated S3 object.
  */
-export async function handler(event: PackageStatsInput & { ignoreValidation?: boolean }, context: Context) {
+export async function handler(event: any, context: Context) {
   console.log(JSON.stringify(event, null, 2));
-
-  // determine if this is a request to rebuild the catalog (basically, an empty event)
-  const rebuild = !(event.package);
-  if (rebuild) {
-    console.log('Requesting package stats rebuild (empty event)');
-  }
 
   const BUCKET_NAME = requireEnv('BUCKET_NAME');
 
@@ -57,41 +48,19 @@ export async function handler(event: PackageStatsInput & { ignoreValidation?: bo
   const catalog: CatalogModel = JSON.parse(catalogData.Body.toString('utf-8'));
   const defaultStats: PackageStatsOutput = { packages: {}, updated: currentDate };
 
-  if (rebuild) {
+  let packageNames = catalog.packages.map(pkg => pkg.name);
+  packageNames = [...new Set(packageNames).values()];
 
-    let packageNames = catalog.packages.map(pkg => pkg.name);
-    packageNames = [...new Set(packageNames).values()];
+  stats = defaultStats;
 
-    stats = defaultStats;
+  console.log(`Retrieving download stats for all registered pacakges: [${packageNames.join(',')}].`);
+  const npmDownloads = await npmClient.getDownloads(packageNames, {
+    period: NpmDownloadsPeriod.LAST_WEEK,
+    throwErrors: false,
+  });
 
-    console.log(`Retrieving download stats for all registered pacakges: [${packageNames.join(',')}].`);
-    const npmDownloads = await npmClient.getDownloads(packageNames, {
-      period: NpmDownloadsPeriod.LAST_WEEK,
-      throwErrors: false,
-    });
-
-    for (const [pkgName, entry] of npmDownloads.entries()) {
-      updateStats(stats, pkgName, entry, currentDate);
-    }
-
-  } else {
-
-    const pkgKey = event.package.key;
-    console.log(`Processing key: ${pkgKey}`);
-    const [, packageName] = constants.STORAGE_KEY_FORMAT_REGEX.exec(pkgKey)!;
-    if (!existsInCatalog(packageName, catalog)) {
-      throw new Error(`Package ${packageName} does not appear to be registered in the catalog.`);
-    }
-
-    stats = oldStats;
-
-    console.log(`Retrieving download stats for ${packageName}`);
-    const npmDownloads = await npmClient.getDownloads([packageName], { period: NpmDownloadsPeriod.LAST_WEEK });
-
-    for (const [pkgName, entry] of npmDownloads.entries()) {
-      updateStats(stats, pkgName, entry, currentDate);
-    }
-
+  for (const [pkgName, entry] of npmDownloads.entries()) {
+    updateStats(stats, pkgName, entry);
   }
 
   stats.updated = currentDate;
@@ -100,7 +69,7 @@ export async function handler(event: PackageStatsInput & { ignoreValidation?: bo
   const newStatsCount = Object.keys(stats.packages).length;
   const ignoreValidation = event.ignoreValidation ?? false;
   if (!ignoreValidation && newStatsCount < oldStatsCount) {
-    console.log(`Number of recorded packages with download stats has decreased from ${oldStatsCount} to ${newStatsCount}. If this is expected, rerun with "ignoreValidation: true".`);
+    throw new Error(`Number of recorded packages with download stats has decreased from ${oldStatsCount} to ${newStatsCount}. If this is expected, rerun with "ignoreValidation: true".`);
   }
 
   console.log(`There are now ${Object.keys(stats.packages).length} packages with NPM stats stored.`);
@@ -125,24 +94,12 @@ export async function handler(event: PackageStatsInput & { ignoreValidation?: bo
   }).promise();
 }
 
-function existsInCatalog(pkgName: string, catalog: { packages: Array<PackageInfo>; updated: string }): boolean {
-  for (const pkg of catalog.packages) {
-    if (pkg.name === pkgName) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function updateStats(stats: DeepWriteable<PackageStatsOutput>, pkgName: string, entry: NpmDownloadsEntry, date: string) {
+function updateStats(stats: DeepWriteable<PackageStatsOutput>, pkgName: string, entry: NpmDownloadsEntry) {
   stats.packages[pkgName] = {
     ...(stats.packages[pkgName] ?? {}),
     downloads: {
       ...(stats.packages[pkgName]?.downloads ?? {}),
-      npm: {
-        count: entry.downloads,
-        updated: date,
-      },
+      npm: entry.downloads,
     },
   };
 }
@@ -169,12 +126,7 @@ export interface PackageStatsEntry {
 }
 
 export interface PackageStatsDownloads {
-  readonly npm: PackageStatsDownloadsDetail;
-}
-
-export interface PackageStatsDownloadsDetail {
-  readonly count: number;
-  readonly updated: string;
+  readonly npm: number;
 }
 
 type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };

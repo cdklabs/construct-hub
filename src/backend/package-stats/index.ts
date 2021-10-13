@@ -47,7 +47,7 @@ export class PackageStats extends Construct {
     });
 
     const rule = new events.Rule(this, 'Rule', {
-      schedule: events.Schedule.cron({ hour: '6' }), // daily at 6am in some timezone
+      schedule: events.Schedule.cron({ hour: '6', minute: '0' }), // daily at 6am in some timezone
     });
     rule.addTarget(new targets.LambdaFunction(handler));
 
