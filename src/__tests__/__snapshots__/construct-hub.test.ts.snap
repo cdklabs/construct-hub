@@ -81,18 +81,6 @@ Object {
       "Description": "S3 key for asset version \\"2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658\\"",
       "Type": "String",
     },
-    "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4ArtifactHashBED74E03": Object {
-      "Description": "Artifact hash for asset \\"37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4\\"",
-      "Type": "String",
-    },
-    "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3Bucket4F1C309F": Object {
-      "Description": "S3 bucket for asset \\"37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4\\"",
-      "Type": "String",
-    },
-    "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3VersionKey86393F7F": Object {
-      "Description": "S3 key for asset version \\"37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4\\"",
-      "Type": "String",
-    },
     "AssetParameters38a367e1cb7d90119cacb57a738d20de810b7c5b330b86c71012a1e348e86c83ArtifactHashAA66450E": Object {
       "Description": "Artifact hash for asset \\"38a367e1cb7d90119cacb57a738d20de810b7c5b330b86c71012a1e348e86c83\\"",
       "Type": "String",
@@ -796,9 +784,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationRedrive8DDBA67E",
               },
-              ")\\\\n[button:Reprocess](/lambda/home#/functions/",
+              ")\\\\n[button:Reprocess](/states/home#/statemachines/view/",
               Object {
-                "Ref": "ConstructHubOrchestrationReprocessAllFF2F2455",
+                "Ref": "ConstructHubOrchestrationReprocessAllWorkflowC3678C45",
               },
               ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
               Object {
@@ -5205,7 +5193,7 @@ Direct link to function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "StateMachineType": "STANDARD",
+        "StateMachineName": "Test.ConstructHub.Orchestration",
         "TracingConfiguration": Object {
           "Enabled": true,
         },
@@ -5802,78 +5790,164 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ConstructHubOrchestrationReprocessAllFF2F2455": Object {
+    "ConstructHubOrchestrationReprocessAllWorkflowC3678C45": Object {
       "DependsOn": Array [
-        "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB",
-        "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+        "ConstructHubOrchestrationReprocessAllWorkflowRoleDefaultPolicy731EB254",
+        "ConstructHubOrchestrationReprocessAllWorkflowRoleA59D0AEE",
       ],
       "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3Bucket4F1C309F",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3VersionKey86393F7F",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3VersionKey86393F7F",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
+        "DefinitionString": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"StartAt\\":\\"Get prefix page\\",\\"States\\":{\\"Get prefix page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next prefixes page\\"}],\\"Default\\":\\"First prefix page\\"},\\"Has more prefixes?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get prefix page\\"}],\\"Default\\":\\"Done\\"},\\"For each prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more prefixes?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is this a @scope-- prefix?\\",\\"States\\":{\\"Is this a @scope-- prefix?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Prefix\\",\\"StringMatches\\":\\"data/@*\\",\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"Process unscoped package\\"},\\"Process unscoped package\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"Prefix.$\\":\\"$.Prefix\\"},\\"StateMachineArn\\":\\"",
+              Object {
+                "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4",
+              },
+              "\\"}},\\"Get @scope page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next @scope page\\"}],\\"Default\\":\\"First @scope page\\"},\\"Has more packages?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"All Done\\"},\\"For each @scope--pkg\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more packages?\\",\\"Iterator\\":{\\"StartAt\\":\\"Process scoped package\\",\\"States\\":{\\"Process scoped package\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"Prefix.$\\":\\"$.Prefix\\"},\\"StateMachineArn\\":\\"",
+              Object {
+                "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4",
+              },
+              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"All Done\\":{\\"Type\\":\\"Succeed\\"}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First prefix page\\":{\\"Next\\":\\"For each prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix\\":\\"data/\\"}},\\"Next prefixes page\\":{\\"Next\\":\\"For each prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix\\":\\"data/\\"}},\\"Done\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":14400}",
             ],
-          },
+          ],
         },
-        "Description": "[ConstructHub/ReprocessAll] Reprocess all package versions through the backend",
-        "Environment": Object {
-          "Variables": Object {
-            "BUCKET_NAME": Object {
-              "Ref": "ConstructHubPackageDataDC5EF35E",
-            },
-            "STATE_MACHINE_ARN": Object {
-              "Ref": "ConstructHubOrchestration39161A46",
-            },
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 1024,
-        "Role": Object {
+        "RoleArn": Object {
           "Fn::GetAtt": Array [
-            "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+            "ConstructHubOrchestrationReprocessAllWorkflowRoleA59D0AEE",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "TracingConfig": Object {
-          "Mode": "Active",
+        "StateMachineName": "Test.ConstructHub.Orchestration.ReprocessAllWorkflow",
+        "TracingConfiguration": Object {
+          "Enabled": true,
         },
       },
-      "Type": "AWS::Lambda::Function",
+      "Type": "AWS::StepFunctions::StateMachine",
     },
-    "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB": Object {
+    "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4": Object {
+      "DependsOn": Array [
+        "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRoleDefaultPolicy09863999",
+        "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRole2AD6D6E1",
+      ],
+      "Properties": Object {
+        "DefinitionString": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"StartAt\\":\\"Get package versions page\\",\\"States\\":{\\"Get package versions page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next versions page\\"}],\\"Default\\":\\"First versions page\\"},\\"Has more versions?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get package versions page\\"}],\\"Default\\":\\"Success\\"},\\"For each key prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more versions?\\",\\"Iterator\\":{\\"StartAt\\":\\"Start Orchestration Workflow\\",\\"States\\":{\\"Start Orchestration Workflow\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::states:startExecution\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"assembly\\":{\\"key.$\\":\\"States.Format('{}assembly.json', $.Prefix)\\"},\\"metadata\\":{\\"key.$\\":\\"States.Format('{}metadata.json', $.Prefix)\\"},\\"package\\":{\\"key.$\\":\\"States.Format('{}package.tgz', $.Prefix)\\"}},\\"StateMachineArn\\":\\"",
+              Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Success\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":3600}",
+            ],
+          ],
+        },
+        "RoleArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRole2AD6D6E1",
+            "Arn",
+          ],
+        },
+        "TracingConfiguration": Object {
+          "Enabled": true,
+        },
+      },
+      "Type": "AWS::StepFunctions::StateMachine",
+    },
+    "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRole2AD6D6E1": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "states.",
+                      Object {
+                        "Ref": "AWS::Region",
+                      },
+                      ".amazonaws.com",
+                    ],
+                  ],
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRoleDefaultPolicy09863999": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
@@ -5881,9 +5955,28 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               "Action": Array [
                 "xray:PutTraceSegments",
                 "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets",
               ],
               "Effect": "Allow",
               "Resource": "*",
+            },
+            Object {
+              "Action": "s3:ListBucket",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubPackageDataDC5EF35E",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
             },
             Object {
               "Action": Array [
@@ -5915,26 +6008,19 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                 },
               ],
             },
-            Object {
-              "Action": "states:StartExecution",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Ref": "ConstructHubOrchestration39161A46",
-              },
-            },
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB",
+        "PolicyName": "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRoleDefaultPolicy09863999",
         "Roles": Array [
           Object {
-            "Ref": "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+            "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRole2AD6D6E1",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434": Object {
+    "ConstructHubOrchestrationReprocessAllWorkflowRoleA59D0AEE": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -5942,28 +6028,167 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
               "Principal": Object {
-                "Service": "lambda.amazonaws.com",
+                "Service": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "states.",
+                      Object {
+                        "Ref": "AWS::Region",
+                      },
+                      ".amazonaws.com",
+                    ],
+                  ],
+                },
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubOrchestrationReprocessAllWorkflowRoleDefaultPolicy731EB254": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets",
               ],
-            ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": "s3:ListBucket",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubPackageDataDC5EF35E",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4",
+              },
+            },
+            Object {
+              "Action": Array [
+                "states:DescribeExecution",
+                "states:StopExecution",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":states:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":execution:",
+                    Object {
+                      "Fn::Select": Array [
+                        6,
+                        Object {
+                          "Fn::Split": Array [
+                            ":",
+                            Object {
+                              "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4",
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                    "*",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "events:PutTargets",
+                "events:PutRule",
+                "events:DescribeRule",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":events:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":rule/StepFunctionsGetEventsForStepFunctionsExecutionRule",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubOrchestrationReprocessAllWorkflowRoleDefaultPolicy731EB254",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationReprocessAllWorkflowRoleA59D0AEE",
           },
         ],
       },
-      "Type": "AWS::IAM::Role",
+      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubOrchestrationRoleDefaultPolicyEACD181F": Object {
       "DependsOn": Array [
@@ -8695,18 +8920,6 @@ Object {
       "Description": "S3 key for asset version \\"2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658\\"",
       "Type": "String",
     },
-    "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4ArtifactHashBED74E03": Object {
-      "Description": "Artifact hash for asset \\"37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4\\"",
-      "Type": "String",
-    },
-    "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3Bucket4F1C309F": Object {
-      "Description": "S3 bucket for asset \\"37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4\\"",
-      "Type": "String",
-    },
-    "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3VersionKey86393F7F": Object {
-      "Description": "S3 key for asset version \\"37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4\\"",
-      "Type": "String",
-    },
     "AssetParameters38a367e1cb7d90119cacb57a738d20de810b7c5b330b86c71012a1e348e86c83ArtifactHashAA66450E": Object {
       "Description": "Artifact hash for asset \\"38a367e1cb7d90119cacb57a738d20de810b7c5b330b86c71012a1e348e86c83\\"",
       "Type": "String",
@@ -9410,9 +9623,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationRedrive8DDBA67E",
               },
-              ")\\\\n[button:Reprocess](/lambda/home#/functions/",
+              ")\\\\n[button:Reprocess](/states/home#/statemachines/view/",
               Object {
-                "Ref": "ConstructHubOrchestrationReprocessAllFF2F2455",
+                "Ref": "ConstructHubOrchestrationReprocessAllWorkflowC3678C45",
               },
               ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
               Object {
@@ -13840,7 +14053,7 @@ Direct link to function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "StateMachineType": "STANDARD",
+        "StateMachineName": "Test.ConstructHub.Orchestration",
         "TracingConfiguration": Object {
           "Enabled": true,
         },
@@ -14437,78 +14650,164 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ConstructHubOrchestrationReprocessAllFF2F2455": Object {
+    "ConstructHubOrchestrationReprocessAllWorkflowC3678C45": Object {
       "DependsOn": Array [
-        "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB",
-        "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+        "ConstructHubOrchestrationReprocessAllWorkflowRoleDefaultPolicy731EB254",
+        "ConstructHubOrchestrationReprocessAllWorkflowRoleA59D0AEE",
       ],
       "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3Bucket4F1C309F",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3VersionKey86393F7F",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3VersionKey86393F7F",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
+        "DefinitionString": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"StartAt\\":\\"Get prefix page\\",\\"States\\":{\\"Get prefix page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next prefixes page\\"}],\\"Default\\":\\"First prefix page\\"},\\"Has more prefixes?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get prefix page\\"}],\\"Default\\":\\"Done\\"},\\"For each prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more prefixes?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is this a @scope-- prefix?\\",\\"States\\":{\\"Is this a @scope-- prefix?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Prefix\\",\\"StringMatches\\":\\"data/@*\\",\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"Process unscoped package\\"},\\"Process unscoped package\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"Prefix.$\\":\\"$.Prefix\\"},\\"StateMachineArn\\":\\"",
+              Object {
+                "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4",
+              },
+              "\\"}},\\"Get @scope page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next @scope page\\"}],\\"Default\\":\\"First @scope page\\"},\\"Has more packages?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"All Done\\"},\\"For each @scope--pkg\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more packages?\\",\\"Iterator\\":{\\"StartAt\\":\\"Process scoped package\\",\\"States\\":{\\"Process scoped package\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"Prefix.$\\":\\"$.Prefix\\"},\\"StateMachineArn\\":\\"",
+              Object {
+                "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4",
+              },
+              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"All Done\\":{\\"Type\\":\\"Succeed\\"}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First prefix page\\":{\\"Next\\":\\"For each prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix\\":\\"data/\\"}},\\"Next prefixes page\\":{\\"Next\\":\\"For each prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix\\":\\"data/\\"}},\\"Done\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":14400}",
             ],
-          },
+          ],
         },
-        "Description": "[ConstructHub/ReprocessAll] Reprocess all package versions through the backend",
-        "Environment": Object {
-          "Variables": Object {
-            "BUCKET_NAME": Object {
-              "Ref": "ConstructHubPackageDataDC5EF35E",
-            },
-            "STATE_MACHINE_ARN": Object {
-              "Ref": "ConstructHubOrchestration39161A46",
-            },
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 1024,
-        "Role": Object {
+        "RoleArn": Object {
           "Fn::GetAtt": Array [
-            "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+            "ConstructHubOrchestrationReprocessAllWorkflowRoleA59D0AEE",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "TracingConfig": Object {
-          "Mode": "Active",
+        "StateMachineName": "Test.ConstructHub.Orchestration.ReprocessAllWorkflow",
+        "TracingConfiguration": Object {
+          "Enabled": true,
         },
       },
-      "Type": "AWS::Lambda::Function",
+      "Type": "AWS::StepFunctions::StateMachine",
     },
-    "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB": Object {
+    "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4": Object {
+      "DependsOn": Array [
+        "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRoleDefaultPolicy09863999",
+        "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRole2AD6D6E1",
+      ],
+      "Properties": Object {
+        "DefinitionString": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"StartAt\\":\\"Get package versions page\\",\\"States\\":{\\"Get package versions page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next versions page\\"}],\\"Default\\":\\"First versions page\\"},\\"Has more versions?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get package versions page\\"}],\\"Default\\":\\"Success\\"},\\"For each key prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more versions?\\",\\"Iterator\\":{\\"StartAt\\":\\"Start Orchestration Workflow\\",\\"States\\":{\\"Start Orchestration Workflow\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::states:startExecution\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"assembly\\":{\\"key.$\\":\\"States.Format('{}assembly.json', $.Prefix)\\"},\\"metadata\\":{\\"key.$\\":\\"States.Format('{}metadata.json', $.Prefix)\\"},\\"package\\":{\\"key.$\\":\\"States.Format('{}package.tgz', $.Prefix)\\"}},\\"StateMachineArn\\":\\"",
+              Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Success\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":3600}",
+            ],
+          ],
+        },
+        "RoleArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRole2AD6D6E1",
+            "Arn",
+          ],
+        },
+        "TracingConfiguration": Object {
+          "Enabled": true,
+        },
+      },
+      "Type": "AWS::StepFunctions::StateMachine",
+    },
+    "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRole2AD6D6E1": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "states.",
+                      Object {
+                        "Ref": "AWS::Region",
+                      },
+                      ".amazonaws.com",
+                    ],
+                  ],
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRoleDefaultPolicy09863999": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
@@ -14516,9 +14815,28 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               "Action": Array [
                 "xray:PutTraceSegments",
                 "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets",
               ],
               "Effect": "Allow",
               "Resource": "*",
+            },
+            Object {
+              "Action": "s3:ListBucket",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubPackageDataDC5EF35E",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
             },
             Object {
               "Action": Array [
@@ -14550,26 +14868,19 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                 },
               ],
             },
-            Object {
-              "Action": "states:StartExecution",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Ref": "ConstructHubOrchestration39161A46",
-              },
-            },
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB",
+        "PolicyName": "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRoleDefaultPolicy09863999",
         "Roles": Array [
           Object {
-            "Ref": "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+            "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRole2AD6D6E1",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434": Object {
+    "ConstructHubOrchestrationReprocessAllWorkflowRoleA59D0AEE": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -14577,28 +14888,167 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
               "Principal": Object {
-                "Service": "lambda.amazonaws.com",
+                "Service": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "states.",
+                      Object {
+                        "Ref": "AWS::Region",
+                      },
+                      ".amazonaws.com",
+                    ],
+                  ],
+                },
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubOrchestrationReprocessAllWorkflowRoleDefaultPolicy731EB254": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets",
               ],
-            ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": "s3:ListBucket",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubPackageDataDC5EF35E",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4",
+              },
+            },
+            Object {
+              "Action": Array [
+                "states:DescribeExecution",
+                "states:StopExecution",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":states:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":execution:",
+                    Object {
+                      "Fn::Select": Array [
+                        6,
+                        Object {
+                          "Fn::Split": Array [
+                            ":",
+                            Object {
+                              "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4",
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                    "*",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "events:PutTargets",
+                "events:PutRule",
+                "events:DescribeRule",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":events:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":rule/StepFunctionsGetEventsForStepFunctionsExecutionRule",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubOrchestrationReprocessAllWorkflowRoleDefaultPolicy731EB254",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationReprocessAllWorkflowRoleA59D0AEE",
           },
         ],
       },
-      "Type": "AWS::IAM::Role",
+      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubOrchestrationRoleDefaultPolicyEACD181F": Object {
       "DependsOn": Array [
@@ -17354,18 +17804,6 @@ Object {
       "Description": "S3 key for asset version \\"2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658\\"",
       "Type": "String",
     },
-    "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4ArtifactHashBED74E03": Object {
-      "Description": "Artifact hash for asset \\"37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4\\"",
-      "Type": "String",
-    },
-    "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3Bucket4F1C309F": Object {
-      "Description": "S3 bucket for asset \\"37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4\\"",
-      "Type": "String",
-    },
-    "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3VersionKey86393F7F": Object {
-      "Description": "S3 key for asset version \\"37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4\\"",
-      "Type": "String",
-    },
     "AssetParameters38a367e1cb7d90119cacb57a738d20de810b7c5b330b86c71012a1e348e86c83ArtifactHashAA66450E": Object {
       "Description": "Artifact hash for asset \\"38a367e1cb7d90119cacb57a738d20de810b7c5b330b86c71012a1e348e86c83\\"",
       "Type": "String",
@@ -18242,9 +18680,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationRedrive8DDBA67E",
               },
-              ")\\\\n[button:Reprocess](/lambda/home#/functions/",
+              ")\\\\n[button:Reprocess](/states/home#/statemachines/view/",
               Object {
-                "Ref": "ConstructHubOrchestrationReprocessAllFF2F2455",
+                "Ref": "ConstructHubOrchestrationReprocessAllWorkflowC3678C45",
               },
               ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
               Object {
@@ -22673,7 +23111,7 @@ Direct link to function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "StateMachineType": "STANDARD",
+        "StateMachineName": "Test.ConstructHub.Orchestration",
         "TracingConfiguration": Object {
           "Enabled": true,
         },
@@ -23270,78 +23708,164 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ConstructHubOrchestrationReprocessAllFF2F2455": Object {
+    "ConstructHubOrchestrationReprocessAllWorkflowC3678C45": Object {
       "DependsOn": Array [
-        "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB",
-        "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+        "ConstructHubOrchestrationReprocessAllWorkflowRoleDefaultPolicy731EB254",
+        "ConstructHubOrchestrationReprocessAllWorkflowRoleA59D0AEE",
       ],
       "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3Bucket4F1C309F",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3VersionKey86393F7F",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3VersionKey86393F7F",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
+        "DefinitionString": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"StartAt\\":\\"Get prefix page\\",\\"States\\":{\\"Get prefix page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next prefixes page\\"}],\\"Default\\":\\"First prefix page\\"},\\"Has more prefixes?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get prefix page\\"}],\\"Default\\":\\"Done\\"},\\"For each prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more prefixes?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is this a @scope-- prefix?\\",\\"States\\":{\\"Is this a @scope-- prefix?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Prefix\\",\\"StringMatches\\":\\"data/@*\\",\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"Process unscoped package\\"},\\"Process unscoped package\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"Prefix.$\\":\\"$.Prefix\\"},\\"StateMachineArn\\":\\"",
+              Object {
+                "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4",
+              },
+              "\\"}},\\"Get @scope page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next @scope page\\"}],\\"Default\\":\\"First @scope page\\"},\\"Has more packages?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"All Done\\"},\\"For each @scope--pkg\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more packages?\\",\\"Iterator\\":{\\"StartAt\\":\\"Process scoped package\\",\\"States\\":{\\"Process scoped package\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"Prefix.$\\":\\"$.Prefix\\"},\\"StateMachineArn\\":\\"",
+              Object {
+                "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4",
+              },
+              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"All Done\\":{\\"Type\\":\\"Succeed\\"}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First prefix page\\":{\\"Next\\":\\"For each prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix\\":\\"data/\\"}},\\"Next prefixes page\\":{\\"Next\\":\\"For each prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix\\":\\"data/\\"}},\\"Done\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":14400}",
             ],
-          },
+          ],
         },
-        "Description": "[ConstructHub/ReprocessAll] Reprocess all package versions through the backend",
-        "Environment": Object {
-          "Variables": Object {
-            "BUCKET_NAME": Object {
-              "Ref": "ConstructHubPackageDataDC5EF35E",
-            },
-            "STATE_MACHINE_ARN": Object {
-              "Ref": "ConstructHubOrchestration39161A46",
-            },
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 1024,
-        "Role": Object {
+        "RoleArn": Object {
           "Fn::GetAtt": Array [
-            "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+            "ConstructHubOrchestrationReprocessAllWorkflowRoleA59D0AEE",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "TracingConfig": Object {
-          "Mode": "Active",
+        "StateMachineName": "Test.ConstructHub.Orchestration.ReprocessAllWorkflow",
+        "TracingConfiguration": Object {
+          "Enabled": true,
         },
       },
-      "Type": "AWS::Lambda::Function",
+      "Type": "AWS::StepFunctions::StateMachine",
     },
-    "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB": Object {
+    "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4": Object {
+      "DependsOn": Array [
+        "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRoleDefaultPolicy09863999",
+        "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRole2AD6D6E1",
+      ],
+      "Properties": Object {
+        "DefinitionString": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"StartAt\\":\\"Get package versions page\\",\\"States\\":{\\"Get package versions page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next versions page\\"}],\\"Default\\":\\"First versions page\\"},\\"Has more versions?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get package versions page\\"}],\\"Default\\":\\"Success\\"},\\"For each key prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more versions?\\",\\"Iterator\\":{\\"StartAt\\":\\"Start Orchestration Workflow\\",\\"States\\":{\\"Start Orchestration Workflow\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::states:startExecution\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"assembly\\":{\\"key.$\\":\\"States.Format('{}assembly.json', $.Prefix)\\"},\\"metadata\\":{\\"key.$\\":\\"States.Format('{}metadata.json', $.Prefix)\\"},\\"package\\":{\\"key.$\\":\\"States.Format('{}package.tgz', $.Prefix)\\"}},\\"StateMachineArn\\":\\"",
+              Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Success\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":3600}",
+            ],
+          ],
+        },
+        "RoleArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRole2AD6D6E1",
+            "Arn",
+          ],
+        },
+        "TracingConfiguration": Object {
+          "Enabled": true,
+        },
+      },
+      "Type": "AWS::StepFunctions::StateMachine",
+    },
+    "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRole2AD6D6E1": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "states.",
+                      Object {
+                        "Ref": "AWS::Region",
+                      },
+                      ".amazonaws.com",
+                    ],
+                  ],
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRoleDefaultPolicy09863999": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
@@ -23349,9 +23873,28 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               "Action": Array [
                 "xray:PutTraceSegments",
                 "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets",
               ],
               "Effect": "Allow",
               "Resource": "*",
+            },
+            Object {
+              "Action": "s3:ListBucket",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubPackageDataDC5EF35E",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
             },
             Object {
               "Action": Array [
@@ -23383,26 +23926,19 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                 },
               ],
             },
-            Object {
-              "Action": "states:StartExecution",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Ref": "ConstructHubOrchestration39161A46",
-              },
-            },
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB",
+        "PolicyName": "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRoleDefaultPolicy09863999",
         "Roles": Array [
           Object {
-            "Ref": "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+            "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRole2AD6D6E1",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434": Object {
+    "ConstructHubOrchestrationReprocessAllWorkflowRoleA59D0AEE": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -23410,28 +23946,167 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
               "Principal": Object {
-                "Service": "lambda.amazonaws.com",
+                "Service": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "states.",
+                      Object {
+                        "Ref": "AWS::Region",
+                      },
+                      ".amazonaws.com",
+                    ],
+                  ],
+                },
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubOrchestrationReprocessAllWorkflowRoleDefaultPolicy731EB254": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets",
               ],
-            ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": "s3:ListBucket",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubPackageDataDC5EF35E",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4",
+              },
+            },
+            Object {
+              "Action": Array [
+                "states:DescribeExecution",
+                "states:StopExecution",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":states:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":execution:",
+                    Object {
+                      "Fn::Select": Array [
+                        6,
+                        Object {
+                          "Fn::Split": Array [
+                            ":",
+                            Object {
+                              "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4",
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                    "*",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "events:PutTargets",
+                "events:PutRule",
+                "events:DescribeRule",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":events:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":rule/StepFunctionsGetEventsForStepFunctionsExecutionRule",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubOrchestrationReprocessAllWorkflowRoleDefaultPolicy731EB254",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationReprocessAllWorkflowRoleA59D0AEE",
           },
         ],
       },
-      "Type": "AWS::IAM::Role",
+      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubOrchestrationRoleDefaultPolicyEACD181F": Object {
       "DependsOn": Array [
@@ -26442,18 +27117,6 @@ Object {
       "Description": "S3 key for asset version \\"2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658\\"",
       "Type": "String",
     },
-    "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4ArtifactHashBED74E03": Object {
-      "Description": "Artifact hash for asset \\"37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4\\"",
-      "Type": "String",
-    },
-    "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3Bucket4F1C309F": Object {
-      "Description": "S3 bucket for asset \\"37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4\\"",
-      "Type": "String",
-    },
-    "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3VersionKey86393F7F": Object {
-      "Description": "S3 key for asset version \\"37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4\\"",
-      "Type": "String",
-    },
     "AssetParameters38a367e1cb7d90119cacb57a738d20de810b7c5b330b86c71012a1e348e86c83ArtifactHashAA66450E": Object {
       "Description": "Artifact hash for asset \\"38a367e1cb7d90119cacb57a738d20de810b7c5b330b86c71012a1e348e86c83\\"",
       "Type": "String",
@@ -27157,9 +27820,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationRedrive8DDBA67E",
               },
-              ")\\\\n[button:Reprocess](/lambda/home#/functions/",
+              ")\\\\n[button:Reprocess](/states/home#/statemachines/view/",
               Object {
-                "Ref": "ConstructHubOrchestrationReprocessAllFF2F2455",
+                "Ref": "ConstructHubOrchestrationReprocessAllWorkflowC3678C45",
               },
               ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
               Object {
@@ -30093,7 +30756,7 @@ Direct link to function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "StateMachineType": "STANDARD",
+        "StateMachineName": "Test.ConstructHub.Orchestration",
         "TracingConfiguration": Object {
           "Enabled": true,
         },
@@ -31073,78 +31736,164 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ConstructHubOrchestrationReprocessAllFF2F2455": Object {
+    "ConstructHubOrchestrationReprocessAllWorkflowC3678C45": Object {
       "DependsOn": Array [
-        "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB",
-        "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+        "ConstructHubOrchestrationReprocessAllWorkflowRoleDefaultPolicy731EB254",
+        "ConstructHubOrchestrationReprocessAllWorkflowRoleA59D0AEE",
       ],
       "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3Bucket4F1C309F",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3VersionKey86393F7F",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3VersionKey86393F7F",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
+        "DefinitionString": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"StartAt\\":\\"Get prefix page\\",\\"States\\":{\\"Get prefix page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next prefixes page\\"}],\\"Default\\":\\"First prefix page\\"},\\"Has more prefixes?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get prefix page\\"}],\\"Default\\":\\"Done\\"},\\"For each prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more prefixes?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is this a @scope-- prefix?\\",\\"States\\":{\\"Is this a @scope-- prefix?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Prefix\\",\\"StringMatches\\":\\"data/@*\\",\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"Process unscoped package\\"},\\"Process unscoped package\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"Prefix.$\\":\\"$.Prefix\\"},\\"StateMachineArn\\":\\"",
+              Object {
+                "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4",
+              },
+              "\\"}},\\"Get @scope page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next @scope page\\"}],\\"Default\\":\\"First @scope page\\"},\\"Has more packages?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"All Done\\"},\\"For each @scope--pkg\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more packages?\\",\\"Iterator\\":{\\"StartAt\\":\\"Process scoped package\\",\\"States\\":{\\"Process scoped package\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"Prefix.$\\":\\"$.Prefix\\"},\\"StateMachineArn\\":\\"",
+              Object {
+                "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4",
+              },
+              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"All Done\\":{\\"Type\\":\\"Succeed\\"}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First prefix page\\":{\\"Next\\":\\"For each prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix\\":\\"data/\\"}},\\"Next prefixes page\\":{\\"Next\\":\\"For each prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix\\":\\"data/\\"}},\\"Done\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":14400}",
             ],
-          },
+          ],
         },
-        "Description": "[ConstructHub/ReprocessAll] Reprocess all package versions through the backend",
-        "Environment": Object {
-          "Variables": Object {
-            "BUCKET_NAME": Object {
-              "Ref": "ConstructHubPackageDataDC5EF35E",
-            },
-            "STATE_MACHINE_ARN": Object {
-              "Ref": "ConstructHubOrchestration39161A46",
-            },
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 1024,
-        "Role": Object {
+        "RoleArn": Object {
           "Fn::GetAtt": Array [
-            "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+            "ConstructHubOrchestrationReprocessAllWorkflowRoleA59D0AEE",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "TracingConfig": Object {
-          "Mode": "Active",
+        "StateMachineName": "Test.ConstructHub.Orchestration.ReprocessAllWorkflow",
+        "TracingConfiguration": Object {
+          "Enabled": true,
         },
       },
-      "Type": "AWS::Lambda::Function",
+      "Type": "AWS::StepFunctions::StateMachine",
     },
-    "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB": Object {
+    "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4": Object {
+      "DependsOn": Array [
+        "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRoleDefaultPolicy09863999",
+        "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRole2AD6D6E1",
+      ],
+      "Properties": Object {
+        "DefinitionString": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"StartAt\\":\\"Get package versions page\\",\\"States\\":{\\"Get package versions page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next versions page\\"}],\\"Default\\":\\"First versions page\\"},\\"Has more versions?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get package versions page\\"}],\\"Default\\":\\"Success\\"},\\"For each key prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more versions?\\",\\"Iterator\\":{\\"StartAt\\":\\"Start Orchestration Workflow\\",\\"States\\":{\\"Start Orchestration Workflow\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::states:startExecution\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"assembly\\":{\\"key.$\\":\\"States.Format('{}assembly.json', $.Prefix)\\"},\\"metadata\\":{\\"key.$\\":\\"States.Format('{}metadata.json', $.Prefix)\\"},\\"package\\":{\\"key.$\\":\\"States.Format('{}package.tgz', $.Prefix)\\"}},\\"StateMachineArn\\":\\"",
+              Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
+              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Success\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":3600}",
+            ],
+          ],
+        },
+        "RoleArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRole2AD6D6E1",
+            "Arn",
+          ],
+        },
+        "TracingConfiguration": Object {
+          "Enabled": true,
+        },
+      },
+      "Type": "AWS::StepFunctions::StateMachine",
+    },
+    "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRole2AD6D6E1": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "states.",
+                      Object {
+                        "Ref": "AWS::Region",
+                      },
+                      ".amazonaws.com",
+                    ],
+                  ],
+                },
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRoleDefaultPolicy09863999": Object {
       "Properties": Object {
         "PolicyDocument": Object {
           "Statement": Array [
@@ -31152,9 +31901,28 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               "Action": Array [
                 "xray:PutTraceSegments",
                 "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets",
               ],
               "Effect": "Allow",
               "Resource": "*",
+            },
+            Object {
+              "Action": "s3:ListBucket",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubPackageDataDC5EF35E",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "ConstructHubOrchestration39161A46",
+              },
             },
             Object {
               "Action": Array [
@@ -31186,26 +31954,19 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                 },
               ],
             },
-            Object {
-              "Action": "states:StartExecution",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Ref": "ConstructHubOrchestration39161A46",
-              },
-            },
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB",
+        "PolicyName": "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRoleDefaultPolicy09863999",
         "Roles": Array [
           Object {
-            "Ref": "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434",
+            "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackageRole2AD6D6E1",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "ConstructHubOrchestrationReprocessAllServiceRoleE23FF434": Object {
+    "ConstructHubOrchestrationReprocessAllWorkflowRoleA59D0AEE": Object {
       "Properties": Object {
         "AssumeRolePolicyDocument": Object {
           "Statement": Array [
@@ -31213,28 +31974,167 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
               "Principal": Object {
-                "Service": "lambda.amazonaws.com",
+                "Service": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "states.",
+                      Object {
+                        "Ref": "AWS::Region",
+                      },
+                      ".amazonaws.com",
+                    ],
+                  ],
+                },
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubOrchestrationReprocessAllWorkflowRoleDefaultPolicy731EB254": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+                "xray:GetSamplingRules",
+                "xray:GetSamplingTargets",
               ],
-            ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": "s3:ListBucket",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubPackageDataDC5EF35E",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4",
+              },
+            },
+            Object {
+              "Action": Array [
+                "states:DescribeExecution",
+                "states:StopExecution",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":states:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":execution:",
+                    Object {
+                      "Fn::Select": Array [
+                        6,
+                        Object {
+                          "Fn::Split": Array [
+                            ":",
+                            Object {
+                              "Ref": "ConstructHubOrchestrationReprocessAllWorkflowPerPackage03F2E3C4",
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                    "*",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "events:PutTargets",
+                "events:PutRule",
+                "events:DescribeRule",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":events:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":rule/StepFunctionsGetEventsForStepFunctionsExecutionRule",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubOrchestrationReprocessAllWorkflowRoleDefaultPolicy731EB254",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationReprocessAllWorkflowRoleA59D0AEE",
           },
         ],
       },
-      "Type": "AWS::IAM::Role",
+      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubOrchestrationRoleDefaultPolicyEACD181F": Object {
       "Properties": Object {

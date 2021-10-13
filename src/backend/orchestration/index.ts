@@ -5,7 +5,7 @@ import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
-import { Choice, Condition, IStateMachine, JsonPath, Parallel, Pass, StateMachine, StateMachineType, Succeed, TaskInput } from '@aws-cdk/aws-stepfunctions';
+import { Choice, Condition, IntegrationPattern, IStateMachine, JsonPath, Map, Parallel, Pass, StateMachine, Succeed, TaskInput } from '@aws-cdk/aws-stepfunctions';
 import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Repository } from '../../codeartifact/repository';
@@ -14,10 +14,10 @@ import { Monitoring } from '../../monitoring';
 import { RUNBOOK_URL } from '../../runbook-url';
 import { CatalogBuilder } from '../catalog-builder';
 import { DenyList } from '../deny-list';
+import { ASSEMBLY_KEY_SUFFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX, STORAGE_KEY_PREFIX } from '../shared/constants';
 import { DocumentationLanguage } from '../shared/language';
 import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
 import { RedriveStateMachine } from './redrive-state-machine';
-import { ReprocessAll } from './reprocess-all';
 
 const SUPPORTED_LANGUAGES = [DocumentationLanguage.PYTHON, DocumentationLanguage.TYPESCRIPT, DocumentationLanguage.JAVA];
 
@@ -109,7 +109,7 @@ export class Orchestration extends Construct {
    * The function operators can use to reprocess all indexed packages through
    * the backend data pipeline.
    */
-  public readonly reprocessAllFunction: IFunction;
+  public readonly reprocessAllWorkflow: IStateMachine;
 
   /**
    * The function that builds the catalog.
@@ -286,7 +286,7 @@ export class Orchestration extends Construct {
 
     this.stateMachine = new StateMachine(this, 'Resource', {
       definition,
-      stateMachineType: StateMachineType.STANDARD,
+      stateMachineName: stateMachineNameFrom(this.node.path),
       timeout: Duration.days(1), // Ample time for retries, etc...
       tracingEnabled: true,
     });
@@ -329,20 +329,12 @@ export class Orchestration extends Construct {
     this.stateMachine.grantStartExecution(this.redriveFunction);
     this.deadLetterQueue.grantConsumeMessages(this.redriveFunction);
 
-    // This function is intended to be manually triggered by an operator to
-    // reprocess all package versions currently in store through the back-end.
-    this.reprocessAllFunction = new ReprocessAll(this, 'ReprocessAll', {
-      description: '[ConstructHub/ReprocessAll] Reprocess all package versions through the backend',
-      environment: {
-        BUCKET_NAME: props.bucket.bucketName,
-        STATE_MACHINE_ARN: this.stateMachine.stateMachineArn,
-      },
-      memorySize: 1_024,
-      timeout: Duration.minutes(15),
-      tracing: Tracing.ACTIVE,
-    });
-    props.bucket.grantRead(this.reprocessAllFunction);
-    this.stateMachine.grantStartExecution(this.reprocessAllFunction);
+    // The workflow is intended to be manually triggered by an operator to
+    // reprocess all package versions currently in store through the orchestrator.
+    this.reprocessAllWorkflow = new ReprocessAllWorkflow(this, 'ReprocessAllWorkflow', {
+      bucket: props.bucket,
+      stateMachine: this.stateMachine,
+    }).stateMachine;
   }
 
   public metricEcsTaskCount(opts: MetricOptions): Metric {
@@ -442,4 +434,180 @@ export class Orchestration extends Construct {
       namespace: 'ECS/ContainerInsights',
     });
   }
+}
+
+interface ReprocessAllWorkflowProps {
+  readonly bucket: IBucket;
+  readonly stateMachine: IStateMachine;
+}
+
+class ReprocessAllWorkflow extends Construct {
+  public readonly stateMachine: StateMachine;
+
+  public constructor(scope: Construct, id: string, props: ReprocessAllWorkflowProps) {
+    super(scope, id);
+
+    const processVersions = new Choice(this, 'Get package versions page')
+      .when(Condition.isPresent('$.response.NextContinuationToken'), new tasks.CallAwsService(this, 'Next versions page', {
+        service: 's3',
+        action: 'listObjectsV2',
+        iamAction: 's3:ListBucket',
+        iamResources: [props.bucket.bucketArn],
+        parameters: {
+          Bucket: props.bucket.bucketName,
+          ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken'),
+          Delimiter: '/',
+          Prefix: JsonPath.stringAt('$.Prefix'),
+        },
+        resultPath: '$.response',
+      }))
+      .otherwise(new tasks.CallAwsService(this, 'First versions page', {
+        service: 's3',
+        action: 'listObjectsV2',
+        iamAction: 's3:ListBucket',
+        iamResources: [props.bucket.bucketArn],
+        parameters: {
+          Bucket: props.bucket.bucketName,
+          Delimiter: '/',
+          Prefix: JsonPath.stringAt('$.Prefix'),
+        },
+        resultPath: '$.response',
+      }))
+      .afterwards()
+      .next(new Map(this, 'For each key prefix', { itemsPath: '$.response.CommonPrefixes', resultPath: JsonPath.DISCARD })
+        .iterator(new tasks.StepFunctionsStartExecution(this, 'Start Orchestration Workflow', {
+          stateMachine: props.stateMachine,
+          input: TaskInput.fromObject({
+            // Associate the child workflow with the execution that started it.
+            AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID: JsonPath.stringAt('$$.Execution.Id'),
+            bucket: props.bucket.bucketName,
+            assembly: { key: JsonPath.stringAt(`States.Format('{}${ASSEMBLY_KEY_SUFFIX.substr(1)}', $.Prefix)`) },
+            metadata: { key: JsonPath.stringAt(`States.Format('{}${METADATA_KEY_SUFFIX.substr(1)}', $.Prefix)`) },
+            package: { key: JsonPath.stringAt(`States.Format('{}${PACKAGE_KEY_SUFFIX.substr(1)}', $.Prefix)`) },
+          }),
+          integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
+        })));
+    processVersions.next(new Choice(this, 'Has more versions?')
+      .when(Condition.isPresent('$.response.NextContinuationToken'), processVersions)
+      .otherwise(new Succeed(this, 'Success')));
+    const processPackageVersions = new StateMachine(this, 'PerPackage', {
+      definition: processVersions,
+      timeout: Duration.hours(1),
+      tracingEnabled: true,
+    });
+
+    // This workflow is broken into two sub-workflows because otherwise it hits the 25K events limit
+    // of StepFunction executions relatively quickly.
+    const processNamespace = new Choice(this, 'Get @scope page')
+      .when(Condition.isPresent('$.response.NextContinuationToken'), new tasks.CallAwsService(this, 'Next @scope page', {
+        service: 's3',
+        action: 'listObjectsV2',
+        iamAction: 's3:ListBucket',
+        iamResources: [props.bucket.bucketArn],
+        parameters: {
+          Bucket: props.bucket.bucketName,
+          ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken'),
+          Delimiter: '/',
+          Prefix: JsonPath.stringAt('$.Prefix'),
+        },
+        resultPath: '$.response',
+      }))
+      .otherwise(new tasks.CallAwsService(this, 'First @scope page', {
+        service: 's3',
+        action: 'listObjectsV2',
+        iamAction: 's3:ListBucket',
+        iamResources: [props.bucket.bucketArn],
+        parameters: {
+          Bucket: props.bucket.bucketName,
+          Delimiter: '/',
+          Prefix: JsonPath.stringAt('$.Prefix'),
+        },
+        resultPath: '$.response',
+      }))
+      .afterwards()
+      .next(new Map(this, 'For each @scope/pkg', { itemsPath: '$.response.CommonPrefixes', resultPath: JsonPath.DISCARD })
+        .iterator(new tasks.StepFunctionsStartExecution(this, 'Process scoped package', {
+          stateMachine: processPackageVersions,
+          input: TaskInput.fromObject({
+            // Associate the child workflow with the execution that started it,
+            AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID: JsonPath.stringAt('$$.Execution.Id'),
+            Prefix: JsonPath.stringAt('$.Prefix'),
+          }),
+          integrationPattern: IntegrationPattern.RUN_JOB,
+        })));
+    processNamespace.next(new Choice(this, 'Has more packages?')
+      .when(Condition.isPresent('$.response.NextContinuationToken'), processNamespace)
+      .otherwise(new Succeed(this, 'All Done')));
+
+    const start = new Choice(this, 'Get prefix page')
+      .when(
+        Condition.isPresent('$.response.NextContinuationToken'),
+        new tasks.CallAwsService(this, 'Next prefixes page', {
+          service: 's3',
+          action: 'listObjectsV2',
+          iamAction: 's3:ListBucket',
+          iamResources: [props.bucket.bucketArn],
+          parameters: {
+            Bucket: props.bucket.bucketName,
+            ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken'),
+            Delimiter: '/',
+            Prefix: STORAGE_KEY_PREFIX,
+          },
+          resultPath: '$.response',
+        }),
+      )
+      .otherwise(
+        new tasks.CallAwsService(this, 'First prefix page', {
+          service: 's3',
+          action: 'listObjectsV2',
+          iamAction: 's3:ListBucket',
+          iamResources: [props.bucket.bucketArn],
+          parameters: {
+            Bucket: props.bucket.bucketName,
+            Delimiter: '/',
+            Prefix: STORAGE_KEY_PREFIX,
+          },
+          resultPath: '$.response',
+        }),
+      ).afterwards()
+      .next(new Map(this, 'For each prefix', { itemsPath: '$.response.CommonPrefixes', resultPath: JsonPath.DISCARD })
+        .iterator(
+          new Choice(this, 'Is this a @scope/ prefix?')
+            .when(Condition.stringMatches('$.Prefix', `${STORAGE_KEY_PREFIX}@*`), processNamespace)
+            .otherwise(new tasks.StepFunctionsStartExecution(this, 'Process unscoped package', {
+              stateMachine: processPackageVersions,
+              input: TaskInput.fromObject({
+                // Associate the child workflow with the execution that started it,
+                AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID: JsonPath.stringAt('$$.Execution.Id'),
+                Prefix: JsonPath.stringAt('$.Prefix'),
+              }),
+              integrationPattern: IntegrationPattern.RUN_JOB,
+            }))
+            .afterwards(),
+        ));
+
+    start.next(new Choice(this, 'Has more prefixes?')
+      .when(Condition.isPresent('$.response.NextContinuationToken'), start)
+      .otherwise(new Succeed(this, 'Done')));
+
+    this.stateMachine = new StateMachine(this, 'Resource', {
+      definition: start,
+      stateMachineName: stateMachineNameFrom(this.node.path),
+      timeout: Duration.hours(4),
+      tracingEnabled: true,
+    });
+
+    props.bucket.grantRead(processPackageVersions);
+    props.bucket.grantRead(this.stateMachine);
+  }
+}
+
+/**
+ * This turns a node path into a valid state machine name, to try and improve
+ * the StepFunction's AWS console experience while minimizing the risk for
+ * collisons.
+ */
+function stateMachineNameFrom(nodePath: string): string {
+  // Poor man's replace all...
+  return nodePath.split(/[^a-z0-9+!@.()=_'-]+/i).join('.');
 }

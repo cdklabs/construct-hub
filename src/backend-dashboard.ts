@@ -167,7 +167,7 @@ export class BackendDashboard extends Construct {
                 `[button:primary:State Machine](${stateMachineUrl(props.orchestration.stateMachine)})`,
                 `[button:DLQ](${sqsQueueUrl(props.orchestration.deadLetterQueue)})`,
                 `[button:Redrive DLQ](${lambdaFunctionUrl(props.orchestration.redriveFunction)})`,
-                `[button:Reprocess](${lambdaFunctionUrl(props.orchestration.reprocessAllFunction)})`,
+                `[button:Reprocess](${stateMachineUrl(props.orchestration.reprocessAllWorkflow)})`,
               ].join('\n'),
           }),
         ],
