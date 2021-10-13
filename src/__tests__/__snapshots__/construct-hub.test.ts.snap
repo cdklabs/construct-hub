@@ -57,18 +57,6 @@ Object {
       "Description": "S3 key for asset version \\"1f6de40da10b415b255c07df709f791e772ffb9f7bdd14ad81fb75643aad24ea\\"",
       "Type": "String",
     },
-    "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1ArtifactHash69412950": Object {
-      "Description": "Artifact hash for asset \\"260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1\\"",
-      "Type": "String",
-    },
-    "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3Bucket1957C858": Object {
-      "Description": "S3 bucket for asset \\"260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1\\"",
-      "Type": "String",
-    },
-    "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3VersionKey74974230": Object {
-      "Description": "S3 key for asset version \\"260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1\\"",
-      "Type": "String",
-    },
     "AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658ArtifactHashA026490C": Object {
       "Description": "Artifact hash for asset \\"2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658\\"",
       "Type": "String",
@@ -127,6 +115,18 @@ Object {
     },
     "AssetParameters4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422S3VersionKeyACFBF6B5": Object {
       "Description": "S3 key for asset version \\"4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422\\"",
+      "Type": "String",
+    },
+    "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aArtifactHash1975372D": Object {
+      "Description": "Artifact hash for asset \\"5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225a\\"",
+      "Type": "String",
+    },
+    "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3BucketEB4B67A6": Object {
+      "Description": "S3 bucket for asset \\"5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225a\\"",
+      "Type": "String",
+    },
+    "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3VersionKey115CBF5A": Object {
+      "Description": "S3 key for asset version \\"5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225a\\"",
       "Type": "String",
     },
     "AssetParameters612b8d0b6ba408a58e8611421e728cad7c781afbdf15aeb9164f3e905d583c7dArtifactHash5F76A80F": Object {
@@ -4740,18 +4740,7 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"java\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate java docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true}}}]},\\"Any Success?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[2].error\\",\\"IsPresent\\":false}],\\"Next\\":\\"Add to catalog.json\\"}],\\"Default\\":\\"Any Failure?\\"},\\"Any Failure?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[2].error\\",\\"IsPresent\\":true}],\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Default\\":\\"Success\\"},\\"Update stats.json\\":{\\"Next\\":\\"Any Failure?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"Next\\":\\"\\\\\\"Update stats.json\\\\\\" throttled\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Update stats.json\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Update stats.json\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.packageStatsOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
-              Object {
-                "Ref": "AWS::Partition",
-              },
-              ":states:::lambda:invoke\\",\\"Parameters\\":{\\"FunctionName\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationPackageStatsDF745EC7",
-                  "Arn",
-                ],
-              },
-              "\\",\\"Payload.$\\":\\"$\\"}},\\"Add to catalog.json\\":{\\"Next\\":\\"Update stats.json\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" throttled\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogBuilderOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
+              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"java\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate java docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true}}}]},\\"Any Success?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[2].error\\",\\"IsPresent\\":false}],\\"Next\\":\\"Add to catalog.json\\"}],\\"Default\\":\\"Any Failure?\\"},\\"Any Failure?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[2].error\\",\\"IsPresent\\":true}],\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Default\\":\\"Success\\"},\\"Add to catalog.json\\":{\\"Next\\":\\"Any Failure?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" throttled\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogBuilderOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -4770,7 +4759,7 @@ Direct link to function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubOrchestrationDLQ9C6D9BD4",
               },
-              "\\",\\"MessageBody.$\\":\\"$\\"}},\\"\\\\\\"Add to catalog.json\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Add to catalog.json\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Update stats.json\\\\\\" throttled\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Update stats.json\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Update stats.json\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"Success\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":86400}",
+              "\\",\\"MessageBody.$\\":\\"$\\"}},\\"\\\\\\"Add to catalog.json\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Add to catalog.json\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"Success\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":86400}",
             ],
           ],
         },
@@ -5228,196 +5217,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubOrchestrationPackageStatsDF745EC7": Object {
-      "DependsOn": Array [
-        "ConstructHubOrchestrationPackageStatsServiceRoleDefaultPolicy0B0559E8",
-        "ConstructHubOrchestrationPackageStatsServiceRole115FC9DA",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3Bucket1957C858",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3VersionKey74974230",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3VersionKey74974230",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "Description": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "Creates the stats.json object in ",
-              Object {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
-              },
-            ],
-          ],
-        },
-        "Environment": Object {
-          "Variables": Object {
-            "BUCKET_NAME": Object {
-              "Ref": "ConstructHubPackageDataDC5EF35E",
-            },
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 256,
-        "ReservedConcurrentExecutions": 1,
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "ConstructHubOrchestrationPackageStatsServiceRole115FC9DA",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "TracingConfig": Object {
-          "Mode": "PassThrough",
-        },
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "ConstructHubOrchestrationPackageStatsLogRetention82582011": Object {
-      "Properties": Object {
-        "LogGroupName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "/aws/lambda/",
-              Object {
-                "Ref": "ConstructHubOrchestrationPackageStatsDF745EC7",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 3653,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-    },
-    "ConstructHubOrchestrationPackageStatsServiceRole115FC9DA": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "ConstructHubOrchestrationPackageStatsServiceRoleDefaultPolicy0B0559E8": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
-                "xray:PutTraceSegments",
-                "xray:PutTelemetryRecords",
-              ],
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ConstructHubOrchestrationPackageStatsServiceRoleDefaultPolicy0B0559E8",
-        "Roles": Array [
-          Object {
-            "Ref": "ConstructHubOrchestrationPackageStatsServiceRole115FC9DA",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
     "ConstructHubOrchestrationRedrive8DDBA67E": Object {
       "DependsOn": Array [
         "ConstructHubOrchestrationRedriveServiceRoleDefaultPolicyC018F436",
@@ -5746,16 +5545,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
               "Effect": "Allow",
               "Resource": "*",
-            },
-            Object {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationPackageStatsDF745EC7",
-                  "Arn",
-                ],
-              },
             },
             Object {
               "Action": "lambda:InvokeFunction",
@@ -7302,6 +7091,233 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::S3::BucketPolicy",
     },
+    "ConstructHubStats61DB07B1": Object {
+      "DependsOn": Array [
+        "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
+        "ConstructHubStatsServiceRole48DCA379",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3BucketEB4B67A6",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3VersionKey115CBF5A",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3VersionKey115CBF5A",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "Creates the stats.json object in ",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+            ],
+          ],
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "BUCKET_NAME": Object {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 256,
+        "ReservedConcurrentExecutions": 1,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubStatsServiceRole48DCA379",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubStatsLogRetentionDD577705": Object {
+      "Properties": Object {
+        "LogGroupName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "/aws/lambda/",
+              Object {
+                "Ref": "ConstructHubStats61DB07B1",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubStatsRuleAllowEventRuleTestConstructHubStatsA5392874C4495EDA": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubStats61DB07B1",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubStatsRuleEEDEC976",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ConstructHubStatsRuleEEDEC976": Object {
+      "Properties": Object {
+        "ScheduleExpression": "cron(0 6 * * ? *)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubStats61DB07B1",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubStatsServiceRole48DCA379": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubStatsServiceRole48DCA379",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B": Object {
       "Properties": Object {
         "AutoPublish": true,
@@ -7707,6 +7723,24 @@ function handler(event) {
                 },
               ],
               "PathPattern": "/catalog.json",
+              "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
+              "ViewerProtocolPolicy": "allow-all",
+            },
+            Object {
+              "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+              "Compress": true,
+              "FunctionAssociations": Array [
+                Object {
+                  "EventType": "viewer-response",
+                  "FunctionARN": Object {
+                    "Fn::GetAtt": Array [
+                      "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B",
+                      "FunctionARN",
+                    ],
+                  },
+                },
+              ],
+              "PathPattern": "/stats.json",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
@@ -8446,18 +8480,6 @@ Object {
       "Description": "S3 key for asset version \\"1f6de40da10b415b255c07df709f791e772ffb9f7bdd14ad81fb75643aad24ea\\"",
       "Type": "String",
     },
-    "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1ArtifactHash69412950": Object {
-      "Description": "Artifact hash for asset \\"260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1\\"",
-      "Type": "String",
-    },
-    "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3Bucket1957C858": Object {
-      "Description": "S3 bucket for asset \\"260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1\\"",
-      "Type": "String",
-    },
-    "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3VersionKey74974230": Object {
-      "Description": "S3 key for asset version \\"260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1\\"",
-      "Type": "String",
-    },
     "AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658ArtifactHashA026490C": Object {
       "Description": "Artifact hash for asset \\"2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658\\"",
       "Type": "String",
@@ -8516,6 +8538,18 @@ Object {
     },
     "AssetParameters4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422S3VersionKeyACFBF6B5": Object {
       "Description": "S3 key for asset version \\"4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422\\"",
+      "Type": "String",
+    },
+    "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aArtifactHash1975372D": Object {
+      "Description": "Artifact hash for asset \\"5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225a\\"",
+      "Type": "String",
+    },
+    "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3BucketEB4B67A6": Object {
+      "Description": "S3 bucket for asset \\"5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225a\\"",
+      "Type": "String",
+    },
+    "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3VersionKey115CBF5A": Object {
+      "Description": "S3 key for asset version \\"5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225a\\"",
       "Type": "String",
     },
     "AssetParameters612b8d0b6ba408a58e8611421e728cad7c781afbdf15aeb9164f3e905d583c7dArtifactHash5F76A80F": Object {
@@ -13150,18 +13184,7 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"java\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate java docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true}}}]},\\"Any Success?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[2].error\\",\\"IsPresent\\":false}],\\"Next\\":\\"Add to catalog.json\\"}],\\"Default\\":\\"Any Failure?\\"},\\"Any Failure?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[2].error\\",\\"IsPresent\\":true}],\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Default\\":\\"Success\\"},\\"Update stats.json\\":{\\"Next\\":\\"Any Failure?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"Next\\":\\"\\\\\\"Update stats.json\\\\\\" throttled\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Update stats.json\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Update stats.json\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.packageStatsOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
-              Object {
-                "Ref": "AWS::Partition",
-              },
-              ":states:::lambda:invoke\\",\\"Parameters\\":{\\"FunctionName\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationPackageStatsDF745EC7",
-                  "Arn",
-                ],
-              },
-              "\\",\\"Payload.$\\":\\"$\\"}},\\"Add to catalog.json\\":{\\"Next\\":\\"Update stats.json\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" throttled\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogBuilderOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
+              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"java\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate java docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true}}}]},\\"Any Success?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[2].error\\",\\"IsPresent\\":false}],\\"Next\\":\\"Add to catalog.json\\"}],\\"Default\\":\\"Any Failure?\\"},\\"Any Failure?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[2].error\\",\\"IsPresent\\":true}],\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Default\\":\\"Success\\"},\\"Add to catalog.json\\":{\\"Next\\":\\"Any Failure?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" throttled\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogBuilderOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -13180,7 +13203,7 @@ Direct link to function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubOrchestrationDLQ9C6D9BD4",
               },
-              "\\",\\"MessageBody.$\\":\\"$\\"}},\\"\\\\\\"Add to catalog.json\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Add to catalog.json\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Update stats.json\\\\\\" throttled\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Update stats.json\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Update stats.json\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"Success\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":86400}",
+              "\\",\\"MessageBody.$\\":\\"$\\"}},\\"\\\\\\"Add to catalog.json\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Add to catalog.json\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"Success\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":86400}",
             ],
           ],
         },
@@ -13638,196 +13661,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubOrchestrationPackageStatsDF745EC7": Object {
-      "DependsOn": Array [
-        "ConstructHubOrchestrationPackageStatsServiceRoleDefaultPolicy0B0559E8",
-        "ConstructHubOrchestrationPackageStatsServiceRole115FC9DA",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3Bucket1957C858",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3VersionKey74974230",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3VersionKey74974230",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "Description": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "Creates the stats.json object in ",
-              Object {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
-              },
-            ],
-          ],
-        },
-        "Environment": Object {
-          "Variables": Object {
-            "BUCKET_NAME": Object {
-              "Ref": "ConstructHubPackageDataDC5EF35E",
-            },
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 256,
-        "ReservedConcurrentExecutions": 1,
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "ConstructHubOrchestrationPackageStatsServiceRole115FC9DA",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "TracingConfig": Object {
-          "Mode": "PassThrough",
-        },
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "ConstructHubOrchestrationPackageStatsLogRetention82582011": Object {
-      "Properties": Object {
-        "LogGroupName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "/aws/lambda/",
-              Object {
-                "Ref": "ConstructHubOrchestrationPackageStatsDF745EC7",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 3653,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-    },
-    "ConstructHubOrchestrationPackageStatsServiceRole115FC9DA": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "ConstructHubOrchestrationPackageStatsServiceRoleDefaultPolicy0B0559E8": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
-                "xray:PutTraceSegments",
-                "xray:PutTelemetryRecords",
-              ],
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ConstructHubOrchestrationPackageStatsServiceRoleDefaultPolicy0B0559E8",
-        "Roles": Array [
-          Object {
-            "Ref": "ConstructHubOrchestrationPackageStatsServiceRole115FC9DA",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
     "ConstructHubOrchestrationRedrive8DDBA67E": Object {
       "DependsOn": Array [
         "ConstructHubOrchestrationRedriveServiceRoleDefaultPolicyC018F436",
@@ -14156,16 +13989,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
               "Effect": "Allow",
               "Resource": "*",
-            },
-            Object {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationPackageStatsDF745EC7",
-                  "Arn",
-                ],
-              },
             },
             Object {
               "Action": "lambda:InvokeFunction",
@@ -15726,6 +15549,233 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::S3::BucketPolicy",
     },
+    "ConstructHubStats61DB07B1": Object {
+      "DependsOn": Array [
+        "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
+        "ConstructHubStatsServiceRole48DCA379",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3BucketEB4B67A6",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3VersionKey115CBF5A",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3VersionKey115CBF5A",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "Creates the stats.json object in ",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+            ],
+          ],
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "BUCKET_NAME": Object {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 256,
+        "ReservedConcurrentExecutions": 1,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubStatsServiceRole48DCA379",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubStatsLogRetentionDD577705": Object {
+      "Properties": Object {
+        "LogGroupName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "/aws/lambda/",
+              Object {
+                "Ref": "ConstructHubStats61DB07B1",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubStatsRuleAllowEventRuleTestConstructHubStatsA5392874C4495EDA": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubStats61DB07B1",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubStatsRuleEEDEC976",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ConstructHubStatsRuleEEDEC976": Object {
+      "Properties": Object {
+        "ScheduleExpression": "cron(0 6 * * ? *)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubStats61DB07B1",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubStatsServiceRole48DCA379": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubStatsServiceRole48DCA379",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B": Object {
       "Properties": Object {
         "AutoPublish": true,
@@ -16131,6 +16181,24 @@ function handler(event) {
                 },
               ],
               "PathPattern": "/catalog.json",
+              "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
+              "ViewerProtocolPolicy": "allow-all",
+            },
+            Object {
+              "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+              "Compress": true,
+              "FunctionAssociations": Array [
+                Object {
+                  "EventType": "viewer-response",
+                  "FunctionARN": Object {
+                    "Fn::GetAtt": Array [
+                      "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B",
+                      "FunctionARN",
+                    ],
+                  },
+                },
+              ],
+              "PathPattern": "/stats.json",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
@@ -16880,18 +16948,6 @@ Object {
       "Description": "S3 key for asset version \\"1f6de40da10b415b255c07df709f791e772ffb9f7bdd14ad81fb75643aad24ea\\"",
       "Type": "String",
     },
-    "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1ArtifactHash69412950": Object {
-      "Description": "Artifact hash for asset \\"260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1\\"",
-      "Type": "String",
-    },
-    "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3Bucket1957C858": Object {
-      "Description": "S3 bucket for asset \\"260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1\\"",
-      "Type": "String",
-    },
-    "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3VersionKey74974230": Object {
-      "Description": "S3 key for asset version \\"260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1\\"",
-      "Type": "String",
-    },
     "AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658ArtifactHashA026490C": Object {
       "Description": "Artifact hash for asset \\"2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658\\"",
       "Type": "String",
@@ -16962,6 +17018,18 @@ Object {
     },
     "AssetParameters5465af3e563838faf87f189369af003b61ed4608e6c6423cf21af7189e21abafS3VersionKey14275E35": Object {
       "Description": "S3 key for asset version \\"5465af3e563838faf87f189369af003b61ed4608e6c6423cf21af7189e21abaf\\"",
+      "Type": "String",
+    },
+    "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aArtifactHash1975372D": Object {
+      "Description": "Artifact hash for asset \\"5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225a\\"",
+      "Type": "String",
+    },
+    "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3BucketEB4B67A6": Object {
+      "Description": "S3 bucket for asset \\"5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225a\\"",
+      "Type": "String",
+    },
+    "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3VersionKey115CBF5A": Object {
+      "Description": "S3 key for asset version \\"5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225a\\"",
       "Type": "String",
     },
     "AssetParameters612b8d0b6ba408a58e8611421e728cad7c781afbdf15aeb9164f3e905d583c7dArtifactHash5F76A80F": Object {
@@ -21758,18 +21826,7 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"java\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate java docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true}}}]},\\"Any Success?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[2].error\\",\\"IsPresent\\":false}],\\"Next\\":\\"Add to catalog.json\\"}],\\"Default\\":\\"Any Failure?\\"},\\"Any Failure?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[2].error\\",\\"IsPresent\\":true}],\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Default\\":\\"Success\\"},\\"Update stats.json\\":{\\"Next\\":\\"Any Failure?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"Next\\":\\"\\\\\\"Update stats.json\\\\\\" throttled\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Update stats.json\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Update stats.json\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.packageStatsOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
-              Object {
-                "Ref": "AWS::Partition",
-              },
-              ":states:::lambda:invoke\\",\\"Parameters\\":{\\"FunctionName\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationPackageStatsDF745EC7",
-                  "Arn",
-                ],
-              },
-              "\\",\\"Payload.$\\":\\"$\\"}},\\"Add to catalog.json\\":{\\"Next\\":\\"Update stats.json\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" throttled\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogBuilderOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
+              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"java\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate java docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true}}}]},\\"Any Success?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[2].error\\",\\"IsPresent\\":false}],\\"Next\\":\\"Add to catalog.json\\"}],\\"Default\\":\\"Any Failure?\\"},\\"Any Failure?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[2].error\\",\\"IsPresent\\":true}],\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Default\\":\\"Success\\"},\\"Add to catalog.json\\":{\\"Next\\":\\"Any Failure?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" throttled\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogBuilderOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -21788,7 +21845,7 @@ Direct link to function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubOrchestrationDLQ9C6D9BD4",
               },
-              "\\",\\"MessageBody.$\\":\\"$\\"}},\\"\\\\\\"Add to catalog.json\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Add to catalog.json\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Update stats.json\\\\\\" throttled\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Update stats.json\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Update stats.json\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"Success\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":86400}",
+              "\\",\\"MessageBody.$\\":\\"$\\"}},\\"\\\\\\"Add to catalog.json\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Add to catalog.json\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"Success\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":86400}",
             ],
           ],
         },
@@ -22246,196 +22303,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubOrchestrationPackageStatsDF745EC7": Object {
-      "DependsOn": Array [
-        "ConstructHubOrchestrationPackageStatsServiceRoleDefaultPolicy0B0559E8",
-        "ConstructHubOrchestrationPackageStatsServiceRole115FC9DA",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3Bucket1957C858",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3VersionKey74974230",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3VersionKey74974230",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "Description": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "Creates the stats.json object in ",
-              Object {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
-              },
-            ],
-          ],
-        },
-        "Environment": Object {
-          "Variables": Object {
-            "BUCKET_NAME": Object {
-              "Ref": "ConstructHubPackageDataDC5EF35E",
-            },
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 256,
-        "ReservedConcurrentExecutions": 1,
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "ConstructHubOrchestrationPackageStatsServiceRole115FC9DA",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "TracingConfig": Object {
-          "Mode": "PassThrough",
-        },
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "ConstructHubOrchestrationPackageStatsLogRetention82582011": Object {
-      "Properties": Object {
-        "LogGroupName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "/aws/lambda/",
-              Object {
-                "Ref": "ConstructHubOrchestrationPackageStatsDF745EC7",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 3653,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-    },
-    "ConstructHubOrchestrationPackageStatsServiceRole115FC9DA": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "ConstructHubOrchestrationPackageStatsServiceRoleDefaultPolicy0B0559E8": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
-                "xray:PutTraceSegments",
-                "xray:PutTelemetryRecords",
-              ],
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ConstructHubOrchestrationPackageStatsServiceRoleDefaultPolicy0B0559E8",
-        "Roles": Array [
-          Object {
-            "Ref": "ConstructHubOrchestrationPackageStatsServiceRole115FC9DA",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
     "ConstructHubOrchestrationRedrive8DDBA67E": Object {
       "DependsOn": Array [
         "ConstructHubOrchestrationRedriveServiceRoleDefaultPolicyC018F436",
@@ -22764,16 +22631,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
               "Effect": "Allow",
               "Resource": "*",
-            },
-            Object {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationPackageStatsDF745EC7",
-                  "Arn",
-                ],
-              },
             },
             Object {
               "Action": "lambda:InvokeFunction",
@@ -24320,6 +24177,233 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::S3::BucketPolicy",
     },
+    "ConstructHubStats61DB07B1": Object {
+      "DependsOn": Array [
+        "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
+        "ConstructHubStatsServiceRole48DCA379",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3BucketEB4B67A6",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3VersionKey115CBF5A",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3VersionKey115CBF5A",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "Creates the stats.json object in ",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+            ],
+          ],
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "BUCKET_NAME": Object {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 256,
+        "ReservedConcurrentExecutions": 1,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubStatsServiceRole48DCA379",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubStatsLogRetentionDD577705": Object {
+      "Properties": Object {
+        "LogGroupName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "/aws/lambda/",
+              Object {
+                "Ref": "ConstructHubStats61DB07B1",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubStatsRuleAllowEventRuleTestConstructHubStatsA5392874C4495EDA": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubStats61DB07B1",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubStatsRuleEEDEC976",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ConstructHubStatsRuleEEDEC976": Object {
+      "Properties": Object {
+        "ScheduleExpression": "cron(0 6 * * ? *)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubStats61DB07B1",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubStatsServiceRole48DCA379": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubStatsServiceRole48DCA379",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "ConstructHubWebAppARecord3863FF6C": Object {
       "Properties": Object {
         "AliasTarget": Object {
@@ -24780,6 +24864,24 @@ function handler(event) {
                 },
               ],
               "PathPattern": "/catalog.json",
+              "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
+              "ViewerProtocolPolicy": "allow-all",
+            },
+            Object {
+              "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+              "Compress": true,
+              "FunctionAssociations": Array [
+                Object {
+                  "EventType": "viewer-response",
+                  "FunctionARN": Object {
+                    "Fn::GetAtt": Array [
+                      "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B",
+                      "FunctionARN",
+                    ],
+                  },
+                },
+              ],
+              "PathPattern": "/stats.json",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
@@ -25743,18 +25845,6 @@ Object {
       "Description": "S3 key for asset version \\"1f6de40da10b415b255c07df709f791e772ffb9f7bdd14ad81fb75643aad24ea\\"",
       "Type": "String",
     },
-    "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1ArtifactHash69412950": Object {
-      "Description": "Artifact hash for asset \\"260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1\\"",
-      "Type": "String",
-    },
-    "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3Bucket1957C858": Object {
-      "Description": "S3 bucket for asset \\"260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1\\"",
-      "Type": "String",
-    },
-    "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3VersionKey74974230": Object {
-      "Description": "S3 key for asset version \\"260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1\\"",
-      "Type": "String",
-    },
     "AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658ArtifactHashA026490C": Object {
       "Description": "Artifact hash for asset \\"2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658\\"",
       "Type": "String",
@@ -25813,6 +25903,18 @@ Object {
     },
     "AssetParameters4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422S3VersionKeyACFBF6B5": Object {
       "Description": "S3 key for asset version \\"4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422\\"",
+      "Type": "String",
+    },
+    "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aArtifactHash1975372D": Object {
+      "Description": "Artifact hash for asset \\"5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225a\\"",
+      "Type": "String",
+    },
+    "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3BucketEB4B67A6": Object {
+      "Description": "S3 bucket for asset \\"5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225a\\"",
+      "Type": "String",
+    },
+    "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3VersionKey115CBF5A": Object {
+      "Description": "S3 key for asset version \\"5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225a\\"",
       "Type": "String",
     },
     "AssetParameters612b8d0b6ba408a58e8611421e728cad7c781afbdf15aeb9164f3e905d583c7dArtifactHash5F76A80F": Object {
@@ -28953,18 +29055,7 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"java\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate java docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true}}}]},\\"Any Success?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[2].error\\",\\"IsPresent\\":false}],\\"Next\\":\\"Add to catalog.json\\"}],\\"Default\\":\\"Any Failure?\\"},\\"Any Failure?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[2].error\\",\\"IsPresent\\":true}],\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Default\\":\\"Success\\"},\\"Update stats.json\\":{\\"Next\\":\\"Any Failure?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"Next\\":\\"\\\\\\"Update stats.json\\\\\\" throttled\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Update stats.json\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Update stats.json\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.packageStatsOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
-              Object {
-                "Ref": "AWS::Partition",
-              },
-              ":states:::lambda:invoke\\",\\"Parameters\\":{\\"FunctionName\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationPackageStatsDF745EC7",
-                  "Arn",
-                ],
-              },
-              "\\",\\"Payload.$\\":\\"$\\"}},\\"Add to catalog.json\\":{\\"Next\\":\\"Update stats.json\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" throttled\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogBuilderOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
+              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"java\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate java docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true},\\"\\\\\\"Generate java docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"java\\"}},\\"End\\":true}}}]},\\"Any Success?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":false},{\\"Variable\\":\\"$.DocGen[2].error\\",\\"IsPresent\\":false}],\\"Next\\":\\"Add to catalog.json\\"}],\\"Default\\":\\"Any Failure?\\"},\\"Any Failure?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Or\\":[{\\"Variable\\":\\"$.DocGen[0].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[1].error\\",\\"IsPresent\\":true},{\\"Variable\\":\\"$.DocGen[2].error\\",\\"IsPresent\\":true}],\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Default\\":\\"Success\\"},\\"Add to catalog.json\\":{\\"Next\\":\\"Any Failure?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" throttled\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Add to catalog.json\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogBuilderOutput\\",\\"ResultSelector\\":{\\"ETag.$\\":\\"$.Payload.ETag\\",\\"VersionId.$\\":\\"$.Payload.VersionId\\"},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -28983,7 +29074,7 @@ Direct link to function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubOrchestrationDLQ9C6D9BD4",
               },
-              "\\",\\"MessageBody.$\\":\\"$\\"}},\\"\\\\\\"Add to catalog.json\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Add to catalog.json\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Update stats.json\\\\\\" throttled\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Update stats.json\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Update stats.json\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"Success\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":86400}",
+              "\\",\\"MessageBody.$\\":\\"$\\"}},\\"\\\\\\"Add to catalog.json\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"\\\\\\"Add to catalog.json\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.error\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\"},\\"Next\\":\\"Send to Dead Letter Queue\\"},\\"Success\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":86400}",
             ],
           ],
         },
@@ -29824,196 +29915,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "ConstructHubOrchestrationPackageStatsDF745EC7": Object {
-      "DependsOn": Array [
-        "ConstructHubOrchestrationPackageStatsServiceRoleDefaultPolicy0B0559E8",
-        "ConstructHubOrchestrationPackageStatsServiceRole115FC9DA",
-      ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
-            "Ref": "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3Bucket1957C858",
-          },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3VersionKey74974230",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters260c682e01375d2beec84813b029ff0d8babc085e9eb1aab891f9711d802a3f1S3VersionKey74974230",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
-        },
-        "Description": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "Creates the stats.json object in ",
-              Object {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
-              },
-            ],
-          ],
-        },
-        "Environment": Object {
-          "Variables": Object {
-            "BUCKET_NAME": Object {
-              "Ref": "ConstructHubPackageDataDC5EF35E",
-            },
-          },
-        },
-        "Handler": "index.handler",
-        "MemorySize": 256,
-        "ReservedConcurrentExecutions": 1,
-        "Role": Object {
-          "Fn::GetAtt": Array [
-            "ConstructHubOrchestrationPackageStatsServiceRole115FC9DA",
-            "Arn",
-          ],
-        },
-        "Runtime": "nodejs14.x",
-        "Timeout": 900,
-        "TracingConfig": Object {
-          "Mode": "PassThrough",
-        },
-      },
-      "Type": "AWS::Lambda::Function",
-    },
-    "ConstructHubOrchestrationPackageStatsLogRetention82582011": Object {
-      "Properties": Object {
-        "LogGroupName": Object {
-          "Fn::Join": Array [
-            "",
-            Array [
-              "/aws/lambda/",
-              Object {
-                "Ref": "ConstructHubOrchestrationPackageStatsDF745EC7",
-              },
-            ],
-          ],
-        },
-        "RetentionInDays": 3653,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
-            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
-            "Arn",
-          ],
-        },
-      },
-      "Type": "Custom::LogRetention",
-    },
-    "ConstructHubOrchestrationPackageStatsServiceRole115FC9DA": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": "sts:AssumeRole",
-              "Effect": "Allow",
-              "Principal": Object {
-                "Service": "lambda.amazonaws.com",
-              },
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                "arn:",
-                Object {
-                  "Ref": "AWS::Partition",
-                },
-                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              ],
-            ],
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Role",
-    },
-    "ConstructHubOrchestrationPackageStatsServiceRoleDefaultPolicy0B0559E8": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
-                "xray:PutTraceSegments",
-                "xray:PutTelemetryRecords",
-              ],
-              "Effect": "Allow",
-              "Resource": "*",
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
-            },
-          ],
-          "Version": "2012-10-17",
-        },
-        "PolicyName": "ConstructHubOrchestrationPackageStatsServiceRoleDefaultPolicy0B0559E8",
-        "Roles": Array [
-          Object {
-            "Ref": "ConstructHubOrchestrationPackageStatsServiceRole115FC9DA",
-          },
-        ],
-      },
-      "Type": "AWS::IAM::Policy",
-    },
     "ConstructHubOrchestrationRedrive8DDBA67E": Object {
       "DependsOn": Array [
         "ConstructHubOrchestrationRedriveServiceRoleDefaultPolicyC018F436",
@@ -30339,16 +30240,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
               "Effect": "Allow",
               "Resource": "*",
-            },
-            Object {
-              "Action": "lambda:InvokeFunction",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubOrchestrationPackageStatsDF745EC7",
-                  "Arn",
-                ],
-              },
             },
             Object {
               "Action": "lambda:InvokeFunction",
@@ -31868,6 +31759,233 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::S3::BucketPolicy",
     },
+    "ConstructHubStats61DB07B1": Object {
+      "DependsOn": Array [
+        "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
+        "ConstructHubStatsServiceRole48DCA379",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3BucketEB4B67A6",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3VersionKey115CBF5A",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters5d3182cf8d37b95b480d12874ecddca851121d2e7b22669d781a514cea0c225aS3VersionKey115CBF5A",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "Creates the stats.json object in ",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+            ],
+          ],
+        },
+        "Environment": Object {
+          "Variables": Object {
+            "BUCKET_NAME": Object {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 256,
+        "ReservedConcurrentExecutions": 1,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubStatsServiceRole48DCA379",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 900,
+        "TracingConfig": Object {
+          "Mode": "PassThrough",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubStatsLogRetentionDD577705": Object {
+      "Properties": Object {
+        "LogGroupName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "/aws/lambda/",
+              Object {
+                "Ref": "ConstructHubStats61DB07B1",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3653,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "ConstructHubStatsRuleAllowEventRuleTestConstructHubStatsA5392874C4495EDA": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubStats61DB07B1",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubStatsRuleEEDEC976",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ConstructHubStatsRuleEEDEC976": Object {
+      "Properties": Object {
+        "ScheduleExpression": "cron(0 6 * * ? *)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubStats61DB07B1",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubStatsServiceRole48DCA379": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubStatsServiceRoleDefaultPolicyE1D7A4CA",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubStatsServiceRole48DCA379",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B": Object {
       "Properties": Object {
         "AutoPublish": true,
@@ -32273,6 +32391,24 @@ function handler(event) {
                 },
               ],
               "PathPattern": "/catalog.json",
+              "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
+              "ViewerProtocolPolicy": "allow-all",
+            },
+            Object {
+              "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
+              "Compress": true,
+              "FunctionAssociations": Array [
+                Object {
+                  "EventType": "viewer-response",
+                  "FunctionARN": Object {
+                    "Fn::GetAtt": Array [
+                      "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B",
+                      "FunctionARN",
+                    ],
+                  },
+                },
+              ],
+              "PathPattern": "/stats.json",
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
