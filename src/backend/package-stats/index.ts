@@ -1,11 +1,13 @@
-import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
+import * as events from '@aws-cdk/aws-events';
+import * as targets from '@aws-cdk/aws-events-targets';
+import { Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import type { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
 import { PackageStats as Handler } from './package-stats';
 
-export interface CatalogBuilderProps {
+export interface PackageStatsProps {
   /**
    * The package store bucket, which should include both the
    * catalog and stats.
@@ -29,9 +31,7 @@ export interface CatalogBuilderProps {
  * Builds or re-builds the `stats.json` object in the designated bucket.
  */
 export class PackageStats extends Construct {
-  public readonly function: IFunction;
-
-  public constructor(scope: Construct, id: string, props: CatalogBuilderProps) {
+  public constructor(scope: Construct, id: string, props: PackageStatsProps) {
     super(scope, id);
 
     const handler = new Handler(this, 'Default', {
@@ -46,8 +46,11 @@ export class PackageStats extends Construct {
       tracing: Tracing.PASS_THROUGH,
     });
 
-    this.function = handler;
+    const rule = new events.Rule(this, 'Rule', {
+      schedule: events.Schedule.cron({ hour: '6' }), // daily at 6am in some timezone
+    });
+    rule.addTarget(new targets.LambdaFunction(handler));
 
-    props.bucket.grantReadWrite(this.function);
+    props.bucket.grantReadWrite(handler);
   }
 }

@@ -134,6 +134,7 @@ export class WebApp extends Construct {
     const jsiiObjOrigin = new origins.S3Origin(props.packageData);
     this.distribution.addBehavior('/data/*', jsiiObjOrigin, behaviorOptions);
     this.distribution.addBehavior('/catalog.json', jsiiObjOrigin, behaviorOptions);
+    this.distribution.addBehavior('/stats.json', jsiiObjOrigin, behaviorOptions);
 
     new CacheInvalidator(this, 'CacheInvalidator', { bucket: props.packageData, distribution: this.distribution });
 

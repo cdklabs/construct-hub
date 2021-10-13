@@ -12,7 +12,10 @@ import { NpmDownloadsClient, NpmDownloadsEntry, NpmDownloadsPeriod } from './npm
 const METRICS_NAMESPACE = 'ConstructHub/PackageStats';
 
 /**
- * Updates or regenerates the `stats.json` object in the configured S3 bucket.
+ * Updates or rebuilds the `stats.json` object in the configured S3 bucket.
+ * Validates that the number of packages on a full rebuild should not decrease
+ * significantly (due to network errors from e.g. NPM) - can be ignored
+ * by passing { ignoreValidation: true }.
  *
  * @param event configuration for the rebuild job. If a package is provided,
  *              just that package will be updated - otherwise, it is assumed
@@ -21,7 +24,7 @@ const METRICS_NAMESPACE = 'ConstructHub/PackageStats';
  *
  * @returns the information about the updated S3 object.
  */
-export async function handler(event: PackageStatsInput, context: Context) {
+export async function handler(event: PackageStatsInput & { ignoreValidation?: boolean }, context: Context) {
   console.log(JSON.stringify(event, null, 2));
 
   // determine if this is a request to rebuild the catalog (basically, an empty event)
@@ -45,20 +48,21 @@ export async function handler(event: PackageStatsInput, context: Context) {
   }
 
   let stats: DeepWriteable<PackageStatsOutput>;
-  const npmClient = new NpmDownloadsClient(got);
-  const catalog: CatalogModel = JSON.parse(catalogData.Body.toString('utf-8'));
   const currentDate = new Date().toISOString();
 
-  // stats.json to use if we are building from scratch, or the object
-  // does not exist in the bucket
-  const emptyStats: PackageStatsOutput = { packages: {}, updated: currentDate };
+  const oldStats: PackageStatsOutput = await fetchCurrentStatsObject(BUCKET_NAME) ?? { packages: {}, updated: currentDate };
+  const oldStatsCount = Object.keys(oldStats.packages).length;
+
+  const npmClient = new NpmDownloadsClient(got);
+  const catalog: CatalogModel = JSON.parse(catalogData.Body.toString('utf-8'));
+  const defaultStats: PackageStatsOutput = { packages: {}, updated: currentDate };
 
   if (rebuild) {
 
     let packageNames = catalog.packages.map(pkg => pkg.name);
     packageNames = [...new Set(packageNames).values()];
 
-    stats = emptyStats;
+    stats = defaultStats;
 
     console.log(`Retrieving download stats for all registered pacakges: [${packageNames.join(',')}].`);
     const npmDownloads = await npmClient.getDownloads(packageNames, {
@@ -66,7 +70,7 @@ export async function handler(event: PackageStatsInput, context: Context) {
       throwErrors: false,
     });
 
-    for (const [pkgName, entry] of Object.entries(npmDownloads)) {
+    for (const [pkgName, entry] of npmDownloads.entries()) {
       updateStats(stats, pkgName, entry, currentDate);
     }
 
@@ -79,12 +83,12 @@ export async function handler(event: PackageStatsInput, context: Context) {
       throw new Error(`Package ${packageName} does not appear to be registered in the catalog.`);
     }
 
-    stats = await fetchCurrentStatsObject(BUCKET_NAME) ?? { packages: {}, updated: currentDate };
+    stats = oldStats;
 
     console.log(`Retrieving download stats for ${packageName}`);
     const npmDownloads = await npmClient.getDownloads([packageName], { period: NpmDownloadsPeriod.LAST_WEEK });
 
-    for (const [pkgName, entry] of Object.entries(npmDownloads)) {
+    for (const [pkgName, entry] of npmDownloads.entries()) {
       updateStats(stats, pkgName, entry, currentDate);
     }
 
@@ -93,6 +97,12 @@ export async function handler(event: PackageStatsInput, context: Context) {
   stats.updated = currentDate;
 
   // Update metrics
+  const newStatsCount = Object.keys(stats.packages).length;
+  const ignoreValidation = event.ignoreValidation ?? false;
+  if (!ignoreValidation && newStatsCount < oldStatsCount) {
+    console.log(`Number of recorded packages with download stats has decreased from ${oldStatsCount} to ${newStatsCount}. If this is expected, rerun with "ignoreValidation: true".`);
+  }
+
   console.log(`There are now ${Object.keys(stats.packages).length} packages with NPM stats stored.`);
   await metricScope((metrics) => async () => {
     metrics.setNamespace(METRICS_NAMESPACE);
@@ -110,7 +120,7 @@ export async function handler(event: PackageStatsInput, context: Context) {
       'Lambda-Log-Group': context.logGroupName,
       'Lambda-Log-Stream': context.logStreamName,
       'Lambda-Run-Id': context.awsRequestId,
-      'Package-Stats-Count': `${Object.keys(stats.packages).length}`,
+      'Package-Stats-Count': newStatsCount.toString(),
     },
   }).promise();
 }

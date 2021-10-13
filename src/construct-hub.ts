@@ -14,6 +14,7 @@ import { DenyListRule } from './backend/deny-list/api';
 import { Inventory } from './backend/inventory';
 import { LicenseList } from './backend/license-list';
 import { Orchestration } from './backend/orchestration';
+import { PackageStats } from './backend/package-stats';
 import { CATALOG_KEY, STORAGE_KEY_PREFIX } from './backend/shared/constants';
 import { Repository } from './codeartifact/repository';
 import { Monitoring } from './monitoring';
@@ -204,6 +205,11 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     const fetchPackageStats = props.fetchPackageStats ?? (
       props.packageSources ? false : true
     );
+    new PackageStats(this, 'Stats', {
+      bucket: packageData,
+      monitoring,
+      logRetention: props.logRetention,
+    });
 
     const orchestration = new Orchestration(this, 'Orchestration', {
       bucket: packageData,
