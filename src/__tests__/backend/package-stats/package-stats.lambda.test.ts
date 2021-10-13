@@ -126,6 +126,22 @@ test('full build', () => {
   return expect(result).resolves.toBe(mockPutObjectResult);
 });
 
+test('errors if no catalog found', () => {
+  // GIVEN
+  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+    try {
+      expect(req.Bucket).toBe(mockBucketName);
+      expect(req.Key.endsWith(constants.CATALOG_KEY));
+      return cb(new NoSuchKeyError());
+    } catch (e) {
+      return cb(e as AWSError);
+    }
+  });
+
+  // THEN
+  return expect(handler({}, { /* context */ } as any)).rejects.toMatch(/No catalog data found/);
+});
+
 type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
 
 class NoSuchKeyError extends Error implements AWS.AWSError {

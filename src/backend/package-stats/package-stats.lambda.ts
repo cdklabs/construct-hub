@@ -34,26 +34,18 @@ export async function handler(event: any, context: Context) {
       : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
 
   if (!catalogData?.Body) {
-    console.log('No catalog data found, so skipping all package stats operations.');
-    return;
+    return Promise.reject('No catalog data found.');
   }
 
-  let stats: DeepWriteable<PackageStatsOutput>;
   const currentDate = new Date().toISOString();
-
-  const oldStats: PackageStatsOutput = await fetchCurrentStatsObject(BUCKET_NAME) ?? { packages: {}, updated: currentDate };
-  const oldStatsCount = Object.keys(oldStats.packages).length;
-
+  const stats: PackageStatsOutput = { packages: {}, updated: currentDate };
   const npmClient = new NpmDownloadsClient(got);
   const catalog: CatalogModel = JSON.parse(catalogData.Body.toString('utf-8'));
-  const defaultStats: PackageStatsOutput = { packages: {}, updated: currentDate };
 
-  let packageNames = catalog.packages.map(pkg => pkg.name);
-  packageNames = [...new Set(packageNames).values()];
+  // remove duplicates from different major versions
+  const packageNames = [...new Set(catalog.packages.map(pkg => pkg.name)).values()];
 
-  stats = defaultStats;
-
-  console.log(`Retrieving download stats for all registered pacakges: [${packageNames.join(',')}].`);
+  console.log(`Retrieving download stats for all ${packageNames.length} registered packages: [${packageNames.join(',')}].`);
   const npmDownloads = await npmClient.getDownloads(packageNames, {
     period: NpmDownloadsPeriod.LAST_WEEK,
     throwErrors: false,
@@ -63,15 +55,7 @@ export async function handler(event: any, context: Context) {
     updateStats(stats, pkgName, entry);
   }
 
-  stats.updated = currentDate;
-
   // Update metrics
-  const newStatsCount = Object.keys(stats.packages).length;
-  const ignoreValidation = event.ignoreValidation ?? false;
-  if (!ignoreValidation && newStatsCount < oldStatsCount) {
-    throw new Error(`Number of recorded packages with download stats has decreased from ${oldStatsCount} to ${newStatsCount}. If this is expected, rerun with "ignoreValidation: true".`);
-  }
-
   console.log(`There are now ${Object.keys(stats.packages).length} packages with NPM stats stored.`);
   await metricScope((metrics) => async () => {
     metrics.setNamespace(METRICS_NAMESPACE);
@@ -89,12 +73,12 @@ export async function handler(event: any, context: Context) {
       'Lambda-Log-Group': context.logGroupName,
       'Lambda-Log-Stream': context.logStreamName,
       'Lambda-Run-Id': context.awsRequestId,
-      'Package-Stats-Count': newStatsCount.toString(),
+      'Package-Stats-Count': `${Object.keys(stats.packages).length}`,
     },
   }).promise();
 }
 
-function updateStats(stats: DeepWriteable<PackageStatsOutput>, pkgName: string, entry: NpmDownloadsEntry) {
+function updateStats(stats: PackageStatsOutput, pkgName: string, entry: NpmDownloadsEntry) {
   stats.packages[pkgName] = {
     ...(stats.packages[pkgName] ?? {}),
     downloads: {
@@ -102,18 +86,6 @@ function updateStats(stats: DeepWriteable<PackageStatsOutput>, pkgName: string, 
       npm: entry.downloads,
     },
   };
-}
-
-async function fetchCurrentStatsObject(bucketName: string) {
-  const statsData: AWS.S3.GetObjectOutput | undefined = await aws.s3()
-    .getObject({ Bucket: bucketName, Key: constants.STATS_KEY })
-    .promise()
-    .catch((err: AWSError) => err.code !== 'NoSuchKey'
-      ? Promise.reject(err)
-      : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
-  return statsData?.Body
-    ? JSON.parse(statsData.Body.toString('utf-8'))
-    : undefined;
 }
 
 export interface PackageStatsOutput {
@@ -128,5 +100,3 @@ export interface PackageStatsEntry {
 export interface PackageStatsDownloads {
   readonly npm: number;
 }
-
-type DeepWriteable<T> = { -readonly [P in keyof T]: DeepWriteable<T[P]> };
