@@ -132,6 +132,7 @@ export class Ingestion extends Construct implements IGrantable {
       },
       encryption: QueueEncryption.KMS_MANAGED,
       retentionPeriod: this.queueRetentionPeriod,
+      // Visibility timeout of 15 minutes matches the Lambda maximum execution time.
       visibilityTimeout: Duration.minutes(15),
     });
     props.bucket.grantRead(this.function, `${STORAGE_KEY_PREFIX}*${PACKAGE_KEY_SUFFIX}`);
@@ -250,6 +251,9 @@ interface ReprocessIngestionWorkflowProps {
  * A StepFunctions State Machine to reprocess every currently indexed package
  * through the ingestion function. This should not be frequently required, but
  * can come in handy at times.
+ *
+ * For more information, refer to the runbook at
+ * https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
  */
 class ReprocessIngestionWorkflow extends Construct {
   public constructor(scope: Construct, id: string, props: ReprocessIngestionWorkflowProps) {
