@@ -52,7 +52,7 @@ export const handler = metricScope(
         })
         .promise();
 
-      const integrityCheck = integrity(payload, Buffer.from(tarball.Body!));
+      const { integrity: integrityCheck } = integrity(payload, Buffer.from(tarball.Body!));
       if (payload.integrity !== integrityCheck) {
         throw new Error(
           `Integrity check failed: ${payload.integrity} !== ${integrityCheck}`,

@@ -70,6 +70,9 @@
           "spawn": "bundle:ingestion"
         },
         {
+          "spawn": "bundle:re-ingest"
+        },
+        {
           "spawn": "bundle:canary"
         },
         {
@@ -309,6 +312,9 @@
           "spawn": "bundle:ingestion"
         },
         {
+          "spawn": "bundle:re-ingest"
+        },
+        {
           "spawn": "bundle:canary"
         },
         {
@@ -447,6 +453,15 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/backend/ingestion/ingestion.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/ingestion.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:re-ingest": {
+      "name": "bundle:re-ingest",
+      "description": "Create an AWS Lambda bundle from src/backend/ingestion/re-ingest.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/ingestion/re-ingest.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/re-ingest.bundle/index.js\" --external:aws-sdk --sourcemap"
         }
       ]
     },
