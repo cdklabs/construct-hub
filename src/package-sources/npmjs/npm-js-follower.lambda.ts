@@ -1,6 +1,5 @@
 import * as console from 'console';
-import * as https from 'https';
-import { URL } from 'url';
+import { gzipSync, gunzipSync } from 'zlib';
 
 import { metricScope, Configuration, MetricsLogger, Unit } from 'aws-embedded-metrics';
 import type { Context, ScheduledEvent } from 'aws-lambda';
@@ -10,14 +9,22 @@ import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
 import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
 import * as aws from '../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
-import { integrity } from '../../backend/shared/integrity.lambda-shared';
-import { MetricName, MARKER_FILE_NAME, METRICS_NAMESPACE, S3KeyPrefix } from './constants.lambda-shared';
+import { MetricName, MARKER_FILE_NAME, METRICS_NAMESPACE } from './constants.lambda-shared';
+import { PackageVersion } from './stage-and-notify.lambda';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const normalizeNPMMetadata = require('normalize-registry-metadata');
 
 const TIMEOUT_MILLISECONDS = 10_000;
 const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set(['cdk', 'aws-cdk', 'awscdk', 'cdk8s', 'cdktf']);
 const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
+
+/**
+ * The release date of `aws-cdk@0.8.0`. Anything earlier than this basically is
+ * not a relevant package, as it cannot possibly be a constructs-based package.
+ * This is used to fast-forward over boring stuff when the sequence number is
+ * reset.
+ */
+const DAWN_OF_CONSTRUCTS = new Date('2018-07-31T13:43:04.615Z');
 
 // Configure embedded metrics format
 Configuration.namespace = METRICS_NAMESPACE;
@@ -36,14 +43,14 @@ export async function handler(event: ScheduledEvent, context: Context) {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
 
   const stagingBucket = requireEnv('BUCKET_NAME');
-  const queueUrl = requireEnv('QUEUE_URL');
+  const stagingFunction = requireEnv('FUNCTION_NAME');
 
   const denyList = await DenyListClient.newClient();
   const licenseList = await LicenseListClient.newClient();
 
   const db = Nano(NPM_REPLICA_REGISTRY_URL).db.use('registry');
 
-  const initialMarker = await loadLastTransactionMarker(db);
+  const { marker: initialMarker, knownVersions } = await loadLastTransactionMarker(db);
 
   const config: Nano.ChangesReaderOptions = {
     includeDocs: true,
@@ -57,6 +64,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
     selector: {
       name: { $gt: null },
     },
+    // Small pages, because we'll be looking at ALL versions of ALL packages... it adds up...
     batchSize: 30,
   };
 
@@ -64,6 +72,9 @@ export async function handler(event: ScheduledEvent, context: Context) {
   // know when it's done...
   return new Promise((ok, ko) => {
     let updatedMarker = initialMarker;
+    // The slowest batch processing time so far (starts at 30 seconds). This is how much time should
+    // be left before timeout if a new batch is to be fetched.
+    let maxBatchProcessingTime = 30_000;
 
     db.changesReader.get(config)
       .on('batch', metricScope((metrics) => async (batch: readonly Change[]) => {
@@ -73,14 +84,20 @@ export async function handler(event: ScheduledEvent, context: Context) {
         metrics.setProperty('StartSeq', updatedMarker);
         const startTime = Date.now();
 
+        // The most recent "modified" timestamp observed in the batch.
+        let lastModified: Date | undefined;
         // Emit npm.js replication lag
         for (const { doc } of batch) {
           if (doc?.time?.modified) {
+            const modified = new Date(doc.time.modified);
             metrics.putMetric(
               MetricName.NPMJS_CHANGE_AGE,
-              startTime - new Date(doc.time.modified).getTime(),
+              startTime - modified.getTime(),
               Unit.Milliseconds,
             );
+            if (lastModified == null || lastModified < modified) {
+              lastModified = modified;
+            }
           }
         }
 
@@ -90,18 +107,35 @@ export async function handler(event: ScheduledEvent, context: Context) {
           const lastSeq = Math.max(...batch.map((change) => change.seq));
           metrics.setProperty('EndSeq', updatedMarker);
 
-          // Obtain the modified package version from the update event, and filter
-          // out packages that are not of interest to us (not construct libraries).
-          const versionInfos = getRelevantVersionInfos(batch, metrics, denyList, licenseList);
-          console.log(`Identified ${versionInfos.length} relevant package version update(s)`);
-          metrics.putMetric(MetricName.RELEVANT_PACKAGE_VERSIONS, versionInfos.length, Unit.Count);
+          if (lastModified && lastModified < DAWN_OF_CONSTRUCTS) {
+            console.log(`Skipping batch as the latest modification is ${lastModified}, which is pre-Constructs`);
+          } else {
+            // Obtain the modified package version from the update event, and filter
+            // out packages that are not of interest to us (not construct libraries).
+            const versionInfos = getRelevantVersionInfos(batch, metrics, denyList, licenseList, knownVersions);
+            console.log(`Identified ${versionInfos.length} relevant package version update(s)`);
+            metrics.putMetric(MetricName.RELEVANT_PACKAGE_VERSIONS, versionInfos.length, Unit.Count);
 
-          // Process all remaining updates
-          await Promise.all(versionInfos.map(async (infos) => {
-            const before = Date.now();
-            await processUpdatedVersion(infos, metrics);
-            metrics.putMetric(MetricName.STAGING_TIME, Date.now() - before, Unit.Milliseconds);
-          }));
+            // Process all remaining updates
+            await Promise.all(versionInfos.map(async ({ infos, modified, seq }) => {
+              const invokeArgs: PackageVersion = {
+                integrity: infos.dist.shasum,
+                modified: modified.toISOString(),
+                name: infos.name,
+                seq: seq.toFixed(),
+                tarballUrl: infos.dist.tarball,
+                version: infos.version,
+              };
+              // "Fire-and-forget" invocation here.
+              const invokeResult = await aws.lambda().invokeAsync({
+                FunctionName: stagingFunction,
+                InvokeArgs: JSON.stringify(invokeArgs, null, 2),
+              }).promise();
+              // Record that this is now a "known" version (no need to re-discover)
+              knownVersions.set(`${infos.name}@${infos.version}`, modified);
+              return invokeResult;
+            }));
+          }
 
           // Update the transaction marker in S3.
           await saveLastTransactionMarker(lastSeq);
@@ -110,7 +144,8 @@ export async function handler(event: ScheduledEvent, context: Context) {
           // If we have enough time left before timeout, proceed with the next batch, otherwise we're done here.
           // Since the distribution of the time it takes to process each package/batch is non uniform, this is a best
           // effort, and we expect the function to timeout in some invocations, we rely on the downstream idempotency to handle this.
-          if (context.getRemainingTimeInMillis() >= 30_000 /* 30 seconds */) {
+          maxBatchProcessingTime = Math.max(maxBatchProcessingTime, Date.now() - startTime);
+          if (context.getRemainingTimeInMillis() >= maxBatchProcessingTime) {
             console.log('There is still time, requesting the next batch...');
             // Note: the `resume` function is missing from the `nano` type definitions, but is there...
             (db.changesReader as any).resume();
@@ -144,116 +179,87 @@ export async function handler(event: ScheduledEvent, context: Context) {
    *
    * @returns the value of the last transaction marker.
    */
-  async function loadLastTransactionMarker(registry: Nano.DocumentScope<unknown>): Promise<number> {
+  async function loadLastTransactionMarker(registry: Nano.DocumentScope<unknown>): Promise<{ marker: number; knownVersions: Map<string, Date> }> {
     try {
       const response = await aws.s3().getObject({
         Bucket: stagingBucket,
         Key: MARKER_FILE_NAME,
       }).promise();
-      const marker = Number.parseInt(response.Body!.toString('utf-8'), 10);
-      console.log(`Read last transaction marker: ${marker}`);
+      if (response.ContentEncoding === 'gzip') {
+        response.Body = gunzipSync(Buffer.from(response.Body!));
+      }
+      let data = JSON.parse(
+        response.Body!.toString('utf-8'),
+        (key, value) => {
+          if (key !== 'knownVersions') {
+            return value;
+          }
+          const map = new Map<string, Date>();
+          for (const [pkgVersion, iso] of Object.entries(value)) {
+            if (typeof iso === 'string' || typeof iso === 'number') {
+              map.set(pkgVersion, new Date(iso));
+            } else {
+              console.error(`Ignoring invalid entry: ${pkgVersion} => ${iso}`);
+            }
+          }
+          return map;
+        },
+      );
+      if (typeof data === 'number') {
+        data = { marker: data, knownVersions: new Map() };
+      }
+      console.log(`Read last transaction marker: ${data.marker}`);
 
       const dbUpdateSeq = (await registry.info()).update_seq;
-      if (dbUpdateSeq < marker) {
+      if (dbUpdateSeq < data.marker) {
         console.warn(`Current DB update_seq (${dbUpdateSeq}) is lower than marker (CouchDB instance was likely replaced), resetting to 0!`);
-        return 0;
+        return { marker: 0, knownVersions: data.knownVersion };
       }
 
-      return marker;
+      return data;
     } catch (error) {
       if (error.code !== 'NoSuchKey') {
         throw error;
       }
       console.warn(`Marker object (s3://${stagingBucket}/${MARKER_FILE_NAME}) does not exist, starting from scratch`);
-      return 0;
+      return { marker: 0, knownVersions: new Map() };
     }
   }
 
   /**
    * Updates the last transaction marker in S3.
    *
-   * @param sequence the last transaction marker value
+   * @param marker the last transaction marker value
    */
-  async function saveLastTransactionMarker(sequence: Number) {
-    console.log(`Updating last transaction marker to ${sequence}`);
-    return putObject(MARKER_FILE_NAME, sequence.toFixed(), { ContentType: 'text/plain; charset=UTF-8' });
-  }
-  //#endregion
-
-  //#region Business Logic
-  async function processUpdatedVersion({ infos, modified, seq }: UpdatedVersion, metrics: MetricsLogger): Promise<void> {
-    try {
-      // Download the tarball
-      const tarball = await httpGet(infos.dist.tarball);
-
-      // Store the tarball into the staging bucket
-      // - infos.dist.tarball => https://registry.npmjs.org/<@scope>/<name>/-/<name>-<version>.tgz
-      // - stagingKey         =>                     staged/<@scope>/<name>/-/<name>-<version>.tgz
-      const stagingKey = `${S3KeyPrefix.STAGED_KEY_PREFIX}${new URL(infos.dist.tarball).pathname}`.replace(/\/{2,}/g, '/');
-      await putObject(stagingKey, tarball, {
-        ContentType: 'application/octet-stream',
-        Metadata: {
-          'Modified-At': modified.toISOString(),
-          'Origin-Integrity': infos.dist.shasum,
-          'Origin-URI': infos.dist.tarball,
-          'Sequence': seq.toFixed(),
-        },
-      });
-
-      // Prepare SQS message for ingestion
-      const message = integrity({
-        tarballUri: `s3://${stagingBucket}/${stagingKey}`,
-        metadata: {
-          dist: infos.dist.tarball,
-          seq: seq.toFixed(),
-        },
-        time: modified.toUTCString(),
-      }, tarball);
-
-      // Send the SQS message out
-      await aws.sqs().sendMessage({
-        MessageBody: JSON.stringify(message, null, 2),
-        QueueUrl: queueUrl,
-      }).promise();
-
-      metrics.putMetric(MetricName.STAGING_FAILURE_COUNT, 0, Unit.Count);
-    } catch (err) {
-      // Something failed, store the payload in the problem prefix, and move on.
-      console.error(`[${seq}] Failed processing, logging error to S3 and resuming work. ${infos.name}@${infos.version}: ${err}`);
-      metrics.putMetric(MetricName.STAGING_FAILURE_COUNT, 1, Unit.Count);
-      await putObject(`${S3KeyPrefix.FAILED_KEY_PREFIX}${seq}`, JSON.stringify({ ...infos, _construct_hub_failure_reason: err }, null, 2), {
-        ContentType: 'application/json',
-        Metadata: {
-          'Modified-At': modified.toISOString(),
-        },
-      });
-    }
+  async function saveLastTransactionMarker(marker: number) {
+    console.log(`Updating last transaction marker to ${marker}`);
+    return putObject(
+      MARKER_FILE_NAME,
+      gzipSync(
+        JSON.stringify(
+          { marker, knownVersions },
+          (_, value) => {
+            if (value instanceof Date) {
+              return value.toISOString();
+            } else if (value instanceof Map) {
+              return Object.fromEntries(value);
+            } else {
+              return value;
+            }
+          },
+          2,
+        ),
+        { level: 9 },
+      ),
+      {
+        ContentType: 'text/plain; charset=UTF-8',
+        ContentEncoding: 'gzip',
+      },
+    );
   }
   //#endregion
 
   //#region Asynchronous Primitives
-  /**
-   * Makes an HTTP GET request, and returns the resulting payload.
-   *
-   * @param url the URL to get.
-   *
-   * @returns a Buffer containing the received data.
-   */
-  function httpGet(url: string) {
-    return new Promise<Buffer>((ok, ko) => {
-      https.get(url, (response) => {
-        if (response.statusCode !== 200) {
-          ko(new Error(`Unsuccessful GET: ${response.statusCode} - ${response.statusMessage}`));
-        }
-
-        let body = Buffer.alloc(0);
-        response.on('data', (chunk) => body = Buffer.concat([body, Buffer.from(chunk)]));
-        response.once('close', () => ok(body));
-        response.once('error', ko);
-      });
-    });
-  }
-
   /**
    * Puts an object in the staging bucket, with standardized object metadata.
    *
@@ -296,6 +302,7 @@ function getRelevantVersionInfos(
   metrics: MetricsLogger,
   denyList: DenyListClient,
   licenseList: LicenseListClient,
+  knownVersions: Map<string, Date>,
 ): readonly UpdatedVersion[] {
 
   const result = new Array<UpdatedVersion>();
@@ -331,18 +338,17 @@ function getRelevantVersionInfos(
     }
 
     // Get the last modification date from the change
-    const sortedUpdates = Object.entries(change.doc.time)
+    const packageVersionUpdates = Object.entries(change.doc.time)
       // Ignore the "created" and "modified" keys here
       .filter(([key]) => key !== 'created' && key !== 'modified')
       // Parse all the dates to ensure they are comparable
-      .map(([version, isoDate]) => [version, new Date(isoDate)] as const)
-      // Sort by date, descending
-      .sort(([, l], [, r]) => r.getTime() - l.getTime());
-    metrics.putMetric(MetricName.PACKAGE_VERSION_COUNT, sortedUpdates.length, Unit.Count);
+      .map(([version, isoDate]) => [version, new Date(isoDate)] as const);
+    metrics.putMetric(MetricName.PACKAGE_VERSION_COUNT, packageVersionUpdates.length, Unit.Count);
 
-    let latestModified: Date | undefined;
-    for (const [version, modified] of sortedUpdates) {
-      if (latestModified == null || latestModified.getTime() === modified.getTime()) {
+    for (const [version, modified] of packageVersionUpdates) {
+      const knownKey = `${change.doc.name}@${version}`;
+      const known = knownVersions.get(knownKey);
+      if (known == null || known < modified) {
         const infos = change.doc.versions[version];
         if (infos == null) {
           // Could be the version in question was un-published.
@@ -353,6 +359,7 @@ function getRelevantVersionInfos(
           const denied = denyList.lookup(infos.name, infos.version);
           if (denied) {
             console.log(`[${change.seq}] Package denied: ${JSON.stringify(denied)}`);
+            knownVersions.set(knownKey, modified);
             metrics.putMetric(MetricName.DENY_LISTED_COUNT, 1, Unit.Count);
             continue;
           }
@@ -364,11 +371,10 @@ function getRelevantVersionInfos(
             result.push({ infos, modified, seq: change.seq });
           } else {
             console.log(`[${change.seq}] Package "${change.doc.name}@${version}" does not use allow-listed license: ${infos.license ?? 'UNLICENSED'}`);
+            knownVersions.set(knownKey, modified);
           }
-        } else {
-          console.log(`[${change.seq}] Ignoring "${change.doc.name}@${version}" as it is not a construct library.`);
         }
-        latestModified = modified;
+        // Else this is not a construct library, so we'll just ignore it...
       }
     }
   }
@@ -381,6 +387,8 @@ function getRelevantVersionInfos(
     return infos.name === 'construct'
       || infos.name === 'aws-cdk-lib'
       || infos.name.startsWith('@aws-cdk')
+      || infos.name === 'cdk8s'
+      || /^cdk8s-plus-(17|20|21|22)$/.test(infos.name)
       || infos.keywords?.some((kw) => CONSTRUCT_KEYWORDS.has(kw))
       || Object.keys(infos.dependencies ?? {}).some(isConstructFrameworkPackage)
       || Object.keys(infos.devDependencies ?? {}).some(isConstructFrameworkPackage)
@@ -398,7 +406,8 @@ function getRelevantVersionInfos(
     return name.startsWith('@aws-cdk/')
       || name.startsWith('@cdktf/')
       || name === 'cdk8s'
-      || name === 'cdk8s-plus';
+      || /^cdk8s-plus-(17|20|21|22)$/.test(name)
+      || name === 'cdktf';
   }
 }
 

@@ -177,16 +177,16 @@ Object {
       "Description": "S3 key for asset version \\"b54cb69349258b9f0b697180533a14fcccbadf6ecc50a9d1e4a358d73c5e9c9f\\"",
       "Type": "String",
     },
-    "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fArtifactHash8AB96C67": Object {
-      "Description": "Artifact hash for asset \\"d413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058f\\"",
+    "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844ArtifactHashACB3437D": Object {
+      "Description": "Artifact hash for asset \\"e173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844\\"",
       "Type": "String",
     },
-    "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3Bucket50F6A66A": Object {
-      "Description": "S3 bucket for asset \\"d413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058f\\"",
+    "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3Bucket4C2F2EF3": Object {
+      "Description": "S3 bucket for asset \\"e173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844\\"",
       "Type": "String",
     },
-    "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3VersionKeyB5D82404": Object {
-      "Description": "S3 key for asset version \\"d413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058f\\"",
+    "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3VersionKey3D46D1CE": Object {
+      "Description": "S3 key for asset version \\"e173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844\\"",
       "Type": "String",
     },
     "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
@@ -235,6 +235,18 @@ Object {
     },
     "AssetParametersf3c7a8a5d42ec692b06ff7c8bc838e1a14427fd70d782af0b332ce32985fed39S3VersionKey3CD7B042": Object {
       "Description": "S3 key for asset version \\"f3c7a8a5d42ec692b06ff7c8bc838e1a14427fd70d782af0b332ce32985fed39\\"",
+      "Type": "String",
+    },
+    "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bArtifactHash66FABED5": Object {
+      "Description": "Artifact hash for asset \\"f7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631b\\"",
+      "Type": "String",
+    },
+    "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3Bucket782CBBB7": Object {
+      "Description": "S3 bucket for asset \\"f7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631b\\"",
+      "Type": "String",
+    },
+    "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3VersionKeyFA8D5CDD": Object {
+      "Description": "S3 key for asset version \\"f7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631b\\"",
       "Type": "String",
     },
     "AssetParametersfe317c8530ec9736af6f26432f692374ee80abaf9d89c284cca0ba0c004f5710ArtifactHashE6439A65": Object {
@@ -664,7 +676,26 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
               },
-              "?prefix=couchdb-last-transaction-id.2)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":39,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
+              "?prefix=couchdb-last-transaction-id.2)\\\\n[button:Stager](/lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              ")\\\\n[button:Stager DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "QueueName",
+                ],
+              },
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":39,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Follower Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -676,15 +707,49 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
               },
-              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"RemainingTime\\",{\\"label\\":\\"Remaining Time\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":900}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":39,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Follower\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"RemainingTime\\",{\\"label\\":\\"Remaining Time\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":39,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Stager Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":45,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Changes\\",\\"region\\":\\"",
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Invocations\\",\\"expression\\":\\"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2, 0)\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              "\\",{\\"label\\":\\"Invocations\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2\\"}],[{\\"label\\":\\"Errors\\",\\"expression\\":\\"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)\\"}],[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}],[\\"AWS/Lambda\\",\\"Duration\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":45,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Follower\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"LastSeq\\",{\\"label\\":\\"Last Sequence Number\\",\\"stat\\":\\"Maximum\\"}]],\\"yAxis\\":{},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":51,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":45,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Changes\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"LastSeq\\",{\\"label\\":\\"Last Sequence Number\\",\\"stat\\":\\"Maximum\\"}]],\\"yAxis\\":{},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":51,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Stager Dead-Letter Queue\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"AWS/SQS\\",\\"ApproximateNumberOfMessagesVisible\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Visible Messages\\",\\"stat\\":\\"Maximum\\"}],[\\"AWS/SQS\\",\\"ApproximateAgeOfOldestMessage\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Oldest Message\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":57,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -707,7 +772,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -719,7 +784,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -744,11 +809,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ffa500\\",\\"label\\":\\"10 Minutes\\",\\"value\\":600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Quality\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ffa500\\",\\"label\\":\\"10 Minutes\\",\\"value\\":600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":65,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Quality\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"stacked\\":true,\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"label\\":\\"Count\\",\\"min\\":0,\\"showUnits\\":false}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
+              "\\",\\"stacked\\":true,\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"label\\":\\"Count\\",\\"min\\":0,\\"showUnits\\":false}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":65,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -773,7 +838,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":65,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:primary:State Machine](/states/home#/statemachines/view/",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":71,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:primary:State Machine](/states/home#/statemachines/view/",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -800,7 +865,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationReprocessAllFF2F2455",
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":73,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -832,7 +897,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letter Queue\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":73,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letter Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -857,7 +922,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":73,\\"properties\\":{\\"markdown\\":\\"# Deny List\\\\n\\\\n[button:primary:Deny List Object](/s3/object/",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":79,\\"properties\\":{\\"markdown\\":\\"# Deny List\\\\n\\\\n[button:primary:Deny List Object](/s3/object/",
               Object {
                 "Ref": "ConstructHubDenyListBucket1B3C2C2E",
               },
@@ -888,7 +953,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubDenyListPrunePruneQueueHandlerF7EB599B",
               },
-              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":75,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Deny List\\",\\"region\\":\\"",
+              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":81,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Deny List\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -899,7 +964,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Deleted Files\\",\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":75,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Prune Function Health\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Deleted Files\\",\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":81,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Prune Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -4565,7 +4630,18 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesTestConstructHubSourcesNpmJsStagerDLQNotEmpty30787871",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -4576,7 +4652,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -4587,7 +4663,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -6204,6 +6280,10 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                 "Value": "true",
               },
               Object {
+                "Name": "AWS_EMF_ENVIRONMENT",
+                "Value": "Local",
+              },
+              Object {
                 "Name": "CODE_ARTIFACT_API_ENDPOINT",
                 "Value": Object {
                   "Fn::Select": Array [
@@ -6271,7 +6351,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:00ca69ab81d988b256f5e2e07a05fe622a9921b4098e4cf5be3316a4797e70c6",
+                  "/aws-cdk/assets:3a443cc6e6f19b1bbe6a93044e3199bc77816b1bf3adf77e479eba6dd5a83c1e",
                 ],
               ],
             },
@@ -7058,7 +7138,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3Bucket50F6A66A",
+            "Ref": "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3Bucket4C2F2EF3",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -7071,7 +7151,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3VersionKeyB5D82404",
+                          "Ref": "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3VersionKey3D46D1CE",
                         },
                       ],
                     },
@@ -7084,7 +7164,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3VersionKeyB5D82404",
+                          "Ref": "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3VersionKey3D46D1CE",
                         },
                       ],
                     },
@@ -7105,13 +7185,13 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               "Ref": "ConstructHubDenyListBucket1B3C2C2E",
             },
             "DENY_LIST_OBJECT_KEY": "deny-list.json",
+            "FUNCTION_NAME": Object {
+              "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+            },
             "LICENSE_LIST_BUCKET_NAME": Object {
               "Ref": "ConstructHubLicenseListBucket9334047F",
             },
             "LICENSE_LIST_OBJECT_KEY": "allowed-licenses.json",
-            "QUEUE_URL": Object {
-              "Ref": "ConstructHubIngestionQueue1AD94CA3",
-            },
           },
         },
         "Handler": "index.handler",
@@ -7458,6 +7538,161 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::IAM::Policy",
     },
+    "ConstructHubSourcesNpmJsStageAndNotify591C0CFA": Object {
+      "DependsOn": Array [
+        "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleDefaultPolicyF7D8382F",
+        "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3Bucket782CBBB7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3VersionKeyFA8D5CDD",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3VersionKeyFA8D5CDD",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "DeadLetterConfig": Object {
+          "TargetArn": Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubSourcesStagerDLQ80BD2600",
+              "Arn",
+            ],
+          },
+        },
+        "Description": "[Test/ConstructHub/Sources/NpmJS-StageAndNotify] Stages tarballs to S3 and notifies ConstructHub",
+        "Environment": Object {
+          "Variables": Object {
+            "AWS_EMF_ENVIRONMENT": "Local",
+            "BUCKET_NAME": Object {
+              "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+            },
+            "QUEUE_URL": Object {
+              "Ref": "ConstructHubIngestionQueue1AD94CA3",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 10024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 300,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubSourcesNpmJsStageAndNotifyEventInvokeConfigF58F658E": Object {
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+        },
+        "MaximumRetryAttempts": 2,
+        "Qualifier": "$LATEST",
+      },
+      "Type": "AWS::Lambda::EventInvokeConfig",
+    },
+    "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleDefaultPolicyF7D8382F": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleDefaultPolicyF7D8382F",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "ConstructHubSourcesNpmJsStagingBucketB286F0E6": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
@@ -7526,6 +7761,108 @@ Direct link to Lambda function: /lambda/home#/functions/",
         },
       },
       "Type": "AWS::S3::BucketPolicy",
+    },
+    "ConstructHubSourcesStagerDLQ80BD2600": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 1209600,
+        "VisibilityTimeout": 900,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubSourcesTestConstructHubSourcesNpmJsStagerDLQNotEmpty30787871": Object {
+      "Properties": Object {
+        "AlarmActions": Array [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The NpmJS package stager is failing - its dead letter queue is not empty/n/nLink to the lambda function: /lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              "/nLink to the dead letter queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "QueueName",
+                ],
+              },
+              "/n/nRunbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+            ],
+          ],
+        },
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Stager/DLQNotEmpty",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": Array [
+          Object {
+            "Expression": "mVisible + mHidden",
+            "Id": "expr_1",
+          },
+          Object {
+            "Id": "mVisible",
+            "MetricStat": Object {
+              "Metric": Object {
+                "Dimensions": Array [
+                  Object {
+                    "Name": "QueueName",
+                    "Value": Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubSourcesStagerDLQ80BD2600",
+                        "QueueName",
+                      ],
+                    },
+                  },
+                ],
+                "MetricName": "ApproximateNumberOfMessagesVisible",
+                "Namespace": "AWS/SQS",
+              },
+              "Period": 300,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+          Object {
+            "Id": "mHidden",
+            "MetricStat": Object {
+              "Metric": Object {
+                "Dimensions": Array [
+                  Object {
+                    "Name": "QueueName",
+                    "Value": Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubSourcesStagerDLQ80BD2600",
+                        "QueueName",
+                      ],
+                    },
+                  },
+                ],
+                "MetricName": "ApproximateNumberOfMessagesNotVisible",
+                "Namespace": "AWS/SQS",
+              },
+              "Period": 300,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
     },
     "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B": Object {
       "Properties": Object {
@@ -8791,16 +9128,16 @@ Object {
       "Description": "S3 key for asset version \\"b54cb69349258b9f0b697180533a14fcccbadf6ecc50a9d1e4a358d73c5e9c9f\\"",
       "Type": "String",
     },
-    "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fArtifactHash8AB96C67": Object {
-      "Description": "Artifact hash for asset \\"d413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058f\\"",
+    "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844ArtifactHashACB3437D": Object {
+      "Description": "Artifact hash for asset \\"e173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844\\"",
       "Type": "String",
     },
-    "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3Bucket50F6A66A": Object {
-      "Description": "S3 bucket for asset \\"d413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058f\\"",
+    "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3Bucket4C2F2EF3": Object {
+      "Description": "S3 bucket for asset \\"e173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844\\"",
       "Type": "String",
     },
-    "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3VersionKeyB5D82404": Object {
-      "Description": "S3 key for asset version \\"d413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058f\\"",
+    "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3VersionKey3D46D1CE": Object {
+      "Description": "S3 key for asset version \\"e173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844\\"",
       "Type": "String",
     },
     "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
@@ -8849,6 +9186,18 @@ Object {
     },
     "AssetParametersf3c7a8a5d42ec692b06ff7c8bc838e1a14427fd70d782af0b332ce32985fed39S3VersionKey3CD7B042": Object {
       "Description": "S3 key for asset version \\"f3c7a8a5d42ec692b06ff7c8bc838e1a14427fd70d782af0b332ce32985fed39\\"",
+      "Type": "String",
+    },
+    "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bArtifactHash66FABED5": Object {
+      "Description": "Artifact hash for asset \\"f7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631b\\"",
+      "Type": "String",
+    },
+    "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3Bucket782CBBB7": Object {
+      "Description": "S3 bucket for asset \\"f7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631b\\"",
+      "Type": "String",
+    },
+    "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3VersionKeyFA8D5CDD": Object {
+      "Description": "S3 key for asset version \\"f7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631b\\"",
       "Type": "String",
     },
     "AssetParametersfe317c8530ec9736af6f26432f692374ee80abaf9d89c284cca0ba0c004f5710ArtifactHashE6439A65": Object {
@@ -9278,7 +9627,26 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
               },
-              "?prefix=couchdb-last-transaction-id.2)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":39,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
+              "?prefix=couchdb-last-transaction-id.2)\\\\n[button:Stager](/lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              ")\\\\n[button:Stager DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "QueueName",
+                ],
+              },
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":39,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Follower Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -9290,15 +9658,49 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
               },
-              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"RemainingTime\\",{\\"label\\":\\"Remaining Time\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":900}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":39,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Follower\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"RemainingTime\\",{\\"label\\":\\"Remaining Time\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":39,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Stager Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":45,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Changes\\",\\"region\\":\\"",
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Invocations\\",\\"expression\\":\\"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2, 0)\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              "\\",{\\"label\\":\\"Invocations\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2\\"}],[{\\"label\\":\\"Errors\\",\\"expression\\":\\"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)\\"}],[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}],[\\"AWS/Lambda\\",\\"Duration\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":45,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Follower\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"LastSeq\\",{\\"label\\":\\"Last Sequence Number\\",\\"stat\\":\\"Maximum\\"}]],\\"yAxis\\":{},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":51,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":45,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Changes\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"LastSeq\\",{\\"label\\":\\"Last Sequence Number\\",\\"stat\\":\\"Maximum\\"}]],\\"yAxis\\":{},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":51,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Stager Dead-Letter Queue\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"AWS/SQS\\",\\"ApproximateNumberOfMessagesVisible\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Visible Messages\\",\\"stat\\":\\"Maximum\\"}],[\\"AWS/SQS\\",\\"ApproximateAgeOfOldestMessage\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Oldest Message\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":57,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -9321,7 +9723,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -9333,7 +9735,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -9358,11 +9760,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ffa500\\",\\"label\\":\\"10 Minutes\\",\\"value\\":600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Quality\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ffa500\\",\\"label\\":\\"10 Minutes\\",\\"value\\":600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":65,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Quality\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"stacked\\":true,\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"label\\":\\"Count\\",\\"min\\":0,\\"showUnits\\":false}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
+              "\\",\\"stacked\\":true,\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"label\\":\\"Count\\",\\"min\\":0,\\"showUnits\\":false}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":65,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -9387,7 +9789,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":65,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:primary:State Machine](/states/home#/statemachines/view/",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":71,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:primary:State Machine](/states/home#/statemachines/view/",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -9414,7 +9816,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationReprocessAllFF2F2455",
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":73,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -9446,7 +9848,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letter Queue\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":73,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letter Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -9471,7 +9873,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":73,\\"properties\\":{\\"markdown\\":\\"# Deny List\\\\n\\\\n[button:primary:Deny List Object](/s3/object/",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":79,\\"properties\\":{\\"markdown\\":\\"# Deny List\\\\n\\\\n[button:primary:Deny List Object](/s3/object/",
               Object {
                 "Ref": "ConstructHubDenyListBucket1B3C2C2E",
               },
@@ -9502,7 +9904,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubDenyListPrunePruneQueueHandlerF7EB599B",
               },
-              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":75,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Deny List\\",\\"region\\":\\"",
+              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":81,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Deny List\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -9513,7 +9915,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Deleted Files\\",\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":75,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Prune Function Health\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Deleted Files\\",\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":81,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Prune Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -13200,7 +13602,18 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesTestConstructHubSourcesNpmJsStagerDLQNotEmpty30787871",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -13211,7 +13624,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -13222,7 +13635,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -14839,6 +15252,10 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                 "Value": "true",
               },
               Object {
+                "Name": "AWS_EMF_ENVIRONMENT",
+                "Value": "Local",
+              },
+              Object {
                 "Name": "CODE_ARTIFACT_API_ENDPOINT",
                 "Value": Object {
                   "Fn::Select": Array [
@@ -14906,7 +15323,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:00ca69ab81d988b256f5e2e07a05fe622a9921b4098e4cf5be3316a4797e70c6",
+                  "/aws-cdk/assets:3a443cc6e6f19b1bbe6a93044e3199bc77816b1bf3adf77e479eba6dd5a83c1e",
                 ],
               ],
             },
@@ -15707,7 +16124,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3Bucket50F6A66A",
+            "Ref": "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3Bucket4C2F2EF3",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -15720,7 +16137,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3VersionKeyB5D82404",
+                          "Ref": "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3VersionKey3D46D1CE",
                         },
                       ],
                     },
@@ -15733,7 +16150,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3VersionKeyB5D82404",
+                          "Ref": "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3VersionKey3D46D1CE",
                         },
                       ],
                     },
@@ -15754,13 +16171,13 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               "Ref": "ConstructHubDenyListBucket1B3C2C2E",
             },
             "DENY_LIST_OBJECT_KEY": "deny-list.json",
+            "FUNCTION_NAME": Object {
+              "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+            },
             "LICENSE_LIST_BUCKET_NAME": Object {
               "Ref": "ConstructHubLicenseListBucket9334047F",
             },
             "LICENSE_LIST_OBJECT_KEY": "allowed-licenses.json",
-            "QUEUE_URL": Object {
-              "Ref": "ConstructHubIngestionQueue1AD94CA3",
-            },
           },
         },
         "Handler": "index.handler",
@@ -16107,6 +16524,161 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::IAM::Policy",
     },
+    "ConstructHubSourcesNpmJsStageAndNotify591C0CFA": Object {
+      "DependsOn": Array [
+        "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleDefaultPolicyF7D8382F",
+        "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3Bucket782CBBB7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3VersionKeyFA8D5CDD",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3VersionKeyFA8D5CDD",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "DeadLetterConfig": Object {
+          "TargetArn": Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubSourcesStagerDLQ80BD2600",
+              "Arn",
+            ],
+          },
+        },
+        "Description": "[Test/ConstructHub/Sources/NpmJS-StageAndNotify] Stages tarballs to S3 and notifies ConstructHub",
+        "Environment": Object {
+          "Variables": Object {
+            "AWS_EMF_ENVIRONMENT": "Local",
+            "BUCKET_NAME": Object {
+              "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+            },
+            "QUEUE_URL": Object {
+              "Ref": "ConstructHubIngestionQueue1AD94CA3",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 10024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 300,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubSourcesNpmJsStageAndNotifyEventInvokeConfigF58F658E": Object {
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+        },
+        "MaximumRetryAttempts": 2,
+        "Qualifier": "$LATEST",
+      },
+      "Type": "AWS::Lambda::EventInvokeConfig",
+    },
+    "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleDefaultPolicyF7D8382F": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleDefaultPolicyF7D8382F",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "ConstructHubSourcesNpmJsStagingBucketB286F0E6": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
@@ -16175,6 +16747,108 @@ Direct link to Lambda function: /lambda/home#/functions/",
         },
       },
       "Type": "AWS::S3::BucketPolicy",
+    },
+    "ConstructHubSourcesStagerDLQ80BD2600": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 1209600,
+        "VisibilityTimeout": 900,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubSourcesTestConstructHubSourcesNpmJsStagerDLQNotEmpty30787871": Object {
+      "Properties": Object {
+        "AlarmActions": Array [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The NpmJS package stager is failing - its dead letter queue is not empty/n/nLink to the lambda function: /lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              "/nLink to the dead letter queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "QueueName",
+                ],
+              },
+              "/n/nRunbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+            ],
+          ],
+        },
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Stager/DLQNotEmpty",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": Array [
+          Object {
+            "Expression": "mVisible + mHidden",
+            "Id": "expr_1",
+          },
+          Object {
+            "Id": "mVisible",
+            "MetricStat": Object {
+              "Metric": Object {
+                "Dimensions": Array [
+                  Object {
+                    "Name": "QueueName",
+                    "Value": Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubSourcesStagerDLQ80BD2600",
+                        "QueueName",
+                      ],
+                    },
+                  },
+                ],
+                "MetricName": "ApproximateNumberOfMessagesVisible",
+                "Namespace": "AWS/SQS",
+              },
+              "Period": 300,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+          Object {
+            "Id": "mHidden",
+            "MetricStat": Object {
+              "Metric": Object {
+                "Dimensions": Array [
+                  Object {
+                    "Name": "QueueName",
+                    "Value": Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubSourcesStagerDLQ80BD2600",
+                        "QueueName",
+                      ],
+                    },
+                  },
+                ],
+                "MetricName": "ApproximateNumberOfMessagesNotVisible",
+                "Namespace": "AWS/SQS",
+              },
+              "Period": 300,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
     },
     "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B": Object {
       "Properties": Object {
@@ -17474,16 +18148,16 @@ Object {
       "Description": "S3 key for asset version \\"b54cb69349258b9f0b697180533a14fcccbadf6ecc50a9d1e4a358d73c5e9c9f\\"",
       "Type": "String",
     },
-    "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fArtifactHash8AB96C67": Object {
-      "Description": "Artifact hash for asset \\"d413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058f\\"",
+    "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844ArtifactHashACB3437D": Object {
+      "Description": "Artifact hash for asset \\"e173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844\\"",
       "Type": "String",
     },
-    "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3Bucket50F6A66A": Object {
-      "Description": "S3 bucket for asset \\"d413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058f\\"",
+    "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3Bucket4C2F2EF3": Object {
+      "Description": "S3 bucket for asset \\"e173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844\\"",
       "Type": "String",
     },
-    "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3VersionKeyB5D82404": Object {
-      "Description": "S3 key for asset version \\"d413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058f\\"",
+    "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3VersionKey3D46D1CE": Object {
+      "Description": "S3 key for asset version \\"e173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844\\"",
       "Type": "String",
     },
     "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
@@ -17532,6 +18206,18 @@ Object {
     },
     "AssetParametersf3c7a8a5d42ec692b06ff7c8bc838e1a14427fd70d782af0b332ce32985fed39S3VersionKey3CD7B042": Object {
       "Description": "S3 key for asset version \\"f3c7a8a5d42ec692b06ff7c8bc838e1a14427fd70d782af0b332ce32985fed39\\"",
+      "Type": "String",
+    },
+    "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bArtifactHash66FABED5": Object {
+      "Description": "Artifact hash for asset \\"f7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631b\\"",
+      "Type": "String",
+    },
+    "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3Bucket782CBBB7": Object {
+      "Description": "S3 bucket for asset \\"f7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631b\\"",
+      "Type": "String",
+    },
+    "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3VersionKeyFA8D5CDD": Object {
+      "Description": "S3 key for asset version \\"f7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631b\\"",
       "Type": "String",
     },
     "AssetParametersfe317c8530ec9736af6f26432f692374ee80abaf9d89c284cca0ba0c004f5710ArtifactHashE6439A65": Object {
@@ -18110,7 +18796,26 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
               },
-              "?prefix=couchdb-last-transaction-id.2)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":39,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
+              "?prefix=couchdb-last-transaction-id.2)\\\\n[button:Stager](/lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              ")\\\\n[button:Stager DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "QueueName",
+                ],
+              },
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":39,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Follower Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -18122,15 +18827,49 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
               },
-              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"RemainingTime\\",{\\"label\\":\\"Remaining Time\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":900}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":39,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Follower\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"RemainingTime\\",{\\"label\\":\\"Remaining Time\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":39,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Stager Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":45,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Changes\\",\\"region\\":\\"",
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Invocations\\",\\"expression\\":\\"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2, 0)\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              "\\",{\\"label\\":\\"Invocations\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2\\"}],[{\\"label\\":\\"Errors\\",\\"expression\\":\\"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)\\"}],[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}],[\\"AWS/Lambda\\",\\"Duration\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":45,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Follower\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"LastSeq\\",{\\"label\\":\\"Last Sequence Number\\",\\"stat\\":\\"Maximum\\"}]],\\"yAxis\\":{},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":51,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":45,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Changes\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"LastSeq\\",{\\"label\\":\\"Last Sequence Number\\",\\"stat\\":\\"Maximum\\"}]],\\"yAxis\\":{},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":51,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Stager Dead-Letter Queue\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"AWS/SQS\\",\\"ApproximateNumberOfMessagesVisible\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Visible Messages\\",\\"stat\\":\\"Maximum\\"}],[\\"AWS/SQS\\",\\"ApproximateAgeOfOldestMessage\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Oldest Message\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":57,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -18153,7 +18892,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -18165,7 +18904,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -18190,11 +18929,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ffa500\\",\\"label\\":\\"10 Minutes\\",\\"value\\":600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Quality\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ffa500\\",\\"label\\":\\"10 Minutes\\",\\"value\\":600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":65,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Quality\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"stacked\\":true,\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"label\\":\\"Count\\",\\"min\\":0,\\"showUnits\\":false}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
+              "\\",\\"stacked\\":true,\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"label\\":\\"Count\\",\\"min\\":0,\\"showUnits\\":false}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":65,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -18219,7 +18958,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":65,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:primary:State Machine](/states/home#/statemachines/view/",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":71,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:primary:State Machine](/states/home#/statemachines/view/",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -18246,7 +18985,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationReprocessAllFF2F2455",
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":73,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -18278,7 +19017,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letter Queue\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":73,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letter Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -18303,7 +19042,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":73,\\"properties\\":{\\"markdown\\":\\"# Deny List\\\\n\\\\n[button:primary:Deny List Object](/s3/object/",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":79,\\"properties\\":{\\"markdown\\":\\"# Deny List\\\\n\\\\n[button:primary:Deny List Object](/s3/object/",
               Object {
                 "Ref": "ConstructHubDenyListBucket1B3C2C2E",
               },
@@ -18334,7 +19073,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubDenyListPrunePruneQueueHandlerF7EB599B",
               },
-              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":75,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Deny List\\",\\"region\\":\\"",
+              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":81,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Deny List\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -18345,7 +19084,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Deleted Files\\",\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":75,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Prune Function Health\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Deleted Files\\",\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":81,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Prune Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -22011,7 +22750,18 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesTestConstructHubSourcesNpmJsStagerDLQNotEmpty30787871",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -22022,7 +22772,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -22033,7 +22783,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"ACM Certificate Expiry\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"ACM Certificate Expiry\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -22044,7 +22794,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Endpoint Certificate Expiry\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":60,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Endpoint Certificate Expiry\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -22055,7 +22805,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":60,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":66,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -23672,6 +24422,10 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                 "Value": "true",
               },
               Object {
+                "Name": "AWS_EMF_ENVIRONMENT",
+                "Value": "Local",
+              },
+              Object {
                 "Name": "CODE_ARTIFACT_API_ENDPOINT",
                 "Value": Object {
                   "Fn::Select": Array [
@@ -23739,7 +24493,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:00ca69ab81d988b256f5e2e07a05fe622a9921b4098e4cf5be3316a4797e70c6",
+                  "/aws-cdk/assets:3a443cc6e6f19b1bbe6a93044e3199bc77816b1bf3adf77e479eba6dd5a83c1e",
                 ],
               ],
             },
@@ -24526,7 +25280,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3Bucket50F6A66A",
+            "Ref": "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3Bucket4C2F2EF3",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -24539,7 +25293,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3VersionKeyB5D82404",
+                          "Ref": "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3VersionKey3D46D1CE",
                         },
                       ],
                     },
@@ -24552,7 +25306,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3VersionKeyB5D82404",
+                          "Ref": "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3VersionKey3D46D1CE",
                         },
                       ],
                     },
@@ -24573,13 +25327,13 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               "Ref": "ConstructHubDenyListBucket1B3C2C2E",
             },
             "DENY_LIST_OBJECT_KEY": "deny-list.json",
+            "FUNCTION_NAME": Object {
+              "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+            },
             "LICENSE_LIST_BUCKET_NAME": Object {
               "Ref": "ConstructHubLicenseListBucket9334047F",
             },
             "LICENSE_LIST_OBJECT_KEY": "allowed-licenses.json",
-            "QUEUE_URL": Object {
-              "Ref": "ConstructHubIngestionQueue1AD94CA3",
-            },
           },
         },
         "Handler": "index.handler",
@@ -24926,6 +25680,161 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::IAM::Policy",
     },
+    "ConstructHubSourcesNpmJsStageAndNotify591C0CFA": Object {
+      "DependsOn": Array [
+        "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleDefaultPolicyF7D8382F",
+        "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3Bucket782CBBB7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3VersionKeyFA8D5CDD",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3VersionKeyFA8D5CDD",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "DeadLetterConfig": Object {
+          "TargetArn": Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubSourcesStagerDLQ80BD2600",
+              "Arn",
+            ],
+          },
+        },
+        "Description": "[Test/ConstructHub/Sources/NpmJS-StageAndNotify] Stages tarballs to S3 and notifies ConstructHub",
+        "Environment": Object {
+          "Variables": Object {
+            "AWS_EMF_ENVIRONMENT": "Local",
+            "BUCKET_NAME": Object {
+              "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+            },
+            "QUEUE_URL": Object {
+              "Ref": "ConstructHubIngestionQueue1AD94CA3",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 10024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 300,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubSourcesNpmJsStageAndNotifyEventInvokeConfigF58F658E": Object {
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+        },
+        "MaximumRetryAttempts": 2,
+        "Qualifier": "$LATEST",
+      },
+      "Type": "AWS::Lambda::EventInvokeConfig",
+    },
+    "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleDefaultPolicyF7D8382F": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleDefaultPolicyF7D8382F",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "ConstructHubSourcesNpmJsStagingBucketB286F0E6": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
@@ -24994,6 +25903,108 @@ Direct link to Lambda function: /lambda/home#/functions/",
         },
       },
       "Type": "AWS::S3::BucketPolicy",
+    },
+    "ConstructHubSourcesStagerDLQ80BD2600": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 1209600,
+        "VisibilityTimeout": 900,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubSourcesTestConstructHubSourcesNpmJsStagerDLQNotEmpty30787871": Object {
+      "Properties": Object {
+        "AlarmActions": Array [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The NpmJS package stager is failing - its dead letter queue is not empty/n/nLink to the lambda function: /lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              "/nLink to the dead letter queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "QueueName",
+                ],
+              },
+              "/n/nRunbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+            ],
+          ],
+        },
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Stager/DLQNotEmpty",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": Array [
+          Object {
+            "Expression": "mVisible + mHidden",
+            "Id": "expr_1",
+          },
+          Object {
+            "Id": "mVisible",
+            "MetricStat": Object {
+              "Metric": Object {
+                "Dimensions": Array [
+                  Object {
+                    "Name": "QueueName",
+                    "Value": Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubSourcesStagerDLQ80BD2600",
+                        "QueueName",
+                      ],
+                    },
+                  },
+                ],
+                "MetricName": "ApproximateNumberOfMessagesVisible",
+                "Namespace": "AWS/SQS",
+              },
+              "Period": 300,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+          Object {
+            "Id": "mHidden",
+            "MetricStat": Object {
+              "Metric": Object {
+                "Dimensions": Array [
+                  Object {
+                    "Name": "QueueName",
+                    "Value": Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubSourcesStagerDLQ80BD2600",
+                        "QueueName",
+                      ],
+                    },
+                  },
+                ],
+                "MetricName": "ApproximateNumberOfMessagesNotVisible",
+                "Namespace": "AWS/SQS",
+              },
+              "Period": 300,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
     },
     "ConstructHubWebAppARecord3863FF6C": Object {
       "Properties": Object {
@@ -26538,16 +27549,16 @@ Object {
       "Description": "S3 key for asset version \\"b54cb69349258b9f0b697180533a14fcccbadf6ecc50a9d1e4a358d73c5e9c9f\\"",
       "Type": "String",
     },
-    "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fArtifactHash8AB96C67": Object {
-      "Description": "Artifact hash for asset \\"d413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058f\\"",
+    "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844ArtifactHashACB3437D": Object {
+      "Description": "Artifact hash for asset \\"e173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844\\"",
       "Type": "String",
     },
-    "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3Bucket50F6A66A": Object {
-      "Description": "S3 bucket for asset \\"d413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058f\\"",
+    "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3Bucket4C2F2EF3": Object {
+      "Description": "S3 bucket for asset \\"e173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844\\"",
       "Type": "String",
     },
-    "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3VersionKeyB5D82404": Object {
-      "Description": "S3 key for asset version \\"d413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058f\\"",
+    "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3VersionKey3D46D1CE": Object {
+      "Description": "S3 key for asset version \\"e173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844\\"",
       "Type": "String",
     },
     "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
@@ -26596,6 +27607,18 @@ Object {
     },
     "AssetParametersf3c7a8a5d42ec692b06ff7c8bc838e1a14427fd70d782af0b332ce32985fed39S3VersionKey3CD7B042": Object {
       "Description": "S3 key for asset version \\"f3c7a8a5d42ec692b06ff7c8bc838e1a14427fd70d782af0b332ce32985fed39\\"",
+      "Type": "String",
+    },
+    "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bArtifactHash66FABED5": Object {
+      "Description": "Artifact hash for asset \\"f7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631b\\"",
+      "Type": "String",
+    },
+    "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3Bucket782CBBB7": Object {
+      "Description": "S3 bucket for asset \\"f7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631b\\"",
+      "Type": "String",
+    },
+    "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3VersionKeyFA8D5CDD": Object {
+      "Description": "S3 key for asset version \\"f7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631b\\"",
       "Type": "String",
     },
     "AssetParametersfe317c8530ec9736af6f26432f692374ee80abaf9d89c284cca0ba0c004f5710ArtifactHashE6439A65": Object {
@@ -27025,7 +28048,26 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
               },
-              "?prefix=couchdb-last-transaction-id.2)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":39,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
+              "?prefix=couchdb-last-transaction-id.2)\\\\n[button:Stager](/lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              ")\\\\n[button:Stager DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "QueueName",
+                ],
+              },
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":39,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Follower Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -27037,15 +28079,49 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubSourcesNpmJs15A77D2D",
               },
-              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"RemainingTime\\",{\\"label\\":\\"Remaining Time\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":900}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":39,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Follower\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"RemainingTime\\",{\\"label\\":\\"Remaining Time\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":39,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Stager Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":900}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":45,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Changes\\",\\"region\\":\\"",
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Invocations\\",\\"expression\\":\\"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2, 0)\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              "\\",{\\"label\\":\\"Invocations\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2\\"}],[{\\"label\\":\\"Errors\\",\\"expression\\":\\"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55, 0)\\"}],[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}],[\\"AWS/Lambda\\",\\"Duration\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":45,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Follower\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"LastSeq\\",{\\"label\\":\\"Last Sequence Number\\",\\"stat\\":\\"Maximum\\"}]],\\"yAxis\\":{},\\"period\\":900}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":51,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"ChangeCount\\",{\\"label\\":\\"Change Count\\",\\"stat\\":\\"Sum\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"UnprocessableEntity\\",{\\"label\\":\\"Unprocessable\\",\\"stat\\":\\"Sum\\"}],[{\\"label\\":\\"Lag to npmjs.com\\",\\"expression\\":\\"FILL(m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"NpmJsChangeAge\\",{\\"label\\":\\"Lag to npmjs.com\\",\\"stat\\":\\"Minimum\\",\\"visible\\":false,\\"id\\":\\"m4d6c513faac55be4bca785e8587a9a145b65f5fe675318c9c5c52f3ada197b7b\\"}],[{\\"label\\":\\"Package Version Age\\",\\"expression\\":\\"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4, REPEAT)\\",\\"yAxis\\":\\"right\\"}],[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"PackageVersionAge\\",{\\"label\\":\\"Package Version Age\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"label\\":\\"Milliseconds\\",\\"min\\":0,\\"showUnits\\":false}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":45,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"CouchDB Changes\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageSource/NpmJs/Follower\\",\\"LastSeq\\",{\\"label\\":\\"Last Sequence Number\\",\\"stat\\":\\"Maximum\\"}]],\\"yAxis\\":{},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":51,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Stager Dead-Letter Queue\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"AWS/SQS\\",\\"ApproximateNumberOfMessagesVisible\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Visible Messages\\",\\"stat\\":\\"Maximum\\"}],[\\"AWS/SQS\\",\\"ApproximateAgeOfOldestMessage\\",\\"QueueName\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "QueueName",
+                ],
+              },
+              "\\",{\\"label\\":\\"Oldest Message\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":57,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -27068,7 +28144,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -27080,7 +28156,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
-              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":53,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Errors\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -27105,11 +28181,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ffa500\\",\\"label\\":\\"10 Minutes\\",\\"value\\":600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Quality\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ffa500\\",\\"label\\":\\"10 Minutes\\",\\"value\\":600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":65,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Input Quality\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"stacked\\":true,\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"label\\":\\"Count\\",\\"min\\":0,\\"showUnits\\":false}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":59,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
+              "\\",\\"stacked\\":true,\\"metrics\\":[[{\\"label\\":\\"Invalid Assemblies\\",\\"expression\\":\\"FILL(m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidAssembly\\",{\\"label\\":\\"Invalid Assemblies\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m0c5f10aa73687a21aa44b8985d19311246bca6c2cd1b2256b9f3e78c71e94fa3\\"}],[{\\"label\\":\\"Invalid Tarball\\",\\"expression\\":\\"FILL(m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"InvalidTarball\\",{\\"label\\":\\"Invalid Tarball\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m3a39d9b0bf974255f27dc95e44c8574bdfce2b97e49a7504346a77c5c9f6a3e1\\"}],[{\\"label\\":\\"Ineligible License\\",\\"expression\\":\\"FILL(me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"IneligibleLicense\\",{\\"label\\":\\"Ineligible License\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"me19ae9c3f20ae715e3462f9402684a3817282218f36e69494a60bc251e3435a6\\"}],[{\\"label\\":\\"Mismatched Identity\\",\\"expression\\":\\"FILL(m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"MismatchedIdentityRejections\\",{\\"label\\":\\"Mismatched Identity\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7c1d407f17f8d2452a0bf87ac06fdd032de385a2758254f4192d6e17ed40d44b\\"}],[{\\"label\\":\\"Found License file\\",\\"expression\\":\\"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661, 0)\\"}],[\\"ConstructHub/Ingestion\\",\\"FoundLicenseFile\\",{\\"label\\":\\"Found License file\\",\\"stat\\":\\"Sum\\",\\"visible\\":false,\\"id\\":\\"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661\\"}]],\\"yAxis\\":{\\"left\\":{\\"label\\":\\"Count\\",\\"min\\":0,\\"showUnits\\":false}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":65,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letters\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -27134,7 +28210,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":65,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:primary:State Machine](/states/home#/statemachines/view/",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":71,\\"properties\\":{\\"markdown\\":\\"# Orchestration\\\\n\\\\n[button:primary:State Machine](/states/home#/statemachines/view/",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -27161,7 +28237,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestrationReprocessAllFF2F2455",
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
+              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":73,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"State Machine Executions\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -27193,7 +28269,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":67,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letter Queue\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Duration\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":73,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Dead Letter Queue\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -27218,7 +28294,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":73,\\"properties\\":{\\"markdown\\":\\"# Deny List\\\\n\\\\n[button:primary:Deny List Object](/s3/object/",
+              "\\",{\\"label\\":\\"Oldest Message Age\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff7f0e\\",\\"label\\":\\"10 days\\",\\"value\\":864000,\\"yAxis\\":\\"right\\"},{\\"color\\":\\"#ff0000\\",\\"label\\":\\"14 days (DLQ Retention)\\",\\"value\\":1209600,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":79,\\"properties\\":{\\"markdown\\":\\"# Deny List\\\\n\\\\n[button:primary:Deny List Object](/s3/object/",
               Object {
                 "Ref": "ConstructHubDenyListBucket1B3C2C2E",
               },
@@ -27249,7 +28325,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "ConstructHubDenyListPrunePruneQueueHandlerF7EB599B",
               },
-              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":75,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Deny List\\",\\"region\\":\\"",
+              "/log-events)\\"}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":0,\\"y\\":81,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Deny List\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -27260,7 +28336,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Deleted Files\\",\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":75,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Prune Function Health\\",\\"region\\":\\"",
+              "\\",{\\"label\\":\\"Deleted Files\\",\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}},\\"period\\":300}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":81,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Prune Function Health\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -29454,7 +30530,18 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesTestConstructHubSourcesNpmJsStagerDLQNotEmpty30787871",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -29465,7 +30552,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -29476,7 +30563,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -31469,6 +32556,10 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                 "Value": "true",
               },
               Object {
+                "Name": "AWS_EMF_ENVIRONMENT",
+                "Value": "Local",
+              },
+              Object {
                 "Name": "CODE_ARTIFACT_DOMAIN_NAME",
                 "Value": Object {
                   "Fn::GetAtt": Array [
@@ -31512,7 +32603,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:00ca69ab81d988b256f5e2e07a05fe622a9921b4098e4cf5be3316a4797e70c6",
+                  "/aws-cdk/assets:3a443cc6e6f19b1bbe6a93044e3199bc77816b1bf3adf77e479eba6dd5a83c1e",
                 ],
               ],
             },
@@ -32299,7 +33390,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3Bucket50F6A66A",
+            "Ref": "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3Bucket4C2F2EF3",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -32312,7 +33403,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3VersionKeyB5D82404",
+                          "Ref": "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3VersionKey3D46D1CE",
                         },
                       ],
                     },
@@ -32325,7 +33416,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersd413c37418c174246ba131e347d5a694adba659152eaa0715a11aa1a5a3b058fS3VersionKeyB5D82404",
+                          "Ref": "AssetParameterse173c687bc5505cf30b8dec7703e757c7edc265a53713915bea89f98cf3ae844S3VersionKey3D46D1CE",
                         },
                       ],
                     },
@@ -32346,13 +33437,13 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               "Ref": "ConstructHubDenyListBucket1B3C2C2E",
             },
             "DENY_LIST_OBJECT_KEY": "deny-list.json",
+            "FUNCTION_NAME": Object {
+              "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+            },
             "LICENSE_LIST_BUCKET_NAME": Object {
               "Ref": "ConstructHubLicenseListBucket9334047F",
             },
             "LICENSE_LIST_OBJECT_KEY": "allowed-licenses.json",
-            "QUEUE_URL": Object {
-              "Ref": "ConstructHubIngestionQueue1AD94CA3",
-            },
           },
         },
         "Handler": "index.handler",
@@ -32699,6 +33790,161 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::IAM::Policy",
     },
+    "ConstructHubSourcesNpmJsStageAndNotify591C0CFA": Object {
+      "DependsOn": Array [
+        "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleDefaultPolicyF7D8382F",
+        "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3Bucket782CBBB7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3VersionKeyFA8D5CDD",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersf7708713b884447caf6dee90b130ee303d7bd087c88e2afa61734ebec6ef631bS3VersionKeyFA8D5CDD",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "DeadLetterConfig": Object {
+          "TargetArn": Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubSourcesStagerDLQ80BD2600",
+              "Arn",
+            ],
+          },
+        },
+        "Description": "[Test/ConstructHub/Sources/NpmJS-StageAndNotify] Stages tarballs to S3 and notifies ConstructHub",
+        "Environment": Object {
+          "Variables": Object {
+            "AWS_EMF_ENVIRONMENT": "Local",
+            "BUCKET_NAME": Object {
+              "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+            },
+            "QUEUE_URL": Object {
+              "Ref": "ConstructHubIngestionQueue1AD94CA3",
+            },
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 10024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 300,
+        "TracingConfig": Object {
+          "Mode": "Active",
+        },
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubSourcesNpmJsStageAndNotifyEventInvokeConfigF58F658E": Object {
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+        },
+        "MaximumRetryAttempts": 2,
+        "Qualifier": "$LATEST",
+      },
+      "Type": "AWS::Lambda::EventInvokeConfig",
+    },
+    "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleDefaultPolicyF7D8382F": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sqs:SendMessage",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "xray:PutTraceSegments",
+                "xray:PutTelemetryRecords",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleDefaultPolicyF7D8382F",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "ConstructHubSourcesNpmJsStagingBucketB286F0E6": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
@@ -32767,6 +34013,108 @@ Direct link to Lambda function: /lambda/home#/functions/",
         },
       },
       "Type": "AWS::S3::BucketPolicy",
+    },
+    "ConstructHubSourcesStagerDLQ80BD2600": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "KmsMasterKeyId": "alias/aws/sqs",
+        "MessageRetentionPeriod": 1209600,
+        "VisibilityTimeout": 900,
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubSourcesTestConstructHubSourcesNpmJsStagerDLQNotEmpty30787871": Object {
+      "Properties": Object {
+        "AlarmActions": Array [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The NpmJS package stager is failing - its dead letter queue is not empty/n/nLink to the lambda function: /lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubSourcesNpmJsStageAndNotify591C0CFA",
+              },
+              "/nLink to the dead letter queue: /sqs/v2/home#/queues/https%3A%2F%2Fsqs.",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ".amazonaws.com%2F",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              "%2F",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesStagerDLQ80BD2600",
+                  "QueueName",
+                ],
+              },
+              "/n/nRunbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+            ],
+          ],
+        },
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Stager/DLQNotEmpty",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": Array [
+          Object {
+            "Expression": "mVisible + mHidden",
+            "Id": "expr_1",
+          },
+          Object {
+            "Id": "mVisible",
+            "MetricStat": Object {
+              "Metric": Object {
+                "Dimensions": Array [
+                  Object {
+                    "Name": "QueueName",
+                    "Value": Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubSourcesStagerDLQ80BD2600",
+                        "QueueName",
+                      ],
+                    },
+                  },
+                ],
+                "MetricName": "ApproximateNumberOfMessagesVisible",
+                "Namespace": "AWS/SQS",
+              },
+              "Period": 300,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+          Object {
+            "Id": "mHidden",
+            "MetricStat": Object {
+              "Metric": Object {
+                "Dimensions": Array [
+                  Object {
+                    "Name": "QueueName",
+                    "Value": Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubSourcesStagerDLQ80BD2600",
+                        "QueueName",
+                      ],
+                    },
+                  },
+                ],
+                "MetricName": "ApproximateNumberOfMessagesNotVisible",
+                "Namespace": "AWS/SQS",
+              },
+              "Period": 300,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
     },
     "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B": Object {
       "Properties": Object {

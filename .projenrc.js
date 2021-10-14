@@ -409,7 +409,8 @@ function newEcsTask(entrypoint) {
   sh.line('#!/bin/bash');
   sh.line(`# ${FileBase.PROJEN_MARKER}`);
   sh.line('exec node <<-EOF');
-  sh.line('const { env } = require(\'process\');');
+  sh.line('const os = require(\'os\');');
+  sh.line('const { env, exit } = require(\'process\');');
   sh.line('const { StepFunctions } = require(\'aws-sdk\');');
   sh.line('const { handler } = require(\'/bundle/index.js\');');
   sh.line('const sfn = new StepFunctions();');
@@ -419,7 +420,14 @@ function newEcsTask(entrypoint) {
   // A heartbeat is sent every minute to StepFunctions
   sh.open('const sendHeartbeat = () => sfn.sendTaskHeartbeat({ taskToken }).promise().then(');
   sh.line('() => console.log(\'Successfully sent task heartbeat!\'),');
-  sh.line('(reason) => console.error(\'Failed to send task heartbeat:\', reason),');
+  sh.open('(reason) => {');
+  sh.line('console.error(\'Failed to send task heartbeat:\', reason);');
+  // If this failed on TaskTimedOut, we will exit the VM right away, as the requesting StepFunctions execution is no longer
+  // interested in the result of this run. This avoids keeping left-over tasks lying around "forever".
+  sh.open('if (reason.code === \'TaskTimedOut\') {');
+  sh.line('exit(-(os.constants.errno.ETIMEDOUT || 1));');
+  sh.close('}');
+  sh.close('},');
   sh.close(');');
   // ... immediately at task start
   sh.line('sendHeartbeat();');

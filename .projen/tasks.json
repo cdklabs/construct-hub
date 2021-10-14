@@ -94,6 +94,9 @@
           "spawn": "bundle:npm-js-follower"
         },
         {
+          "spawn": "bundle:stage-and-notify"
+        },
+        {
           "spawn": "bundle:handler"
         },
         {
@@ -336,6 +339,9 @@
           "spawn": "bundle:npm-js-follower"
         },
         {
+          "spawn": "bundle:stage-and-notify"
+        },
+        {
           "spawn": "bundle:handler"
         },
         {
@@ -525,6 +531,15 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/package-sources/npmjs/npm-js-follower.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/npm-js-follower.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:stage-and-notify": {
+      "name": "bundle:stage-and-notify",
+      "description": "Create an AWS Lambda bundle from src/package-sources/npmjs/stage-and-notify.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/stage-and-notify.bundle/index.js\" --external:aws-sdk --sourcemap"
         }
       ]
     },
