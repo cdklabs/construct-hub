@@ -24,6 +24,7 @@ export async function handler(event: any, context: Context) {
   console.log(JSON.stringify(event, null, 2));
 
   const BUCKET_NAME = requireEnv('BUCKET_NAME');
+  const STATS_KEY = requireEnv('STATS_KEY');
 
   console.log('Loading the catalog...');
   const catalogData: AWS.S3.GetObjectOutput | undefined = await aws.s3()
@@ -33,7 +34,7 @@ export async function handler(event: any, context: Context) {
       : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
 
   if (!catalogData?.Body) {
-    return Promise.reject('No catalog data found.');
+    throw new Error('No catalog data found.');
   }
 
   const currentDate = new Date().toISOString();
@@ -64,7 +65,7 @@ export async function handler(event: any, context: Context) {
   // Upload the result to S3 and exit.
   return aws.s3().putObject({
     Bucket: BUCKET_NAME,
-    Key: constants.STATS_KEY,
+    Key: STATS_KEY,
     Body: JSON.stringify(stats, null, 2),
     ContentType: 'application/json',
     CacheControl: 'public, max-age=300', // Expire from cache after 5 minutes

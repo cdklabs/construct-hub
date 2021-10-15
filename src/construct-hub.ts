@@ -205,11 +205,17 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     const fetchPackageStats = props.fetchPackageStats ?? (
       props.packageSources ? false : true
     );
-    const packageStats = new PackageStats(this, 'Stats', {
-      bucket: packageData,
-      monitoring,
-      logRetention: props.logRetention,
-    });
+
+    let packageStats: PackageStats | undefined;
+    const statsKey = 'stats.json';
+    if (fetchPackageStats) {
+      packageStats = new PackageStats(this, 'Stats', {
+        bucket: packageData,
+        monitoring,
+        logRetention: props.logRetention,
+        objectKey: statsKey,
+      });
+    }
 
     const orchestration = new Orchestration(this, 'Orchestration', {
       bucket: packageData,
@@ -220,7 +226,6 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       vpc,
       vpcEndpoints,
       vpcSubnets,
-      packageStats: fetchPackageStats,
     });
 
     // rebuild the catalog when the deny list changes.
@@ -283,7 +288,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       packageLinks: props.packageLinks,
       packageTags: packageTagsSerialized,
       featuredPackages: props.featuredPackages,
-      packageStats: fetchPackageStats,
+      packageStats,
     });
   }
 

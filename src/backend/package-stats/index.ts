@@ -11,10 +11,12 @@ import { RUNBOOK_URL } from '../../runbook-url';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { PackageStats as Handler } from './package-stats';
 
+/**
+ * Props for `PackageStats`.
+ */
 export interface PackageStatsProps {
   /**
-   * The package store bucket, which should include both the
-   * catalog and stats.
+   * The bucket which should include the package stats.
    */
   readonly bucket: IBucket;
 
@@ -29,24 +31,52 @@ export interface PackageStatsProps {
    * @default RetentionDays.TEN_YEARS
    */
   readonly logRetention?: RetentionDays;
+
+  /**
+   * How frequently should the stats be updated?
+   *
+   * NPM updates their download stats once a day.
+   *
+   * @default - 1 day
+   */
+  readonly updatePeriod?: Duration;
+
+  /**
+   * The key of the object storing the package stats.
+   */
+  readonly objectKey: string;
 }
 
 /**
  * Builds or re-builds the `stats.json` object in the designated bucket.
  */
 export class PackageStats extends Construct {
+  /**
+   * The bucket which should include the package stats.
+   */
   public readonly bucket: IBucket;
-  public readonly function: IFunction;
+
+  /**
+   * The Lambda function that periodically updates stats.json.
+   */
+  public readonly handler: IFunction;
+
+  /**
+   * The key of the object storing the package stats.
+   */
+  public readonly statsKey: string;
 
   public constructor(scope: Construct, id: string, props: PackageStatsProps) {
     super(scope, id);
 
     this.bucket = props.bucket;
+    this.statsKey = props.objectKey;
 
-    this.function = new Handler(this, 'Default', {
+    this.handler = new Handler(this, 'Default', {
       description: `Creates the stats.json object in ${props.bucket.bucketName}`,
       environment: {
         BUCKET_NAME: this.bucket.bucketName,
+        STATS_KEY: props.objectKey,
       },
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 256,
@@ -55,21 +85,22 @@ export class PackageStats extends Construct {
       tracing: Tracing.PASS_THROUGH,
     });
 
+    const updatePeriod = props.updatePeriod ?? Duration.days(1);
     const rule = new events.Rule(this, 'Rule', {
-      schedule: events.Schedule.cron({ hour: '6', minute: '0' }), // daily at 6am in some timezone
+      schedule: events.Schedule.rate(updatePeriod),
     });
-    rule.addTarget(new targets.LambdaFunction(this.function));
+    rule.addTarget(new targets.LambdaFunction(this.handler));
 
-    this.bucket.grantReadWrite(this.function);
+    this.bucket.grantReadWrite(this.handler);
 
-    const failureAlarm = this.function.metricErrors().createAlarm(scope, 'PackageStats/Failures', {
+    const failureAlarm = this.handler.metricErrors().createAlarm(scope, 'PackageStats/Failures', {
       alarmName: `${scope.node.path}/PackageStats/Failures`,
       alarmDescription: [
         'The package stats function failed!',
         '',
         `RunBook: ${RUNBOOK_URL}`,
         '',
-        `Direct link to Lambda function: ${lambdaFunctionUrl(this.function)}`,
+        `Direct link to Lambda function: ${lambdaFunctionUrl(this.handler)}`,
       ].join('\n'),
       comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
       evaluationPeriods: 1,
@@ -85,8 +116,8 @@ export class PackageStats extends Construct {
       statistic: Statistic.MAXIMUM,
       ...opts,
       dimensions: {
-        ['ServiceName']: this.function.functionName,
-        ['LogGroup']: this.function.functionName,
+        ['ServiceName']: this.handler.functionName,
+        ['LogGroup']: this.handler.functionName,
         ['ServiceType']: 'AWS::Lambda::Function',
       },
       metricName: MetricName.REGISTERED_PACKAGES_WITH_STATS,

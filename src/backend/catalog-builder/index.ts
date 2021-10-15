@@ -8,6 +8,9 @@ import { Monitoring } from '../../monitoring';
 import { DenyList } from '../deny-list';
 import { CatalogBuilder as Handler } from './catalog-builder';
 
+/**
+ * Props for `CatalogBuilder`.
+ */
 export interface CatalogBuilderProps {
   /**
    * The package store bucket.
@@ -62,8 +65,17 @@ export class CatalogBuilder extends Construct {
   }
 }
 
+/**
+ * Data format for catalog object.
+ */
 export interface CatalogModel {
+  /**
+   * Packages in the catalog.
+   */
   readonly packages: PackageInfo[];
+  /**
+   * Date the catalog was last updated, in ISO 8601 format.
+   */
   readonly updated: string;
 }
 

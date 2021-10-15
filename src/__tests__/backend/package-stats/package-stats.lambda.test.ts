@@ -10,10 +10,12 @@ import * as aws from '../../../backend/shared/aws.lambda-shared';
 import * as constants from '../../../backend/shared/constants';
 
 let mockBucketName: string | undefined;
+let mockStatsKey: string | undefined;
 jest.mock('got');
 
 beforeEach((done) => {
   process.env.BUCKET_NAME = mockBucketName = randomBytes(16).toString('base64');
+  process.env.STATS_KEY = mockStatsKey = 'my-stats.json';
   AWSMock.setSDKInstance(AWS);
   done();
 });
@@ -22,6 +24,7 @@ afterEach((done) => {
   AWSMock.restore();
   aws.reset();
   process.env.BUCKET_NAME = mockBucketName = undefined;
+  process.env.STATS_KEY = mockStatsKey = undefined;
   done();
 });
 
@@ -60,7 +63,7 @@ test('full build', () => {
 
     if (req.Key.endsWith(constants.CATALOG_KEY)) {
       return cb(null, { Body: JSON.stringify(initialCatalog) });
-    } else if (req.Key.endsWith(constants.STATS_KEY)) {
+    } else if (mockStatsKey && req.Key.endsWith(mockStatsKey)) {
       // suppose we are building for the first time
       return cb(new NoSuchKeyError());
     } else {
@@ -93,7 +96,7 @@ test('full build', () => {
   AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
     try {
       expect(req.Bucket).toBe(mockBucketName);
-      expect(req.Key).toBe(constants.STATS_KEY);
+      expect(req.Key).toBe(mockStatsKey);
       expect(req.ContentType).toBe('application/json');
       expect(req.Metadata).toHaveProperty('Package-Stats-Count', '2');
       const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
@@ -139,7 +142,7 @@ test('errors if no catalog found', () => {
   });
 
   // THEN
-  return expect(handler({}, { /* context */ } as any)).rejects.toMatch(/No catalog data found/);
+  return expect(handler({}, { /* context */ } as any)).rejects.toThrow(/No catalog data found/);
 });
 
 type Response<T> = (err: AWS.AWSError | null, data?: T) => void;

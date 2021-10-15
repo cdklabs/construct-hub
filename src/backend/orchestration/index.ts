@@ -41,8 +41,7 @@ const THROTTLE_RETRY_POLICY = { backoffRate: 1.1, interval: Duration.minutes(1),
 
 export interface OrchestrationProps {
   /**
-   * The bucket in which to source assemblies to transliterate, and in which
-   * catalog.json and stats.json are stored.
+   * The bucket in which to source assemblies to transliterate.
    */
   readonly bucket: IBucket;
 
@@ -82,12 +81,6 @@ export interface OrchestrationProps {
    * The deny list.
    */
   readonly denyList: DenyList;
-
-  /**
-   * Create a backend component for fetching package stats and saving them
-   * to the object "stats.json" in `bucket`.
-   */
-  readonly packageStats: boolean;
 }
 
 /**
@@ -122,11 +115,6 @@ export class Orchestration extends Construct {
    * The function that builds the catalog.
    */
   public readonly catalogBuilder: IFunction;
-
-  /**
-   * The function that fetches all package download metrics.
-   */
-  public readonly packageStats?: IFunction;
 
   /**
    * The ECS cluster used to run tasks.

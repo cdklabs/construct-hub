@@ -7,6 +7,8 @@ import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
 import { CfnOutput, Construct } from '@aws-cdk/core';
 import { Domain } from '../api';
+import { PackageStats } from '../backend/package-stats';
+import { CATALOG_KEY } from '../backend/shared/constants';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
 import { CacheInvalidator } from './cache-invalidator';
@@ -88,6 +90,11 @@ export interface WebAppProps extends WebappConfigProps {
    * The bucket containing package data.
    */
   readonly packageData: s3.Bucket;
+
+  /**
+   * Manages the `stats.json` file object.
+   */
+  readonly packageStats?: PackageStats;
 }
 
 export class WebApp extends Construct {
@@ -133,8 +140,13 @@ export class WebApp extends Construct {
 
     const jsiiObjOrigin = new origins.S3Origin(props.packageData);
     this.distribution.addBehavior('/data/*', jsiiObjOrigin, behaviorOptions);
-    this.distribution.addBehavior('/catalog.json', jsiiObjOrigin, behaviorOptions);
-    this.distribution.addBehavior('/stats.json', jsiiObjOrigin, behaviorOptions);
+    this.distribution.addBehavior(`/${CATALOG_KEY}`, jsiiObjOrigin, behaviorOptions);
+
+    if (props.packageStats) {
+      const packageStats = props.packageStats;
+      const statsObjOrigin = new origins.S3Origin(packageStats.bucket);
+      this.distribution.addBehavior(`/${packageStats.statsKey}`, statsObjOrigin, behaviorOptions);
+    }
 
     new CacheInvalidator(this, 'CacheInvalidator', { bucket: props.packageData, distribution: this.distribution });
 
@@ -180,7 +192,7 @@ export class WebApp extends Construct {
       packageLinks: props.packageLinks,
       packageTags: props.packageTags,
       featuredPackages: props.featuredPackages,
-      packageStats: props.packageStats,
+      showPackageStats: props.packageStats !== undefined,
     });
 
     new s3deploy.BucketDeployment(this, 'DeployWebsiteConfig', {

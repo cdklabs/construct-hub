@@ -42,10 +42,11 @@ export interface WebappConfigProps {
   readonly featuredPackages?: FeaturedPackages;
 
   /**
-   * Whether to display package stats from the `stats.json` on
+   * Whether to display package stats from `stats.json` on
    * package cards.
+   * @default true
    */
-  readonly packageStats: boolean;
+  readonly showPackageStats?: boolean;
 }
 
 export class WebappConfig {
@@ -62,7 +63,7 @@ export class WebappConfig {
       packageLinks: this.packageLinks,
       packageTags: this.packageTags,
       featuredPackages: this.featuredPackages,
-      packageStats: this.props.packageStats,
+      packageStats: this.props.showPackageStats ?? true,
     };
   }
 
