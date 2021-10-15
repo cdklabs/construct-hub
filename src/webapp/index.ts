@@ -141,11 +141,8 @@ export class WebApp extends Construct {
     const jsiiObjOrigin = new origins.S3Origin(props.packageData);
     this.distribution.addBehavior('/data/*', jsiiObjOrigin, behaviorOptions);
     this.distribution.addBehavior(`/${CATALOG_KEY}`, jsiiObjOrigin, behaviorOptions);
-
     if (props.packageStats) {
-      const packageStats = props.packageStats;
-      const statsObjOrigin = new origins.S3Origin(packageStats.bucket);
-      this.distribution.addBehavior(`/${packageStats.statsKey}`, statsObjOrigin, behaviorOptions);
+      this.distribution.addBehavior(`/${props.packageStats.statsKey}`, jsiiObjOrigin, behaviorOptions);
     }
 
     new CacheInvalidator(this, 'CacheInvalidator', { bucket: props.packageData, distribution: this.distribution });
@@ -192,7 +189,7 @@ export class WebApp extends Construct {
       packageLinks: props.packageLinks,
       packageTags: props.packageTags,
       featuredPackages: props.featuredPackages,
-      showPackageStats: props.packageStats !== undefined,
+      showPackageStats: props.showPackageStats ?? props.packageStats !== undefined,
     });
 
     new s3deploy.BucketDeployment(this, 'DeployWebsiteConfig', {

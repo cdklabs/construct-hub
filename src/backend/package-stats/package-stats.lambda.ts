@@ -1,10 +1,8 @@
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
-import type { AWSError, S3 } from 'aws-sdk';
 import got from 'got';
-import { CatalogModel } from '../catalog-builder';
+import { CatalogClient } from '../catalog-builder/client.lambda-shared';
 import * as aws from '../shared/aws.lambda-shared';
-import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { NpmDownloadsClient, NpmDownloadsEntry, NpmDownloadsPeriod } from './npm-downloads.lambda-shared';
@@ -23,27 +21,21 @@ import { NpmDownloadsClient, NpmDownloadsEntry, NpmDownloadsPeriod } from './npm
 export async function handler(event: any, context: Context) {
   console.log(JSON.stringify(event, null, 2));
 
-  const BUCKET_NAME = requireEnv('BUCKET_NAME');
-  const STATS_KEY = requireEnv('STATS_KEY');
+  const STATS_BUCKET_NAME = requireEnv('STATS_BUCKET_NAME');
+  const STATS_OBJECT_KEY = requireEnv('STATS_OBJECT_KEY');
 
-  console.log('Loading the catalog...');
-  const catalogData: AWS.S3.GetObjectOutput | undefined = await aws.s3()
-    .getObject({ Bucket: BUCKET_NAME, Key: constants.CATALOG_KEY }).promise()
-    .catch((err: AWSError) => err.code !== 'NoSuchKey'
-      ? Promise.reject(err)
-      : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
-
-  if (!catalogData?.Body) {
-    throw new Error('No catalog data found.');
+  const catalogClient = await CatalogClient.newClient();
+  const catalog = catalogClient.packages;
+  if (catalog.length === 0) {
+    throw new Error('No packages found.');
   }
 
   const currentDate = new Date().toISOString();
   const stats: PackageStatsOutput = { packages: {}, updated: currentDate };
   const npmClient = new NpmDownloadsClient(got);
-  const catalog: CatalogModel = JSON.parse(catalogData.Body.toString('utf-8'));
 
   // remove duplicates from different major versions
-  const packageNames = [...new Set(catalog.packages.map(pkg => pkg.name)).values()];
+  const packageNames = [...new Set(catalog.map(pkg => pkg.name)).values()];
 
   console.log(`Retrieving download stats for all ${packageNames.length} registered packages: [${packageNames.join(',')}].`);
   const npmDownloads = await npmClient.getDownloads(packageNames, {
@@ -56,16 +48,20 @@ export async function handler(event: any, context: Context) {
   }
 
   // Update metrics
-  console.log(`There are now ${Object.keys(stats.packages).length} packages with NPM stats stored.`);
+  const statsCount = Object.keys(stats.packages).length;
+  console.log(`There are now ${statsCount} packages with NPM stats stored.`);
   await metricScope((metrics) => async () => {
+    // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73
+    metrics.setDimensions();
+
     metrics.setNamespace(METRICS_NAMESPACE);
-    metrics.putMetric(MetricName.REGISTERED_PACKAGES_WITH_STATS, catalog.packages.length, Unit.Count);
+    metrics.putMetric(MetricName.REGISTERED_PACKAGES_WITH_STATS, statsCount, Unit.Count);
   })();
 
   // Upload the result to S3 and exit.
   return aws.s3().putObject({
-    Bucket: BUCKET_NAME,
-    Key: STATS_KEY,
+    Bucket: STATS_BUCKET_NAME,
+    Key: STATS_OBJECT_KEY,
     Body: JSON.stringify(stats, null, 2),
     ContentType: 'application/json',
     CacheControl: 'public, max-age=300', // Expire from cache after 5 minutes
@@ -73,7 +69,7 @@ export async function handler(event: any, context: Context) {
       'Lambda-Log-Group': context.logGroupName,
       'Lambda-Log-Stream': context.logStreamName,
       'Lambda-Run-Id': context.awsRequestId,
-      'Package-Stats-Count': `${Object.keys(stats.packages).length}`,
+      'Package-Stats-Count': `${statsCount}`,
     },
   }).promise();
 }

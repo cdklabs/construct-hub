@@ -7,15 +7,18 @@ import type { Got } from 'got';
 
 import { handler } from '../../../backend/package-stats/package-stats.lambda';
 import * as aws from '../../../backend/shared/aws.lambda-shared';
-import * as constants from '../../../backend/shared/constants';
 
+let mockCatalogBucket: string | undefined;
+let mockCatalogKey: string | undefined;
 let mockBucketName: string | undefined;
 let mockStatsKey: string | undefined;
 jest.mock('got');
 
 beforeEach((done) => {
-  process.env.BUCKET_NAME = mockBucketName = randomBytes(16).toString('base64');
-  process.env.STATS_KEY = mockStatsKey = 'my-stats.json';
+  process.env.CATALOG_BUCKET_NAME = mockCatalogBucket = randomBytes(16).toString('base64');
+  process.env.CATALOG_OBJECT_KEY = mockCatalogKey = 'my-catalog.json';
+  process.env.STATS_BUCKET_NAME = mockBucketName = randomBytes(16).toString('base64');
+  process.env.STATS_OBJECT_KEY = mockStatsKey = 'my-stats.json';
   AWSMock.setSDKInstance(AWS);
   done();
 });
@@ -23,8 +26,10 @@ beforeEach((done) => {
 afterEach((done) => {
   AWSMock.restore();
   aws.reset();
-  process.env.BUCKET_NAME = mockBucketName = undefined;
-  process.env.STATS_KEY = mockStatsKey = undefined;
+  process.env.CATALOG_BUCKET_NAME = mockCatalogBucket = undefined;
+  process.env.CATALOG_OBJECT_KEY = mockCatalogKey = undefined;
+  process.env.STATS_BUCKET_NAME = mockBucketName = undefined;
+  process.env.STATS_OBJECT_KEY = mockStatsKey = undefined;
   done();
 });
 
@@ -56,14 +61,14 @@ test('full build', () => {
   // GIVEN
   AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
     try {
-      expect(req.Bucket).toBe(mockBucketName);
+      expect(req.Bucket).toBe(mockCatalogBucket);
     } catch (e) {
       return cb(e as AWSError);
     }
 
-    if (req.Key.endsWith(constants.CATALOG_KEY)) {
+    if (req.Key === mockCatalogKey) {
       return cb(null, { Body: JSON.stringify(initialCatalog) });
-    } else if (mockStatsKey && req.Key.endsWith(mockStatsKey)) {
+    } else if (req.Key === mockStatsKey) {
       // suppose we are building for the first time
       return cb(new NoSuchKeyError());
     } else {
@@ -129,12 +134,12 @@ test('full build', () => {
   return expect(result).resolves.toBe(mockPutObjectResult);
 });
 
-test('errors if no catalog found', () => {
+test('errors if no catalog found', async () => {
   // GIVEN
   AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
     try {
-      expect(req.Bucket).toBe(mockBucketName);
-      expect(req.Key.endsWith(constants.CATALOG_KEY));
+      expect(req.Bucket).toBe(mockCatalogBucket);
+      expect(req.Key).toBe(mockCatalogKey);
       return cb(new NoSuchKeyError());
     } catch (e) {
       return cb(e as AWSError);
@@ -142,7 +147,7 @@ test('errors if no catalog found', () => {
   });
 
   // THEN
-  return expect(handler({}, { /* context */ } as any)).rejects.toThrow(/No catalog data found/);
+  return expect(handler({}, { /* context */ } as any)).rejects.toThrow(/No catalog was found/);
 });
 
 type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
@@ -150,6 +155,7 @@ type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
 class NoSuchKeyError extends Error implements AWS.AWSError {
   public code = 'NoSuchKey';
   public time = new Date();
+  public message = 'NoSuchKey';
 
   public retryable?: boolean | undefined;
   public statusCode?: number | undefined;

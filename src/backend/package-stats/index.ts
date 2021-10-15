@@ -8,6 +8,7 @@ import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { RUNBOOK_URL } from '../../runbook-url';
+import { CATALOG_KEY } from '../shared/constants';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { PackageStats as Handler } from './package-stats';
 
@@ -16,7 +17,8 @@ import { PackageStats as Handler } from './package-stats';
  */
 export interface PackageStatsProps {
   /**
-   * The bucket which should include the package stats.
+   * The package store bucket, which should include both the
+   * catalog and stats.
    */
   readonly bucket: IBucket;
 
@@ -52,7 +54,8 @@ export interface PackageStatsProps {
  */
 export class PackageStats extends Construct {
   /**
-   * The bucket which should include the package stats.
+   * The package store bucket, which should include both the
+   * catalog and stats.
    */
   public readonly bucket: IBucket;
 
@@ -75,8 +78,10 @@ export class PackageStats extends Construct {
     this.handler = new Handler(this, 'Default', {
       description: `Creates the stats.json object in ${props.bucket.bucketName}`,
       environment: {
-        BUCKET_NAME: this.bucket.bucketName,
-        STATS_KEY: props.objectKey,
+        CATALOG_BUCKET_NAME: this.bucket.bucketName,
+        CATALOG_OBJECT_KEY: CATALOG_KEY,
+        STATS_BUCKET_NAME: this.bucket.bucketName,
+        STATS_OBJECT_KEY: props.objectKey,
       },
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 256,
@@ -115,11 +120,6 @@ export class PackageStats extends Construct {
       period: Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
       ...opts,
-      dimensions: {
-        ['ServiceName']: this.handler.functionName,
-        ['LogGroup']: this.handler.functionName,
-        ['ServiceType']: 'AWS::Lambda::Function',
-      },
       metricName: MetricName.REGISTERED_PACKAGES_WITH_STATS,
       namespace: METRICS_NAMESPACE,
     });

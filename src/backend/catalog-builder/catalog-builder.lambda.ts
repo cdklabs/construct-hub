@@ -88,7 +88,7 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
 
   // Build the final data package...
   console.log('Consolidating catalog...');
-  const catalog = { packages: new Array<PackageInfo>(), updated: new Date().toISOString() };
+  const catalog: CatalogModel = { packages: new Array<PackageInfo>(), updated: new Date().toISOString() };
   for (const majors of packages.values()) {
     for (const pkg of majors.values()) {
       catalog.packages.push(pkg);
