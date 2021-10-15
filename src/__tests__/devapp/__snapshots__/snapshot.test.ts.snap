@@ -1784,7 +1784,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3Bucket7EEA4574
+          Ref: AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3Bucket639E8849
         S3Key:
           Fn::Join:
             - ""
@@ -1792,12 +1792,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3VersionKey9C0E59C6
+                      - Ref: AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3VersionKey02BFFB24
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3VersionKey9C0E59C6
+                      - Ref: AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3VersionKey02BFFB24
       Role:
         Fn::GetAtt:
           - ConstructHubStatsServiceRole48DCA379
@@ -4132,11 +4132,8 @@ Resources:
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Packages with
               stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f,
-              REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats","LogGroup","'
-            - Ref: ConstructHubStats61DB07B1
-            - '","ServiceName","'
-            - Ref: ConstructHubStats61DB07B1
-            - '","ServiceType","AWS::Lambda::Function",{"label":"Packages with
+              REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages
+              with
               stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":83,"properties":{"view":"timeSeries","title":"Invocation
               Duration","region":"'
             - Ref: AWS::Region
@@ -5020,18 +5017,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "fe317c8530ec9736af6f26432f692374ee80abaf9d89c284cca0ba0c004f5710"
-  AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3Bucket7EEA4574:
+  AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3Bucket639E8849:
     Type: String
     Description: S3 bucket for asset
-      "458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578"
-  AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3VersionKey9C0E59C6:
+      "9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17"
+  AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3VersionKey02BFFB24:
     Type: String
     Description: S3 key for asset version
-      "458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578"
-  AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578ArtifactHash8A210B68:
+      "9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17"
+  AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17ArtifactHashCFF1D102:
     Type: String
     Description: Artifact hash for asset
-      "458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578"
+      "9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17"
   AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3Bucket4D46ABB5:
     Type: String
     Description: S3 bucket for asset

@@ -141,18 +141,6 @@ Object {
       "Description": "S3 key for asset version \\"41af655bf242608677fb1b76a2fc7928bf1be45ab323eacd1bd5002412949214\\"",
       "Type": "String",
     },
-    "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578ArtifactHash8A210B68": Object {
-      "Description": "Artifact hash for asset \\"458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578\\"",
-      "Type": "String",
-    },
-    "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3Bucket7EEA4574": Object {
-      "Description": "S3 bucket for asset \\"458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578\\"",
-      "Type": "String",
-    },
-    "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3VersionKey9C0E59C6": Object {
-      "Description": "S3 key for asset version \\"458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578\\"",
-      "Type": "String",
-    },
     "AssetParameters4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422ArtifactHashF7ACDAC0": Object {
       "Description": "Artifact hash for asset \\"4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422\\"",
       "Type": "String",
@@ -199,6 +187,18 @@ Object {
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064S3VersionKey5B081B37": Object {
       "Description": "S3 key for asset version \\"8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064\\"",
+      "Type": "String",
+    },
+    "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17ArtifactHashCFF1D102": Object {
+      "Description": "Artifact hash for asset \\"9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17\\"",
+      "Type": "String",
+    },
+    "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3Bucket639E8849": Object {
+      "Description": "S3 bucket for asset \\"9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17\\"",
+      "Type": "String",
+    },
+    "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3VersionKey02BFFB24": Object {
+      "Description": "S3 key for asset version \\"9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17\\"",
       "Type": "String",
     },
     "AssetParametersa9c1126f433d4d7214e1150e73f618dcbf66cfface99922057bbad43792f8baaArtifactHash8FB5D501": Object {
@@ -927,15 +927,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[{\\"label\\":\\"Packages with stats\\",\\"expression\\":\\"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)\\"}],[\\"ConstructHub/PackageStats\\",\\"RegisteredPackagesWithStats\\",\\"LogGroup\\",\\"",
-              Object {
-                "Ref": "ConstructHubStats61DB07B1",
-              },
-              "\\",\\"ServiceName\\",\\"",
-              Object {
-                "Ref": "ConstructHubStats61DB07B1",
-              },
-              "\\",\\"ServiceType\\",\\"AWS::Lambda::Function\\",{\\"label\\":\\"Packages with stats\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":83,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocation Duration\\",\\"region\\":\\"",
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Packages with stats\\",\\"expression\\":\\"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)\\"}],[\\"ConstructHub/PackageStats\\",\\"RegisteredPackagesWithStats\\",{\\"label\\":\\"Packages with stats\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":83,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocation Duration\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -7168,7 +7160,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3Bucket7EEA4574",
+            "Ref": "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3Bucket639E8849",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -7181,7 +7173,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3VersionKey9C0E59C6",
+                          "Ref": "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3VersionKey02BFFB24",
                         },
                       ],
                     },
@@ -7194,7 +7186,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3VersionKey9C0E59C6",
+                          "Ref": "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3VersionKey02BFFB24",
                         },
                       ],
                     },
@@ -8638,18 +8630,6 @@ Object {
       "Description": "S3 key for asset version \\"41af655bf242608677fb1b76a2fc7928bf1be45ab323eacd1bd5002412949214\\"",
       "Type": "String",
     },
-    "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578ArtifactHash8A210B68": Object {
-      "Description": "Artifact hash for asset \\"458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578\\"",
-      "Type": "String",
-    },
-    "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3Bucket7EEA4574": Object {
-      "Description": "S3 bucket for asset \\"458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578\\"",
-      "Type": "String",
-    },
-    "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3VersionKey9C0E59C6": Object {
-      "Description": "S3 key for asset version \\"458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578\\"",
-      "Type": "String",
-    },
     "AssetParameters4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422ArtifactHashF7ACDAC0": Object {
       "Description": "Artifact hash for asset \\"4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422\\"",
       "Type": "String",
@@ -8696,6 +8676,18 @@ Object {
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064S3VersionKey5B081B37": Object {
       "Description": "S3 key for asset version \\"8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064\\"",
+      "Type": "String",
+    },
+    "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17ArtifactHashCFF1D102": Object {
+      "Description": "Artifact hash for asset \\"9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17\\"",
+      "Type": "String",
+    },
+    "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3Bucket639E8849": Object {
+      "Description": "S3 bucket for asset \\"9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17\\"",
+      "Type": "String",
+    },
+    "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3VersionKey02BFFB24": Object {
+      "Description": "S3 key for asset version \\"9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17\\"",
       "Type": "String",
     },
     "AssetParametersa9c1126f433d4d7214e1150e73f618dcbf66cfface99922057bbad43792f8baaArtifactHash8FB5D501": Object {
@@ -9424,15 +9416,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[{\\"label\\":\\"Packages with stats\\",\\"expression\\":\\"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)\\"}],[\\"ConstructHub/PackageStats\\",\\"RegisteredPackagesWithStats\\",\\"LogGroup\\",\\"",
-              Object {
-                "Ref": "ConstructHubStats61DB07B1",
-              },
-              "\\",\\"ServiceName\\",\\"",
-              Object {
-                "Ref": "ConstructHubStats61DB07B1",
-              },
-              "\\",\\"ServiceType\\",\\"AWS::Lambda::Function\\",{\\"label\\":\\"Packages with stats\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":83,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocation Duration\\",\\"region\\":\\"",
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Packages with stats\\",\\"expression\\":\\"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)\\"}],[\\"ConstructHub/PackageStats\\",\\"RegisteredPackagesWithStats\\",{\\"label\\":\\"Packages with stats\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":83,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocation Duration\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -15700,7 +15684,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3Bucket7EEA4574",
+            "Ref": "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3Bucket639E8849",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -15713,7 +15697,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3VersionKey9C0E59C6",
+                          "Ref": "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3VersionKey02BFFB24",
                         },
                       ],
                     },
@@ -15726,7 +15710,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3VersionKey9C0E59C6",
+                          "Ref": "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3VersionKey02BFFB24",
                         },
                       ],
                     },
@@ -17180,18 +17164,6 @@ Object {
       "Description": "S3 key for asset version \\"41af655bf242608677fb1b76a2fc7928bf1be45ab323eacd1bd5002412949214\\"",
       "Type": "String",
     },
-    "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578ArtifactHash8A210B68": Object {
-      "Description": "Artifact hash for asset \\"458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578\\"",
-      "Type": "String",
-    },
-    "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3Bucket7EEA4574": Object {
-      "Description": "S3 bucket for asset \\"458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578\\"",
-      "Type": "String",
-    },
-    "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3VersionKey9C0E59C6": Object {
-      "Description": "S3 key for asset version \\"458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578\\"",
-      "Type": "String",
-    },
     "AssetParameters4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422ArtifactHashF7ACDAC0": Object {
       "Description": "Artifact hash for asset \\"4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422\\"",
       "Type": "String",
@@ -17262,6 +17234,18 @@ Object {
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064S3VersionKey5B081B37": Object {
       "Description": "S3 key for asset version \\"8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064\\"",
+      "Type": "String",
+    },
+    "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17ArtifactHashCFF1D102": Object {
+      "Description": "Artifact hash for asset \\"9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17\\"",
+      "Type": "String",
+    },
+    "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3Bucket639E8849": Object {
+      "Description": "S3 bucket for asset \\"9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17\\"",
+      "Type": "String",
+    },
+    "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3VersionKey02BFFB24": Object {
+      "Description": "S3 key for asset version \\"9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17\\"",
       "Type": "String",
     },
     "AssetParametersa9c1126f433d4d7214e1150e73f618dcbf66cfface99922057bbad43792f8baaArtifactHash8FB5D501": Object {
@@ -18139,15 +18123,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[{\\"label\\":\\"Packages with stats\\",\\"expression\\":\\"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)\\"}],[\\"ConstructHub/PackageStats\\",\\"RegisteredPackagesWithStats\\",\\"LogGroup\\",\\"",
-              Object {
-                "Ref": "ConstructHubStats61DB07B1",
-              },
-              "\\",\\"ServiceName\\",\\"",
-              Object {
-                "Ref": "ConstructHubStats61DB07B1",
-              },
-              "\\",\\"ServiceType\\",\\"AWS::Lambda::Function\\",{\\"label\\":\\"Packages with stats\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":83,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocation Duration\\",\\"region\\":\\"",
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Packages with stats\\",\\"expression\\":\\"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)\\"}],[\\"ConstructHub/PackageStats\\",\\"RegisteredPackagesWithStats\\",{\\"label\\":\\"Packages with stats\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":83,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocation Duration\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -24402,7 +24378,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3Bucket7EEA4574",
+            "Ref": "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3Bucket639E8849",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -24415,7 +24391,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3VersionKey9C0E59C6",
+                          "Ref": "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3VersionKey02BFFB24",
                         },
                       ],
                     },
@@ -24428,7 +24404,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3VersionKey9C0E59C6",
+                          "Ref": "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3VersionKey02BFFB24",
                         },
                       ],
                     },
@@ -26151,18 +26127,6 @@ Object {
       "Description": "S3 key for asset version \\"41af655bf242608677fb1b76a2fc7928bf1be45ab323eacd1bd5002412949214\\"",
       "Type": "String",
     },
-    "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578ArtifactHash8A210B68": Object {
-      "Description": "Artifact hash for asset \\"458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578\\"",
-      "Type": "String",
-    },
-    "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3Bucket7EEA4574": Object {
-      "Description": "S3 bucket for asset \\"458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578\\"",
-      "Type": "String",
-    },
-    "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3VersionKey9C0E59C6": Object {
-      "Description": "S3 key for asset version \\"458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578\\"",
-      "Type": "String",
-    },
     "AssetParameters4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422ArtifactHashF7ACDAC0": Object {
       "Description": "Artifact hash for asset \\"4c036f977ebebb2c14cb59060ee5b26d3bdf5e20cdc7c07a510d194d1b2fa422\\"",
       "Type": "String",
@@ -26209,6 +26173,18 @@ Object {
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064S3VersionKey5B081B37": Object {
       "Description": "S3 key for asset version \\"8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064\\"",
+      "Type": "String",
+    },
+    "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17ArtifactHashCFF1D102": Object {
+      "Description": "Artifact hash for asset \\"9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17\\"",
+      "Type": "String",
+    },
+    "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3Bucket639E8849": Object {
+      "Description": "S3 bucket for asset \\"9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17\\"",
+      "Type": "String",
+    },
+    "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3VersionKey02BFFB24": Object {
+      "Description": "S3 key for asset version \\"9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17\\"",
       "Type": "String",
     },
     "AssetParametersa9c1126f433d4d7214e1150e73f618dcbf66cfface99922057bbad43792f8baaArtifactHash8FB5D501": Object {
@@ -26937,15 +26913,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               Object {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[{\\"label\\":\\"Packages with stats\\",\\"expression\\":\\"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)\\"}],[\\"ConstructHub/PackageStats\\",\\"RegisteredPackagesWithStats\\",\\"LogGroup\\",\\"",
-              Object {
-                "Ref": "ConstructHubStats61DB07B1",
-              },
-              "\\",\\"ServiceName\\",\\"",
-              Object {
-                "Ref": "ConstructHubStats61DB07B1",
-              },
-              "\\",\\"ServiceType\\",\\"AWS::Lambda::Function\\",{\\"label\\":\\"Packages with stats\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":83,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocation Duration\\",\\"region\\":\\"",
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Packages with stats\\",\\"expression\\":\\"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f, REPEAT)\\"}],[\\"ConstructHub/PackageStats\\",\\"RegisteredPackagesWithStats\\",{\\"label\\":\\"Packages with stats\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0}}}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":83,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocation Duration\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -32058,7 +32026,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3Bucket7EEA4574",
+            "Ref": "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3Bucket639E8849",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -32071,7 +32039,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3VersionKey9C0E59C6",
+                          "Ref": "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3VersionKey02BFFB24",
                         },
                       ],
                     },
@@ -32084,7 +32052,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters458383a93e55b10afdda8e9254b391306c62202748f4c43183928c6f9d722578S3VersionKey9C0E59C6",
+                          "Ref": "AssetParameters9191ed879e8e962b0acf918f719d4b830493477d443e8dba8d31c6cb7a62cc17S3VersionKey02BFFB24",
                         },
                       ],
                     },
