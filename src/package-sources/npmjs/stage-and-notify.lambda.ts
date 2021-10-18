@@ -1,6 +1,6 @@
 import * as https from 'https';
 import { URL } from 'url';
-import type { Context } from 'aws-lambda';
+import type { Context, SQSEvent } from 'aws-lambda';
 import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
 import { s3, sqs } from '../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
@@ -8,8 +8,14 @@ import { IngestionInput } from '../../backend/shared/ingestion-input.lambda-shar
 import { integrity } from '../../backend/shared/integrity.lambda-shared';
 import { S3KeyPrefix } from './constants.lambda-shared';
 
-export async function handler(event: PackageVersion, context: Context) {
+export async function handler(event: PackageVersion | SQSEvent, context: Context) {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
+
+  if ('Records' in event) {
+    // ATTENTION: Assumes there is only exactly 1 event in there...
+    event = JSON.parse(event.Records[0].body) as PackageVersion;
+    console.log(`Event (extracted): ${JSON.stringify(event, null, 2)}`);
+  }
 
   const stagingBucket = requireEnv('BUCKET_NAME');
   const queueUrl = requireEnv('QUEUE_URL');
@@ -22,15 +28,18 @@ export async function handler(event: PackageVersion, context: Context) {
   }
 
   // Download the tarball
+  console.log(`Downloading tarball from URL: ${event.tarballUrl}`);
   const tarball = await httpGet(event.tarballUrl);
 
   // Store the tarball into the staging bucket
   // - infos.dist.tarball => https://registry.npmjs.org/<@scope>/<name>/-/<name>-<version>.tgz
   // - stagingKey         =>                     staged/<@scope>/<name>/-/<name>-<version>.tgz
   const stagingKey = `${S3KeyPrefix.STAGED_KEY_PREFIX}${new URL(event.tarballUrl).pathname}`.replace(/\/{2,}/g, '/');
+  console.log(`Storing tarball in staging bucket with key ${stagingKey}`);
   await s3().putObject({
     Bucket: stagingBucket,
     Key: stagingKey,
+    Body: tarball,
     ContentType: 'application/octet-stream',
     Metadata: {
       'Lambda-Log-Group': context.logGroupName,
@@ -59,6 +68,7 @@ export async function handler(event: PackageVersion, context: Context) {
   );
 
   // Send message to SQS
+  console.log(`Sending message to ConstructHub ingestion queue: ${JSON.stringify(message, null, 2)}`);
   await sqs().sendMessage({
     MessageBody: JSON.stringify(message, null, 2),
     MessageAttributes: {

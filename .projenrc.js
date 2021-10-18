@@ -74,7 +74,6 @@ const project = new JsiiProject({
     'spdx-license-list',
     'tar-stream',
     'yaml',
-    'nano',
     'normalize-registry-metadata',
   ],
 

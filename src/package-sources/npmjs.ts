@@ -2,6 +2,7 @@ import { ComparisonOperator, GraphWidget, MathExpression, Metric, MetricOptions,
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { Tracing } from '@aws-cdk/aws-lambda';
+import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
 import { Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
@@ -60,6 +61,13 @@ export class NpmJs implements IPackageSource {
       tracing: Tracing.ACTIVE,
     });
 
+    bucket.grantReadWrite(stager);
+    denyList?.grantRead(stager);
+    queue.grantSendMessages(stager);
+
+    stager.addEventSource(new SqsEventSource(stager.deadLetterQueue!, { batchSize: 1, enabled: false }));
+
+
     const follower = new NpmJsFollower(scope, 'NpmJs', {
       description: `[${scope.node.path}/NpmJs] Periodically query npmjs.com index for new packages`,
       environment: {
@@ -73,10 +81,10 @@ export class NpmJs implements IPackageSource {
       tracing: Tracing.ACTIVE,
     });
 
-    bucket.grantReadWrite(follower);
-    queue.grantSendMessages(follower);
+    bucket.grantReadWrite(follower, MARKER_FILE_NAME);
     denyList?.grantRead(follower);
     licenseList.grantRead(follower);
+    stager.grantInvoke(follower);
 
     const rule = new Rule(scope, 'NpmJs/Schedule', {
       description: `${scope.node.path}/NpmJs/Schedule`,
@@ -209,8 +217,8 @@ export class NpmJs implements IPackageSource {
             width: 12,
             title: 'CouchDB Follower',
             left: [
-              this.metricChangeCount({ label: 'Change Count' }),
-              this.metricUnprocessableEntity({ label: 'Unprocessable' }),
+              fillMetric(this.metricChangeCount({ label: 'Change Count' }), 0),
+              fillMetric(this.metricUnprocessableEntity({ label: 'Unprocessable' }), 0),
             ],
             leftYAxis: { min: 0 },
             right: [
@@ -225,7 +233,7 @@ export class NpmJs implements IPackageSource {
             width: 12,
             title: 'CouchDB Changes',
             left: [
-              this.metricLastSeq({ label: 'Last Sequence Number' }),
+              fillMetric(this.metricLastSeq({ label: 'Last Sequence Number' }), 'REPEAT'),
             ],
             period: Duration.minutes(5),
           }),
@@ -235,8 +243,8 @@ export class NpmJs implements IPackageSource {
             width: 12,
             title: 'Stager Dead-Letter Queue',
             left: [
-              stager.deadLetterQueue!.metricApproximateNumberOfMessagesVisible({ label: 'Visible Messages' }),
-              stager.deadLetterQueue!.metricApproximateNumberOfMessagesVisible({ label: 'Invisible Messages' }),
+              fillMetric(stager.deadLetterQueue!.metricApproximateNumberOfMessagesVisible({ label: 'Visible Messages' }), 0),
+              fillMetric(stager.deadLetterQueue!.metricApproximateNumberOfMessagesNotVisible({ label: 'Invisible Messages' }), 0),
             ],
             leftYAxis: { min: 0 },
             right: [
@@ -255,7 +263,7 @@ export class NpmJs implements IPackageSource {
    */
   public metricBatchProcessingTime(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: Duration.minutes(1),
       statistic: Statistic.AVERAGE,
       ...opts,
       metricName: MetricName.BATCH_PROCESSING_TIME,
@@ -268,7 +276,7 @@ export class NpmJs implements IPackageSource {
    */
   public metricChangeCount(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: Duration.minutes(1),
       statistic: Statistic.SUM,
       ...opts,
       metricName: MetricName.CHANGE_COUNT,
@@ -282,7 +290,7 @@ export class NpmJs implements IPackageSource {
    */
   public metricLastSeq(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: Duration.minutes(1),
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.LAST_SEQ,
@@ -292,7 +300,7 @@ export class NpmJs implements IPackageSource {
 
   public metricNpmJsChangeAge(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: Duration.minutes(1),
       statistic: Statistic.MINIMUM,
       ...opts,
       metricName: MetricName.NPMJS_CHANGE_AGE,
@@ -305,7 +313,7 @@ export class NpmJs implements IPackageSource {
    */
   public metricPackageVersionAge(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: Duration.minutes(1),
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.PACKAGE_VERSION_AGE,
@@ -318,7 +326,7 @@ export class NpmJs implements IPackageSource {
    */
   public metricPackageVersionCount(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: Duration.minutes(1),
       statistic: Statistic.SUM,
       ...opts,
       metricName: MetricName.PACKAGE_VERSION_COUNT,
@@ -331,7 +339,7 @@ export class NpmJs implements IPackageSource {
    */
   public metricRelevantPackageVersions(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: Duration.minutes(1),
       statistic: Statistic.SUM,
       ...opts,
       metricName: MetricName.RELEVANT_PACKAGE_VERSIONS,
@@ -346,7 +354,7 @@ export class NpmJs implements IPackageSource {
   public metricRemainingTime(opts?: MetricOptions): Metric {
     return new Metric({
       period: Duration.minutes(5),
-      statistic: Statistic.AVERAGE,
+      statistic: Statistic.MINIMUM,
       ...opts,
       metricName: MetricName.REMAINING_TIME,
       namespace: METRICS_NAMESPACE,
@@ -359,7 +367,7 @@ export class NpmJs implements IPackageSource {
    */
   public metricUnprocessableEntity(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: Duration.minutes(1),
       statistic: Statistic.SUM,
       ...opts,
       metricName: MetricName.UNPROCESSABLE_ENTITY,

@@ -1,4 +1,4 @@
-import { Dashboard, GraphWidget, GraphWidgetView, TextWidget, IWidget, MathExpression, Metric, Statistic } from '@aws-cdk/aws-cloudwatch';
+import { Dashboard, GraphWidget, GraphWidgetView, TextWidget, IWidget, MathExpression, Metric, Statistic, PeriodOverride } from '@aws-cdk/aws-cloudwatch';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 import { DenyList } from './backend/deny-list';
@@ -26,6 +26,7 @@ export class BackendDashboard extends Construct {
 
     new Dashboard(this, 'Resource', {
       dashboardName: props.dashboardName,
+      periodOverride: PeriodOverride.AUTO,
       start: '-P1W', // Show 1 week by default
       widgets: [
         [
