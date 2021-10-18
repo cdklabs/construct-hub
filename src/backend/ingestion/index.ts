@@ -1,13 +1,12 @@
 import { ComparisonOperator, MathExpression, Metric, MetricOptions, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
-import { Effect, IGrantable, IPrincipal, PolicyStatement } from '@aws-cdk/aws-iam';
+import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
-import { StateMachine, TaskStateBase, TaskStateBaseProps, FieldUtils, JsonPath, IntegrationPattern, Choice, Succeed, Condition, Map } from '@aws-cdk/aws-stepfunctions';
-import { LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
-import { integrationResourceArn } from '@aws-cdk/aws-stepfunctions-tasks/lib/private/task-utils';
+import { StateMachine, JsonPath, Choice, Succeed, Condition, Map } from '@aws-cdk/aws-stepfunctions';
+import { CallAwsService, LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
 import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
@@ -271,11 +270,11 @@ class ReprocessIngestionWorkflow extends Construct {
 
     const listBucket = new Choice(this, 'Has a NextContinuationToken?')
       .when(Condition.isPresent('$.response.NextContinuationToken'),
-        new AwsSdkTask(this, 'S3.ListObjectsV2(NextPage)', {
+        new CallAwsService(this, 'S3.ListObjectsV2(NextPage)', {
           service: 's3',
           action: 'listObjectsV2',
-          iamAction: 'ListBucket',
-          iamResource: props.bucket.bucketArn,
+          iamAction: 's3:ListBucket',
+          iamResources: [props.bucket.bucketArn],
           parameters: {
             Bucket: props.bucket.bucketName,
             ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken'),
@@ -284,11 +283,11 @@ class ReprocessIngestionWorkflow extends Construct {
           },
           resultPath: '$.response',
         }))
-      .otherwise(new AwsSdkTask(this, 'S3.ListObjectsV2(FirstPage)', {
+      .otherwise(new CallAwsService(this, 'S3.ListObjectsV2(FirstPage)', {
         service: 's3',
         action: 'listObjectsV2',
-        iamAction: 'ListBucket',
-        iamResource: props.bucket.bucketArn,
+        iamAction: 's3:ListBucket',
+        iamResources: [props.bucket.bucketArn],
         parameters: {
           Bucket: props.bucket.bucketName,
           Prefix: STORAGE_KEY_PREFIX,
@@ -321,44 +320,5 @@ class ReprocessIngestionWorkflow extends Construct {
 
     props.bucket.grantRead(stateMachine);
     props.queue.grantSendMessages(stateMachine);
-  }
-}
-
-/**
- * There is an open PR on CDK to implement this as part of the core framework.
- * This can be removed once that PR lands.
- */
-interface AwsSdkTaskProps extends TaskStateBaseProps {
-  readonly service: string;
-  readonly action: string;
-  readonly iamAction?: string;
-  readonly iamResource?: string;
-  readonly parameters?: { [key: string]: any };
-}
-
-class AwsSdkTask extends TaskStateBase {
-  public readonly taskMetrics = undefined;
-
-  public constructor(scope: Construct, id: string, private readonly props: AwsSdkTaskProps) {
-    super(scope, id, props);
-  }
-
-  public get taskPolicies(): PolicyStatement[] {
-    return [new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: [`${this.props.service}:${this.props.iamAction ?? this.props.action}`],
-      resources: [this.props.iamResource ?? '*'],
-    })];
-  }
-
-  protected _renderTask(): any {
-    return {
-      Resource: integrationResourceArn(
-        'aws-sdk',
-        `${this.props.service}:${this.props.action}`,
-        this.props.integrationPattern ?? IntegrationPattern.REQUEST_RESPONSE,
-      ),
-      Parameters: FieldUtils.renderObject(this.props.parameters ?? {}),
-    };
   }
 }
