@@ -10,6 +10,7 @@ export class ReprocessAll extends lambda.Function {
   constructor(scope: Construct, id: string, props?: ReprocessAllProps) {
     super(scope, id, {
       description: 'backend/orchestration/reprocess-all.lambda.ts',
+      architecture: lambda.Architecture.ARM_64,
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',

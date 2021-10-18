@@ -10,6 +10,7 @@ export class CatalogBuilder extends lambda.Function {
   constructor(scope: Construct, id: string, props?: CatalogBuilderProps) {
     super(scope, id, {
       description: 'backend/catalog-builder/catalog-builder.lambda.ts',
+      architecture: lambda.Architecture.ARM_64,
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',

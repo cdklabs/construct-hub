@@ -10,6 +10,7 @@ export class CertificateMonitor extends lambda.Function {
   constructor(scope: Construct, id: string, props?: CertificateMonitorProps) {
     super(scope, id, {
       description: 'monitored-certificate/certificate-monitor.lambda.ts',
+      architecture: lambda.Architecture.ARM_64,
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',

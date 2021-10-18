@@ -16,6 +16,7 @@ export class TriggerClientTest extends lambda.Function {
   constructor(scope: Construct, id: string, props?: TriggerClientTestProps) {
     super(scope, id, {
       description: '__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts',
+      architecture: lambda.Architecture.ARM_64,
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',

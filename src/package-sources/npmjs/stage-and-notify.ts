@@ -10,6 +10,7 @@ export class StageAndNotify extends lambda.Function {
   constructor(scope: Construct, id: string, props?: StageAndNotifyProps) {
     super(scope, id, {
       description: 'package-sources/npmjs/stage-and-notify.lambda.ts',
+      architecture: lambda.Architecture.ARM_64,
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',

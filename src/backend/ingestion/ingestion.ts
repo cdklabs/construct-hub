@@ -10,6 +10,7 @@ export class Ingestion extends lambda.Function {
   constructor(scope: Construct, id: string, props?: IngestionProps) {
     super(scope, id, {
       description: 'backend/ingestion/ingestion.lambda.ts',
+      architecture: lambda.Architecture.ARM_64,
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',

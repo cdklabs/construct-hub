@@ -317,6 +317,7 @@ function newLambdaHandler(entrypoint, trigger) {
   ts.open(`constructor(scope: Construct, id: string, props?: ${propsName}) {`);
   ts.open('super(scope, id, {');
   ts.line(`description: '${entrypoint}',`);
+  ts.line('architecture: lambda.Architecture.ARM_64,'),
   ts.line('...props,');
   ts.line('runtime: lambda.Runtime.NODEJS_14_X,');
   ts.line('handler: \'index.handler\',');
