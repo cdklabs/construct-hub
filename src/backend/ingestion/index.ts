@@ -5,6 +5,8 @@ import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
+import { StateMachine, JsonPath, Choice, Succeed, Condition, Map } from '@aws-cdk/aws-stepfunctions';
+import { CallAwsService, LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
 import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
@@ -12,8 +14,10 @@ import { PackageTagConfig } from '../../package-tag';
 import { RUNBOOK_URL } from '../../runbook-url';
 import type { PackageLinkConfig } from '../../webapp';
 import { Orchestration } from '../orchestration';
+import { STORAGE_KEY_PREFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX } from '../shared/constants';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { Ingestion as Handler } from './ingestion';
+import { ReIngest } from './re-ingest';
 
 export interface IngestionProps {
   /**
@@ -118,6 +122,22 @@ export class Ingestion extends Construct implements IGrantable {
     // This event source is disabled, and can be used to re-process dead-letter-queue messages
     this.function.addEventSource(new SqsEventSource(this.deadLetterQueue, { batchSize: 1, enabled: false }));
 
+
+    // Reprocess workflow
+    const reprocessQueue = new Queue(this, 'ReprocessQueue', {
+      deadLetterQueue: {
+        maxReceiveCount: 5,
+        queue: this.deadLetterQueue,
+      },
+      encryption: QueueEncryption.KMS_MANAGED,
+      retentionPeriod: this.queueRetentionPeriod,
+      // Visibility timeout of 15 minutes matches the Lambda maximum execution time.
+      visibilityTimeout: Duration.minutes(15),
+    });
+    props.bucket.grantRead(this.function, `${STORAGE_KEY_PREFIX}*${PACKAGE_KEY_SUFFIX}`);
+    this.function.addEventSource(new SqsEventSource(reprocessQueue, { batchSize: 1 }));
+    new ReprocessIngestionWorkflow(this, 'ReprocessWorkflow', { bucket: props.bucket, queue: reprocessQueue });
+
     this.grantPrincipal = this.function.grantPrincipal;
 
     props.monitoring.addHighSeverityAlarm(
@@ -218,5 +238,87 @@ export class Ingestion extends Construct implements IGrantable {
       metricName: MetricName.MISMATCHED_IDENTITY_REJECTIONS,
       namespace: METRICS_NAMESPACE,
     });
+  }
+}
+
+interface ReprocessIngestionWorkflowProps {
+  readonly bucket: IBucket;
+  readonly queue: IQueue;
+}
+
+/**
+ * A StepFunctions State Machine to reprocess every currently indexed package
+ * through the ingestion function. This should not be frequently required, but
+ * can come in handy at times.
+ *
+ * For more information, refer to the runbook at
+ * https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+ */
+class ReprocessIngestionWorkflow extends Construct {
+  public constructor(scope: Construct, id: string, props: ReprocessIngestionWorkflowProps) {
+    super(scope, id);
+
+    const lambdaFunction = new ReIngest(this, 'Function', {
+      description: '[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion',
+      environment: { BUCKET_NAME: props.bucket.bucketName, QUEUE_URL: props.queue.queueUrl },
+      tracing: Tracing.ACTIVE,
+    });
+
+    props.queue.grantSendMessages(lambdaFunction);
+    props.bucket.grantRead(lambdaFunction, `${STORAGE_KEY_PREFIX}*${METADATA_KEY_SUFFIX}`);
+    props.bucket.grantRead(lambdaFunction, `${STORAGE_KEY_PREFIX}*${PACKAGE_KEY_SUFFIX}`);
+
+    const listBucket = new Choice(this, 'Has a NextContinuationToken?')
+      .when(Condition.isPresent('$.response.NextContinuationToken'),
+        new CallAwsService(this, 'S3.ListObjectsV2(NextPage)', {
+          service: 's3',
+          action: 'listObjectsV2',
+          iamAction: 's3:ListBucket',
+          iamResources: [props.bucket.bucketArn],
+          parameters: {
+            Bucket: props.bucket.bucketName,
+            ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken'),
+            MaxKeys: 250, // <- Limits the response size, and ensures we don't spawn too many Lambdas at once in the Map state.
+            Prefix: STORAGE_KEY_PREFIX,
+          },
+          resultPath: '$.response',
+        }))
+      .otherwise(new CallAwsService(this, 'S3.ListObjectsV2(FirstPage)', {
+        service: 's3',
+        action: 'listObjectsV2',
+        iamAction: 's3:ListBucket',
+        iamResources: [props.bucket.bucketArn],
+        parameters: {
+          Bucket: props.bucket.bucketName,
+          Prefix: STORAGE_KEY_PREFIX,
+        },
+        resultPath: '$.response',
+      })).afterwards();
+
+    const process = new Map(this, 'Process Result', {
+      itemsPath: '$.response.Contents',
+      resultPath: JsonPath.DISCARD,
+    }).iterator(
+      new Choice(this, 'Is metadata object?')
+        .when(
+          Condition.stringMatches('$.Key', `*${METADATA_KEY_SUFFIX}`),
+          new LambdaInvoke(this, 'Send for reprocessing', { lambdaFunction })
+            // Ample retries here... We should never fail because of throttling....
+            .addRetry({ errors: ['Lambda.TooManyRequestsException'], backoffRate: 1.1, interval: Duration.minutes(1), maxAttempts: 30 }),
+        )
+        .otherwise(new Succeed(this, 'Nothing to do')),
+    );
+
+    listBucket.next(process.next(new Choice(this, 'Is there more?')
+      .when(Condition.isPresent('$.response.NextContinuationToken'), listBucket)
+      .otherwise(new Succeed(this, 'All Done'))));
+
+    const stateMachine = new StateMachine(this, 'StateMachine', {
+      definition: listBucket,
+      timeout: Duration.hours(1),
+    });
+
+    props.bucket.grantRead(stateMachine);
+    props.queue.grantSendMessages(stateMachine);
   }
 }

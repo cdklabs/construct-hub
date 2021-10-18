@@ -70,6 +70,9 @@
           "spawn": "bundle:ingestion"
         },
         {
+          "spawn": "bundle:re-ingest"
+        },
+        {
           "spawn": "bundle:canary"
         },
         {
@@ -204,27 +207,6 @@
         }
       ]
     },
-    "upgrade": {
-      "name": "upgrade",
-      "description": "upgrade dependencies",
-      "env": {
-        "CI": "0"
-      },
-      "steps": [
-        {
-          "exec": "npm-check-updates --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk'"
-        },
-        {
-          "exec": "yarn install --check-files"
-        },
-        {
-          "exec": "yarn upgrade @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case cdk-triggers construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak json-schema nano normalize-registry-metadata npm-check-updates projen semver spdx-license-list standard-version tar-stream typescript yaml"
-        },
-        {
-          "exec": "npx projen"
-        }
-      ]
-    },
     "default": {
       "name": "default",
       "steps": [
@@ -331,6 +313,9 @@
         },
         {
           "spawn": "bundle:ingestion"
+        },
+        {
+          "spawn": "bundle:re-ingest"
         },
         {
           "spawn": "bundle:canary"
@@ -487,6 +472,15 @@
         }
       ]
     },
+    "bundle:re-ingest": {
+      "name": "bundle:re-ingest",
+      "description": "Create an AWS Lambda bundle from src/backend/ingestion/re-ingest.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/ingestion/re-ingest.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/re-ingest.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
     "bundle:canary": {
       "name": "bundle:canary",
       "description": "Create an AWS Lambda bundle from src/backend/inventory/canary.lambda.ts",
@@ -603,7 +597,7 @@
       "description": "destroy integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
       "steps": [
         {
-          "exec": "cdk destroy --app src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout"
+          "exec": "cdk destroy --app src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout --no-version-reporting"
         }
       ]
     },
@@ -649,6 +643,39 @@
         },
         {
           "exec": "git diff --ignore-space-at-eol --exit-code"
+        }
+      ]
+    },
+    "upgrade": {
+      "name": "upgrade",
+      "description": "upgrade dependencies",
+      "env": {
+        "CI": "0"
+      },
+      "steps": [
+        {
+          "exec": "npm-check-updates --dep dev --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk'"
+        },
+        {
+          "exec": "npm-check-updates --dep optional --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk'"
+        },
+        {
+          "exec": "npm-check-updates --dep peer --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk'"
+        },
+        {
+          "exec": "npm-check-updates --dep prod --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk'"
+        },
+        {
+          "exec": "npm-check-updates --dep bundle --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk'"
+        },
+        {
+          "exec": "yarn install --check-files"
+        },
+        {
+          "exec": "yarn upgrade @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case cdk-triggers construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak json-schema nano normalize-registry-metadata npm-check-updates projen semver spdx-license-list standard-version tar-stream typescript yaml"
+        },
+        {
+          "exec": "npx projen"
         }
       ]
     }

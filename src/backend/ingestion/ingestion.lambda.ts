@@ -5,7 +5,7 @@ import { URL } from 'url';
 import { Assembly, validateAssembly } from '@jsii/spec';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { Context, SQSEvent } from 'aws-lambda';
-import { SemVer } from 'semver';
+import { minVersion } from 'semver';
 import type { PackageTagConfig } from '../../package-tag';
 import type { PackageLinkConfig } from '../../webapp';
 import type { StateMachineInput } from '../payload-schema';
@@ -52,7 +52,7 @@ export const handler = metricScope(
         })
         .promise();
 
-      const integrityCheck = integrity(payload, Buffer.from(tarball.Body!));
+      const { integrity: integrityCheck } = integrity(payload, Buffer.from(tarball.Body!));
       if (payload.integrity !== integrityCheck) {
         throw new Error(
           `Integrity check failed: ${payload.integrity} !== ${integrityCheck}`,
@@ -304,41 +304,53 @@ interface ConstructFramework {
  */
 function detectConstructFramework(assembly: Assembly): ConstructFramework | undefined {
   let name: ConstructFramework['name'] | undefined;
+  let nameAmbiguous = false;
   let majorVersion: number | undefined;
   let majorVersionAmbiguous = false;
+  detectConstructFrameworkPackage(assembly.name, assembly.version);
   for (const depName of Object.keys(assembly.dependencyClosure ?? {})) {
-    if (depName.startsWith('@aws-cdk/')) {
+    detectConstructFrameworkPackage(depName);
+    if (nameAmbiguous) {
+      return undefined;
+    }
+  }
+  return name && { name, majorVersion: majorVersionAmbiguous ? undefined : majorVersion };
+
+  function detectConstructFrameworkPackage(packageName: string, versionRange = assembly.dependencies?.[packageName]): void {
+    if (packageName.startsWith('@aws-cdk/') || packageName === 'aws-cdk-lib' || packageName === 'monocdk') {
       if (name && name !== ConstructFrameworkName.AWS_CDK) {
-        // Identified multiple candidates, so returning undefined...
-        return undefined;
+        // Identified multiple candidates, so returning ambiguous...
+        nameAmbiguous = true;
+        return;
       }
       name = ConstructFrameworkName.AWS_CDK;
-    } else if (depName.startsWith('@cdktf/')) {
+    } else if (packageName === 'cdktf') {
       if (name && name !== ConstructFrameworkName.CDKTF) {
-        // Identified multiple candidates, so returning undefined...
-        return undefined;
+        // Identified multiple candidates, so returning ambiguous...
+        nameAmbiguous = true;
+        return;
       }
       name = ConstructFrameworkName.CDKTF;
-    } else if (depName === 'cdk8s' || depName === 'cdk8s-plus') {
+    } else if (packageName === 'cdk8s') {
       if (name && name !== ConstructFrameworkName.CDK8S) {
-        // Identified multiple candidates, so returning undefined...
-        return undefined;
+        // Identified multiple candidates, so returning ambiguous...
+        nameAmbiguous = true;
+        return;
       }
       name = ConstructFrameworkName.CDK8S;
     } else {
-      continue;
+      return;
     }
-    const depVersion = assembly.dependencies?.[depName];
-    if (depVersion) {
-      const major = new SemVer(depVersion).major;
+    if (versionRange) {
+      const major = minVersion(versionRange)?.major;
       if (majorVersion != null && majorVersion !== major) {
         // Identified multiple candidates, so this is ambiguous...
         majorVersionAmbiguous = true;
       }
       majorVersion = major;
     }
+    return;
   }
-  return name && { name, majorVersion: majorVersionAmbiguous ? undefined : majorVersion };
 }
 
 /**

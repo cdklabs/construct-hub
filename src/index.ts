@@ -4,4 +4,4 @@ export * from './package-source';
 export * as sources from './package-sources';
 export * from './spdx-license';
 export * from './package-tag';
-export { PackageLinkConfig, FeaturedPackages, FeaturedPackagesSection } from './webapp';
+export { PackageLinkConfig, FeaturedPackages, FeaturedPackagesSection, FeaturedPackagesDetail } from './webapp';

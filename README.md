@@ -269,19 +269,29 @@ new ConstructHub(this, "ConstructHub", {
   featuredPackages: {
     sections: [
       {
-        name: 'Recently updated',
+        name: "Recently updated",
         showLastUpdated: 4
       },
       {
-        name: 'From the AWS CDK',
+        name: "From the AWS CDK",
         showPackages: [
-          '@aws-cdk/core',
-          '@aws-cdk/s3',
-          '@aws-cdk/lambda',
-          '@aws-cdk/iam'
-        ],
+          {
+            name: "@aws-cdk/core"
+          },
+          {
+            name: "@aws-cdk/aws-s3",
+            comment: "One of the most popular AWS CDK libraries!"
+          },
+          {
+            name: "@aws-cdk/aws-lambda"
+          },
+          {
+            name: "@aws-cdk/pipelines"
+            comment: "The pipelines L3 construct library abstracts away many of the details of managing software deployment within AWS."
+          }
+        ]
       }
-    ],
+    ]
   }
 });
 ```
