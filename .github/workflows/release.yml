@@ -22,7 +22,7 @@ jobs:
           fetch-depth: 0
       - name: Set git identity
         run: |-
-          git config user.name "Automation"
+          git config user.name "github-actions"
           git config user.email "github-actions@github.com"
       - name: Setup Node.js
         uses: actions/setup-node@v2.2.0
@@ -43,7 +43,7 @@ jobs:
           name: dist
           path: dist
     container:
-      image: jsii/superchain:node14
+      image: jsii/superchain:1-buster-slim-node12
   release_github:
     name: Publish to GitHub Releases
     needs: release
@@ -87,7 +87,7 @@ jobs:
           NPM_REGISTRY: registry.npmjs.org
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     container:
-      image: jsii/superchain:node14
+      image: jsii/superchain:1-buster-slim-node14
   release_pypi:
     name: Publish to PyPI
     needs: release
@@ -107,4 +107,4 @@ jobs:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
     container:
-      image: jsii/superchain:node14
+      image: jsii/superchain:1-buster-slim-node14

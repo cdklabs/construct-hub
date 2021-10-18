@@ -152,16 +152,14 @@ test('happy path', async () => {
           LOG_GROUP_NAME: { DataType: 'String', StringValue: mockContext.logGroupName },
           LOG_STREAM_NAME: { DataType: 'String', StringValue: mockContext.logStreamName },
         },
-        MessageBody: JSON.stringify({
-          tarballUri: `s3://${mockBucketName}/${stagingKey}`,
-          metadata: { resources: resources.join(', ') },
-          time,
-          integrity: integrity({
+        MessageBody: JSON.stringify(integrity(
+          {
             tarballUri: `s3://${mockBucketName}/${stagingKey}`,
             metadata: { resources: resources.join(', ') },
             time,
-          }, Buffer.from(mockGetPackageVersionAssetResult.asset!)),
-        }),
+          },
+          Buffer.from(mockGetPackageVersionAssetResult.asset!)),
+        ),
         MessageDeduplicationId: detail.eventDeduplicationId,
         QueueUrl: mockQueueUrl,
       });

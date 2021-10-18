@@ -125,7 +125,8 @@ const project = new JsiiProject({
     secret: 'GITHUB_TOKEN',
   },
   autoApproveUpgrades: true,
-  depsUpgrade: DependenciesUpgradeMechanism.githubWorkflow({
+
+  depsUpgradeOptions: {
     exclude: [...peerDeps, cdkAssert, cdkCli],
     ignoreProjen: false,
     workflowOptions: {
@@ -135,7 +136,7 @@ const project = new JsiiProject({
         image: 'jsii/superchain',
       },
     },
-  }),
+  },
 });
 
 function addDevApp() {
@@ -213,7 +214,7 @@ function discoverIntegrationTests() {
 
     const destroy = project.addTask(`integ:${name}:destroy`, {
       description: `destroy integration test ${entry}`,
-      exec: `cdk destroy --app ${snapshotdir}`,
+      exec: `cdk destroy --app ${snapshotdir} --no-version-reporting`,
     });
 
     deploy.spawn(destroy);

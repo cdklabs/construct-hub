@@ -10,7 +10,6 @@ import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
 import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
 import * as aws from '../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
-import { IngestionInput } from '../../backend/shared/ingestion-input.lambda-shared';
 import { integrity } from '../../backend/shared/integrity.lambda-shared';
 import { MetricName, MARKER_FILE_NAME, METRICS_NAMESPACE, S3KeyPrefix } from './constants.lambda-shared';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -202,18 +201,14 @@ export async function handler(event: ScheduledEvent, context: Context) {
       });
 
       // Prepare SQS message for ingestion
-      const messageBase = {
+      const message = integrity({
         tarballUri: `s3://${stagingBucket}/${stagingKey}`,
         metadata: {
           dist: infos.dist.tarball,
           seq: seq.toFixed(),
         },
         time: modified.toUTCString(),
-      };
-      const message: IngestionInput = {
-        ...messageBase,
-        integrity: integrity(messageBase, tarball),
-      };
+      }, tarball);
 
       // Send the SQS message out
       await aws.sqs().sendMessage({
