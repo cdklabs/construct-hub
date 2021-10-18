@@ -67,7 +67,7 @@ export class NpmDownloadsClient {
 
     console.log(`Querying NPM for ${packages.length} package(s): [${packages.join(', ')}]`);
     const result = await this.got(`${NpmDownloadsClient.NPM_DOWNLOADS_API_URL}/${period}/${packages.join(',')}`, {
-      timeout: 5 * 1000, // 5 seconds
+      timeout: 5_000, // 5 seconds
     }).catch((err) => {
       if (throwErrors) {
         throw err;
@@ -107,8 +107,7 @@ export class NpmDownloadsClient {
     }
 
     // typescript can't figure out that we removed all null values
-    // @ts-ignore
-    return new Map(Object.entries(data));
+    return new Map(Object.entries(data) as any);
   }
 
   /**
