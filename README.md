@@ -172,7 +172,7 @@ stage triggers an alarm within a specific timeframe.
 
 #### Discovery Canary
 
-Configuring the discovery probe will validate that your instance of Construct Hub is able to detect and process newly published
+Configuring the discovery probe will provision a Lambda Function that will validate your instance of Construct Hub is able to detect and process newly published
 packages within a predefined SLA period. It does this by publishing a new package and making sure the expected package page of the hub
 contains the correct content.
 
