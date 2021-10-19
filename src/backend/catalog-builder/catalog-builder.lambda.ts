@@ -39,13 +39,34 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
       ? Promise.reject(err)
       : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
 
+  if (data.Body) {
+    console.log('Catalog found. Loading...');
+    const catalog: CatalogModel = JSON.parse(data.Body.toString('utf-8'));
+    for (const info of catalog.packages) {
+      if (!packages.has(info.name)) {
+        packages.set(info.name, new Map());
+      }
+      packages.get(info.name)!.set(info.major, info);
+    }
+  }
+
   // If defined, the function will invoke itself again to resume the work from that key (this
   // happens only in "from scratch" or "rebuild" cases).
   let nextStartAfter: string | undefined;
 
-  // If we don't have a catalog, or the event does not have a package, we're in for a full refresh!
-  if (!data?.Body || !event?.package) {
-    console.log('Catalog not found. Recreating...');
+  if (event.package) {
+    console.log('Registering new packages...');
+    // note that we intentionally don't catch errors here to let these
+    // event go to the DLQ for manual inspection.
+    await appendPackage(packages, event.package.key, BUCKET_NAME, denyList);
+  }
+
+  // If we don't have a package in event, then we're refreshing the catalog. This is also true if we
+  // don't have a catalog body (from scratch) or if "startAfter" is set (continuation of from
+  // scratch).
+  if (!event?.package || !data.Body || event.startAfter) {
+
+    console.log('Recreating or refreshing catalog...');
     const failures: any = {};
     for await (const { Key: pkgKey } of relevantObjects(BUCKET_NAME, event.startAfter)) {
       try {
@@ -70,20 +91,6 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
       console.log(`Marking ${failedCount} failed packages`);
       metrics.putMetric('FailedPackagesOnRecreation', failedCount, Unit.Count);
     })();
-
-  } else {
-    console.log('Catalog found. Loading...');
-    const catalog: CatalogModel = JSON.parse(data.Body.toString('utf-8'));
-    for (const info of catalog.packages) {
-      if (!packages.has(info.name)) {
-        packages.set(info.name, new Map());
-      }
-      packages.get(info.name)!.set(info.major, info);
-    }
-    console.log('Registering new packages...');
-    // note that we intentionally don't catch errors here to let these
-    // event go to the DLQ for manual inspection.
-    await appendPackage(packages, event.package.key, BUCKET_NAME, denyList);
   }
 
   // Build the final data package...
