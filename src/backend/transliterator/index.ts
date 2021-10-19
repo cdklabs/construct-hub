@@ -105,6 +105,8 @@ export class Transliterator extends Construct {
       // temporaty hack to generate construct-hub compliant markdown.
       // see https://github.com/cdklabs/jsii-docgen/blob/master/src/docgen/render/markdown.ts#L172
       HEADER_SPAN: 'true',
+      // Set embedded metrics format environment to "Local", to have a consistent experience.
+      AWS_EMF_ENVIRONMENT: 'Local',
     };
     if (props.vpcEndpoints) {
       // Those are returned as an array of HOSTED_ZONE_ID:DNS_NAME... We care

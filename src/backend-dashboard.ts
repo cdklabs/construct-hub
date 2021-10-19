@@ -1,4 +1,4 @@
-import { Dashboard, GraphWidget, GraphWidgetView, TextWidget, IWidget, MathExpression, Metric, Statistic } from '@aws-cdk/aws-cloudwatch';
+import { Dashboard, GraphWidget, GraphWidgetView, TextWidget, IWidget, MathExpression, Metric, Statistic, PeriodOverride } from '@aws-cdk/aws-cloudwatch';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 import { DenyList } from './backend/deny-list';
@@ -28,6 +28,7 @@ export class BackendDashboard extends Construct {
 
     new Dashboard(this, 'Resource', {
       dashboardName: props.dashboardName,
+      periodOverride: PeriodOverride.AUTO,
       start: '-P1W', // Show 1 week by default
       widgets: [
         [
@@ -295,9 +296,8 @@ export class BackendDashboard extends Construct {
       new GraphWidget({
         height: 6,
         width: 12,
-        title: 'ECS Resources',
+        title: 'Fargate Resources',
         left: [
-          orchestration.metricEcsTaskCount({ label: 'Task Count' }),
           mFargateUsage.with({ label: 'Fargate Usage (On-Demand)' }),
           new MathExpression({
             expression: 'SERVICE_QUOTA(mFargateUsage)',
@@ -315,12 +315,16 @@ export class BackendDashboard extends Construct {
       new GraphWidget({
         height: 6,
         width: 12,
-        title: 'ECS Networking',
+        title: 'ECS Resources',
         left: [
-          orchestration.metricEcsNetworkRxBytes({ label: 'Received Bytes' }),
-          orchestration.metricEcsNetworkTxBytes({ label: 'Transmitted Bytes' }),
+          fillMetric(orchestration.metricEcsNetworkRxBytes({ label: 'Received Bytes' })),
+          fillMetric(orchestration.metricEcsNetworkTxBytes({ label: 'Transmitted Bytes' })),
         ],
         leftYAxis: { min: 0 },
+        right: [
+          fillMetric(orchestration.metricEcsTaskCount({ label: 'Task Count' })),
+        ],
+        rightYAxis: { min: 0 },
       }),
     ];
 

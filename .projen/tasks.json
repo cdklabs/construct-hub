@@ -97,6 +97,9 @@
           "spawn": "bundle:npm-js-follower"
         },
         {
+          "spawn": "bundle:stage-and-notify"
+        },
+        {
           "spawn": "bundle:handler"
         },
         {
@@ -342,6 +345,9 @@
           "spawn": "bundle:npm-js-follower"
         },
         {
+          "spawn": "bundle:stage-and-notify"
+        },
+        {
           "spawn": "bundle:handler"
         },
         {
@@ -553,6 +559,15 @@
         }
       ]
     },
+    "bundle:stage-and-notify": {
+      "name": "bundle:stage-and-notify",
+      "description": "Create an AWS Lambda bundle from src/package-sources/npmjs/stage-and-notify.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/stage-and-notify.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
     "bundle:handler": {
       "name": "bundle:handler",
       "description": "Create an AWS Lambda bundle from src/webapp/cache-invalidator/handler.lambda.ts",
@@ -672,7 +687,7 @@
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case cdk-triggers construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak json-schema nano normalize-registry-metadata npm-check-updates projen semver spdx-license-list standard-version tar-stream typescript yaml"
+          "exec": "yarn upgrade @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case cdk-triggers construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak json-schema normalize-registry-metadata npm-check-updates projen semver spdx-license-list standard-version tar-stream typescript yaml"
         },
         {
           "exec": "npx projen"
