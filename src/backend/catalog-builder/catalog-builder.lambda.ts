@@ -160,7 +160,8 @@ async function appendPackage(packages: any, pkgKey: string, bucketName: string, 
   const [, packageName, versionStr] = constants.STORAGE_KEY_FORMAT_REGEX.exec(pkgKey)!;
   const version = new SemVer(versionStr);
   const found = packages.get(packageName)?.get(version.major);
-  if (found != null && version.compare(found.version) <= 0) {
+  // If the version is === to the current latest, we'll be replacing that (so re-generated metadata are taken into account)
+  if (found != null && version.compare(found.version) < 0) {
     console.log(`Skipping ${packageName}@${version} because it is not newer than the existing ${found.version}`);
     return;
   }

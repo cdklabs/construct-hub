@@ -378,10 +378,21 @@ function getRelevantVersionInfos(
     if (infos.jsii == null) {
       return false;
     }
+    // The "constructs" package is a sign of a constructs library
     return infos.name === 'construct'
+      // AWS CDK packages
+      || infos.name.startsWith('@aws-cdk/')
       || infos.name === 'aws-cdk-lib'
-      || infos.name.startsWith('@aws-cdk')
+      || infos.name === 'monocdk'
+      // CDK8s packages
+      || infos.name === 'cdk8s'
+      || /^cdk8s-plus(?:-(?:17|20|21|22))?$/.test(infos.name)
+      // CDKTf packages
+      || infos.name === 'cdktf'
+      || infos.name.startsWith('@cdktf/')
+      // Keyword-based fallback
       || infos.keywords?.some((kw) => CONSTRUCT_KEYWORDS.has(kw))
+      // Recursively apply on dependencies
       || Object.keys(infos.dependencies ?? {}).some(isConstructFrameworkPackage)
       || Object.keys(infos.devDependencies ?? {}).some(isConstructFrameworkPackage)
       || Object.keys(infos.peerDependencies ?? {}).some(isConstructFrameworkPackage);
