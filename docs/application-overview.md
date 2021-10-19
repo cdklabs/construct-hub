@@ -27,6 +27,9 @@ that performes the following tasks:
 1. The *prune* function enforces the configured deny-list and ensures previously
    indexed packages that are now part of the deny-list are removed from storage
    within an hour.
+1. The *discovery canary*, if configured, is a Lambda function the will periodically
+   publish new versions of a dummy package and validate the hub is able to discover that
+   package within a predefined SLA.
 
 [cdklabs/construct-hub-webapp]: https://github.com/cdklabs/construct-hub-webapp
 
@@ -196,6 +199,27 @@ CloudWatch Logs, or by looking at service maps in the X-Ray console.
 The *prune* function emits a `Rules` CloudWatch Metric that indicates how many
 deny-list rules it is currently enforcing. This could match the amount of rules
 that were configured on the ConstructHub instance.
+
+### 5. Discovery Canary
+
+The [discovery canary](../README.md#discovery-canary) is an optional canary that can be configured as part of the hub's deployment.
+Its job is to continuously validate that the hub is able to discover and process packages in a timely manner.
+
+At a high level, the canary is implemented like so, assuming `ch-probe` is our dummy package name, and we have a 3 hour SLA.
+
+The function triggers every 3 hours and perform one of:
+
+- If `ch-probe` is not published yet, publish it with a `0.0.1` version number.
+- If `ch-probe` is published, detect its latest version and ping the hub's endpoint.
+    - If the ping is unsuccessfull, i.e we have a breach, emit a custom metric that will trigger the `ConstructHub/Canaries/Discovery/Breached` alarm.
+
+A **high-severity** alarm triggers if the canary function is either malfunctioning or detects discovery SLA breaches.
+Troubleshooting these alarms is described in the operator runbook.
+
+- [`ConstructHub/Canaries/Discovery/NotRunning`]()
+- [`ConstructHub/Canaries/Discovery/Failures`]()
+- [`ConstructHub/Canaries/Discovery/Breached`]()
+
 
 # Monitoring & Alarming
 

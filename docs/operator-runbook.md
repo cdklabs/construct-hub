@@ -419,29 +419,47 @@ reporting `npmjs.com` registry changes again. No further action is needed.
 
 ### `ConstructHub/Canaries/Discovery/NotRunning`
 
-This alarm is only provisioned in case the [discovery canary]() was configured.
-
 #### Description
+
+This alarm is only provisioned in case the [discovery canary](../README.md#discovery-canary) was configured.
+It triggers when the canary is not running at the scheduled rate it was configured with.
+This means that the hub is unable to detect whether or not new packages are properly discovered.
 
 #### Investigation
 
+TBD
+
 #### Resolution
+
+TBD
 
 ### `ConstructHub/Canaries/Discovery/Failures`
 
 #### Description
 
+This alarm is only provisioned in case the [discovery canary](../README.md#discovery-canary) was configured.
+It triggers when the canary is expriencing execution failures. Note that these are internal failures, it means the canary cannot
+perform its job, making the hub unable to detect whether or not new packages are properly discovered.
+
 #### Investigation
 
 #### Resolution
 
-### `ConstructHub/Canaries/Discovery/Breach`
+### `ConstructHub/Canaries/Discovery/Breached`
 
 #### Description
 
+This alarm is only provisioned in case the [discovery canary](../README.md#discovery-canary) was configured.
+It triggers when the canary detects that a newly published package was not discovered within the predefined SLA period.
+This means the hub cannot discover new packages and is effectively disabled.
+
 #### Investigation
 
+TBD
+
 #### Resolution
+
+TBD
 
 ## :information_source: General Recommendations
 
