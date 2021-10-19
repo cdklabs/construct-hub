@@ -7,7 +7,7 @@ import { AWSError } from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import * as tar from 'tar-stream';
 
-import { DenyListMap } from '../../../backend';
+import { CatalogModel, DenyListMap } from '../../../backend';
 import { handler } from '../../../backend/catalog-builder/catalog-builder.lambda';
 import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY } from '../../../backend/deny-list/constants';
 import { CatalogBuilderInput } from '../../../backend/payload-schema';
@@ -171,7 +171,7 @@ test('initial build', () => {
   // WHEN
   const result = handler({
     package: {
-      key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.2${constants.ASSEMBLY_KEY_SUFFIX}`,
+      key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.2${constants.PACKAGE_KEY_SUFFIX}`,
       versionId: 'VersionID',
     },
   }, { getRemainingTimeInMillis: () => Number.MAX_SAFE_INTEGER } as any);
@@ -180,9 +180,25 @@ test('initial build', () => {
   return expect(result).resolves.toBe(mockPutObjectResult);
 });
 
-test('initial build (with continuation)', async () => {
+test('rebuild (with continuation)', async () => {
   // GIVEN
   const npmMetadata = { date: 'Thu, 17 Jun 2021 01:52:04 GMT' };
+
+  const mockCatalog: CatalogModel = {
+    packages: [
+      {
+        author: { name: 'author' },
+        keywords: ['keyword'],
+        languages: { java: {}, go: {} },
+        license: 'UNLICENSED',
+        major: 42,
+        name: '@fake/package',
+        time: new Date(0),
+        version: '42.1337.0',
+      },
+    ],
+    updated: new Date(0).toISOString(),
+  };
 
   AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
     const denyListResponse = tryMockDenyList(req);
@@ -194,6 +210,10 @@ test('initial build (with continuation)', async () => {
       expect(req.Bucket).toBe(mockBucketName);
     } catch (e) {
       return cb(e as any);
+    }
+
+    if (req.Key === constants.CATALOG_KEY) {
+      return cb(null, { Body: JSON.stringify(mockCatalog) });
     }
 
     if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
@@ -247,9 +267,11 @@ test('initial build (with continuation)', async () => {
       expect(req.Bucket).toBe(mockBucketName);
       expect(req.Key).toBe(constants.CATALOG_KEY);
       expect(req.ContentType).toBe('application/json');
-      expect(req.Metadata).toHaveProperty('Package-Count', '1');
+      expect(req.Metadata).toHaveProperty('Package-Count', '2');
       const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
       expect(body.packages).toEqual([
+        // The existing catalog should __NOT__ get truncated.
+        ...mockCatalog.packages.map((pkg) => ({ ...pkg, time: pkg.time.toISOString() })),
         {
           description: 'Package @scope/package, version 1.2.3',
           languages: { foo: 'bar' },
