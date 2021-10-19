@@ -293,9 +293,8 @@ export class BackendDashboard extends Construct {
       new GraphWidget({
         height: 6,
         width: 12,
-        title: 'ECS Resources',
+        title: 'Fargate Resources',
         left: [
-          orchestration.metricEcsTaskCount({ label: 'Task Count' }),
           mFargateUsage.with({ label: 'Fargate Usage (On-Demand)' }),
           new MathExpression({
             expression: 'SERVICE_QUOTA(mFargateUsage)',
@@ -313,12 +312,16 @@ export class BackendDashboard extends Construct {
       new GraphWidget({
         height: 6,
         width: 12,
-        title: 'ECS Networking',
+        title: 'ECS Resources',
         left: [
-          orchestration.metricEcsNetworkRxBytes({ label: 'Received Bytes' }),
-          orchestration.metricEcsNetworkTxBytes({ label: 'Transmitted Bytes' }),
+          fillMetric(orchestration.metricEcsNetworkRxBytes({ label: 'Received Bytes' })),
+          fillMetric(orchestration.metricEcsNetworkTxBytes({ label: 'Transmitted Bytes' })),
         ],
         leftYAxis: { min: 0 },
+        right: [
+          fillMetric(orchestration.metricEcsTaskCount({ label: 'Task Count' })),
+        ],
+        rightYAxis: { min: 0 },
       }),
     ];
 

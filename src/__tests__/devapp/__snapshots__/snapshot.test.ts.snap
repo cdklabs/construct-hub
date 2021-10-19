@@ -299,8 +299,6 @@ Resources:
         Fn::GetAtt:
           - ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionServiceRole9AAAD93C
           - Arn
-      Architectures:
-        - arm64
       Description:
         Fn::Join:
           - ""
@@ -1607,8 +1605,6 @@ Resources:
         Fn::GetAtt:
           - ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE
           - Arn
-      Architectures:
-        - arm64
       Description: backend/deny-list/prune-handler.lambda.ts
       Environment:
         Variables:
@@ -1698,8 +1694,6 @@ Resources:
         Fn::GetAtt:
           - ConstructHubDenyListPrunePruneQueueHandlerServiceRoleC10AC418
           - Arn
-      Architectures:
-        - arm64
       Description: backend/deny-list/prune-queue-handler.lambda.ts
       Environment:
         Variables:
@@ -1898,8 +1892,6 @@ Resources:
         Fn::GetAtt:
           - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
           - Arn
-      Architectures:
-        - arm64
       Description:
         Fn::Join:
           - ""
@@ -2706,8 +2698,6 @@ Resources:
         Fn::GetAtt:
           - ConstructHubOrchestrationRedriveServiceRoleB84EFF33
           - Arn
-      Architectures:
-        - arm64
       Description: "[ConstructHub/Redrive] Manually redrives all messages from the
         backend dead letter queue"
       Environment:
@@ -2797,8 +2787,6 @@ Resources:
         Fn::GetAtt:
           - ConstructHubOrchestrationReprocessAllServiceRoleE23FF434
           - Arn
-      Architectures:
-        - arm64
       Description: "[ConstructHub/ReprocessAll] Reprocess all package versions through
         the backend"
       Environment:
@@ -2973,8 +2961,6 @@ Resources:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
           - Arn
-      Architectures:
-        - arm64
       Description: "[ConstructHub/Ingestion] Ingests new package versions into the
         Construct Hub"
       Environment:
@@ -3145,8 +3131,6 @@ Resources:
         Fn::GetAtt:
           - ConstructHubIngestionReprocessWorkflowFunctionServiceRoleA59056B1
           - Arn
-      Architectures:
-        - arm64
       Description: "[ConstructHub/Ingestion/ReIngest] The function used to reprocess
         packages through ingestion"
       Environment:
@@ -3584,7 +3568,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters85d26bfe7790a3373b11ace571e5616c448493a98d10ed299463ee2e07bdce49S3BucketEEFC2942
+          Ref: AssetParametersc09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2S3Bucket282AD231
         S3Key:
           Fn::Join:
             - ""
@@ -3592,18 +3576,16 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters85d26bfe7790a3373b11ace571e5616c448493a98d10ed299463ee2e07bdce49S3VersionKey66920F91
+                      - Ref: AssetParametersc09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2S3VersionKey2CF1D797
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters85d26bfe7790a3373b11ace571e5616c448493a98d10ed299463ee2e07bdce49S3VersionKey66920F91
+                      - Ref: AssetParametersc09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2S3VersionKey2CF1D797
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50
           - Arn
-      Architectures:
-        - arm64
       DeadLetterConfig:
         TargetArn:
           Fn::GetAtt:
@@ -3743,7 +3725,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters3306cf155a82b612c8c7fde5a97296d3dee65ae9583ebe7ce9d9a0cd1f5a4c31S3Bucket57E0B5DF
+          Ref: AssetParameters8a4f91f7cfe7a988cc49d61f5bc568f49db75225cf3a89de6c8ace2248650a42S3BucketB7E4D952
         S3Key:
           Fn::Join:
             - ""
@@ -3751,18 +3733,16 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters3306cf155a82b612c8c7fde5a97296d3dee65ae9583ebe7ce9d9a0cd1f5a4c31S3VersionKeyCE80FB9C
+                      - Ref: AssetParameters8a4f91f7cfe7a988cc49d61f5bc568f49db75225cf3a89de6c8ace2248650a42S3VersionKey7736CBD7
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters3306cf155a82b612c8c7fde5a97296d3dee65ae9583ebe7ce9d9a0cd1f5a4c31S3VersionKeyCE80FB9C
+                      - Ref: AssetParameters8a4f91f7cfe7a988cc49d61f5bc568f49db75225cf3a89de6c8ace2248650a42S3VersionKey7736CBD7
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsServiceRoleAC3F7AA6
           - Arn
-      Architectures:
-        - arm64
       Description: "[dev/ConstructHub/Sources/NpmJs] Periodically query npmjs.com
         index for new packages"
       Environment:
@@ -4024,8 +4004,6 @@ Resources:
         Fn::GetAtt:
           - ConstructHubInventoryCanaryServiceRole7684EDDE
           - Arn
-      Architectures:
-        - arm64
       Description: "[ConstructHub/Inventory] A canary that periodically inspects the
         list of indexed packages"
       Environment:
@@ -4172,13 +4150,10 @@ Resources:
                     - Ref: ConstructHubOrchestrationTransliteratorLogGroupEE16EE8B
             - )\\n[button:Transliterator ECS Cluster](/ecs/home#/clusters/
             - Ref: ConstructHubOrchestrationCluster3D6F0081
-            - /tasks)"}},{"type":"metric","width":12,"height":6,"x":0,"y":10,"properties":{"view":"timeSeries","title":"ECS
+            - /tasks)"}},{"type":"metric","width":12,"height":6,"x":0,"y":10,"properties":{"view":"timeSeries","title":"Fargate
               Resources","region":"
             - Ref: AWS::Region
-            - '","metrics":[["ECS/ContainerInsights","TaskCount","ClusterName","'
-            - Ref: ConstructHubOrchestrationCluster3D6F0081
-            - '",{"label":"Task
-              Count","stat":"Sum"}],["AWS/Usage","ResourceCount","Class","None","Resource","OnDemand","Service","Fargate","Type","Resource",{"label":"Fargate
+            - '","metrics":[["AWS/Usage","ResourceCount","Class","None","Resource","OnDemand","Service","Fargate","Type","Resource",{"label":"Fargate
               Usage
               (On-Demand)","stat":"Maximum","id":"mFargateUsage"}],[{"label":"Fargate
               Quota
@@ -4197,15 +4172,24 @@ Resources:
             - '",{"stat":"Maximum","visible":false,"id":"mMemoryReserved"}],["ECS/ContainerInsights","MemoryUtilized","ClusterName","'
             - Ref: ConstructHubOrchestrationCluster3D6F0081
             - '",{"stat":"Maximum","visible":false,"id":"mMemoryUtilized"}]],"yAxis":{"left":{"min":0},"right":{"label":"Percent","min":0,"max":100,"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":10,"properties":{"view":"timeSeries","title":"ECS
-              Networking","region":"'
+              Resources","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ECS/ContainerInsights","NetworkRxBytes","ClusterName","'
+            - '","metrics":[[{"label":"Received
+              Bytes","expression":"FILL(m67cc14db3275d4a2af71847df2ebb376a00b015f62c4ff9d1aedb9bc615a6cf0,
+              0)"}],["ECS/ContainerInsights","NetworkRxBytes","ClusterName","'
             - Ref: ConstructHubOrchestrationCluster3D6F0081
             - '",{"label":"Received
-              Bytes","stat":"Maximum"}],["ECS/ContainerInsights","NetworkTxBytes","ClusterName","'
+              Bytes","stat":"Maximum","visible":false,"id":"m67cc14db3275d4a2af71847df2ebb376a00b015f62c4ff9d1aedb9bc615a6cf0"}],[{"label":"Transmitted
+              Bytes","expression":"FILL(md6781afc8bf73de5587d36039d8226d1c0fe0b50a1c949759d3d8d8cd2e3f6d1,
+              0)"}],["ECS/ContainerInsights","NetworkTxBytes","ClusterName","'
             - Ref: ConstructHubOrchestrationCluster3D6F0081
             - '",{"label":"Transmitted
-              Bytes","stat":"Maximum"}]],"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":1,"x":0,"y":16,"properties":{"markdown":"##
+              Bytes","stat":"Maximum","visible":false,"id":"md6781afc8bf73de5587d36039d8226d1c0fe0b50a1c949759d3d8d8cd2e3f6d1"}],[{"label":"Task
+              Count","expression":"FILL(mbb258976f5c025a7dff5289417a6b07619e000e4af1a427fecc57b31586fd6dd,
+              0)","yAxis":"right"}],["ECS/ContainerInsights","TaskCount","ClusterName","'
+            - Ref: ConstructHubOrchestrationCluster3D6F0081
+            - '",{"label":"Task
+              Count","stat":"Sum","visible":false,"id":"mbb258976f5c025a7dff5289417a6b07619e000e4af1a427fecc57b31586fd6dd"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"text","width":24,"height":1,"x":0,"y":16,"properties":{"markdown":"##
               Language:
               typescript"}},{"type":"metric","width":6,"height":6,"x":0,"y":17,"properties":{"view":"pie","title":"Package
               Versions","region":"'
@@ -4731,8 +4715,6 @@ Resources:
         Fn::GetAtt:
           - ConstructHubWebAppCacheInvalidatorServiceRoleAABE9AE2
           - Arn
-      Architectures:
-        - arm64
       Description:
         Fn::Join:
           - ""
@@ -5466,30 +5448,30 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658"
-  AssetParameters85d26bfe7790a3373b11ace571e5616c448493a98d10ed299463ee2e07bdce49S3BucketEEFC2942:
+  AssetParametersc09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2S3Bucket282AD231:
     Type: String
     Description: S3 bucket for asset
-      "85d26bfe7790a3373b11ace571e5616c448493a98d10ed299463ee2e07bdce49"
-  AssetParameters85d26bfe7790a3373b11ace571e5616c448493a98d10ed299463ee2e07bdce49S3VersionKey66920F91:
+      "c09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2"
+  AssetParametersc09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2S3VersionKey2CF1D797:
     Type: String
     Description: S3 key for asset version
-      "85d26bfe7790a3373b11ace571e5616c448493a98d10ed299463ee2e07bdce49"
-  AssetParameters85d26bfe7790a3373b11ace571e5616c448493a98d10ed299463ee2e07bdce49ArtifactHash7773FEB4:
+      "c09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2"
+  AssetParametersc09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2ArtifactHash7CC2C110:
     Type: String
     Description: Artifact hash for asset
-      "85d26bfe7790a3373b11ace571e5616c448493a98d10ed299463ee2e07bdce49"
-  AssetParameters3306cf155a82b612c8c7fde5a97296d3dee65ae9583ebe7ce9d9a0cd1f5a4c31S3Bucket57E0B5DF:
+      "c09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2"
+  AssetParameters8a4f91f7cfe7a988cc49d61f5bc568f49db75225cf3a89de6c8ace2248650a42S3BucketB7E4D952:
     Type: String
     Description: S3 bucket for asset
-      "3306cf155a82b612c8c7fde5a97296d3dee65ae9583ebe7ce9d9a0cd1f5a4c31"
-  AssetParameters3306cf155a82b612c8c7fde5a97296d3dee65ae9583ebe7ce9d9a0cd1f5a4c31S3VersionKeyCE80FB9C:
+      "8a4f91f7cfe7a988cc49d61f5bc568f49db75225cf3a89de6c8ace2248650a42"
+  AssetParameters8a4f91f7cfe7a988cc49d61f5bc568f49db75225cf3a89de6c8ace2248650a42S3VersionKey7736CBD7:
     Type: String
     Description: S3 key for asset version
-      "3306cf155a82b612c8c7fde5a97296d3dee65ae9583ebe7ce9d9a0cd1f5a4c31"
-  AssetParameters3306cf155a82b612c8c7fde5a97296d3dee65ae9583ebe7ce9d9a0cd1f5a4c31ArtifactHash4309A7FE:
+      "8a4f91f7cfe7a988cc49d61f5bc568f49db75225cf3a89de6c8ace2248650a42"
+  AssetParameters8a4f91f7cfe7a988cc49d61f5bc568f49db75225cf3a89de6c8ace2248650a42ArtifactHashAD02DF9B:
     Type: String
     Description: Artifact hash for asset
-      "3306cf155a82b612c8c7fde5a97296d3dee65ae9583ebe7ce9d9a0cd1f5a4c31"
+      "8a4f91f7cfe7a988cc49d61f5bc568f49db75225cf3a89de6c8ace2248650a42"
   AssetParameterscfa04e95a99d0796c41be6daddff2f13b6b46407c75c963edc503c40076fe575S3BucketD9E029DB:
     Type: String
     Description: S3 bucket for asset

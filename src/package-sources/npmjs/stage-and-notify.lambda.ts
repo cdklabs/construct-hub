@@ -4,11 +4,19 @@ import type { Context, SQSEvent } from 'aws-lambda';
 import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
 import { s3, sqs } from '../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
-import { IngestionInput } from '../../backend/shared/ingestion-input.lambda-shared';
 import { integrity } from '../../backend/shared/integrity.lambda-shared';
 import { S3KeyPrefix } from './constants.lambda-shared';
 
-export async function handler(event: PackageVersion | SQSEvent, context: Context) {
+/**
+ * This function is invoked by the `npm-js-follower.lambda`  with a `PackageVersion` object, or by
+ * an SQS trigger feeding from this function's Dead-Letter Queue (for re-trying purposes).
+ *
+ * The payload contains information about a discovered new package version. This handler will
+ * check the package is not deny-listed, download the tarball from the payload's `tarballUrl`, store
+ * it in the staging bucket, then send a message to the ConstructHub ingestion SQS queue in order to
+ * trigger ingestion of this package.
+ */
+export async function handler(event: PackageVersion | SQSEvent, context: Context): Promise<void> {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
 
   if ('Records' in event) {
@@ -53,7 +61,7 @@ export async function handler(event: PackageVersion | SQSEvent, context: Context
   }).promise();
 
   // Prepare ingestion request
-  const message: IngestionInput = integrity(
+  const message = integrity(
     {
       tarballUri: `s3://${stagingBucket}/${stagingKey}`,
       metadata: {

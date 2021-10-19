@@ -10,7 +10,6 @@ export class HttpGetFunction extends lambda.Function {
   constructor(scope: Construct, id: string, props?: HttpGetFunctionProps) {
     super(scope, id, {
       description: 'monitoring/http-get-function.lambda.ts',
-      architecture: lambda.Architecture.ARM_64,
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',

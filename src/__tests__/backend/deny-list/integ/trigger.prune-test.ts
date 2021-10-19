@@ -16,7 +16,6 @@ export class TriggerPruneTest extends lambda.Function {
   constructor(scope: Construct, id: string, props?: TriggerPruneTestProps) {
     super(scope, id, {
       description: '__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts',
-      architecture: lambda.Architecture.ARM_64,
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',

@@ -56,7 +56,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
   const npm = new CouchChanges(NPM_REPLICA_REGISTRY_URL, 'registry');
 
-  const { marker: initialMarker, knownVersions } = await loadLastTransactionMarker(npm);
+  const { marker: initialMarker, knownVersions } = await loadLastTransactionMarker(stagingBucket, npm);
 
   // The last written marker seq id.
   let updatedMarker = initialMarker;
@@ -138,7 +138,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
         }
 
         // Updating the S3 stored marker with the new seq id as communicated by nano.
-        await saveLastTransactionMarker(updatedMarker);
+        await saveLastTransactionMarker(context, stagingBucket, updatedMarker, knownVersions);
 
       } finally {
         // Markers may not always be numeric (but in practice they are now), so we protect against that...
@@ -155,121 +155,129 @@ export async function handler(event: ScheduledEvent, context: Context) {
   console.log('All done here, we have success!');
 
   return { initialMarker, updatedMarker };
+}
 
-  //#region Last transaction marker
-  /**
-   * Loads the last transaction marker from S3.
-   *
-   * @param registry a Nano database corresponding to the Npmjs.com CouchDB instance.
-   *
-   * @returns the value of the last transaction marker.
-   */
-  async function loadLastTransactionMarker(registry: CouchChanges): Promise<{ marker: string | number; knownVersions: Map<string, Date> }> {
-    try {
-      const response = await aws.s3().getObject({
-        Bucket: stagingBucket,
-        Key: MARKER_FILE_NAME,
-      }).promise();
-      if (response.ContentEncoding === 'gzip') {
-        response.Body = gunzipSync(Buffer.from(response.Body!));
-      }
-      let data = JSON.parse(
-        response.Body!.toString('utf-8'),
-        (key, value) => {
-          if (key !== 'knownVersions') {
-            return value;
-          }
-          const map = new Map<string, Date>();
-          for (const [pkgVersion, iso] of Object.entries(value)) {
-            if (typeof iso === 'string' || typeof iso === 'number') {
-              map.set(pkgVersion, new Date(iso));
-            } else {
-              console.error(`Ignoring invalid entry: ${pkgVersion} => ${iso}`);
-            }
-          }
-          return map;
-        },
-      );
-      if (typeof data === 'number') {
-        data = { marker: data.toFixed(), knownVersions: new Map() };
-      }
-      console.log(`Read last transaction marker: ${data.marker}`);
 
-      const dbUpdateSeq = (await registry.info()).update_seq;
-      if (dbUpdateSeq < data.marker) {
-        console.warn(`Current DB update_seq (${dbUpdateSeq}) is lower than marker (CouchDB instance was likely replaced), resetting to 0!`);
-        return { marker: '0', knownVersions: data.knownVersion };
-      }
-
-      return data;
-    } catch (error) {
-      if (error.code !== 'NoSuchKey') {
-        throw error;
-      }
-      console.warn(`Marker object (s3://${stagingBucket}/${MARKER_FILE_NAME}) does not exist, starting from scratch`);
-      return { marker: '0', knownVersions: new Map() };
+//#region Last transaction marker
+/**
+ * Loads the last transaction marker from S3.
+ *
+ * @param registry a Nano database corresponding to the Npmjs.com CouchDB instance.
+ *
+ * @returns the value of the last transaction marker and the map of package names + versions to the last modification
+ *          of that package version that was processed.
+ */
+async function loadLastTransactionMarker(
+  stagingBucket: string,
+  registry: CouchChanges,
+): Promise<{ marker: string | number; knownVersions: Map<string, Date> }> {
+  try {
+    const response = await aws.s3().getObject({
+      Bucket: stagingBucket,
+      Key: MARKER_FILE_NAME,
+    }).promise();
+    if (response.ContentEncoding === 'gzip') {
+      response.Body = gunzipSync(Buffer.from(response.Body!));
     }
-  }
-
-  /**
-   * Updates the last transaction marker in S3.
-   *
-   * @param marker the last transaction marker value
-   */
-  async function saveLastTransactionMarker(marker: string | number) {
-    console.log(`Updating last transaction marker to ${marker}`);
-    return putObject(
-      MARKER_FILE_NAME,
-      gzipSync(
-        JSON.stringify(
-          { marker, knownVersions },
-          (_, value) => {
-            if (value instanceof Date) {
-              return value.toISOString();
-            } else if (value instanceof Map) {
-              return Object.fromEntries(value);
-            } else {
-              return value;
-            }
-          },
-          2,
-        ),
-        { level: 9 },
-      ),
-      {
-        ContentType: 'application/json',
-        ContentEncoding: 'gzip',
+    let data = JSON.parse(
+      response.Body!.toString('utf-8'),
+      (key, value) => {
+        if (key !== 'knownVersions') {
+          return value;
+        }
+        const map = new Map<string, Date>();
+        for (const [pkgVersion, iso] of Object.entries(value)) {
+          if (typeof iso === 'string' || typeof iso === 'number') {
+            map.set(pkgVersion, new Date(iso));
+          } else {
+            console.error(`Ignoring invalid entry: ${pkgVersion} => ${iso}`);
+          }
+        }
+        return map;
       },
     );
-  }
-  //#endregion
+    if (typeof data === 'number') {
+      data = { marker: data.toFixed(), knownVersions: new Map() };
+    }
+    console.log(`Read last transaction marker: ${data.marker}`);
 
-  //#region Asynchronous Primitives
-  /**
-   * Puts an object in the staging bucket, with standardized object metadata.
-   *
-   * @param key  the key for the object to be put.
-   * @param body the body of the object to be put.
-   * @param opts any other options to use when sending the S3 request.
-   *
-   * @returns the result of the S3 request.
-   */
-  function putObject(key: string, body: AWS.S3.Body, opts: Omit<AWS.S3.PutObjectRequest, 'Bucket' | 'Key' | 'Body'> = {}) {
-    return aws.s3().putObject({
-      Bucket: stagingBucket,
-      Key: key,
-      Body: body,
-      Metadata: {
-        'Lambda-Log-Group': context.logGroupName,
-        'Lambda-Log-Stream': context.logStreamName,
-        'Lambda-Run-Id': context.awsRequestId,
-        ...opts.Metadata,
-      },
-      ...opts,
-    }).promise();
+    const dbUpdateSeq = (await registry.info()).update_seq;
+    if (dbUpdateSeq < data.marker) {
+      console.warn(`Current DB update_seq (${dbUpdateSeq}) is lower than marker (CouchDB instance was likely replaced), resetting to 0!`);
+      return { marker: '0', knownVersions: data.knownVersion };
+    }
+
+    return data;
+  } catch (error) {
+    if (error.code !== 'NoSuchKey') {
+      throw error;
+    }
+    console.warn(`Marker object (s3://${stagingBucket}/${MARKER_FILE_NAME}) does not exist, starting from scratch`);
+    return { marker: '0', knownVersions: new Map() };
   }
-  //#endregion
 }
+
+/**
+ * Updates the last transaction marker in S3.
+ *
+ * @param marker the last transaction marker value
+ * @param knownVersions the map of package name + version to last modified timestamp of packages that have been processed.
+ */
+async function saveLastTransactionMarker(context: Context, stagingBucket: string, marker: string | number, knownVersions: Map<string, Date>) {
+  console.log(`Updating last transaction marker to ${marker}`);
+  return putObject(
+    context,
+    stagingBucket,
+    MARKER_FILE_NAME,
+    gzipSync(
+      JSON.stringify(
+        { marker, knownVersions },
+        (_, value) => {
+          if (value instanceof Date) {
+            return value.toISOString();
+          } else if (value instanceof Map) {
+            return Object.fromEntries(value);
+          } else {
+            return value;
+          }
+        },
+        2,
+      ),
+      { level: 9 },
+    ),
+    {
+      ContentType: 'application/json',
+      ContentEncoding: 'gzip',
+    },
+  );
+}
+//#endregion
+
+//#region Asynchronous Primitives
+/**
+ * Puts an object in the staging bucket, with standardized object metadata.
+ *
+ * @param key  the key for the object to be put.
+ * @param body the body of the object to be put.
+ * @param opts any other options to use when sending the S3 request.
+ *
+ * @returns the result of the S3 request.
+ */
+function putObject(context: Context, bucket: string, key: string, body: AWS.S3.Body, opts: Omit<AWS.S3.PutObjectRequest, 'Bucket' | 'Key' | 'Body'> = {}) {
+  return aws.s3().putObject({
+    Bucket: bucket,
+    Key: key,
+    Body: body,
+    Metadata: {
+      'Lambda-Log-Group': context.logGroupName,
+      'Lambda-Log-Stream': context.logStreamName,
+      'Lambda-Run-Id': context.awsRequestId,
+      ...opts.Metadata,
+    },
+    ...opts,
+  }).promise();
+}
+//#endregion
 
 /**
  * Obtains the `VersionInfo` corresponding to the modified version(s) in the
@@ -365,6 +373,17 @@ function getRelevantVersionInfos(
   }
   return result;
 
+  /**
+   * This determines whether a package is "interesting" to ConstructHub or not. This is related but
+   * not necessarily identical to the logic in the ingestion process that annotates package metadata
+   * with a construct framework name + version (those could ultimately be re-factored to share more
+   * of the logic/heuristics, though).
+   *
+   * Concretely, it checks for a list of known "official" packages for various construct frameworks,
+   * and packages that have a dependency on such a package. It also has a keywords allow-list as a
+   * fall-back (the current dependency-based logic does not consider transitive dependencies and
+   * might hence miss certain rare use-cases, which keywords would rescue).
+   */
   function isConstructLibrary(infos: VersionInfo): boolean {
     if (infos.jsii == null) {
       return false;

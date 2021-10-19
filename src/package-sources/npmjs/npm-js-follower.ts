@@ -10,7 +10,6 @@ export class NpmJsFollower extends lambda.Function {
   constructor(scope: Construct, id: string, props?: NpmJsFollowerProps) {
     super(scope, id, {
       description: 'package-sources/npmjs/npm-js-follower.lambda.ts',
-      architecture: lambda.Architecture.ARM_64,
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',

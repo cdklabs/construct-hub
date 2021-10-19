@@ -10,7 +10,6 @@ export class Handler extends lambda.Function {
   constructor(scope: Construct, id: string, props?: HandlerProps) {
     super(scope, id, {
       description: 'webapp/cache-invalidator/handler.lambda.ts',
-      architecture: lambda.Architecture.ARM_64,
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',

@@ -10,7 +10,6 @@ export class PruneQueueHandler extends lambda.Function {
   constructor(scope: Construct, id: string, props?: PruneQueueHandlerProps) {
     super(scope, id, {
       description: 'backend/deny-list/prune-queue-handler.lambda.ts',
-      architecture: lambda.Architecture.ARM_64,
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',

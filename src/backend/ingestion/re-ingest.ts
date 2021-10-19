@@ -10,7 +10,6 @@ export class ReIngest extends lambda.Function {
   constructor(scope: Construct, id: string, props?: ReIngestProps) {
     super(scope, id, {
       description: 'backend/ingestion/re-ingest.lambda.ts',
-      architecture: lambda.Architecture.ARM_64,
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',

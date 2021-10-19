@@ -10,7 +10,6 @@ export class CodeArtifactForwarder extends lambda.Function {
   constructor(scope: Construct, id: string, props?: CodeArtifactForwarderProps) {
     super(scope, id, {
       description: 'package-sources/codeartifact/code-artifact-forwarder.lambda.ts',
-      architecture: lambda.Architecture.ARM_64,
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
