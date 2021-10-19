@@ -158,8 +158,8 @@ running as scheduled again. No further action is needed.
 #### Description
 
 The dead-letter queue of the orchestration state machine is not empty. This
-means that some packages could not be processed by the construct hub and therefore 
-they might be missing documentation for one or more languages, or may not be referenced 
+means that some packages could not be processed by the construct hub and therefore
+they might be missing documentation for one or more languages, or may not be referenced
 in the catalog at all.
 
 > :warning: Messages in the dead-letter queue can only be persisted there for up
@@ -191,21 +191,21 @@ by clicking the *State Machine* button in the backend dashboard, and
 search for the execution named at `$TaskExecution.Name`.
 
 Open the execution details and locate the failed tasks. Failed tasks are colored
-orange or red in the state diagram. 
+orange or red in the state diagram.
 
 Reviewing the logs of various tasks can be useful to obtain more information. Tasks
 are retried automatically by the state machine, so it might be useful to review
 a few failures to identify if an error is endemic or transient.
 
-Click on the URL under **Resource** in the **Details** tab in order to jump to the 
+Click on the URL under **Resource** in the **Details** tab in order to jump to the
 AWS console for this specific task execution and view logs from there.
 
 In the case of ECS tasks, the CloudWatch logs for a particular execution can be
 found by following the links from the state machine execution events to the ECS
 task, then to the CloudWatch Logs stream for that execution.
 
-> In case ECS says "We couldn't find the requested content.", it means that the task 
-> execution was already deleted from ECS, and then you should be able to go directly to the CloudWatch 
+> In case ECS says "We couldn't find the requested content.", it means that the task
+> execution was already deleted from ECS, and then you should be able to go directly to the CloudWatch
 > logs for this task. see [Diving into ECS logs in CloudWatch][#ecs-log-dive]
 > section for details on how to find the CloudWatch logs for this task based on the task ID.
 
@@ -261,7 +261,7 @@ console.
 
 ### `ConstructHub/Sources/CodeArtifact/*/Fowarder/DLQNotEmpty`
 
-# Description
+#### Description
 
 One instance of this alarms exists for each configured CodeArtifact source. It
 triggers when CodeArtifact events (via EventBridge) failed processing through
@@ -274,7 +274,7 @@ triggered them are not ingested.
 > time frame, it is recommended to copy those messages out to persistent storage
 > for later re-processing.
 
-# Investigation
+#### Investigation
 
 Locate the relevant CodeArtifact package source in the backend dashboard, and
 click the *DLQ* button to access the dead-letter queue. Messages in the queue
@@ -287,7 +287,7 @@ If that information is not sufficient to understand the problem, click the
 For additional recommendations for diving into CloudWatch Logs, refer to the
 [Diving into Lambda Function logs in CloudWatch Logs][#lambda-log-dive] section.
 
-# Resolution
+#### Resolution
 
 Once the root cause has been fixed, messages from the dead-letter queue need to
 be sent back to the *Forwarder Function* for processing. Messages from the
@@ -299,7 +299,7 @@ dead-letter queue need to be manually passed to new function invocations.
 
 ### `ConstructHub/Sources/CodeArtifact/*/Fowarder/Failures`
 
-# Description
+#### Description
 
 One instance of this alarms exists for each configured CodeArtifact source. It
 triggers when CodeArtifact events (via EventBridge) fail processing through the
@@ -307,7 +307,7 @@ triggers when CodeArtifact events (via EventBridge) fail processing through the
 when appropriate. This means newly published packages from the CodeArtifact
 repository are not ingested anymore.
 
-# Investigation
+#### Investigation
 
 Locate the relevant CodeArtifact package source in the backend dashboard, and
 click the *Search Log Group* button to dive into the logs of the forwarder
@@ -316,7 +316,7 @@ function.
 For additional recommendations for diving into CloudWatch Logs, refer to the
 [Diving into Lambda Function logs in CloudWatch Logs][#lambda-log-dive] section.
 
-# Resolution
+#### Resolution
 
 This alarm will automatically go back to green as the CodeArtifact forwarder
 stops failing.
@@ -417,6 +417,32 @@ reporting `npmjs.com` registry changes again. No further action is needed.
 
 --------------------------------------------------------------------------------
 
+### `ConstructHub/Canaries/Discovery/NotRunning`
+
+This alarm is only provisioned in case the [discovery canary]() was configured.
+
+#### Description
+
+#### Investigation
+
+#### Resolution
+
+### `ConstructHub/Canaries/Discovery/Failures`
+
+#### Description
+
+#### Investigation
+
+#### Resolution
+
+### `ConstructHub/Canaries/Discovery/Breach`
+
+#### Description
+
+#### Investigation
+
+#### Resolution
+
 ## :information_source: General Recommendations
 
 ### Diving into Lambda Function logs in CloudWatch Logs
@@ -450,7 +476,7 @@ often good first steps to take in such investigations:
 ### Diving into ECS logs in CloudWatch Logs
 [#ecs-log-dive]: #diving-into-ecs-logs-in-cloudwatch-logs
 
-ECS tasks emit logs into CloudWatch under a log group called 
-`ConstructHubOrchestrationTransliteratorLogGroup` 
-in its name and the log stream `transliterator/Resource/$TASKID` (e.g. 
+ECS tasks emit logs into CloudWatch under a log group called
+`ConstructHubOrchestrationTransliteratorLogGroup`
+in its name and the log stream `transliterator/Resource/$TASKID` (e.g.
 `transliterator/Resource/6b5c48f0a7624396899c6a3c8474d5c7`).
