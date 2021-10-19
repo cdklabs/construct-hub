@@ -2,7 +2,7 @@ import { Effect, PolicyStatement } from '@aws-cdk/aws-iam';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
-import { Construct, Duration, Stack } from '@aws-cdk/core';
+import { ArnFormat, Construct, Duration, Stack } from '@aws-cdk/core';
 import type { AssemblyTargets } from '@jsii/spec';
 
 import { Monitoring } from '../../monitoring';
@@ -67,6 +67,7 @@ export class CatalogBuilder extends Construct {
       actions: ['lambda:InvokeFunction'],
       effect: Effect.ALLOW,
       resources: [Stack.of(this).formatArn({
+        arnFormat: ArnFormat.COLON_RESOURCE_NAME,
         service: 'lambda',
         resource: 'function',
         resourceName: '*',
