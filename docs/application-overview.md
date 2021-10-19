@@ -207,7 +207,7 @@ Its job is to continuously validate that the hub is able to discover and process
 
 At a high level, the canary is implemented like so, assuming an SLA of 3 hours:
 
-
+```text
                                         │
                                         │Invoke every 3 hours
                                         │
@@ -235,6 +235,8 @@ At a high level, the canary is implemented like so, assuming an SLA of 3 hours:
                                            ┌────┐                                    ┌──────┐
                                            │Exit│                                    │ Exit │
                                            └────┘                                    └──────┘
+
+```
 
 A **high-severity** alarm triggers if the canary function is either malfunctioning or detects discovery SLA breaches. Troubleshooting these alarms is described in the operator runbook.
 
