@@ -171,7 +171,7 @@ test('initial build', () => {
   // WHEN
   const result = handler({
     package: {
-      key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.2${constants.ASSEMBLY_KEY_SUFFIX}`,
+      key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.2${constants.PACKAGE_KEY_SUFFIX}`,
       versionId: 'VersionID',
     },
   }, { getRemainingTimeInMillis: () => Number.MAX_SAFE_INTEGER } as any);
@@ -189,13 +189,13 @@ test('rebuild (with continuation)', async () => {
       {
         author: { name: 'author' },
         keywords: ['keyword'],
-        languages: { 'java': {}, 'go': {} },
+        languages: { java: {}, go: {} },
         license: 'UNLICENSED',
         major: 42,
         name: '@fake/package',
         time: new Date(0),
         version: '42.1337.0',
-      }
+      },
     ],
     updated: new Date(0).toISOString(),
   };
@@ -271,7 +271,7 @@ test('rebuild (with continuation)', async () => {
       const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
       expect(body.packages).toEqual([
         // The existing catalog should __NOT__ get truncated.
-        ...mockCatalog.packages.map((pkg) => ({...pkg, time: pkg.time.toISOString() })),
+        ...mockCatalog.packages.map((pkg) => ({ ...pkg, time: pkg.time.toISOString() })),
         {
           description: 'Package @scope/package, version 1.2.3',
           languages: { foo: 'bar' },
