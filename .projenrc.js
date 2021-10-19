@@ -149,6 +149,11 @@ function addDevApp() {
       exec: `npx cdk ${cmd}`,
     });
   }
+  project.addTask('dev:hotswap', {
+    description: 'cdk deploy --hotswap',
+    cwd: devapp,
+    exec: 'npx cdk deploy --hotswap',
+  });
 
   project.gitignore.addPatterns(`${devapp}/cdk.out`);
 

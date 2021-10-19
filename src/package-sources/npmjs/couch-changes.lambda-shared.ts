@@ -194,7 +194,7 @@ export interface DatabaseChange {
    * The set of revisions to the object that were resolved as part of this
    * change.
    */
-  readonly changes: ReadonlyArray<{ readonly rev: string; }>;
+  readonly changes: ReadonlyArray<{ readonly rev: string }>;
 
   /**
    * The ID of the document that has changed.
