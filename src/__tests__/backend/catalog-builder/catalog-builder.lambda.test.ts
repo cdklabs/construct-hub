@@ -174,10 +174,122 @@ test('initial build', () => {
       key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.2${constants.ASSEMBLY_KEY_SUFFIX}`,
       versionId: 'VersionID',
     },
-  }, { /* context */ } as any);
+  }, { getRemainingTimeInMillis: () => Number.MAX_SAFE_INTEGER } as any);
 
   // THEN
   return expect(result).resolves.toBe(mockPutObjectResult);
+});
+
+test('initial build (with continuation)', async () => {
+  // GIVEN
+  const npmMetadata = { date: 'Thu, 17 Jun 2021 01:52:04 GMT' };
+
+  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+    const denyListResponse = tryMockDenyList(req);
+    if (denyListResponse) {
+      return cb(null, denyListResponse);
+    }
+
+    try {
+      expect(req.Bucket).toBe(mockBucketName);
+    } catch (e) {
+      return cb(e as any);
+    }
+
+    if (req.Key.endsWith(constants.METADATA_KEY_SUFFIX)) {
+      return cb(null, { Body: JSON.stringify(npmMetadata) });
+    }
+    const matches = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`).exec(req.Key);
+    if (matches != null) {
+      mockNpmPackage(matches[1], matches[2]).then(
+        (pack) => cb(null, { Body: pack }),
+        cb,
+      );
+    } else {
+      return cb(new NoSuchKeyError());
+    }
+  });
+  // this is the suffix that triggers the catalog builder.
+  const docsSuffix = constants.DOCS_KEY_SUFFIX_TYPESCRIPT;
+  const mockFirstPage: AWS.S3.ObjectList = [
+    { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.3${constants.ASSEMBLY_KEY_SUFFIX}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.3${constants.PACKAGE_KEY_SUFFIX}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}@scope/package/v1.2.3${docsSuffix}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}name/v1.2.3${constants.ASSEMBLY_KEY_SUFFIX}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}name/v1.2.3${constants.PACKAGE_KEY_SUFFIX}` },
+    { Key: `${constants.STORAGE_KEY_PREFIX}name/v1.2.3${docsSuffix}` },
+  ];
+  AWSMock.mock('S3', 'listObjectsV2', (req: AWS.S3.ListObjectsV2Request, cb: Response<AWS.S3.ListObjectsV2Output>) => {
+    try {
+      expect(req.Bucket).toBe(mockBucketName);
+      expect(req.Prefix).toBe(constants.STORAGE_KEY_PREFIX);
+      expect(req.ContinuationToken).toBeUndefined();
+      return cb(null, { Contents: mockFirstPage, NextContinuationToken: 'next' });
+    } catch (e) {
+      return cb(e as any);
+    }
+  });
+  AWSMock.mock('S3', 'headObject', (req: AWS.S3.HeadObjectRequest, cb: Response<AWS.S3.HeadObjectOutput>) => {
+    const existingKeys = new Set(mockFirstPage.map((obj) => obj.Key!));
+    if (req.Bucket === mockBucketName && existingKeys.has(req.Key)) {
+      return cb(null, {});
+    }
+    class NotFound extends Error implements AWSError {
+      public code = 'NotFound';
+      public message = 'Not Found';
+      public time = new Date();
+    }
+    return cb(new NotFound());
+  });
+  const mockPutObjectResult: AWS.S3.PutObjectOutput = {};
+  AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
+    try {
+      expect(req.Bucket).toBe(mockBucketName);
+      expect(req.Key).toBe(constants.CATALOG_KEY);
+      expect(req.ContentType).toBe('application/json');
+      expect(req.Metadata).toHaveProperty('Package-Count', '1');
+      const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
+      expect(body.packages).toEqual([
+        {
+          description: 'Package @scope/package, version 1.2.3',
+          languages: { foo: 'bar' },
+          major: 1,
+          metadata: npmMetadata,
+          name: '@scope/package',
+          version: '1.2.3',
+        },
+      ]);
+      expect(Date.parse(body.updatedAt)).toBeDefined();
+    } catch (e) {
+      return cb(e as any);
+    }
+    return cb(null, mockPutObjectResult);
+  });
+
+  let invokeDone = false;
+  const mockFunctionName = 'fake-function-name';
+  AWSMock.mock('Lambda', 'invokeAsync', (req: AWS.Lambda.InvokeAsyncRequest, cb: Response<AWS.Lambda.InvokeAsyncResponse>) => {
+    try {
+      expect(req.FunctionName).toBe(mockFunctionName);
+      expect(JSON.parse(req.InvokeArgs!.toString('utf8'))).toEqual({
+        startAfter: mockFirstPage.find(({ Key }) => Key!.endsWith(constants.PACKAGE_KEY_SUFFIX))!.Key,
+      });
+      invokeDone = true;
+      return cb(null, { Status: 202 });
+    } catch (e) {
+      return cb(e as any);
+    }
+  });
+
+  // WHEN
+  const result = handler(
+    {} as any, // Full rebuild attempt
+    { functionName: mockFunctionName, getRemainingTimeInMillis: () => 0 /* to cause continuation */ } as any,
+  );
+
+  // THEN
+  await expect(result).resolves.toBe(mockPutObjectResult);
+  expect(invokeDone).toBeTruthy();
 });
 
 describe('incremental build', () => {

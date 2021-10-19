@@ -1,7 +1,8 @@
+import { Effect, PolicyStatement } from '@aws-cdk/aws-iam';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
-import { Construct, Duration } from '@aws-cdk/core';
+import { Construct, Duration, Stack } from '@aws-cdk/core';
 import type { AssemblyTargets } from '@jsii/spec';
 
 import { Monitoring } from '../../monitoring';
@@ -57,6 +58,20 @@ export class CatalogBuilder extends Construct {
       tracing: Tracing.PASS_THROUGH,
     });
     this.function = handler;
+
+    // This function may invoke itself in case it needs to continue it's work in
+    // a "child" invocation. We must hence allow it to invoke itself. We cannot
+    // use grantInvoke as this would (naturally) cause a circular reference
+    // (Function -> Role -> Function).
+    handler.addToRolePolicy(new PolicyStatement({
+      actions: ['lambda:InvokeFunction'],
+      effect: Effect.ALLOW,
+      resources: [Stack.of(this).formatArn({
+        service: 'lambda',
+        resource: 'function',
+        resourceName: '*',
+      })],
+    }));
 
     // allow the catalog builder to use the client.
     props.denyList.grantRead(handler);
