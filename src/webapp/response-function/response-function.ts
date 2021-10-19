@@ -1,16 +1,18 @@
-interface CloudFrontResponse {
-  response: any;
-  headers: {
-    [key: string]: {
-      value: string;
-    };
-  };
-}
+import type { CloudFrontFunctionsEvent } from 'aws-lambda';
 
-function handler(event: CloudFrontResponse) {
+export function handler(event: CloudFrontFunctionsEvent): CloudFrontFunctionsEvent['response'] {
   var response = event.response;
   var headers = response.headers;
 
+  // Delete S3 metadata headers (irrelevant for the customer)
+  for (const key of Object.keys(headers)) {
+    const lkKey = key.toLowerCase();
+    if (lkKey.startsWith('x-amz-meta-')) {
+      delete headers[key];
+    }
+  }
+
+  // Set up security posture headers
   headers['x-frame-options'] = { value: 'deny' };
   headers['x-xss-protection'] = { value: '1; mode=block' };
   headers['x-content-type-options'] = { value: 'nosniff' };
