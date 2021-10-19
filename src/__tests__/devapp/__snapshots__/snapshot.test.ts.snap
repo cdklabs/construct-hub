@@ -1991,6 +1991,18 @@ Resources:
               - xray:PutTelemetryRecords
             Effect: Allow
             Resource: "*"
+          - Action: lambda:InvokeFunction
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - ":lambda:"
+                  - Ref: AWS::Region
+                  - ":"
+                  - Ref: AWS::AccountId
+                  - :function:*
           - Action:
               - s3:GetObject*
               - s3:GetBucket*
@@ -2033,7 +2045,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters8c2699bad46f0f26e9042dd754eba6ba68363c29b7c9fdc052da2a515d0b3a63S3BucketFB591343
+          Ref: AssetParametersbf525797a524275b4c8f834bd2cdca4b8e4273b0eb3500dd0c9250ee47d088daS3Bucket527872D7
         S3Key:
           Fn::Join:
             - ""
@@ -2041,12 +2053,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters8c2699bad46f0f26e9042dd754eba6ba68363c29b7c9fdc052da2a515d0b3a63S3VersionKeyC9D11757
+                      - Ref: AssetParametersbf525797a524275b4c8f834bd2cdca4b8e4273b0eb3500dd0c9250ee47d088daS3VersionKey6EB6060F
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters8c2699bad46f0f26e9042dd754eba6ba68363c29b7c9fdc052da2a515d0b3a63S3VersionKeyC9D11757
+                      - Ref: AssetParametersbf525797a524275b4c8f834bd2cdca4b8e4273b0eb3500dd0c9250ee47d088daS3VersionKey6EB6060F
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
@@ -3102,7 +3114,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersb4828fa3e6608b604f40714834357128787d8bb7327ddf0ae60941eeea975812S3Bucket2779E091
+          Ref: AssetParameters010f4329742dff85b55468073f1cdf06029945bb929d9e345726efac93194cf7S3Bucket16AB23B9
         S3Key:
           Fn::Join:
             - ""
@@ -3110,12 +3122,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersb4828fa3e6608b604f40714834357128787d8bb7327ddf0ae60941eeea975812S3VersionKey4905FB72
+                      - Ref: AssetParameters010f4329742dff85b55468073f1cdf06029945bb929d9e345726efac93194cf7S3VersionKey278B5FF6
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersb4828fa3e6608b604f40714834357128787d8bb7327ddf0ae60941eeea975812S3VersionKey4905FB72
+                      - Ref: AssetParameters010f4329742dff85b55468073f1cdf06029945bb929d9e345726efac93194cf7S3VersionKey278B5FF6
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
@@ -3884,7 +3896,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters54a013c685fd830d9e53c7a610f5278cca1110a389a5013daa53066efa077cceS3BucketC93D5DF5
+          Ref: AssetParameters01a7ad9f7673212b72747f5f069ae5e8f415c0ac5c1193452c0b475e5ce63d12S3BucketE5EB9EA3
         S3Key:
           Fn::Join:
             - ""
@@ -3892,12 +3904,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters54a013c685fd830d9e53c7a610f5278cca1110a389a5013daa53066efa077cceS3VersionKey761E0020
+                      - Ref: AssetParameters01a7ad9f7673212b72747f5f069ae5e8f415c0ac5c1193452c0b475e5ce63d12S3VersionKey3F3D62B5
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters54a013c685fd830d9e53c7a610f5278cca1110a389a5013daa53066efa077cceS3VersionKey761E0020
+                      - Ref: AssetParameters01a7ad9f7673212b72747f5f069ae5e8f415c0ac5c1193452c0b475e5ce63d12S3VersionKey3F3D62B5
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsServiceRoleAC3F7AA6
@@ -4741,9 +4753,21 @@ Resources:
       FunctionCode: >-
         "use strict";
 
+        Object.defineProperty(exports, "__esModule", { value: true });
+
+        exports.handler = void 0;
+
         function handler(event) {
             var response = event.response;
             var headers = response.headers;
+            // Delete S3 metadata headers (irrelevant for the customer)
+            for (const key of Object.keys(headers)) {
+                const lkKey = key.toLowerCase();
+                if (lkKey.startsWith('x-amz-meta-')) {
+                    delete headers[key];
+                }
+            }
+            // Set up security posture headers
             headers['x-frame-options'] = { value: 'deny' };
             headers['x-xss-protection'] = { value: '1; mode=block' };
             headers['x-content-type-options'] = { value: 'nosniff' };
@@ -4761,7 +4785,9 @@ Resources:
             return response;
         }
 
-        //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxTQUFTLE9BQU8sQ0FBQyxLQUF5QjtJQUN4QyxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0g7WUFDRSw2REFBNkQ7WUFDN0Qsa0RBQWtEO1lBQ2xELG1CQUFtQjtZQUNuQiwrQ0FBK0M7WUFDL0Msb0JBQW9CO1lBQ3BCLG1DQUFtQztTQUNwQyxDQUFDLElBQUksQ0FBQyxHQUFHLENBQUM7S0FDZCxDQUFDO0lBRUYsT0FBTyxRQUFRLENBQUM7QUFDbEIsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImludGVyZmFjZSBDbG91ZEZyb250UmVzcG9uc2Uge1xuICByZXNwb25zZTogYW55O1xuICBoZWFkZXJzOiB7XG4gICAgW2tleTogc3RyaW5nXToge1xuICAgICAgdmFsdWU6IHN0cmluZztcbiAgICB9O1xuICB9O1xufVxuXG5mdW5jdGlvbiBoYW5kbGVyKGV2ZW50OiBDbG91ZEZyb250UmVzcG9uc2UpIHtcbiAgdmFyIHJlc3BvbnNlID0gZXZlbnQucmVzcG9uc2U7XG4gIHZhciBoZWFkZXJzID0gcmVzcG9uc2UuaGVhZGVycztcblxuICBoZWFkZXJzWyd4LWZyYW1lLW9wdGlvbnMnXSA9IHsgdmFsdWU6ICdkZW55JyB9O1xuICBoZWFkZXJzWyd4LXhzcy1wcm90ZWN0aW9uJ10gPSB7IHZhbHVlOiAnMTsgbW9kZT1ibG9jaycgfTtcbiAgaGVhZGVyc1sneC1jb250ZW50LXR5cGUtb3B0aW9ucyddID0geyB2YWx1ZTogJ25vc25pZmYnIH07XG4gIGhlYWRlcnNbJ3N0cmljdC10cmFuc3BvcnQtc2VjdXJpdHknXSA9IHsgdmFsdWU6ICdtYXgtYWdlPTQ3MzA0MDAwOyBpbmNsdWRlU3ViRG9tYWlucycgfTtcbiAgaGVhZGVyc1snY29udGVudC1zZWN1cml0eS1wb2xpY3knXSA9IHtcbiAgICB2YWx1ZTpcbiAgICAgIFtcbiAgICAgICAgXCJkZWZhdWx0LXNyYyAnc2VsZicgJ3Vuc2FmZS1pbmxpbmUnIGh0dHBzOi8vKi5hd3NzdGF0aWMuY29tO1wiLFxuICAgICAgICBcImNvbm5lY3Qtc3JjICdzZWxmJyBodHRwczovLyouc2hvcnRicmVhZC5hd3MuZGV2O1wiLFxuICAgICAgICBcImZyYW1lLXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwiaW1nLXNyYyAnc2VsZicgaHR0cHM6Ly8qIGh0dHA6Ly8qLm9tdHJkYy5uZXQ7XCIsXG4gICAgICAgIFwib2JqZWN0LXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwic3R5bGUtc3JjICdzZWxmJyAndW5zYWZlLWlubGluZSc7XCIsXG4gICAgICBdLmpvaW4oJyAnKSxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=
+        exports.handler = handler;
+
+        //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUVBLFNBQWdCLE9BQU8sQ0FBQyxLQUErQjtJQUNyRCxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsMkRBQTJEO0lBQzNELEtBQUssTUFBTSxHQUFHLElBQUksTUFBTSxDQUFDLElBQUksQ0FBQyxPQUFPLENBQUMsRUFBRTtRQUN0QyxNQUFNLEtBQUssR0FBRyxHQUFHLENBQUMsV0FBVyxFQUFFLENBQUM7UUFDaEMsSUFBSSxLQUFLLENBQUMsVUFBVSxDQUFDLGFBQWEsQ0FBQyxFQUFFO1lBQ25DLE9BQU8sT0FBTyxDQUFDLEdBQUcsQ0FBQyxDQUFDO1NBQ3JCO0tBQ0Y7SUFFRCxrQ0FBa0M7SUFDbEMsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0g7WUFDRSw2REFBNkQ7WUFDN0Qsa0RBQWtEO1lBQ2xELG1CQUFtQjtZQUNuQiwrQ0FBK0M7WUFDL0Msb0JBQW9CO1lBQ3BCLG1DQUFtQztTQUNwQyxDQUFDLElBQUksQ0FBQyxHQUFHLENBQUM7S0FDZCxDQUFDO0lBRUYsT0FBTyxRQUFRLENBQUM7QUFDbEIsQ0FBQztBQTlCRCwwQkE4QkMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgdHlwZSB7IENsb3VkRnJvbnRGdW5jdGlvbnNFdmVudCB9IGZyb20gJ2F3cy1sYW1iZGEnO1xuXG5leHBvcnQgZnVuY3Rpb24gaGFuZGxlcihldmVudDogQ2xvdWRGcm9udEZ1bmN0aW9uc0V2ZW50KTogQ2xvdWRGcm9udEZ1bmN0aW9uc0V2ZW50WydyZXNwb25zZSddIHtcbiAgdmFyIHJlc3BvbnNlID0gZXZlbnQucmVzcG9uc2U7XG4gIHZhciBoZWFkZXJzID0gcmVzcG9uc2UuaGVhZGVycztcblxuICAvLyBEZWxldGUgUzMgbWV0YWRhdGEgaGVhZGVycyAoaXJyZWxldmFudCBmb3IgdGhlIGN1c3RvbWVyKVxuICBmb3IgKGNvbnN0IGtleSBvZiBPYmplY3Qua2V5cyhoZWFkZXJzKSkge1xuICAgIGNvbnN0IGxrS2V5ID0ga2V5LnRvTG93ZXJDYXNlKCk7XG4gICAgaWYgKGxrS2V5LnN0YXJ0c1dpdGgoJ3gtYW16LW1ldGEtJykpIHtcbiAgICAgIGRlbGV0ZSBoZWFkZXJzW2tleV07XG4gICAgfVxuICB9XG5cbiAgLy8gU2V0IHVwIHNlY3VyaXR5IHBvc3R1cmUgaGVhZGVyc1xuICBoZWFkZXJzWyd4LWZyYW1lLW9wdGlvbnMnXSA9IHsgdmFsdWU6ICdkZW55JyB9O1xuICBoZWFkZXJzWyd4LXhzcy1wcm90ZWN0aW9uJ10gPSB7IHZhbHVlOiAnMTsgbW9kZT1ibG9jaycgfTtcbiAgaGVhZGVyc1sneC1jb250ZW50LXR5cGUtb3B0aW9ucyddID0geyB2YWx1ZTogJ25vc25pZmYnIH07XG4gIGhlYWRlcnNbJ3N0cmljdC10cmFuc3BvcnQtc2VjdXJpdHknXSA9IHsgdmFsdWU6ICdtYXgtYWdlPTQ3MzA0MDAwOyBpbmNsdWRlU3ViRG9tYWlucycgfTtcbiAgaGVhZGVyc1snY29udGVudC1zZWN1cml0eS1wb2xpY3knXSA9IHtcbiAgICB2YWx1ZTpcbiAgICAgIFtcbiAgICAgICAgXCJkZWZhdWx0LXNyYyAnc2VsZicgJ3Vuc2FmZS1pbmxpbmUnIGh0dHBzOi8vKi5hd3NzdGF0aWMuY29tO1wiLFxuICAgICAgICBcImNvbm5lY3Qtc3JjICdzZWxmJyBodHRwczovLyouc2hvcnRicmVhZC5hd3MuZGV2O1wiLFxuICAgICAgICBcImZyYW1lLXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwiaW1nLXNyYyAnc2VsZicgaHR0cHM6Ly8qIGh0dHA6Ly8qLm9tdHJkYy5uZXQ7XCIsXG4gICAgICAgIFwib2JqZWN0LXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwic3R5bGUtc3JjICdzZWxmJyAndW5zYWZlLWlubGluZSc7XCIsXG4gICAgICBdLmpvaW4oJyAnKSxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=
       FunctionConfig:
         Comment: AddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
         Runtime: cloudfront-js-1.0
@@ -5582,18 +5608,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "b120b13d9d868c7622e7db1b68bae4c0f82ffd0227b8c15f2cef38e186ff3827"
-  AssetParameters8c2699bad46f0f26e9042dd754eba6ba68363c29b7c9fdc052da2a515d0b3a63S3BucketFB591343:
+  AssetParametersbf525797a524275b4c8f834bd2cdca4b8e4273b0eb3500dd0c9250ee47d088daS3Bucket527872D7:
     Type: String
     Description: S3 bucket for asset
-      "8c2699bad46f0f26e9042dd754eba6ba68363c29b7c9fdc052da2a515d0b3a63"
-  AssetParameters8c2699bad46f0f26e9042dd754eba6ba68363c29b7c9fdc052da2a515d0b3a63S3VersionKeyC9D11757:
+      "bf525797a524275b4c8f834bd2cdca4b8e4273b0eb3500dd0c9250ee47d088da"
+  AssetParametersbf525797a524275b4c8f834bd2cdca4b8e4273b0eb3500dd0c9250ee47d088daS3VersionKey6EB6060F:
     Type: String
     Description: S3 key for asset version
-      "8c2699bad46f0f26e9042dd754eba6ba68363c29b7c9fdc052da2a515d0b3a63"
-  AssetParameters8c2699bad46f0f26e9042dd754eba6ba68363c29b7c9fdc052da2a515d0b3a63ArtifactHash3B3688C8:
+      "bf525797a524275b4c8f834bd2cdca4b8e4273b0eb3500dd0c9250ee47d088da"
+  AssetParametersbf525797a524275b4c8f834bd2cdca4b8e4273b0eb3500dd0c9250ee47d088daArtifactHash46280B8D:
     Type: String
     Description: Artifact hash for asset
-      "8c2699bad46f0f26e9042dd754eba6ba68363c29b7c9fdc052da2a515d0b3a63"
+      "bf525797a524275b4c8f834bd2cdca4b8e4273b0eb3500dd0c9250ee47d088da"
   AssetParametersfc986584c099ea5046c4cc9515c34013472214b465565366d7e634dd9705258fS3Bucket44863F75:
     Type: String
     Description: S3 bucket for asset
@@ -5618,18 +5644,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4"
-  AssetParametersb4828fa3e6608b604f40714834357128787d8bb7327ddf0ae60941eeea975812S3Bucket2779E091:
+  AssetParameters010f4329742dff85b55468073f1cdf06029945bb929d9e345726efac93194cf7S3Bucket16AB23B9:
     Type: String
     Description: S3 bucket for asset
-      "b4828fa3e6608b604f40714834357128787d8bb7327ddf0ae60941eeea975812"
-  AssetParametersb4828fa3e6608b604f40714834357128787d8bb7327ddf0ae60941eeea975812S3VersionKey4905FB72:
+      "010f4329742dff85b55468073f1cdf06029945bb929d9e345726efac93194cf7"
+  AssetParameters010f4329742dff85b55468073f1cdf06029945bb929d9e345726efac93194cf7S3VersionKey278B5FF6:
     Type: String
     Description: S3 key for asset version
-      "b4828fa3e6608b604f40714834357128787d8bb7327ddf0ae60941eeea975812"
-  AssetParametersb4828fa3e6608b604f40714834357128787d8bb7327ddf0ae60941eeea975812ArtifactHashF1CFE7DA:
+      "010f4329742dff85b55468073f1cdf06029945bb929d9e345726efac93194cf7"
+  AssetParameters010f4329742dff85b55468073f1cdf06029945bb929d9e345726efac93194cf7ArtifactHash71D9EA54:
     Type: String
     Description: Artifact hash for asset
-      "b4828fa3e6608b604f40714834357128787d8bb7327ddf0ae60941eeea975812"
+      "010f4329742dff85b55468073f1cdf06029945bb929d9e345726efac93194cf7"
   AssetParameters2afb4b0541001a078b483de798350f4dd244eff255cd0d8dcce9121502119037S3Bucket2031097D:
     Type: String
     Description: S3 bucket for asset
@@ -5666,18 +5692,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "c09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2"
-  AssetParameters54a013c685fd830d9e53c7a610f5278cca1110a389a5013daa53066efa077cceS3BucketC93D5DF5:
+  AssetParameters01a7ad9f7673212b72747f5f069ae5e8f415c0ac5c1193452c0b475e5ce63d12S3BucketE5EB9EA3:
     Type: String
     Description: S3 bucket for asset
-      "54a013c685fd830d9e53c7a610f5278cca1110a389a5013daa53066efa077cce"
-  AssetParameters54a013c685fd830d9e53c7a610f5278cca1110a389a5013daa53066efa077cceS3VersionKey761E0020:
+      "01a7ad9f7673212b72747f5f069ae5e8f415c0ac5c1193452c0b475e5ce63d12"
+  AssetParameters01a7ad9f7673212b72747f5f069ae5e8f415c0ac5c1193452c0b475e5ce63d12S3VersionKey3F3D62B5:
     Type: String
     Description: S3 key for asset version
-      "54a013c685fd830d9e53c7a610f5278cca1110a389a5013daa53066efa077cce"
-  AssetParameters54a013c685fd830d9e53c7a610f5278cca1110a389a5013daa53066efa077cceArtifactHash0D03C94E:
+      "01a7ad9f7673212b72747f5f069ae5e8f415c0ac5c1193452c0b475e5ce63d12"
+  AssetParameters01a7ad9f7673212b72747f5f069ae5e8f415c0ac5c1193452c0b475e5ce63d12ArtifactHash563FA61E:
     Type: String
     Description: Artifact hash for asset
-      "54a013c685fd830d9e53c7a610f5278cca1110a389a5013daa53066efa077cce"
+      "01a7ad9f7673212b72747f5f069ae5e8f415c0ac5c1193452c0b475e5ce63d12"
   AssetParameterscfa04e95a99d0796c41be6daddff2f13b6b46407c75c963edc503c40076fe575S3BucketD9E029DB:
     Type: String
     Description: S3 bucket for asset

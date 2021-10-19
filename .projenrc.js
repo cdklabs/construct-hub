@@ -136,6 +136,13 @@ const project = new JsiiProject({
       },
     },
   },
+
+  jestOptions: {
+    jestConfig: {
+      // Ensure we don't try to parallelize too much, this causes timeouts.
+      maxConcurrency: 2,
+    },
+  },
 });
 
 function addDevApp() {
