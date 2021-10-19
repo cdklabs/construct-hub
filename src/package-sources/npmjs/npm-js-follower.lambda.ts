@@ -379,23 +379,13 @@ function getRelevantVersionInfos(
       return false;
     }
     // The "constructs" package is a sign of a constructs library
-    return infos.name === 'construct'
-      // AWS CDK packages
-      || infos.name.startsWith('@aws-cdk/')
-      || infos.name === 'aws-cdk-lib'
-      || infos.name === 'monocdk'
-      // CDK8s packages
-      || infos.name === 'cdk8s'
-      || /^cdk8s-plus(?:-(?:17|20|21|22))?$/.test(infos.name)
-      // CDKTf packages
-      || infos.name === 'cdktf'
-      || infos.name.startsWith('@cdktf/')
-      // Keyword-based fallback
-      || infos.keywords?.some((kw) => CONSTRUCT_KEYWORDS.has(kw))
+    return isConstructFrameworkPackage(infos.name)
       // Recursively apply on dependencies
       || Object.keys(infos.dependencies ?? {}).some(isConstructFrameworkPackage)
       || Object.keys(infos.devDependencies ?? {}).some(isConstructFrameworkPackage)
-      || Object.keys(infos.peerDependencies ?? {}).some(isConstructFrameworkPackage);
+      || Object.keys(infos.peerDependencies ?? {}).some(isConstructFrameworkPackage)
+      // Keyword-based fallback
+      || infos.keywords?.some((kw) => CONSTRUCT_KEYWORDS.has(kw));
   }
 
   /**
@@ -405,11 +395,20 @@ function getRelevantVersionInfos(
    * - cdk8s or cdk8s-plus
    */
   function isConstructFrameworkPackage(name: string): boolean {
-    // NOTE: Prefix matching should only be used for @scope/ names.
-    return name.startsWith('@aws-cdk/')
-      || name.startsWith('@cdktf/')
+    // IMPORTANT NOTE: Prefix matching should only be used for @scope/ names.
+
+    // The low-level constructs package
+    return name === 'constructs'
+      // AWS CDK Packages
+      || name === 'aws-cdk-lib'
+      || name === 'monocdk'
+      || name.startsWith('@aws-cdk/')
+      // CDK8s packages
       || name === 'cdk8s'
-      || name === 'cdk8s-plus';
+      || /^cdk8s-plus(?:-(?:17|20|21|22))?$/.test(name)
+      // CDKTf packages
+      || name === 'cdktf'
+      || name.startsWith('@cdktf/');
   }
 }
 
