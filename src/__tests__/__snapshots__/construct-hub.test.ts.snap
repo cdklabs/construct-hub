@@ -225,6 +225,18 @@ Object {
       "Description": "S3 key for asset version \\"cfa04e95a99d0796c41be6daddff2f13b6b46407c75c963edc503c40076fe575\\"",
       "Type": "String",
     },
+    "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fArtifactHash06A8805F": Object {
+      "Description": "Artifact hash for asset \\"dc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9f\\"",
+      "Type": "String",
+    },
+    "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3Bucket88D2C885": Object {
+      "Description": "S3 bucket for asset \\"dc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9f\\"",
+      "Type": "String",
+    },
+    "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3VersionKey2F49288A": Object {
+      "Description": "S3 key for asset version \\"dc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9f\\"",
+      "Type": "String",
+    },
     "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
       "Description": "Artifact hash for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
       "Type": "String",
@@ -247,18 +259,6 @@ Object {
     },
     "AssetParametersec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114S3VersionKey0F6A742F": Object {
       "Description": "S3 key for asset version \\"ec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114\\"",
-      "Type": "String",
-    },
-    "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112ArtifactHash1355668B": Object {
-      "Description": "Artifact hash for asset \\"fb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112\\"",
-      "Type": "String",
-    },
-    "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3BucketFB9E976F": Object {
-      "Description": "S3 bucket for asset \\"fb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112\\"",
-      "Type": "String",
-    },
-    "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3VersionKeyEB418ADA": Object {
-      "Description": "S3 key for asset version \\"fb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112\\"",
       "Type": "String",
     },
     "AssetParametersfc986584c099ea5046c4cc9515c34013472214b465565366d7e634dd9705258fArtifactHash19E96771": Object {
@@ -8313,19 +8313,9 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": Object {
         "AutoPublish": true,
         "FunctionCode": "\\"use strict\\";
-Object.defineProperty(exports, \\"__esModule\\", { value: true });
-exports.handler = void 0;
 function handler(event) {
     var response = event.response;
     var headers = response.headers;
-    // Delete S3 metadata headers (irrelevant for the customer)
-    for (const key of Object.keys(headers)) {
-        const lkKey = key.toLowerCase();
-        if (lkKey.startsWith('x-amz-meta-')) {
-            delete headers[key];
-        }
-    }
-    // Set up security posture headers
     headers['x-frame-options'] = { value: 'deny' };
     headers['x-xss-protection'] = { value: '1; mode=block' };
     headers['x-content-type-options'] = { value: 'nosniff' };
@@ -8342,8 +8332,7 @@ function handler(event) {
     };
     return response;
 }
-exports.handler = handler;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUVBLFNBQWdCLE9BQU8sQ0FBQyxLQUErQjtJQUNyRCxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsMkRBQTJEO0lBQzNELEtBQUssTUFBTSxHQUFHLElBQUksTUFBTSxDQUFDLElBQUksQ0FBQyxPQUFPLENBQUMsRUFBRTtRQUN0QyxNQUFNLEtBQUssR0FBRyxHQUFHLENBQUMsV0FBVyxFQUFFLENBQUM7UUFDaEMsSUFBSSxLQUFLLENBQUMsVUFBVSxDQUFDLGFBQWEsQ0FBQyxFQUFFO1lBQ25DLE9BQU8sT0FBTyxDQUFDLEdBQUcsQ0FBQyxDQUFDO1NBQ3JCO0tBQ0Y7SUFFRCxrQ0FBa0M7SUFDbEMsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0g7WUFDRSw2REFBNkQ7WUFDN0Qsa0RBQWtEO1lBQ2xELG1CQUFtQjtZQUNuQiwrQ0FBK0M7WUFDL0Msb0JBQW9CO1lBQ3BCLG1DQUFtQztTQUNwQyxDQUFDLElBQUksQ0FBQyxHQUFHLENBQUM7S0FDZCxDQUFDO0lBRUYsT0FBTyxRQUFRLENBQUM7QUFDbEIsQ0FBQztBQTlCRCwwQkE4QkMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgdHlwZSB7IENsb3VkRnJvbnRGdW5jdGlvbnNFdmVudCB9IGZyb20gJ2F3cy1sYW1iZGEnO1xuXG5leHBvcnQgZnVuY3Rpb24gaGFuZGxlcihldmVudDogQ2xvdWRGcm9udEZ1bmN0aW9uc0V2ZW50KTogQ2xvdWRGcm9udEZ1bmN0aW9uc0V2ZW50WydyZXNwb25zZSddIHtcbiAgdmFyIHJlc3BvbnNlID0gZXZlbnQucmVzcG9uc2U7XG4gIHZhciBoZWFkZXJzID0gcmVzcG9uc2UuaGVhZGVycztcblxuICAvLyBEZWxldGUgUzMgbWV0YWRhdGEgaGVhZGVycyAoaXJyZWxldmFudCBmb3IgdGhlIGN1c3RvbWVyKVxuICBmb3IgKGNvbnN0IGtleSBvZiBPYmplY3Qua2V5cyhoZWFkZXJzKSkge1xuICAgIGNvbnN0IGxrS2V5ID0ga2V5LnRvTG93ZXJDYXNlKCk7XG4gICAgaWYgKGxrS2V5LnN0YXJ0c1dpdGgoJ3gtYW16LW1ldGEtJykpIHtcbiAgICAgIGRlbGV0ZSBoZWFkZXJzW2tleV07XG4gICAgfVxuICB9XG5cbiAgLy8gU2V0IHVwIHNlY3VyaXR5IHBvc3R1cmUgaGVhZGVyc1xuICBoZWFkZXJzWyd4LWZyYW1lLW9wdGlvbnMnXSA9IHsgdmFsdWU6ICdkZW55JyB9O1xuICBoZWFkZXJzWyd4LXhzcy1wcm90ZWN0aW9uJ10gPSB7IHZhbHVlOiAnMTsgbW9kZT1ibG9jaycgfTtcbiAgaGVhZGVyc1sneC1jb250ZW50LXR5cGUtb3B0aW9ucyddID0geyB2YWx1ZTogJ25vc25pZmYnIH07XG4gIGhlYWRlcnNbJ3N0cmljdC10cmFuc3BvcnQtc2VjdXJpdHknXSA9IHsgdmFsdWU6ICdtYXgtYWdlPTQ3MzA0MDAwOyBpbmNsdWRlU3ViRG9tYWlucycgfTtcbiAgaGVhZGVyc1snY29udGVudC1zZWN1cml0eS1wb2xpY3knXSA9IHtcbiAgICB2YWx1ZTpcbiAgICAgIFtcbiAgICAgICAgXCJkZWZhdWx0LXNyYyAnc2VsZicgJ3Vuc2FmZS1pbmxpbmUnIGh0dHBzOi8vKi5hd3NzdGF0aWMuY29tO1wiLFxuICAgICAgICBcImNvbm5lY3Qtc3JjICdzZWxmJyBodHRwczovLyouc2hvcnRicmVhZC5hd3MuZGV2O1wiLFxuICAgICAgICBcImZyYW1lLXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwiaW1nLXNyYyAnc2VsZicgaHR0cHM6Ly8qIGh0dHA6Ly8qLm9tdHJkYy5uZXQ7XCIsXG4gICAgICAgIFwib2JqZWN0LXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwic3R5bGUtc3JjICdzZWxmJyAndW5zYWZlLWlubGluZSc7XCIsXG4gICAgICBdLmpvaW4oJyAnKSxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=",
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxTQUFTLE9BQU8sQ0FBQyxLQUF5QjtJQUN4QyxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0g7WUFDRSw2REFBNkQ7WUFDN0Qsa0RBQWtEO1lBQ2xELG1CQUFtQjtZQUNuQiwrQ0FBK0M7WUFDL0Msb0JBQW9CO1lBQ3BCLG1DQUFtQztTQUNwQyxDQUFDLElBQUksQ0FBQyxHQUFHLENBQUM7S0FDZCxDQUFDO0lBRUYsT0FBTyxRQUFRLENBQUM7QUFDbEIsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImludGVyZmFjZSBDbG91ZEZyb250UmVzcG9uc2Uge1xuICByZXNwb25zZTogYW55O1xuICBoZWFkZXJzOiB7XG4gICAgW2tleTogc3RyaW5nXToge1xuICAgICAgdmFsdWU6IHN0cmluZztcbiAgICB9O1xuICB9O1xufVxuXG5mdW5jdGlvbiBoYW5kbGVyKGV2ZW50OiBDbG91ZEZyb250UmVzcG9uc2UpIHtcbiAgdmFyIHJlc3BvbnNlID0gZXZlbnQucmVzcG9uc2U7XG4gIHZhciBoZWFkZXJzID0gcmVzcG9uc2UuaGVhZGVycztcblxuICBoZWFkZXJzWyd4LWZyYW1lLW9wdGlvbnMnXSA9IHsgdmFsdWU6ICdkZW55JyB9O1xuICBoZWFkZXJzWyd4LXhzcy1wcm90ZWN0aW9uJ10gPSB7IHZhbHVlOiAnMTsgbW9kZT1ibG9jaycgfTtcbiAgaGVhZGVyc1sneC1jb250ZW50LXR5cGUtb3B0aW9ucyddID0geyB2YWx1ZTogJ25vc25pZmYnIH07XG4gIGhlYWRlcnNbJ3N0cmljdC10cmFuc3BvcnQtc2VjdXJpdHknXSA9IHsgdmFsdWU6ICdtYXgtYWdlPTQ3MzA0MDAwOyBpbmNsdWRlU3ViRG9tYWlucycgfTtcbiAgaGVhZGVyc1snY29udGVudC1zZWN1cml0eS1wb2xpY3knXSA9IHtcbiAgICB2YWx1ZTpcbiAgICAgIFtcbiAgICAgICAgXCJkZWZhdWx0LXNyYyAnc2VsZicgJ3Vuc2FmZS1pbmxpbmUnIGh0dHBzOi8vKi5hd3NzdGF0aWMuY29tO1wiLFxuICAgICAgICBcImNvbm5lY3Qtc3JjICdzZWxmJyBodHRwczovLyouc2hvcnRicmVhZC5hd3MuZGV2O1wiLFxuICAgICAgICBcImZyYW1lLXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwiaW1nLXNyYyAnc2VsZicgaHR0cHM6Ly8qIGh0dHA6Ly8qLm9tdHJkYy5uZXQ7XCIsXG4gICAgICAgIFwib2JqZWN0LXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwic3R5bGUtc3JjICdzZWxmJyAndW5zYWZlLWlubGluZSc7XCIsXG4gICAgICBdLmpvaW4oJyAnKSxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=",
         "FunctionConfig": Object {
           "Comment": "AddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9",
           "Runtime": "cloudfront-js-1.0",
@@ -8646,7 +8635,7 @@ exports.handler = handler;
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3BucketFB9E976F",
+            "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3Bucket88D2C885",
           },
         ],
         "SourceObjectKeys": Array [
@@ -8661,7 +8650,7 @@ exports.handler = handler;
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3VersionKeyEB418ADA",
+                          "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3VersionKey2F49288A",
                         },
                       ],
                     },
@@ -8674,7 +8663,7 @@ exports.handler = handler;
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3VersionKeyEB418ADA",
+                          "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3VersionKey2F49288A",
                         },
                       ],
                     },
@@ -9194,7 +9183,7 @@ exports.handler = handler;
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3BucketFB9E976F",
+                        "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3Bucket88D2C885",
                       },
                     ],
                   ],
@@ -9209,7 +9198,7 @@ exports.handler = handler;
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3BucketFB9E976F",
+                        "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3Bucket88D2C885",
                       },
                       "/*",
                     ],
@@ -9650,6 +9639,18 @@ Object {
       "Description": "S3 key for asset version \\"cfa04e95a99d0796c41be6daddff2f13b6b46407c75c963edc503c40076fe575\\"",
       "Type": "String",
     },
+    "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fArtifactHash06A8805F": Object {
+      "Description": "Artifact hash for asset \\"dc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9f\\"",
+      "Type": "String",
+    },
+    "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3Bucket88D2C885": Object {
+      "Description": "S3 bucket for asset \\"dc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9f\\"",
+      "Type": "String",
+    },
+    "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3VersionKey2F49288A": Object {
+      "Description": "S3 key for asset version \\"dc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9f\\"",
+      "Type": "String",
+    },
     "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
       "Description": "Artifact hash for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
       "Type": "String",
@@ -9672,18 +9673,6 @@ Object {
     },
     "AssetParametersec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114S3VersionKey0F6A742F": Object {
       "Description": "S3 key for asset version \\"ec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114\\"",
-      "Type": "String",
-    },
-    "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112ArtifactHash1355668B": Object {
-      "Description": "Artifact hash for asset \\"fb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112\\"",
-      "Type": "String",
-    },
-    "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3BucketFB9E976F": Object {
-      "Description": "S3 bucket for asset \\"fb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112\\"",
-      "Type": "String",
-    },
-    "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3VersionKeyEB418ADA": Object {
-      "Description": "S3 key for asset version \\"fb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112\\"",
       "Type": "String",
     },
     "AssetParametersfc986584c099ea5046c4cc9515c34013472214b465565366d7e634dd9705258fArtifactHash19E96771": Object {
@@ -17773,19 +17762,9 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": Object {
         "AutoPublish": true,
         "FunctionCode": "\\"use strict\\";
-Object.defineProperty(exports, \\"__esModule\\", { value: true });
-exports.handler = void 0;
 function handler(event) {
     var response = event.response;
     var headers = response.headers;
-    // Delete S3 metadata headers (irrelevant for the customer)
-    for (const key of Object.keys(headers)) {
-        const lkKey = key.toLowerCase();
-        if (lkKey.startsWith('x-amz-meta-')) {
-            delete headers[key];
-        }
-    }
-    // Set up security posture headers
     headers['x-frame-options'] = { value: 'deny' };
     headers['x-xss-protection'] = { value: '1; mode=block' };
     headers['x-content-type-options'] = { value: 'nosniff' };
@@ -17802,8 +17781,7 @@ function handler(event) {
     };
     return response;
 }
-exports.handler = handler;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUVBLFNBQWdCLE9BQU8sQ0FBQyxLQUErQjtJQUNyRCxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsMkRBQTJEO0lBQzNELEtBQUssTUFBTSxHQUFHLElBQUksTUFBTSxDQUFDLElBQUksQ0FBQyxPQUFPLENBQUMsRUFBRTtRQUN0QyxNQUFNLEtBQUssR0FBRyxHQUFHLENBQUMsV0FBVyxFQUFFLENBQUM7UUFDaEMsSUFBSSxLQUFLLENBQUMsVUFBVSxDQUFDLGFBQWEsQ0FBQyxFQUFFO1lBQ25DLE9BQU8sT0FBTyxDQUFDLEdBQUcsQ0FBQyxDQUFDO1NBQ3JCO0tBQ0Y7SUFFRCxrQ0FBa0M7SUFDbEMsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0g7WUFDRSw2REFBNkQ7WUFDN0Qsa0RBQWtEO1lBQ2xELG1CQUFtQjtZQUNuQiwrQ0FBK0M7WUFDL0Msb0JBQW9CO1lBQ3BCLG1DQUFtQztTQUNwQyxDQUFDLElBQUksQ0FBQyxHQUFHLENBQUM7S0FDZCxDQUFDO0lBRUYsT0FBTyxRQUFRLENBQUM7QUFDbEIsQ0FBQztBQTlCRCwwQkE4QkMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgdHlwZSB7IENsb3VkRnJvbnRGdW5jdGlvbnNFdmVudCB9IGZyb20gJ2F3cy1sYW1iZGEnO1xuXG5leHBvcnQgZnVuY3Rpb24gaGFuZGxlcihldmVudDogQ2xvdWRGcm9udEZ1bmN0aW9uc0V2ZW50KTogQ2xvdWRGcm9udEZ1bmN0aW9uc0V2ZW50WydyZXNwb25zZSddIHtcbiAgdmFyIHJlc3BvbnNlID0gZXZlbnQucmVzcG9uc2U7XG4gIHZhciBoZWFkZXJzID0gcmVzcG9uc2UuaGVhZGVycztcblxuICAvLyBEZWxldGUgUzMgbWV0YWRhdGEgaGVhZGVycyAoaXJyZWxldmFudCBmb3IgdGhlIGN1c3RvbWVyKVxuICBmb3IgKGNvbnN0IGtleSBvZiBPYmplY3Qua2V5cyhoZWFkZXJzKSkge1xuICAgIGNvbnN0IGxrS2V5ID0ga2V5LnRvTG93ZXJDYXNlKCk7XG4gICAgaWYgKGxrS2V5LnN0YXJ0c1dpdGgoJ3gtYW16LW1ldGEtJykpIHtcbiAgICAgIGRlbGV0ZSBoZWFkZXJzW2tleV07XG4gICAgfVxuICB9XG5cbiAgLy8gU2V0IHVwIHNlY3VyaXR5IHBvc3R1cmUgaGVhZGVyc1xuICBoZWFkZXJzWyd4LWZyYW1lLW9wdGlvbnMnXSA9IHsgdmFsdWU6ICdkZW55JyB9O1xuICBoZWFkZXJzWyd4LXhzcy1wcm90ZWN0aW9uJ10gPSB7IHZhbHVlOiAnMTsgbW9kZT1ibG9jaycgfTtcbiAgaGVhZGVyc1sneC1jb250ZW50LXR5cGUtb3B0aW9ucyddID0geyB2YWx1ZTogJ25vc25pZmYnIH07XG4gIGhlYWRlcnNbJ3N0cmljdC10cmFuc3BvcnQtc2VjdXJpdHknXSA9IHsgdmFsdWU6ICdtYXgtYWdlPTQ3MzA0MDAwOyBpbmNsdWRlU3ViRG9tYWlucycgfTtcbiAgaGVhZGVyc1snY29udGVudC1zZWN1cml0eS1wb2xpY3knXSA9IHtcbiAgICB2YWx1ZTpcbiAgICAgIFtcbiAgICAgICAgXCJkZWZhdWx0LXNyYyAnc2VsZicgJ3Vuc2FmZS1pbmxpbmUnIGh0dHBzOi8vKi5hd3NzdGF0aWMuY29tO1wiLFxuICAgICAgICBcImNvbm5lY3Qtc3JjICdzZWxmJyBodHRwczovLyouc2hvcnRicmVhZC5hd3MuZGV2O1wiLFxuICAgICAgICBcImZyYW1lLXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwiaW1nLXNyYyAnc2VsZicgaHR0cHM6Ly8qIGh0dHA6Ly8qLm9tdHJkYy5uZXQ7XCIsXG4gICAgICAgIFwib2JqZWN0LXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwic3R5bGUtc3JjICdzZWxmJyAndW5zYWZlLWlubGluZSc7XCIsXG4gICAgICBdLmpvaW4oJyAnKSxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=",
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxTQUFTLE9BQU8sQ0FBQyxLQUF5QjtJQUN4QyxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0g7WUFDRSw2REFBNkQ7WUFDN0Qsa0RBQWtEO1lBQ2xELG1CQUFtQjtZQUNuQiwrQ0FBK0M7WUFDL0Msb0JBQW9CO1lBQ3BCLG1DQUFtQztTQUNwQyxDQUFDLElBQUksQ0FBQyxHQUFHLENBQUM7S0FDZCxDQUFDO0lBRUYsT0FBTyxRQUFRLENBQUM7QUFDbEIsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImludGVyZmFjZSBDbG91ZEZyb250UmVzcG9uc2Uge1xuICByZXNwb25zZTogYW55O1xuICBoZWFkZXJzOiB7XG4gICAgW2tleTogc3RyaW5nXToge1xuICAgICAgdmFsdWU6IHN0cmluZztcbiAgICB9O1xuICB9O1xufVxuXG5mdW5jdGlvbiBoYW5kbGVyKGV2ZW50OiBDbG91ZEZyb250UmVzcG9uc2UpIHtcbiAgdmFyIHJlc3BvbnNlID0gZXZlbnQucmVzcG9uc2U7XG4gIHZhciBoZWFkZXJzID0gcmVzcG9uc2UuaGVhZGVycztcblxuICBoZWFkZXJzWyd4LWZyYW1lLW9wdGlvbnMnXSA9IHsgdmFsdWU6ICdkZW55JyB9O1xuICBoZWFkZXJzWyd4LXhzcy1wcm90ZWN0aW9uJ10gPSB7IHZhbHVlOiAnMTsgbW9kZT1ibG9jaycgfTtcbiAgaGVhZGVyc1sneC1jb250ZW50LXR5cGUtb3B0aW9ucyddID0geyB2YWx1ZTogJ25vc25pZmYnIH07XG4gIGhlYWRlcnNbJ3N0cmljdC10cmFuc3BvcnQtc2VjdXJpdHknXSA9IHsgdmFsdWU6ICdtYXgtYWdlPTQ3MzA0MDAwOyBpbmNsdWRlU3ViRG9tYWlucycgfTtcbiAgaGVhZGVyc1snY29udGVudC1zZWN1cml0eS1wb2xpY3knXSA9IHtcbiAgICB2YWx1ZTpcbiAgICAgIFtcbiAgICAgICAgXCJkZWZhdWx0LXNyYyAnc2VsZicgJ3Vuc2FmZS1pbmxpbmUnIGh0dHBzOi8vKi5hd3NzdGF0aWMuY29tO1wiLFxuICAgICAgICBcImNvbm5lY3Qtc3JjICdzZWxmJyBodHRwczovLyouc2hvcnRicmVhZC5hd3MuZGV2O1wiLFxuICAgICAgICBcImZyYW1lLXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwiaW1nLXNyYyAnc2VsZicgaHR0cHM6Ly8qIGh0dHA6Ly8qLm9tdHJkYy5uZXQ7XCIsXG4gICAgICAgIFwib2JqZWN0LXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwic3R5bGUtc3JjICdzZWxmJyAndW5zYWZlLWlubGluZSc7XCIsXG4gICAgICBdLmpvaW4oJyAnKSxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=",
         "FunctionConfig": Object {
           "Comment": "AddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9",
           "Runtime": "cloudfront-js-1.0",
@@ -18106,7 +18084,7 @@ exports.handler = handler;
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3BucketFB9E976F",
+            "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3Bucket88D2C885",
           },
         ],
         "SourceObjectKeys": Array [
@@ -18121,7 +18099,7 @@ exports.handler = handler;
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3VersionKeyEB418ADA",
+                          "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3VersionKey2F49288A",
                         },
                       ],
                     },
@@ -18134,7 +18112,7 @@ exports.handler = handler;
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3VersionKeyEB418ADA",
+                          "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3VersionKey2F49288A",
                         },
                       ],
                     },
@@ -18654,7 +18632,7 @@ exports.handler = handler;
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3BucketFB9E976F",
+                        "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3Bucket88D2C885",
                       },
                     ],
                   ],
@@ -18669,7 +18647,7 @@ exports.handler = handler;
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3BucketFB9E976F",
+                        "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3Bucket88D2C885",
                       },
                       "/*",
                     ],
@@ -19144,6 +19122,18 @@ Object {
       "Description": "S3 key for asset version \\"cfa04e95a99d0796c41be6daddff2f13b6b46407c75c963edc503c40076fe575\\"",
       "Type": "String",
     },
+    "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fArtifactHash06A8805F": Object {
+      "Description": "Artifact hash for asset \\"dc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9f\\"",
+      "Type": "String",
+    },
+    "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3Bucket88D2C885": Object {
+      "Description": "S3 bucket for asset \\"dc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9f\\"",
+      "Type": "String",
+    },
+    "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3VersionKey2F49288A": Object {
+      "Description": "S3 key for asset version \\"dc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9f\\"",
+      "Type": "String",
+    },
     "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
       "Description": "Artifact hash for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
       "Type": "String",
@@ -19166,18 +19156,6 @@ Object {
     },
     "AssetParametersec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114S3VersionKey0F6A742F": Object {
       "Description": "S3 key for asset version \\"ec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114\\"",
-      "Type": "String",
-    },
-    "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112ArtifactHash1355668B": Object {
-      "Description": "Artifact hash for asset \\"fb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112\\"",
-      "Type": "String",
-    },
-    "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3BucketFB9E976F": Object {
-      "Description": "S3 bucket for asset \\"fb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112\\"",
-      "Type": "String",
-    },
-    "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3VersionKeyEB418ADA": Object {
-      "Description": "S3 key for asset version \\"fb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112\\"",
       "Type": "String",
     },
     "AssetParametersfc986584c099ea5046c4cc9515c34013472214b465565366d7e634dd9705258fArtifactHash19E96771": Object {
@@ -27455,19 +27433,9 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": Object {
         "AutoPublish": true,
         "FunctionCode": "\\"use strict\\";
-Object.defineProperty(exports, \\"__esModule\\", { value: true });
-exports.handler = void 0;
 function handler(event) {
     var response = event.response;
     var headers = response.headers;
-    // Delete S3 metadata headers (irrelevant for the customer)
-    for (const key of Object.keys(headers)) {
-        const lkKey = key.toLowerCase();
-        if (lkKey.startsWith('x-amz-meta-')) {
-            delete headers[key];
-        }
-    }
-    // Set up security posture headers
     headers['x-frame-options'] = { value: 'deny' };
     headers['x-xss-protection'] = { value: '1; mode=block' };
     headers['x-content-type-options'] = { value: 'nosniff' };
@@ -27484,8 +27452,7 @@ function handler(event) {
     };
     return response;
 }
-exports.handler = handler;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUVBLFNBQWdCLE9BQU8sQ0FBQyxLQUErQjtJQUNyRCxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsMkRBQTJEO0lBQzNELEtBQUssTUFBTSxHQUFHLElBQUksTUFBTSxDQUFDLElBQUksQ0FBQyxPQUFPLENBQUMsRUFBRTtRQUN0QyxNQUFNLEtBQUssR0FBRyxHQUFHLENBQUMsV0FBVyxFQUFFLENBQUM7UUFDaEMsSUFBSSxLQUFLLENBQUMsVUFBVSxDQUFDLGFBQWEsQ0FBQyxFQUFFO1lBQ25DLE9BQU8sT0FBTyxDQUFDLEdBQUcsQ0FBQyxDQUFDO1NBQ3JCO0tBQ0Y7SUFFRCxrQ0FBa0M7SUFDbEMsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0g7WUFDRSw2REFBNkQ7WUFDN0Qsa0RBQWtEO1lBQ2xELG1CQUFtQjtZQUNuQiwrQ0FBK0M7WUFDL0Msb0JBQW9CO1lBQ3BCLG1DQUFtQztTQUNwQyxDQUFDLElBQUksQ0FBQyxHQUFHLENBQUM7S0FDZCxDQUFDO0lBRUYsT0FBTyxRQUFRLENBQUM7QUFDbEIsQ0FBQztBQTlCRCwwQkE4QkMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgdHlwZSB7IENsb3VkRnJvbnRGdW5jdGlvbnNFdmVudCB9IGZyb20gJ2F3cy1sYW1iZGEnO1xuXG5leHBvcnQgZnVuY3Rpb24gaGFuZGxlcihldmVudDogQ2xvdWRGcm9udEZ1bmN0aW9uc0V2ZW50KTogQ2xvdWRGcm9udEZ1bmN0aW9uc0V2ZW50WydyZXNwb25zZSddIHtcbiAgdmFyIHJlc3BvbnNlID0gZXZlbnQucmVzcG9uc2U7XG4gIHZhciBoZWFkZXJzID0gcmVzcG9uc2UuaGVhZGVycztcblxuICAvLyBEZWxldGUgUzMgbWV0YWRhdGEgaGVhZGVycyAoaXJyZWxldmFudCBmb3IgdGhlIGN1c3RvbWVyKVxuICBmb3IgKGNvbnN0IGtleSBvZiBPYmplY3Qua2V5cyhoZWFkZXJzKSkge1xuICAgIGNvbnN0IGxrS2V5ID0ga2V5LnRvTG93ZXJDYXNlKCk7XG4gICAgaWYgKGxrS2V5LnN0YXJ0c1dpdGgoJ3gtYW16LW1ldGEtJykpIHtcbiAgICAgIGRlbGV0ZSBoZWFkZXJzW2tleV07XG4gICAgfVxuICB9XG5cbiAgLy8gU2V0IHVwIHNlY3VyaXR5IHBvc3R1cmUgaGVhZGVyc1xuICBoZWFkZXJzWyd4LWZyYW1lLW9wdGlvbnMnXSA9IHsgdmFsdWU6ICdkZW55JyB9O1xuICBoZWFkZXJzWyd4LXhzcy1wcm90ZWN0aW9uJ10gPSB7IHZhbHVlOiAnMTsgbW9kZT1ibG9jaycgfTtcbiAgaGVhZGVyc1sneC1jb250ZW50LXR5cGUtb3B0aW9ucyddID0geyB2YWx1ZTogJ25vc25pZmYnIH07XG4gIGhlYWRlcnNbJ3N0cmljdC10cmFuc3BvcnQtc2VjdXJpdHknXSA9IHsgdmFsdWU6ICdtYXgtYWdlPTQ3MzA0MDAwOyBpbmNsdWRlU3ViRG9tYWlucycgfTtcbiAgaGVhZGVyc1snY29udGVudC1zZWN1cml0eS1wb2xpY3knXSA9IHtcbiAgICB2YWx1ZTpcbiAgICAgIFtcbiAgICAgICAgXCJkZWZhdWx0LXNyYyAnc2VsZicgJ3Vuc2FmZS1pbmxpbmUnIGh0dHBzOi8vKi5hd3NzdGF0aWMuY29tO1wiLFxuICAgICAgICBcImNvbm5lY3Qtc3JjICdzZWxmJyBodHRwczovLyouc2hvcnRicmVhZC5hd3MuZGV2O1wiLFxuICAgICAgICBcImZyYW1lLXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwiaW1nLXNyYyAnc2VsZicgaHR0cHM6Ly8qIGh0dHA6Ly8qLm9tdHJkYy5uZXQ7XCIsXG4gICAgICAgIFwib2JqZWN0LXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwic3R5bGUtc3JjICdzZWxmJyAndW5zYWZlLWlubGluZSc7XCIsXG4gICAgICBdLmpvaW4oJyAnKSxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=",
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxTQUFTLE9BQU8sQ0FBQyxLQUF5QjtJQUN4QyxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0g7WUFDRSw2REFBNkQ7WUFDN0Qsa0RBQWtEO1lBQ2xELG1CQUFtQjtZQUNuQiwrQ0FBK0M7WUFDL0Msb0JBQW9CO1lBQ3BCLG1DQUFtQztTQUNwQyxDQUFDLElBQUksQ0FBQyxHQUFHLENBQUM7S0FDZCxDQUFDO0lBRUYsT0FBTyxRQUFRLENBQUM7QUFDbEIsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImludGVyZmFjZSBDbG91ZEZyb250UmVzcG9uc2Uge1xuICByZXNwb25zZTogYW55O1xuICBoZWFkZXJzOiB7XG4gICAgW2tleTogc3RyaW5nXToge1xuICAgICAgdmFsdWU6IHN0cmluZztcbiAgICB9O1xuICB9O1xufVxuXG5mdW5jdGlvbiBoYW5kbGVyKGV2ZW50OiBDbG91ZEZyb250UmVzcG9uc2UpIHtcbiAgdmFyIHJlc3BvbnNlID0gZXZlbnQucmVzcG9uc2U7XG4gIHZhciBoZWFkZXJzID0gcmVzcG9uc2UuaGVhZGVycztcblxuICBoZWFkZXJzWyd4LWZyYW1lLW9wdGlvbnMnXSA9IHsgdmFsdWU6ICdkZW55JyB9O1xuICBoZWFkZXJzWyd4LXhzcy1wcm90ZWN0aW9uJ10gPSB7IHZhbHVlOiAnMTsgbW9kZT1ibG9jaycgfTtcbiAgaGVhZGVyc1sneC1jb250ZW50LXR5cGUtb3B0aW9ucyddID0geyB2YWx1ZTogJ25vc25pZmYnIH07XG4gIGhlYWRlcnNbJ3N0cmljdC10cmFuc3BvcnQtc2VjdXJpdHknXSA9IHsgdmFsdWU6ICdtYXgtYWdlPTQ3MzA0MDAwOyBpbmNsdWRlU3ViRG9tYWlucycgfTtcbiAgaGVhZGVyc1snY29udGVudC1zZWN1cml0eS1wb2xpY3knXSA9IHtcbiAgICB2YWx1ZTpcbiAgICAgIFtcbiAgICAgICAgXCJkZWZhdWx0LXNyYyAnc2VsZicgJ3Vuc2FmZS1pbmxpbmUnIGh0dHBzOi8vKi5hd3NzdGF0aWMuY29tO1wiLFxuICAgICAgICBcImNvbm5lY3Qtc3JjICdzZWxmJyBodHRwczovLyouc2hvcnRicmVhZC5hd3MuZGV2O1wiLFxuICAgICAgICBcImZyYW1lLXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwiaW1nLXNyYyAnc2VsZicgaHR0cHM6Ly8qIGh0dHA6Ly8qLm9tdHJkYy5uZXQ7XCIsXG4gICAgICAgIFwib2JqZWN0LXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwic3R5bGUtc3JjICdzZWxmJyAndW5zYWZlLWlubGluZSc7XCIsXG4gICAgICBdLmpvaW4oJyAnKSxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=",
         "FunctionConfig": Object {
           "Comment": "AddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9",
           "Runtime": "cloudfront-js-1.0",
@@ -27788,7 +27755,7 @@ exports.handler = handler;
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3BucketFB9E976F",
+            "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3Bucket88D2C885",
           },
         ],
         "SourceObjectKeys": Array [
@@ -27803,7 +27770,7 @@ exports.handler = handler;
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3VersionKeyEB418ADA",
+                          "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3VersionKey2F49288A",
                         },
                       ],
                     },
@@ -27816,7 +27783,7 @@ exports.handler = handler;
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3VersionKeyEB418ADA",
+                          "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3VersionKey2F49288A",
                         },
                       ],
                     },
@@ -28563,7 +28530,7 @@ exports.handler = handler;
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3BucketFB9E976F",
+                        "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3Bucket88D2C885",
                       },
                     ],
                   ],
@@ -28578,7 +28545,7 @@ exports.handler = handler;
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3BucketFB9E976F",
+                        "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3Bucket88D2C885",
                       },
                       "/*",
                     ],
@@ -29019,6 +28986,18 @@ Object {
       "Description": "S3 key for asset version \\"cfa04e95a99d0796c41be6daddff2f13b6b46407c75c963edc503c40076fe575\\"",
       "Type": "String",
     },
+    "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fArtifactHash06A8805F": Object {
+      "Description": "Artifact hash for asset \\"dc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9f\\"",
+      "Type": "String",
+    },
+    "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3Bucket88D2C885": Object {
+      "Description": "S3 bucket for asset \\"dc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9f\\"",
+      "Type": "String",
+    },
+    "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3VersionKey2F49288A": Object {
+      "Description": "S3 key for asset version \\"dc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9f\\"",
+      "Type": "String",
+    },
     "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
       "Description": "Artifact hash for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
       "Type": "String",
@@ -29041,18 +29020,6 @@ Object {
     },
     "AssetParametersec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114S3VersionKey0F6A742F": Object {
       "Description": "S3 key for asset version \\"ec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114\\"",
-      "Type": "String",
-    },
-    "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112ArtifactHash1355668B": Object {
-      "Description": "Artifact hash for asset \\"fb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112\\"",
-      "Type": "String",
-    },
-    "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3BucketFB9E976F": Object {
-      "Description": "S3 bucket for asset \\"fb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112\\"",
-      "Type": "String",
-    },
-    "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3VersionKeyEB418ADA": Object {
-      "Description": "S3 key for asset version \\"fb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112\\"",
       "Type": "String",
     },
     "AssetParametersfc986584c099ea5046c4cc9515c34013472214b465565366d7e634dd9705258fArtifactHash19E96771": Object {
@@ -35987,19 +35954,9 @@ Direct link to Lambda function: /lambda/home#/functions/",
       "Properties": Object {
         "AutoPublish": true,
         "FunctionCode": "\\"use strict\\";
-Object.defineProperty(exports, \\"__esModule\\", { value: true });
-exports.handler = void 0;
 function handler(event) {
     var response = event.response;
     var headers = response.headers;
-    // Delete S3 metadata headers (irrelevant for the customer)
-    for (const key of Object.keys(headers)) {
-        const lkKey = key.toLowerCase();
-        if (lkKey.startsWith('x-amz-meta-')) {
-            delete headers[key];
-        }
-    }
-    // Set up security posture headers
     headers['x-frame-options'] = { value: 'deny' };
     headers['x-xss-protection'] = { value: '1; mode=block' };
     headers['x-content-type-options'] = { value: 'nosniff' };
@@ -36016,8 +35973,7 @@ function handler(event) {
     };
     return response;
 }
-exports.handler = handler;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7OztBQUVBLFNBQWdCLE9BQU8sQ0FBQyxLQUErQjtJQUNyRCxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsMkRBQTJEO0lBQzNELEtBQUssTUFBTSxHQUFHLElBQUksTUFBTSxDQUFDLElBQUksQ0FBQyxPQUFPLENBQUMsRUFBRTtRQUN0QyxNQUFNLEtBQUssR0FBRyxHQUFHLENBQUMsV0FBVyxFQUFFLENBQUM7UUFDaEMsSUFBSSxLQUFLLENBQUMsVUFBVSxDQUFDLGFBQWEsQ0FBQyxFQUFFO1lBQ25DLE9BQU8sT0FBTyxDQUFDLEdBQUcsQ0FBQyxDQUFDO1NBQ3JCO0tBQ0Y7SUFFRCxrQ0FBa0M7SUFDbEMsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0g7WUFDRSw2REFBNkQ7WUFDN0Qsa0RBQWtEO1lBQ2xELG1CQUFtQjtZQUNuQiwrQ0FBK0M7WUFDL0Msb0JBQW9CO1lBQ3BCLG1DQUFtQztTQUNwQyxDQUFDLElBQUksQ0FBQyxHQUFHLENBQUM7S0FDZCxDQUFDO0lBRUYsT0FBTyxRQUFRLENBQUM7QUFDbEIsQ0FBQztBQTlCRCwwQkE4QkMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgdHlwZSB7IENsb3VkRnJvbnRGdW5jdGlvbnNFdmVudCB9IGZyb20gJ2F3cy1sYW1iZGEnO1xuXG5leHBvcnQgZnVuY3Rpb24gaGFuZGxlcihldmVudDogQ2xvdWRGcm9udEZ1bmN0aW9uc0V2ZW50KTogQ2xvdWRGcm9udEZ1bmN0aW9uc0V2ZW50WydyZXNwb25zZSddIHtcbiAgdmFyIHJlc3BvbnNlID0gZXZlbnQucmVzcG9uc2U7XG4gIHZhciBoZWFkZXJzID0gcmVzcG9uc2UuaGVhZGVycztcblxuICAvLyBEZWxldGUgUzMgbWV0YWRhdGEgaGVhZGVycyAoaXJyZWxldmFudCBmb3IgdGhlIGN1c3RvbWVyKVxuICBmb3IgKGNvbnN0IGtleSBvZiBPYmplY3Qua2V5cyhoZWFkZXJzKSkge1xuICAgIGNvbnN0IGxrS2V5ID0ga2V5LnRvTG93ZXJDYXNlKCk7XG4gICAgaWYgKGxrS2V5LnN0YXJ0c1dpdGgoJ3gtYW16LW1ldGEtJykpIHtcbiAgICAgIGRlbGV0ZSBoZWFkZXJzW2tleV07XG4gICAgfVxuICB9XG5cbiAgLy8gU2V0IHVwIHNlY3VyaXR5IHBvc3R1cmUgaGVhZGVyc1xuICBoZWFkZXJzWyd4LWZyYW1lLW9wdGlvbnMnXSA9IHsgdmFsdWU6ICdkZW55JyB9O1xuICBoZWFkZXJzWyd4LXhzcy1wcm90ZWN0aW9uJ10gPSB7IHZhbHVlOiAnMTsgbW9kZT1ibG9jaycgfTtcbiAgaGVhZGVyc1sneC1jb250ZW50LXR5cGUtb3B0aW9ucyddID0geyB2YWx1ZTogJ25vc25pZmYnIH07XG4gIGhlYWRlcnNbJ3N0cmljdC10cmFuc3BvcnQtc2VjdXJpdHknXSA9IHsgdmFsdWU6ICdtYXgtYWdlPTQ3MzA0MDAwOyBpbmNsdWRlU3ViRG9tYWlucycgfTtcbiAgaGVhZGVyc1snY29udGVudC1zZWN1cml0eS1wb2xpY3knXSA9IHtcbiAgICB2YWx1ZTpcbiAgICAgIFtcbiAgICAgICAgXCJkZWZhdWx0LXNyYyAnc2VsZicgJ3Vuc2FmZS1pbmxpbmUnIGh0dHBzOi8vKi5hd3NzdGF0aWMuY29tO1wiLFxuICAgICAgICBcImNvbm5lY3Qtc3JjICdzZWxmJyBodHRwczovLyouc2hvcnRicmVhZC5hd3MuZGV2O1wiLFxuICAgICAgICBcImZyYW1lLXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwiaW1nLXNyYyAnc2VsZicgaHR0cHM6Ly8qIGh0dHA6Ly8qLm9tdHJkYy5uZXQ7XCIsXG4gICAgICAgIFwib2JqZWN0LXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwic3R5bGUtc3JjICdzZWxmJyAndW5zYWZlLWlubGluZSc7XCIsXG4gICAgICBdLmpvaW4oJyAnKSxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=",
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxTQUFTLE9BQU8sQ0FBQyxLQUF5QjtJQUN4QyxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUscUNBQXFDLEVBQUUsQ0FBQztJQUN4RixPQUFPLENBQUMseUJBQXlCLENBQUMsR0FBRztRQUNuQyxLQUFLLEVBQ0g7WUFDRSw2REFBNkQ7WUFDN0Qsa0RBQWtEO1lBQ2xELG1CQUFtQjtZQUNuQiwrQ0FBK0M7WUFDL0Msb0JBQW9CO1lBQ3BCLG1DQUFtQztTQUNwQyxDQUFDLElBQUksQ0FBQyxHQUFHLENBQUM7S0FDZCxDQUFDO0lBRUYsT0FBTyxRQUFRLENBQUM7QUFDbEIsQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImludGVyZmFjZSBDbG91ZEZyb250UmVzcG9uc2Uge1xuICByZXNwb25zZTogYW55O1xuICBoZWFkZXJzOiB7XG4gICAgW2tleTogc3RyaW5nXToge1xuICAgICAgdmFsdWU6IHN0cmluZztcbiAgICB9O1xuICB9O1xufVxuXG5mdW5jdGlvbiBoYW5kbGVyKGV2ZW50OiBDbG91ZEZyb250UmVzcG9uc2UpIHtcbiAgdmFyIHJlc3BvbnNlID0gZXZlbnQucmVzcG9uc2U7XG4gIHZhciBoZWFkZXJzID0gcmVzcG9uc2UuaGVhZGVycztcblxuICBoZWFkZXJzWyd4LWZyYW1lLW9wdGlvbnMnXSA9IHsgdmFsdWU6ICdkZW55JyB9O1xuICBoZWFkZXJzWyd4LXhzcy1wcm90ZWN0aW9uJ10gPSB7IHZhbHVlOiAnMTsgbW9kZT1ibG9jaycgfTtcbiAgaGVhZGVyc1sneC1jb250ZW50LXR5cGUtb3B0aW9ucyddID0geyB2YWx1ZTogJ25vc25pZmYnIH07XG4gIGhlYWRlcnNbJ3N0cmljdC10cmFuc3BvcnQtc2VjdXJpdHknXSA9IHsgdmFsdWU6ICdtYXgtYWdlPTQ3MzA0MDAwOyBpbmNsdWRlU3ViRG9tYWlucycgfTtcbiAgaGVhZGVyc1snY29udGVudC1zZWN1cml0eS1wb2xpY3knXSA9IHtcbiAgICB2YWx1ZTpcbiAgICAgIFtcbiAgICAgICAgXCJkZWZhdWx0LXNyYyAnc2VsZicgJ3Vuc2FmZS1pbmxpbmUnIGh0dHBzOi8vKi5hd3NzdGF0aWMuY29tO1wiLFxuICAgICAgICBcImNvbm5lY3Qtc3JjICdzZWxmJyBodHRwczovLyouc2hvcnRicmVhZC5hd3MuZGV2O1wiLFxuICAgICAgICBcImZyYW1lLXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwiaW1nLXNyYyAnc2VsZicgaHR0cHM6Ly8qIGh0dHA6Ly8qLm9tdHJkYy5uZXQ7XCIsXG4gICAgICAgIFwib2JqZWN0LXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwic3R5bGUtc3JjICdzZWxmJyAndW5zYWZlLWlubGluZSc7XCIsXG4gICAgICBdLmpvaW4oJyAnKSxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=",
         "FunctionConfig": Object {
           "Comment": "AddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9",
           "Runtime": "cloudfront-js-1.0",
@@ -36320,7 +36276,7 @@ exports.handler = handler;
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3BucketFB9E976F",
+            "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3Bucket88D2C885",
           },
         ],
         "SourceObjectKeys": Array [
@@ -36335,7 +36291,7 @@ exports.handler = handler;
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3VersionKeyEB418ADA",
+                          "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3VersionKey2F49288A",
                         },
                       ],
                     },
@@ -36348,7 +36304,7 @@ exports.handler = handler;
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3VersionKeyEB418ADA",
+                          "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3VersionKey2F49288A",
                         },
                       ],
                     },
@@ -36868,7 +36824,7 @@ exports.handler = handler;
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3BucketFB9E976F",
+                        "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3Bucket88D2C885",
                       },
                     ],
                   ],
@@ -36883,7 +36839,7 @@ exports.handler = handler;
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParametersfb190c32a65b9618be756c3a0558c8fb6581f4fff7a1358b82c9deb4dd4e9112S3BucketFB9E976F",
+                        "Ref": "AssetParametersdc5efafd91493abae1a65c8df4be3c283682cf62f17da8b140d8191a6baa2c9fS3Bucket88D2C885",
                       },
                       "/*",
                     ],
