@@ -230,7 +230,7 @@ At a high level, the canary is implemented like so, assuming an SLA of 3 hours:
        │ Exit │                    ┌─────────────────────┐                    ┌───────────────────┐
        └──────┘                    │Publish version X + 1│                    │Emit metric & Alarm│
                                    └─────────┬───────────┘                    └──────────┬────────┘
-                                             │                                           │                      alarm
+                                             │                                           │
                                              ▼                                           ▼
                                            ┌────┐                                    ┌──────┐
                                            │Exit│                                    │ Exit │
