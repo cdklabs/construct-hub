@@ -55,6 +55,10 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
   let nextStartAfter: string | undefined;
 
   if (event.package) {
+    if (!event.package.key.endsWith(constants.PACKAGE_KEY_SUFFIX)) {
+      throw new Error(`The provided package key is invalid: ${event.package.key} does not end in ${constants.PACKAGE_KEY_SUFFIX}`);
+    }
+
     console.log('Registering new packages...');
     // note that we intentionally don't catch errors here to let these
     // event go to the DLQ for manual inspection.
