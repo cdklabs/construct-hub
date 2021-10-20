@@ -109,7 +109,7 @@ export class Orchestration extends Construct {
    * The function operators can use to reprocess all indexed packages through
    * the backend data pipeline.
    */
-  public readonly reprocessAllWorkflow: IStateMachine;
+  public readonly regenerateAllDocumentation: IStateMachine;
 
   /**
    * The function that builds the catalog.
@@ -331,7 +331,7 @@ export class Orchestration extends Construct {
 
     // The workflow is intended to be manually triggered by an operator to
     // reprocess all package versions currently in store through the orchestrator.
-    this.reprocessAllWorkflow = new ReprocessAllWorkflow(this, 'ReprocessAllWorkflow', {
+    this.regenerateAllDocumentation = new RegenerateAllDocumentation(this, 'RegenerateAllDocumentation', {
       bucket: props.bucket,
       stateMachine: this.stateMachine,
     }).stateMachine;
@@ -436,15 +436,15 @@ export class Orchestration extends Construct {
   }
 }
 
-interface ReprocessAllWorkflowProps {
+interface RegenerateAllDocumentationProps {
   readonly bucket: IBucket;
   readonly stateMachine: IStateMachine;
 }
 
-class ReprocessAllWorkflow extends Construct {
+class RegenerateAllDocumentation extends Construct {
   public readonly stateMachine: StateMachine;
 
-  public constructor(scope: Construct, id: string, props: ReprocessAllWorkflowProps) {
+  public constructor(scope: Construct, id: string, props: RegenerateAllDocumentationProps) {
     super(scope, id);
 
     const processVersions = new Choice(this, 'Get package versions page')

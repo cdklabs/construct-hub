@@ -433,10 +433,11 @@ Two workflows are available for bulk-reprocessing:
    with many indexed packages (incorrect or missing `metadata.json`, incorrectly
    identfied construct framework package, etc...). In most cases, re-generating
    the documentation is sufficient.
-1. The "re-generate documentation" workflow re-runs all indexed packages through
-   the documentation-generation process. This is useful when a new language is
-   added to ConstructHub, or the rendered documentation has significantly
-   changed, as it will guarantee all packages are on the latest version of it.
+1. The "re-generate all documentation" workflow re-runs all indexed packages
+   through the documentation-generation process. This is useful when a new
+   language is added to ConstructHub, or the rendered documentation has
+   significantly changed, as it will guarantee all packages are on the latest
+   version of it.
 
 ### Usage
 
