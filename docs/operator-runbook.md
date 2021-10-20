@@ -454,6 +454,47 @@ disable the SQS Trigger again.
 
 --------------------------------------------------------------------------------
 
+## :repeat: Bulk Re-processing
+
+In some cases, it might be useful to re-process indexed packages though parts or
+all of the back-end. This section descripts the options offered by the back-end
+system and when it is appropriate to use them.
+
+### Overview
+
+Two workflows are available for bulk-reprocessing:
+
+1. The "re-ingest everything" workflow can be used to re-process packages
+   through the entire pipeline, including re-generating the `metadata.json`
+   object. This is usually not necessary, unless an issue has been identified
+   with many indexed packages (incorrect or missing `metadata.json`, incorrectly
+   identfied construct framework package, etc...). In most cases, re-generating
+   the documentation is sufficient.
+1. The "re-generate all documentation" workflow re-runs all indexed packages
+   through the documentation-generation process. This is useful when a new
+   language is added to ConstructHub, or the rendered documentation has
+   significantly changed, as it will guarantee all packages are on the latest
+   version of it.
+
+### Usage
+
+In the AWS Console, navigate to the StepFunctions console, and identify the
+ConstructHub workflows. Simply initiate a new execution of the workflow of your
+choice - the input payload is not relevant, and we recommend setting it to an
+object such as the following:
+
+```json
+{
+  "requester": "your-username",
+  "reason": "A short comment explaining why this workflow was ran"
+}
+```
+
+These informations may be useful to other operations as they observe the side
+effects of executing these workflows.
+
+--------------------------------------------------------------------------------
+
 ## :information_source: General Recommendations
 
 ### Diving into Lambda Function logs in CloudWatch Logs

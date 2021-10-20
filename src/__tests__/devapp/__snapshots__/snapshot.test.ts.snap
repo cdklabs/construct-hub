@@ -2764,7 +2764,7 @@ Resources:
               fault":{"Type":"Pass","ResultPath":"$.error","Parameters":{"error.$":"$.Cause"},"Next":"Send
               to Dead Letter
               Queue"},"Success":{"Type":"Succeed"}},"TimeoutSeconds":86400}'
-      StateMachineType: STANDARD
+      StateMachineName: dev.ConstructHub.Orchestration
       TracingConfiguration:
         Enabled: true
     DependsOn:
@@ -2886,7 +2886,7 @@ Resources:
     DependsOn:
       - ConstructHubOrchestrationRedriveServiceRoleDefaultPolicyC018F436
       - ConstructHubOrchestrationRedriveServiceRoleB84EFF33
-  ConstructHubOrchestrationReprocessAllServiceRoleE23FF434:
+  ConstructHubOrchestrationRegenerateAllDocumentationPerPackageRoleD7CCFA73:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -2894,15 +2894,14 @@ Resources:
           - Action: sts:AssumeRole
             Effect: Allow
             Principal:
-              Service: lambda.amazonaws.com
+              Service:
+                Fn::Join:
+                  - ""
+                  - - states.
+                    - Ref: AWS::Region
+                    - .amazonaws.com
         Version: 2012-10-17
-      ManagedPolicyArns:
-        - Fn::Join:
-            - ""
-            - - "arn:"
-              - Ref: AWS::Partition
-              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-  ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB:
+  ConstructHubOrchestrationRegenerateAllDocumentationPerPackageRoleDefaultPolicy001A4726:
     Type: AWS::IAM::Policy
     Properties:
       PolicyDocument:
@@ -2910,8 +2909,20 @@ Resources:
           - Action:
               - xray:PutTraceSegments
               - xray:PutTelemetryRecords
+              - xray:GetSamplingRules
+              - xray:GetSamplingTargets
             Effect: Allow
             Resource: "*"
+          - Action: s3:ListBucket
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ConstructHubPackageDataDC5EF35E
+                - Arn
+          - Action: states:StartExecution
+            Effect: Allow
+            Resource:
+              Ref: ConstructHubOrchestration39161A46
           - Action:
               - s3:GetObject*
               - s3:GetBucket*
@@ -2927,54 +2938,216 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /*
+        Version: 2012-10-17
+      PolicyName: ConstructHubOrchestrationRegenerateAllDocumentationPerPackageRoleDefaultPolicy001A4726
+      Roles:
+        - Ref: ConstructHubOrchestrationRegenerateAllDocumentationPerPackageRoleD7CCFA73
+  ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      RoleArn:
+        Fn::GetAtt:
+          - ConstructHubOrchestrationRegenerateAllDocumentationPerPackageRoleD7CCFA73
+          - Arn
+      DefinitionString:
+        Fn::Join:
+          - ""
+          - - '{"StartAt":"Get package versions page","States":{"Get package
+              versions
+              page":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Next
+              versions page"}],"Default":"First versions page"},"Has more
+              versions?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Get
+              package versions page"}],"Default":"Success"},"For each key
+              prefix":{"Type":"Map","ResultPath":null,"Next":"Has more
+              versions?","Iterator":{"StartAt":"Start Orchestration
+              Workflow","States":{"Start Orchestration
+              Workflow":{"End":true,"Type":"Task","Resource":"arn:'
+            - Ref: AWS::Partition
+            - :states:::states:startExecution","Parameters":{"Input":{"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$":"$$.Execution.Id","bucket":"
+            - Ref: ConstructHubPackageDataDC5EF35E
+            - "\\",\\"assembly\\":{\\"key.$\\":\\"States.Format('{}assembly.json',
+              $.Prefix)\\"},\\"metadata\\":{\\"key.$\\":\\"States.Format('{}metadata.\\
+              json',
+              $.Prefix)\\"},\\"package\\":{\\"key.$\\":\\"States.Format('{}package.tg\\
+              z', $.Prefix)\\"}},\\"StateMachineArn\\":\\""
+            - Ref: ConstructHubOrchestration39161A46
+            - '"}}}},"ItemsPath":"$.response.CommonPrefixes"},"First versions
+              page":{"Next":"For each key
+              prefix","Type":"Task","ResultPath":"$.response","Resource":"arn:'
+            - Ref: AWS::Partition
+            - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
+            - Ref: ConstructHubPackageDataDC5EF35E
+            - '","Delimiter":"/","Prefix.$":"$.Prefix"}},"Next versions
+              page":{"Next":"For each key
+              prefix","Type":"Task","ResultPath":"$.response","Resource":"arn:'
+            - Ref: AWS::Partition
+            - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
+            - Ref: ConstructHubPackageDataDC5EF35E
+            - '","ContinuationToken.$":"$.response.NextContinuationToken","Delimiter":"/","Prefix.$":"$.Prefix"}},"Success":{"Type":"Succeed"}},"TimeoutSeconds":3600}'
+      TracingConfiguration:
+        Enabled: true
+    DependsOn:
+      - ConstructHubOrchestrationRegenerateAllDocumentationPerPackageRoleDefaultPolicy001A4726
+      - ConstructHubOrchestrationRegenerateAllDocumentationPerPackageRoleD7CCFA73
+  ConstructHubOrchestrationRegenerateAllDocumentationRole1C7D3B5F:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                Fn::Join:
+                  - ""
+                  - - states.
+                    - Ref: AWS::Region
+                    - .amazonaws.com
+        Version: 2012-10-17
+  ConstructHubOrchestrationRegenerateAllDocumentationRoleDefaultPolicy2F4FBD86:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - xray:PutTraceSegments
+              - xray:PutTelemetryRecords
+              - xray:GetSamplingRules
+              - xray:GetSamplingTargets
+            Effect: Allow
+            Resource: "*"
+          - Action: s3:ListBucket
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ConstructHubPackageDataDC5EF35E
+                - Arn
           - Action: states:StartExecution
             Effect: Allow
             Resource:
-              Ref: ConstructHubOrchestration39161A46
+              Ref: ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7
+          - Action:
+              - states:DescribeExecution
+              - states:StopExecution
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - ":states:"
+                  - Ref: AWS::Region
+                  - ":"
+                  - Ref: AWS::AccountId
+                  - ":execution:"
+                  - Fn::Select:
+                      - 6
+                      - Fn::Split:
+                          - ":"
+                          - Ref: ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7
+                  - "*"
+          - Action:
+              - events:PutTargets
+              - events:PutRule
+              - events:DescribeRule
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - ":events:"
+                  - Ref: AWS::Region
+                  - ":"
+                  - Ref: AWS::AccountId
+                  - :rule/StepFunctionsGetEventsForStepFunctionsExecutionRule
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /*
         Version: 2012-10-17
-      PolicyName: ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB
+      PolicyName: ConstructHubOrchestrationRegenerateAllDocumentationRoleDefaultPolicy2F4FBD86
       Roles:
-        - Ref: ConstructHubOrchestrationReprocessAllServiceRoleE23FF434
-  ConstructHubOrchestrationReprocessAllFF2F2455:
-    Type: AWS::Lambda::Function
+        - Ref: ConstructHubOrchestrationRegenerateAllDocumentationRole1C7D3B5F
+  ConstructHubOrchestrationRegenerateAllDocumentationE9FAB254:
+    Type: AWS::StepFunctions::StateMachine
     Properties:
-      Code:
-        S3Bucket:
-          Ref: AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3Bucket4F1C309F
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3VersionKey86393F7F
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3VersionKey86393F7F
-      Role:
+      RoleArn:
         Fn::GetAtt:
-          - ConstructHubOrchestrationReprocessAllServiceRoleE23FF434
+          - ConstructHubOrchestrationRegenerateAllDocumentationRole1C7D3B5F
           - Arn
-      Description: "[ConstructHub/ReprocessAll] Reprocess all package versions through
-        the backend"
-      Environment:
-        Variables:
-          BUCKET_NAME:
-            Ref: ConstructHubPackageDataDC5EF35E
-          STATE_MACHINE_ARN:
-            Ref: ConstructHubOrchestration39161A46
-      Handler: index.handler
-      MemorySize: 1024
-      Runtime: nodejs14.x
-      Timeout: 900
-      TracingConfig:
-        Mode: Active
+      DefinitionString:
+        Fn::Join:
+          - ""
+          - - '{"StartAt":"Get prefix page","States":{"Get prefix
+              page":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Next
+              prefixes page"}],"Default":"First prefix page"},"Has more
+              prefixes?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Get
+              prefix page"}],"Default":"Done"},"For each
+              prefix":{"Type":"Map","ResultPath":null,"Next":"Has more
+              prefixes?","Iterator":{"StartAt":"Is this a @scope--
+              prefix?","States":{"Is this a @scope--
+              prefix?":{"Type":"Choice","Choices":[{"Variable":"$.Prefix","StringMatches":"data/@*","Next":"Get
+              @scope page"}],"Default":"Process unscoped package"},"Process
+              unscoped package":{"End":true,"Type":"Task","Resource":"arn:'
+            - Ref: AWS::Partition
+            - :states:::states:startExecution.sync:2","Parameters":{"Input":{"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$":"$$.Execution.Id","Prefix.$":"$.Prefix"},"StateMachineArn":"
+            - Ref: ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7
+            - '"}},"Get @scope
+              page":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Next
+              @scope page"}],"Default":"First @scope page"},"Has more
+              packages?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Get
+              @scope page"}],"Default":"All Done"},"For each
+              @scope--pkg":{"Type":"Map","ResultPath":null,"Next":"Has more
+              packages?","Iterator":{"StartAt":"Process scoped
+              package","States":{"Process scoped
+              package":{"End":true,"Type":"Task","Resource":"arn:'
+            - Ref: AWS::Partition
+            - :states:::states:startExecution.sync:2","Parameters":{"Input":{"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$":"$$.Execution.Id","Prefix.$":"$.Prefix"},"StateMachineArn":"
+            - Ref: ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7
+            - '"}}}},"ItemsPath":"$.response.CommonPrefixes"},"First @scope
+              page":{"Next":"For each
+              @scope--pkg","Type":"Task","ResultPath":"$.response","Resource":"arn:'
+            - Ref: AWS::Partition
+            - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
+            - Ref: ConstructHubPackageDataDC5EF35E
+            - '","Delimiter":"/","Prefix.$":"$.Prefix"}},"Next @scope
+              page":{"Next":"For each
+              @scope--pkg","Type":"Task","ResultPath":"$.response","Resource":"arn:'
+            - Ref: AWS::Partition
+            - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
+            - Ref: ConstructHubPackageDataDC5EF35E
+            - '","ContinuationToken.$":"$.response.NextContinuationToken","Delimiter":"/","Prefix.$":"$.Prefix"}},"All
+              Done":{"Type":"Succeed"}}},"ItemsPath":"$.response.CommonPrefixes"},"First
+              prefix page":{"Next":"For each
+              prefix","Type":"Task","ResultPath":"$.response","Resource":"arn:'
+            - Ref: AWS::Partition
+            - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
+            - Ref: ConstructHubPackageDataDC5EF35E
+            - '","Delimiter":"/","Prefix":"data/"}},"Next prefixes
+              page":{"Next":"For each
+              prefix","Type":"Task","ResultPath":"$.response","Resource":"arn:'
+            - Ref: AWS::Partition
+            - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
+            - Ref: ConstructHubPackageDataDC5EF35E
+            - '","ContinuationToken.$":"$.response.NextContinuationToken","Delimiter":"/","Prefix":"data/"}},"Done":{"Type":"Succeed"}},"TimeoutSeconds":14400}'
+      StateMachineName: dev.ConstructHub.Orchestration.RegenerateAllDocumentation
+      TracingConfiguration:
+        Enabled: true
     DependsOn:
-      - ConstructHubOrchestrationReprocessAllServiceRoleDefaultPolicy33BF56FB
-      - ConstructHubOrchestrationReprocessAllServiceRoleE23FF434
+      - ConstructHubOrchestrationRegenerateAllDocumentationRoleDefaultPolicy2F4FBD86
+      - ConstructHubOrchestrationRegenerateAllDocumentationRole1C7D3B5F
   ConstructHubIngestionDLQ3E96A5F2:
     Type: AWS::SQS::Queue
     Properties:
@@ -4583,8 +4756,9 @@ Resources:
                 - QueueName
             - )\\n[button:Redrive DLQ](/lambda/home#/functions/
             - Ref: ConstructHubOrchestrationRedrive8DDBA67E
-            - )\\n[button:Reprocess](/lambda/home#/functions/
-            - Ref: ConstructHubOrchestrationReprocessAllFF2F2455
+            - )\\n[button:Regenerate All
+              Documentation](/states/home#/statemachines/view/
+            - Ref: ConstructHubOrchestrationRegenerateAllDocumentationE9FAB254
             - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":73,"properties":{"view":"timeSeries","title":"State
               Machine Executions","region":"
             - Ref: AWS::Region
@@ -5618,18 +5792,6 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "fc986584c099ea5046c4cc9515c34013472214b465565366d7e634dd9705258f"
-  AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3Bucket4F1C309F:
-    Type: String
-    Description: S3 bucket for asset
-      "37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4"
-  AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4S3VersionKey86393F7F:
-    Type: String
-    Description: S3 key for asset version
-      "37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4"
-  AssetParameters37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4ArtifactHashBED74E03:
-    Type: String
-    Description: Artifact hash for asset
-      "37a7a5676db5cc319df41562d6f07c6ea1c93244cfda1e4c1f903176f99307a4"
   AssetParameters010f4329742dff85b55468073f1cdf06029945bb929d9e345726efac93194cf7S3Bucket16AB23B9:
     Type: String
     Description: S3 bucket for asset

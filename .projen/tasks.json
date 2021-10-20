@@ -79,9 +79,6 @@
           "spawn": "bundle:redrive-state-machine"
         },
         {
-          "spawn": "bundle:reprocess-all"
-        },
-        {
           "spawn": "bundle:package-stats"
         },
         {
@@ -320,9 +317,6 @@
           "spawn": "bundle:redrive-state-machine"
         },
         {
-          "spawn": "bundle:reprocess-all"
-        },
-        {
           "spawn": "bundle:package-stats"
         },
         {
@@ -495,15 +489,6 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/backend/orchestration/redrive-state-machine.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/orchestration/redrive-state-machine.bundle/index.js\" --external:aws-sdk --sourcemap"
-        }
-      ]
-    },
-    "bundle:reprocess-all": {
-      "name": "bundle:reprocess-all",
-      "description": "Create an AWS Lambda bundle from src/backend/orchestration/reprocess-all.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/backend/orchestration/reprocess-all.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/orchestration/reprocess-all.bundle/index.js\" --external:aws-sdk --sourcemap"
         }
       ]
     },
