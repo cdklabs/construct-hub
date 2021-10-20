@@ -111,6 +111,18 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
   await metricScope((metrics) => async () => {
     metrics.setDimensions();
     metrics.putMetric(MetricName.REGISTERED_PACKAGES_MAJOR_VERSION, catalog.packages.length, Unit.Count);
+    metrics.putMetric(
+      MetricName.MISSING_CONSTRUCT_FRAMEWORK_COUNT,
+      catalog.packages.filter((pkg) => pkg.constructFramework == null).length,
+      Unit.Count,
+    );
+    metrics.putMetric(
+      MetricName.MISSING_CONSTRUCT_FRAMEWORK_VERSION_COUNT,
+      catalog.packages.filter(
+        (pkg) => pkg.constructFramework && pkg.constructFramework.majorVersion == null,
+      ).length,
+      Unit.Count,
+    );
   })();
 
 

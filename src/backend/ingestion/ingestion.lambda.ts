@@ -281,7 +281,7 @@ const enum ConstructFrameworkName {
   CDKTF = 'cdktf',
 }
 
-interface ConstructFramework {
+export interface ConstructFramework {
   /**
    * The name of the construct framework.
    */

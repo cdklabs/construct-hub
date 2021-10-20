@@ -10,6 +10,7 @@ import { lambdaFunctionUrl, s3ObjectUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { RUNBOOK_URL } from '../../runbook-url';
 import { DenyList } from '../deny-list';
+import type { ConstructFramework } from '../ingestion/ingestion.lambda';
 import { CatalogBuilder as Handler } from './catalog-builder';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 
@@ -112,6 +113,26 @@ export class CatalogBuilder extends Construct {
     props.monitoring.addHighSeverityAlarm('Catalog Size Shrunk', alarmShrinkingCatalog);
   }
 
+  public metricMissingConstructFrameworkCount(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(15),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      metricName: MetricName.MISSING_CONSTRUCT_FRAMEWORK_COUNT,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  public metricMissingConstructFrameworkVersionCount(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(15),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      metricName: MetricName.MISSING_CONSTRUCT_FRAMEWORK_VERSION_COUNT,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
   public metricRegisteredPackageMajorVersions(opts?: MetricOptions): Metric {
     return new Metric({
       period: Duration.minutes(15),
@@ -173,6 +194,11 @@ export interface PackageInfo {
    * package's major version stream, if any.
    */
   readonly metadata?: { readonly [key: string]: string };
+
+  /**
+   * The construct framework, if present.
+   */
+  readonly constructFramework?: ConstructFramework | undefined;
 
   /**
    * The author of the package.

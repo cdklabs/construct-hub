@@ -114,7 +114,7 @@ export class Orchestration extends Construct {
   /**
    * The function that builds the catalog.
    */
-  public readonly catalogBuilder: IFunction;
+  public readonly catalogBuilder: CatalogBuilder;
 
   /**
    * The ECS cluster used to run tasks.
@@ -166,10 +166,10 @@ export class Orchestration extends Construct {
       resultPath: JsonPath.DISCARD,
     });
 
-    this.catalogBuilder = new CatalogBuilder(this, 'CatalogBuilder', props).function;
+    this.catalogBuilder = new CatalogBuilder(this, 'CatalogBuilder', props);
 
     const addToCatalog = new tasks.LambdaInvoke(this, 'Add to catalog.json', {
-      lambdaFunction: this.catalogBuilder,
+      lambdaFunction: this.catalogBuilder.function,
       resultPath: '$.catalogBuilderOutput',
       resultSelector: {
         'ETag.$': '$.Payload.ETag',

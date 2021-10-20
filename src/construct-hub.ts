@@ -229,7 +229,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     });
 
     // rebuild the catalog when the deny list changes.
-    denyList.prune.onChangeInvoke(orchestration.catalogBuilder);
+    denyList.prune.onChangeInvoke(orchestration.catalogBuilder.function);
 
     const packageTagsSerialized = props.packageTags?.map((config) => {
       return {
