@@ -436,7 +436,7 @@ function newEcsTask(entrypoint) {
   // If this failed on TaskTimedOut, we will exit the VM right away, as the requesting StepFunctions execution is no longer
   // interested in the result of this run. This avoids keeping left-over tasks lying around "forever".
   sh.open('if (reason.code === \'TaskTimedOut\') {');
-  sh.line('exit(-(os.constants.errno.ETIMEDOUT || 1));');
+  sh.line('exit(-(os.constants.errno.ETIMEDOUT || 1));');
   sh.close('}');
   sh.close('},');
   sh.close(');');
@@ -454,7 +454,7 @@ function newEcsTask(entrypoint) {
   // In case of errors, send task failure to StepFunctions
   sh.open('  .catch((reason) => {');
   sh.line('  console.error(\'Execution error:\', reason);');
-  sh.line('  return sfn.sendTaskFailure({ cause: JSON.stringify(reason), error: reason.name ?? reason.constructor.name ?? \'Error\', taskToken }).promise();');
+  sh.line('  return sfn.sendTaskFailure({ cause: JSON.stringify(reason), error: reason.name || reason.constructor.name || \'Error\', taskToken }).promise();');
   sh.close('  })');
   // Stop the heartbeat once we're all done...
   sh.line('  .finally(() => clearInterval(heartbeat));');
