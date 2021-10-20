@@ -141,18 +141,6 @@ Object {
       "Description": "S3 key for asset version \\"a9c1126f433d4d7214e1150e73f618dcbf66cfface99922057bbad43792f8baa\\"",
       "Type": "String",
     },
-    "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547ArtifactHash7E841E6B": Object {
-      "Description": "Artifact hash for asset \\"afe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547\\"",
-      "Type": "String",
-    },
-    "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3Bucket7BA74192": Object {
-      "Description": "S3 bucket for asset \\"afe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547\\"",
-      "Type": "String",
-    },
-    "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3VersionKey4A32BC9E": Object {
-      "Description": "S3 key for asset version \\"afe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547\\"",
-      "Type": "String",
-    },
     "AssetParametersb120b13d9d868c7622e7db1b68bae4c0f82ffd0227b8c15f2cef38e186ff3827ArtifactHash1355580A": Object {
       "Description": "Artifact hash for asset \\"b120b13d9d868c7622e7db1b68bae4c0f82ffd0227b8c15f2cef38e186ff3827\\"",
       "Type": "String",
@@ -187,6 +175,18 @@ Object {
     },
     "AssetParametersc09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2S3VersionKey2CF1D797": Object {
       "Description": "S3 key for asset version \\"c09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2\\"",
+      "Type": "String",
+    },
+    "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafArtifactHash385BFE50": Object {
+      "Description": "Artifact hash for asset \\"c3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aaf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3Bucket17D6EDF1": Object {
+      "Description": "S3 bucket for asset \\"c3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aaf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3VersionKey8A5FD5F0": Object {
+      "Description": "S3 key for asset version \\"c3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aaf\\"",
       "Type": "String",
     },
     "AssetParametersc5ed3506ccf141325c557e0e0c7990b8436c834222d75edcc64d8220f0e46245ArtifactHashEBD3FED7": Object {
@@ -4606,7 +4606,18 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":6,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Backend Orchestration Failed\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":6,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size Shrunk\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubOrchestrationCatalogBuilderShrinkingCatalogAlarm48329E25",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":12,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Backend Orchestration Failed\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -4617,7 +4628,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":12,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingestion Dead-Letter Queue not empty\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingestion Dead-Letter Queue not empty\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -4628,7 +4639,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingestion failures\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":24,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingestion failures\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -4639,7 +4650,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":24,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Failures\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Failures\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -4650,7 +4661,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -4661,7 +4672,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -4672,7 +4683,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -4683,7 +4694,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -4694,7 +4705,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":60,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -5327,7 +5338,7 @@ Direct link to function: /lambda/home#/functions/",
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3Bucket7BA74192",
+            "Ref": "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3Bucket17D6EDF1",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -5340,7 +5351,7 @@ Direct link to function: /lambda/home#/functions/",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3VersionKey4A32BC9E",
+                          "Ref": "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3VersionKey8A5FD5F0",
                         },
                       ],
                     },
@@ -5353,7 +5364,7 @@ Direct link to function: /lambda/home#/functions/",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3VersionKey4A32BC9E",
+                          "Ref": "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3VersionKey8A5FD5F0",
                         },
                       ],
                     },
@@ -5567,6 +5578,59 @@ Direct link to function: /lambda/home#/functions/",
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubOrchestrationCatalogBuilderShrinkingCatalogAlarm48329E25": Object {
+      "Properties": Object {
+        "AlarmActions": Array [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The number of packages registered in the catalog.json object has shrunk by more than 5
+elements. There might be a mass extinction event going on. This should be investigated
+as soon as possible.
+
+Catalog.json: /s3/object/",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "?prefix=catalog.json
+Catalog Builder: /lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubOrchestrationCatalogBuilder7C964951",
+              },
+              "
+
+RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+            ],
+          ],
+        },
+        "AlarmName": "Test/ConstructHub/Orchestration/CatalogBuilder/ShrinkingCatalog",
+        "ComparisonOperator": "LessThanThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": Array [
+          Object {
+            "Expression": "DIFF(FILL(m1, REPEAT))",
+            "Id": "expr_1",
+          },
+          Object {
+            "Id": "m1",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "RegisteredPackagesMajorVersion",
+                "Namespace": "ConstructHub/CatalogBuilder",
+              },
+              "Period": 900,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Threshold": -5,
+      },
+      "Type": "AWS::CloudWatch::Alarm",
     },
     "ConstructHubOrchestrationCluster3D6F0081": Object {
       "Properties": Object {
@@ -9780,18 +9844,6 @@ Object {
       "Description": "S3 key for asset version \\"a9c1126f433d4d7214e1150e73f618dcbf66cfface99922057bbad43792f8baa\\"",
       "Type": "String",
     },
-    "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547ArtifactHash7E841E6B": Object {
-      "Description": "Artifact hash for asset \\"afe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547\\"",
-      "Type": "String",
-    },
-    "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3Bucket7BA74192": Object {
-      "Description": "S3 bucket for asset \\"afe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547\\"",
-      "Type": "String",
-    },
-    "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3VersionKey4A32BC9E": Object {
-      "Description": "S3 key for asset version \\"afe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547\\"",
-      "Type": "String",
-    },
     "AssetParametersb120b13d9d868c7622e7db1b68bae4c0f82ffd0227b8c15f2cef38e186ff3827ArtifactHash1355580A": Object {
       "Description": "Artifact hash for asset \\"b120b13d9d868c7622e7db1b68bae4c0f82ffd0227b8c15f2cef38e186ff3827\\"",
       "Type": "String",
@@ -9826,6 +9878,18 @@ Object {
     },
     "AssetParametersc09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2S3VersionKey2CF1D797": Object {
       "Description": "S3 key for asset version \\"c09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2\\"",
+      "Type": "String",
+    },
+    "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafArtifactHash385BFE50": Object {
+      "Description": "Artifact hash for asset \\"c3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aaf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3Bucket17D6EDF1": Object {
+      "Description": "S3 bucket for asset \\"c3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aaf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3VersionKey8A5FD5F0": Object {
+      "Description": "S3 key for asset version \\"c3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aaf\\"",
       "Type": "String",
     },
     "AssetParametersc5ed3506ccf141325c557e0e0c7990b8436c834222d75edcc64d8220f0e46245ArtifactHashEBD3FED7": Object {
@@ -14266,7 +14330,18 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":6,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Backend Orchestration Failed\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":6,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size Shrunk\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubOrchestrationCatalogBuilderShrinkingCatalogAlarm48329E25",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":12,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Backend Orchestration Failed\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -14277,7 +14352,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":12,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingestion Dead-Letter Queue not empty\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingestion Dead-Letter Queue not empty\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -14288,7 +14363,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingestion failures\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":24,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingestion failures\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -14299,7 +14374,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":24,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Failures\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Failures\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -14310,7 +14385,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -14321,7 +14396,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -14332,7 +14407,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -14343,7 +14418,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -14354,7 +14429,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":60,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -14987,7 +15062,7 @@ Direct link to function: /lambda/home#/functions/",
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3Bucket7BA74192",
+            "Ref": "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3Bucket17D6EDF1",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -15000,7 +15075,7 @@ Direct link to function: /lambda/home#/functions/",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3VersionKey4A32BC9E",
+                          "Ref": "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3VersionKey8A5FD5F0",
                         },
                       ],
                     },
@@ -15013,7 +15088,7 @@ Direct link to function: /lambda/home#/functions/",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3VersionKey4A32BC9E",
+                          "Ref": "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3VersionKey8A5FD5F0",
                         },
                       ],
                     },
@@ -15227,6 +15302,59 @@ Direct link to function: /lambda/home#/functions/",
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubOrchestrationCatalogBuilderShrinkingCatalogAlarm48329E25": Object {
+      "Properties": Object {
+        "AlarmActions": Array [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The number of packages registered in the catalog.json object has shrunk by more than 5
+elements. There might be a mass extinction event going on. This should be investigated
+as soon as possible.
+
+Catalog.json: /s3/object/",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "?prefix=catalog.json
+Catalog Builder: /lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubOrchestrationCatalogBuilder7C964951",
+              },
+              "
+
+RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+            ],
+          ],
+        },
+        "AlarmName": "Test/ConstructHub/Orchestration/CatalogBuilder/ShrinkingCatalog",
+        "ComparisonOperator": "LessThanThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": Array [
+          Object {
+            "Expression": "DIFF(FILL(m1, REPEAT))",
+            "Id": "expr_1",
+          },
+          Object {
+            "Id": "m1",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "RegisteredPackagesMajorVersion",
+                "Namespace": "ConstructHub/CatalogBuilder",
+              },
+              "Period": 900,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Threshold": -5,
+      },
+      "Type": "AWS::CloudWatch::Alarm",
     },
     "ConstructHubOrchestrationCluster3D6F0081": Object {
       "Properties": Object {
@@ -19488,18 +19616,6 @@ Object {
       "Description": "S3 key for asset version \\"a9c1126f433d4d7214e1150e73f618dcbf66cfface99922057bbad43792f8baa\\"",
       "Type": "String",
     },
-    "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547ArtifactHash7E841E6B": Object {
-      "Description": "Artifact hash for asset \\"afe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547\\"",
-      "Type": "String",
-    },
-    "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3Bucket7BA74192": Object {
-      "Description": "S3 bucket for asset \\"afe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547\\"",
-      "Type": "String",
-    },
-    "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3VersionKey4A32BC9E": Object {
-      "Description": "S3 key for asset version \\"afe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547\\"",
-      "Type": "String",
-    },
     "AssetParametersb120b13d9d868c7622e7db1b68bae4c0f82ffd0227b8c15f2cef38e186ff3827ArtifactHash1355580A": Object {
       "Description": "Artifact hash for asset \\"b120b13d9d868c7622e7db1b68bae4c0f82ffd0227b8c15f2cef38e186ff3827\\"",
       "Type": "String",
@@ -19534,6 +19650,18 @@ Object {
     },
     "AssetParametersc09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2S3VersionKey2CF1D797": Object {
       "Description": "S3 key for asset version \\"c09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2\\"",
+      "Type": "String",
+    },
+    "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafArtifactHash385BFE50": Object {
+      "Description": "Artifact hash for asset \\"c3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aaf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3Bucket17D6EDF1": Object {
+      "Description": "S3 bucket for asset \\"c3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aaf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3VersionKey8A5FD5F0": Object {
+      "Description": "S3 key for asset version \\"c3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aaf\\"",
       "Type": "String",
     },
     "AssetParametersc5ed3506ccf141325c557e0e0c7990b8436c834222d75edcc64d8220f0e46245ArtifactHashEBD3FED7": Object {
@@ -24102,7 +24230,18 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":6,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Backend Orchestration Failed\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":6,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size Shrunk\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubOrchestrationCatalogBuilderShrinkingCatalogAlarm48329E25",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":12,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Backend Orchestration Failed\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -24113,7 +24252,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":12,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingestion Dead-Letter Queue not empty\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingestion Dead-Letter Queue not empty\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -24124,7 +24263,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingestion failures\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":24,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingestion failures\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -24135,7 +24274,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":24,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Failures\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Failures\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -24146,7 +24285,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -24157,7 +24296,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -24168,7 +24307,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -24179,7 +24318,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -24190,7 +24329,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"ACM Certificate Expiry\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":60,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"ACM Certificate Expiry\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -24201,7 +24340,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":60,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Endpoint Certificate Expiry\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":66,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Endpoint Certificate Expiry\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -24212,7 +24351,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":66,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":72,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -24845,7 +24984,7 @@ Direct link to function: /lambda/home#/functions/",
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3Bucket7BA74192",
+            "Ref": "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3Bucket17D6EDF1",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -24858,7 +24997,7 @@ Direct link to function: /lambda/home#/functions/",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3VersionKey4A32BC9E",
+                          "Ref": "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3VersionKey8A5FD5F0",
                         },
                       ],
                     },
@@ -24871,7 +25010,7 @@ Direct link to function: /lambda/home#/functions/",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3VersionKey4A32BC9E",
+                          "Ref": "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3VersionKey8A5FD5F0",
                         },
                       ],
                     },
@@ -25085,6 +25224,59 @@ Direct link to function: /lambda/home#/functions/",
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubOrchestrationCatalogBuilderShrinkingCatalogAlarm48329E25": Object {
+      "Properties": Object {
+        "AlarmActions": Array [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The number of packages registered in the catalog.json object has shrunk by more than 5
+elements. There might be a mass extinction event going on. This should be investigated
+as soon as possible.
+
+Catalog.json: /s3/object/",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "?prefix=catalog.json
+Catalog Builder: /lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubOrchestrationCatalogBuilder7C964951",
+              },
+              "
+
+RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+            ],
+          ],
+        },
+        "AlarmName": "Test/ConstructHub/Orchestration/CatalogBuilder/ShrinkingCatalog",
+        "ComparisonOperator": "LessThanThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": Array [
+          Object {
+            "Expression": "DIFF(FILL(m1, REPEAT))",
+            "Id": "expr_1",
+          },
+          Object {
+            "Id": "m1",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "RegisteredPackagesMajorVersion",
+                "Namespace": "ConstructHub/CatalogBuilder",
+              },
+              "Period": 900,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Threshold": -5,
+      },
+      "Type": "AWS::CloudWatch::Alarm",
     },
     "ConstructHubOrchestrationCluster3D6F0081": Object {
       "Properties": Object {
@@ -29577,18 +29769,6 @@ Object {
       "Description": "S3 key for asset version \\"a9c1126f433d4d7214e1150e73f618dcbf66cfface99922057bbad43792f8baa\\"",
       "Type": "String",
     },
-    "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547ArtifactHash7E841E6B": Object {
-      "Description": "Artifact hash for asset \\"afe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547\\"",
-      "Type": "String",
-    },
-    "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3Bucket7BA74192": Object {
-      "Description": "S3 bucket for asset \\"afe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547\\"",
-      "Type": "String",
-    },
-    "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3VersionKey4A32BC9E": Object {
-      "Description": "S3 key for asset version \\"afe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547\\"",
-      "Type": "String",
-    },
     "AssetParametersb120b13d9d868c7622e7db1b68bae4c0f82ffd0227b8c15f2cef38e186ff3827ArtifactHash1355580A": Object {
       "Description": "Artifact hash for asset \\"b120b13d9d868c7622e7db1b68bae4c0f82ffd0227b8c15f2cef38e186ff3827\\"",
       "Type": "String",
@@ -29623,6 +29803,18 @@ Object {
     },
     "AssetParametersc09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2S3VersionKey2CF1D797": Object {
       "Description": "S3 key for asset version \\"c09eea9f146f40034eac08f09b352048658b81613013dd0cb3c780882ddad2d2\\"",
+      "Type": "String",
+    },
+    "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafArtifactHash385BFE50": Object {
+      "Description": "Artifact hash for asset \\"c3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aaf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3Bucket17D6EDF1": Object {
+      "Description": "S3 bucket for asset \\"c3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aaf\\"",
+      "Type": "String",
+    },
+    "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3VersionKey8A5FD5F0": Object {
+      "Description": "S3 key for asset version \\"c3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aaf\\"",
       "Type": "String",
     },
     "AssetParametersc5ed3506ccf141325c557e0e0c7990b8436c834222d75edcc64d8220f0e46245ArtifactHashEBD3FED7": Object {
@@ -32570,7 +32762,18 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":6,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Backend Orchestration Failed\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":6,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Catalog Size Shrunk\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubOrchestrationCatalogBuilderShrinkingCatalogAlarm48329E25",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":12,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Backend Orchestration Failed\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -32581,7 +32784,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":12,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingestion Dead-Letter Queue not empty\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingestion Dead-Letter Queue not empty\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -32592,7 +32795,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":18,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingestion failures\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":24,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Ingestion failures\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -32603,7 +32806,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":24,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Failures\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Failures\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -32614,7 +32817,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -32625,7 +32828,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -32636,7 +32839,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -32647,7 +32850,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -32658,7 +32861,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":60,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -33290,7 +33493,7 @@ Direct link to function: /lambda/home#/functions/",
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3Bucket7BA74192",
+            "Ref": "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3Bucket17D6EDF1",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -33303,7 +33506,7 @@ Direct link to function: /lambda/home#/functions/",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3VersionKey4A32BC9E",
+                          "Ref": "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3VersionKey8A5FD5F0",
                         },
                       ],
                     },
@@ -33316,7 +33519,7 @@ Direct link to function: /lambda/home#/functions/",
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersafe4ef4006015b60ee6b6a867efe7658a14ed4517dc52fe5f99e309e1a121547S3VersionKey4A32BC9E",
+                          "Ref": "AssetParametersc3d45264971a22524399687baa4da09e05f0558634844543c016a7c5a0495aafS3VersionKey8A5FD5F0",
                         },
                       ],
                     },
@@ -33530,6 +33733,59 @@ Direct link to function: /lambda/home#/functions/",
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubOrchestrationCatalogBuilderShrinkingCatalogAlarm48329E25": Object {
+      "Properties": Object {
+        "AlarmActions": Array [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
+        "AlarmDescription": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "The number of packages registered in the catalog.json object has shrunk by more than 5
+elements. There might be a mass extinction event going on. This should be investigated
+as soon as possible.
+
+Catalog.json: /s3/object/",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "?prefix=catalog.json
+Catalog Builder: /lambda/home#/functions/",
+              Object {
+                "Ref": "ConstructHubOrchestrationCatalogBuilder7C964951",
+              },
+              "
+
+RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+            ],
+          ],
+        },
+        "AlarmName": "Test/ConstructHub/Orchestration/CatalogBuilder/ShrinkingCatalog",
+        "ComparisonOperator": "LessThanThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": Array [
+          Object {
+            "Expression": "DIFF(FILL(m1, REPEAT))",
+            "Id": "expr_1",
+          },
+          Object {
+            "Id": "m1",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "RegisteredPackagesMajorVersion",
+                "Namespace": "ConstructHub/CatalogBuilder",
+              },
+              "Period": 900,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Threshold": -5,
+      },
+      "Type": "AWS::CloudWatch::Alarm",
     },
     "ConstructHubOrchestrationCluster3D6F0081": Object {
       "Properties": Object {

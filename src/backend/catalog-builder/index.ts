@@ -1,13 +1,17 @@
+import { ComparisonOperator, MathExpression, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
 import { Effect, PolicyStatement } from '@aws-cdk/aws-iam';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { ArnFormat, Construct, Duration, Stack } from '@aws-cdk/core';
 import type { AssemblyTargets } from '@jsii/spec';
+import { lambdaFunctionUrl, s3ObjectUrl } from '../../deep-link';
 
 import { Monitoring } from '../../monitoring';
+import { RUNBOOK_URL } from '../../runbook-url';
 import { DenyList } from '../deny-list';
 import { CatalogBuilder as Handler } from './catalog-builder';
+import { MetricName, METRICS_NAMESPACE } from './constants';
 
 /**
  * Props for `CatalogBuilder`.
@@ -78,6 +82,44 @@ export class CatalogBuilder extends Construct {
     props.denyList.grantRead(handler);
 
     props.bucket.grantReadWrite(this.function);
+
+    // Monitor the derivative of the catalog size, and alarm if the catalog
+    // loses more than 5 items. Catalog elements can disappear if they are added
+    // to the deny-list, or if they get un-published from the origin repository.
+    // Such cases are normal and shouldn't typically result in a significant
+    // contraction of the catalog size.
+    const catalogSizeChange = new MathExpression({
+      expression: 'DIFF(FILL(m1, REPEAT))',
+      period: Duration.minutes(15),
+      usingMetrics: { m1: this.metricRegisteredPackageMajorVersions() },
+    });
+    const alarmShrinkingCatalog = catalogSizeChange.createAlarm(this, 'ShrinkingCatalogAlarm', {
+      alarmName: `${this.node.path}/ShrinkingCatalog`,
+      alarmDescription: [
+        'The number of packages registered in the catalog.json object has shrunk by more than 5',
+        'elements. There might be a mass extinction event going on. This should be investigated',
+        'as soon as possible.',
+        '',
+        `Catalog.json: ${s3ObjectUrl(props.bucket, 'catalog.json')}`,
+        `Catalog Builder: ${lambdaFunctionUrl(handler)}`,
+        '',
+        `RUNBOOK: ${RUNBOOK_URL}`,
+      ].join('\n'),
+      comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+      evaluationPeriods: 1,
+      threshold: -5,
+    });
+    props.monitoring.addHighSeverityAlarm('Catalog Size Shrunk', alarmShrinkingCatalog);
+  }
+
+  public metricRegisteredPackageMajorVersions(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(15),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      metricName: MetricName.REGISTERED_PACKAGES_MAJOR_VERSION,
+      namespace: METRICS_NAMESPACE,
+    });
   }
 }
 

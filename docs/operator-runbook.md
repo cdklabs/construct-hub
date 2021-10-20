@@ -227,7 +227,68 @@ If messages are sent back to the dead-letter queue, perform the investigation
 steps again.
 
 
-### `ConstructHUb/Orchestration/Resource/ExecutionsFailed`
+### `ConstructHub/Orchestration/CatalogBuilder/ShrinkingCatalog`
+
+#### Description
+
+This alarm goes off if the count of entries in the `catalog.json` object, which
+backs the search experience of ConstructHub, reduces by more than 5 items,
+meaning packages are no longer accessible for search.
+
+#### Investigation
+
+Packages can be removed from `catalog.json` in normal circumstances: when a
+package is added the the deny-list of the deployment, it will eventually be
+pruned from the catalog. If many packages are added to the deny-list at the same
+time, this alarm might go off.
+
+Review the CloudWatch metric associated to the alarm to understand if the
+magnitude of the catalog size change corresponds to a known or expected event.
+If the change corresponds to an expected event (i.e: due to a change in
+deny-list contents), you can treat the alarm as a false positive.
+
+On the other hand, if the catalog contraction is unexpected, investigate the
+logs of the *Catalog Builder* function to identify any unexpected activity.
+
+#### Resolution
+
+The *package data bucket* is configured with object versionning. You can
+identify a previous "good" version of the `catalog.json` object by reviewing the
+object history in the S3 console (or using the AWS CLI or SDK). The number of
+elements in the `catalog.json` is reported in a metadata attribute of the object
+in S3 - which can help identify the correct previous version without necessarily
+having to download all of them for inspection. The object size is also a good
+heuristic to short-list the candidate versions.
+
+When the relevant version has been identified, it can be restored to be the
+current version by copying that version over the `catalog.json` key. This can be
+done using the following AWS CLI command (replace `<bucket-name>` with the
+relevant *package data bucket* name, and `<version-id>` with the S3 version ID
+you have selected):
+
+```console
+$ aws s3api copy-object                                               \
+  --bucket='<bucket-name>'                                            \
+  --copy-source='<bucket-name>/catalog.json?versionId=<version-id>'   \
+  --key='catalog.json'
+```
+
+This will produce an output similar to the following (note that the `VersionId`
+value there is the **new** current version of  the `catalog.json` object, which
+will always be different from the version ID you copied from):
+
+```json
+{
+  "CopyObjectResult": {
+    "LastModified": "2015-11-10T01:07:25.000Z",
+    "ETag": "\"589c8b79c230a6ecd5a7e1d040a9a030\""
+  },
+  "VersionId": "YdnYvTCVDqRRFA.NFJjy36p0hxifMlkA"
+}
+```
+
+
+### `ConstructHub/Orchestration/Resource/ExecutionsFailed`
 
 #### Description
 
