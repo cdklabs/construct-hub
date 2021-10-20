@@ -415,6 +415,43 @@ For additional recommendations for diving into CloudWatch Logs, refer to the
 The alarm will automatically go back to green once the Lambda function starts
 reporting `npmjs.com` registry changes again. No further action is needed.
 
+### `ConstructHub/Sources/NpmJs/Stager/DLQNotEmpty`
+
+#### Description
+
+This alarm is only provisioned when the `NpmJs` package source is configured. It
+triggers when the stager function has failed processing an input message 3 times
+in a row, which resulted in that message being sent to the dead-letter queue.
+
+The package versions that were targeted by those messages have hence not been
+ingested into ConstructHub.
+
+#### Investigation
+
+The *NpmJs Stager* receives messages from the *NpmJs Follower* function for each
+new package version identified. It downloads the npm package tarball, stores it
+into a staging S3 bucket, then notifies the ConstructHub *Ingestion queue* so
+the package version is indexed into ConstructHub.
+
+An `npmjs.com` outage could result in failures to download the tarballs, so
+start by checking the `npmjs.com` status updates and announcements.
+
+Additionally, review the logs of the *NpmJs Stager* function to identify any
+problem.
+
+For additional recommendations for diving into CloudWatch Logs, refer to the
+[Diving into Lambda Function logs in CloudWatch Logs][#lambda-log-dive] section.
+
+#### Resolution
+
+Once the root cause of the failures has been addressed, the messgaes from the
+dead-letter queue can be automatically re-processed through the Lambda function
+by enabling the SQS Trigger that is automatically configured on the function,
+but is disabled by default.
+
+Once all messages have cleared from the dead-letter queue, do not forget to
+disable the SQS Trigger again.
+
 --------------------------------------------------------------------------------
 
 ## :repeat: Bulk Re-processing

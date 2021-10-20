@@ -21,9 +21,10 @@ interface FrontendConfig {
   packageLinks?: FrontendPackageLinkConfig[];
   packageTags?: FrontendPackageTagConfig[];
   featuredPackages?: FrontendFeaturedPackagesConfig;
+  packageStats?: boolean;
 }
 
-interface WebappConfigProps {
+export interface WebappConfigProps {
   /**
    * Configuration for custom package page links.
    */
@@ -39,6 +40,13 @@ interface WebappConfigProps {
    * @default - Display the 10 most recently updated packages
    */
   readonly featuredPackages?: FeaturedPackages;
+
+  /**
+   * Whether to display package stats from `stats.json` on
+   * package cards.
+   * @default true
+   */
+  readonly showPackageStats?: boolean;
 }
 
 export class WebappConfig {
@@ -55,6 +63,7 @@ export class WebappConfig {
       packageLinks: this.packageLinks,
       packageTags: this.packageTags,
       featuredPackages: this.featuredPackages,
+      packageStats: this.props.showPackageStats ?? true,
     };
   }
 

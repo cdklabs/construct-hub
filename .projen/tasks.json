@@ -79,6 +79,9 @@
           "spawn": "bundle:redrive-state-machine"
         },
         {
+          "spawn": "bundle:package-stats"
+        },
+        {
           "spawn": "bundle:certificate-monitor"
         },
         {
@@ -91,6 +94,9 @@
           "spawn": "bundle:npm-js-follower"
         },
         {
+          "spawn": "bundle:stage-and-notify"
+        },
+        {
           "spawn": "bundle:handler"
         },
         {
@@ -98,17 +104,10 @@
         }
       ]
     },
-    "test:compile": {
-      "name": "test:compile",
-      "description": "compiles the test code"
-    },
     "test": {
       "name": "test",
       "description": "Run tests",
       "steps": [
-        {
-          "spawn": "test:compile"
-        },
         {
           "exec": "jest --passWithNoTests --all --updateSnapshot"
         },
@@ -318,6 +317,9 @@
           "spawn": "bundle:redrive-state-machine"
         },
         {
+          "spawn": "bundle:package-stats"
+        },
+        {
           "spawn": "bundle:certificate-monitor"
         },
         {
@@ -328,6 +330,9 @@
         },
         {
           "spawn": "bundle:npm-js-follower"
+        },
+        {
+          "spawn": "bundle:stage-and-notify"
         },
         {
           "spawn": "bundle:handler"
@@ -383,6 +388,16 @@
       "steps": [
         {
           "exec": "npx cdk bootstrap"
+        }
+      ],
+      "cwd": "lib/__tests__/devapp"
+    },
+    "dev:hotswap": {
+      "name": "dev:hotswap",
+      "description": "cdk deploy --hotswap",
+      "steps": [
+        {
+          "exec": "npx cdk deploy --hotswap"
         }
       ],
       "cwd": "lib/__tests__/devapp"
@@ -477,6 +492,15 @@
         }
       ]
     },
+    "bundle:package-stats": {
+      "name": "bundle:package-stats",
+      "description": "Create an AWS Lambda bundle from src/backend/package-stats/package-stats.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
     "bundle:certificate-monitor": {
       "name": "bundle:certificate-monitor",
       "description": "Create an AWS Lambda bundle from src/monitored-certificate/certificate-monitor.lambda.ts",
@@ -510,6 +534,15 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/package-sources/npmjs/npm-js-follower.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/npm-js-follower.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:stage-and-notify": {
+      "name": "bundle:stage-and-notify",
+      "description": "Create an AWS Lambda bundle from src/package-sources/npmjs/stage-and-notify.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/stage-and-notify.bundle/index.js\" --external:aws-sdk --sourcemap"
         }
       ]
     },
@@ -632,7 +665,7 @@
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case cdk-triggers construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak json-schema nano normalize-registry-metadata npm-check-updates projen semver spdx-license-list standard-version tar-stream typescript yaml"
+          "exec": "yarn upgrade @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case cdk-triggers construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak json-schema normalize-registry-metadata npm-check-updates projen semver spdx-license-list standard-version tar-stream typescript yaml"
         },
         {
           "exec": "npx projen"

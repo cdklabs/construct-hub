@@ -1,10 +1,11 @@
-import { Dashboard, GraphWidget, GraphWidgetView, TextWidget, IWidget, MathExpression, Metric, Statistic } from '@aws-cdk/aws-cloudwatch';
+import { Dashboard, GraphWidget, GraphWidgetView, TextWidget, IWidget, MathExpression, Metric, Statistic, PeriodOverride } from '@aws-cdk/aws-cloudwatch';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 import { DenyList } from './backend/deny-list';
 import { Ingestion } from './backend/ingestion';
 import { Inventory } from './backend/inventory';
 import { Orchestration } from './backend/orchestration';
+import { PackageStats } from './backend/package-stats';
 import { DocumentationLanguage } from './backend/shared/language';
 import { ecsClusterUrl, lambdaFunctionUrl, lambdaSearchLogGroupUrl, logGroupUrl, s3ObjectUrl, sqsQueueUrl, stateMachineUrl } from './deep-link';
 import { fillMetric } from './metric-utils';
@@ -18,6 +19,7 @@ export interface BackendDashboardProps {
   readonly inventory: Inventory;
   readonly denyList: DenyList;
   readonly packageData: IBucket;
+  readonly packageStats?: PackageStats;
 }
 
 export class BackendDashboard extends Construct {
@@ -26,6 +28,7 @@ export class BackendDashboard extends Construct {
 
     new Dashboard(this, 'Resource', {
       dashboardName: props.dashboardName,
+      periodOverride: PeriodOverride.AUTO,
       start: '-P1W', // Show 1 week by default
       widgets: [
         [
@@ -259,6 +262,7 @@ export class BackendDashboard extends Construct {
           }),
         ],
 
+        ...(props.packageStats ? renderPackageStatsWidgets(props.packageStats) : []),
       ],
     });
   }
@@ -292,9 +296,8 @@ export class BackendDashboard extends Construct {
       new GraphWidget({
         height: 6,
         width: 12,
-        title: 'ECS Resources',
+        title: 'Fargate Resources',
         left: [
-          orchestration.metricEcsTaskCount({ label: 'Task Count' }),
           mFargateUsage.with({ label: 'Fargate Usage (On-Demand)' }),
           new MathExpression({
             expression: 'SERVICE_QUOTA(mFargateUsage)',
@@ -312,12 +315,16 @@ export class BackendDashboard extends Construct {
       new GraphWidget({
         height: 6,
         width: 12,
-        title: 'ECS Networking',
+        title: 'ECS Resources',
         left: [
-          orchestration.metricEcsNetworkRxBytes({ label: 'Received Bytes' }),
-          orchestration.metricEcsNetworkTxBytes({ label: 'Transmitted Bytes' }),
+          fillMetric(orchestration.metricEcsNetworkRxBytes({ label: 'Received Bytes' })),
+          fillMetric(orchestration.metricEcsNetworkTxBytes({ label: 'Transmitted Bytes' })),
         ],
         leftYAxis: { min: 0 },
+        right: [
+          fillMetric(orchestration.metricEcsTaskCount({ label: 'Task Count' })),
+        ],
+        rightYAxis: { min: 0 },
       }),
     ];
 
@@ -400,4 +407,48 @@ function* renderPackageSourcesWidgets(packageSources: PackageSourceBindResult[])
     yield* packageSource.dashboardWidgets;
   }
   return;
+}
+
+function renderPackageStatsWidgets(packageStats: PackageStats): IWidget[][] {
+  return [
+    [
+      new TextWidget({
+        height: 2,
+        width: 24,
+        markdown:
+          [
+            '# Package Stats',
+            '',
+            `[button:primary:Package Stats Object](${s3ObjectUrl(packageStats.bucket, packageStats.statsKey)})`,
+            `[button:Package Stats Function](${lambdaFunctionUrl(packageStats.handler)})`,
+            `[button:Package Stats Logs](${lambdaSearchLogGroupUrl(packageStats.handler)})`,
+          ].join('\n'),
+      }),
+    ],
+    [
+      new GraphWidget({
+        height: 6,
+        width: 12,
+        title: 'Number of Package Stats Recorded',
+        left: [
+          fillMetric(packageStats.metricPackagesCount({ label: 'Packages with stats' }), 'REPEAT'),
+        ],
+        leftYAxis: { min: 0 },
+      }),
+      new GraphWidget({
+        height: 6,
+        width: 12,
+        title: 'Invocation Duration',
+        left: [
+          packageStats.handler.metricDuration({ label: 'Duration' }),
+        ],
+        leftYAxis: { min: 0 },
+        rightAnnotations: [{
+          color: '#ffa500',
+          label: '15 minutes (Lambda timeout)',
+          value: Duration.minutes(15).toSeconds(),
+        }],
+      }),
+    ],
+  ];
 }

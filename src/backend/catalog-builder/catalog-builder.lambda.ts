@@ -1,11 +1,11 @@
 import { gunzip } from 'zlib';
 
-import type { AssemblyTargets } from '@jsii/spec';
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
 import { AWSError, S3 } from 'aws-sdk';
 import { SemVer } from 'semver';
 import { extract } from 'tar-stream';
+import { CatalogModel, PackageInfo } from '.';
 import { DenyListClient } from '../deny-list/client.lambda-shared';
 import type { CatalogBuilderInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
@@ -27,37 +27,62 @@ const METRICS_NAMESPACE = 'ConstructHub/CatalogBuilder';
 export async function handler(event: CatalogBuilderInput, context: Context) {
   console.log(JSON.stringify(event, null, 2));
 
-  // determine if this is a request to rebuild the catalog (basically, an empty event)
-  const rebuild = !event?.package;
-  if (rebuild) {
-    console.log('Requesting catalog rebuild (empty event)');
-  }
-
   const BUCKET_NAME = requireEnv('BUCKET_NAME');
 
   const packages = new Map<string, Map<number, PackageInfo>>();
   const denyList = await DenyListClient.newClient();
 
-  let data: undefined | AWS.S3.GetObjectOutput;
+  console.log('Loading existing catalog (if present)...');
 
-  if (!rebuild) {
-    console.log('Loading existing catalog...');
+  const data = await aws.s3().getObject({ Bucket: BUCKET_NAME, Key: constants.CATALOG_KEY }).promise()
+    .catch((err: AWSError) => err.code !== 'NoSuchKey'
+      ? Promise.reject(err)
+      : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
 
-    data = await aws.s3().getObject({ Bucket: BUCKET_NAME, Key: constants.CATALOG_KEY }).promise()
-      .catch((err: AWSError) => err.code !== 'NoSuchKey'
-        ? Promise.reject(err)
-        : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
+  if (data.Body) {
+    console.log('Catalog found. Loading...');
+    const catalog: CatalogModel = JSON.parse(data.Body.toString('utf-8'));
+    for (const info of catalog.packages) {
+      if (!packages.has(info.name)) {
+        packages.set(info.name, new Map());
+      }
+      packages.get(info.name)!.set(info.major, info);
+    }
   }
 
-  // if event is empty, we're doing a full rebuild
-  if (!data?.Body || rebuild) {
-    console.log('Catalog not found. Recreating...');
+  // If defined, the function will invoke itself again to resume the work from that key (this
+  // happens only in "from scratch" or "rebuild" cases).
+  let nextStartAfter: string | undefined;
+
+  if (event.package) {
+    if (!event.package.key.endsWith(constants.PACKAGE_KEY_SUFFIX)) {
+      throw new Error(`The provided package key is invalid: ${event.package.key} does not end in ${constants.PACKAGE_KEY_SUFFIX}`);
+    }
+
+    console.log('Registering new packages...');
+    // note that we intentionally don't catch errors here to let these
+    // event go to the DLQ for manual inspection.
+    await appendPackage(packages, event.package.key, BUCKET_NAME, denyList);
+  }
+
+  // If we don't have a package in event, then we're refreshing the catalog. This is also true if we
+  // don't have a catalog body (from scratch) or if "startAfter" is set (continuation of from
+  // scratch).
+  if (!event?.package || !data.Body || event.startAfter) {
+
+    console.log('Recreating or refreshing catalog...');
     const failures: any = {};
-    for await (const { Key: pkgKey } of relevantObjects(BUCKET_NAME)) {
+    for await (const { Key: pkgKey } of relevantObjects(BUCKET_NAME, event.startAfter)) {
       try {
         await appendPackage(packages, pkgKey!, BUCKET_NAME, denyList);
       } catch (e) {
         failures[pkgKey!] = e;
+      }
+      // If we're getting short on time (1 minute out of 15 left), we'll be continuing in a new
+      // invocation after writing what we've done so far to S3...
+      if (context.getRemainingTimeInMillis() <= 60_000) {
+        nextStartAfter = pkgKey;
+        break;
       }
     }
     for (const [key, error] of Object.entries(failures)) {
@@ -70,25 +95,11 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
       console.log(`Marking ${failedCount} failed packages`);
       metrics.putMetric('FailedPackagesOnRecreation', failedCount, Unit.Count);
     })();
-
-  } else {
-    console.log('Catalog found. Loading...');
-    const catalog = JSON.parse(data.Body.toString('utf-8'));
-    for (const info of catalog.packages) {
-      if (!packages.has(info.name)) {
-        packages.set(info.name, new Map());
-      }
-      packages.get(info.name)!.set(info.major, info);
-    }
-    console.log('Registering new packages...');
-    // note that we intentionally don't catch errors here to let these
-    // event go to the DLQ for manual inspection.
-    await appendPackage(packages, event.package.key, BUCKET_NAME, denyList);
   }
 
   // Build the final data package...
   console.log('Consolidating catalog...');
-  const catalog = { packages: new Array<PackageInfo>(), updated: new Date().toISOString() };
+  const catalog: CatalogModel = { packages: new Array<PackageInfo>(), updated: new Date().toISOString() };
   for (const majors of packages.values()) {
     for (const pkg of majors.values()) {
       catalog.packages.push(pkg);
@@ -111,7 +122,7 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
   }
 
   // Upload the result to S3 and exit.
-  return aws.s3().putObject({
+  const result = await aws.s3().putObject({
     Bucket: BUCKET_NAME,
     Key: constants.CATALOG_KEY,
     Body: JSON.stringify(catalog, null, 2),
@@ -125,15 +136,34 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     },
   }).promise();
 
+  if (nextStartAfter != null) {
+    console.log(`Will continue from ${nextStartAfter} in new invocation...`);
+    const nextEvent: CatalogBuilderInput = { ...event, startAfter: nextStartAfter };
+    // We start it asynchronously, as this function has a provisionned
+    // concurrency of 1 (so a synchronous attempt would always be throttled).
+    await aws.lambda().invokeAsync({
+      FunctionName: context.functionName,
+      InvokeArgs: JSON.stringify(nextEvent, null, 2),
+    }).promise();
+  }
+
+  return result;
 }
 
 /**
  * A generator that asynchronously traverses the set of "interesting" objects
  * found by listing the configured S3 bucket. Those objects correspond to all
  * npm package tarballs present under the `packages/` prefix in the bucket.
+ *
+ * @param bucket the bucket in which to list objects
+ * @param startAfter the key to start reading from, if provided.
  */
-async function* relevantObjects(bucket: string) {
-  const request: S3.ListObjectsV2Request = { Bucket: bucket, Prefix: constants.STORAGE_KEY_PREFIX };
+async function* relevantObjects(bucket: string, startAfter?: string) {
+  const request: S3.ListObjectsV2Request = {
+    Bucket: bucket,
+    Prefix: constants.STORAGE_KEY_PREFIX,
+    StartAfter: startAfter,
+  };
   do {
     const result = await aws.s3().listObjectsV2(request).promise();
     for (const object of result.Contents ?? []) {
@@ -160,7 +190,8 @@ async function appendPackage(packages: any, pkgKey: string, bucketName: string, 
   const [, packageName, versionStr] = constants.STORAGE_KEY_FORMAT_REGEX.exec(pkgKey)!;
   const version = new SemVer(versionStr);
   const found = packages.get(packageName)?.get(version.major);
-  if (found != null && version.compare(found.version) <= 0) {
+  // If the version is === to the current latest, we'll be replacing that (so re-generated metadata are taken into account)
+  if (found != null && version.compare(found.version) < 0) {
     console.log(`Skipping ${packageName}@${version} because it is not newer than the existing ${found.version}`);
     return;
   }
@@ -227,64 +258,4 @@ async function appendPackage(packages: any, pkgKey: string, bucketName: string, 
     version: pkgMetadata.version,
   });
 
-}
-
-interface PackageInfo {
-  /**
-   * The name of the assembly.
-   */
-  readonly name: string;
-
-  /**
-   * The major version of this assembly, according to SemVer.
-   */
-  readonly major: number;
-
-  /**
-   * The complete SemVer version string for this package's major version stream,
-   * including pre-release identifiers, but excluding additional metadata
-   * (everything starting at `+`, if there is any).
-   */
-  readonly version: string;
-
-  /**
-   * The SPDX license identifier for the package's license.
-   */
-  readonly license: string;
-
-  /**
-   * The list of keywords configured on the package.
-   */
-  readonly keywords: readonly string[];
-
-  /**
-   * Metadata assigned by the discovery function to the latest release of this
-   * package's major version stream, if any.
-   */
-  readonly metadata?: { readonly [key: string]: string };
-
-  /**
-   * The author of the package.
-   */
-  readonly author: {
-    readonly name: string;
-    readonly email?: string;
-    readonly url?: string;
-  };
-
-  /**
-   * The list of languages configured on the package, and the corresponding
-   * configuration.
-   */
-  readonly languages: AssemblyTargets;
-
-  /**
-   * The timestamp at which this version was created.
-   */
-  readonly time: Date;
-
-  /**
-   * The description of the package.
-   */
-  readonly description?: string;
 }

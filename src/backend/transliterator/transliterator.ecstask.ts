@@ -1,5 +1,7 @@
 import * as os from 'os';
 import * as path from 'path';
+import { gzipSync } from 'zlib';
+import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { PromiseResult } from 'aws-sdk/lib/request';
 import * as fs from 'fs-extra';
 import * as docgen from 'jsii-docgen';
@@ -11,6 +13,7 @@ import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DocumentationLanguage } from '../shared/language';
 import { shellOut } from '../shared/shell-out.lambda-shared';
+import { MetricName, METRICS_NAMESPACE } from './constants';
 
 const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)${constants.ASSEMBLY_KEY_SUFFIX}$`);
 // Capture groups:                                                    ┗━━━━━━━━━1━━━━━━━┛  ┗━━2━━┛
@@ -86,17 +89,24 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
       return created;
     }
 
-    async function generateDocs(lang: string) {
+    const generateDocs = metricScope((metrics) => async (lang: string) => {
+      metrics.setDimensions();
+      metrics.setNamespace(METRICS_NAMESPACE);
 
       const uploads = new Map<string, Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>>();
       const docs = await docgen.Documentation.forPackage(packageFqn, { language: docgen.Language.fromString(lang) });
 
       function renderAndDispatch(submodule?: string) {
         console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
-        const page = docs.render({ submodule, linkFormatter: linkFormatter(docs) }).render();
+        const page = Buffer.from(docs.render({ submodule, linkFormatter: linkFormatter(docs) }).render());
+        metrics.putMetric(MetricName.DOCUMENT_SIZE, page.length, Unit.Bytes);
+
+        const { buffer: body, contentEncoding } = compressContent(page);
+        metrics.putMetric(MetricName.COMPRESSED_DOCUMENT_SIZE, body.length, Unit.Bytes);
+
         const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(lang), submodule));
         console.log(`Uploading ${key}`);
-        const upload = uploadFile(event.bucket, key, event.assembly.versionId, page);
+        const upload = uploadFile(event.bucket, key, event.assembly.versionId, body, contentEncoding);
         uploads.set(key, upload);
       }
 
@@ -110,12 +120,23 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
         created.push({ bucket: event.bucket, key, versionId: response.VersionId });
         console.log(`Finished uploading ${key} (Version ID: ${response.VersionId})`);
       }
-
-    }
+    });
     await generateDocs(language);
 
     return created;
   });
+}
+
+function compressContent(buffer: Buffer): { readonly buffer: Buffer; readonly contentEncoding?: 'gzip' } {
+  if (buffer.length < 1_024) {
+    return { buffer };
+  }
+  const gz = gzipSync(buffer, { level: 9 });
+  // If it did not compress well, we'll keep the un-compressed original...
+  if (gz.length >= buffer.length) {
+    return { buffer };
+  }
+  return { buffer, contentEncoding: 'gzip' };
 }
 
 async function ensureWritableHome<T>(cb: () => Promise<T>): Promise<T> {
@@ -133,12 +154,13 @@ async function ensureWritableHome<T>(cb: () => Promise<T>): Promise<T> {
   }
 }
 
-function uploadFile(bucket: string, key: string, sourceVersionId?: string, body?: AWS.S3.Body) {
+function uploadFile(bucket: string, key: string, sourceVersionId?: string, body?: AWS.S3.Body, contentEncoding?: 'gzip') {
   return aws.s3().putObject({
     Bucket: bucket,
     Key: key,
     Body: body,
     CacheControl: 'public',
+    ContentEncoding: contentEncoding,
     ContentType: 'text/markdown; charset=UTF-8',
     Metadata: {
       'Origin-Version-Id': sourceVersionId ?? 'N/A',

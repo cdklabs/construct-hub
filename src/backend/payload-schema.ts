@@ -5,7 +5,7 @@ export interface StateMachineInput {
   readonly metadata: S3ObjectVersion;
 }
 
-export type CatalogBuilderInput = Pick<StateMachineInput, 'package'>;
+export type CatalogBuilderInput = Pick<StateMachineInput, 'package'> & { readonly startAfter?: string };
 
 export type TransliteratorInput = Pick<StateMachineInput, 'bucket' | 'assembly'>;
 

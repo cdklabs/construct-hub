@@ -324,14 +324,14 @@ function detectConstructFramework(assembly: Assembly): ConstructFramework | unde
         return;
       }
       name = ConstructFrameworkName.AWS_CDK;
-    } else if (packageName === 'cdktf') {
+    } else if (packageName === 'cdktf' || packageName.startsWith('@cdktf/')) {
       if (name && name !== ConstructFrameworkName.CDKTF) {
         // Identified multiple candidates, so returning ambiguous...
         nameAmbiguous = true;
         return;
       }
       name = ConstructFrameworkName.CDKTF;
-    } else if (packageName === 'cdk8s') {
+    } else if (packageName === 'cdk8s' || /^cdk8s-plus(?:-(?:17|20|21|22))?$/.test(packageName)) {
       if (name && name !== ConstructFrameworkName.CDK8S) {
         // Identified multiple candidates, so returning ambiguous...
         nameAmbiguous = true;

@@ -50,6 +50,7 @@ test('CodeArtifact repository', () => {
     ContainerDefinitions: [{
       Environment: stack.resolve([
         { Name: 'HEADER_SPAN', Value: 'true' },
+        { Name: 'AWS_EMF_ENVIRONMENT', Value: 'Local' },
         { Name: 'CODE_ARTIFACT_DOMAIN_NAME', Value: codeArtifact.repositoryDomainName },
         { Name: 'CODE_ARTIFACT_DOMAIN_OWNER', Value: codeArtifact.repositoryDomainOwner },
         { Name: 'CODE_ARTIFACT_REPOSITORY_ENDPOINT', Value: codeArtifact.repositoryNpmEndpoint },
@@ -106,6 +107,7 @@ test('VPC Endpoints', () => {
     ContainerDefinitions: [{
       Environment: stack.resolve([
         { Name: 'HEADER_SPAN', Value: 'true' },
+        { Name: 'AWS_EMF_ENVIRONMENT', Value: 'Local' },
         { Name: 'CODE_ARTIFACT_API_ENDPOINT', Value: Fn.select(1, Fn.split(':', Fn.select(0, codeArtifactApi.vpcEndpointDnsEntries))) },
       ]),
     }],
@@ -161,6 +163,7 @@ test('VPC Endpoints and CodeArtifact repository', () => {
     ContainerDefinitions: [{
       Environment: stack.resolve([
         { Name: 'HEADER_SPAN', Value: 'true' },
+        { Name: 'AWS_EMF_ENVIRONMENT', Value: 'Local' },
         { Name: 'CODE_ARTIFACT_API_ENDPOINT', Value: Fn.select(1, Fn.split(':', Fn.select(0, codeArtifactApi.vpcEndpointDnsEntries))) },
         { Name: 'CODE_ARTIFACT_DOMAIN_NAME', Value: repository.repositoryDomainName },
         { Name: 'CODE_ARTIFACT_DOMAIN_OWNER', Value: repository.repositoryDomainOwner },

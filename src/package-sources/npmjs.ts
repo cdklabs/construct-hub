@@ -1,16 +1,19 @@
-import { ComparisonOperator, GraphWidget, Metric, MetricOptions, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
+import { ComparisonOperator, GraphWidget, MathExpression, Metric, MetricOptions, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { Tracing } from '@aws-cdk/aws-lambda';
+import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
+import { Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
-import { lambdaFunctionUrl, s3ObjectUrl } from '../deep-link';
+import { lambdaFunctionUrl, s3ObjectUrl, sqsQueueUrl } from '../deep-link';
 import { fillMetric } from '../metric-utils';
 import type { IPackageSource, PackageSourceBindOptions, PackageSourceBindResult } from '../package-source';
 import { RUNBOOK_URL } from '../runbook-url';
 import { MARKER_FILE_NAME, METRICS_NAMESPACE, MetricName, S3KeyPrefix } from './npmjs/constants.lambda-shared';
 
 import { NpmJsFollower } from './npmjs/npm-js-follower';
+import { StageAndNotify } from './npmjs/stage-and-notify';
 
 export interface NpmJsProps {
   /**
@@ -40,12 +43,37 @@ export class NpmJs implements IPackageSource {
     });
     bucket.grantRead(ingestion);
 
+    const stager = new StageAndNotify(scope, 'NpmJs-StageAndNotify', {
+      deadLetterQueue: new Queue(scope, 'StagerDLQ', {
+        encryption: QueueEncryption.KMS_MANAGED,
+        retentionPeriod: Duration.days(14),
+        visibilityTimeout: Duration.minutes(15),
+      }),
+      description: `[${scope.node.path}/NpmJS-StageAndNotify] Stages tarballs to S3 and notifies ConstructHub`,
+      environment: {
+        AWS_EMF_ENVIRONMENT: 'Local',
+        BUCKET_NAME: bucket.bucketName,
+        QUEUE_URL: queue.queueUrl,
+      },
+      memorySize: 10_024, // 10GiB
+      retryAttempts: 2,
+      timeout: Duration.minutes(5),
+      tracing: Tracing.ACTIVE,
+    });
+
+    bucket.grantReadWrite(stager);
+    denyList?.grantRead(stager);
+    queue.grantSendMessages(stager);
+
+    stager.addEventSource(new SqsEventSource(stager.deadLetterQueue!, { batchSize: 1, enabled: false }));
+
+
     const follower = new NpmJsFollower(scope, 'NpmJs', {
       description: `[${scope.node.path}/NpmJs] Periodically query npmjs.com index for new packages`,
       environment: {
         AWS_EMF_ENVIRONMENT: 'Local',
         BUCKET_NAME: bucket.bucketName,
-        QUEUE_URL: queue.queueUrl,
+        FUNCTION_NAME: stager.functionName,
       },
       memorySize: 10_024, // 10 GiB
       reservedConcurrentExecutions: 1, // Only one execution at a time, to avoid race conditions on the S3 marker object
@@ -53,10 +81,10 @@ export class NpmJs implements IPackageSource {
       tracing: Tracing.ACTIVE,
     });
 
-    bucket.grantReadWrite(follower);
-    queue.grantSendMessages(follower);
+    bucket.grantReadWrite(follower, MARKER_FILE_NAME);
     denyList?.grantRead(follower);
     licenseList.grantRead(follower);
+    stager.grantInvoke(follower);
 
     const rule = new Rule(scope, 'NpmJs/Schedule', {
       description: `${scope.node.path}/NpmJs/Schedule`,
@@ -113,6 +141,29 @@ export class NpmJs implements IPackageSource {
     });
     monitoring.addLowSeverityAlarm('Np npmjs.com changes discovered', noChangeAlarm);
 
+    const dlqNotEmptyAlarm = new MathExpression({
+      expression: 'mVisible + mHidden',
+      usingMetrics: {
+        mVisible: stager.deadLetterQueue!.metricApproximateNumberOfMessagesVisible({ period: Duration.minutes(1) }),
+        mHidden: stager.deadLetterQueue!.metricApproximateNumberOfMessagesNotVisible({ period: Duration.minutes(1) }),
+      },
+    }).createAlarm(scope, `${scope.node.path}/NpmJs/Stager/DLQNotEmpty`, {
+      alarmName: `${scope.node.path}/NpmJs/Stager/DLQNotEmpty`,
+      alarmDescription: [
+        'The NpmJS package stager is failing - its dead letter queue is not empty',
+        '',
+        `Link to the lambda function: ${lambdaFunctionUrl(stager)}`,
+        `Link to the dead letter queue: ${sqsQueueUrl(stager.deadLetterQueue!)}`,
+        '',
+        `Runbook: ${RUNBOOK_URL}`,
+      ].join('/n'),
+      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      evaluationPeriods: 1,
+      threshold: 1,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
+    });
+    monitoring.addHighSeverityAlarm('NpmJs/Stager DLQ Not Empty', dlqNotEmptyAlarm);
+
     // Finally - the "not running" alarm depends on the schedule (it won't run until the schedule
     // exists!), and the schedule depends on the failure alarm existing (we don't want it to run
     // before we can know it is failing). This means the returned `IDependable` effectively ensures
@@ -125,13 +176,15 @@ export class NpmJs implements IPackageSource {
       links: [
         { name: 'NpmJs Follower', url: lambdaFunctionUrl(follower), primary: true },
         { name: 'Marker Object', url: s3ObjectUrl(bucket, MARKER_FILE_NAME) },
+        { name: 'Stager', url: lambdaFunctionUrl(stager) },
+        { name: 'Stager DLQ', url: sqsQueueUrl(stager.deadLetterQueue!) },
       ],
       dashboardWidgets: [
         [
           new GraphWidget({
             height: 6,
             width: 12,
-            title: 'Function Health',
+            title: 'Follower Health',
             left: [
               fillMetric(follower.metricInvocations({ label: 'Invocations' })),
               fillMetric(follower.metricErrors({ label: 'Errors' })),
@@ -141,15 +194,31 @@ export class NpmJs implements IPackageSource {
               this.metricRemainingTime({ label: 'Remaining Time' }),
             ],
             rightYAxis: { min: 0 },
-            period: Duration.minutes(15),
+            period: Duration.minutes(5),
           }),
+          new GraphWidget({
+            height: 6,
+            width: 12,
+            title: 'Stager Health',
+            left: [
+              fillMetric(stager.metricInvocations({ label: 'Invocations' })),
+              fillMetric(stager.metricErrors({ label: 'Errors' })),
+            ],
+            leftYAxis: { min: 0 },
+            right: [
+              stager.metricDuration({ label: 'Duration' }),
+            ],
+            rightYAxis: { min: 0 },
+            period: Duration.minutes(5),
+          }),
+        ], [
           new GraphWidget({
             height: 6,
             width: 12,
             title: 'CouchDB Follower',
             left: [
-              this.metricChangeCount({ label: 'Change Count' }),
-              this.metricUnprocessableEntity({ label: 'Unprocessable' }),
+              fillMetric(this.metricChangeCount({ label: 'Change Count' }), 0),
+              fillMetric(this.metricUnprocessableEntity({ label: 'Unprocessable' }), 0),
             ],
             leftYAxis: { min: 0 },
             right: [
@@ -157,17 +226,32 @@ export class NpmJs implements IPackageSource {
               fillMetric(this.metricPackageVersionAge({ label: 'Package Version Age' }), 'REPEAT'),
             ],
             rightYAxis: { label: 'Milliseconds', min: 0, showUnits: false },
-            period: Duration.minutes(15),
+            period: Duration.minutes(5),
           }),
-        ], [
           new GraphWidget({
             height: 6,
             width: 12,
             title: 'CouchDB Changes',
             left: [
-              this.metricLastSeq({ label: 'Last Sequence Number' }),
+              fillMetric(this.metricLastSeq({ label: 'Last Sequence Number' }), 'REPEAT'),
             ],
-            period: Duration.minutes(15),
+            period: Duration.minutes(5),
+          }),
+        ], [
+          new GraphWidget({
+            height: 6,
+            width: 12,
+            title: 'Stager Dead-Letter Queue',
+            left: [
+              fillMetric(stager.deadLetterQueue!.metricApproximateNumberOfMessagesVisible({ label: 'Visible Messages' }), 0),
+              fillMetric(stager.deadLetterQueue!.metricApproximateNumberOfMessagesNotVisible({ label: 'Invisible Messages' }), 0),
+            ],
+            leftYAxis: { min: 0 },
+            right: [
+              stager.deadLetterQueue!.metricApproximateAgeOfOldestMessage({ label: 'Oldest Message' }),
+            ],
+            rightYAxis: { min: 0 },
+            period: Duration.minutes(1),
           }),
         ],
       ],
@@ -179,7 +263,7 @@ export class NpmJs implements IPackageSource {
    */
   public metricBatchProcessingTime(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: Duration.minutes(1),
       statistic: Statistic.AVERAGE,
       ...opts,
       metricName: MetricName.BATCH_PROCESSING_TIME,
@@ -192,7 +276,7 @@ export class NpmJs implements IPackageSource {
    */
   public metricChangeCount(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: Duration.minutes(1),
       statistic: Statistic.SUM,
       ...opts,
       metricName: MetricName.CHANGE_COUNT,
@@ -206,7 +290,7 @@ export class NpmJs implements IPackageSource {
    */
   public metricLastSeq(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: Duration.minutes(1),
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.LAST_SEQ,
@@ -216,7 +300,7 @@ export class NpmJs implements IPackageSource {
 
   public metricNpmJsChangeAge(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: Duration.minutes(1),
       statistic: Statistic.MINIMUM,
       ...opts,
       metricName: MetricName.NPMJS_CHANGE_AGE,
@@ -229,7 +313,7 @@ export class NpmJs implements IPackageSource {
    */
   public metricPackageVersionAge(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: Duration.minutes(1),
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.PACKAGE_VERSION_AGE,
@@ -242,7 +326,7 @@ export class NpmJs implements IPackageSource {
    */
   public metricPackageVersionCount(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: Duration.minutes(1),
       statistic: Statistic.SUM,
       ...opts,
       metricName: MetricName.PACKAGE_VERSION_COUNT,
@@ -255,7 +339,7 @@ export class NpmJs implements IPackageSource {
    */
   public metricRelevantPackageVersions(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: Duration.minutes(1),
       statistic: Statistic.SUM,
       ...opts,
       metricName: MetricName.RELEVANT_PACKAGE_VERSIONS,
@@ -270,35 +354,9 @@ export class NpmJs implements IPackageSource {
   public metricRemainingTime(opts?: MetricOptions): Metric {
     return new Metric({
       period: Duration.minutes(5),
-      statistic: Statistic.AVERAGE,
+      statistic: Statistic.MINIMUM,
       ...opts,
       metricName: MetricName.REMAINING_TIME,
-      namespace: METRICS_NAMESPACE,
-    });
-  }
-
-  /**
-   * The total count of staging failures.
-   */
-  public metricStagingFailureCount(opts?: MetricOptions): Metric {
-    return new Metric({
-      period: Duration.minutes(5),
-      statistic: Statistic.SUM,
-      ...opts,
-      metricName: MetricName.STAGING_FAILURE_COUNT,
-      namespace: METRICS_NAMESPACE,
-    });
-  }
-
-  /**
-   * The average time it took to stage a package to S3.
-   */
-  public metricStagingTime(opts?: MetricOptions): Metric {
-    return new Metric({
-      period: Duration.minutes(5),
-      statistic: Statistic.AVERAGE,
-      ...opts,
-      metricName: MetricName.STAGING_TIME,
       namespace: METRICS_NAMESPACE,
     });
   }
@@ -309,7 +367,7 @@ export class NpmJs implements IPackageSource {
    */
   public metricUnprocessableEntity(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: Duration.minutes(1),
       statistic: Statistic.SUM,
       ...opts,
       metricName: MetricName.UNPROCESSABLE_ENTITY,

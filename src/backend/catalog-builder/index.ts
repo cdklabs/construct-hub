@@ -1,12 +1,17 @@
+import { Effect, PolicyStatement } from '@aws-cdk/aws-iam';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
-import { Construct, Duration } from '@aws-cdk/core';
+import { ArnFormat, Construct, Duration, Stack } from '@aws-cdk/core';
+import type { AssemblyTargets } from '@jsii/spec';
 
 import { Monitoring } from '../../monitoring';
 import { DenyList } from '../deny-list';
 import { CatalogBuilder as Handler } from './catalog-builder';
 
+/**
+ * Props for `CatalogBuilder`.
+ */
 export interface CatalogBuilderProps {
   /**
    * The package store bucket.
@@ -54,9 +59,102 @@ export class CatalogBuilder extends Construct {
     });
     this.function = handler;
 
+    // This function may invoke itself in case it needs to continue it's work in
+    // a "child" invocation. We must hence allow it to invoke itself. We cannot
+    // use grantInvoke as this would (naturally) cause a circular reference
+    // (Function -> Role -> Function).
+    handler.addToRolePolicy(new PolicyStatement({
+      actions: ['lambda:InvokeFunction'],
+      effect: Effect.ALLOW,
+      resources: [Stack.of(this).formatArn({
+        arnFormat: ArnFormat.COLON_RESOURCE_NAME,
+        service: 'lambda',
+        resource: 'function',
+        resourceName: '*',
+      })],
+    }));
+
     // allow the catalog builder to use the client.
     props.denyList.grantRead(handler);
 
     props.bucket.grantReadWrite(this.function);
   }
 }
+
+/**
+ * Data format for catalog object.
+ */
+export interface CatalogModel {
+  /**
+   * Packages in the catalog.
+   */
+  readonly packages: PackageInfo[];
+  /**
+   * Date the catalog was last updated, in ISO 8601 format.
+   */
+  readonly updated: string;
+}
+
+/**
+ * Data format for packages stored in the catalog.
+ */
+export interface PackageInfo {
+  /**
+   * The name of the assembly.
+   */
+  readonly name: string;
+
+  /**
+   * The major version of this assembly, according to SemVer.
+   */
+  readonly major: number;
+
+  /**
+   * The complete SemVer version string for this package's major version stream,
+   * including pre-release identifiers, but excluding additional metadata
+   * (everything starting at `+`, if there is any).
+   */
+  readonly version: string;
+
+  /**
+   * The SPDX license identifier for the package's license.
+   */
+  readonly license: string;
+
+  /**
+   * The list of keywords configured on the package.
+   */
+  readonly keywords: readonly string[];
+
+  /**
+   * Metadata assigned by the discovery function to the latest release of this
+   * package's major version stream, if any.
+   */
+  readonly metadata?: { readonly [key: string]: string };
+
+  /**
+   * The author of the package.
+   */
+  readonly author: {
+    readonly name: string;
+    readonly email?: string;
+    readonly url?: string;
+  };
+
+  /**
+   * The list of languages configured on the package, and the corresponding
+   * configuration.
+   */
+  readonly languages: AssemblyTargets;
+
+  /**
+   * The timestamp at which this version was created.
+   */
+  readonly time: Date;
+
+  /**
+   * The description of the package.
+   */
+  readonly description?: string;
+}
+
