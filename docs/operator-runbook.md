@@ -448,7 +448,7 @@ object such as the following:
 ```json
 {
   "requester": "your-username",
-  "reason": "A shot comment explaining why this workflow was ran"
+  "reason": "A short comment explaining why this workflow was ran"
 }
 ```
 
