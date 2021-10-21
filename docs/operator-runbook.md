@@ -252,7 +252,7 @@ logs of the *Catalog Builder* function to identify any unexpected activity.
 
 #### Resolution
 
-The *package data bucket* is configured with object versionning. You can
+The *package data bucket* is configured with object versioning. You can
 identify a previous "good" version of the `catalog.json` object by reviewing the
 object history in the S3 console (or using the AWS CLI or SDK). The number of
 elements in the `catalog.json` is reported in a metadata attribute of the object
