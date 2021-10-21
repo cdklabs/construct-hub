@@ -136,7 +136,7 @@ function compressContent(buffer: Buffer): { readonly buffer: Buffer; readonly co
   if (gz.length >= buffer.length) {
     return { buffer };
   }
-  return { buffer, contentEncoding: 'gzip' };
+  return { buffer: gz, contentEncoding: 'gzip' };
 }
 
 async function ensureWritableHome<T>(cb: () => Promise<T>): Promise<T> {
