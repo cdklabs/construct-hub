@@ -64,7 +64,7 @@ export async function handler(event: any, context: Context) {
     Key: STATS_OBJECT_KEY,
     Body: JSON.stringify(stats, null, 2),
     ContentType: 'application/json',
-    CacheControl: 'public, max-age=300', // Expire from cache after 5 minutes
+    CacheControl: 'public, max-age=300, must-revalidate, proxy-revalidate', // Expire from cache after 5 minutes
     Metadata: {
       'Lambda-Log-Group': context.logGroupName,
       'Lambda-Log-Stream': context.logStreamName,

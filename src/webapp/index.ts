@@ -5,15 +5,15 @@ import * as r53 from '@aws-cdk/aws-route53';
 import * as r53targets from '@aws-cdk/aws-route53-targets';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
-import { CfnOutput, Construct } from '@aws-cdk/core';
+import { CfnOutput, Construct, Duration } from '@aws-cdk/core';
 import { Domain } from '../api';
 import { PackageStats } from '../backend/package-stats';
 import { CATALOG_KEY } from '../backend/shared/constants';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
-import { CacheInvalidator } from './cache-invalidator';
 import { WebappConfig, WebappConfigProps } from './config';
 import { ResponseFunction } from './response-function';
+import { CacheControl } from '@aws-cdk/aws-s3-deployment';
 
 export interface PackageLinkConfig {
   /**
@@ -129,7 +129,7 @@ export class WebApp extends Construct {
     // see https://github.com/aws/aws-cdk/issues/15523
     const functionId = `AddHeadersFunction${this.node.addr}`;
 
-    const behaviorOptions = {
+    const behaviorOptions: cloudfront.AddBehaviorOptions = {
       compress: true,
       cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
       functionAssociations: [{
@@ -159,8 +159,6 @@ export class WebApp extends Construct {
     if (props.packageStats) {
       this.distribution.addBehavior(`/${props.packageStats.statsKey}`, jsiiObjOrigin, behaviorOptions);
     }
-
-    new CacheInvalidator(this, 'CacheInvalidator', { bucket: props.packageData, distribution: this.distribution });
 
     // if we use a domain, and A records with a CloudFront alias
     if (props.domain) {
@@ -193,10 +191,17 @@ export class WebApp extends Construct {
     const webappDir = path.join(__dirname, '..', '..', 'website');
 
     new s3deploy.BucketDeployment(this, 'DeployWebsite', {
-      sources: [s3deploy.Source.asset(webappDir)],
+      cacheControl: [
+        CacheControl.setPublic(),
+        CacheControl.maxAge(Duration.hours(1)),
+        CacheControl.mustRevalidate(),
+        CacheControl.sMaxAge(Duration.minutes(5)),
+        CacheControl.proxyRevalidate(),
+      ],
       destinationBucket: this.bucket,
       distribution: this.distribution,
       prune: false,
+      sources: [s3deploy.Source.asset(webappDir)],
     });
 
     // Generate config.json to customize frontend behavior
