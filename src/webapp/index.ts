@@ -90,7 +90,7 @@ export interface FeaturedPackagesDetail {
 }
 
 /**
- * Enable/disable features on the home page.
+ * Enable/disable features for the web app.
  */
 export interface FeatureFlags {
   readonly homeRedesign?: boolean;
