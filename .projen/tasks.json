@@ -94,9 +94,6 @@
           "spawn": "bundle:stage-and-notify"
         },
         {
-          "spawn": "bundle:handler"
-        },
-        {
           "spawn": "bundle:transliterator"
         }
       ]
@@ -335,9 +332,6 @@
           "spawn": "bundle:stage-and-notify"
         },
         {
-          "spawn": "bundle:handler"
-        },
-        {
           "spawn": "bundle:transliterator"
         }
       ]
@@ -543,15 +537,6 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/stage-and-notify.bundle/index.js\" --external:aws-sdk --sourcemap"
-        }
-      ]
-    },
-    "bundle:handler": {
-      "name": "bundle:handler",
-      "description": "Create an AWS Lambda bundle from src/webapp/cache-invalidator/handler.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/webapp/cache-invalidator/handler.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/webapp/cache-invalidator/handler.bundle/index.js\" --external:aws-sdk --sourcemap"
         }
       ]
     },

@@ -194,7 +194,7 @@ export const handler = metricScope(
             Bucket: BUCKET_NAME,
             Key: packageKey,
             Body: tarball.Body,
-            CacheControl: 'public',
+            CacheControl: 'public, max-age=86400, must-revalidate, s-maxage=300, proxy-revalidate',
             ContentType: 'application/octet-stream',
             Metadata: {
               'Lambda-Log-Group': context.logGroupName,
@@ -209,7 +209,7 @@ export const handler = metricScope(
             Bucket: BUCKET_NAME,
             Key: metadataKey,
             Body: JSON.stringify(metadata),
-            CacheControl: 'public',
+            CacheControl: 'public, max-age=300, must-revalidate, proxy-revalidate',
             ContentType: 'application/json',
             Metadata: {
               'Lambda-Log-Group': context.logGroupName,
@@ -228,7 +228,7 @@ export const handler = metricScope(
           Bucket: BUCKET_NAME,
           Key: assemblyKey,
           Body: dotJsii,
-          CacheControl: 'public',
+          CacheControl: 'public, max-age: 86400, must-revalidate, s-maxage=300, proxy-revalidate',
           ContentType: 'application/json',
           Metadata: {
             'Lambda-Log-Group': context.logGroupName,
