@@ -123,7 +123,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
               integrity: infos.dist.shasum,
               modified: modified.toISOString(),
               name: infos.name,
-              seq: seq.toString(),
+              seq: seq?.toString(),
               tarballUrl: infos.dist.tarball,
               version: infos.version,
             };
@@ -456,7 +456,7 @@ interface UpdatedVersion {
   /**
    * The CouchDB transaction number for the update.
    */
-  readonly seq: string | number;
+  readonly seq?: string | number;
 }
 
 interface Document {
@@ -485,8 +485,5 @@ interface Document {
 }
 
 interface Change extends DatabaseChange {
-  readonly seq: string;
   readonly doc: Document;
-  readonly id: string;
-  readonly deleted: boolean;
 }
