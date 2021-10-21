@@ -251,6 +251,7 @@ export class Orchestration extends Construct {
                 .addRetry({
                   errors: [
                     'ECS.AmazonECSException', // Task failed starting, usually due to throttle / out of capacity
+                    'ECS.InvalidParameterException', // This is returned when ECS gets throttled when trying to access VPC/SGs.
                     'jsii-docgen.NpmError.E429', // HTTP 429 ("Too Many Requests") from CodeArtifact's S3 bucket
                     'jsii-codgen.NpmError.EPROTO', // Sporadic TLS negotiation failures we see in logs, transient
                   ],
@@ -263,7 +264,7 @@ export class Orchestration extends Construct {
                 )
                 .addCatch(
                   new Pass(this, `"Generate ${language} docs" service error`, { parameters: { 'error.$': '$.Cause', language } }),
-                  { errors: ['ECS.AmazonECSException'] },
+                  { errors: ['ECS.AmazonECSException', 'ECS.InvalidParameterException'] },
                 )
                 .addCatch(
                   new Pass(this, `"Generate ${language} docs" failure`, { parameters: { 'error.$': 'States.StringToJson($.Cause)', language } }),
