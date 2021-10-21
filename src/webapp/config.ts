@@ -1,7 +1,7 @@
 import { mkdtempSync, writeFileSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
-import { FeaturedPackages, PackageLinkConfig } from '.';
+import { FeaturedPackages, FeatureFlags, PackageLinkConfig } from '.';
 import { PackageTagConfig } from '../package-tag';
 
 interface FrontendPackageLinkConfig {
@@ -22,6 +22,7 @@ interface FrontendConfig {
   packageTags?: FrontendPackageTagConfig[];
   featuredPackages?: FrontendFeaturedPackagesConfig;
   packageStats?: boolean;
+  featureFlags?: FeatureFlags;
 }
 
 export interface WebappConfigProps {
@@ -40,6 +41,11 @@ export interface WebappConfigProps {
    * @default - Display the 10 most recently updated packages
    */
   readonly featuredPackages?: FeaturedPackages;
+
+  /**
+   * Configure feature flags for the web app.
+   */
+  readonly featureFlags?: FeatureFlags;
 
   /**
    * Whether to display package stats from `stats.json` on
@@ -64,6 +70,7 @@ export class WebappConfig {
       packageTags: this.packageTags,
       featuredPackages: this.featuredPackages,
       packageStats: this.props.showPackageStats ?? true,
+      featureFlags: this.props.featureFlags,
     };
   }
 
