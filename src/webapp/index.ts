@@ -93,8 +93,9 @@ export interface FeaturedPackagesDetail {
  * Enable/disable features on the home page.
  */
 export interface FeatureFlags {
-  homeRedesign?: boolean;
-  searchRedesign?: boolean;
+  readonly homeRedesign?: boolean;
+  readonly searchRedesign?: boolean;
+  [key: string]: any;
 }
 
 export interface WebAppProps extends WebappConfigProps {
