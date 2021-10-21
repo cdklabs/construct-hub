@@ -296,6 +296,13 @@ new ConstructHub(this, "ConstructHub", {
 });
 ```
 
+#### Feature Flags
+
+Feature flags for the web app can be used to enable or disable experimental
+features. These can be customized through the `featureFlags` property - for
+more information about the available flags, check the documentation for
+https://github.com/cdklabs/construct-hub-webapp/.
+
 ## :raised_hand: Contributing
 
 If you are looking to contribute to this project, but don't know where to start,

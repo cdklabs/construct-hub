@@ -89,6 +89,15 @@ export interface FeaturedPackagesDetail {
   readonly comment?: string;
 }
 
+/**
+ * Enable/disable features for the web app.
+ */
+export interface FeatureFlags {
+  readonly homeRedesign?: boolean;
+  readonly searchRedesign?: boolean;
+  [key: string]: any;
+}
+
 export interface WebAppProps extends WebappConfigProps {
   /**
    * Connect to a domain.
@@ -205,6 +214,7 @@ export class WebApp extends Construct {
       packageTags: props.packageTags,
       featuredPackages: props.featuredPackages,
       showPackageStats: props.showPackageStats ?? props.packageStats !== undefined,
+      featureFlags: props.featureFlags,
     });
 
     new s3deploy.BucketDeployment(this, 'DeployWebsiteConfig', {

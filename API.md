@@ -280,6 +280,18 @@ Configuration for packages to feature on the home page.
 
 ---
 
+##### `featureFlags`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.featureFlags"></a>
+
+```typescript
+public readonly featureFlags: FeatureFlags;
+```
+
+- *Type:* [`construct-hub.FeatureFlags`](#construct-hub.FeatureFlags)
+
+Configure feature flags for the web app.
+
+---
+
 ##### `fetchPackageStats`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.fetchPackageStats"></a>
 
 ```typescript
@@ -586,6 +598,38 @@ public readonly showPackages: FeaturedPackagesDetail[];
 Show an explicit list of packages.
 
 Cannot be used with `showLastUpdated`.
+
+---
+
+### FeatureFlags <a name="construct-hub.FeatureFlags"></a>
+
+Enable/disable features for the web app.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { FeatureFlags } from 'construct-hub'
+
+const featureFlags: FeatureFlags = { ... }
+```
+
+##### `homeRedesign`<sup>Optional</sup> <a name="construct-hub.FeatureFlags.property.homeRedesign"></a>
+
+```typescript
+public readonly homeRedesign: boolean;
+```
+
+- *Type:* `boolean`
+
+---
+
+##### `searchRedesign`<sup>Optional</sup> <a name="construct-hub.FeatureFlags.property.searchRedesign"></a>
+
+```typescript
+public readonly searchRedesign: boolean;
+```
+
+- *Type:* `boolean`
 
 ---
 
