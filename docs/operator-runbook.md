@@ -257,8 +257,7 @@ identify a previous "good" version of the `catalog.json` object by reviewing the
 object history in the S3 console (or using the AWS CLI or SDK). The number of
 elements in the `catalog.json` is reported in a metadata attribute of the object
 in S3 - which can help identify the correct previous version without necessarily
-having to download all of them for inspection. The object size is also a good
-heuristic to short-list the candidate versions.
+having to download all of them for inspection.
 
 When the relevant version has been identified, it can be restored to be the
 current version by copying that version over the `catalog.json` key. This can be
