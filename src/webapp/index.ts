@@ -5,6 +5,7 @@ import * as r53 from '@aws-cdk/aws-route53';
 import * as r53targets from '@aws-cdk/aws-route53-targets';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
+import { CacheControl } from '@aws-cdk/aws-s3-deployment';
 import { CfnOutput, Construct, Duration } from '@aws-cdk/core';
 import { Domain } from '../api';
 import { PackageStats } from '../backend/package-stats';
@@ -13,7 +14,6 @@ import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
 import { WebappConfig, WebappConfigProps } from './config';
 import { ResponseFunction } from './response-function';
-import { CacheControl } from '@aws-cdk/aws-s3-deployment';
 
 export interface PackageLinkConfig {
   /**
