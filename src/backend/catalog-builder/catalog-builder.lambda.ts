@@ -1,6 +1,6 @@
 import { gunzip } from 'zlib';
 
-import { metricScope, Unit } from 'aws-embedded-metrics';
+import { Configuration, metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
 import { AWSError, S3 } from 'aws-sdk';
 import { SemVer } from 'semver';
@@ -11,8 +11,9 @@ import type { CatalogBuilderInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
+import { MetricName, METRICS_NAMESPACE } from './constants';
 
-const METRICS_NAMESPACE = 'ConstructHub/CatalogBuilder';
+Configuration.namespace = METRICS_NAMESPACE;
 
 /**
  * Regenerates the `catalog.json` object in the configured S3 bucket.
@@ -90,10 +91,10 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     }
 
     await metricScope((metrics) => async () => {
-      metrics.setNamespace(METRICS_NAMESPACE);
+      metrics.setDimensions();
       const failedCount = Object.keys(failures).length;
       console.log(`Marking ${failedCount} failed packages`);
-      metrics.putMetric('FailedPackagesOnRecreation', failedCount, Unit.Count);
+      metrics.putMetric(MetricName.FAILED_PACKAGES_ON_RECREATION, failedCount, Unit.Count);
     })();
   }
 
@@ -108,8 +109,20 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
 
   console.log(`There are now ${catalog.packages.length} registered package major versions`);
   await metricScope((metrics) => async () => {
-    metrics.setNamespace(METRICS_NAMESPACE);
-    metrics.putMetric('RegisteredPackagesMajorVersion', catalog.packages.length, Unit.Count);
+    metrics.setDimensions();
+    metrics.putMetric(MetricName.REGISTERED_PACKAGES_MAJOR_VERSION, catalog.packages.length, Unit.Count);
+    metrics.putMetric(
+      MetricName.MISSING_CONSTRUCT_FRAMEWORK_COUNT,
+      catalog.packages.filter((pkg) => pkg.constructFramework == null).length,
+      Unit.Count,
+    );
+    metrics.putMetric(
+      MetricName.MISSING_CONSTRUCT_FRAMEWORK_VERSION_COUNT,
+      catalog.packages.filter(
+        (pkg) => pkg.constructFramework && pkg.constructFramework.majorVersion == null,
+      ).length,
+      Unit.Count,
+    );
   })();
 
 
