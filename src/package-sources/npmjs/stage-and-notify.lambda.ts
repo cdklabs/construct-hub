@@ -56,7 +56,8 @@ export async function handler(event: PackageVersion | SQSEvent, context: Context
       'Modified-At': event.modified,
       'Origin-Integrity': event.integrity,
       'Origin-URI': event.tarballUrl,
-      'Sequence': event.seq,
+      // Seq might not be present... so skip it if absent...
+      ...(event.seq ? { Sequence: event.seq } : {}),
     },
   }).promise();
 
@@ -68,7 +69,8 @@ export async function handler(event: PackageVersion | SQSEvent, context: Context
         dist: event.tarballUrl,
         integrity: event.integrity,
         modified: event.modified,
-        seq: event.seq,
+        // Seq might not be present... so skip it if absent...
+        ...(event.seq ? { seq: event.seq } : { }),
       },
       time: event.modified,
     },
@@ -96,7 +98,7 @@ export interface PackageVersion {
   readonly tarballUrl: string;
   readonly integrity: string;
 
-  readonly seq: string;
+  readonly seq?: string;
 }
 
 /**

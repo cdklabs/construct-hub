@@ -22,7 +22,7 @@ import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
 import { PackageTag } from './package-tag';
 import { SpdxLicense } from './spdx-license';
-import { WebApp, PackageLinkConfig, FeaturedPackages } from './webapp';
+import { WebApp, PackageLinkConfig, FeaturedPackages, FeatureFlags } from './webapp';
 
 /**
  * Props for `ConstructHub`.
@@ -112,6 +112,11 @@ export interface ConstructHubProps {
    * @default - Display the 10 most recently updated packages
    */
   readonly featuredPackages?: FeaturedPackages;
+
+  /**
+   * Configure feature flags for the web app.
+   */
+  readonly featureFlags?: FeatureFlags;
 
   /**
    * Configure whether or not the backend should periodically query NPM
@@ -289,6 +294,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       packageTags: packageTagsSerialized,
       featuredPackages: props.featuredPackages,
       packageStats,
+      featureFlags: props.featureFlags,
     });
   }
 

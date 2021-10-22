@@ -136,7 +136,7 @@ function compressContent(buffer: Buffer): { readonly buffer: Buffer; readonly co
   if (gz.length >= buffer.length) {
     return { buffer };
   }
-  return { buffer, contentEncoding: 'gzip' };
+  return { buffer: gz, contentEncoding: 'gzip' };
 }
 
 async function ensureWritableHome<T>(cb: () => Promise<T>): Promise<T> {
@@ -159,7 +159,7 @@ function uploadFile(bucket: string, key: string, sourceVersionId?: string, body?
     Bucket: bucket,
     Key: key,
     Body: body,
-    CacheControl: 'public',
+    CacheControl: 'public, max-age=300, must-revalidate, proxy-revalidate', // Expire from cache after 10 minutes
     ContentEncoding: contentEncoding,
     ContentType: 'text/markdown; charset=UTF-8',
     Metadata: {
