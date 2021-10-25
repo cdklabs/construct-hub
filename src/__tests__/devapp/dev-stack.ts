@@ -23,9 +23,6 @@ export class DevStack extends Stack {
     });
 
     const isAwsOfficial = TagCondition.field('name').startsWith('@aws-cdk/');
-    const isCdk8sOfficial = TagCondition.field('name').eq('cdk8s');
-    const isHashicoprOfficial = TagCondition.field('name').eq('cdktf');
-    const isCommunity = TagCondition.not(TagCondition.or(isAwsOfficial, isCdk8sOfficial, isHashicoprOfficial));
     const authorSearchFilter = 'Author';
 
     new ConstructHub(this, 'ConstructHub', {
@@ -53,42 +50,6 @@ export class DevStack extends Stack {
         searchFilter: {
           groupBy: authorSearchFilter,
           display: 'AWS',
-        },
-      }, {
-        id: 'cdk8s-official',
-        condition: isCdk8sOfficial,
-        highlight: {
-          label: 'CDK8s Official',
-          color: '#ED3B00',
-          icon: '/assets/construct.png',
-        },
-        searchFilter: {
-          groupBy: authorSearchFilter,
-          display: 'CDK8s',
-        },
-      }, {
-        id: 'tf-official',
-        condition: isHashicoprOfficial,
-        highlight: {
-          label: 'Hashicorp Official',
-          color: '#ED3B00',
-          icon: '/assets/construct.png',
-        },
-        searchFilter: {
-          groupBy: authorSearchFilter,
-          display: 'Hashicorp',
-        },
-      }, {
-        id: 'community',
-        condition: isCommunity,
-        highlight: {
-          label: 'Community',
-          color: '#2F50FE',
-          icon: '/assets/community.png',
-        },
-        searchFilter: {
-          groupBy: authorSearchFilter,
-          display: 'Community',
         },
       }],
     });
