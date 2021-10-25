@@ -633,6 +633,86 @@ public readonly searchRedesign: boolean;
 
 ---
 
+### Highlight <a name="construct-hub.Highlight"></a>
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { Highlight } from 'construct-hub'
+
+const highlight: Highlight = { ... }
+```
+
+##### `label`<sup>Required</sup> <a name="construct-hub.Highlight.property.label"></a>
+
+```typescript
+public readonly label: string;
+```
+
+- *Type:* `string`
+
+The label for the tag being applied.
+
+---
+
+##### `color`<sup>Optional</sup> <a name="construct-hub.Highlight.property.color"></a>
+
+```typescript
+public readonly color: string;
+```
+
+- *Type:* `string`
+
+The hex value string for the color of the tag when displayed.
+
+---
+
+##### `icon`<sup>Optional</sup> <a name="construct-hub.Highlight.property.icon"></a>
+
+```typescript
+public readonly icon: string;
+```
+
+- *Type:* `string`
+
+Icon displayed next to highlight on package card.
+
+---
+
+### Keyword <a name="construct-hub.Keyword"></a>
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { Keyword } from 'construct-hub'
+
+const keyword: Keyword = { ... }
+```
+
+##### `label`<sup>Required</sup> <a name="construct-hub.Keyword.property.label"></a>
+
+```typescript
+public readonly label: string;
+```
+
+- *Type:* `string`
+
+The label for the tag being applied.
+
+---
+
+##### `color`<sup>Optional</sup> <a name="construct-hub.Keyword.property.color"></a>
+
+```typescript
+public readonly color: string;
+```
+
+- *Type:* `string`
+
+The hex value string for the color of the tag when displayed.
+
+---
+
 ### LinkedResource <a name="construct-hub.LinkedResource"></a>
 
 #### Initializer <a name="[object Object].Initializer"></a>
@@ -911,6 +991,45 @@ import { PackageTag } from 'construct-hub'
 const packageTag: PackageTag = { ... }
 ```
 
+##### `highlight`<sup>Optional</sup> <a name="construct-hub.PackageTag.property.highlight"></a>
+
+```typescript
+public readonly highlight: Highlight;
+```
+
+- *Type:* [`construct-hub.Highlight`](#construct-hub.Highlight)
+- *Default:* don't highlight tag
+
+Configuration for higlighting tag on package card.
+
+---
+
+##### `keyword`<sup>Optional</sup> <a name="construct-hub.PackageTag.property.keyword"></a>
+
+```typescript
+public readonly keyword: Keyword;
+```
+
+- *Type:* [`construct-hub.Keyword`](#construct-hub.Keyword)
+- *Default:* don't show tag in keyword list
+
+Configuration for showing tag as keyword.
+
+---
+
+##### `searchFilter`<sup>Optional</sup> <a name="construct-hub.PackageTag.property.searchFilter"></a>
+
+```typescript
+public readonly searchFilter: SearchFilter;
+```
+
+- *Type:* [`construct-hub.SearchFilter`](#construct-hub.SearchFilter)
+- *Default:* don't show tag in search filters
+
+Configuration for showing tag as search filter.
+
+---
+
 ##### `condition`<sup>Required</sup> <a name="construct-hub.PackageTag.property.condition"></a>
 
 ```typescript
@@ -923,27 +1042,52 @@ The description of the logic that dictates whether the package has the tag appli
 
 ---
 
-##### `label`<sup>Required</sup> <a name="construct-hub.PackageTag.property.label"></a>
+### PackageTagBase <a name="construct-hub.PackageTagBase"></a>
+
+#### Initializer <a name="[object Object].Initializer"></a>
 
 ```typescript
-public readonly label: string;
+import { PackageTagBase } from 'construct-hub'
+
+const packageTagBase: PackageTagBase = { ... }
 ```
 
-- *Type:* `string`
+##### `highlight`<sup>Optional</sup> <a name="construct-hub.PackageTagBase.property.highlight"></a>
 
-The label for the tag being applied.
+```typescript
+public readonly highlight: Highlight;
+```
+
+- *Type:* [`construct-hub.Highlight`](#construct-hub.Highlight)
+- *Default:* don't highlight tag
+
+Configuration for higlighting tag on package card.
 
 ---
 
-##### `color`<sup>Optional</sup> <a name="construct-hub.PackageTag.property.color"></a>
+##### `keyword`<sup>Optional</sup> <a name="construct-hub.PackageTagBase.property.keyword"></a>
 
 ```typescript
-public readonly color: string;
+public readonly keyword: Keyword;
 ```
 
-- *Type:* `string`
+- *Type:* [`construct-hub.Keyword`](#construct-hub.Keyword)
+- *Default:* don't show tag in keyword list
 
-The hex value string for the color of the tag when displayed.
+Configuration for showing tag as keyword.
+
+---
+
+##### `searchFilter`<sup>Optional</sup> <a name="construct-hub.PackageTagBase.property.searchFilter"></a>
+
+```typescript
+public readonly searchFilter: SearchFilter;
+```
+
+- *Type:* [`construct-hub.SearchFilter`](#construct-hub.SearchFilter)
+- *Default:* don't show tag in search filters
+
+Configuration for showing tag as search filter.
 
 ---
 
@@ -959,6 +1103,45 @@ import { PackageTagConfig } from 'construct-hub'
 const packageTagConfig: PackageTagConfig = { ... }
 ```
 
+##### `highlight`<sup>Optional</sup> <a name="construct-hub.PackageTagConfig.property.highlight"></a>
+
+```typescript
+public readonly highlight: Highlight;
+```
+
+- *Type:* [`construct-hub.Highlight`](#construct-hub.Highlight)
+- *Default:* don't highlight tag
+
+Configuration for higlighting tag on package card.
+
+---
+
+##### `keyword`<sup>Optional</sup> <a name="construct-hub.PackageTagConfig.property.keyword"></a>
+
+```typescript
+public readonly keyword: Keyword;
+```
+
+- *Type:* [`construct-hub.Keyword`](#construct-hub.Keyword)
+- *Default:* don't show tag in keyword list
+
+Configuration for showing tag as keyword.
+
+---
+
+##### `searchFilter`<sup>Optional</sup> <a name="construct-hub.PackageTagConfig.property.searchFilter"></a>
+
+```typescript
+public readonly searchFilter: SearchFilter;
+```
+
+- *Type:* [`construct-hub.SearchFilter`](#construct-hub.SearchFilter)
+- *Default:* don't show tag in search filters
+
+Configuration for showing tag as search filter.
+
+---
+
 ##### `condition`<sup>Required</sup> <a name="construct-hub.PackageTagConfig.property.condition"></a>
 
 ```typescript
@@ -969,27 +1152,25 @@ public readonly condition: TagConditionConfig;
 
 ---
 
-##### `label`<sup>Required</sup> <a name="construct-hub.PackageTagConfig.property.label"></a>
+### SearchFilter <a name="construct-hub.SearchFilter"></a>
+
+#### Initializer <a name="[object Object].Initializer"></a>
 
 ```typescript
-public readonly label: string;
+import { SearchFilter } from 'construct-hub'
+
+const searchFilter: SearchFilter = { ... }
+```
+
+##### `name`<sup>Required</sup> <a name="construct-hub.SearchFilter.property.name"></a>
+
+```typescript
+public readonly name: string;
 ```
 
 - *Type:* `string`
 
-The label for the tag being applied.
-
----
-
-##### `color`<sup>Optional</sup> <a name="construct-hub.PackageTagConfig.property.color"></a>
-
-```typescript
-public readonly color: string;
-```
-
-- *Type:* `string`
-
-The hex value string for the color of the tag when displayed.
+Name of group to include filter in.
 
 ---
 

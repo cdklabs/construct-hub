@@ -60,31 +60,95 @@ test('package links', () => {
   });
 });
 
-test('package tags', () => {
-  // GIVEN
-  const config = new WebappConfig({
-    packageTags: [
-      {
-        label: 'Official',
-        color: '#00FF00',
-        condition: TagCondition.or(
-          TagCondition.field('name').eq('construct-hub'),
-          TagCondition.field('name').eq('construct-hub-webapp'),
-        ).bind(),
-      },
-    ],
+describe('package tags', () => {
+  test('keyword', () => {
+    // GIVEN
+    const keyword = {
+      label: 'Official',
+      color: '#00FF00',
+    };
+    const config = new WebappConfig({
+      packageTags: [
+        {
+          keyword,
+          condition: TagCondition.or(
+            TagCondition.field('name').eq('construct-hub'),
+            TagCondition.field('name').eq('construct-hub-webapp'),
+          ).bind(),
+        },
+      ],
+    });
+
+    // THEN
+    const file = readJsonSync(config.path);
+    expect(file).toEqual({
+      ...DEFAULT_CONFIG,
+      packageTags: [
+        {
+          keyword,
+        },
+      ],
+    });
   });
 
-  // THEN
-  const file = readJsonSync(config.path);
-  expect(file).toEqual({
-    ...DEFAULT_CONFIG,
-    packageTags: [
-      {
-        color: '#00FF00',
-        label: 'Official',
-      },
-    ],
+  test('highlight', () => {
+    // GIVEN
+    const highlight = {
+      label: 'Official',
+      color: '#00FF00',
+      icon: 'ICONPATH',
+    };
+    const config = new WebappConfig({
+      packageTags: [
+        {
+          highlight,
+          condition: TagCondition.or(
+            TagCondition.field('name').eq('construct-hub'),
+            TagCondition.field('name').eq('construct-hub-webapp'),
+          ).bind(),
+        },
+      ],
+    });
+
+    // THEN
+    const file = readJsonSync(config.path);
+    expect(file).toEqual({
+      ...DEFAULT_CONFIG,
+      packageTags: [
+        {
+          highlight,
+        },
+      ],
+    });
+  });
+
+  test('search filter', () => {
+    // GIVEN
+    const searchFilter = {
+      name: 'FILTERNAME',
+    };
+    const config = new WebappConfig({
+      packageTags: [
+        {
+          searchFilter,
+          condition: TagCondition.or(
+            TagCondition.field('name').eq('construct-hub'),
+            TagCondition.field('name').eq('construct-hub-webapp'),
+          ).bind(),
+        },
+      ],
+    });
+
+    // THEN
+    const file = readJsonSync(config.path);
+    expect(file).toEqual({
+      ...DEFAULT_CONFIG,
+      packageTags: [
+        {
+          searchFilter,
+        },
+      ],
+    });
   });
 });
 

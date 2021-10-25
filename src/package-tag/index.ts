@@ -1,4 +1,4 @@
-interface PackageTagBase {
+interface PackageTagPresentationBase {
   /**
    * The label for the tag being applied
    */
@@ -8,6 +8,42 @@ interface PackageTagBase {
    * The hex value string for the color of the tag when displayed
    */
   readonly color?: string;
+}
+
+export interface Keyword extends PackageTagPresentationBase {}
+
+export interface Highlight extends PackageTagPresentationBase{
+  /**
+   * Icon displayed next to highlight on package card
+   */
+  readonly icon?: string;
+}
+
+export interface SearchFilter {
+  /**
+   * Name of group to include filter in
+   */
+  readonly name: string;
+}
+
+export interface PackageTagBase {
+  /**
+   * Configuration for higlighting tag on package card
+   * @default don't highlight tag
+   */
+  readonly highlight?: Highlight;
+
+  /**
+   * Configuration for showing tag as keyword
+   * @default don't show tag in keyword list
+   */
+  readonly keyword?: Keyword;
+
+  /**
+   * Configuration for showing tag as search filter
+   * @default don't show tag in search filters
+   */
+  readonly searchFilter?: SearchFilter;
 }
 
 /**
