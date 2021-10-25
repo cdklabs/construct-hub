@@ -991,6 +991,20 @@ import { PackageTag } from 'construct-hub'
 const packageTag: PackageTag = { ... }
 ```
 
+##### `id`<sup>Required</sup> <a name="construct-hub.PackageTag.property.id"></a>
+
+```typescript
+public readonly id: string;
+```
+
+- *Type:* `string`
+
+Identifier for tag, used for search.
+
+Must be unique amongst tags.
+
+---
+
 ##### `highlight`<sup>Optional</sup> <a name="construct-hub.PackageTag.property.highlight"></a>
 
 ```typescript
@@ -1052,6 +1066,20 @@ import { PackageTagBase } from 'construct-hub'
 const packageTagBase: PackageTagBase = { ... }
 ```
 
+##### `id`<sup>Required</sup> <a name="construct-hub.PackageTagBase.property.id"></a>
+
+```typescript
+public readonly id: string;
+```
+
+- *Type:* `string`
+
+Identifier for tag, used for search.
+
+Must be unique amongst tags.
+
+---
+
 ##### `highlight`<sup>Optional</sup> <a name="construct-hub.PackageTagBase.property.highlight"></a>
 
 ```typescript
@@ -1102,6 +1130,20 @@ import { PackageTagConfig } from 'construct-hub'
 
 const packageTagConfig: PackageTagConfig = { ... }
 ```
+
+##### `id`<sup>Required</sup> <a name="construct-hub.PackageTagConfig.property.id"></a>
+
+```typescript
+public readonly id: string;
+```
+
+- *Type:* `string`
+
+Identifier for tag, used for search.
+
+Must be unique amongst tags.
+
+---
 
 ##### `highlight`<sup>Optional</sup> <a name="construct-hub.PackageTagConfig.property.highlight"></a>
 

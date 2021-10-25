@@ -63,6 +63,7 @@ test('package links', () => {
 describe('package tags', () => {
   test('keyword', () => {
     // GIVEN
+    const id = 'ID';
     const keyword = {
       label: 'Official',
       color: '#00FF00',
@@ -70,6 +71,7 @@ describe('package tags', () => {
     const config = new WebappConfig({
       packageTags: [
         {
+          id,
           keyword,
           condition: TagCondition.or(
             TagCondition.field('name').eq('construct-hub'),
@@ -85,6 +87,7 @@ describe('package tags', () => {
       ...DEFAULT_CONFIG,
       packageTags: [
         {
+          id,
           keyword,
         },
       ],
@@ -93,6 +96,7 @@ describe('package tags', () => {
 
   test('highlight', () => {
     // GIVEN
+    const id = 'ID';
     const highlight = {
       label: 'Official',
       color: '#00FF00',
@@ -101,6 +105,7 @@ describe('package tags', () => {
     const config = new WebappConfig({
       packageTags: [
         {
+          id,
           highlight,
           condition: TagCondition.or(
             TagCondition.field('name').eq('construct-hub'),
@@ -116,6 +121,7 @@ describe('package tags', () => {
       ...DEFAULT_CONFIG,
       packageTags: [
         {
+          id,
           highlight,
         },
       ],
@@ -124,12 +130,14 @@ describe('package tags', () => {
 
   test('search filter', () => {
     // GIVEN
+    const id = 'ID';
     const searchFilter = {
       name: 'FILTERNAME',
     };
     const config = new WebappConfig({
       packageTags: [
         {
+          id,
           searchFilter,
           condition: TagCondition.or(
             TagCondition.field('name').eq('construct-hub'),
@@ -145,6 +153,7 @@ describe('package tags', () => {
       ...DEFAULT_CONFIG,
       packageTags: [
         {
+          id,
           searchFilter,
         },
       ],

@@ -24,6 +24,7 @@ interface FrontendPackageTagSearchFilterConfig {
 }
 
 interface FrontendPackageTagConfig {
+  id: string;
   keyword?: FrontendPackageTagConfigBase;
   highlight?: FrontendPackageTagHighlightConfig;
   searchFilter?: FrontendPackageTagSearchFilterConfig;

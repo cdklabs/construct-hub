@@ -28,6 +28,11 @@ export interface SearchFilter {
 
 export interface PackageTagBase {
   /**
+   * Identifier for tag, used for search. Must be unique amongst tags.
+   */
+  readonly id: string;
+
+  /**
    * Configuration for higlighting tag on package card
    * @default don't highlight tag
    */
