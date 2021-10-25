@@ -5893,6 +5893,30 @@ public eq(value: any)
 
 ---
 
+##### `includes` <a name="construct-hub.TagConditionField.includes"></a>
+
+```typescript
+public includes(value: any)
+```
+
+###### `value`<sup>Required</sup> <a name="construct-hub.TagConditionField.parameter.value"></a>
+
+- *Type:* `any`
+
+---
+
+##### `startsWith` <a name="construct-hub.TagConditionField.startsWith"></a>
+
+```typescript
+public startsWith(value: string)
+```
+
+###### `value`<sup>Required</sup> <a name="construct-hub.TagConditionField.parameter.value"></a>
+
+- *Type:* `string`
+
+---
+
 
 
 
@@ -6067,6 +6091,16 @@ Logic operators for performing specific conditional logic.
 
 
 #### `EQUALS` <a name="construct-hub.TagConditionLogicType.EQUALS"></a>
+
+---
+
+
+#### `INCLUDES` <a name="construct-hub.TagConditionLogicType.INCLUDES"></a>
+
+---
+
+
+#### `STARTS_WITH` <a name="construct-hub.TagConditionLogicType.STARTS_WITH"></a>
 
 ---
 

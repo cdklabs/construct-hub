@@ -124,6 +124,8 @@ export enum TagConditionLogicType {
   OR = 'OR',
   NOT = 'NOT',
   EQUALS = 'EQUALS',
+  INCLUDES = 'INCLUDES',
+  STARTS_WITH = 'STARTS_WITH',
 }
 
 class TagConditionLogic extends TagCondition {
@@ -175,6 +177,32 @@ export class TagConditionField {
   public eq(value: any): TagCondition {
     return new TagConditionPredicate(
       TagConditionLogicType.EQUALS,
+      this.field,
+      value,
+    );
+  }
+
+  /**
+   * Create a `field.includes(value)` condition which applies if the specified
+   * field within the package's package.json includes the value. This works for
+   * arrays or strings.
+   */
+  public includes(value: any): TagCondition {
+    return new TagConditionPredicate(
+      TagConditionLogicType.INCLUDES,
+      this.field,
+      value,
+    );
+  }
+
+  /**
+   * Create a `field.startsWith(value)` condition which applies if the specified
+   * field within the package's package.json begins with the value. This works
+   * only for string values.
+   */
+  public startsWith(value: string): TagCondition {
+    return new TagConditionPredicate(
+      TagConditionLogicType.STARTS_WITH,
       this.field,
       value,
     );
