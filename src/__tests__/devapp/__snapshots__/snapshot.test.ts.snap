@@ -3293,7 +3293,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters53d14430c9c3422fa2a752e4cbb92c6fc8ba48bde33421f1ce30753833f4f287S3Bucket7C64D6F2
+          Ref: AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3Bucket6311A3CE
         S3Key:
           Fn::Join:
             - ""
@@ -3301,12 +3301,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters53d14430c9c3422fa2a752e4cbb92c6fc8ba48bde33421f1ce30753833f4f287S3VersionKey2A9F1263
+                      - Ref: AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters53d14430c9c3422fa2a752e4cbb92c6fc8ba48bde33421f1ce30753833f4f287S3VersionKey2A9F1263
+                      - Ref: AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
@@ -3320,9 +3320,9 @@ Resources:
             Ref: ConstructHubPackageDataDC5EF35E
           PACKAGE_LINKS: "[]"
           PACKAGE_TAGS: '[{"id":"aws-official","condition":{"type":"STARTS_WITH","key":["name"],"value":"@aws-cdk/"},"highlight":{"label":"AWS
-            Official","color":"#ED3B00","icon":"/assets/construct.png"},"searchFilter":{"name":"Author"}},{"id":"cdk8s-official","condition":{"type":"EQUALS","key":["name"],"value":"cdk8s"},"highlight":{"label":"CDK8s
-            Official","color":"#ED3B00","icon":"/assets/construct.png"},"searchFilter":{"name":"Author"}},{"id":"tf-official","condition":{"type":"EQUALS","key":["name"],"value":"cdktf"},"highlight":{"label":"Hashicorp
-            Official","color":"#ED3B00","icon":"/assets/construct.png"},"searchFilter":{"name":"Author"}},{"id":"community","condition":{"type":"NOT","children":[{"type":"OR","children":[{"type":"STARTS_WITH","key":["name"],"value":"@aws-cdk/"},{"type":"EQUALS","key":["name"],"value":"cdk8s"},{"type":"EQUALS","key":["name"],"value":"cdktf"}]}]},"highlight":{"label":"Community","color":"#2F50FE","icon":"/assets/community.png"},"searchFilter":{"name":"Author"}}]'
+            Official","color":"#ED3B00","icon":"/assets/construct.png"},"searchFilter":{"groupBy":"Author","display":"AWS"}},{"id":"cdk8s-official","condition":{"type":"EQUALS","key":["name"],"value":"cdk8s"},"highlight":{"label":"CDK8s
+            Official","color":"#ED3B00","icon":"/assets/construct.png"},"searchFilter":{"groupBy":"Author","display":"CDK8s"}},{"id":"tf-official","condition":{"type":"EQUALS","key":["name"],"value":"cdktf"},"highlight":{"label":"Hashicorp
+            Official","color":"#ED3B00","icon":"/assets/construct.png"},"searchFilter":{"groupBy":"Author","display":"Hashicorp"}},{"id":"community","condition":{"type":"NOT","children":[{"type":"OR","children":[{"type":"STARTS_WITH","key":["name"],"value":"@aws-cdk/"},{"type":"EQUALS","key":["name"],"value":"cdk8s"},{"type":"EQUALS","key":["name"],"value":"cdktf"}]}]},"highlight":{"label":"Community","color":"#2F50FE","icon":"/assets/community.png"},"searchFilter":{"groupBy":"Author","display":"Community"}}]'
           STATE_MACHINE_ARN:
             Ref: ConstructHubOrchestration39161A46
       Handler: index.handler
@@ -5136,7 +5136,7 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParametersa46990bac2148485c93ce534e6485bb3da7f171ec9f473e641843d8add3558bdS3Bucket7F243517
+        - Ref: AssetParameters66244fea2f06cec7e6804665871998b1b3259e6f22de322774c792b38c2486a3S3Bucket04D923ED
       SourceObjectKeys:
         - Fn::Join:
             - ""
@@ -5144,12 +5144,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersa46990bac2148485c93ce534e6485bb3da7f171ec9f473e641843d8add3558bdS3VersionKey698FDBCA
+                      - Ref: AssetParameters66244fea2f06cec7e6804665871998b1b3259e6f22de322774c792b38c2486a3S3VersionKeyB1868758
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersa46990bac2148485c93ce534e6485bb3da7f171ec9f473e641843d8add3558bdS3VersionKey698FDBCA
+                      - Ref: AssetParameters66244fea2f06cec7e6804665871998b1b3259e6f22de322774c792b38c2486a3S3VersionKeyB1868758
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: false
@@ -5349,13 +5349,13 @@ Resources:
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParametersa46990bac2148485c93ce534e6485bb3da7f171ec9f473e641843d8add3558bdS3Bucket7F243517
+                    - Ref: AssetParameters66244fea2f06cec7e6804665871998b1b3259e6f22de322774c792b38c2486a3S3Bucket04D923ED
               - Fn::Join:
                   - ""
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParametersa46990bac2148485c93ce534e6485bb3da7f171ec9f473e641843d8add3558bdS3Bucket7F243517
+                    - Ref: AssetParameters66244fea2f06cec7e6804665871998b1b3259e6f22de322774c792b38c2486a3S3Bucket04D923ED
                     - /*
         Version: 2012-10-17
       PolicyName: CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF
@@ -5739,18 +5739,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "fc986584c099ea5046c4cc9515c34013472214b465565366d7e634dd9705258f"
-  AssetParameters53d14430c9c3422fa2a752e4cbb92c6fc8ba48bde33421f1ce30753833f4f287S3Bucket7C64D6F2:
+  AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3Bucket6311A3CE:
     Type: String
     Description: S3 bucket for asset
-      "53d14430c9c3422fa2a752e4cbb92c6fc8ba48bde33421f1ce30753833f4f287"
-  AssetParameters53d14430c9c3422fa2a752e4cbb92c6fc8ba48bde33421f1ce30753833f4f287S3VersionKey2A9F1263:
+      "cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795"
+  AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9:
     Type: String
     Description: S3 key for asset version
-      "53d14430c9c3422fa2a752e4cbb92c6fc8ba48bde33421f1ce30753833f4f287"
-  AssetParameters53d14430c9c3422fa2a752e4cbb92c6fc8ba48bde33421f1ce30753833f4f287ArtifactHash914147AD:
+      "cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795"
+  AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795ArtifactHash7CF56D65:
     Type: String
     Description: Artifact hash for asset
-      "53d14430c9c3422fa2a752e4cbb92c6fc8ba48bde33421f1ce30753833f4f287"
+      "cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795"
   AssetParameters2afb4b0541001a078b483de798350f4dd244eff255cd0d8dcce9121502119037S3Bucket2031097D:
     Type: String
     Description: S3 bucket for asset
@@ -5823,18 +5823,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "91955c9e651a35d130efe2c711e502e7831f207049132b47bc0a6c348a00f1a2"
-  AssetParametersa46990bac2148485c93ce534e6485bb3da7f171ec9f473e641843d8add3558bdS3Bucket7F243517:
+  AssetParameters66244fea2f06cec7e6804665871998b1b3259e6f22de322774c792b38c2486a3S3Bucket04D923ED:
     Type: String
     Description: S3 bucket for asset
-      "a46990bac2148485c93ce534e6485bb3da7f171ec9f473e641843d8add3558bd"
-  AssetParametersa46990bac2148485c93ce534e6485bb3da7f171ec9f473e641843d8add3558bdS3VersionKey698FDBCA:
+      "66244fea2f06cec7e6804665871998b1b3259e6f22de322774c792b38c2486a3"
+  AssetParameters66244fea2f06cec7e6804665871998b1b3259e6f22de322774c792b38c2486a3S3VersionKeyB1868758:
     Type: String
     Description: S3 key for asset version
-      "a46990bac2148485c93ce534e6485bb3da7f171ec9f473e641843d8add3558bd"
-  AssetParametersa46990bac2148485c93ce534e6485bb3da7f171ec9f473e641843d8add3558bdArtifactHashBEA8C97E:
+      "66244fea2f06cec7e6804665871998b1b3259e6f22de322774c792b38c2486a3"
+  AssetParameters66244fea2f06cec7e6804665871998b1b3259e6f22de322774c792b38c2486a3ArtifactHash2BC7ADAF:
     Type: String
     Description: Artifact hash for asset
-      "a46990bac2148485c93ce534e6485bb3da7f171ec9f473e641843d8add3558bd"
+      "66244fea2f06cec7e6804665871998b1b3259e6f22de322774c792b38c2486a3"
   AssetParameters3c8f117f368bb6b603b3fae24bc441d91c776dc69b4c0d2415f401116b1b01abS3BucketB8697C36:
     Type: String
     Description: S3 bucket for asset

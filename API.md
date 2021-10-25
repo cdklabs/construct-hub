@@ -1204,10 +1204,22 @@ import { SearchFilter } from 'construct-hub'
 const searchFilter: SearchFilter = { ... }
 ```
 
-##### `name`<sup>Required</sup> <a name="construct-hub.SearchFilter.property.name"></a>
+##### `display`<sup>Required</sup> <a name="construct-hub.SearchFilter.property.display"></a>
 
 ```typescript
-public readonly name: string;
+public readonly display: string;
+```
+
+- *Type:* `string`
+
+Display name for filter.
+
+---
+
+##### `groupBy`<sup>Required</sup> <a name="construct-hub.SearchFilter.property.groupBy"></a>
+
+```typescript
+public readonly groupBy: string;
 ```
 
 - *Type:* `string`

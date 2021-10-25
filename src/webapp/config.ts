@@ -20,7 +20,8 @@ interface FrontendPackageTagHighlightConfig extends FrontendPackageTagConfigBase
 }
 
 interface FrontendPackageTagSearchFilterConfig {
-  name: string;
+  display: string;
+  groupBy: string;
 }
 
 interface FrontendPackageTagConfig {

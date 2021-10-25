@@ -26,9 +26,7 @@ export class DevStack extends Stack {
     const isCdk8sOfficial = TagCondition.field('name').eq('cdk8s');
     const isHashicoprOfficial = TagCondition.field('name').eq('cdktf');
     const isCommunity = TagCondition.not(TagCondition.or(isAwsOfficial, isCdk8sOfficial, isHashicoprOfficial));
-    const authorSearchFilter = {
-      name: 'Author',
-    };
+    const authorSearchFilter = 'Author';
 
     new ConstructHub(this, 'ConstructHub', {
       featureFlags: {
@@ -52,7 +50,10 @@ export class DevStack extends Stack {
           color: '#ED3B00',
           icon: '/assets/construct.png',
         },
-        searchFilter: authorSearchFilter,
+        searchFilter: {
+          groupBy: authorSearchFilter,
+          display: 'AWS',
+        },
       }, {
         id: 'cdk8s-official',
         condition: isCdk8sOfficial,
@@ -61,7 +62,10 @@ export class DevStack extends Stack {
           color: '#ED3B00',
           icon: '/assets/construct.png',
         },
-        searchFilter: authorSearchFilter,
+        searchFilter: {
+          groupBy: authorSearchFilter,
+          display: 'CDK8s',
+        },
       }, {
         id: 'tf-official',
         condition: isHashicoprOfficial,
@@ -70,7 +74,10 @@ export class DevStack extends Stack {
           color: '#ED3B00',
           icon: '/assets/construct.png',
         },
-        searchFilter: authorSearchFilter,
+        searchFilter: {
+          groupBy: authorSearchFilter,
+          display: 'Hashicorp',
+        },
       }, {
         id: 'community',
         condition: isCommunity,
@@ -79,7 +86,10 @@ export class DevStack extends Stack {
           color: '#2F50FE',
           icon: '/assets/community.png',
         },
-        searchFilter: authorSearchFilter,
+        searchFilter: {
+          groupBy: authorSearchFilter,
+          display: 'Community',
+        },
       }],
     });
   }

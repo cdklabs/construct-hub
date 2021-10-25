@@ -132,7 +132,8 @@ describe('package tags', () => {
     // GIVEN
     const id = 'ID';
     const searchFilter = {
-      name: 'FILTERNAME',
+      groupBy: 'FILTERNAME',
+      display: 'DISPLAY',
     };
     const config = new WebappConfig({
       packageTags: [

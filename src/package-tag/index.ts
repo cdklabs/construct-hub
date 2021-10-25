@@ -21,9 +21,14 @@ export interface Highlight extends PackageTagPresentationBase{
 
 export interface SearchFilter {
   /**
+   * Display name for filter
+   */
+  readonly display: string;
+
+  /**
    * Name of group to include filter in
    */
-  readonly name: string;
+  readonly groupBy: string;
 }
 
 export interface PackageTagBase {
