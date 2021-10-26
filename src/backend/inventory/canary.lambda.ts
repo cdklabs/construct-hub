@@ -96,7 +96,7 @@ export async function handler(event: ScheduledEvent, _context: Context) {
           recordPerLanguage(language, PerLanguageStatus.SUPPORTED, name, majorVersion, fullName);
           identified = true;
         } else if (key.endsWith(constants.docsKeySuffix(language) + constants.NOT_SUPPORTED_SUFFIX)) {
-          recordPerLanguage(language, PerLanguageStatus.SUPPORTED, name, majorVersion, fullName);
+          recordPerLanguage(language, PerLanguageStatus.UNSUPPORTED, name, majorVersion, fullName);
           identified = true;
         }
       }
