@@ -2536,7 +2536,7 @@ Resources:
                 - Ref: AWS::Region
                 - .
                 - Ref: AWS::URLSuffix
-                - /aws-cdk/assets:d1949158c45a1a4728606ba480f960d71a9f7f80c864e2c1870b2d8230f716fe
+                - /aws-cdk/assets:c09fa58fc7d1a72042f88c22afbab3137e4b766961b800ecf88adefea4e481be
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -2773,7 +2773,7 @@ Resources:
               python input"},"Stringify python
               input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
               python docs"},"Generate python
-              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
+              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
               python docs\\" timed
               out"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"Next":"\\"Generate
               python docs\\" service
@@ -2781,7 +2781,7 @@ Resources:
               python docs\\"
               failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate python
               docs\\"
-              fault"}],"Type":"Task","HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"python"},"success.$":"$"}},"Resource":"arn:'
+              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"python"},"success.$":"$"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
@@ -2810,7 +2810,7 @@ Resources:
               typescript input"},"Stringify typescript
               input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
               typescript docs"},"Generate typescript
-              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
+              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
               typescript docs\\" timed
               out"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"Next":"\\"Generate
               typescript docs\\" service
@@ -2818,7 +2818,7 @@ Resources:
               typescript docs\\"
               failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate
               typescript docs\\"
-              fault"}],"Type":"Task","HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"typescript"},"success.$":"$"}},"Resource":"arn:'
+              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"typescript"},"success.$":"$"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
@@ -2847,7 +2847,7 @@ Resources:
               java input"},"Stringify java
               input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
               java docs"},"Generate java
-              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
+              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
               java docs\\" timed
               out"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"Next":"\\"Generate
               java docs\\" service
@@ -2855,7 +2855,7 @@ Resources:
               java docs\\"
               failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate java
               docs\\"
-              fault"}],"Type":"Task","HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"java"},"success.$":"$"}},"Resource":"arn:'
+              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"java"},"success.$":"$"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
@@ -2883,7 +2883,7 @@ Resources:
               csharp input"},"Stringify csharp
               input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
               csharp docs"},"Generate csharp
-              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
+              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
               csharp docs\\" timed
               out"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"Next":"\\"Generate
               csharp docs\\" service
@@ -2891,7 +2891,7 @@ Resources:
               csharp docs\\"
               failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate csharp
               docs\\"
-              fault"}],"Type":"Task","HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"csharp"},"success.$":"$"}},"Resource":"arn:'
+              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"csharp"},"success.$":"$"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
@@ -5272,7 +5272,7 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParameters91955c9e651a35d130efe2c711e502e7831f207049132b47bc0a6c348a00f1a2S3Bucket4224757C
+        - Ref: AssetParameters1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782eeS3BucketA6AF90CE
       SourceObjectKeys:
         - Fn::Join:
             - ""
@@ -5280,12 +5280,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters91955c9e651a35d130efe2c711e502e7831f207049132b47bc0a6c348a00f1a2S3VersionKey0B2A1F1C
+                      - Ref: AssetParameters1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782eeS3VersionKey2AEB33CE
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters91955c9e651a35d130efe2c711e502e7831f207049132b47bc0a6c348a00f1a2S3VersionKey0B2A1F1C
+                      - Ref: AssetParameters1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782eeS3VersionKey2AEB33CE
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: false
@@ -5494,13 +5494,13 @@ Resources:
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters91955c9e651a35d130efe2c711e502e7831f207049132b47bc0a6c348a00f1a2S3Bucket4224757C
+                    - Ref: AssetParameters1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782eeS3BucketA6AF90CE
               - Fn::Join:
                   - ""
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters91955c9e651a35d130efe2c711e502e7831f207049132b47bc0a6c348a00f1a2S3Bucket4224757C
+                    - Ref: AssetParameters1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782eeS3BucketA6AF90CE
                     - /*
           - Action:
               - s3:GetObject*
@@ -5998,18 +5998,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "6ea3c5137560a8ea22a6aa265df4ad99ce3b56b494af38b10e27e2f1d24dc233"
-  AssetParameters91955c9e651a35d130efe2c711e502e7831f207049132b47bc0a6c348a00f1a2S3Bucket4224757C:
+  AssetParameters1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782eeS3BucketA6AF90CE:
     Type: String
     Description: S3 bucket for asset
-      "91955c9e651a35d130efe2c711e502e7831f207049132b47bc0a6c348a00f1a2"
-  AssetParameters91955c9e651a35d130efe2c711e502e7831f207049132b47bc0a6c348a00f1a2S3VersionKey0B2A1F1C:
+      "1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782ee"
+  AssetParameters1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782eeS3VersionKey2AEB33CE:
     Type: String
     Description: S3 key for asset version
-      "91955c9e651a35d130efe2c711e502e7831f207049132b47bc0a6c348a00f1a2"
-  AssetParameters91955c9e651a35d130efe2c711e502e7831f207049132b47bc0a6c348a00f1a2ArtifactHashF555477C:
+      "1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782ee"
+  AssetParameters1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782eeArtifactHash9BCAC7E9:
     Type: String
     Description: Artifact hash for asset
-      "91955c9e651a35d130efe2c711e502e7831f207049132b47bc0a6c348a00f1a2"
+      "1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782ee"
   AssetParameters15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622fS3BucketD12474B4:
     Type: String
     Description: S3 bucket for asset
