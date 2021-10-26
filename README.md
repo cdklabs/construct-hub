@@ -182,15 +182,53 @@ For example:
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
   packageTags: [{
-    label: 'Official',
-    color: '#00FF00',
+    id: 'official',
     condition: TagCondition.field('name').eq('construct-hub'),
+    keyword: {
+      label: 'Official',
+      color: '#00FF00',
+    },
+    highlight: {
+      label: 'Vended by AWS',
+      color: '#00FF00',
+    }
   }]
 });
 ```
 
 The above example will result in packages with the `name` of `construct-hub` to
-receive the `Official` tag, which is colored green.
+receive the `Official` tag, which is colored green and displayed amongst the
+list of keywords. Additionally the `highlight` key shows this as a highlighted
+item on the package's card.
+
+The `searchFilter` key can also be used to show tags as search filters grouped
+together.
+
+```ts
+const isAws = TagCondition.field('name').eq('construct-hub'),
+new ConstructHub(this, "ConstructHub", {
+  ...myProps,
+  packageTags: [{
+    id: 'AWS',
+    condition: isAws,
+    searchFilter: {
+      groupBy: 'Authors',
+      display: 'AWS',
+    },
+  }, {
+    id: 'Community',
+    condition: TagCondition.not(isAws),
+    searchFilter: {
+      groupBy: 'Authors',
+      display: 'AWS',
+    },
+  }]
+});
+```
+
+The above will show a list of `Authors` filters on the search results page
+with a checkbox for each `AWS` and `Community` packages, allowing users to
+filter results by the presence of these tags.
 
 Combinations of conditions are also supported:
 ```ts
