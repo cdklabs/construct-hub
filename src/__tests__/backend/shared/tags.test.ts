@@ -55,32 +55,62 @@ describe('Tag conditional logic', () => {
     expect(isTagApplicable(condition, packageJson)).toBe(false);
   });
 
-  test('String includes', () => {
-    // GIVEN
-    const key = 'STRING_KEY';
-    const substring = 'SOME_THING';
-    const value = `BEGINNING_${substring}_MORE`;
-    const packageJson = {
-      [key]: value,
-    };
+  describe('String includes', () => {
+    test('positive', () => {
+      // GIVEN
+      const key = 'STRING_KEY';
+      const substring = 'SOME_THING';
+      const value = `BEGINNING_${substring}_MORE`;
+      const packageJson = {
+        [key]: value,
+      };
 
-    // THEN
-    const condition = TagCondition.field(key).includes(substring).bind();
-    expect(isTagApplicable(condition, packageJson)).toBe(true);
+      // THEN
+      const condition = TagCondition.field(key).includes(substring).bind();
+      expect(isTagApplicable(condition, packageJson)).toBe(true);
+    });
+
+    test('negative', () => {
+      // GIVEN
+      const key = 'STRING_KEY';
+      const value = `STRING_VALUE`;
+      const packageJson = {
+        [key]: value,
+      };
+
+      // THEN
+      const condition = TagCondition.field(key).includes('SOME_SUBSTRING').bind();
+      expect(isTagApplicable(condition, packageJson)).toBe(false);
+    });
   });
 
-  test('Array includes', () => {
-    // GIVEN
-    const key = 'STRING_KEY';
-    const item = 'SOME_THING';
-    const value = ['SOME', item, 'SOME_THING_ELSE'];
-    const packageJson = {
-      [key]: value,
-    };
+  describe('Array includes', () => {
+    test('positive', () => {
+      // GIVEN
+      const key = 'STRING_KEY';
+      const item = 'SOME_THING';
+      const value = ['SOME', item, 'ANOTHER_THING'];
+      const packageJson = {
+        [key]: value,
+      };
 
-    // THEN
-    const condition = TagCondition.field(key).includes(item).bind();
-    expect(isTagApplicable(condition, packageJson)).toBe(true);
+      // THEN
+      const condition = TagCondition.field(key).includes(item).bind();
+      expect(isTagApplicable(condition, packageJson)).toBe(true);
+    });
+
+    test('negative', () => {
+      // GIVEN
+      const key = 'STRING_KEY';
+      const value = ['SOME', 'ANOTHER_THING'];
+      const packageJson = {
+        [key]: value,
+      };
+
+      // THEN
+      const condition = TagCondition.field(key).includes('NOT_IN_THE_ARRAY').bind();
+      expect(isTagApplicable(condition, packageJson)).toBe(false);
+    });
   });
 
   test('String starts with', () => {
