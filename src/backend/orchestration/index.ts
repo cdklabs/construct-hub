@@ -19,7 +19,12 @@ import { DocumentationLanguage } from '../shared/language';
 import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
 import { RedriveStateMachine } from './redrive-state-machine';
 
-const SUPPORTED_LANGUAGES = [DocumentationLanguage.PYTHON, DocumentationLanguage.TYPESCRIPT, DocumentationLanguage.JAVA];
+const SUPPORTED_LANGUAGES = [
+  DocumentationLanguage.PYTHON,
+  DocumentationLanguage.TYPESCRIPT,
+  DocumentationLanguage.JAVA,
+  DocumentationLanguage.CSHARP,
+];
 
 /**
  * This retry policy is used for all items in the state machine and allows ample
