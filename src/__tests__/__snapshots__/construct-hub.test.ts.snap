@@ -3857,6 +3857,39 @@ Direct link to function: /lambda/home#/functions/",
             },
             Object {
               "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/package.tgz",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
                 "s3:Abort*",
                 "s3:DeleteObject*",
                 "s3:PutObject*",
@@ -5204,7 +5237,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Track Execution Infos\\",\\"States\\":{\\"Track Execution Infos\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.$TaskExecution\\",\\"InputPath\\":\\"$$.Execution\\",\\"Parameters\\":{\\"Id.$\\":\\"$.Id\\",\\"Name.$\\":\\"$.Name\\",\\"RoleArn.$\\":\\"$.RoleArn\\",\\"StartTime.$\\":\\"$.StartTime\\"},\\"Next\\":\\"DocGen\\"},\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"ResultPath\\":\\"$.DocGen\\",\\"Next\\":\\"Any Success?\\",\\"Branches\\":[{\\"StartAt\\":\\"Prepare python\\",\\"States\\":{\\"Prepare python\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify python input\\"},\\"Stringify python input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate python docs\\"},\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"python\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Track Execution Infos\\",\\"States\\":{\\"Track Execution Infos\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.$TaskExecution\\",\\"InputPath\\":\\"$$.Execution\\",\\"Parameters\\":{\\"Id.$\\":\\"$.Id\\",\\"Name.$\\":\\"$.Name\\",\\"RoleArn.$\\":\\"$.RoleArn\\",\\"StartTime.$\\":\\"$.StartTime\\"},\\"Next\\":\\"DocGen\\"},\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"ResultPath\\":\\"$.DocGen\\",\\"Next\\":\\"Any Success?\\",\\"Branches\\":[{\\"StartAt\\":\\"Prepare python\\",\\"States\\":{\\"Prepare python\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"package.$\\":\\"$.package\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify python input\\"},\\"Stringify python input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate python docs\\"},\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"python\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -5230,7 +5263,7 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"python\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate python docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Prepare typescript\\",\\"States\\":{\\"Prepare typescript\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify typescript input\\"},\\"Stringify typescript input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate typescript docs\\"},\\"Generate typescript docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"typescript\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
+              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"python\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate python docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Prepare typescript\\",\\"States\\":{\\"Prepare typescript\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"package.$\\":\\"$.package\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify typescript input\\"},\\"Stringify typescript input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate typescript docs\\"},\\"Generate typescript docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"typescript\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -5256,7 +5289,7 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"typescript\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate typescript docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Prepare java\\",\\"States\\":{\\"Prepare java\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify java input\\"},\\"Stringify java input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate java docs\\"},\\"Generate java docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"java\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
+              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"typescript\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate typescript docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Prepare java\\",\\"States\\":{\\"Prepare java\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"package.$\\":\\"$.package\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify java input\\"},\\"Stringify java input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate java docs\\"},\\"Generate java docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"java\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -6695,7 +6728,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:81ce17910d75d22a110119257e7542d48912117a6d418aeafeda350c2c97e0b3",
+                  "/aws-cdk/assets:8c8c2891dc14365a996191c3ce171047c415f727942b200831b96af73a35868b",
                 ],
               ],
             },
@@ -6902,6 +6935,36 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                         ],
                       },
                       "/data/*/assembly.json",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/package.tgz",
                     ],
                   ],
                 },
@@ -13378,6 +13441,39 @@ Direct link to function: /lambda/home#/functions/",
             },
             Object {
               "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/package.tgz",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
                 "s3:Abort*",
                 "s3:DeleteObject*",
                 "s3:PutObject*",
@@ -14725,7 +14821,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Track Execution Infos\\",\\"States\\":{\\"Track Execution Infos\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.$TaskExecution\\",\\"InputPath\\":\\"$$.Execution\\",\\"Parameters\\":{\\"Id.$\\":\\"$.Id\\",\\"Name.$\\":\\"$.Name\\",\\"RoleArn.$\\":\\"$.RoleArn\\",\\"StartTime.$\\":\\"$.StartTime\\"},\\"Next\\":\\"DocGen\\"},\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"ResultPath\\":\\"$.DocGen\\",\\"Next\\":\\"Any Success?\\",\\"Branches\\":[{\\"StartAt\\":\\"Prepare python\\",\\"States\\":{\\"Prepare python\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify python input\\"},\\"Stringify python input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate python docs\\"},\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"python\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Track Execution Infos\\",\\"States\\":{\\"Track Execution Infos\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.$TaskExecution\\",\\"InputPath\\":\\"$$.Execution\\",\\"Parameters\\":{\\"Id.$\\":\\"$.Id\\",\\"Name.$\\":\\"$.Name\\",\\"RoleArn.$\\":\\"$.RoleArn\\",\\"StartTime.$\\":\\"$.StartTime\\"},\\"Next\\":\\"DocGen\\"},\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"ResultPath\\":\\"$.DocGen\\",\\"Next\\":\\"Any Success?\\",\\"Branches\\":[{\\"StartAt\\":\\"Prepare python\\",\\"States\\":{\\"Prepare python\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"package.$\\":\\"$.package\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify python input\\"},\\"Stringify python input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate python docs\\"},\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"python\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -14751,7 +14847,7 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"python\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate python docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Prepare typescript\\",\\"States\\":{\\"Prepare typescript\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify typescript input\\"},\\"Stringify typescript input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate typescript docs\\"},\\"Generate typescript docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"typescript\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
+              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"python\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate python docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Prepare typescript\\",\\"States\\":{\\"Prepare typescript\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"package.$\\":\\"$.package\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify typescript input\\"},\\"Stringify typescript input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate typescript docs\\"},\\"Generate typescript docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"typescript\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -14777,7 +14873,7 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"typescript\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate typescript docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Prepare java\\",\\"States\\":{\\"Prepare java\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify java input\\"},\\"Stringify java input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate java docs\\"},\\"Generate java docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"java\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
+              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"typescript\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate typescript docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Prepare java\\",\\"States\\":{\\"Prepare java\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"package.$\\":\\"$.package\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify java input\\"},\\"Stringify java input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate java docs\\"},\\"Generate java docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"java\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -16216,7 +16312,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:81ce17910d75d22a110119257e7542d48912117a6d418aeafeda350c2c97e0b3",
+                  "/aws-cdk/assets:8c8c2891dc14365a996191c3ce171047c415f727942b200831b96af73a35868b",
                 ],
               ],
             },
@@ -16437,6 +16533,36 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                         ],
                       },
                       "/data/*/assembly.json",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/package.tgz",
                     ],
                   ],
                 },
@@ -23075,6 +23201,39 @@ Direct link to function: /lambda/home#/functions/",
             },
             Object {
               "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/package.tgz",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
                 "s3:Abort*",
                 "s3:DeleteObject*",
                 "s3:PutObject*",
@@ -24444,7 +24603,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Track Execution Infos\\",\\"States\\":{\\"Track Execution Infos\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.$TaskExecution\\",\\"InputPath\\":\\"$$.Execution\\",\\"Parameters\\":{\\"Id.$\\":\\"$.Id\\",\\"Name.$\\":\\"$.Name\\",\\"RoleArn.$\\":\\"$.RoleArn\\",\\"StartTime.$\\":\\"$.StartTime\\"},\\"Next\\":\\"DocGen\\"},\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"ResultPath\\":\\"$.DocGen\\",\\"Next\\":\\"Any Success?\\",\\"Branches\\":[{\\"StartAt\\":\\"Prepare python\\",\\"States\\":{\\"Prepare python\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify python input\\"},\\"Stringify python input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate python docs\\"},\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"python\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Track Execution Infos\\",\\"States\\":{\\"Track Execution Infos\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.$TaskExecution\\",\\"InputPath\\":\\"$$.Execution\\",\\"Parameters\\":{\\"Id.$\\":\\"$.Id\\",\\"Name.$\\":\\"$.Name\\",\\"RoleArn.$\\":\\"$.RoleArn\\",\\"StartTime.$\\":\\"$.StartTime\\"},\\"Next\\":\\"DocGen\\"},\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"ResultPath\\":\\"$.DocGen\\",\\"Next\\":\\"Any Success?\\",\\"Branches\\":[{\\"StartAt\\":\\"Prepare python\\",\\"States\\":{\\"Prepare python\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"package.$\\":\\"$.package\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify python input\\"},\\"Stringify python input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate python docs\\"},\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"python\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -24470,7 +24629,7 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"python\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate python docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Prepare typescript\\",\\"States\\":{\\"Prepare typescript\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify typescript input\\"},\\"Stringify typescript input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate typescript docs\\"},\\"Generate typescript docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"typescript\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
+              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"python\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate python docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Prepare typescript\\",\\"States\\":{\\"Prepare typescript\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"package.$\\":\\"$.package\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify typescript input\\"},\\"Stringify typescript input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate typescript docs\\"},\\"Generate typescript docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"typescript\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -24496,7 +24655,7 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"typescript\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate typescript docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Prepare java\\",\\"States\\":{\\"Prepare java\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify java input\\"},\\"Stringify java input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate java docs\\"},\\"Generate java docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"java\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
+              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"typescript\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate typescript docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Prepare java\\",\\"States\\":{\\"Prepare java\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"package.$\\":\\"$.package\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify java input\\"},\\"Stringify java input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate java docs\\"},\\"Generate java docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"java\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -25935,7 +26094,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:81ce17910d75d22a110119257e7542d48912117a6d418aeafeda350c2c97e0b3",
+                  "/aws-cdk/assets:8c8c2891dc14365a996191c3ce171047c415f727942b200831b96af73a35868b",
                 ],
               ],
             },
@@ -26142,6 +26301,36 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                         ],
                       },
                       "/data/*/assembly.json",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/package.tgz",
                     ],
                   ],
                 },
@@ -32750,7 +32939,7 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Track Execution Infos\\",\\"States\\":{\\"Track Execution Infos\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.$TaskExecution\\",\\"InputPath\\":\\"$$.Execution\\",\\"Parameters\\":{\\"Id.$\\":\\"$.Id\\",\\"Name.$\\":\\"$.Name\\",\\"RoleArn.$\\":\\"$.RoleArn\\",\\"StartTime.$\\":\\"$.StartTime\\"},\\"Next\\":\\"DocGen\\"},\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"ResultPath\\":\\"$.DocGen\\",\\"Next\\":\\"Any Success?\\",\\"Branches\\":[{\\"StartAt\\":\\"Prepare python\\",\\"States\\":{\\"Prepare python\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify python input\\"},\\"Stringify python input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate python docs\\"},\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"python\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Track Execution Infos\\",\\"States\\":{\\"Track Execution Infos\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$.$TaskExecution\\",\\"InputPath\\":\\"$$.Execution\\",\\"Parameters\\":{\\"Id.$\\":\\"$.Id\\",\\"Name.$\\":\\"$.Name\\",\\"RoleArn.$\\":\\"$.RoleArn\\",\\"StartTime.$\\":\\"$.StartTime\\"},\\"Next\\":\\"DocGen\\"},\\"DocGen\\":{\\"Type\\":\\"Parallel\\",\\"ResultPath\\":\\"$.DocGen\\",\\"Next\\":\\"Any Success?\\",\\"Branches\\":[{\\"StartAt\\":\\"Prepare python\\",\\"States\\":{\\"Prepare python\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"package.$\\":\\"$.package\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify python input\\"},\\"Stringify python input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate python docs\\"},\\"Generate python docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate python docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"python\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -32776,7 +32965,7 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"python\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate python docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Prepare typescript\\",\\"States\\":{\\"Prepare typescript\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify typescript input\\"},\\"Stringify typescript input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate typescript docs\\"},\\"Generate typescript docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"typescript\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
+              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"python\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate python docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true},\\"\\\\\\"Generate python docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"python\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Prepare typescript\\",\\"States\\":{\\"Prepare typescript\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"package.$\\":\\"$.package\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify typescript input\\"},\\"Stringify typescript input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate typescript docs\\"},\\"Generate typescript docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate typescript docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"typescript\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -32802,7 +32991,7 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"typescript\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate typescript docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Prepare java\\",\\"States\\":{\\"Prepare java\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify java input\\"},\\"Stringify java input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate java docs\\"},\\"Generate java docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"java\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
+              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"TARGET_LANGUAGE\\",\\"Value\\":\\"typescript\\"},{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"\\\\\\"Generate typescript docs\\\\\\" timed out\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error\\":\\"Timed out!\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" service error\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" failure\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"States.StringToJson($.Cause)\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true},\\"\\\\\\"Generate typescript docs\\\\\\" fault\\":{\\"Type\\":\\"Pass\\",\\"Parameters\\":{\\"error.$\\":\\"$.Cause\\",\\"language\\":{\\"lang\\":\\"typescript\\"}},\\"End\\":true}}},{\\"StartAt\\":\\"Prepare java\\",\\"States\\":{\\"Prepare java\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"command\\":{\\"bucket.$\\":\\"$.bucket\\",\\"assembly.$\\":\\"$.assembly\\",\\"package.$\\":\\"$.package\\",\\"$TaskExecution.$\\":\\"$.$TaskExecution\\"}},\\"Next\\":\\"Stringify java input\\"},\\"Stringify java input\\":{\\"Type\\":\\"Pass\\",\\"ResultPath\\":\\"$\\",\\"Parameters\\":{\\"commands.$\\":\\"States.Array(States.JsonToString($.command))\\"},\\"Next\\":\\"Generate java docs\\"},\\"Generate java docs\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"jsii-docgen.NoSpaceLeftOnDevice\\"],\\"MaxAttempts\\":0},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\",\\"jsii-docgen.NpmError.E429\\",\\"jsii-codgen.NpmError.EPROTO\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"MaxAttempts\\":3}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"States.Timeout\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" timed out\\"},{\\"ErrorEquals\\":[\\"ECS.AmazonECSException\\",\\"ECS.InvalidParameterException\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" service error\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" failure\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"Next\\":\\"\\\\\\"Generate java docs\\\\\\" fault\\"}],\\"Type\\":\\"Task\\",\\"HeartbeatSeconds\\":300,\\"InputPath\\":\\"$.commands\\",\\"ResultSelector\\":{\\"result\\":{\\"language\\":{\\"lang\\":\\"java\\"},\\"success.$\\":\\"$\\"}},\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -34594,7 +34783,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:81ce17910d75d22a110119257e7542d48912117a6d418aeafeda350c2c97e0b3",
+                  "/aws-cdk/assets:8c8c2891dc14365a996191c3ce171047c415f727942b200831b96af73a35868b",
                 ],
               ],
             },
@@ -34801,6 +34990,36 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                         ],
                       },
                       "/data/*/assembly.json",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/package.tgz",
                     ],
                   ],
                 },
