@@ -10,9 +10,25 @@ interface FrontendPackageLinkConfig {
   linkText?: string;
 }
 
-interface FrontendPackageTagConfig {
+interface FrontendPackageTagConfigBase {
   label: string;
   color?: string;
+}
+
+interface FrontendPackageTagHighlightConfig extends FrontendPackageTagConfigBase{
+  icon?: string;
+}
+
+interface FrontendPackageTagSearchFilterConfig {
+  display: string;
+  groupBy: string;
+}
+
+interface FrontendPackageTagConfig {
+  id: string;
+  keyword?: FrontendPackageTagConfigBase;
+  highlight?: FrontendPackageTagHighlightConfig;
+  searchFilter?: FrontendPackageTagSearchFilterConfig;
 }
 
 type FrontendFeaturedPackagesConfig = FeaturedPackages;
