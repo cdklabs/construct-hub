@@ -2635,7 +2635,7 @@ Resources:
               python input"},"Stringify python
               input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
               python docs"},"Generate python
-              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
+              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
               python docs\\" timed
               out"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"Next":"\\"Generate
               python docs\\" service
@@ -2643,7 +2643,7 @@ Resources:
               python docs\\"
               failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate python
               docs\\"
-              fault"}],"Type":"Task","HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"python"},"success.$":"$"}},"Resource":"arn:'
+              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"python"},"success.$":"$"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
@@ -2672,7 +2672,7 @@ Resources:
               typescript input"},"Stringify typescript
               input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
               typescript docs"},"Generate typescript
-              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
+              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
               typescript docs\\" timed
               out"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"Next":"\\"Generate
               typescript docs\\" service
@@ -2680,7 +2680,7 @@ Resources:
               typescript docs\\"
               failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate
               typescript docs\\"
-              fault"}],"Type":"Task","HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"typescript"},"success.$":"$"}},"Resource":"arn:'
+              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"typescript"},"success.$":"$"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
@@ -2709,7 +2709,7 @@ Resources:
               java input"},"Stringify java
               input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
               java docs"},"Generate java
-              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
+              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
               java docs\\" timed
               out"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"Next":"\\"Generate
               java docs\\" service
@@ -2717,7 +2717,7 @@ Resources:
               java docs\\"
               failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate java
               docs\\"
-              fault"}],"Type":"Task","HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"java"},"success.$":"$"}},"Resource":"arn:'
+              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"java"},"success.$":"$"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
