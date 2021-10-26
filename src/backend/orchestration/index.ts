@@ -232,7 +232,7 @@ export class Orchestration extends Construct {
           // an array of strings (the model if that of a CLI invocation).
           // Unfortunately, we have to split this in two Pass states, because I don't know how to make it work otherwise.
           return new Pass(this, `Prepare ${language}`, {
-            parameters: { command: { 'bucket.$': '$.bucket', 'assembly.$': '$.assembly', '$TaskExecution.$': '$.$TaskExecution' } },
+            parameters: { command: { 'bucket.$': '$.bucket', 'assembly.$': '$.assembly', 'package.$': '$.package', '$TaskExecution.$': '$.$TaskExecution' } },
             resultPath: '$',
           })
             .next(new Pass(this, `Stringify ${language} input`, {

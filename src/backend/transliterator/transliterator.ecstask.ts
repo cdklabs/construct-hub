@@ -13,6 +13,7 @@ import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DocumentationLanguage } from '../shared/language';
 import { shellOut } from '../shared/shell-out.lambda-shared';
+import { extractObjects } from '../shared/tarball.lambda-shared';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 
 const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)${constants.ASSEMBLY_KEY_SUFFIX}$`);
@@ -24,12 +25,16 @@ const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]
  * configured in `TARGET_LANGUAGE`, and uploads the resulting `.jsii.<lang>`
  * object to S3.
  *
+ * By default, dependencies that reference remote URLs or git repos cause the
+ * handler to exit since these dependencies cannot be installed within VPCs.
+ * This behavior can be disabled with `{ allowRemoteDependencies: true }`.
+ *
  * @param event   an S3 event payload
  * @param context a Lambda execution context
  *
  * @returns nothing
  */
-export function handler(event: TransliteratorInput): Promise<S3Object[]> {
+export function handler(event: TransliteratorInput & { allowRemoteDependencies?: boolean }): Promise<S3Object[]> {
   console.log(JSON.stringify(event, null, 2));
   // We'll need a writable $HOME directory, or this won't work well, because
   // npm will try to write stuff like the `.npmrc` or package caches in there
@@ -77,6 +82,33 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
 
     const assembly = JSON.parse(assemblyResponse.Body.toString('utf-8'));
     const submodules = Object.keys(assembly.submodules ?? {}).map(s => s.split('.')[1]);
+
+    console.log(`Fetching package: ${event.package.key}`);
+    const tarball = await aws.s3().getObject({ Bucket: event.bucket, Key: event.package.key }).promise();
+    if (!tarball.Body) {
+      throw new Error(`Response body for package at key ${event.package.key} is empty`);
+    }
+
+    const { packageJson } = await extractObjects(
+      Buffer.from(tarball.Body!),
+      {
+        packageJson: { path: 'package/package.json', required: true },
+      },
+    );
+
+    const packageJsonObj = JSON.parse(packageJson.toString('utf-8'));
+
+    const allowRemoteDependencies = event.allowRemoteDependencies ?? false;
+    if (!allowRemoteDependencies && !canInstallDependencies(packageJsonObj)) {
+      console.error(`Package ${assembly.name}@${assembly.version} has dependencies that cannot be installed, skipping!`);
+      console.log(`Assembly targets: ${JSON.stringify(assembly.targets, null, 2)}`);
+      for (const submodule of [undefined, ...submodules]) {
+        const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(language), submodule)) + constants.NOT_SUPPORTED_SUFFIX;
+        const response = await uploadFile(event.bucket, key, event.assembly.versionId);
+        created.push({ bucket: event.bucket, key, versionId: response.VersionId });
+      }
+      return created;
+    }
 
     if (language !== 'typescript' && assembly.targets[language] == null) {
       console.error(`Package ${assembly.name}@${assembly.version} does not support ${language}, skipping!`);
@@ -206,4 +238,24 @@ interface S3Object {
   readonly bucket: string;
   readonly key: string;
   readonly versionId?: string;
+}
+
+export function canInstallDependencies(packageJson: any): boolean {
+  const dependencies: Record<string, string> = packageJson.dependencies ?? {};
+  const devDependencies: Record<string, string> = packageJson.devDependencies ?? {};
+
+  const cannotInstall = (version: string) => {
+    const isGitHubUrl = /[a-zA-Z0-9_-]+\/[a-zA-Z0-9_-]+/.test(version); // e.g. "user/repo"
+    const isGitUrl = version.startsWith('git');
+    const isRemoteUrl = version.startsWith('https://') || version.startsWith('http://');
+    return isGitHubUrl || isGitUrl || isRemoteUrl;
+  };
+
+  for (const dep of [...Object.values(dependencies), ...Object.values(devDependencies)]) {
+    if (cannotInstall(dep)) {
+      return false;
+    }
+  }
+
+  return true;
 }
