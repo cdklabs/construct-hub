@@ -205,7 +205,7 @@ The `searchFilter` key can also be used to show tags as search filters grouped
 together.
 
 ```ts
-const isAws = TagCondition.field('name').eq('construct-hub'),
+const isAws = TagCondition.field('name').eq('construct-hub');
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
   packageTags: [{
