@@ -73,7 +73,7 @@ describe('Tag conditional logic', () => {
     test('negative', () => {
       // GIVEN
       const key = 'STRING_KEY';
-      const value = `STRING_VALUE`;
+      const value = 'STRING_VALUE';
       const packageJson = {
         [key]: value,
       };
