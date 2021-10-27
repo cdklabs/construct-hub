@@ -196,70 +196,63 @@ Resources:
             - Fn::GetAtt:
                 - ConstructHubOrchestrationDLQAlarm85EE7509
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":6,"properties":{"view":"timeSeries","title":"Catalog
-              Size Shrunk","region":"'
-            - Ref: AWS::Region
-            - '","annotations":{"alarms":["'
-            - Fn::GetAtt:
-                - ConstructHubOrchestrationCatalogBuilderShrinkingCatalogAlarm48329E25
-                - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Backend
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":6,"properties":{"view":"timeSeries","title":"Backend
               Orchestration Failed","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubOrchestrationOrchestrationFailed5AF50838
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Ingestion
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Ingestion
               Dead-Letter Queue not empty","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubIngestionDLQAlarm83BD1903
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"Ingestion
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Ingestion
               failures","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubIngestionFailureAlarm9D0028DD
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"NpmJs/Follower
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"NpmJs/Follower
               Failures","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubSourcesNpmJsFollowerFailures86BCBA0D
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"NpmJs/Follower
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"NpmJs/Follower
               Not Running","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubSourcesNpmJsFollowerNotRunningCEAF0E1E
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"NpmJs/Stager
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"NpmJs/Stager
               DLQ Not Empty","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubSourcesdevConstructHubSourcesNpmJsStagerDLQNotEmpty3777A4EA
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":48,"properties":{"view":"timeSeries","title":"Inventory
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"Inventory
               Canary is not Running","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubInventoryCanaryNotRunningAF44D71C
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":54,"properties":{"view":"timeSeries","title":"Inventory
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":48,"properties":{"view":"timeSeries","title":"Inventory
               Canary is failing","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubInventoryCanaryFailures5BDA8051
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":60,"properties":{"view":"timeSeries","title":"Home
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":54,"properties":{"view":"timeSeries","title":"Home
               Page Canary","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
@@ -2011,7 +2004,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters8eaf6ae740a064bd5b2d2fcac89919a8258bbb48d282db3f17c544078b69997fS3Bucket98913320
+          Ref: AssetParameters39c4ec54da4c011c32a9001be8e0e203a72cf42459e90ec9648d861b10f86970S3Bucket59FF0364
         S3Key:
           Fn::Join:
             - ""
@@ -2019,12 +2012,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters8eaf6ae740a064bd5b2d2fcac89919a8258bbb48d282db3f17c544078b69997fS3VersionKeyEAE62DFB
+                      - Ref: AssetParameters39c4ec54da4c011c32a9001be8e0e203a72cf42459e90ec9648d861b10f86970S3VersionKeyBC3996AE
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters8eaf6ae740a064bd5b2d2fcac89919a8258bbb48d282db3f17c544078b69997fS3VersionKeyEAE62DFB
+                      - Ref: AssetParameters39c4ec54da4c011c32a9001be8e0e203a72cf42459e90ec9648d861b10f86970S3VersionKeyBC3996AE
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
@@ -2065,46 +2058,6 @@ Resources:
           - - /aws/lambda/
             - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
       RetentionInDays: 7
-  ConstructHubOrchestrationCatalogBuilderShrinkingCatalogAlarm48329E25:
-    Type: AWS::CloudWatch::Alarm
-    Properties:
-      ComparisonOperator: LessThanThreshold
-      EvaluationPeriods: 1
-      AlarmDescription:
-        Fn::Join:
-          - ""
-          - - >-
-              The number of packages registered in the catalog.json object has
-              shrunk by more than 5
-
-              elements. There might be a mass extinction event going on. This should be investigated
-
-              as soon as possible.
-
-
-              Catalog.json: /s3/object/
-            - Ref: ConstructHubPackageDataDC5EF35E
-            - |-
-              ?prefix=catalog.json
-              Catalog Builder: /lambda/home#/functions/
-            - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
-            - >-
-              
-
-              RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
-      AlarmName: dev/ConstructHub/Orchestration/CatalogBuilder/ShrinkingCatalog
-      Metrics:
-        - Expression: DIFF(FILL(m1, REPEAT))
-          Id: expr_1
-        - Id: m1
-          MetricStat:
-            Metric:
-              MetricName: RegisteredPackagesMajorVersion
-              Namespace: ConstructHub/CatalogBuilder
-            Period: 900
-            Stat: Maximum
-          ReturnData: false
-      Threshold: -5
   ConstructHubOrchestrationCluster3D6F0081:
     Type: AWS::ECS::Cluster
     Properties:
@@ -2408,7 +2361,7 @@ Resources:
                 - Ref: AWS::Region
                 - .
                 - Ref: AWS::URLSuffix
-                - /aws-cdk/assets:0ef527e7371dd68a5ed5152ef6d7ef27ef6f533a132def94a4fcda3ece38518e
+                - /aws-cdk/assets:15aa27c124da7cf9b7bd93dea129b874d20bcbb44a69efdb98a0658103244217
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -2635,7 +2588,7 @@ Resources:
               python input"},"Stringify python
               input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
               python docs"},"Generate python
-              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
+              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
               python docs\\" timed
               out"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"Next":"\\"Generate
               python docs\\" service
@@ -2643,7 +2596,7 @@ Resources:
               python docs\\"
               failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate python
               docs\\"
-              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"python"},"success.$":"$"}},"Resource":"arn:'
+              fault"}],"Type":"Task","HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"python"},"success.$":"$"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
@@ -2672,7 +2625,7 @@ Resources:
               typescript input"},"Stringify typescript
               input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
               typescript docs"},"Generate typescript
-              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
+              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
               typescript docs\\" timed
               out"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"Next":"\\"Generate
               typescript docs\\" service
@@ -2680,7 +2633,7 @@ Resources:
               typescript docs\\"
               failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate
               typescript docs\\"
-              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"typescript"},"success.$":"$"}},"Resource":"arn:'
+              fault"}],"Type":"Task","HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"typescript"},"success.$":"$"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
@@ -2709,7 +2662,7 @@ Resources:
               java input"},"Stringify java
               input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
               java docs"},"Generate java
-              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
+              docs":{"End":true,"Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
               java docs\\" timed
               out"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"Next":"\\"Generate
               java docs\\" service
@@ -2717,7 +2670,7 @@ Resources:
               java docs\\"
               failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate java
               docs\\"
-              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"java"},"success.$":"$"}},"Resource":"arn:'
+              fault"}],"Type":"Task","HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"java"},"success.$":"$"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
@@ -3293,7 +3246,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3Bucket6311A3CE
+          Ref: AssetParameters8150485d52211339597d537b8ed64276f19dbcf68d481ae911078a94bb111015S3Bucket2C9CF65D
         S3Key:
           Fn::Join:
             - ""
@@ -3301,12 +3254,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9
+                      - Ref: AssetParameters8150485d52211339597d537b8ed64276f19dbcf68d481ae911078a94bb111015S3VersionKeyF9F94B30
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9
+                      - Ref: AssetParameters8150485d52211339597d537b8ed64276f19dbcf68d481ae911078a94bb111015S3VersionKeyF9F94B30
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
@@ -3319,8 +3272,7 @@ Resources:
           BUCKET_NAME:
             Ref: ConstructHubPackageDataDC5EF35E
           PACKAGE_LINKS: "[]"
-          PACKAGE_TAGS: '[{"id":"aws-official","condition":{"type":"STARTS_WITH","key":["name"],"value":"@aws-cdk/"},"highlight":{"label":"AWS
-            Official","color":"#ED3B00","icon":"/assets/construct.png"},"searchFilter":{"groupBy":"Author","display":"AWS"}}]'
+          PACKAGE_TAGS: "[]"
           STATE_MACHINE_ARN:
             Ref: ConstructHubOrchestration39161A46
       Handler: index.handler
@@ -4337,7 +4289,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameterscfb95243d32b912db8291fc6bc5e6631e01c6f262bddd14fd69b96603bb887f0S3Bucket513001F2
+          Ref: AssetParameterscfa04e95a99d0796c41be6daddff2f13b6b46407c75c963edc503c40076fe575S3BucketD9E029DB
         S3Key:
           Fn::Join:
             - ""
@@ -4345,12 +4297,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameterscfb95243d32b912db8291fc6bc5e6631e01c6f262bddd14fd69b96603bb887f0S3VersionKeyC08DC591
+                      - Ref: AssetParameterscfa04e95a99d0796c41be6daddff2f13b6b46407c75c963edc503c40076fe575S3VersionKey61B8F9CA
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameterscfb95243d32b912db8291fc6bc5e6631e01c6f262bddd14fd69b96603bb887f0S3VersionKeyC08DC591
+                      - Ref: AssetParameterscfa04e95a99d0796c41be6daddff2f13b6b46407c75c963edc503c40076fe575S3VersionKey61B8F9CA
       Role:
         Fn::GetAtt:
           - ConstructHubInventoryCanaryServiceRole7684EDDE
@@ -4491,11 +4443,7 @@ Resources:
             - '","metrics":[["ConstructHub/Inventory","UnknownObjectCount",{"label":"Unknown","stat":"Maximum"}],["ConstructHub/Inventory","MissingAssemblyCount",{"label":"Missing
               Assembly","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageMetadataCount",{"label":"Missing
               Metadata","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageTarballCount",{"label":"Missing
-              Tarball","stat":"Maximum"}],["ConstructHub/CatalogBuilder","MissingConstructFrameworkCount",{"label":"No
-              Construct
-              Framework","period":900,"stat":"Maximum","yAxis":"right"}],["ConstructHub/CatalogBuilder","MissingConstructFrameworkVersionCount",{"label":"No
-              Construct Framework
-              Version","period":900,"stat":"Maximum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":8,"properties":{"markdown":"#
+              Tarball","stat":"Maximum"}]],"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":8,"properties":{"markdown":"#
               Documentation Generation\\n\\n[button:primary:Transliterator
               Logs](/cloudwatch/home#logsV2:log-groups/log-group/'
             - Fn::Join:
@@ -5083,7 +5031,7 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParameters1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782eeS3BucketA6AF90CE
+        - Ref: AssetParameters669d8b21e4c99e7928f017d96aa4ee590c3050e9ee7812786ff738974097f24cS3Bucket8EC29361
       SourceObjectKeys:
         - Fn::Join:
             - ""
@@ -5091,12 +5039,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782eeS3VersionKey2AEB33CE
+                      - Ref: AssetParameters669d8b21e4c99e7928f017d96aa4ee590c3050e9ee7812786ff738974097f24cS3VersionKeyF6200A62
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782eeS3VersionKey2AEB33CE
+                      - Ref: AssetParameters669d8b21e4c99e7928f017d96aa4ee590c3050e9ee7812786ff738974097f24cS3VersionKeyF6200A62
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: false
@@ -5134,7 +5082,7 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParameters15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622fS3BucketD12474B4
+        - Ref: AssetParametersec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114S3Bucket6F15F130
       SourceObjectKeys:
         - Fn::Join:
             - ""
@@ -5142,12 +5090,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622fS3VersionKey99E4F89D
+                      - Ref: AssetParametersec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114S3VersionKey0F6A742F
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622fS3VersionKey99E4F89D
+                      - Ref: AssetParametersec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114S3VersionKey0F6A742F
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: false
@@ -5305,13 +5253,13 @@ Resources:
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782eeS3BucketA6AF90CE
+                    - Ref: AssetParameters669d8b21e4c99e7928f017d96aa4ee590c3050e9ee7812786ff738974097f24cS3Bucket8EC29361
               - Fn::Join:
                   - ""
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782eeS3BucketA6AF90CE
+                    - Ref: AssetParameters669d8b21e4c99e7928f017d96aa4ee590c3050e9ee7812786ff738974097f24cS3Bucket8EC29361
                     - /*
           - Action:
               - s3:GetObject*
@@ -5347,13 +5295,13 @@ Resources:
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622fS3BucketD12474B4
+                    - Ref: AssetParametersec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114S3Bucket6F15F130
               - Fn::Join:
                   - ""
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622fS3BucketD12474B4
+                    - Ref: AssetParametersec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114S3Bucket6F15F130
                     - /*
         Version: 2012-10-17
       PolicyName: CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF
@@ -5713,18 +5661,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "b120b13d9d868c7622e7db1b68bae4c0f82ffd0227b8c15f2cef38e186ff3827"
-  AssetParameters8eaf6ae740a064bd5b2d2fcac89919a8258bbb48d282db3f17c544078b69997fS3Bucket98913320:
+  AssetParameters39c4ec54da4c011c32a9001be8e0e203a72cf42459e90ec9648d861b10f86970S3Bucket59FF0364:
     Type: String
     Description: S3 bucket for asset
-      "8eaf6ae740a064bd5b2d2fcac89919a8258bbb48d282db3f17c544078b69997f"
-  AssetParameters8eaf6ae740a064bd5b2d2fcac89919a8258bbb48d282db3f17c544078b69997fS3VersionKeyEAE62DFB:
+      "39c4ec54da4c011c32a9001be8e0e203a72cf42459e90ec9648d861b10f86970"
+  AssetParameters39c4ec54da4c011c32a9001be8e0e203a72cf42459e90ec9648d861b10f86970S3VersionKeyBC3996AE:
     Type: String
     Description: S3 key for asset version
-      "8eaf6ae740a064bd5b2d2fcac89919a8258bbb48d282db3f17c544078b69997f"
-  AssetParameters8eaf6ae740a064bd5b2d2fcac89919a8258bbb48d282db3f17c544078b69997fArtifactHashD2AAD74E:
+      "39c4ec54da4c011c32a9001be8e0e203a72cf42459e90ec9648d861b10f86970"
+  AssetParameters39c4ec54da4c011c32a9001be8e0e203a72cf42459e90ec9648d861b10f86970ArtifactHashCB8C7871:
     Type: String
     Description: Artifact hash for asset
-      "8eaf6ae740a064bd5b2d2fcac89919a8258bbb48d282db3f17c544078b69997f"
+      "39c4ec54da4c011c32a9001be8e0e203a72cf42459e90ec9648d861b10f86970"
   AssetParametersfc986584c099ea5046c4cc9515c34013472214b465565366d7e634dd9705258fS3Bucket44863F75:
     Type: String
     Description: S3 bucket for asset
@@ -5737,18 +5685,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "fc986584c099ea5046c4cc9515c34013472214b465565366d7e634dd9705258f"
-  AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3Bucket6311A3CE:
+  AssetParameters8150485d52211339597d537b8ed64276f19dbcf68d481ae911078a94bb111015S3Bucket2C9CF65D:
     Type: String
     Description: S3 bucket for asset
-      "cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795"
-  AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9:
+      "8150485d52211339597d537b8ed64276f19dbcf68d481ae911078a94bb111015"
+  AssetParameters8150485d52211339597d537b8ed64276f19dbcf68d481ae911078a94bb111015S3VersionKeyF9F94B30:
     Type: String
     Description: S3 key for asset version
-      "cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795"
-  AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795ArtifactHash7CF56D65:
+      "8150485d52211339597d537b8ed64276f19dbcf68d481ae911078a94bb111015"
+  AssetParameters8150485d52211339597d537b8ed64276f19dbcf68d481ae911078a94bb111015ArtifactHashDC2980F4:
     Type: String
     Description: Artifact hash for asset
-      "cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795"
+      "8150485d52211339597d537b8ed64276f19dbcf68d481ae911078a94bb111015"
   AssetParameters2afb4b0541001a078b483de798350f4dd244eff255cd0d8dcce9121502119037S3Bucket2031097D:
     Type: String
     Description: S3 bucket for asset
@@ -5797,42 +5745,42 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28"
-  AssetParameterscfb95243d32b912db8291fc6bc5e6631e01c6f262bddd14fd69b96603bb887f0S3Bucket513001F2:
+  AssetParameterscfa04e95a99d0796c41be6daddff2f13b6b46407c75c963edc503c40076fe575S3BucketD9E029DB:
     Type: String
     Description: S3 bucket for asset
-      "cfb95243d32b912db8291fc6bc5e6631e01c6f262bddd14fd69b96603bb887f0"
-  AssetParameterscfb95243d32b912db8291fc6bc5e6631e01c6f262bddd14fd69b96603bb887f0S3VersionKeyC08DC591:
+      "cfa04e95a99d0796c41be6daddff2f13b6b46407c75c963edc503c40076fe575"
+  AssetParameterscfa04e95a99d0796c41be6daddff2f13b6b46407c75c963edc503c40076fe575S3VersionKey61B8F9CA:
     Type: String
     Description: S3 key for asset version
-      "cfb95243d32b912db8291fc6bc5e6631e01c6f262bddd14fd69b96603bb887f0"
-  AssetParameterscfb95243d32b912db8291fc6bc5e6631e01c6f262bddd14fd69b96603bb887f0ArtifactHash2CBE2485:
+      "cfa04e95a99d0796c41be6daddff2f13b6b46407c75c963edc503c40076fe575"
+  AssetParameterscfa04e95a99d0796c41be6daddff2f13b6b46407c75c963edc503c40076fe575ArtifactHashC439F3C2:
     Type: String
     Description: Artifact hash for asset
-      "cfb95243d32b912db8291fc6bc5e6631e01c6f262bddd14fd69b96603bb887f0"
-  AssetParameters1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782eeS3BucketA6AF90CE:
+      "cfa04e95a99d0796c41be6daddff2f13b6b46407c75c963edc503c40076fe575"
+  AssetParameters669d8b21e4c99e7928f017d96aa4ee590c3050e9ee7812786ff738974097f24cS3Bucket8EC29361:
     Type: String
     Description: S3 bucket for asset
-      "1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782ee"
-  AssetParameters1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782eeS3VersionKey2AEB33CE:
+      "669d8b21e4c99e7928f017d96aa4ee590c3050e9ee7812786ff738974097f24c"
+  AssetParameters669d8b21e4c99e7928f017d96aa4ee590c3050e9ee7812786ff738974097f24cS3VersionKeyF6200A62:
     Type: String
     Description: S3 key for asset version
-      "1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782ee"
-  AssetParameters1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782eeArtifactHash9BCAC7E9:
+      "669d8b21e4c99e7928f017d96aa4ee590c3050e9ee7812786ff738974097f24c"
+  AssetParameters669d8b21e4c99e7928f017d96aa4ee590c3050e9ee7812786ff738974097f24cArtifactHash5BDAE58E:
     Type: String
     Description: Artifact hash for asset
-      "1c6b44f2c7a5d63a4c8752844bc2932878c21b6dc63bbb90fdf3582bdc5782ee"
-  AssetParameters15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622fS3BucketD12474B4:
+      "669d8b21e4c99e7928f017d96aa4ee590c3050e9ee7812786ff738974097f24c"
+  AssetParametersec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114S3Bucket6F15F130:
     Type: String
     Description: S3 bucket for asset
-      "15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622f"
-  AssetParameters15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622fS3VersionKey99E4F89D:
+      "ec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114"
+  AssetParametersec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114S3VersionKey0F6A742F:
     Type: String
     Description: S3 key for asset version
-      "15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622f"
-  AssetParameters15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622fArtifactHashC85449A8:
+      "ec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114"
+  AssetParametersec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114ArtifactHashA65B0FBE:
     Type: String
     Description: Artifact hash for asset
-      "15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622f"
+      "ec5ba82277d61b4c8f62eda97571cd57e350a84143f89d23270e8b9028d6f114"
   AssetParameters3c8f117f368bb6b603b3fae24bc441d91c776dc69b4c0d2415f401116b1b01abS3BucketB8697C36:
     Type: String
     Description: S3 bucket for asset

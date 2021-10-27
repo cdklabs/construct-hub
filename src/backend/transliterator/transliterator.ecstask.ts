@@ -56,7 +56,7 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
     }
 
     const language = requireEnv('TARGET_LANGUAGE');
-    console.log(`TARGET_LANGUAEG=${language}`);
+    console.log(`TARGET_LANGUAGE=${language}`);
     const created = new Array<S3Object>();
 
     const [, packageName, packageVersion] = event.assembly.key.match(ASSEMBLY_KEY_REGEX) ?? [];
