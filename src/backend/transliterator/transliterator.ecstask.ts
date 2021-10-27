@@ -89,7 +89,12 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
     const tarball = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'packages-')), 'package.tgz');
     await writeFile(tarball, readStream);
 
-    if (language !== 'typescript' && assembly.targets[language] == null) {
+    const isCSharpAndSupported = language === 'csharp' && assembly.targets.dotnet;
+    const isOtherwiseSupported = language === 'typescript' || assembly.targets[language];
+    if (
+      !isCSharpAndSupported
+      && !isOtherwiseSupported
+    ) {
       console.error(`Package ${assembly.name}@${assembly.version} does not support ${language}, skipping!`);
       console.log(`Assembly targets: ${JSON.stringify(assembly.targets, null, 2)}`);
       for (const submodule of [undefined, ...submodules]) {
