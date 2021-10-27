@@ -14,6 +14,7 @@ import { requireEnv } from '../shared/env.lambda-shared';
 import { DocumentationLanguage } from '../shared/language';
 import { shellOut } from '../shared/shell-out.lambda-shared';
 import { MetricName, METRICS_NAMESPACE } from './constants';
+import { writeFile } from './util';
 
 const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)${constants.ASSEMBLY_KEY_SUFFIX}$`);
 // Capture groups:                                                    ┗━━━━━━━━━1━━━━━━━┛  ┗━━2━━┛
@@ -79,6 +80,15 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
     const assembly = JSON.parse(assemblyResponse.Body.toString('utf-8'));
     const submodules = Object.keys(assembly.submodules ?? {}).map(s => s.split('.')[1]);
 
+    console.log(`Fetching package: ${event.package.key}`);
+    const tarballExists = await aws.s3ObjectExists(event.bucket, event.package.key);
+    if (!tarballExists) {
+      throw new Error(`Tarball does not exist at key ${event.package.key} in bucket ${event.bucket}.`);
+    }
+    const readStream = aws.s3().getObject({ Bucket: event.bucket, Key: event.package.key }).createReadStream();
+    const tarball = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'packages-')), 'package.tgz');
+    await writeFile(tarball, readStream);
+
     const isCSharpAndSupported = language === 'csharp' && assembly.targets.dotnet;
     const isOtherwiseSupported = language === 'typescript' || assembly.targets[language];
     if (
@@ -100,7 +110,7 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
       metrics.setNamespace(METRICS_NAMESPACE);
 
       const uploads = new Map<string, Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>>();
-      const docs = await docgen.Documentation.forPackage(packageFqn, { language: docgen.Language.fromString(lang) });
+      const docs = await docgen.Documentation.forPackage(tarball, { name: packageName, language: docgen.Language.fromString(lang) });
 
       function renderAndDispatch(submodule?: string) {
         console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);

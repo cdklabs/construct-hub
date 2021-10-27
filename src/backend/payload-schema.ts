@@ -21,7 +21,7 @@ export interface StateMachineInput {
 
 export type CatalogBuilderInput = Pick<StateMachineInput, 'package'> & { readonly startAfter?: string };
 
-export type TransliteratorInput = Pick<StateMachineInput, 'bucket' | 'assembly'>;
+export type TransliteratorInput = Pick<StateMachineInput, 'bucket' | 'assembly' | 'package'>;
 
 export interface S3ObjectVersion {
   readonly key: string;
