@@ -2536,7 +2536,7 @@ Resources:
                 - Ref: AWS::Region
                 - .
                 - Ref: AWS::URLSuffix
-                - /aws-cdk/assets:241d43031b419e2330345318039a5e0e2a5731b142a1465c503f77427d66c542
+                - /aws-cdk/assets:ff553f80018a6d407b19115d240490a69ee5528c059cb2cffcc89a6fa465fbe0
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -2767,8 +2767,12 @@ Resources:
           - ""
           - - '{"StartAt":"Track Execution Infos","States":{"Track Execution
               Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"DocGen"},"DocGen":{"Type":"Parallel","ResultPath":"$.DocGen","Next":"Any
-              Success?","Branches":[{"StartAt":"Prepare
-              python","States":{"Prepare
+              Success?","Branches":[{"StartAt":"Is python needed?","States":{"Is
+              python
+              needed?":{"Type":"Choice","Choices":[{"Or":[{"Variable":"$.languages","IsPresent":false},{"And":[{"Variable":"$.languages.python","IsPresent":true},{"Variable":"$.languages.python","BooleanEquals":true}]}],"Next":"Prepare
+              python"}],"Default":"Skip python"},"Skip
+              python":{"Type":"Pass","Result":{"language":"python","success":"NOOP
+              (Skipped)"},"ResultPath":"$","End":true},"Prepare
               python":{"Type":"Pass","ResultPath":"$","Parameters":{"command":{"bucket.$":"$.bucket","assembly.$":"$.assembly","$TaskExecution.$":"$.$TaskExecution"}},"Next":"Stringify
               python input"},"Stringify python
               input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
@@ -2781,7 +2785,7 @@ Resources:
               python docs\\"
               failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate python
               docs\\"
-              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"python"},"success.$":"$"}},"Resource":"arn:'
+              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":"python","success.$":"$"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
@@ -2798,14 +2802,18 @@ Resources:
             - '"]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"TARGET_LANGUAGE","Value":"python"},{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"\\"Generate
               python docs\\" timed
               out":{"Type":"Pass","Parameters":{"error":"Timed
-              out!","language":{"lang":"python"}},"End":true},"\\"Generate python
-              docs\\" service
-              error":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"python"}},"End":true},"\\"Generate
+              out!","language":"python"},"End":true},"\\"Generate python docs\\"
+              service
+              error":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":"python"},"End":true},"\\"Generate
               python docs\\"
-              failure":{"Type":"Pass","Parameters":{"error.$":"States.StringToJson($.Cause)","language":{"lang":"python"}},"End":true},"\\"Generate
+              failure":{"Type":"Pass","Parameters":{"error.$":"States.StringToJson($.Cause)","language":"python"},"End":true},"\\"Generate
               python docs\\"
-              fault":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"python"}},"End":true}}},{"StartAt":"Prepare
-              typescript","States":{"Prepare
+              fault":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":"python"},"End":true}}},{"StartAt":"Is
+              typescript needed?","States":{"Is typescript
+              needed?":{"Type":"Choice","Choices":[{"Or":[{"Variable":"$.languages","IsPresent":false},{"And":[{"Variable":"$.languages.typescript","IsPresent":true},{"Variable":"$.languages.typescript","BooleanEquals":true}]}],"Next":"Prepare
+              typescript"}],"Default":"Skip typescript"},"Skip
+              typescript":{"Type":"Pass","Result":{"language":"typescript","success":"NOOP
+              (Skipped)"},"ResultPath":"$","End":true},"Prepare
               typescript":{"Type":"Pass","ResultPath":"$","Parameters":{"command":{"bucket.$":"$.bucket","assembly.$":"$.assembly","$TaskExecution.$":"$.$TaskExecution"}},"Next":"Stringify
               typescript input"},"Stringify typescript
               input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
@@ -2818,7 +2826,7 @@ Resources:
               typescript docs\\"
               failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate
               typescript docs\\"
-              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"typescript"},"success.$":"$"}},"Resource":"arn:'
+              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":"typescript","success.$":"$"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
@@ -2835,14 +2843,18 @@ Resources:
             - '"]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"TARGET_LANGUAGE","Value":"typescript"},{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"\\"Generate
               typescript docs\\" timed
               out":{"Type":"Pass","Parameters":{"error":"Timed
-              out!","language":{"lang":"typescript"}},"End":true},"\\"Generate
-              typescript docs\\" service
-              error":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"typescript"}},"End":true},"\\"Generate
+              out!","language":"typescript"},"End":true},"\\"Generate typescript
+              docs\\" service
+              error":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":"typescript"},"End":true},"\\"Generate
               typescript docs\\"
-              failure":{"Type":"Pass","Parameters":{"error.$":"States.StringToJson($.Cause)","language":{"lang":"typescript"}},"End":true},"\\"Generate
+              failure":{"Type":"Pass","Parameters":{"error.$":"States.StringToJson($.Cause)","language":"typescript"},"End":true},"\\"Generate
               typescript docs\\"
-              fault":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"typescript"}},"End":true}}},{"StartAt":"Prepare
-              java","States":{"Prepare
+              fault":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":"typescript"},"End":true}}},{"StartAt":"Is
+              java needed?","States":{"Is java
+              needed?":{"Type":"Choice","Choices":[{"Or":[{"Variable":"$.languages","IsPresent":false},{"And":[{"Variable":"$.languages.java","IsPresent":true},{"Variable":"$.languages.java","BooleanEquals":true}]}],"Next":"Prepare
+              java"}],"Default":"Skip java"},"Skip
+              java":{"Type":"Pass","Result":{"language":"java","success":"NOOP
+              (Skipped)"},"ResultPath":"$","End":true},"Prepare
               java":{"Type":"Pass","ResultPath":"$","Parameters":{"command":{"bucket.$":"$.bucket","assembly.$":"$.assembly","$TaskExecution.$":"$.$TaskExecution"}},"Next":"Stringify
               java input"},"Stringify java
               input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
@@ -2855,7 +2867,7 @@ Resources:
               java docs\\"
               failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate java
               docs\\"
-              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"java"},"success.$":"$"}},"Resource":"arn:'
+              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":"java","success.$":"$"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
@@ -2871,14 +2883,18 @@ Resources:
                 - GroupId
             - '"]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"TARGET_LANGUAGE","Value":"java"},{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"\\"Generate
               java docs\\" timed out":{"Type":"Pass","Parameters":{"error":"Timed
-              out!","language":{"lang":"java"}},"End":true},"\\"Generate java
-              docs\\" service
-              error":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"java"}},"End":true},"\\"Generate
+              out!","language":"java"},"End":true},"\\"Generate java docs\\"
+              service
+              error":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":"java"},"End":true},"\\"Generate
               java docs\\"
-              failure":{"Type":"Pass","Parameters":{"error.$":"States.StringToJson($.Cause)","language":{"lang":"java"}},"End":true},"\\"Generate
+              failure":{"Type":"Pass","Parameters":{"error.$":"States.StringToJson($.Cause)","language":"java"},"End":true},"\\"Generate
               java docs\\"
-              fault":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"java"}},"End":true}}},{"StartAt":"Prepare
-              csharp","States":{"Prepare
+              fault":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":"java"},"End":true}}},{"StartAt":"Is
+              csharp needed?","States":{"Is csharp
+              needed?":{"Type":"Choice","Choices":[{"Or":[{"Variable":"$.languages","IsPresent":false},{"And":[{"Variable":"$.languages.csharp","IsPresent":true},{"Variable":"$.languages.csharp","BooleanEquals":true}]}],"Next":"Prepare
+              csharp"}],"Default":"Skip csharp"},"Skip
+              csharp":{"Type":"Pass","Result":{"language":"csharp","success":"NOOP
+              (Skipped)"},"ResultPath":"$","End":true},"Prepare
               csharp":{"Type":"Pass","ResultPath":"$","Parameters":{"command":{"bucket.$":"$.bucket","assembly.$":"$.assembly","$TaskExecution.$":"$.$TaskExecution"}},"Next":"Stringify
               csharp input"},"Stringify csharp
               input":{"Type":"Pass","ResultPath":"$","Parameters":{"commands.$":"States.Array(States.JsonToString($.command))"},"Next":"Generate
@@ -2891,7 +2907,7 @@ Resources:
               csharp docs\\"
               failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate csharp
               docs\\"
-              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":{"lang":"csharp"},"success.$":"$"}},"Resource":"arn:'
+              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.commands","ResultSelector":{"result":{"language":"csharp","success.$":"$"}},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
@@ -2908,13 +2924,13 @@ Resources:
             - '"]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"TARGET_LANGUAGE","Value":"csharp"},{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"\\"Generate
               csharp docs\\" timed
               out":{"Type":"Pass","Parameters":{"error":"Timed
-              out!","language":{"lang":"csharp"}},"End":true},"\\"Generate csharp
-              docs\\" service
-              error":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"csharp"}},"End":true},"\\"Generate
+              out!","language":"csharp"},"End":true},"\\"Generate csharp docs\\"
+              service
+              error":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":"csharp"},"End":true},"\\"Generate
               csharp docs\\"
-              failure":{"Type":"Pass","Parameters":{"error.$":"States.StringToJson($.Cause)","language":{"lang":"csharp"}},"End":true},"\\"Generate
+              failure":{"Type":"Pass","Parameters":{"error.$":"States.StringToJson($.Cause)","language":"csharp"},"End":true},"\\"Generate
               csharp docs\\"
-              fault":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":{"lang":"csharp"}},"End":true}}}]},"Any
+              fault":{"Type":"Pass","Parameters":{"error.$":"$.Cause","language":"csharp"},"End":true}}}]},"Any
               Success?":{"Type":"Choice","Choices":[{"Or":[{"Variable":"$.DocGen[0].error","IsPresent":false},{"Variable":"$.DocGen[1].error","IsPresent":false},{"Variable":"$.DocGen[2].error","IsPresent":false},{"Variable":"$.DocGen[3].error","IsPresent":false}],"Next":"Add
               to catalog.json"}],"Default":"Any Failure?"},"Any
               Failure?":{"Type":"Choice","Choices":[{"Or":[{"Variable":"$.DocGen[0].error","IsPresent":true},{"Variable":"$.DocGen[1].error","IsPresent":true},{"Variable":"$.DocGen[2].error","IsPresent":true},{"Variable":"$.DocGen[3].error","IsPresent":true}],"Next":"Send
