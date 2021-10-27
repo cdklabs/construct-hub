@@ -18,3 +18,26 @@ export function shellOut(cmd: string, ...args: readonly string[]): Promise<void>
     });
   });
 }
+
+/**
+ * Executes the specified command in a sub-shell. Instead of asserting success,
+ * this captures all data sent to `STDOUT` and returns that, with the command's
+ * exit code or signal.
+ */
+export function shellOutWithOutput(
+  cmd: string,
+  ...args: readonly string[],
+): Promise<{ exitCode: number; signal: NodeJS.Signals | null; stdout: Buffer; }> {
+  return new Promise((ok, ko) => {
+    const child = spawn(cmd, args, { stdio: ['ignore', 'pipe', 'inherit'] });
+    const chunks = new Array<Buffer>();
+    child.stdout.on('data', (chunk) => {
+      chunks.push(Buffer.from(chunk));
+    });
+    child.once('error', ko);
+    child.once('close', (exitCode, signal) => {
+      const stdout = Buffer.concat(chunks);
+      ok({ exitCode, signal, stdout });
+    });
+  });
+}

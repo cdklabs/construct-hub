@@ -85,6 +85,20 @@ test('external connection', () => {
             ],
           },
           RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
+          Upstreams: [{ 'Fn::GetAtt': ['RepoUpstreampublicnpmjsA8B06E28', 'Name'] }],
+        },
+      },
+      RepoUpstreampublicnpmjsA8B06E28: {
+        Type: 'AWS::CodeArtifact::Repository',
+        Properties: {
+          Description: 'Upstream with external connection to public:npmjs',
+          DomainName: {
+            'Fn::GetAtt': [
+              'RepoDomainC79FB030',
+              'Name',
+            ],
+          },
+          RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907-npmjs',
           ExternalConnections: ['public:npmjs'],
         },
       },

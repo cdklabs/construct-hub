@@ -33,6 +33,18 @@ Object {
     },
   },
   "Parameters": Object {
+    "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eArtifactHash73C06B94": Object {
+      "Description": "Artifact hash for asset \\"060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1e\\"",
+      "Type": "String",
+    },
+    "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3BucketD8E94875": Object {
+      "Description": "S3 bucket for asset \\"060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1e\\"",
+      "Type": "String",
+    },
+    "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3VersionKey6ABA2442": Object {
+      "Description": "S3 key for asset version \\"060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1e\\"",
+      "Type": "String",
+    },
     "AssetParameters141015d9750ce132a40866c30c003c906c4dfd4b0b1bdf624e24b79c1ba381b9ArtifactHash5A74AA12": Object {
       "Description": "Artifact hash for asset \\"141015d9750ce132a40866c30c003c906c4dfd4b0b1bdf624e24b79c1ba381b9\\"",
       "Type": "String",
@@ -187,18 +199,6 @@ Object {
     },
     "AssetParametersc5ed3506ccf141325c557e0e0c7990b8436c834222d75edcc64d8220f0e46245S3VersionKey2CD3E7D9": Object {
       "Description": "S3 key for asset version \\"c5ed3506ccf141325c557e0e0c7990b8436c834222d75edcc64d8220f0e46245\\"",
-      "Type": "String",
-    },
-    "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795ArtifactHash7CF56D65": Object {
-      "Description": "Artifact hash for asset \\"cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795\\"",
-      "Type": "String",
-    },
-    "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3Bucket6311A3CE": Object {
-      "Description": "S3 bucket for asset \\"cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795\\"",
-      "Type": "String",
-    },
-    "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9": Object {
-      "Description": "S3 key for asset version \\"cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795\\"",
       "Type": "String",
     },
     "AssetParameterscfb95243d32b912db8291fc6bc5e6631e01c6f262bddd14fd69b96603bb887f0ArtifactHash2CBE2485": Object {
@@ -1011,10 +1011,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Name",
           ],
         },
-        "ExternalConnections": Array [
-          "public:npmjs",
-        ],
         "RepositoryName": "c857fcb69e05ffe74ccbcc624c4f6a4017daeb8cbb",
+        "Upstreams": Array [
+          Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubCodeArtifactUpstreampublicnpmjs5122981E",
+              "Name",
+            ],
+          },
+        ],
       },
       "Type": "AWS::CodeArtifact::Repository",
     },
@@ -1189,6 +1194,22 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubCodeArtifactUpstreampublicnpmjs5122981E": Object {
+      "Properties": Object {
+        "Description": "Upstream with external connection to public:npmjs",
+        "DomainName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubCodeArtifactDomainFC30B796",
+            "Name",
+          ],
+        },
+        "ExternalConnections": Array [
+          "public:npmjs",
+        ],
+        "RepositoryName": "c857fcb69e05ffe74ccbcc624c4f6a4017daeb8cbb-npmjs",
+      },
+      "Type": "AWS::CodeArtifact::Repository",
     },
     "ConstructHubDenyListBucket1B3C2C2E": Object {
       "DeletionPolicy": "Delete",
@@ -1857,7 +1878,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3Bucket6311A3CE",
+            "Ref": "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3BucketD8E94875",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -1870,7 +1891,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9",
+                          "Ref": "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3VersionKey6ABA2442",
                         },
                       ],
                     },
@@ -1883,7 +1904,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9",
+                          "Ref": "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3VersionKey6ABA2442",
                         },
                       ],
                     },
@@ -1899,6 +1920,24 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "AWS_EMF_ENVIRONMENT": "Local",
             "BUCKET_NAME": Object {
               "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "CODE_ARTIFACT_DOMAIN_NAME": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifact1188409E",
+                "DomainName",
+              ],
+            },
+            "CODE_ARTIFACT_DOMAIN_OWNER": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifact1188409E",
+                "DomainOwner",
+              ],
+            },
+            "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifactGetEndpoint9A458FEF",
+                "repositoryEndpoint",
+              ],
             },
             "PACKAGE_LINKS": "[]",
             "PACKAGE_TAGS": "[]",
@@ -2558,6 +2597,79 @@ Direct link to the function: /lambda/home#/functions/",
                   ],
                 },
               ],
+            },
+            Object {
+              "Action": "sts:GetServiceBearerToken",
+              "Condition": Object {
+                "StringEquals": Object {
+                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
+                },
+              },
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "codeartifact:GetAuthorizationToken",
+                "codeartifact:GetRepositoryEndpoint",
+                "codeartifact:ReadFromRepository",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifactDomainFC30B796",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifact1188409E",
+                    "Arn",
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "codeartifact:PublishPackageVersion",
+                "codeartifact:PutPackageMetadata",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":codeartifact:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":package/",
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubCodeArtifact1188409E",
+                        "DomainName",
+                      ],
+                    },
+                    "/",
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubCodeArtifact1188409E",
+                        "Name",
+                      ],
+                    },
+                    "/npm/*",
+                  ],
+                ],
+              },
             },
             Object {
               "Action": "states:StartExecution",
@@ -6695,7 +6807,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:ed5eeb0e22bffdb797b689c6c8dacefbaedc31da834755ae9d67c73de88878d0",
+                  "/aws-cdk/assets:43785b1c782377e4a1cea3ee3db76e1a2aa616fe8b152a7d4b9061ae9e8d44d1",
                 ],
               ],
             },
@@ -9533,6 +9645,18 @@ Object {
     },
   },
   "Parameters": Object {
+    "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eArtifactHash73C06B94": Object {
+      "Description": "Artifact hash for asset \\"060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1e\\"",
+      "Type": "String",
+    },
+    "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3BucketD8E94875": Object {
+      "Description": "S3 bucket for asset \\"060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1e\\"",
+      "Type": "String",
+    },
+    "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3VersionKey6ABA2442": Object {
+      "Description": "S3 key for asset version \\"060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1e\\"",
+      "Type": "String",
+    },
     "AssetParameters141015d9750ce132a40866c30c003c906c4dfd4b0b1bdf624e24b79c1ba381b9ArtifactHash5A74AA12": Object {
       "Description": "Artifact hash for asset \\"141015d9750ce132a40866c30c003c906c4dfd4b0b1bdf624e24b79c1ba381b9\\"",
       "Type": "String",
@@ -9687,18 +9811,6 @@ Object {
     },
     "AssetParametersc5ed3506ccf141325c557e0e0c7990b8436c834222d75edcc64d8220f0e46245S3VersionKey2CD3E7D9": Object {
       "Description": "S3 key for asset version \\"c5ed3506ccf141325c557e0e0c7990b8436c834222d75edcc64d8220f0e46245\\"",
-      "Type": "String",
-    },
-    "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795ArtifactHash7CF56D65": Object {
-      "Description": "Artifact hash for asset \\"cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795\\"",
-      "Type": "String",
-    },
-    "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3Bucket6311A3CE": Object {
-      "Description": "S3 bucket for asset \\"cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795\\"",
-      "Type": "String",
-    },
-    "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9": Object {
-      "Description": "S3 key for asset version \\"cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795\\"",
       "Type": "String",
     },
     "AssetParameterscfb95243d32b912db8291fc6bc5e6631e01c6f262bddd14fd69b96603bb887f0ArtifactHash2CBE2485": Object {
@@ -11364,7 +11476,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3Bucket6311A3CE",
+            "Ref": "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3BucketD8E94875",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -11377,7 +11489,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9",
+                          "Ref": "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3VersionKey6ABA2442",
                         },
                       ],
                     },
@@ -11390,7 +11502,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9",
+                          "Ref": "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3VersionKey6ABA2442",
                         },
                       ],
                     },
@@ -11406,6 +11518,24 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "AWS_EMF_ENVIRONMENT": "Local",
             "BUCKET_NAME": Object {
               "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "CODE_ARTIFACT_DOMAIN_NAME": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifact1188409E",
+                "DomainName",
+              ],
+            },
+            "CODE_ARTIFACT_DOMAIN_OWNER": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifact1188409E",
+                "DomainOwner",
+              ],
+            },
+            "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifactGetEndpoint9A458FEF",
+                "repositoryEndpoint",
+              ],
             },
             "PACKAGE_LINKS": "[]",
             "PACKAGE_TAGS": "[]",
@@ -12065,6 +12195,93 @@ Direct link to the function: /lambda/home#/functions/",
                   ],
                 },
               ],
+            },
+            Object {
+              "Action": "sts:GetServiceBearerToken",
+              "Condition": Object {
+                "StringEquals": Object {
+                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
+                },
+              },
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "codeartifact:GetAuthorizationToken",
+                "codeartifact:GetRepositoryEndpoint",
+                "codeartifact:ReadFromRepository",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":codeartifact:",
+                      Object {
+                        "Ref": "AWS::Region",
+                      },
+                      ":",
+                      Object {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":domain/existing-domain-name",
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifact1188409E",
+                    "Arn",
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "codeartifact:PublishPackageVersion",
+                "codeartifact:PutPackageMetadata",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":codeartifact:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":package/",
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubCodeArtifact1188409E",
+                        "DomainName",
+                      ],
+                    },
+                    "/",
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubCodeArtifact1188409E",
+                        "Name",
+                      ],
+                    },
+                    "/npm/*",
+                  ],
+                ],
+              },
             },
             Object {
               "Action": "states:StartExecution",
@@ -16216,7 +16433,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:ed5eeb0e22bffdb797b689c6c8dacefbaedc31da834755ae9d67c73de88878d0",
+                  "/aws-cdk/assets:43785b1c782377e4a1cea3ee3db76e1a2aa616fe8b152a7d4b9061ae9e8d44d1",
                 ],
               ],
             },
@@ -19078,6 +19295,18 @@ Object {
     },
   },
   "Parameters": Object {
+    "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eArtifactHash73C06B94": Object {
+      "Description": "Artifact hash for asset \\"060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1e\\"",
+      "Type": "String",
+    },
+    "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3BucketD8E94875": Object {
+      "Description": "S3 bucket for asset \\"060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1e\\"",
+      "Type": "String",
+    },
+    "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3VersionKey6ABA2442": Object {
+      "Description": "S3 key for asset version \\"060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1e\\"",
+      "Type": "String",
+    },
     "AssetParameters141015d9750ce132a40866c30c003c906c4dfd4b0b1bdf624e24b79c1ba381b9ArtifactHash5A74AA12": Object {
       "Description": "Artifact hash for asset \\"141015d9750ce132a40866c30c003c906c4dfd4b0b1bdf624e24b79c1ba381b9\\"",
       "Type": "String",
@@ -19256,18 +19485,6 @@ Object {
     },
     "AssetParametersc5ed3506ccf141325c557e0e0c7990b8436c834222d75edcc64d8220f0e46245S3VersionKey2CD3E7D9": Object {
       "Description": "S3 key for asset version \\"c5ed3506ccf141325c557e0e0c7990b8436c834222d75edcc64d8220f0e46245\\"",
-      "Type": "String",
-    },
-    "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795ArtifactHash7CF56D65": Object {
-      "Description": "Artifact hash for asset \\"cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795\\"",
-      "Type": "String",
-    },
-    "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3Bucket6311A3CE": Object {
-      "Description": "S3 bucket for asset \\"cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795\\"",
-      "Type": "String",
-    },
-    "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9": Object {
-      "Description": "S3 key for asset version \\"cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795\\"",
       "Type": "String",
     },
     "AssetParameterscfb95243d32b912db8291fc6bc5e6631e01c6f262bddd14fd69b96603bb887f0ArtifactHash2CBE2485": Object {
@@ -20229,10 +20446,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Name",
           ],
         },
-        "ExternalConnections": Array [
-          "public:npmjs",
-        ],
         "RepositoryName": "c857fcb69e05ffe74ccbcc624c4f6a4017daeb8cbb",
+        "Upstreams": Array [
+          Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubCodeArtifactUpstreampublicnpmjs5122981E",
+              "Name",
+            ],
+          },
+        ],
       },
       "Type": "AWS::CodeArtifact::Repository",
     },
@@ -20407,6 +20629,22 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubCodeArtifactUpstreampublicnpmjs5122981E": Object {
+      "Properties": Object {
+        "Description": "Upstream with external connection to public:npmjs",
+        "DomainName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubCodeArtifactDomainFC30B796",
+            "Name",
+          ],
+        },
+        "ExternalConnections": Array [
+          "public:npmjs",
+        ],
+        "RepositoryName": "c857fcb69e05ffe74ccbcc624c4f6a4017daeb8cbb-npmjs",
+      },
+      "Type": "AWS::CodeArtifact::Repository",
     },
     "ConstructHubDenyListBucket1B3C2C2E": Object {
       "DeletionPolicy": "Delete",
@@ -21075,7 +21313,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3Bucket6311A3CE",
+            "Ref": "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3BucketD8E94875",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -21088,7 +21326,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9",
+                          "Ref": "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3VersionKey6ABA2442",
                         },
                       ],
                     },
@@ -21101,7 +21339,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9",
+                          "Ref": "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3VersionKey6ABA2442",
                         },
                       ],
                     },
@@ -21117,6 +21355,24 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "AWS_EMF_ENVIRONMENT": "Local",
             "BUCKET_NAME": Object {
               "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "CODE_ARTIFACT_DOMAIN_NAME": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifact1188409E",
+                "DomainName",
+              ],
+            },
+            "CODE_ARTIFACT_DOMAIN_OWNER": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifact1188409E",
+                "DomainOwner",
+              ],
+            },
+            "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifactGetEndpoint9A458FEF",
+                "repositoryEndpoint",
+              ],
             },
             "PACKAGE_LINKS": "[]",
             "PACKAGE_TAGS": "[]",
@@ -21776,6 +22032,79 @@ Direct link to the function: /lambda/home#/functions/",
                   ],
                 },
               ],
+            },
+            Object {
+              "Action": "sts:GetServiceBearerToken",
+              "Condition": Object {
+                "StringEquals": Object {
+                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
+                },
+              },
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "codeartifact:GetAuthorizationToken",
+                "codeartifact:GetRepositoryEndpoint",
+                "codeartifact:ReadFromRepository",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifactDomainFC30B796",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifact1188409E",
+                    "Arn",
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "codeartifact:PublishPackageVersion",
+                "codeartifact:PutPackageMetadata",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":codeartifact:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":package/",
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubCodeArtifact1188409E",
+                        "DomainName",
+                      ],
+                    },
+                    "/",
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubCodeArtifact1188409E",
+                        "Name",
+                      ],
+                    },
+                    "/npm/*",
+                  ],
+                ],
+              },
             },
             Object {
               "Action": "states:StartExecution",
@@ -25935,7 +26264,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:ed5eeb0e22bffdb797b689c6c8dacefbaedc31da834755ae9d67c73de88878d0",
+                  "/aws-cdk/assets:43785b1c782377e4a1cea3ee3db76e1a2aa616fe8b152a7d4b9061ae9e8d44d1",
                 ],
               ],
             },
@@ -29052,6 +29381,18 @@ Object {
     },
   },
   "Parameters": Object {
+    "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eArtifactHash73C06B94": Object {
+      "Description": "Artifact hash for asset \\"060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1e\\"",
+      "Type": "String",
+    },
+    "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3BucketD8E94875": Object {
+      "Description": "S3 bucket for asset \\"060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1e\\"",
+      "Type": "String",
+    },
+    "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3VersionKey6ABA2442": Object {
+      "Description": "S3 key for asset version \\"060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1e\\"",
+      "Type": "String",
+    },
     "AssetParameters141015d9750ce132a40866c30c003c906c4dfd4b0b1bdf624e24b79c1ba381b9ArtifactHash5A74AA12": Object {
       "Description": "Artifact hash for asset \\"141015d9750ce132a40866c30c003c906c4dfd4b0b1bdf624e24b79c1ba381b9\\"",
       "Type": "String",
@@ -29206,18 +29547,6 @@ Object {
     },
     "AssetParametersc5ed3506ccf141325c557e0e0c7990b8436c834222d75edcc64d8220f0e46245S3VersionKey2CD3E7D9": Object {
       "Description": "S3 key for asset version \\"c5ed3506ccf141325c557e0e0c7990b8436c834222d75edcc64d8220f0e46245\\"",
-      "Type": "String",
-    },
-    "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795ArtifactHash7CF56D65": Object {
-      "Description": "Artifact hash for asset \\"cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795\\"",
-      "Type": "String",
-    },
-    "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3Bucket6311A3CE": Object {
-      "Description": "S3 bucket for asset \\"cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795\\"",
-      "Type": "String",
-    },
-    "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9": Object {
-      "Description": "S3 key for asset version \\"cdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795\\"",
       "Type": "String",
     },
     "AssetParameterscfb95243d32b912db8291fc6bc5e6631e01c6f262bddd14fd69b96603bb887f0ArtifactHash2CBE2485": Object {
@@ -30030,10 +30359,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Name",
           ],
         },
-        "ExternalConnections": Array [
-          "public:npmjs",
-        ],
         "RepositoryName": "c857fcb69e05ffe74ccbcc624c4f6a4017daeb8cbb",
+        "Upstreams": Array [
+          Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubCodeArtifactUpstreampublicnpmjs5122981E",
+              "Name",
+            ],
+          },
+        ],
       },
       "Type": "AWS::CodeArtifact::Repository",
     },
@@ -30143,6 +30477,22 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubCodeArtifactUpstreampublicnpmjs5122981E": Object {
+      "Properties": Object {
+        "Description": "Upstream with external connection to public:npmjs",
+        "DomainName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubCodeArtifactDomainFC30B796",
+            "Name",
+          ],
+        },
+        "ExternalConnections": Array [
+          "public:npmjs",
+        ],
+        "RepositoryName": "c857fcb69e05ffe74ccbcc624c4f6a4017daeb8cbb-npmjs",
+      },
+      "Type": "AWS::CodeArtifact::Repository",
     },
     "ConstructHubDenyListBucket1B3C2C2E": Object {
       "DeletionPolicy": "Delete",
@@ -30811,7 +31161,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3Bucket6311A3CE",
+            "Ref": "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3BucketD8E94875",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -30824,7 +31174,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9",
+                          "Ref": "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3VersionKey6ABA2442",
                         },
                       ],
                     },
@@ -30837,7 +31187,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameterscdaa4fa23cccfc34f52d8a07d2f62a29c54796effddf5a55a009e516e9e8a795S3VersionKey36F40DC9",
+                          "Ref": "AssetParameters060078147c064907851ae45cf35eee04eb5463480d4cdd847358f93f75f0da1eS3VersionKey6ABA2442",
                         },
                       ],
                     },
@@ -30853,6 +31203,24 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "AWS_EMF_ENVIRONMENT": "Local",
             "BUCKET_NAME": Object {
               "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            "CODE_ARTIFACT_DOMAIN_NAME": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifact1188409E",
+                "DomainName",
+              ],
+            },
+            "CODE_ARTIFACT_DOMAIN_OWNER": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifact1188409E",
+                "DomainOwner",
+              ],
+            },
+            "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubCodeArtifactGetEndpoint9A458FEF",
+                "repositoryEndpoint",
+              ],
             },
             "PACKAGE_LINKS": "[]",
             "PACKAGE_TAGS": "[]",
@@ -31512,6 +31880,79 @@ Direct link to the function: /lambda/home#/functions/",
                   ],
                 },
               ],
+            },
+            Object {
+              "Action": "sts:GetServiceBearerToken",
+              "Condition": Object {
+                "StringEquals": Object {
+                  "sts:AWSServiceName": "codeartifact.amazonaws.com",
+                },
+              },
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "codeartifact:GetAuthorizationToken",
+                "codeartifact:GetRepositoryEndpoint",
+                "codeartifact:ReadFromRepository",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifactDomainFC30B796",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifact1188409E",
+                    "Arn",
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "codeartifact:PublishPackageVersion",
+                "codeartifact:PutPackageMetadata",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":codeartifact:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":package/",
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubCodeArtifact1188409E",
+                        "DomainName",
+                      ],
+                    },
+                    "/",
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubCodeArtifact1188409E",
+                        "Name",
+                      ],
+                    },
+                    "/npm/*",
+                  ],
+                ],
+              },
             },
             Object {
               "Action": "states:StartExecution",
@@ -34594,7 +35035,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:ed5eeb0e22bffdb797b689c6c8dacefbaedc31da834755ae9d67c73de88878d0",
+                  "/aws-cdk/assets:43785b1c782377e4a1cea3ee3db76e1a2aa616fe8b152a7d4b9061ae9e8d44d1",
                 ],
               ],
             },

@@ -118,13 +118,27 @@ export class Repository extends Construct implements IRepository {
 
     const domainName = props?.domainName ?? this.node.addr;
     const domain = props?.domainExists ? undefined : new CfnDomain(this, 'Domain', { domainName });
+    const repositoryName = props?.repositoryName ?? this.node.addr;
 
     const repository = new CfnRepository(this, 'Default', {
       description: props?.description,
       domainName: domain?.attrName ?? domainName,
-      externalConnections: Lazy.list({ produce: () => this.#externalConnections.length > 0 ? this.#externalConnections : undefined }),
-      repositoryName: props?.repositoryName ?? this.node.addr,
-      upstreams: props?.upstreams,
+      externalConnections: Lazy.list({
+        produce: () =>
+          !domain && this.#externalConnections.length > 0
+            ? this.#externalConnections
+            : undefined,
+      }),
+      repositoryName,
+      upstreams: Lazy.list({
+        produce: () =>
+          domain && this.#externalConnections.length > 0
+            ? [
+              ...(props?.upstreams ?? []),
+              ...this.#externalConnections.map((name) => this.makeUpstreamForId(name, { domain, repositoryName })),
+            ]
+            : props?.upstreams,
+      }),
     });
 
     this.repositoryDomainArn = domain?.attrArn ?? Stack.of(this).formatArn({
@@ -144,7 +158,7 @@ export class Repository extends Construct implements IRepository {
    *
    * @param id the id of the external connection (i.e: `public:npmjs`).
    */
-  public addExternalConnection(id: string): void {
+  public addExternalConnection(id: 'public:npmjs'): void {
     if (!this.#externalConnections.includes(id)) {
       this.#externalConnections.push(id);
     }
@@ -224,6 +238,26 @@ export class Repository extends Construct implements IRepository {
     });
   }
 
+  public grantPublishToRepository(grantee: IGrantable, format = 'npm'): Grant {
+    const readOnlyGrant = this.grantReadFromRepository(grantee);
+    if (!readOnlyGrant.success) {
+      return readOnlyGrant;
+    }
+    return Grant.addToPrincipal({
+      grantee,
+      actions: [
+        'codeartifact:PublishPackageVersion',
+        'codeartifact:PutPackageMetadata',
+      ],
+      resourceArns: [Stack.of(this).formatArn({
+        arnFormat: ArnFormat.SLASH_RESOURCE_NAME,
+        service: 'codeartifact',
+        resource: 'package',
+        resourceName: `${this.repositoryDomainName}/${this.repositoryName}/${format}/*`,
+      })],
+    });
+  }
+
   /**
    * Obtains a view of this repository that is intended to be accessed though
    * VPC endpoints.
@@ -283,5 +317,14 @@ export class Repository extends Construct implements IRepository {
       }
       return mainGrant;
     }
+  }
+
+  private makeUpstreamForId(externalConnection: string, { domain, repositoryName }: {domain: CfnDomain; repositoryName: string}): string {
+    return new CfnRepository(this, `Upstream:${externalConnection}`, {
+      domainName: domain.attrName,
+      description: `Upstream with external connection to ${externalConnection}`,
+      externalConnections: [externalConnection],
+      repositoryName: `${repositoryName}-${externalConnection.substr(7)}`,
+    }).attrName;
   }
 }

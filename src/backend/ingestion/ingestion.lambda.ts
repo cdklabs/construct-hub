@@ -10,6 +10,7 @@ import type { PackageTagConfig } from '../../package-tag';
 import type { PackageLinkConfig } from '../../webapp';
 import type { StateMachineInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
+import { CodeArtifactProps, codeArtifactPublishPackage } from '../shared/code-artifact.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
@@ -31,6 +32,17 @@ export const handler = metricScope(
     const STATE_MACHINE_ARN = requireEnv('STATE_MACHINE_ARN');
     const PACKAGE_LINKS = requireEnv('PACKAGE_LINKS');
     const PACKAGE_TAGS = requireEnv('PACKAGE_TAGS');
+
+    const codeArtifactProps: CodeArtifactProps | undefined = (function () {
+      const endpoint = process.env.CODE_ARTIFACT_REPOSITORY_ENDPOINT;
+      if (!endpoint) {
+        return undefined;
+      }
+      const domain = requireEnv('CODE_ARTIFACT_DOMAIN_NAME');
+      const domainOwner = process.env.CODE_ARTIFACT_DOMAIN_OWNER;
+      const apiEndpoint = process.env.CODE_ARTIFACT_API_ENDPOINT;
+      return { endpoint, domain, domainOwner, apiEndpoint };
+    })();
 
     const result = new Array<string>();
 
@@ -165,6 +177,12 @@ export const handler = metricScope(
 
         return accum;
       }, []);
+
+
+      if (codeArtifactProps) {
+        console.log('Publishing to the internal CodeArtifact...');
+        await codeArtifactPublishPackage(Buffer.from(tarball.Body!), codeArtifactProps);
+      }
 
       const metadata = {
         constructFramework,

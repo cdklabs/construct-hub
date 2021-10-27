@@ -245,6 +245,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     this.ingestion = new Ingestion(this, 'Ingestion', {
       bucket: packageData,
+      codeArtifact,
       orchestration,
       logRetention: props.logRetention,
       monitoring,
