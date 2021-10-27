@@ -281,15 +281,15 @@ export class Orchestration extends Construct {
                       { errors: ['States.Timeout'] },
                     )
                     .addCatch(
-                      new Pass(this, `"Generate ${language} docs" service error`, { parameters: { 'error.$': '$.Cause', language: language.toString() } }),
+                      new Pass(this, `"Generate ${language} docs" service error`, { parameters: { 'error.$': '$.Cause', 'language': language.toString() } }),
                       { errors: ['ECS.AmazonECSException', 'ECS.InvalidParameterException'] },
                     )
                     .addCatch(
-                      new Pass(this, `"Generate ${language} docs" failure`, { parameters: { 'error.$': 'States.StringToJson($.Cause)', language: language.toString() } }),
+                      new Pass(this, `"Generate ${language} docs" failure`, { parameters: { 'error.$': 'States.StringToJson($.Cause)', 'language': language.toString() } }),
                       { errors: ['States.TaskFailed'] },
                     )
                     .addCatch(
-                      new Pass(this, `"Generate ${language} docs" fault`, { parameters: { 'error.$': '$.Cause', language: language.toString() } }),
+                      new Pass(this, `"Generate ${language} docs" fault`, { parameters: { 'error.$': '$.Cause', 'language': language.toString() } }),
                       { errors: ['States.ALL'] },
                     ))),
             )
