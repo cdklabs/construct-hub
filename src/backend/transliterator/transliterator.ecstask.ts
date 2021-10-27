@@ -79,9 +79,7 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
     const assembly = JSON.parse(assemblyResponse.Body.toString('utf-8'));
     const submodules = Object.keys(assembly.submodules ?? {}).map(s => s.split('.')[1]);
 
-    const isCSharpSupported = language === 'csharp' && assembly.targets.dotnet;
-    const isUnsupported = !isCSharpSupported || (language !== 'typescript' && assembly.targets[language] == null);
-    if (isUnsupported) {
+    if (language !== 'typescript' && assembly.targets[language] == null) {
       console.error(`Package ${assembly.name}@${assembly.version} does not support ${language}, skipping!`);
       console.log(`Assembly targets: ${JSON.stringify(assembly.targets, null, 2)}`);
       for (const submodule of [undefined, ...submodules]) {
