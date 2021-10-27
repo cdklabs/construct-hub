@@ -471,6 +471,8 @@ function newEcsTask(entrypoint) {
   df.line(' && yum install -y git nodejs \\');
   // The entry point requires aws-sdk to be available, so we install it locally.
   df.line(' && npm install --no-save aws-sdk@^2.957.0 \\');
+  // npm@8 is required by jsii-docgen
+  df.line(' && npm install --no-save npm@8 \\');
   // Clean up the yum cache in the interest of image size
   df.line(' && yum clean all \\');
   df.line(' && rm -rf /var/cache/yum');

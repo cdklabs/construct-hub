@@ -1,6 +1,7 @@
 import * as spec from '@jsii/spec';
 
 import * as AWS from 'aws-sdk';
+import type { AWSError } from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import { Documentation } from 'jsii-docgen';
 
@@ -8,10 +9,19 @@ import type { TransliteratorInput } from '../../../backend/payload-schema';
 import { reset } from '../../../backend/shared/aws.lambda-shared';
 import * as constants from '../../../backend/shared/constants';
 import { handler } from '../../../backend/transliterator/transliterator.ecstask';
+import { writeFile } from '../../../backend/transliterator/util';
 
 jest.mock('child_process');
 jest.mock('jsii-docgen');
 jest.mock('../../../backend/shared/code-artifact.lambda-shared');
+jest.mock('../../../backend/transliterator/util');
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const mockWriteFile = require('../../../backend/transliterator/util').writeFile as jest.MockedFunction<typeof writeFile>;
+mockWriteFile.mockImplementation(async (filePath: string) => {
+  expect(filePath.endsWith('package.tgz')).toEqual(true);
+  return Promise.resolve(true);
+});
 
 type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
 
@@ -66,14 +76,21 @@ describe('VPC Endpoints', () => {
         key: `${constants.STORAGE_KEY_PREFIX}@${packageScope}/${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
         versionId: 'VersionId',
       },
+      package: {
+        key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`,
+        versionId: 'VersionId',
+      },
     };
 
     const assembly: spec.Assembly = {
       targets: { python: {} },
     } as any;
 
-    // mock the assembly request
-    mockFetchAssembly(assembly);
+    // mock the s3ObjectExists call
+    mockHeadRequest('package.tgz');
+
+    // mock the assembly and tarball requests
+    mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
 
     // mock the file uploads
     mockPutDocs('/docs-typescript.md');
@@ -109,14 +126,21 @@ test('uploads a file per language (scoped package)', async () => {
       key: `${constants.STORAGE_KEY_PREFIX}@${packageScope}/${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
       versionId: 'VersionId',
     },
+    package: {
+      key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`,
+      versionId: 'VersionId',
+    },
   };
 
   const assembly: spec.Assembly = {
     targets: { python: {} },
   } as any;
 
-  // mock the assembly request
-  mockFetchAssembly(assembly);
+  // mock the s3ObjectExists call
+  mockHeadRequest('package.tgz');
+
+  // mock the assembly and tarball requests
+  mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
 
   // mock the file uploads
   mockPutDocs('/docs-typescript.md');
@@ -144,6 +168,10 @@ test('uploads a file per submodule (unscoped package)', async () => {
       key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
       versionId: 'VersionId',
     },
+    package: {
+      key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`,
+      versionId: 'VersionId',
+    },
   };
 
   const assembly: spec.Assembly = {
@@ -151,8 +179,11 @@ test('uploads a file per submodule (unscoped package)', async () => {
     submodules: { '@scope/package-name.sub1': {}, '@scope/package-name.sub2': {} },
   } as any;
 
-  // mock the assembly request
-  mockFetchAssembly(assembly);
+  // mock the s3ObjectExists call
+  mockHeadRequest('package.tgz');
+
+  // mock the assembly and tarball requests
+  mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
 
   // mock the file uploads
   mockPutDocs(
@@ -201,6 +232,10 @@ describe('markers for un-supported languages', () => {
         key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
         versionId: 'VersionId',
       },
+      package: {
+        key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`,
+        versionId: 'VersionId',
+      },
     };
 
     const assembly: spec.Assembly = {
@@ -208,8 +243,11 @@ describe('markers for un-supported languages', () => {
       submodules: { 'package-name.sub1': {}, 'package-name.sub2': {} },
     } as any;
 
-    // mock the assembly request
-    mockFetchAssembly(assembly);
+    // mock the s3ObjectExists call
+    mockHeadRequest('package.tgz');
+
+    // mock the assembly and tarball requests
+    mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
 
     // mock the file uploads
     mockPutDocs(
@@ -238,15 +276,33 @@ class MockDocumentation {
   }
 }
 
-function mockFetchAssembly(response: spec.Assembly) {
+function mockFetchRequests(assembly: spec.Assembly, tarball: Buffer) {
   AWSMock.mock('S3', 'getObject', (request: AWS.S3.GetObjectRequest, callback: Response<AWS.S3.GetObjectOutput>) => {
     if (request.Key.endsWith(constants.ASSEMBLY_KEY_SUFFIX)) {
       callback(null, {
-        Body: JSON.stringify(response),
+        Body: JSON.stringify(assembly),
+      });
+    } else if (request.Key.endsWith(constants.PACKAGE_KEY_SUFFIX)) {
+      callback(null, {
+        Body: JSON.stringify(tarball),
       });
     } else {
       throw new Error(`Unexpected GET request: ${request.Key}`);
     }
+  });
+}
+
+function mockHeadRequest(key: string) {
+  AWSMock.mock('S3', 'headObject', (req: AWS.S3.HeadObjectRequest, cb: Response<AWS.S3.HeadObjectOutput>) => {
+    if (req.Key.endsWith(key)) {
+      return cb(null, {});
+    }
+    class NotFound extends Error implements AWSError {
+      public code = 'NotFound';
+      public message = 'Not Found';
+      public time = new Date();
+    }
+    return cb(new NotFound());
   });
 }
 
