@@ -30,7 +30,7 @@ const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]
  * @returns nothing
  */
 export function handler(event: TransliteratorInput): Promise<S3Object[]> {
-  console.log(JSON.stringify(event, null, 2));
+  console.log(`Event: ${JSON.stringify(event, null, 2)}`);
   // We'll need a writable $HOME directory, or this won't work well, because
   // npm will try to write stuff like the `.npmrc` or package caches in there
   // and that'll bail out on EROFS if that fails.
@@ -56,6 +56,7 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
     }
 
     const language = requireEnv('TARGET_LANGUAGE');
+    console.log(`TARGET_LANGUAGE=${language}`);
     const created = new Array<S3Object>();
 
     const [, packageName, packageVersion] = event.assembly.key.match(ASSEMBLY_KEY_REGEX) ?? [];
