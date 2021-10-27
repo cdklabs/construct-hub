@@ -60,31 +60,105 @@ test('package links', () => {
   });
 });
 
-test('package tags', () => {
-  // GIVEN
-  const config = new WebappConfig({
-    packageTags: [
-      {
-        label: 'Official',
-        color: '#00FF00',
-        condition: TagCondition.or(
-          TagCondition.field('name').eq('construct-hub'),
-          TagCondition.field('name').eq('construct-hub-webapp'),
-        ).bind(),
-      },
-    ],
+describe('package tags', () => {
+  test('keyword', () => {
+    // GIVEN
+    const id = 'ID';
+    const keyword = {
+      label: 'Official',
+      color: '#00FF00',
+    };
+    const config = new WebappConfig({
+      packageTags: [
+        {
+          id,
+          keyword,
+          condition: TagCondition.or(
+            TagCondition.field('name').eq('construct-hub'),
+            TagCondition.field('name').eq('construct-hub-webapp'),
+          ).bind(),
+        },
+      ],
+    });
+
+    // THEN
+    const file = readJsonSync(config.path);
+    expect(file).toEqual({
+      ...DEFAULT_CONFIG,
+      packageTags: [
+        {
+          id,
+          keyword,
+        },
+      ],
+    });
   });
 
-  // THEN
-  const file = readJsonSync(config.path);
-  expect(file).toEqual({
-    ...DEFAULT_CONFIG,
-    packageTags: [
-      {
-        color: '#00FF00',
-        label: 'Official',
-      },
-    ],
+  test('highlight', () => {
+    // GIVEN
+    const id = 'ID';
+    const highlight = {
+      label: 'Official',
+      color: '#00FF00',
+      icon: 'ICONPATH',
+    };
+    const config = new WebappConfig({
+      packageTags: [
+        {
+          id,
+          highlight,
+          condition: TagCondition.or(
+            TagCondition.field('name').eq('construct-hub'),
+            TagCondition.field('name').eq('construct-hub-webapp'),
+          ).bind(),
+        },
+      ],
+    });
+
+    // THEN
+    const file = readJsonSync(config.path);
+    expect(file).toEqual({
+      ...DEFAULT_CONFIG,
+      packageTags: [
+        {
+          id,
+          highlight,
+        },
+      ],
+    });
+  });
+
+  test('search filter', () => {
+    // GIVEN
+    const id = 'ID';
+    const searchFilter = {
+      groupBy: 'FILTERNAME',
+      display: 'DISPLAY',
+    };
+    const config = new WebappConfig({
+      packageTags: [
+        {
+          id,
+          searchFilter,
+          condition: TagCondition.or(
+            TagCondition.field('name').eq('construct-hub'),
+            TagCondition.field('name').eq('construct-hub-webapp'),
+          ).bind(),
+        },
+      ],
+    });
+
+    // THEN
+    const file = readJsonSync(config.path);
+    expect(file).toEqual({
+      ...DEFAULT_CONFIG,
+      packageTags: [
+        {
+          id,
+          searchFilter,
+        },
+      ],
+    });
   });
 });
 

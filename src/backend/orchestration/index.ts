@@ -114,7 +114,7 @@ export class Orchestration extends Construct {
   /**
    * The function that builds the catalog.
    */
-  public readonly catalogBuilder: IFunction;
+  public readonly catalogBuilder: CatalogBuilder;
 
   /**
    * The ECS cluster used to run tasks.
@@ -166,10 +166,10 @@ export class Orchestration extends Construct {
       resultPath: JsonPath.DISCARD,
     });
 
-    this.catalogBuilder = new CatalogBuilder(this, 'CatalogBuilder', props).function;
+    this.catalogBuilder = new CatalogBuilder(this, 'CatalogBuilder', props);
 
     const addToCatalog = new tasks.LambdaInvoke(this, 'Add to catalog.json', {
-      lambdaFunction: this.catalogBuilder,
+      lambdaFunction: this.catalogBuilder.function,
       resultPath: '$.catalogBuilderOutput',
       resultSelector: {
         'ETag.$': '$.Payload.ETag',
@@ -244,6 +244,8 @@ export class Orchestration extends Construct {
                 inputPath: '$.commands',
                 language,
                 resultSelector: { result: { 'language': language, 'success.$': '$' } },
+                // Expect this to complete within one hour
+                timeout: Duration.hours(1),
                 vpcSubnets: props.vpcSubnets,
               })
                 // Do not retry NoSpaceLeftOnDevice errors, these are typically not transient.
@@ -256,6 +258,13 @@ export class Orchestration extends Construct {
                     'jsii-codgen.NpmError.EPROTO', // Sporadic TLS negotiation failures we see in logs, transient
                   ],
                   ...THROTTLE_RETRY_POLICY,
+                })
+                .addRetry({
+                  errors: ['jsii-docgen.NpmError.ETARGET'], // Seen when dependencies aren't available yet
+                  // We'll wait longer between retries. This is to account for CodeArtifact's lag behind npm
+                  backoffRate: 2,
+                  interval: Duration.minutes(5),
+                  maxAttempts: 3,
                 })
                 .addRetry({ maxAttempts: 3 })
                 .addCatch(

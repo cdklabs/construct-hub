@@ -1,4 +1,4 @@
-interface PackageTagBase {
+interface PackageTagPresentationBase {
   /**
    * The label for the tag being applied
    */
@@ -8,6 +8,52 @@ interface PackageTagBase {
    * The hex value string for the color of the tag when displayed
    */
   readonly color?: string;
+}
+
+export interface Keyword extends PackageTagPresentationBase {}
+
+export interface Highlight extends PackageTagPresentationBase{
+  /**
+   * Icon displayed next to highlight on package card
+   */
+  readonly icon?: string;
+}
+
+export interface SearchFilter {
+  /**
+   * Display name for filter
+   */
+  readonly display: string;
+
+  /**
+   * Name of group to include filter in
+   */
+  readonly groupBy: string;
+}
+
+export interface PackageTagBase {
+  /**
+   * Identifier for tag, used for search. Must be unique amongst tags.
+   */
+  readonly id: string;
+
+  /**
+   * Configuration for higlighting tag on package card
+   * @default don't highlight tag
+   */
+  readonly highlight?: Highlight;
+
+  /**
+   * Configuration for showing tag as keyword
+   * @default don't show tag in keyword list
+   */
+  readonly keyword?: Keyword;
+
+  /**
+   * Configuration for showing tag as search filter
+   * @default don't show tag in search filters
+   */
+  readonly searchFilter?: SearchFilter;
 }
 
 /**
@@ -88,6 +134,8 @@ export enum TagConditionLogicType {
   OR = 'OR',
   NOT = 'NOT',
   EQUALS = 'EQUALS',
+  INCLUDES = 'INCLUDES',
+  STARTS_WITH = 'STARTS_WITH',
 }
 
 class TagConditionLogic extends TagCondition {
@@ -139,6 +187,32 @@ export class TagConditionField {
   public eq(value: any): TagCondition {
     return new TagConditionPredicate(
       TagConditionLogicType.EQUALS,
+      this.field,
+      value,
+    );
+  }
+
+  /**
+   * Create a `field.includes(value)` condition which applies if the specified
+   * field within the package's package.json includes the value. This works for
+   * arrays or strings.
+   */
+  public includes(value: any): TagCondition {
+    return new TagConditionPredicate(
+      TagConditionLogicType.INCLUDES,
+      this.field,
+      value,
+    );
+  }
+
+  /**
+   * Create a `field.startsWith(value)` condition which applies if the specified
+   * field within the package's package.json begins with the value. This works
+   * only for string values.
+   */
+  public startsWith(value: string): TagCondition {
+    return new TagConditionPredicate(
+      TagConditionLogicType.STARTS_WITH,
       this.field,
       value,
     );
