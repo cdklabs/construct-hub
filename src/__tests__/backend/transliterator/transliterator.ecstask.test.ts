@@ -20,7 +20,7 @@ jest.mock('../../../backend/transliterator/util');
 const mockWriteFile = require('../../../backend/transliterator/util').writeFile as jest.MockedFunction<typeof writeFile>;
 mockWriteFile.mockImplementation(async (filePath: string) => {
   expect(filePath.endsWith('package.tgz')).toEqual(true);
-  return Promise.resolve(true);
+  return Promise.resolve();
 });
 
 type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
