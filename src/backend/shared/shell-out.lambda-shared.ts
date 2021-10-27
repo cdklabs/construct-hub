@@ -24,10 +24,7 @@ export function shellOut(cmd: string, ...args: readonly string[]): Promise<void>
  * this captures all data sent to `STDOUT` and returns that, with the command's
  * exit code or signal.
  */
-export function shellOutWithOutput(
-  cmd: string,
-  ...args: readonly string[],
-): Promise<{ exitCode: number; signal: NodeJS.Signals | null; stdout: Buffer; }> {
+export function shellOutWithOutput(cmd: string, ...args: readonly string[]): Promise<ShellOutResult> {
   return new Promise((ok, ko) => {
     const child = spawn(cmd, args, { stdio: ['ignore', 'pipe', 'inherit'] });
     const chunks = new Array<Buffer>();
@@ -40,4 +37,10 @@ export function shellOutWithOutput(
       ok({ exitCode, signal, stdout });
     });
   });
+}
+
+export interface ShellOutResult {
+  readonly exitCode: number | null;
+  readonly signal: NodeJS.Signals | null;
+  readonly stdout: Buffer;
 }
