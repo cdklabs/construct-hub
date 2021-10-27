@@ -497,8 +497,6 @@ function newEcsTask(entrypoint) {
   df.line('RUN curl -sL https://rpm.nodesource.com/setup_16.x | bash - \\');
   df.line(' && yum update -y \\');
   df.line(' && yum install -y git nodejs \\');
-  // npm@8 is required by jsii-docgen
-  df.line(' && npm install --no-save npm@8 \\');
   // Clean up the yum cache in the interest of image size
   df.line(' && yum clean all \\');
   df.line(' && rm -rf /var/cache/yum');
