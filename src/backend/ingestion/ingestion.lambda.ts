@@ -20,11 +20,6 @@ import { MetricName, METRICS_NAMESPACE } from './constants';
 
 Configuration.namespace = METRICS_NAMESPACE;
 
-interface Config {
-  packageTags: PackageTagConfig[];
-  packageLinks: PackageLinkConfig[];
-}
-
 export const handler = metricScope(
   (metrics) => async (event: SQSEvent, context: Context) => {
     console.log(`Event: ${JSON.stringify(event, null, 2)}`);
@@ -37,12 +32,8 @@ export const handler = metricScope(
     const CONFIG_BUCKET_NAME = requireEnv('CONFIG_BUCKET_NAME');
     const CONFIG_FILE_KEY = requireEnv('CONFIG_FILE_KEY');
 
-    const configReq = await aws.s3().getObject({
-      Bucket: CONFIG_BUCKET_NAME,
-      Key: CONFIG_FILE_KEY,
-    }).promise();
-    const config: string = configReq?.Body?.toString() ?? '';
-    const { packageTags: packageTagsConfig, packageLinks: allowedLinks }: Config = JSON.parse(config);
+    // Load configuration
+    const { packageTags: packageTagsConfig, packageLinks: allowedLinks }: Config = await getConfig(CONFIG_BUCKET_NAME, CONFIG_FILE_KEY);
 
     const result = new Array<string>();
 
@@ -403,4 +394,37 @@ function sfnExecutionNameFromParts(
     .digest('hex')
     .substring(0, 6);
   return `${name.substring(0, 80 - suffix.length - 1)}_${suffix}`;
+}
+
+/**
+ * Ingestion configuration for package links and tags
+ */
+interface Config {
+  packageTags: PackageTagConfig[];
+  packageLinks: PackageLinkConfig[];
+}
+
+/**
+ * Looks for the ingestion configuration file in the passed bucket and parses
+ * it. If it is not found or invalid then a default is returned.
+ */
+async function getConfig(bucket: string, key: string): Promise<Config> {
+  const defaultConfig = {
+    packageTags: [],
+    packageLinks: [],
+  };
+  try {
+    const req = await aws.s3().getObject({
+      Bucket: bucket,
+      Key: key,
+    }).promise();
+    const body = req?.Body?.toString();
+    if (body) {
+      return JSON.parse(body);
+    }
+    return defaultConfig;
+  } catch (e) {
+    console.error(e);
+    return defaultConfig;
+  }
 }
