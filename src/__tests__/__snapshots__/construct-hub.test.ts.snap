@@ -1047,6 +1047,12 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Name",
             ],
           },
+          Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubCodeArtifactPublishing143CC07C",
+              "Name",
+            ],
+          },
         ],
       },
       "Type": "AWS::CodeArtifact::Repository",
@@ -1222,6 +1228,120 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubCodeArtifactGetPublishingEndpoint6394DEF7": Object {
+      "DeletionPolicy": "Delete",
+      "DependsOn": Array [
+        "ConstructHubCodeArtifactGetPublishingEndpointCustomResourcePolicyE039B00F",
+      ],
+      "Properties": Object {
+        "Create": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"getRepositoryEndpoint\\",\\"parameters\\":{\\"domain\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainName",
+                ],
+              },
+              "\\",\\"domainOwner\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainOwner",
+                ],
+              },
+              "\\",\\"format\\":\\"npm\\",\\"repository\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifactPublishing143CC07C",
+                  "Name",
+                ],
+              },
+              "\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"repositoryEndpoint\\"}}",
+            ],
+          ],
+        },
+        "InstallLatestAwsSdk": true,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+            "Arn",
+          ],
+        },
+        "Update": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"getRepositoryEndpoint\\",\\"parameters\\":{\\"domain\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainName",
+                ],
+              },
+              "\\",\\"domainOwner\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainOwner",
+                ],
+              },
+              "\\",\\"format\\":\\"npm\\",\\"repository\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifactPublishing143CC07C",
+                  "Name",
+                ],
+              },
+              "\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"repositoryEndpoint\\"}}",
+            ],
+          ],
+        },
+      },
+      "Type": "Custom::CodeArtifactNpmRepositoryEndpoint",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubCodeArtifactGetPublishingEndpointCustomResourcePolicyE039B00F": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "codeartifact:GetRepositoryEndpoint",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifactPublishing143CC07C",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubCodeArtifactGetPublishingEndpointCustomResourcePolicyE039B00F",
+        "Roles": Array [
+          Object {
+            "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubCodeArtifactPublishing143CC07C": Object {
+      "Properties": Object {
+        "Description": "Publishing repository",
+        "DomainName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubCodeArtifactDomainFC30B796",
+            "Name",
+          ],
+        },
+        "RepositoryName": "c857fcb69e05ffe74ccbcc624c4f6a4017daeb8cbb-publish-overlay",
+      },
+      "Type": "AWS::CodeArtifact::Repository",
     },
     "ConstructHubCodeArtifactUpstreampublicnpmjs5122981E": Object {
       "Properties": Object {
@@ -1963,7 +2083,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
               "Fn::GetAtt": Array [
-                "ConstructHubCodeArtifactGetEndpoint9A458FEF",
+                "ConstructHubCodeArtifactGetPublishingEndpoint6394DEF7",
                 "repositoryEndpoint",
               ],
             },
@@ -2849,6 +2969,12 @@ Direct link to the function: /lambda/home#/functions/",
                     "Arn",
                   ],
                 },
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifactPublishing143CC07C",
+                    "Arn",
+                  ],
+                },
               ],
             },
             Object {
@@ -2883,7 +3009,7 @@ Direct link to the function: /lambda/home#/functions/",
                     "/",
                     Object {
                       "Fn::GetAtt": Array [
-                        "ConstructHubCodeArtifact1188409E",
+                        "ConstructHubCodeArtifactPublishing143CC07C",
                         "Name",
                       ],
                     },
@@ -7235,7 +7361,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:df82ba5708874bf8d73cba60a8af41b59fdfe0d2b0840ea47a324f915d4e4ff4",
+                  "/aws-cdk/assets:17d7c83246affa8f4cf34ef254747962699b1bdd71b588caa6b65243f3dce12e",
                 ],
               ],
             },
@@ -7412,6 +7538,12 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                 Object {
                   "Fn::GetAtt": Array [
                     "ConstructHubCodeArtifact1188409E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifactPublishing143CC07C",
                     "Arn",
                   ],
                 },
@@ -11489,6 +11621,93 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::IAM::Policy",
     },
+    "ConstructHubCodeArtifactGetPublishingEndpoint6394DEF7": Object {
+      "DeletionPolicy": "Delete",
+      "DependsOn": Array [
+        "ConstructHubCodeArtifactGetPublishingEndpointCustomResourcePolicyE039B00F",
+      ],
+      "Properties": Object {
+        "Create": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"getRepositoryEndpoint\\",\\"parameters\\":{\\"domain\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainName",
+                ],
+              },
+              "\\",\\"domainOwner\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainOwner",
+                ],
+              },
+              "\\",\\"format\\":\\"npm\\",\\"repository\\":\\"c857fcb69e05ffe74ccbcc624c4f6a4017daeb8cbb\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"repositoryEndpoint\\"}}",
+            ],
+          ],
+        },
+        "InstallLatestAwsSdk": true,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+            "Arn",
+          ],
+        },
+        "Update": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"getRepositoryEndpoint\\",\\"parameters\\":{\\"domain\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainName",
+                ],
+              },
+              "\\",\\"domainOwner\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainOwner",
+                ],
+              },
+              "\\",\\"format\\":\\"npm\\",\\"repository\\":\\"c857fcb69e05ffe74ccbcc624c4f6a4017daeb8cbb\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"repositoryEndpoint\\"}}",
+            ],
+          ],
+        },
+      },
+      "Type": "Custom::CodeArtifactNpmRepositoryEndpoint",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubCodeArtifactGetPublishingEndpointCustomResourcePolicyE039B00F": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "codeartifact:GetRepositoryEndpoint",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifact1188409E",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubCodeArtifactGetPublishingEndpointCustomResourcePolicyE039B00F",
+        "Roles": Array [
+          Object {
+            "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "ConstructHubDenyListBucket1B3C2C2E": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
@@ -12213,7 +12432,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
               "Fn::GetAtt": Array [
-                "ConstructHubCodeArtifactGetEndpoint9A458FEF",
+                "ConstructHubCodeArtifactGetPublishingEndpoint6394DEF7",
                 "repositoryEndpoint",
               ],
             },
@@ -13144,14 +13363,7 @@ Direct link to the function: /lambda/home#/functions/",
                         "DomainName",
                       ],
                     },
-                    "/",
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubCodeArtifact1188409E",
-                        "Name",
-                      ],
-                    },
-                    "/npm/*",
+                    "/c857fcb69e05ffe74ccbcc624c4f6a4017daeb8cbb/npm/*",
                   ],
                 ],
               },
@@ -17513,7 +17725,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:df82ba5708874bf8d73cba60a8af41b59fdfe0d2b0840ea47a324f915d4e4ff4",
+                  "/aws-cdk/assets:17d7c83246affa8f4cf34ef254747962699b1bdd71b588caa6b65243f3dce12e",
                 ],
               ],
             },
@@ -21786,6 +21998,12 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Name",
             ],
           },
+          Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubCodeArtifactPublishing143CC07C",
+              "Name",
+            ],
+          },
         ],
       },
       "Type": "AWS::CodeArtifact::Repository",
@@ -21961,6 +22179,120 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubCodeArtifactGetPublishingEndpoint6394DEF7": Object {
+      "DeletionPolicy": "Delete",
+      "DependsOn": Array [
+        "ConstructHubCodeArtifactGetPublishingEndpointCustomResourcePolicyE039B00F",
+      ],
+      "Properties": Object {
+        "Create": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"getRepositoryEndpoint\\",\\"parameters\\":{\\"domain\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainName",
+                ],
+              },
+              "\\",\\"domainOwner\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainOwner",
+                ],
+              },
+              "\\",\\"format\\":\\"npm\\",\\"repository\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifactPublishing143CC07C",
+                  "Name",
+                ],
+              },
+              "\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"repositoryEndpoint\\"}}",
+            ],
+          ],
+        },
+        "InstallLatestAwsSdk": true,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+            "Arn",
+          ],
+        },
+        "Update": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"getRepositoryEndpoint\\",\\"parameters\\":{\\"domain\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainName",
+                ],
+              },
+              "\\",\\"domainOwner\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainOwner",
+                ],
+              },
+              "\\",\\"format\\":\\"npm\\",\\"repository\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifactPublishing143CC07C",
+                  "Name",
+                ],
+              },
+              "\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"repositoryEndpoint\\"}}",
+            ],
+          ],
+        },
+      },
+      "Type": "Custom::CodeArtifactNpmRepositoryEndpoint",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubCodeArtifactGetPublishingEndpointCustomResourcePolicyE039B00F": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "codeartifact:GetRepositoryEndpoint",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifactPublishing143CC07C",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubCodeArtifactGetPublishingEndpointCustomResourcePolicyE039B00F",
+        "Roles": Array [
+          Object {
+            "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubCodeArtifactPublishing143CC07C": Object {
+      "Properties": Object {
+        "Description": "Publishing repository",
+        "DomainName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubCodeArtifactDomainFC30B796",
+            "Name",
+          ],
+        },
+        "RepositoryName": "c857fcb69e05ffe74ccbcc624c4f6a4017daeb8cbb-publish-overlay",
+      },
+      "Type": "AWS::CodeArtifact::Repository",
     },
     "ConstructHubCodeArtifactUpstreampublicnpmjs5122981E": Object {
       "Properties": Object {
@@ -22702,7 +23034,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
               "Fn::GetAtt": Array [
-                "ConstructHubCodeArtifactGetEndpoint9A458FEF",
+                "ConstructHubCodeArtifactGetPublishingEndpoint6394DEF7",
                 "repositoryEndpoint",
               ],
             },
@@ -23588,6 +23920,12 @@ Direct link to the function: /lambda/home#/functions/",
                     "Arn",
                   ],
                 },
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifactPublishing143CC07C",
+                    "Arn",
+                  ],
+                },
               ],
             },
             Object {
@@ -23622,7 +23960,7 @@ Direct link to the function: /lambda/home#/functions/",
                     "/",
                     Object {
                       "Fn::GetAtt": Array [
-                        "ConstructHubCodeArtifact1188409E",
+                        "ConstructHubCodeArtifactPublishing143CC07C",
                         "Name",
                       ],
                     },
@@ -27996,7 +28334,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:df82ba5708874bf8d73cba60a8af41b59fdfe0d2b0840ea47a324f915d4e4ff4",
+                  "/aws-cdk/assets:17d7c83246affa8f4cf34ef254747962699b1bdd71b588caa6b65243f3dce12e",
                 ],
               ],
             },
@@ -28173,6 +28511,12 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                 Object {
                   "Fn::GetAtt": Array [
                     "ConstructHubCodeArtifact1188409E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifactPublishing143CC07C",
                     "Arn",
                   ],
                 },
@@ -32351,6 +32695,12 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               "Name",
             ],
           },
+          Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubCodeArtifactPublishing143CC07C",
+              "Name",
+            ],
+          },
         ],
       },
       "Type": "AWS::CodeArtifact::Repository",
@@ -32461,6 +32811,120 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubCodeArtifactGetPublishingEndpoint6394DEF7": Object {
+      "DeletionPolicy": "Delete",
+      "DependsOn": Array [
+        "ConstructHubCodeArtifactGetPublishingEndpointCustomResourcePolicyE039B00F",
+      ],
+      "Properties": Object {
+        "Create": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"getRepositoryEndpoint\\",\\"parameters\\":{\\"domain\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainName",
+                ],
+              },
+              "\\",\\"domainOwner\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainOwner",
+                ],
+              },
+              "\\",\\"format\\":\\"npm\\",\\"repository\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifactPublishing143CC07C",
+                  "Name",
+                ],
+              },
+              "\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"repositoryEndpoint\\"}}",
+            ],
+          ],
+        },
+        "InstallLatestAwsSdk": true,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
+            "Arn",
+          ],
+        },
+        "Update": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"getRepositoryEndpoint\\",\\"parameters\\":{\\"domain\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainName",
+                ],
+              },
+              "\\",\\"domainOwner\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifact1188409E",
+                  "DomainOwner",
+                ],
+              },
+              "\\",\\"format\\":\\"npm\\",\\"repository\\":\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifactPublishing143CC07C",
+                  "Name",
+                ],
+              },
+              "\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"repositoryEndpoint\\"}}",
+            ],
+          ],
+        },
+      },
+      "Type": "Custom::CodeArtifactNpmRepositoryEndpoint",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubCodeArtifactGetPublishingEndpointCustomResourcePolicyE039B00F": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "codeartifact:GetRepositoryEndpoint",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubCodeArtifactPublishing143CC07C",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubCodeArtifactGetPublishingEndpointCustomResourcePolicyE039B00F",
+        "Roles": Array [
+          Object {
+            "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubCodeArtifactPublishing143CC07C": Object {
+      "Properties": Object {
+        "Description": "Publishing repository",
+        "DomainName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubCodeArtifactDomainFC30B796",
+            "Name",
+          ],
+        },
+        "RepositoryName": "c857fcb69e05ffe74ccbcc624c4f6a4017daeb8cbb-publish-overlay",
+      },
+      "Type": "AWS::CodeArtifact::Repository",
     },
     "ConstructHubCodeArtifactUpstreampublicnpmjs5122981E": Object {
       "Properties": Object {
@@ -33202,7 +33666,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             "CODE_ARTIFACT_REPOSITORY_ENDPOINT": Object {
               "Fn::GetAtt": Array [
-                "ConstructHubCodeArtifactGetEndpoint9A458FEF",
+                "ConstructHubCodeArtifactGetPublishingEndpoint6394DEF7",
                 "repositoryEndpoint",
               ],
             },
@@ -34088,6 +34552,12 @@ Direct link to the function: /lambda/home#/functions/",
                     "Arn",
                   ],
                 },
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifactPublishing143CC07C",
+                    "Arn",
+                  ],
+                },
               ],
             },
             Object {
@@ -34122,7 +34592,7 @@ Direct link to the function: /lambda/home#/functions/",
                     "/",
                     Object {
                       "Fn::GetAtt": Array [
-                        "ConstructHubCodeArtifact1188409E",
+                        "ConstructHubCodeArtifactPublishing143CC07C",
                         "Name",
                       ],
                     },
@@ -37254,7 +37724,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:df82ba5708874bf8d73cba60a8af41b59fdfe0d2b0840ea47a324f915d4e4ff4",
+                  "/aws-cdk/assets:17d7c83246affa8f4cf34ef254747962699b1bdd71b588caa6b65243f3dce12e",
                 ],
               ],
             },
@@ -37431,6 +37901,12 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                 Object {
                   "Fn::GetAtt": Array [
                     "ConstructHubCodeArtifact1188409E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubCodeArtifactPublishing143CC07C",
                     "Arn",
                   ],
                 },
