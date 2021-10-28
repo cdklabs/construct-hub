@@ -1,6 +1,6 @@
 import { ComparisonOperator, MathExpression, Metric, MetricOptions, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
 import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
-import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
+import { FunctionProps, IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
@@ -9,6 +9,7 @@ import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { StateMachine, JsonPath, Choice, Succeed, Condition, Map } from '@aws-cdk/aws-stepfunctions';
 import { CallAwsService, LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
 import { Construct, Duration } from '@aws-cdk/core';
+import { Repository } from '../../codeartifact/repository';
 import { ConfigFile } from '../../config-file';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
@@ -26,6 +27,12 @@ export interface IngestionProps {
    * The bucket in which ingested objects are due to be inserted.
    */
   readonly bucket: IBucket;
+
+  /**
+   * The CodeArtifact repository to which packages should be published. This is
+   * the ConstructHub internal CodeArtifact repository, if one exists.
+   */
+  readonly codeArtifact?: Repository;
 
   /**
    * The monitoring handler to register alarms with.
@@ -117,15 +124,23 @@ export class Ingestion extends Construct implements IGrantable {
       destinationBucket: configBucket,
     });
 
+    const environment: FunctionProps['environment'] = {
+      AWS_EMF_ENVIRONMENT: 'Local',
+      BUCKET_NAME: props.bucket.bucketName,
+      CONFIG_BUCKET_NAME: configBucket.bucketName,
+      CONFIG_FILE_KEY: configFilename,
+      STATE_MACHINE_ARN: props.orchestration.stateMachine.stateMachineArn,
+    };
+
+    if (props.codeArtifact) {
+      environment.CODE_ARTIFACT_REPOSITORY_ENDPOINT = props.codeArtifact.repositoryNpmEndpoint;
+      environment.CODE_ARTIFACT_DOMAIN_NAME = props.codeArtifact.repositoryDomainName;
+      environment.CODE_ARTIFACT_DOMAIN_OWNER = props.codeArtifact.repositoryDomainOwner;
+    }
+
     const handler = new Handler(this, 'Default', {
       description: '[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub',
-      environment: {
-        AWS_EMF_ENVIRONMENT: 'Local',
-        BUCKET_NAME: props.bucket.bucketName,
-        STATE_MACHINE_ARN: props.orchestration.stateMachine.stateMachineArn,
-        CONFIG_BUCKET_NAME: configBucket.bucketName,
-        CONFIG_FILE_KEY: configFilename,
-      },
+      environment,
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 10_240, // Currently the maximum possible setting
       timeout: Duration.minutes(15),
@@ -135,6 +150,7 @@ export class Ingestion extends Construct implements IGrantable {
 
     configBucket.grantRead(handler);
     props.bucket.grantWrite(this.function);
+    props.codeArtifact?.grantPublishToRepository(handler);
     props.orchestration.stateMachine.grantStartExecution(this.function);
 
     this.function.addEventSource(new SqsEventSource(this.queue, { batchSize: 1 }));
