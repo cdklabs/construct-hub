@@ -5,7 +5,7 @@ import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
-import { Choice, Condition, IntegrationPattern, IStateMachine, JsonPath, Map, Parallel, Pass, Result, StateMachine, Succeed, TaskInput } from '@aws-cdk/aws-stepfunctions';
+import { Choice, Condition, IntegrationPattern, IStateMachine, JsonPath, Map, Pass, StateMachine, Succeed, TaskInput } from '@aws-cdk/aws-stepfunctions';
 import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Repository } from '../../codeartifact/repository';
@@ -15,16 +15,8 @@ import { RUNBOOK_URL } from '../../runbook-url';
 import { CatalogBuilder } from '../catalog-builder';
 import { DenyList } from '../deny-list';
 import { ASSEMBLY_KEY_SUFFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX, STORAGE_KEY_PREFIX } from '../shared/constants';
-import { DocumentationLanguage } from '../shared/language';
 import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
 import { RedriveStateMachine } from './redrive-state-machine';
-
-const SUPPORTED_LANGUAGES = [
-  DocumentationLanguage.PYTHON,
-  DocumentationLanguage.TYPESCRIPT,
-  DocumentationLanguage.JAVA,
-  DocumentationLanguage.CSHARP,
-];
 
 /**
  * This retry policy is used for all items in the state machine and allows ample
@@ -169,7 +161,7 @@ export class Orchestration extends Construct {
       messageBody: TaskInput.fromJsonPathAt('$'),
       queue: this.deadLetterQueue,
       resultPath: JsonPath.DISCARD,
-    });
+    }).next(new Succeed(this, 'Sent to DLQ'));
 
     this.catalogBuilder = new CatalogBuilder(this, 'CatalogBuilder', props);
 
@@ -202,16 +194,6 @@ export class Orchestration extends Construct {
         resultPath: '$.error',
       }).next(sendToDeadLetterQueue), { errors: ['States.ALL'] });
 
-    const docGenResultsKey = 'DocGen';
-    const sendToDlqIfNeeded = new Choice(this, 'Any Failure?')
-      .when(
-        Condition.or(
-          ...SUPPORTED_LANGUAGES.map((_, i) => Condition.isPresent(`$.${docGenResultsKey}[${i}].error`)),
-        ),
-        sendToDeadLetterQueue,
-      )
-      .otherwise(new Succeed(this, 'Success'));
-
     this.ecsCluster = new Cluster(this, 'Cluster', {
       containerInsights: true,
       enableFargateCapacityProviders: true,
@@ -229,86 +211,62 @@ export class Orchestration extends Construct {
         'StartTime.$': '$.StartTime',
       },
       resultPath: '$.$TaskExecution',
-    }).next(
-      new Parallel(this, 'DocGen', { resultPath: `$.${docGenResultsKey}` })
-        .branch(...SUPPORTED_LANGUAGES.map((language) => {
-
-          return new Choice(this, `Is ${language} needed?`)
-            .when(
-              Condition.or(
-                Condition.isNotPresent('$.languages'),
-                Condition.and(
-                  Condition.isPresent(`$.languages.${language}`),
-                  Condition.booleanEquals(`$.languages.${language}`, true),
-                ),
-              ),
-              // We have to prepare the input to be a JSON string, within an array, because the ECS task integration expects
-              // an array of strings (the model if that of a CLI invocation).
-              // Unfortunately, we have to split this in two Pass states, because I don't know how to make it work otherwise.
-              new Pass(this, `Prepare ${language}`, {
-                parameters: { command: { 'bucket.$': '$.bucket', 'assembly.$': '$.assembly', 'package.$': '$.package', '$TaskExecution.$': '$.$TaskExecution' } },
-                resultPath: '$',
-              })
-                .next(new Pass(this, `Stringify ${language} input`, {
-                  parameters: { 'commands.$': 'States.Array(States.JsonToString($.command))' },
-                  resultPath: '$',
-                })
-                  .next(this.transliterator.createEcsRunTask(this, `Generate ${language} docs`, {
-                    cluster: this.ecsCluster,
-                    inputPath: '$.commands',
-                    language,
-                    resultSelector: { result: { 'language': language.toString(), 'success.$': '$' } },
-                    // Expect this to complete within one hour
-                    timeout: Duration.hours(1),
-                    vpcSubnets: props.vpcSubnets,
-                  })
-                    // Do not retry NoSpaceLeftOnDevice errors, these are typically not transient.
-                    .addRetry({ errors: ['jsii-docgen.NoSpaceLeftOnDevice'], maxAttempts: 0 })
-                    .addRetry({
-                      errors: [
-                        'ECS.AmazonECSException', // Task failed starting, usually due to throttle / out of capacity
-                        'ECS.InvalidParameterException', // This is returned when ECS gets throttled when trying to access VPC/SGs.
-                        'jsii-docgen.NpmError.E429', // HTTP 429 ("Too Many Requests") from CodeArtifact's S3 bucket
-                        'jsii-codgen.NpmError.EPROTO', // Sporadic TLS negotiation failures we see in logs, transient
-                      ],
-                      ...THROTTLE_RETRY_POLICY,
-                    })
-                    .addRetry({
-                      errors: ['jsii-docgen.NpmError.ETARGET'], // Seen when dependencies aren't available yet
-                      // We'll wait longer between retries. This is to account for CodeArtifact's lag behind npm
-                      backoffRate: 2,
-                      interval: Duration.minutes(5),
-                      maxAttempts: 3,
-                    })
-                    .addRetry({ maxAttempts: 3 })
-                    .addCatch(
-                      new Pass(this, `"Generate ${language} docs" timed out`, { parameters: { error: 'Timed out!', language: language.toString() } }),
-                      { errors: ['States.Timeout'] },
-                    )
-                    .addCatch(
-                      new Pass(this, `"Generate ${language} docs" service error`, { parameters: { 'error.$': '$.Cause', 'language': language.toString() } }),
-                      { errors: ['ECS.AmazonECSException', 'ECS.InvalidParameterException'] },
-                    )
-                    .addCatch(
-                      new Pass(this, `"Generate ${language} docs" failure`, { parameters: { 'error.$': 'States.StringToJson($.Cause)', 'language': language.toString() } }),
-                      { errors: ['States.TaskFailed'] },
-                    )
-                    .addCatch(
-                      new Pass(this, `"Generate ${language} docs" fault`, { parameters: { 'error.$': '$.Cause', 'language': language.toString() } }),
-                      { errors: ['States.ALL'] },
-                    ))),
-            )
-            .otherwise(new Pass(this, `Skip ${language}`, { result: Result.fromObject({ language: language.toString(), success: 'NOOP (Skipped)' }), resultPath: '$' }));
-        }))
-        .next(new Choice(this, 'Any Success?')
-          .when(
-            Condition.or(
-              ...SUPPORTED_LANGUAGES.map((_, i) => Condition.isNotPresent(`$.${docGenResultsKey}[${i}].error`)),
-            ),
-            addToCatalog.next(sendToDlqIfNeeded),
+    })
+      .next(
+        new Pass(this, 'Prepare doc-gen ECS Command', {
+          parameters: { 'command.$': 'States.Array(States.JsonToString($))' },
+          outputPath: '$.command',
+          resultPath: '$.command',
+        }),
+      )
+      .next(
+        this.transliterator.createEcsRunTask(this, 'Generate docs', {
+          cluster: this.ecsCluster,
+          inputPath: '$.command',
+          // Expect this to complete within one hour
+          timeout: Duration.hours(1),
+          vpcSubnets: props.vpcSubnets,
+        })
+        // Do not retry NoSpaceLeftOnDevice errors, these are typically not transient.
+          .addRetry({ errors: ['jsii-docgen.NoSpaceLeftOnDevice'], maxAttempts: 0 })
+          .addRetry({
+            errors: [
+              'ECS.AmazonECSException', // Task failed starting, usually due to throttle / out of capacity
+              'ECS.InvalidParameterException', // This is returned when ECS gets throttled when trying to access VPC/SGs.
+              'jsii-docgen.NpmError.E429', // HTTP 429 ("Too Many Requests") from CodeArtifact's S3 bucket
+              'jsii-codgen.NpmError.EPROTO', // Sporadic TLS negotiation failures we see in logs, transient
+            ],
+            ...THROTTLE_RETRY_POLICY,
+          })
+          .addRetry({
+            errors: ['jsii-docgen.NpmError.ETARGET'], // Seen when dependencies aren't available yet
+            // We'll wait longer between retries. This is to account for CodeArtifact's lag behind npm
+            backoffRate: 2,
+            interval: Duration.minutes(5),
+            maxAttempts: 3,
+          })
+          .addRetry({ maxAttempts: 3 })
+          .addCatch(
+            new Pass(this, '"Generate docs" timed out', { parameters: { error: 'Timed out!' } })
+              .next(sendToDeadLetterQueue),
+            { errors: ['States.Timeout'] },
           )
-          .otherwise(sendToDlqIfNeeded),
-        ));
+          .addCatch(
+            new Pass(this, '"Generate docs" service error', { parameters: { 'error.$': '$.Cause' } })
+              .next(sendToDeadLetterQueue),
+            { errors: ['ECS.AmazonECSException', 'ECS.InvalidParameterException'] },
+          )
+          .addCatch(
+            new Pass(this, '"Generate docs" failure', { parameters: { 'error.$': 'States.StringToJson($.Cause)' } })
+              .next(sendToDeadLetterQueue),
+            { errors: ['States.TaskFailed'] },
+          )
+          .addCatch(
+            new Pass(this, '"Generate docs" fault', { parameters: { 'error.$': '$.Cause' } })
+              .next(sendToDeadLetterQueue),
+            { errors: ['States.ALL'] },
+          ).next(addToCatalog),
+      );
 
     this.stateMachine = new StateMachine(this, 'Resource', {
       definition,

@@ -213,7 +213,6 @@ export class Transliterator extends Construct {
         containerDefinition: this.containerDefinition,
         command: JsonPath.listAt('$'),
         environment: [
-          { name: 'TARGET_LANGUAGE', value: opts.language.toString() },
           { name: 'SFN_TASK_TOKEN', value: JsonPath.taskToken },
         ],
       }],
@@ -239,11 +238,6 @@ export interface CreateEcsRunTaskOpts extends TaskStateBaseProps {
    * `createEcsRunTask` method could do the input processing properly...
    */
   readonly inputPath: string;
-
-  /**
-   * The language into which the transliteration should be made.
-   */
-  readonly language: DocumentationLanguage;
 
   /**
    * VPC Subnet placement options, if relevant.
