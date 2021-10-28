@@ -19,7 +19,12 @@ import { DocumentationLanguage } from '../shared/language';
 import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
 import { RedriveStateMachine } from './redrive-state-machine';
 
-const SUPPORTED_LANGUAGES = [DocumentationLanguage.PYTHON, DocumentationLanguage.TYPESCRIPT, DocumentationLanguage.JAVA];
+const SUPPORTED_LANGUAGES = [
+  DocumentationLanguage.PYTHON,
+  DocumentationLanguage.TYPESCRIPT,
+  DocumentationLanguage.JAVA,
+  DocumentationLanguage.CSHARP,
+];
 
 /**
  * This retry policy is used for all items in the state machine and allows ample
@@ -241,7 +246,7 @@ export class Orchestration extends Construct {
               // an array of strings (the model if that of a CLI invocation).
               // Unfortunately, we have to split this in two Pass states, because I don't know how to make it work otherwise.
               new Pass(this, `Prepare ${language}`, {
-                parameters: { command: { 'bucket.$': '$.bucket', 'assembly.$': '$.assembly', '$TaskExecution.$': '$.$TaskExecution' } },
+                parameters: { command: { 'bucket.$': '$.bucket', 'assembly.$': '$.assembly', 'package.$': '$.package', '$TaskExecution.$': '$.$TaskExecution' } },
                 resultPath: '$',
               })
                 .next(new Pass(this, `Stringify ${language} input`, {

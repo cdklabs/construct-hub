@@ -187,9 +187,11 @@ async function* relevantObjects(bucket: string, startAfter?: string) {
       const tsDocs = `${object.Key.substring(0, object.Key.length - constants.PACKAGE_KEY_SUFFIX.length)}${constants.DOCS_KEY_SUFFIX_TYPESCRIPT}`;
       const pyDocs = `${object.Key.substring(0, object.Key.length - constants.PACKAGE_KEY_SUFFIX.length)}${constants.DOCS_KEY_SUFFIX_PYTHON}`;
       const javaDocs = `${object.Key.substring(0, object.Key.length - constants.PACKAGE_KEY_SUFFIX.length)}${constants.DOCS_KEY_SUFFIX_JAVA}`;
+      const csharpDocs = `${object.Key.substring(0, object.Key.length - constants.PACKAGE_KEY_SUFFIX.length)}${constants.DOCS_KEY_SUFFIX_CSHARP}`;
       if (!(await aws.s3ObjectExists(bucket, tsDocs)) &&
           !(await aws.s3ObjectExists(bucket, pyDocs)) &&
-          !(await aws.s3ObjectExists(bucket, javaDocs))) {
+          !(await aws.s3ObjectExists(bucket, javaDocs)) &&
+          !(await aws.s3ObjectExists(bucket, csharpDocs))) {
         continue;
       }
       yield object;

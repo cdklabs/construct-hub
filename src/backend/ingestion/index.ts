@@ -3,12 +3,14 @@ import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
 import { FunctionProps, IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { RetentionDays } from '@aws-cdk/aws-logs';
-import { IBucket } from '@aws-cdk/aws-s3';
+import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
+import { BucketDeployment, Source } from '@aws-cdk/aws-s3-deployment';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { StateMachine, JsonPath, Choice, Succeed, Condition, Map } from '@aws-cdk/aws-stepfunctions';
 import { CallAwsService, LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Repository } from '../../codeartifact/repository';
+import { ConfigFile } from '../../config-file';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { PackageTagConfig } from '../../package-tag';
@@ -106,11 +108,27 @@ export class Ingestion extends Construct implements IGrantable {
       visibilityTimeout: Duration.minutes(15),
     });
 
+    const configFilename = 'config.json';
+    const config = new ConfigFile(configFilename, JSON.stringify({
+      packageLinks: props.packageLinks ?? [],
+      packageTags: props.packageTags ?? [],
+    }));
+
+    const configBucket = new Bucket(this, 'ConfigBucket', {
+      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+      enforceSSL: true,
+    });
+
+    new BucketDeployment(this, 'DeployIngestionConfiguration', {
+      sources: [Source.asset(config.dir)],
+      destinationBucket: configBucket,
+    });
+
     const environment: FunctionProps['environment'] = {
       AWS_EMF_ENVIRONMENT: 'Local',
       BUCKET_NAME: props.bucket.bucketName,
-      PACKAGE_LINKS: JSON.stringify(props.packageLinks ?? []),
-      PACKAGE_TAGS: JSON.stringify(props.packageTags ?? []),
+      CONFIG_BUCKET_NAME: configBucket.bucketName,
+      CONFIG_FILE_KEY: configFilename,
       STATE_MACHINE_ARN: props.orchestration.stateMachine.stateMachineArn,
     };
 
@@ -130,6 +148,7 @@ export class Ingestion extends Construct implements IGrantable {
     });
     this.function = handler;
 
+    configBucket.grantRead(handler);
     props.bucket.grantWrite(this.function);
     props.codeArtifact?.grantPublishToRepository(handler);
     props.orchestration.stateMachine.grantStartExecution(this.function);

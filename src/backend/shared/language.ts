@@ -18,12 +18,18 @@ export class DocumentationLanguage {
   public static readonly JAVA = new DocumentationLanguage('java');
 
   /**
+   * CSharp.
+   */
+  public static readonly CSHARP = new DocumentationLanguage('csharp');
+
+  /**
    * All supported languages.
    */
   public static readonly ALL = [
     DocumentationLanguage.TYPESCRIPT,
     DocumentationLanguage.PYTHON,
     DocumentationLanguage.JAVA,
+    DocumentationLanguage.CSHARP,
   ] as const;
 
   /**
@@ -39,6 +45,8 @@ export class DocumentationLanguage {
         return DocumentationLanguage.PYTHON;
       case DocumentationLanguage.JAVA.toString():
         return DocumentationLanguage.JAVA;
+      case DocumentationLanguage.CSHARP.toString():
+        return DocumentationLanguage.CSHARP;
       default:
         throw new UnsupportedLanguageError(lang, DocumentationLanguage.ALL);
     }
