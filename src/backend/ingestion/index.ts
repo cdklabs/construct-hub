@@ -133,7 +133,7 @@ export class Ingestion extends Construct implements IGrantable {
     };
 
     if (props.codeArtifact) {
-      environment.CODE_ARTIFACT_REPOSITORY_ENDPOINT = props.codeArtifact.repositoryNpmEndpoint;
+      environment.CODE_ARTIFACT_REPOSITORY_ENDPOINT = props.codeArtifact.publishingRepositoryNpmEndpoint;
       environment.CODE_ARTIFACT_DOMAIN_NAME = props.codeArtifact.repositoryDomainName;
       environment.CODE_ARTIFACT_DOMAIN_OWNER = props.codeArtifact.repositoryDomainOwner;
     }
