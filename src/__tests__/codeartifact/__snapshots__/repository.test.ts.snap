@@ -92,6 +92,19 @@ Object {
       "Type": "AWS::IAM::Policy",
     },
     "RepoDomainC79FB030": Anything,
+    "RepoPublishing9FE3D602": Object {
+      "Properties": Object {
+        "Description": "Publishing repository",
+        "DomainName": Object {
+          "Fn::GetAtt": Array [
+            "RepoDomainC79FB030",
+            "Name",
+          ],
+        },
+        "RepositoryName": "c824e6f26ac4b798fe181c4568a8a55d69111ad893-publish-overlay",
+      },
+      "Type": "AWS::CodeArtifact::Repository",
+    },
   },
 }
 `;
@@ -223,6 +236,19 @@ Object {
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "RepoPublishing9FE3D602": Object {
+      "Properties": Object {
+        "Description": "Publishing repository",
+        "DomainName": Object {
+          "Fn::GetAtt": Array [
+            "RepoDomainC79FB030",
+            "Name",
+          ],
+        },
+        "RepositoryName": "c824e6f26ac4b798fe181c4568a8a55d69111ad893-publish-overlay",
+      },
+      "Type": "AWS::CodeArtifact::Repository",
     },
   },
 }

@@ -101,9 +101,20 @@ export class Repository extends Construct implements IRepository {
    */
   public readonly repositoryName: string;
 
+  /**
+   * The name of the CodeArtifact Repository where to publish overlay packages.
+   */
+  public readonly publishingRepositoryArn: string;
+
+  /**
+   * The name of the CodeArtifact Repository where to publish overlay packages.
+   */
+  public readonly publishingRepositoryName: string;
+
   readonly #externalConnections = new Array<string>();
 
   #repositoryNpmEndpoint?: string;
+  #publishingRepositoryNpmEndpoint?: string;
   #s3BucketArn?: string;
 
   public constructor(scope: Construct, id: string, props?: RepositoryProps) {
@@ -120,6 +131,18 @@ export class Repository extends Construct implements IRepository {
     const domain = props?.domainExists ? undefined : new CfnDomain(this, 'Domain', { domainName });
     const repositoryName = props?.repositoryName ?? this.node.addr;
 
+    /**
+     * This repository does not have any upstreams or external connections, so
+     * it should be exempt from surprises. Concretely, any apckages published
+     * to this repository will go in there, so we can separate "hand-published"
+     * from "from upstream or external" packages.
+     */
+    const publishingUpstream = domain && new CfnRepository(this, 'Publishing', {
+      description: 'Publishing repository',
+      domainName: domain.attrName,
+      repositoryName: `${repositoryName}-publish-overlay`,
+    });
+
     const repository = new CfnRepository(this, 'Default', {
       description: props?.description,
       domainName: domain?.attrName ?? domainName,
@@ -130,14 +153,19 @@ export class Repository extends Construct implements IRepository {
             : undefined,
       }),
       repositoryName,
+      // NOTE: Upstream order IS important, as CodeArtifact repositories query
+      // their upstreams in the order they are listed in. The publishing
+      // upstream is hence last in the list, so we get packages from the
+      // "official" sources first.
       upstreams: Lazy.list({
         produce: () =>
           domain && this.#externalConnections.length > 0
             ? [
               ...(props?.upstreams ?? []),
               ...this.#externalConnections.map((name) => this.makeUpstreamForId(name, { domain, repositoryName })),
+              ...(publishingUpstream ? [publishingUpstream.attrName] : []),
             ]
-            : props?.upstreams,
+            : publishingUpstream ? [publishingUpstream?.attrName] : props?.upstreams,
       }),
     });
 
@@ -151,6 +179,9 @@ export class Repository extends Construct implements IRepository {
     this.repositoryDomainOwner = repository.attrDomainOwner;
     this.repositoryArn = repository.attrArn;
     this.repositoryName = repository.attrName;
+
+    this.publishingRepositoryArn = publishingUpstream?.attrArn ?? this.repositoryArn;
+    this.publishingRepositoryName = publishingUpstream?.attrName ?? repositoryName;
   }
 
   /**
@@ -189,6 +220,34 @@ export class Repository extends Construct implements IRepository {
       this.#repositoryNpmEndpoint = endpoint.getResponseField('repositoryEndpoint');
     }
     return this.#repositoryNpmEndpoint;
+  }
+
+  /**
+   * The npm repository endpoint to use for interacting with this repository to
+   * publish new packages.
+   */
+  public get publishingRepositoryNpmEndpoint(): string {
+    if (this.#publishingRepositoryNpmEndpoint == null) {
+      const serviceCall = {
+        service: 'CodeArtifact',
+        action: 'getRepositoryEndpoint',
+        parameters: {
+          domain: this.repositoryDomainName,
+          domainOwner: this.repositoryDomainOwner,
+          format: 'npm',
+          repository: this.publishingRepositoryName,
+        },
+        physicalResourceId: PhysicalResourceId.fromResponse('repositoryEndpoint'),
+      };
+      const endpoint = new AwsCustomResource(this, 'GetPublishingEndpoint', {
+        onCreate: serviceCall,
+        onUpdate: serviceCall,
+        policy: AwsCustomResourcePolicy.fromSdkCalls({ resources: [this.publishingRepositoryArn] }),
+        resourceType: 'Custom::CodeArtifactNpmRepositoryEndpoint',
+      });
+      this.#publishingRepositoryNpmEndpoint = endpoint.getResponseField('repositoryEndpoint');
+    }
+    return this.#publishingRepositoryNpmEndpoint;
   }
 
   /**
@@ -234,7 +293,7 @@ export class Repository extends Construct implements IRepository {
         'codeartifact:GetRepositoryEndpoint',
         'codeartifact:ReadFromRepository',
       ],
-      resourceArns: [this.repositoryDomainArn, this.repositoryArn],
+      resourceArns: [this.repositoryDomainArn, this.repositoryArn, this.publishingRepositoryArn],
     });
   }
 
@@ -253,7 +312,7 @@ export class Repository extends Construct implements IRepository {
         arnFormat: ArnFormat.SLASH_RESOURCE_NAME,
         service: 'codeartifact',
         resource: 'package',
-        resourceName: `${this.repositoryDomainName}/${this.repositoryName}/${format}/*`,
+        resourceName: `${this.repositoryDomainName}/${this.publishingRepositoryName}/${format}/*`,
       })],
     });
   }
