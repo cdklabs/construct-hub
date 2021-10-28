@@ -20,6 +20,11 @@ import { MetricName, METRICS_NAMESPACE } from './constants';
 
 Configuration.namespace = METRICS_NAMESPACE;
 
+interface Config {
+  packageTags: PackageTagConfig[];
+  packageLinks: PackageLinkConfig[];
+}
+
 export const handler = metricScope(
   (metrics) => async (event: SQSEvent, context: Context) => {
     console.log(`Event: ${JSON.stringify(event, null, 2)}`);
@@ -29,8 +34,15 @@ export const handler = metricScope(
 
     const BUCKET_NAME = requireEnv('BUCKET_NAME');
     const STATE_MACHINE_ARN = requireEnv('STATE_MACHINE_ARN');
-    const PACKAGE_LINKS = requireEnv('PACKAGE_LINKS');
-    const PACKAGE_TAGS = requireEnv('PACKAGE_TAGS');
+    const CONFIG_BUCKET_NAME = requireEnv('CONFIG_BUCKET_NAME');
+    const CONFIG_FILE_KEY = requireEnv('CONFIG_FILE_KEY');
+
+    const configReq = await aws.s3().getObject({
+      Bucket: CONFIG_BUCKET_NAME,
+      Key: CONFIG_FILE_KEY,
+    }).promise();
+    const config: string = configReq?.Body?.toString() ?? '';
+    const { packageTags: packageTagsConfig, packageLinks: allowedLinks }: Config = JSON.parse(config);
 
     const result = new Array<string>();
 
@@ -135,9 +147,6 @@ export const handler = metricScope(
         Unit.Count,
       );
 
-      // Add custom links content to metdata for display on the frontend
-      const allowedLinks: PackageLinkConfig[] = JSON.parse(PACKAGE_LINKS);
-
       const packageLinks = allowedLinks.reduce((accum, { configKey, allowedDomains }) => {
         const pkgValue = constructHub?.packageLinks[configKey];
 
@@ -155,8 +164,6 @@ export const handler = metricScope(
         return { ...accum, [configKey]: pkgValue };
       }, {});
 
-      // Add computed tags to metadata
-      const packageTagsConfig: PackageTagConfig[] = JSON.parse(PACKAGE_TAGS);
       const packageTags = packageTagsConfig.reduce((accum: Array<Omit<PackageTagConfig, 'condition'>>, tagConfig) => {
         const { condition, ...tagData } = tagConfig;
         if (isTagApplicable(condition, packageJsonObj)) {

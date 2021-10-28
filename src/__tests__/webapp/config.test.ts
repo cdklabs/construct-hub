@@ -21,7 +21,7 @@ test('minimal', () => {
   const config = new WebappConfig({});
 
   // THEN
-  const file = readJsonSync(config.path);
+  const file = readJsonSync(config.file.path);
   expect(file).toEqual(DEFAULT_CONFIG);
 });
 
@@ -43,7 +43,7 @@ test('package links', () => {
   });
 
   // THEN
-  const file = readJsonSync(config.path);
+  const file = readJsonSync(config.file.path);
   expect(file).toEqual({
     ...DEFAULT_CONFIG,
     packageLinks: [
@@ -82,7 +82,7 @@ describe('package tags', () => {
     });
 
     // THEN
-    const file = readJsonSync(config.path);
+    const file = readJsonSync(config.file.path);
     expect(file).toEqual({
       ...DEFAULT_CONFIG,
       packageTags: [
@@ -116,7 +116,7 @@ describe('package tags', () => {
     });
 
     // THEN
-    const file = readJsonSync(config.path);
+    const file = readJsonSync(config.file.path);
     expect(file).toEqual({
       ...DEFAULT_CONFIG,
       packageTags: [
@@ -149,7 +149,7 @@ describe('package tags', () => {
     });
 
     // THEN
-    const file = readJsonSync(config.path);
+    const file = readJsonSync(config.file.path);
     expect(file).toEqual({
       ...DEFAULT_CONFIG,
       packageTags: [
@@ -196,7 +196,7 @@ test('featured packages', () => {
   const config = new WebappConfig({ featuredPackages });
 
   // THEN
-  const file = readJsonSync(config.path);
+  const file = readJsonSync(config.file.path);
   expect(file).toEqual({
     ...DEFAULT_CONFIG,
     featuredPackages,
@@ -214,7 +214,7 @@ test('feature flags', () => {
   const config = new WebappConfig({ featureFlags });
 
   // THEN
-  const file = readJsonSync(config.path);
+  const file = readJsonSync(config.file.path);
   expect(file).toEqual({
     ...DEFAULT_CONFIG,
     featureFlags,

@@ -33,6 +33,18 @@ Object {
     },
   },
   "Parameters": Object {
+    "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9ArtifactHashB9E3BF29": Object {
+      "Description": "Artifact hash for asset \\"0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9\\"",
+      "Type": "String",
+    },
+    "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3BucketF7599DDF": Object {
+      "Description": "S3 bucket for asset \\"0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9\\"",
+      "Type": "String",
+    },
+    "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3VersionKeyE9957876": Object {
+      "Description": "S3 key for asset version \\"0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9\\"",
+      "Type": "String",
+    },
     "AssetParameters141015d9750ce132a40866c30c003c906c4dfd4b0b1bdf624e24b79c1ba381b9ArtifactHash5A74AA12": Object {
       "Description": "Artifact hash for asset \\"141015d9750ce132a40866c30c003c906c4dfd4b0b1bdf624e24b79c1ba381b9\\"",
       "Type": "String",
@@ -129,6 +141,18 @@ Object {
       "Description": "S3 key for asset version \\"6ea3c5137560a8ea22a6aa265df4ad99ce3b56b494af38b10e27e2f1d24dc233\\"",
       "Type": "String",
     },
+    "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebArtifactHash69D8FA23": Object {
+      "Description": "Artifact hash for asset \\"85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aeb\\"",
+      "Type": "String",
+    },
+    "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3Bucket8B3B248E": Object {
+      "Description": "S3 bucket for asset \\"85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aeb\\"",
+      "Type": "String",
+    },
+    "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3VersionKey1791B031": Object {
+      "Description": "S3 key for asset version \\"85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aeb\\"",
+      "Type": "String",
+    },
     "AssetParameters8c43ff52db4a7b0bb7be49dc644eacf19ac8c170a63521ec67bad5015079e986ArtifactHash49266BFF": Object {
       "Description": "Artifact hash for asset \\"8c43ff52db4a7b0bb7be49dc644eacf19ac8c170a63521ec67bad5015079e986\\"",
       "Type": "String",
@@ -139,18 +163,6 @@ Object {
     },
     "AssetParameters8c43ff52db4a7b0bb7be49dc644eacf19ac8c170a63521ec67bad5015079e986S3VersionKey6ED4DF82": Object {
       "Description": "S3 key for asset version \\"8c43ff52db4a7b0bb7be49dc644eacf19ac8c170a63521ec67bad5015079e986\\"",
-      "Type": "String",
-    },
-    "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479ArtifactHashB171FCB5": Object {
-      "Description": "Artifact hash for asset \\"8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479\\"",
-      "Type": "String",
-    },
-    "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3Bucket92EDF3D4": Object {
-      "Description": "S3 bucket for asset \\"8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479\\"",
-      "Type": "String",
-    },
-    "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3VersionKey1232157A": Object {
-      "Description": "S3 key for asset version \\"8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479\\"",
       "Type": "String",
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064ArtifactHashEA963870": Object {
@@ -1873,7 +1885,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3Bucket92EDF3D4",
+            "Ref": "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3Bucket8B3B248E",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -1886,7 +1898,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3VersionKey1232157A",
+                          "Ref": "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3VersionKey1791B031",
                         },
                       ],
                     },
@@ -1899,7 +1911,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3VersionKey1232157A",
+                          "Ref": "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3VersionKey1791B031",
                         },
                       ],
                     },
@@ -1916,8 +1928,10 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "BUCKET_NAME": Object {
               "Ref": "ConstructHubPackageDataDC5EF35E",
             },
-            "PACKAGE_LINKS": "[]",
-            "PACKAGE_TAGS": "[]",
+            "CONFIG_BUCKET_NAME": Object {
+              "Ref": "ConstructHubIngestionConfigBucket0F0ED0B6",
+            },
+            "CONFIG_FILE_KEY": "config.json",
             "STATE_MACHINE_ARN": Object {
               "Ref": "ConstructHubOrchestration39161A46",
             },
@@ -1938,6 +1952,66 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubIngestionConfigBucket0F0ED0B6": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubIngestionConfigBucketPolicyF096914C": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubIngestionConfigBucket0F0ED0B6",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubIngestionConfigBucket0F0ED0B6",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubIngestionConfigBucket0F0ED0B6",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "ConstructHubIngestionDLQ3E96A5F2": Object {
       "DeletionPolicy": "Delete",
@@ -2044,6 +2118,107 @@ Direct link to the function: /lambda/home#/functions/",
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubIngestionDeployIngestionConfigurationAwsCliLayerF77955C2": Object {
+      "Properties": Object {
+        "Content": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "/opt/awscli/aws",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "ConstructHubIngestionDeployIngestionConfigurationCustomResourceD7F243C1": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "DestinationBucketName": Object {
+          "Ref": "ConstructHubIngestionConfigBucket0F0ED0B6",
+        },
+        "Prune": true,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn",
+          ],
+        },
+        "SourceBucketNames": Array [
+          Object {
+            "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3BucketF7599DDF",
+          },
+        ],
+        "SourceObjectKeys": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3VersionKeyE9957876",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3VersionKeyE9957876",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "Custom::CDKBucketDeployment",
+      "UpdateReplacePolicy": "Delete",
     },
     "ConstructHubIngestionFailureAlarm9D0028DD": Object {
       "Properties": Object {
@@ -2544,6 +2719,36 @@ Direct link to the function: /lambda/home#/functions/",
               ],
               "Effect": "Allow",
               "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubIngestionConfigBucket0F0ED0B6",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubIngestionConfigBucket0F0ED0B6",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
             },
             Object {
               "Action": Array [
@@ -9505,6 +9710,80 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
+                        "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3BucketF7599DDF",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3BucketF7599DDF",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubIngestionConfigBucket0F0ED0B6",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubIngestionConfigBucket0F0ED0B6",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
                         "Ref": "AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658S3BucketF36A877E",
                       },
                     ],
@@ -9843,6 +10122,18 @@ Object {
     },
   },
   "Parameters": Object {
+    "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9ArtifactHashB9E3BF29": Object {
+      "Description": "Artifact hash for asset \\"0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9\\"",
+      "Type": "String",
+    },
+    "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3BucketF7599DDF": Object {
+      "Description": "S3 bucket for asset \\"0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9\\"",
+      "Type": "String",
+    },
+    "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3VersionKeyE9957876": Object {
+      "Description": "S3 key for asset version \\"0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9\\"",
+      "Type": "String",
+    },
     "AssetParameters141015d9750ce132a40866c30c003c906c4dfd4b0b1bdf624e24b79c1ba381b9ArtifactHash5A74AA12": Object {
       "Description": "Artifact hash for asset \\"141015d9750ce132a40866c30c003c906c4dfd4b0b1bdf624e24b79c1ba381b9\\"",
       "Type": "String",
@@ -9939,6 +10230,18 @@ Object {
       "Description": "S3 key for asset version \\"6ea3c5137560a8ea22a6aa265df4ad99ce3b56b494af38b10e27e2f1d24dc233\\"",
       "Type": "String",
     },
+    "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebArtifactHash69D8FA23": Object {
+      "Description": "Artifact hash for asset \\"85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aeb\\"",
+      "Type": "String",
+    },
+    "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3Bucket8B3B248E": Object {
+      "Description": "S3 bucket for asset \\"85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aeb\\"",
+      "Type": "String",
+    },
+    "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3VersionKey1791B031": Object {
+      "Description": "S3 key for asset version \\"85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aeb\\"",
+      "Type": "String",
+    },
     "AssetParameters8c43ff52db4a7b0bb7be49dc644eacf19ac8c170a63521ec67bad5015079e986ArtifactHash49266BFF": Object {
       "Description": "Artifact hash for asset \\"8c43ff52db4a7b0bb7be49dc644eacf19ac8c170a63521ec67bad5015079e986\\"",
       "Type": "String",
@@ -9949,18 +10252,6 @@ Object {
     },
     "AssetParameters8c43ff52db4a7b0bb7be49dc644eacf19ac8c170a63521ec67bad5015079e986S3VersionKey6ED4DF82": Object {
       "Description": "S3 key for asset version \\"8c43ff52db4a7b0bb7be49dc644eacf19ac8c170a63521ec67bad5015079e986\\"",
-      "Type": "String",
-    },
-    "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479ArtifactHashB171FCB5": Object {
-      "Description": "Artifact hash for asset \\"8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479\\"",
-      "Type": "String",
-    },
-    "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3Bucket92EDF3D4": Object {
-      "Description": "S3 bucket for asset \\"8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479\\"",
-      "Type": "String",
-    },
-    "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3VersionKey1232157A": Object {
-      "Description": "S3 key for asset version \\"8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479\\"",
       "Type": "String",
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064ArtifactHashEA963870": Object {
@@ -11690,7 +11981,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3Bucket92EDF3D4",
+            "Ref": "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3Bucket8B3B248E",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -11703,7 +11994,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3VersionKey1232157A",
+                          "Ref": "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3VersionKey1791B031",
                         },
                       ],
                     },
@@ -11716,7 +12007,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3VersionKey1232157A",
+                          "Ref": "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3VersionKey1791B031",
                         },
                       ],
                     },
@@ -11733,8 +12024,10 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "BUCKET_NAME": Object {
               "Ref": "ConstructHubPackageDataDC5EF35E",
             },
-            "PACKAGE_LINKS": "[]",
-            "PACKAGE_TAGS": "[]",
+            "CONFIG_BUCKET_NAME": Object {
+              "Ref": "ConstructHubIngestionConfigBucket0F0ED0B6",
+            },
+            "CONFIG_FILE_KEY": "config.json",
             "STATE_MACHINE_ARN": Object {
               "Ref": "ConstructHubOrchestration39161A46",
             },
@@ -11755,6 +12048,66 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubIngestionConfigBucket0F0ED0B6": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubIngestionConfigBucketPolicyF096914C": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubIngestionConfigBucket0F0ED0B6",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubIngestionConfigBucket0F0ED0B6",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubIngestionConfigBucket0F0ED0B6",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "ConstructHubIngestionDLQ3E96A5F2": Object {
       "DeletionPolicy": "Delete",
@@ -11861,6 +12214,107 @@ Direct link to the function: /lambda/home#/functions/",
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubIngestionDeployIngestionConfigurationAwsCliLayerF77955C2": Object {
+      "Properties": Object {
+        "Content": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "/opt/awscli/aws",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "ConstructHubIngestionDeployIngestionConfigurationCustomResourceD7F243C1": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "DestinationBucketName": Object {
+          "Ref": "ConstructHubIngestionConfigBucket0F0ED0B6",
+        },
+        "Prune": true,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn",
+          ],
+        },
+        "SourceBucketNames": Array [
+          Object {
+            "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3BucketF7599DDF",
+          },
+        ],
+        "SourceObjectKeys": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3VersionKeyE9957876",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3VersionKeyE9957876",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "Custom::CDKBucketDeployment",
+      "UpdateReplacePolicy": "Delete",
     },
     "ConstructHubIngestionFailureAlarm9D0028DD": Object {
       "Properties": Object {
@@ -12361,6 +12815,36 @@ Direct link to the function: /lambda/home#/functions/",
               ],
               "Effect": "Allow",
               "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubIngestionConfigBucket0F0ED0B6",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubIngestionConfigBucket0F0ED0B6",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
             },
             Object {
               "Action": Array [
@@ -19350,6 +19834,80 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
+                        "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3BucketF7599DDF",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3BucketF7599DDF",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubIngestionConfigBucket0F0ED0B6",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubIngestionConfigBucket0F0ED0B6",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
                         "Ref": "AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658S3BucketF36A877E",
                       },
                     ],
@@ -19698,6 +20256,18 @@ Object {
     },
   },
   "Parameters": Object {
+    "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9ArtifactHashB9E3BF29": Object {
+      "Description": "Artifact hash for asset \\"0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9\\"",
+      "Type": "String",
+    },
+    "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3BucketF7599DDF": Object {
+      "Description": "S3 bucket for asset \\"0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9\\"",
+      "Type": "String",
+    },
+    "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3VersionKeyE9957876": Object {
+      "Description": "S3 key for asset version \\"0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9\\"",
+      "Type": "String",
+    },
     "AssetParameters141015d9750ce132a40866c30c003c906c4dfd4b0b1bdf624e24b79c1ba381b9ArtifactHash5A74AA12": Object {
       "Description": "Artifact hash for asset \\"141015d9750ce132a40866c30c003c906c4dfd4b0b1bdf624e24b79c1ba381b9\\"",
       "Type": "String",
@@ -19818,6 +20388,18 @@ Object {
       "Description": "S3 key for asset version \\"7af6295e521fd55af94332393ceffb3e866aac4dc4956321f7918f21e72199e4\\"",
       "Type": "String",
     },
+    "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebArtifactHash69D8FA23": Object {
+      "Description": "Artifact hash for asset \\"85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aeb\\"",
+      "Type": "String",
+    },
+    "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3Bucket8B3B248E": Object {
+      "Description": "S3 bucket for asset \\"85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aeb\\"",
+      "Type": "String",
+    },
+    "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3VersionKey1791B031": Object {
+      "Description": "S3 key for asset version \\"85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aeb\\"",
+      "Type": "String",
+    },
     "AssetParameters8c43ff52db4a7b0bb7be49dc644eacf19ac8c170a63521ec67bad5015079e986ArtifactHash49266BFF": Object {
       "Description": "Artifact hash for asset \\"8c43ff52db4a7b0bb7be49dc644eacf19ac8c170a63521ec67bad5015079e986\\"",
       "Type": "String",
@@ -19828,18 +20410,6 @@ Object {
     },
     "AssetParameters8c43ff52db4a7b0bb7be49dc644eacf19ac8c170a63521ec67bad5015079e986S3VersionKey6ED4DF82": Object {
       "Description": "S3 key for asset version \\"8c43ff52db4a7b0bb7be49dc644eacf19ac8c170a63521ec67bad5015079e986\\"",
-      "Type": "String",
-    },
-    "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479ArtifactHashB171FCB5": Object {
-      "Description": "Artifact hash for asset \\"8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479\\"",
-      "Type": "String",
-    },
-    "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3Bucket92EDF3D4": Object {
-      "Description": "S3 bucket for asset \\"8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479\\"",
-      "Type": "String",
-    },
-    "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3VersionKey1232157A": Object {
-      "Description": "S3 key for asset version \\"8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479\\"",
       "Type": "String",
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064ArtifactHashEA963870": Object {
@@ -21711,7 +22281,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3Bucket92EDF3D4",
+            "Ref": "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3Bucket8B3B248E",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -21724,7 +22294,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3VersionKey1232157A",
+                          "Ref": "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3VersionKey1791B031",
                         },
                       ],
                     },
@@ -21737,7 +22307,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3VersionKey1232157A",
+                          "Ref": "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3VersionKey1791B031",
                         },
                       ],
                     },
@@ -21754,8 +22324,10 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "BUCKET_NAME": Object {
               "Ref": "ConstructHubPackageDataDC5EF35E",
             },
-            "PACKAGE_LINKS": "[]",
-            "PACKAGE_TAGS": "[]",
+            "CONFIG_BUCKET_NAME": Object {
+              "Ref": "ConstructHubIngestionConfigBucket0F0ED0B6",
+            },
+            "CONFIG_FILE_KEY": "config.json",
             "STATE_MACHINE_ARN": Object {
               "Ref": "ConstructHubOrchestration39161A46",
             },
@@ -21776,6 +22348,66 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubIngestionConfigBucket0F0ED0B6": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubIngestionConfigBucketPolicyF096914C": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubIngestionConfigBucket0F0ED0B6",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubIngestionConfigBucket0F0ED0B6",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubIngestionConfigBucket0F0ED0B6",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "ConstructHubIngestionDLQ3E96A5F2": Object {
       "DeletionPolicy": "Delete",
@@ -21882,6 +22514,107 @@ Direct link to the function: /lambda/home#/functions/",
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubIngestionDeployIngestionConfigurationAwsCliLayerF77955C2": Object {
+      "Properties": Object {
+        "Content": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "/opt/awscli/aws",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "ConstructHubIngestionDeployIngestionConfigurationCustomResourceD7F243C1": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "DestinationBucketName": Object {
+          "Ref": "ConstructHubIngestionConfigBucket0F0ED0B6",
+        },
+        "Prune": true,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn",
+          ],
+        },
+        "SourceBucketNames": Array [
+          Object {
+            "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3BucketF7599DDF",
+          },
+        ],
+        "SourceObjectKeys": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3VersionKeyE9957876",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3VersionKeyE9957876",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "Custom::CDKBucketDeployment",
+      "UpdateReplacePolicy": "Delete",
     },
     "ConstructHubIngestionFailureAlarm9D0028DD": Object {
       "Properties": Object {
@@ -22382,6 +23115,36 @@ Direct link to the function: /lambda/home#/functions/",
               ],
               "Effect": "Allow",
               "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubIngestionConfigBucket0F0ED0B6",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubIngestionConfigBucket0F0ED0B6",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
             },
             Object {
               "Action": Array [
@@ -29644,6 +30407,80 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
+                        "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3BucketF7599DDF",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3BucketF7599DDF",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubIngestionConfigBucket0F0ED0B6",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubIngestionConfigBucket0F0ED0B6",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
                         "Ref": "AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658S3BucketF36A877E",
                       },
                     ],
@@ -29982,6 +30819,18 @@ Object {
     },
   },
   "Parameters": Object {
+    "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9ArtifactHashB9E3BF29": Object {
+      "Description": "Artifact hash for asset \\"0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9\\"",
+      "Type": "String",
+    },
+    "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3BucketF7599DDF": Object {
+      "Description": "S3 bucket for asset \\"0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9\\"",
+      "Type": "String",
+    },
+    "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3VersionKeyE9957876": Object {
+      "Description": "S3 key for asset version \\"0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9\\"",
+      "Type": "String",
+    },
     "AssetParameters141015d9750ce132a40866c30c003c906c4dfd4b0b1bdf624e24b79c1ba381b9ArtifactHash5A74AA12": Object {
       "Description": "Artifact hash for asset \\"141015d9750ce132a40866c30c003c906c4dfd4b0b1bdf624e24b79c1ba381b9\\"",
       "Type": "String",
@@ -30078,6 +30927,18 @@ Object {
       "Description": "S3 key for asset version \\"6ea3c5137560a8ea22a6aa265df4ad99ce3b56b494af38b10e27e2f1d24dc233\\"",
       "Type": "String",
     },
+    "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebArtifactHash69D8FA23": Object {
+      "Description": "Artifact hash for asset \\"85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aeb\\"",
+      "Type": "String",
+    },
+    "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3Bucket8B3B248E": Object {
+      "Description": "S3 bucket for asset \\"85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aeb\\"",
+      "Type": "String",
+    },
+    "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3VersionKey1791B031": Object {
+      "Description": "S3 key for asset version \\"85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aeb\\"",
+      "Type": "String",
+    },
     "AssetParameters8c43ff52db4a7b0bb7be49dc644eacf19ac8c170a63521ec67bad5015079e986ArtifactHash49266BFF": Object {
       "Description": "Artifact hash for asset \\"8c43ff52db4a7b0bb7be49dc644eacf19ac8c170a63521ec67bad5015079e986\\"",
       "Type": "String",
@@ -30088,18 +30949,6 @@ Object {
     },
     "AssetParameters8c43ff52db4a7b0bb7be49dc644eacf19ac8c170a63521ec67bad5015079e986S3VersionKey6ED4DF82": Object {
       "Description": "S3 key for asset version \\"8c43ff52db4a7b0bb7be49dc644eacf19ac8c170a63521ec67bad5015079e986\\"",
-      "Type": "String",
-    },
-    "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479ArtifactHashB171FCB5": Object {
-      "Description": "Artifact hash for asset \\"8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479\\"",
-      "Type": "String",
-    },
-    "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3Bucket92EDF3D4": Object {
-      "Description": "S3 bucket for asset \\"8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479\\"",
-      "Type": "String",
-    },
-    "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3VersionKey1232157A": Object {
-      "Description": "S3 key for asset version \\"8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479\\"",
       "Type": "String",
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064ArtifactHashEA963870": Object {
@@ -31757,7 +32606,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3Bucket92EDF3D4",
+            "Ref": "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3Bucket8B3B248E",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -31770,7 +32619,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3VersionKey1232157A",
+                          "Ref": "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3VersionKey1791B031",
                         },
                       ],
                     },
@@ -31783,7 +32632,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters8c51f880a35ff372fbfdaa99907d4bfc74c996b6d13dadfc5043904ee70a4479S3VersionKey1232157A",
+                          "Ref": "AssetParameters85a07a2a22438d1993a9df76ff27a1c74859c91b0c7924664cc792fcecc27aebS3VersionKey1791B031",
                         },
                       ],
                     },
@@ -31800,8 +32649,10 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "BUCKET_NAME": Object {
               "Ref": "ConstructHubPackageDataDC5EF35E",
             },
-            "PACKAGE_LINKS": "[]",
-            "PACKAGE_TAGS": "[]",
+            "CONFIG_BUCKET_NAME": Object {
+              "Ref": "ConstructHubIngestionConfigBucket0F0ED0B6",
+            },
+            "CONFIG_FILE_KEY": "config.json",
             "STATE_MACHINE_ARN": Object {
               "Ref": "ConstructHubOrchestration39161A46",
             },
@@ -31822,6 +32673,66 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubIngestionConfigBucket0F0ED0B6": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubIngestionConfigBucketPolicyF096914C": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubIngestionConfigBucket0F0ED0B6",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubIngestionConfigBucket0F0ED0B6",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubIngestionConfigBucket0F0ED0B6",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "ConstructHubIngestionDLQ3E96A5F2": Object {
       "DeletionPolicy": "Delete",
@@ -31928,6 +32839,107 @@ Direct link to the function: /lambda/home#/functions/",
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubIngestionDeployIngestionConfigurationAwsCliLayerF77955C2": Object {
+      "Properties": Object {
+        "Content": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "/opt/awscli/aws",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "ConstructHubIngestionDeployIngestionConfigurationCustomResourceD7F243C1": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "DestinationBucketName": Object {
+          "Ref": "ConstructHubIngestionConfigBucket0F0ED0B6",
+        },
+        "Prune": true,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn",
+          ],
+        },
+        "SourceBucketNames": Array [
+          Object {
+            "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3BucketF7599DDF",
+          },
+        ],
+        "SourceObjectKeys": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3VersionKeyE9957876",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3VersionKeyE9957876",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "Custom::CDKBucketDeployment",
+      "UpdateReplacePolicy": "Delete",
     },
     "ConstructHubIngestionFailureAlarm9D0028DD": Object {
       "Properties": Object {
@@ -32428,6 +33440,36 @@ Direct link to the function: /lambda/home#/functions/",
               ],
               "Effect": "Allow",
               "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubIngestionConfigBucket0F0ED0B6",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubIngestionConfigBucket0F0ED0B6",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
             },
             Object {
               "Action": Array [
@@ -38175,6 +39217,80 @@ function handler(event) {
                       Object {
                         "Fn::GetAtt": Array [
                           "ConstructHubDenyListBucket1B3C2C2E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3BucketF7599DDF",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9S3BucketF7599DDF",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubIngestionConfigBucket0F0ED0B6",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubIngestionConfigBucket0F0ED0B6",
                           "Arn",
                         ],
                       },

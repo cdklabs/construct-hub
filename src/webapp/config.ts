@@ -1,7 +1,5 @@
-import { mkdtempSync, writeFileSync } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
 import { FeaturedPackages, FeatureFlags, PackageLinkConfig } from '.';
+import { ConfigFile } from '../config-file';
 import { PackageTagConfig } from '../package-tag';
 
 interface FrontendPackageLinkConfig {
@@ -72,12 +70,9 @@ export interface WebappConfigProps {
 }
 
 export class WebappConfig {
-  public readonly path: string;
-  public readonly dir: string;
+  public readonly file: ConfigFile;
   public constructor(private readonly props: WebappConfigProps) {
-    this.dir = mkdtempSync(join(tmpdir(), 'chwebapp'));
-    this.path = join(this.dir, 'config.json');
-    writeFileSync(this.path, JSON.stringify(this.frontendConfig));
+    this.file = new ConfigFile('config.json', JSON.stringify(this.frontendConfig));
   }
 
   private get frontendConfig(): FrontendConfig {
