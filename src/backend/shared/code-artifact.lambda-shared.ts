@@ -69,8 +69,8 @@ export async function codeArtifactPublishPackage(tarball: Buffer, opts: CodeArti
       throw new Error(`npm publish was killed by signal ${signal}`);
     }
     const result = JSON.parse(stdout.toString('utf-8'));
-    if (result.error?.code === 'E409') {
-      console.log('E409 - The package already exist; assuming idempotent success!');
+    if (result.error?.code === 'E409' || result.error?.code === 'EPUBLISHCONFLICT') {
+      console.log(`${result.error.code} - The package already exist; assuming idempotent success!`);
       return;
     } else {
       throw new Error(`npm publish returned ${JSON.stringify(result)}`);
