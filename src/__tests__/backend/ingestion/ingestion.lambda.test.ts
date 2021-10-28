@@ -43,8 +43,8 @@ afterEach((done) => {
 test('basic happy case', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
-  const mockPackageLinks = '[]';
-  const mockPackageTags = '[]';
+  const mockConfigBucket = 'fake-config-bucket';
+  const mockConfigkey = 'fake-config-obj-key';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -55,11 +55,11 @@ test('basic happy case', async () => {
     if (name === 'STATE_MACHINE_ARN') {
       return mockStateMachineArn;
     }
-    if (name === 'PACKAGE_LINKS') {
-      return mockPackageLinks;
+    if (name === 'CONFIG_BUCKET_NAME') {
+      return mockConfigBucket;
     }
-    if (name === 'PACKAGE_TAGS') {
-      return mockPackageTags;
+    if (name === 'CONFIG_FILE_KEY') {
+      return mockConfigkey;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -76,6 +76,10 @@ test('basic happy case', async () => {
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
   const fakeDotJsii = JSON.stringify(fakeAssembly(packageName, packageVersion, packageLicense));
+  const mockConfig = Buffer.from(JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  }));
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -84,6 +88,16 @@ test('basic happy case', async () => {
   } as any;
 
   AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+    if (req.Bucket === mockConfigBucket) {
+      try {
+        expect(req.Bucket).toBe(mockConfigBucket);
+        expect(req.Key).toBe(mockConfigkey);
+      } catch (e) {
+        return cb(e);
+      }
+      return cb(null, { Body: mockConfig });
+    }
+
     try {
       expect(req.Bucket).toBe(stagingBucket);
       expect(req.Key).toBe(stagingKey);
@@ -185,8 +199,8 @@ test('basic happy case', async () => {
 test('basic happy case with license file', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
-  const mockPackageLinks = '[]';
-  const mockPackageTags = '[]';
+  const mockConfigBucket = 'fake-config-bucket';
+  const mockConfigkey = 'fake-config-obj-key';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -197,11 +211,11 @@ test('basic happy case with license file', async () => {
     if (name === 'STATE_MACHINE_ARN') {
       return mockStateMachineArn;
     }
-    if (name === 'PACKAGE_LINKS') {
-      return mockPackageLinks;
+    if (name === 'CONFIG_BUCKET_NAME') {
+      return mockConfigBucket;
     }
-    if (name === 'PACKAGE_TAGS') {
-      return mockPackageTags;
+    if (name === 'CONFIG_FILE_KEY') {
+      return mockConfigkey;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -219,6 +233,10 @@ test('basic happy case with license file', async () => {
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
   const fakeDotJsii = JSON.stringify(fakeAssembly(packageName, packageVersion, packageLicense));
+  const mockConfig = Buffer.from(JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  }));
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -227,6 +245,16 @@ test('basic happy case with license file', async () => {
   } as any;
 
   AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+    if (req.Bucket === mockConfigBucket) {
+      try {
+        expect(req.Bucket).toBe(mockConfigBucket);
+        expect(req.Key).toBe(mockConfigkey);
+      } catch (e) {
+        return cb(e);
+      }
+      return cb(null, { Body: mockConfig });
+    }
+
     try {
       expect(req.Bucket).toBe(stagingBucket);
       expect(req.Key).toBe(stagingKey);
@@ -338,19 +366,8 @@ test('basic happy case with license file', async () => {
 test('basic happy case with custom package links', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
-  const mockPackageTags = '[]';
-  const mockPackageLinks = JSON.stringify([{
-    linkLabel: 'PackageLink',
-    configKey: 'PackageLinkKey',
-  }, {
-    linkLabel: 'PackageLinkDomain',
-    configKey: 'PackageLinkDomainKey',
-    allowedDomains: ['somehost.com'],
-  }, {
-    linkLabel: 'PackageLinkBadDomain',
-    configKey: 'PackageLinkBadDomainKey',
-    allowedDomains: ['somehost.com'],
-  }]);
+  const mockConfigBucket = 'fake-config-bucket';
+  const mockConfigkey = 'fake-config-obj-key';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -361,11 +378,11 @@ test('basic happy case with custom package links', async () => {
     if (name === 'STATE_MACHINE_ARN') {
       return mockStateMachineArn;
     }
-    if (name === 'PACKAGE_LINKS') {
-      return mockPackageLinks;
+    if (name === 'CONFIG_BUCKET_NAME') {
+      return mockConfigBucket;
     }
-    if (name === 'PACKAGE_TAGS') {
-      return mockPackageTags;
+    if (name === 'CONFIG_FILE_KEY') {
+      return mockConfigkey;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -384,6 +401,21 @@ test('basic happy case with custom package links', async () => {
   const packageLinkValue = 'https://somehost.com';
   const packageLinkBadValue = 'https://somebadhost.com';
   const fakeDotJsii = JSON.stringify(fakeAssembly(packageName, packageVersion, packageLicense));
+  const mockConfig = Buffer.from(JSON.stringify({
+    packageLinks: [{
+      linkLabel: 'PackageLink',
+      configKey: 'PackageLinkKey',
+    }, {
+      linkLabel: 'PackageLinkDomain',
+      configKey: 'PackageLinkDomainKey',
+      allowedDomains: ['somehost.com'],
+    }, {
+      linkLabel: 'PackageLinkBadDomain',
+      configKey: 'PackageLinkBadDomainKey',
+      allowedDomains: ['somehost.com'],
+    }],
+    packageTags: [],
+  }));
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -392,6 +424,16 @@ test('basic happy case with custom package links', async () => {
   } as any;
 
   AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+    if (req.Bucket === mockConfigBucket) {
+      try {
+        expect(req.Bucket).toBe(mockConfigBucket);
+        expect(req.Key).toBe(mockConfigkey);
+      } catch (e) {
+        return cb(e);
+      }
+      return cb(null, { Body: mockConfig });
+    }
+
     try {
       expect(req.Bucket).toBe(stagingBucket);
       expect(req.Key).toBe(stagingKey);
@@ -513,7 +555,38 @@ test('basic happy case with custom tags', async () => {
   const packageName = '@package-scope/package-name';
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
-  const mockPackageLinks = '[]';
+  const mockConfigBucket = 'fake-config-bucket';
+  const mockConfigkey = 'fake-config-obj-key';
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
+  mockRequireEnv.mockImplementation((name) => {
+    if (name === 'BUCKET_NAME') {
+      return mockBucketName;
+    }
+    if (name === 'STATE_MACHINE_ARN') {
+      return mockStateMachineArn;
+    }
+    if (name === 'CONFIG_BUCKET_NAME') {
+      return mockConfigBucket;
+    }
+    if (name === 'CONFIG_FILE_KEY') {
+      return mockConfigkey;
+    }
+    throw new Error(`Bad environment variable: "${name}"`);
+  });
+
+  const stagingBucket = 'staging-bucket';
+  const stagingKey = 'staging-key';
+  const stagingVersion = 'staging-version-id';
+  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
+  const fakeTar = Buffer.from('fake-tarball-content');
+  const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
+  const time = '2021-07-12T15:18:00.000000+02:00';
+  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
+  const packageVersion = '1.2.3-pre.4';
+  const packageLicense = 'Apache-2.0';
+  const fakeDotJsii = JSON.stringify(fakeAssembly(packageName, packageVersion, packageLicense));
 
   // Some true and false tags to assert against in output
   const mockTrueCondition = TagCondition.field('name').eq(packageName);
@@ -548,40 +621,15 @@ test('basic happy case with custom tags', async () => {
         }),
       );
 
-  const mockPackageTags = JSON.stringify([
+  const mockPackageTags = [
     ...tagMaker('true', trueEntries),
     ...tagMaker('false', Object.entries(falseTags)),
-  ]);
+  ];
 
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
-  mockRequireEnv.mockImplementation((name) => {
-    if (name === 'BUCKET_NAME') {
-      return mockBucketName;
-    }
-    if (name === 'STATE_MACHINE_ARN') {
-      return mockStateMachineArn;
-    }
-    if (name === 'PACKAGE_LINKS') {
-      return mockPackageLinks;
-    }
-    if (name === 'PACKAGE_TAGS') {
-      return mockPackageTags;
-    }
-    throw new Error(`Bad environment variable: "${name}"`);
-  });
-
-  const stagingBucket = 'staging-bucket';
-  const stagingKey = 'staging-key';
-  const stagingVersion = 'staging-version-id';
-  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
-  const fakeTar = Buffer.from('fake-tarball-content');
-  const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
-  const time = '2021-07-12T15:18:00.000000+02:00';
-  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
-  const packageVersion = '1.2.3-pre.4';
-  const packageLicense = 'Apache-2.0';
-  const fakeDotJsii = JSON.stringify(fakeAssembly(packageName, packageVersion, packageLicense));
+  const mockConfig = Buffer.from(JSON.stringify({
+    packageLinks: [],
+    packageTags: mockPackageTags,
+  }));
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -590,6 +638,16 @@ test('basic happy case with custom tags', async () => {
   } as any;
 
   AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+    if (req.Bucket === mockConfigBucket) {
+      try {
+        expect(req.Bucket).toBe(mockConfigBucket);
+        expect(req.Key).toBe(mockConfigkey);
+      } catch (e) {
+        return cb(e);
+      }
+      return cb(null, { Body: mockConfig });
+    }
+
     try {
       expect(req.Bucket).toBe(stagingBucket);
       expect(req.Key).toBe(stagingKey);
@@ -701,8 +759,8 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
   test(`basic happy case with constructs framework (${frameworkName})`, async () => {
     const mockBucketName = 'fake-bucket';
     const mockStateMachineArn = 'fake-state-machine-arn';
-    const mockPackageLinks = '[]';
-    const mockPackageTags = '[]';
+    const mockConfigBucket = 'fake-config-bucket';
+    const mockConfigkey = 'fake-config-obj-key';
 
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -713,11 +771,11 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
       if (name === 'STATE_MACHINE_ARN') {
         return mockStateMachineArn;
       }
-      if (name === 'PACKAGE_LINKS') {
-        return mockPackageLinks;
+      if (name === 'CONFIG_BUCKET_NAME') {
+        return mockConfigBucket;
       }
-      if (name === 'PACKAGE_TAGS') {
-        return mockPackageTags;
+      if (name === 'CONFIG_FILE_KEY') {
+        return mockConfigkey;
       }
       throw new Error(`Bad environment variable: "${name}"`);
     });
@@ -738,6 +796,10 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
       dependencies: { [frameworkPackage]: '^1337.234.567' },
       dependencyClosure: { [frameworkPackage]: { /* ... */ } },
     });
+    const mockConfig = Buffer.from(JSON.stringify({
+      packageLinks: [],
+      packageTags: [],
+    }));
 
     const context: Context = {
       awsRequestId: 'Fake-Request-ID',
@@ -746,6 +808,16 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
     } as any;
 
     AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      if (req.Bucket === mockConfigBucket) {
+        try {
+          expect(req.Bucket).toBe(mockConfigBucket);
+          expect(req.Key).toBe(mockConfigkey);
+        } catch (e) {
+          return cb(e);
+        }
+        return cb(null, { Body: mockConfig });
+      }
+
       try {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
@@ -852,8 +924,8 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
   test(`the construct framework package itself (${frameworkPackage} => ${frameworkName})`, async () => {
     const mockBucketName = 'fake-bucket';
     const mockStateMachineArn = 'fake-state-machine-arn';
-    const mockPackageLinks = '[]';
-    const mockPackageTags = '[]';
+    const mockConfigBucket = 'fake-config-bucket';
+    const mockConfigkey = 'fake-config-obj-key';
 
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -864,11 +936,11 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
       if (name === 'STATE_MACHINE_ARN') {
         return mockStateMachineArn;
       }
-      if (name === 'PACKAGE_LINKS') {
-        return mockPackageLinks;
+      if (name === 'CONFIG_BUCKET_NAME') {
+        return mockConfigBucket;
       }
-      if (name === 'PACKAGE_TAGS') {
-        return mockPackageTags;
+      if (name === 'CONFIG_FILE_KEY') {
+        return mockConfigkey;
       }
       throw new Error(`Bad environment variable: "${name}"`);
     });
@@ -884,6 +956,10 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
     const packageVersion = '42.2.3-pre.4';
     const packageLicense = 'Apache-2.0';
     const fakeDotJsii = JSON.stringify(fakeAssembly(frameworkPackage, packageVersion, packageLicense));
+    const mockConfig = Buffer.from(JSON.stringify({
+      packageLinks: [],
+      packageTags: [],
+    }));
 
     const context: Context = {
       awsRequestId: 'Fake-Request-ID',
@@ -892,6 +968,16 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
     } as any;
 
     AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      if (req.Bucket === mockConfigBucket) {
+        try {
+          expect(req.Bucket).toBe(mockConfigBucket);
+          expect(req.Key).toBe(mockConfigkey);
+        } catch (e) {
+          return cb(e);
+        }
+        return cb(null, { Body: mockConfig });
+      }
+
       try {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
@@ -998,8 +1084,8 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
   test(`basic happy case with constructs framework (${frameworkName}), no major`, async () => {
     const mockBucketName = 'fake-bucket';
     const mockStateMachineArn = 'fake-state-machine-arn';
-    const mockPackageLinks = '[]';
-    const mockPackageTags = '[]';
+    const mockConfigBucket = 'fake-config-bucket';
+    const mockConfigkey = 'fake-config-obj-key';
 
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -1010,11 +1096,11 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
       if (name === 'STATE_MACHINE_ARN') {
         return mockStateMachineArn;
       }
-      if (name === 'PACKAGE_LINKS') {
-        return mockPackageLinks;
+      if (name === 'CONFIG_BUCKET_NAME') {
+        return mockConfigBucket;
       }
-      if (name === 'PACKAGE_TAGS') {
-        return mockPackageTags;
+      if (name === 'CONFIG_FILE_KEY') {
+        return mockConfigkey;
       }
       throw new Error(`Bad environment variable: "${name}"`);
     });
@@ -1036,6 +1122,10 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
       // determine which major version of the framework is being used here.
       dependencyClosure: { [frameworkPackage]: { /* ... */ } },
     });
+    const mockConfig = Buffer.from(JSON.stringify({
+      packageLinks: [],
+      packageTags: [],
+    }));
 
     const context: Context = {
       awsRequestId: 'Fake-Request-ID',
@@ -1044,6 +1134,16 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
     } as any;
 
     AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      if (req.Bucket === mockConfigBucket) {
+        try {
+          expect(req.Bucket).toBe(mockConfigBucket);
+          expect(req.Key).toBe(mockConfigkey);
+        } catch (e) {
+          return cb(e);
+        }
+        return cb(null, { Body: mockConfig });
+      }
+
       try {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
@@ -1151,8 +1251,8 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
 test('mismatched package name', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
-  const mockPackageLinks = '[]';
-  const mockPackageTags = '[]';
+  const mockConfigBucket = 'fake-config-bucket';
+  const mockConfigkey = 'fake-config-obj-key';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -1163,11 +1263,11 @@ test('mismatched package name', async () => {
     if (name === 'STATE_MACHINE_ARN') {
       return mockStateMachineArn;
     }
-    if (name === 'PACKAGE_LINKS') {
-      return mockPackageLinks;
+    if (name === 'CONFIG_BUCKET_NAME') {
+      return mockConfigBucket;
     }
-    if (name === 'PACKAGE_TAGS') {
-      return mockPackageTags;
+    if (name === 'CONFIG_FILE_KEY') {
+      return mockConfigkey;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -1185,6 +1285,10 @@ test('mismatched package name', async () => {
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
   const fakeDotJsii = JSON.stringify(fakeAssembly(packageName + '-oops', packageVersion, packageLicense));
+  const mockConfig = Buffer.from(JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  }));
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -1193,6 +1297,16 @@ test('mismatched package name', async () => {
   } as any;
 
   AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+    if (req.Bucket === mockConfigBucket) {
+      try {
+        expect(req.Bucket).toBe(mockConfigBucket);
+        expect(req.Key).toBe(mockConfigkey);
+      } catch (e) {
+        return cb(e);
+      }
+      return cb(null, { Body: mockConfig });
+    }
+
     try {
       expect(req.Bucket).toBe(stagingBucket);
       expect(req.Key).toBe(stagingKey);
@@ -1243,8 +1357,8 @@ test('mismatched package name', async () => {
 test('mismatched package version', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
-  const mockPackageLinks = '[]';
-  const mockPackageTags = '[]';
+  const mockConfigBucket = 'fake-config-bucket';
+  const mockConfigkey = 'fake-config-obj-key';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -1255,11 +1369,11 @@ test('mismatched package version', async () => {
     if (name === 'STATE_MACHINE_ARN') {
       return mockStateMachineArn;
     }
-    if (name === 'PACKAGE_LINKS') {
-      return mockPackageLinks;
+    if (name === 'CONFIG_BUCKET_NAME') {
+      return mockConfigBucket;
     }
-    if (name === 'PACKAGE_TAGS') {
-      return mockPackageTags;
+    if (name === 'CONFIG_FILE_KEY') {
+      return mockConfigkey;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -1277,6 +1391,10 @@ test('mismatched package version', async () => {
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
   const fakeDotJsii = JSON.stringify(fakeAssembly(packageName, packageVersion + '-oops', packageLicense));
+  const mockConfig = Buffer.from(JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  }));
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -1285,6 +1403,16 @@ test('mismatched package version', async () => {
   } as any;
 
   AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+    if (req.Bucket === mockConfigBucket) {
+      try {
+        expect(req.Bucket).toBe(mockConfigBucket);
+        expect(req.Key).toBe(mockConfigkey);
+      } catch (e) {
+        return cb(e);
+      }
+      return cb(null, { Body: mockConfig });
+    }
+
     try {
       expect(req.Bucket).toBe(stagingBucket);
       expect(req.Key).toBe(stagingKey);
@@ -1335,8 +1463,8 @@ test('mismatched package version', async () => {
 test('mismatched package license', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
-  const mockPackageLinks = '[]';
-  const mockPackageTags = '[]';
+  const mockConfigBucket = 'fake-config-bucket';
+  const mockConfigkey = 'fake-config-obj-key';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -1347,11 +1475,11 @@ test('mismatched package license', async () => {
     if (name === 'STATE_MACHINE_ARN') {
       return mockStateMachineArn;
     }
-    if (name === 'PACKAGE_LINKS') {
-      return mockPackageLinks;
+    if (name === 'CONFIG_BUCKET_NAME') {
+      return mockConfigBucket;
     }
-    if (name === 'PACKAGE_TAGS') {
-      return mockPackageTags;
+    if (name === 'CONFIG_FILE_KEY') {
+      return mockConfigkey;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -1369,6 +1497,10 @@ test('mismatched package license', async () => {
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
   const fakeDotJsii = JSON.stringify(fakeAssembly(packageName, packageVersion, packageLicense + '-oops'));
+  const mockConfig = Buffer.from(JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  }));
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -1377,6 +1509,16 @@ test('mismatched package license', async () => {
   } as any;
 
   AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+    if (req.Bucket === mockConfigBucket) {
+      try {
+        expect(req.Bucket).toBe(mockConfigBucket);
+        expect(req.Key).toBe(mockConfigkey);
+      } catch (e) {
+        return cb(e);
+      }
+      return cb(null, { Body: mockConfig });
+    }
+
     try {
       expect(req.Bucket).toBe(stagingBucket);
       expect(req.Key).toBe(stagingKey);
@@ -1427,8 +1569,8 @@ test('mismatched package license', async () => {
 test('missing .jsii file', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
-  const mockPackageLinks = '[]';
-  const mockPackageTags = '[]';
+  const mockConfigBucket = 'fake-config-bucket';
+  const mockConfigkey = 'fake-config-obj-key';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -1439,11 +1581,11 @@ test('missing .jsii file', async () => {
     if (name === 'STATE_MACHINE_ARN') {
       return mockStateMachineArn;
     }
-    if (name === 'PACKAGE_LINKS') {
-      return mockPackageLinks;
+    if (name === 'CONFIG_BUCKET_NAME') {
+      return mockConfigBucket;
     }
-    if (name === 'PACKAGE_TAGS') {
-      return mockPackageTags;
+    if (name === 'CONFIG_FILE_KEY') {
+      return mockConfigkey;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -1460,6 +1602,10 @@ test('missing .jsii file', async () => {
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
+  const mockConfig = Buffer.from(JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  }));
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -1468,6 +1614,16 @@ test('missing .jsii file', async () => {
   } as any;
 
   AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+    if (req.Bucket === mockConfigBucket) {
+      try {
+        expect(req.Bucket).toBe(mockConfigBucket);
+        expect(req.Key).toBe(mockConfigkey);
+      } catch (e) {
+        return cb(e);
+      }
+      return cb(null, { Body: mockConfig });
+    }
+
     try {
       expect(req.Bucket).toBe(stagingBucket);
       expect(req.Key).toBe(stagingKey);
@@ -1515,8 +1671,8 @@ test('missing .jsii file', async () => {
 test('missing package.json file', async () => {
   const mockBucketName = 'fake-bucket';
   const mockStateMachineArn = 'fake-state-machine-arn';
-  const mockPackageLinks = '[]';
-  const mockPackageTags = '[]';
+  const mockConfigBucket = 'fake-config-bucket';
+  const mockConfigkey = 'fake-config-obj-key';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
@@ -1527,11 +1683,11 @@ test('missing package.json file', async () => {
     if (name === 'STATE_MACHINE_ARN') {
       return mockStateMachineArn;
     }
-    if (name === 'PACKAGE_LINKS') {
-      return mockPackageLinks;
+    if (name === 'CONFIG_BUCKET_NAME') {
+      return mockConfigBucket;
     }
-    if (name === 'PACKAGE_TAGS') {
-      return mockPackageTags;
+    if (name === 'CONFIG_FILE_KEY') {
+      return mockConfigkey;
     }
     throw new Error(`Bad environment variable: "${name}"`);
   });
@@ -1549,6 +1705,10 @@ test('missing package.json file', async () => {
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
   const fakeDotJsii = JSON.stringify(fakeAssembly(packageName, packageVersion, packageLicense));
+  const mockConfig = Buffer.from(JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  }));
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -1557,6 +1717,16 @@ test('missing package.json file', async () => {
   } as any;
 
   AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+    if (req.Bucket === mockConfigBucket) {
+      try {
+        expect(req.Bucket).toBe(mockConfigBucket);
+        expect(req.Key).toBe(mockConfigkey);
+      } catch (e) {
+        return cb(e);
+      }
+      return cb(null, { Body: mockConfig });
+    }
+
     try {
       expect(req.Bucket).toBe(stagingBucket);
       expect(req.Key).toBe(stagingKey);

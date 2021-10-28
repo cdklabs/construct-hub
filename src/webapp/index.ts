@@ -223,7 +223,7 @@ export class WebApp extends Construct {
     });
 
     new s3deploy.BucketDeployment(this, 'DeployWebsiteConfig', {
-      sources: [s3deploy.Source.asset(config.dir)],
+      sources: [s3deploy.Source.asset(config.file.dir)],
       destinationBucket: this.bucket,
       distribution: this.distribution,
       prune: false,

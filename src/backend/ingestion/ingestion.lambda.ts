@@ -29,8 +29,11 @@ export const handler = metricScope(
 
     const BUCKET_NAME = requireEnv('BUCKET_NAME');
     const STATE_MACHINE_ARN = requireEnv('STATE_MACHINE_ARN');
-    const PACKAGE_LINKS = requireEnv('PACKAGE_LINKS');
-    const PACKAGE_TAGS = requireEnv('PACKAGE_TAGS');
+    const CONFIG_BUCKET_NAME = requireEnv('CONFIG_BUCKET_NAME');
+    const CONFIG_FILE_KEY = requireEnv('CONFIG_FILE_KEY');
+
+    // Load configuration
+    const { packageTags: packageTagsConfig, packageLinks: allowedLinks }: Config = await getConfig(CONFIG_BUCKET_NAME, CONFIG_FILE_KEY);
 
     const result = new Array<string>();
 
@@ -135,9 +138,6 @@ export const handler = metricScope(
         Unit.Count,
       );
 
-      // Add custom links content to metdata for display on the frontend
-      const allowedLinks: PackageLinkConfig[] = JSON.parse(PACKAGE_LINKS);
-
       const packageLinks = allowedLinks.reduce((accum, { configKey, allowedDomains }) => {
         const pkgValue = constructHub?.packageLinks[configKey];
 
@@ -155,8 +155,6 @@ export const handler = metricScope(
         return { ...accum, [configKey]: pkgValue };
       }, {});
 
-      // Add computed tags to metadata
-      const packageTagsConfig: PackageTagConfig[] = JSON.parse(PACKAGE_TAGS);
       const packageTags = packageTagsConfig.reduce((accum: Array<Omit<PackageTagConfig, 'condition'>>, tagConfig) => {
         const { condition, ...tagData } = tagConfig;
         if (isTagApplicable(condition, packageJsonObj)) {
@@ -396,4 +394,37 @@ function sfnExecutionNameFromParts(
     .digest('hex')
     .substring(0, 6);
   return `${name.substring(0, 80 - suffix.length - 1)}_${suffix}`;
+}
+
+/**
+ * Ingestion configuration for package links and tags
+ */
+interface Config {
+  packageTags: PackageTagConfig[];
+  packageLinks: PackageLinkConfig[];
+}
+
+/**
+ * Looks for the ingestion configuration file in the passed bucket and parses
+ * it. If it is not found or invalid then a default is returned.
+ */
+async function getConfig(bucket: string, key: string): Promise<Config> {
+  const defaultConfig = {
+    packageTags: [],
+    packageLinks: [],
+  };
+  try {
+    const req = await aws.s3().getObject({
+      Bucket: bucket,
+      Key: key,
+    }).promise();
+    const body = req?.Body?.toString();
+    if (body) {
+      return JSON.parse(body);
+    }
+    return defaultConfig;
+  } catch (e) {
+    console.error(e);
+    return defaultConfig;
+  }
 }
