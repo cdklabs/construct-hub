@@ -20,7 +20,7 @@ export class DocumentationLanguage {
   /**
    * CSharp.
    */
-  public static readonly CSHARP = new DocumentationLanguage('csharp', 'dotnet');
+  public static readonly CSHARP = new DocumentationLanguage('csharp');
 
   /**
    * All supported languages.
@@ -46,17 +46,16 @@ export class DocumentationLanguage {
       case DocumentationLanguage.JAVA.toString():
         return DocumentationLanguage.JAVA;
       case DocumentationLanguage.CSHARP.toString():
-      case DocumentationLanguage.CSHARP.targetName:
         return DocumentationLanguage.CSHARP;
       default:
         throw new UnsupportedLanguageError(lang, DocumentationLanguage.ALL);
     }
   }
 
-  private constructor(public readonly name: string, public readonly targetName = name) {}
+  private constructor(private readonly lang: string) {}
 
   public toString() {
-    return this.name;
+    return this.lang;
   }
 }
 
