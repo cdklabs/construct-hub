@@ -223,6 +223,7 @@ export class Orchestration extends Construct {
         this.transliterator.createEcsRunTask(this, 'Generate docs', {
           cluster: this.ecsCluster,
           inputPath: '$.command',
+          resultPath: '$.docGenOutput',
           // Expect this to complete within one hour
           timeout: Duration.hours(1),
           vpcSubnets: props.vpcSubnets,
