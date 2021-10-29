@@ -2655,7 +2655,7 @@ Resources:
                 - Ref: AWS::Region
                 - .
                 - Ref: AWS::URLSuffix
-                - /aws-cdk/assets:93e9a2eddcef167572d70c64a4eaee8414f925cbb03ed488ecaea29d83a09b2d
+                - /aws-cdk/assets:10f7f941abb5d59399b6f71b7090ef96d30a02ce6ab2a6053ba90924bddd4796
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -2866,7 +2866,7 @@ Resources:
               error"},{"ErrorEquals":["States.TaskFailed"],"Next":"\\"Generate
               docs\\" failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate
               docs\\"
-              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.command","Resource":"arn:'
+              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.command","ResultPath":"$.docGenOutput","Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:

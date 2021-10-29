@@ -215,14 +215,13 @@ export class Orchestration extends Construct {
       .next(
         new Pass(this, 'Prepare doc-gen ECS Command', {
           parameters: { 'command.$': 'States.Array(States.JsonToString($))' },
-          outputPath: '$.command',
-          resultPath: '$.command',
+          resultPath: '$.docGen',
         }),
       )
       .next(
         this.transliterator.createEcsRunTask(this, 'Generate docs', {
           cluster: this.ecsCluster,
-          inputPath: '$.command',
+          inputPath: '$.docGen.command',
           resultPath: '$.docGenOutput',
           // Expect this to complete within one hour
           timeout: Duration.hours(1),
