@@ -26,6 +26,8 @@ export interface MonitoringProps {
  */
 export class Monitoring extends Construct implements IMonitoring {
   private alarmActions?: AlarmActions;
+  private _highSeverityAlarms: cw.Alarm[];
+  private _lowSeverityAlarms: cw.Alarm[];
 
   /**
    * Allows adding automatic monitoring to standard resources. Note that
@@ -46,6 +48,9 @@ export class Monitoring extends Construct implements IMonitoring {
       alarmActionArns: this.alarmActions?.normalSeverity ? [this.alarmActions.normalSeverity] : [],
       alarmActions: this.alarmActions?.normalSeverityAction ? [this.alarmActions.normalSeverityAction] : [],
     });
+
+    this._highSeverityAlarms = [];
+    this._lowSeverityAlarms = [];
 
     this.highSeverityDashboard = new cw.Dashboard(this, 'HighSeverityDashboard');
   }
@@ -71,12 +76,23 @@ export class Monitoring extends Construct implements IMonitoring {
       title,
       width: 24,
     }));
+
+    this._highSeverityAlarms?.push(alarm);
   }
 
   public addLowSeverityAlarm(_title: string, alarm: cw.Alarm) {
     if (this.alarmActions?.normalSeverityAction) {
       alarm.addAlarmAction(this.alarmActions!.normalSeverityAction);
     }
+    this._lowSeverityAlarms?.push(alarm);
+  }
+
+  public get highSeverityAlarms() {
+    return [...this._highSeverityAlarms];
+  }
+
+  public get lowSeverityAlarms() {
+    return [...this._lowSeverityAlarms];
   }
 
   /**
