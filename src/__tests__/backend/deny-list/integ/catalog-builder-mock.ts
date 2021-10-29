@@ -13,7 +13,7 @@ export class CatalogBuilderMock extends lambda.Function {
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '/catalog-builder-mock.bundle')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '/catalog-builder-mock.lambda.bundle')),
     });
   }
 }

@@ -12,7 +12,7 @@ export class Transliterator extends ecs.ContainerDefinition {
   public constructor(scope: Construct, id: string, props: TransliteratorProps) {
     super(scope, id, {
       ...props,
-      image: ecs.ContainerImage.fromAsset(path.join(__dirname, 'transliterator.bundle')),
+      image: ecs.ContainerImage.fromAsset(path.join(__dirname, 'transliterator.ecs-entrypoint.bundle')),
     });
 
     props.taskDefinition.taskRole.addToPrincipalPolicy(new iam.PolicyStatement({

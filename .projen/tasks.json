@@ -281,7 +281,7 @@
     },
     "bundle": {
       "name": "bundle",
-      "description": "Bundle all lambda functions",
+      "description": "Bundle all lambda and ECS functions",
       "steps": [
         {
           "spawn": "bundle:catalog-builder-mock"
@@ -401,7 +401,16 @@
       "description": "Create an AWS Lambda bundle from src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/catalog-builder-mock.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:catalog-builder-mock:watch": {
+      "name": "bundle:catalog-builder-mock:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -410,7 +419,16 @@
       "description": "Create an AWS Lambda bundle from src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/trigger.client-test.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/trigger.client-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:trigger.client-test:watch": {
+      "name": "bundle:trigger.client-test:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/trigger.client-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -419,7 +437,16 @@
       "description": "Create an AWS Lambda bundle from src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/trigger.prune-test.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:trigger.prune-test:watch": {
+      "name": "bundle:trigger.prune-test:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -428,7 +455,16 @@
       "description": "Create an AWS Lambda bundle from src/backend/catalog-builder/catalog-builder.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/catalog-builder/catalog-builder.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/catalog-builder/catalog-builder.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "esbuild --bundle src/backend/catalog-builder/catalog-builder.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/catalog-builder/catalog-builder.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:catalog-builder:watch": {
+      "name": "bundle:catalog-builder:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/catalog-builder/catalog-builder.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/catalog-builder/catalog-builder.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/catalog-builder/catalog-builder.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -437,7 +473,16 @@
       "description": "Create an AWS Lambda bundle from src/backend/deny-list/prune-handler.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/deny-list/prune-handler.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-handler.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "esbuild --bundle src/backend/deny-list/prune-handler.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-handler.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:prune-handler:watch": {
+      "name": "bundle:prune-handler:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/deny-list/prune-handler.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/deny-list/prune-handler.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-handler.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -446,7 +491,16 @@
       "description": "Create an AWS Lambda bundle from src/backend/deny-list/prune-queue-handler.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/deny-list/prune-queue-handler.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-queue-handler.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "esbuild --bundle src/backend/deny-list/prune-queue-handler.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-queue-handler.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:prune-queue-handler:watch": {
+      "name": "bundle:prune-queue-handler:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/deny-list/prune-queue-handler.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/deny-list/prune-queue-handler.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-queue-handler.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -455,7 +509,16 @@
       "description": "Create an AWS Lambda bundle from src/backend/ingestion/ingestion.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/ingestion/ingestion.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/ingestion.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "esbuild --bundle src/backend/ingestion/ingestion.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/ingestion.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:ingestion:watch": {
+      "name": "bundle:ingestion:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/ingestion/ingestion.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/ingestion/ingestion.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/ingestion.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -464,7 +527,16 @@
       "description": "Create an AWS Lambda bundle from src/backend/ingestion/re-ingest.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/ingestion/re-ingest.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/re-ingest.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "esbuild --bundle src/backend/ingestion/re-ingest.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/re-ingest.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:re-ingest:watch": {
+      "name": "bundle:re-ingest:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/ingestion/re-ingest.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/ingestion/re-ingest.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/re-ingest.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -473,7 +545,16 @@
       "description": "Create an AWS Lambda bundle from src/backend/inventory/canary.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/inventory/canary.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/canary.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "esbuild --bundle src/backend/inventory/canary.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/canary.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:canary:watch": {
+      "name": "bundle:canary:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/inventory/canary.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/inventory/canary.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/canary.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -482,7 +563,16 @@
       "description": "Create an AWS Lambda bundle from src/backend/orchestration/redrive-state-machine.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/orchestration/redrive-state-machine.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/orchestration/redrive-state-machine.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "esbuild --bundle src/backend/orchestration/redrive-state-machine.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/orchestration/redrive-state-machine.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:redrive-state-machine:watch": {
+      "name": "bundle:redrive-state-machine:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/orchestration/redrive-state-machine.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/orchestration/redrive-state-machine.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/orchestration/redrive-state-machine.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -491,7 +581,16 @@
       "description": "Create an AWS Lambda bundle from src/backend/package-stats/package-stats.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/package-stats/package-stats.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:package-stats:watch": {
+      "name": "bundle:package-stats:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/package-stats/package-stats.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -500,7 +599,16 @@
       "description": "Create an AWS Lambda bundle from src/monitored-certificate/certificate-monitor.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/monitored-certificate/certificate-monitor.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitored-certificate/certificate-monitor.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "esbuild --bundle src/monitored-certificate/certificate-monitor.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitored-certificate/certificate-monitor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:certificate-monitor:watch": {
+      "name": "bundle:certificate-monitor:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/monitored-certificate/certificate-monitor.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/monitored-certificate/certificate-monitor.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitored-certificate/certificate-monitor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -509,7 +617,16 @@
       "description": "Create an AWS Lambda bundle from src/monitoring/http-get-function.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/monitoring/http-get-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitoring/http-get-function.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "esbuild --bundle src/monitoring/http-get-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitoring/http-get-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:http-get-function:watch": {
+      "name": "bundle:http-get-function:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/monitoring/http-get-function.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/monitoring/http-get-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitoring/http-get-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -518,7 +635,16 @@
       "description": "Create an AWS Lambda bundle from src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/codeartifact/code-artifact-forwarder.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "esbuild --bundle src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/codeartifact/code-artifact-forwarder.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:code-artifact-forwarder:watch": {
+      "name": "bundle:code-artifact-forwarder:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/codeartifact/code-artifact-forwarder.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -527,7 +653,16 @@
       "description": "Create an AWS Lambda bundle from src/package-sources/npmjs/npm-js-follower.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/npmjs/npm-js-follower.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/npm-js-follower.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "esbuild --bundle src/package-sources/npmjs/npm-js-follower.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/npm-js-follower.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:npm-js-follower:watch": {
+      "name": "bundle:npm-js-follower:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/package-sources/npmjs/npm-js-follower.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/npmjs/npm-js-follower.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/npm-js-follower.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -536,7 +671,25 @@
       "description": "Create an AWS Lambda bundle from src/package-sources/npmjs/stage-and-notify.lambda.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/stage-and-notify.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/stage-and-notify.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:stage-and-notify:watch": {
+      "name": "bundle:stage-and-notify:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/package-sources/npmjs/stage-and-notify.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/stage-and-notify.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:lambda:watch": {
+      "name": "bundle:lambda:watch",
+      "description": "Continuously bundle all AWS Lambda functions",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/package-stats/package-stats.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/monitoring/http-get-function.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -545,7 +698,25 @@
       "description": "Create an AWS Fargate bundle from src/backend/transliterator/transliterator.ecstask.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/transliterator/transliterator.ecs-entrypoint.ts --target=\"node16\" --platform=\"node\" --outfile=\"lib/backend/transliterator/transliterator.bundle/index.js\" --sourcemap"
+          "exec": "esbuild --bundle src/backend/transliterator/transliterator.ecs-entrypoint.ts --target=\"node16\" --platform=\"node\" --outfile=\"lib/backend/transliterator/transliterator.ecs-entrypoint.bundle/index.js\" --sourcemap"
+        }
+      ]
+    },
+    "bundle:transliterator:watch": {
+      "name": "bundle:transliterator:watch",
+      "description": "Continuously update an AWS Fargate bundle from src/backend/transliterator/transliterator.ecstask.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/transliterator/transliterator.ecs-entrypoint.ts --target=\"node16\" --platform=\"node\" --outfile=\"lib/backend/transliterator/transliterator.ecs-entrypoint.bundle/index.js\" --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:fargate:watch": {
+      "name": "bundle:fargate:watch",
+      "description": "Continuously bundle all AWS Fargate functions",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/transliterator/transliterator.ecs-entrypoint.ts --target=\"node16\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
