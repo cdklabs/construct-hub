@@ -12,12 +12,12 @@ import { logInWithCodeArtifact } from '../shared/code-artifact.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DocumentationLanguage } from '../shared/language';
-import { shellOut, shellOutWithOutput } from '../shared/shell-out.lambda-shared';
+import { shellOut } from '../shared/shell-out.lambda-shared';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { writeFile } from './util';
 
 const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)${constants.ASSEMBLY_KEY_SUFFIX}$`);
-// Capture groups:                                                            ┗━━━━━━━━━1━━━━━━━┛  ┗━━2━━┛
+// Capture groups:                                                    ┗━━━━━━━━━1━━━━━━━┛  ┗━━2━━┛
 
 /**
  * This function receives an S3 event, and for each record, proceeds to download
@@ -56,6 +56,8 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
       await shellOut('npm', 'config', 'set', `cache=${npmCacheDir}`);
     }
 
+    const language = requireEnv('TARGET_LANGUAGE');
+    console.log(`TARGET_LANGUAGE=${language}`);
     const created = new Array<S3Object>();
 
     const [, packageName, packageVersion] = event.assembly.key.match(ASSEMBLY_KEY_REGEX) ?? [];
@@ -84,103 +86,58 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
       throw new Error(`Tarball does not exist at key ${event.package.key} in bucket ${event.bucket}.`);
     }
     const readStream = aws.s3().getObject({ Bucket: event.bucket, Key: event.package.key }).createReadStream();
-    const tmpdir = fs.mkdtempSync(path.join(os.tmpdir(), 'packages-'));
-    const tarball = path.join(tmpdir, 'package.tgz');
+    const tarball = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'packages-')), 'package.tgz');
     await writeFile(tarball, readStream);
 
-    const cwd = process.cwd();
-    try {
-      process.chdir(tmpdir);
-      console.log(`Preparing package install at ${tmpdir}`);
-      const installResult = await shellOutWithOutput(
-        'npm',
-        'install',
-        tarball,
-        '--ignore-scripts',
-        '--no-bin-links',
-        '--no-save',
-        '--include=dev',
-        '--no-package-lock',
-        '--json',
-      );
-      if (installResult.exitCode !== 0) {
-        if (installResult.signal) {
-          throw new Error(`"npm install" was killed by signal ${installResult.signal}`);
-        }
-        const toThrow = new Error(`"npm install" failed with exit code ${installResult.exitCode}`);
-        toThrow.name = 'jsii-docgen.NpmError';
-        try {
-          const json = JSON.parse(installResult.stdout.toString('utf-8'));
-          console.error(`Installation result: ${JSON.stringify(json, null, 2)}`);
-          if (json.error.code) {
-            toThrow.name += `.${json.error.code}`;
-          }
-        } catch (error) {
-          console.error(`Installation result: ${installResult.stdout.toString('utf-8')}`);
-        }
-        throw toThrow;
+    const isCSharpAndSupported = language === 'csharp' && assembly.targets.dotnet;
+    const isOtherwiseSupported = language === 'typescript' || assembly.targets[language];
+    if (
+      !isCSharpAndSupported
+      && !isOtherwiseSupported
+    ) {
+      console.error(`Package ${assembly.name}@${assembly.version} does not support ${language}, skipping!`);
+      console.log(`Assembly targets: ${JSON.stringify(assembly.targets, null, 2)}`);
+      for (const submodule of [undefined, ...submodules]) {
+        const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(language), submodule)) + constants.NOT_SUPPORTED_SUFFIX;
+        const response = await uploadFile(event.bucket, key, event.assembly.versionId);
+        created.push({ bucket: event.bucket, key, versionId: response.VersionId });
       }
-    } finally {
-      process.chdir(cwd);
+      return created;
     }
 
-    const packageDir = path.join(tmpdir, 'node_modules', packageName);
-    console.log(`Generating documentation from ${packageDir}...`);
-    for (const language of DocumentationLanguage.ALL) {
-      if (event.languages && !event.languages[language.toString()]) {
-        console.log(`Skipping language ${language} as it was not requested!`);
-        continue;
+    const generateDocs = metricScope((metrics) => async (lang: string) => {
+      metrics.setDimensions();
+      metrics.setNamespace(METRICS_NAMESPACE);
+
+      const uploads = new Map<string, Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>>();
+      const docs = await docgen.Documentation.forPackage(tarball, { name: packageName, language: docgen.Language.fromString(lang) });
+
+      function renderAndDispatch(submodule?: string) {
+        console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
+        const page = Buffer.from(docs.render({ submodule, linkFormatter: linkFormatter(docs) }).render());
+        metrics.putMetric(MetricName.DOCUMENT_SIZE, page.length, Unit.Bytes);
+
+        const { buffer: body, contentEncoding } = compressContent(page);
+        metrics.putMetric(MetricName.COMPRESSED_DOCUMENT_SIZE, body.length, Unit.Bytes);
+
+        const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(lang), submodule));
+        console.log(`Uploading ${key}`);
+        const upload = uploadFile(event.bucket, key, event.assembly.versionId, body, contentEncoding);
+        uploads.set(key, upload);
       }
 
-      const isSupported = language === DocumentationLanguage.TYPESCRIPT || assembly.targets[language.targetName];
-      if (!isSupported) {
-        console.error(`Package ${packageName}@${packageVersion} does not support ${language}, skipping!`);
-        console.log(`Assembly targets: ${JSON.stringify(assembly.targets, null, 2)}`);
-        for (const submodule of [undefined, ...submodules]) {
-          const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(language, submodule)) + constants.NOT_SUPPORTED_SUFFIX;
-          const response = await uploadFile(event.bucket, key, event.assembly.versionId);
-          created.push({ bucket: event.bucket, key, versionId: response.VersionId });
-        }
-        continue;
+      renderAndDispatch();
+      for (const submodule of submodules) {
+        renderAndDispatch(submodule);
       }
 
-      const generateDocs = metricScope((metrics) => async (lang: DocumentationLanguage) => {
-        metrics.setDimensions();
-        metrics.setNamespace(METRICS_NAMESPACE);
-
-        const uploads = new Map<string, Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>>();
-        const docs = await docgen.Documentation.forProject(packageDir, {
-          assembliesDir: tmpdir,
-          language: docgen.Language.fromString(lang.name),
-        });
-
-        function renderAndDispatch(submodule?: string) {
-          console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
-          const page = Buffer.from(docs.render({ submodule, linkFormatter: linkFormatter(docs) }).render());
-          metrics.putMetric(MetricName.DOCUMENT_SIZE, page.length, Unit.Bytes);
-
-          const { buffer: body, contentEncoding } = compressContent(page);
-          metrics.putMetric(MetricName.COMPRESSED_DOCUMENT_SIZE, body.length, Unit.Bytes);
-
-          const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(lang, submodule));
-          console.log(`Uploading ${key}`);
-          const upload = uploadFile(event.bucket, key, event.assembly.versionId, body, contentEncoding);
-          uploads.set(key, upload);
-        }
-
-        renderAndDispatch();
-        for (const submodule of submodules) {
-          renderAndDispatch(submodule);
-        }
-
-        for (const [key, upload] of uploads.entries()) {
-          const response = await upload;
-          created.push({ bucket: event.bucket, key, versionId: response.VersionId });
-          console.log(`Finished uploading ${key} (Version ID: ${response.VersionId})`);
-        }
-      });
-      await generateDocs(language);
-    }
+      for (const [key, upload] of uploads.entries()) {
+        const response = await upload;
+        created.push({ bucket: event.bucket, key, versionId: response.VersionId });
+        console.log(`Finished uploading ${key} (Version ID: ${response.VersionId})`);
+      }
+    });
+    await generateDocs(language);
 
     return created;
   });
