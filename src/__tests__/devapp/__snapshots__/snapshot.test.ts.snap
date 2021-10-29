@@ -2857,7 +2857,7 @@ Resources:
           - - '{"StartAt":"Track Execution Infos","States":{"Track Execution
               Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"Prepare
               doc-gen ECS Command"},"Prepare doc-gen ECS
-              Command":{"Type":"Pass","ResultPath":"$.command","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"OutputPath":"$.command","Next":"Generate
+              Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate
               docs"},"Generate docs":{"Next":"Add to
               catalog.json","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
               docs\\" timed
@@ -2866,7 +2866,7 @@ Resources:
               error"},{"ErrorEquals":["States.TaskFailed"],"Next":"\\"Generate
               docs\\" failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate
               docs\\"
-              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.command","Resource":"arn:'
+              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.docGen.command","ResultPath":"$.docGenOutput","Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
