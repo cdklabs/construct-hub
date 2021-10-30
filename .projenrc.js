@@ -265,7 +265,7 @@ function discoverIntegrationTests() {
   }
 }
 
-const bundleTask = project.addTask('bundle', { description: 'Bundle all lambda functions' });
+const bundleTask = project.addTask('bundle', { description: 'Bundle all lambda and ECS functions' });
 
 /**
  * Generates a construct for a pre-bundled AWS Lambda function:
@@ -297,7 +297,7 @@ function newLambdaHandler(entrypoint, trigger) {
   const dir = join(dirname(entrypoint), base);
   const entry = `${project.srcdir}/${entrypoint}`;
   const infra = `${project.srcdir}/${dir}.ts`;
-  const outdir = `${project.libdir}/${dir}.bundle`;
+  const outdir = `${project.libdir}/${dir}.lambda.bundle`;
   const outfile = `${outdir}/index.js`;
   const className = Case.pascal(basename(dir));
   const propsName = `${className}Props`;
@@ -344,24 +344,30 @@ function newLambdaHandler(entrypoint, trigger) {
   ts.close('}');
   ts.close('}');
 
+  const bundleCmd = [
+    'esbuild',
+    '--bundle',
+    entry,
+    '--target="node14"',
+    '--platform="node"',
+    `--outfile="${outfile}"`,
+    '--external:aws-sdk',
+    '--sourcemap',
+  ];
   const bundle = project.addTask(`bundle:${base}`, {
     description: `Create an AWS Lambda bundle from ${entry}`,
-    exec: [
-      'esbuild',
-      '--bundle',
-      entry,
-      '--target="node14"',
-      '--platform="node"',
-      `--outfile="${outfile}"`,
-      '--external:aws-sdk',
-      '--sourcemap',
-    ].join(' '),
+    exec: bundleCmd.join(' '),
+  });
+  const bundleWatch = project.addTask(`bundle:${base}:watch`, {
+    description: `Continuously update an AWS Lambda bundle from ${entry}`,
+    exec: [...bundleCmd, '--watch'].join(' '),
   });
 
   project.compileTask.spawn(bundle);
   bundleTask.spawn(bundle);
   console.error(`${base}: construct "${className}" under "${infra}"`);
   console.error(`${base}: bundle task "${bundle.name}"`);
+  console.error(`${base}: bundle watch task "${bundleWatch.name}"`);
 }
 
 function newEcsTask(entrypoint) {
@@ -382,9 +388,8 @@ function newEcsTask(entrypoint) {
   const dir = join(dirname(entrypoint), base);
   const entry = `${project.srcdir}/${entrypoint}`;
   const infra = `${project.srcdir}/${dir}.ts`;
-  const outdir = `${project.libdir}/${dir}.bundle`;
+  const outdir = `${project.libdir}/${dir}.ecs-entrypoint.bundle`;
   const ecsMain = `${project.srcdir}/${dir}.ecs-entrypoint.ts`;
-  const bash = `${outdir}/entrypoint.sh`;
   const outfile = `${outdir}/index.js`;
   const dockerfile = `${outdir}/Dockerfile`;
   const className = Case.pascal(basename(dir));
@@ -512,29 +517,37 @@ function newEcsTask(entrypoint) {
   df.line();
   df.line('ENTRYPOINT ["/usr/bin/env", "node", "/bundle/index.js"]');
 
+  const bundleCmd = [
+    'esbuild',
+    '--bundle',
+    ecsMain,
+    '--target="node16"',
+    '--platform="node"',
+    `--outfile="${outfile}"`,
+    '--sourcemap',
+  ];
   const bundle = project.addTask(`bundle:${base}`, {
     description: `Create an AWS Fargate bundle from ${entry}`,
-    exec: [
-      'esbuild',
-      '--bundle',
-      ecsMain,
-      '--target="node16"',
-      '--platform="node"',
-      `--outfile="${outfile}"`,
-      '--sourcemap',
-    ].join(' '),
+    exec: bundleCmd.join(' '),
+  });
+  const bundleWatch = project.addTask(`bundle:${base}:watch`, {
+    description: `Continuously update an AWS Fargate bundle from ${entry}`,
+    exec: [...bundleCmd, '--watch'].join(' '),
   });
 
   project.compileTask.spawn(bundle);
   bundleTask.spawn(bundle);
   console.error(`${base}: construct "${className}" under "${infra}"`);
   console.error(`${base}: bundle task "${bundle.name}"`);
+  console.error(`${base}: bundle watch task "${bundleWatch.name}"`);
 }
 
 /**
  * Auto-discovers all lambda functions.
  */
 function discoverLambdas() {
+  const entrypoints = [];
+
   // allow .lambda code to import dev-deps (since they are only needed during bundling)
   project.eslint.allowDevDeps('src/**/*.lambda.ts');
   // Allow .lambda-shared code to import dev-deps (these are not entry points, but are shared by several lambdas)
@@ -542,7 +555,25 @@ function discoverLambdas() {
   for (const entry of glob.sync('src/**/*.lambda.ts')) {
     const trigger = basename(entry).startsWith('trigger.');
     newLambdaHandler(entry, trigger);
+    entrypoints.push(entry);
   }
+
+  project.addTask('bundle:lambda:watch', {
+    description: 'Continuously bundle all AWS Lambda functions',
+    exec: [
+      'esbuild',
+      '--bundle',
+      ...entrypoints,
+      '--target="node14"',
+      '--platform="node"',
+      `--outbase="${project.srcdir}"`,
+      `--outdir="${project.libdir}"`,
+      '--entry-names="[dir]/[name].bundle/index"',
+      '--external:aws-sdk',
+      '--sourcemap',
+      '--watch',
+    ].join(' '),
+  });
 
   // Add the AWS Lambda type definitions, and ignore that it never resolves
   project.addDevDeps('@types/aws-lambda');
@@ -553,13 +584,33 @@ function discoverLambdas() {
 }
 
 function discoverEcsTasks() {
+  const entrypoints = [];
+
   // allow .fargate code to import dev-deps (since they are only needed during bundling)
   project.eslint.allowDevDeps('src/**/*.ecstask.ts');
   project.eslint.allowDevDeps('src/**/*.ecs-entrypoint.ts');
 
   for (const entry of glob.sync('src/**/*.ecstask.ts')) {
     newEcsTask(entry);
+    entrypoints.push(entry);
   }
+
+  project.addTask('bundle:fargate:watch', {
+    description: 'Continuously bundle all AWS Fargate functions',
+    exec: [
+      'esbuild',
+      '--bundle',
+      ...entrypoints.map((file) => file.replace('ecstask.ts', 'ecs-entrypoint.ts')),
+      '--target="node16"',
+      '--platform="node"',
+      `--outbase="${project.srcdir}"`,
+      `--outdir="${project.libdir}"`,
+      '--entry-names="[dir]/[name].bundle/index"',
+      '--external:aws-sdk',
+      '--sourcemap',
+      '--watch',
+    ].join(' '),
+  });
 }
 
 function generateSpdxLicenseEnum() {
