@@ -44,6 +44,11 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     console.log('Catalog found. Loading...');
     const catalog: CatalogModel = JSON.parse(data.Body.toString('utf-8'));
     for (const info of catalog.packages) {
+      const denyRule = denyList.lookup(info.name, info.version);
+      if (denyRule != null) {
+        console.log(`Dropping ${info.name}@${info.version} from catalog: ${denyRule.reason}`);
+        continue;
+      }
       if (!packages.has(info.name)) {
         packages.set(info.name, new Map());
       }
