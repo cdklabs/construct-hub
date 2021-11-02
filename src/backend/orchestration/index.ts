@@ -461,16 +461,15 @@ class RegenerateAllDocumentation extends Construct {
       .next(new Map(this, 'For each key prefix', { itemsPath: '$.response.CommonPrefixes', resultPath: JsonPath.DISCARD })
         .iterator(new tasks.StepFunctionsStartExecution(this, 'Start Orchestration Workflow', {
           stateMachine: props.stateMachine,
+          associateWithParent: true,
           input: TaskInput.fromObject({
-            // Associate the child workflow with the execution that started it.
-            AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID: JsonPath.stringAt('$$.Execution.Id'),
             bucket: props.bucket.bucketName,
             assembly: { key: JsonPath.stringAt(`States.Format('{}${ASSEMBLY_KEY_SUFFIX.substr(1)}', $.Prefix)`) },
             metadata: { key: JsonPath.stringAt(`States.Format('{}${METADATA_KEY_SUFFIX.substr(1)}', $.Prefix)`) },
             package: { key: JsonPath.stringAt(`States.Format('{}${PACKAGE_KEY_SUFFIX.substr(1)}', $.Prefix)`) },
           }),
           integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
-        })));
+        }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })));
     processVersions.next(new Choice(this, 'Has more versions?')
       .when(Condition.isPresent('$.response.NextContinuationToken'), processVersions)
       .otherwise(new Succeed(this, 'Success')));
@@ -512,13 +511,12 @@ class RegenerateAllDocumentation extends Construct {
       .next(new Map(this, 'For each @scope/pkg', { itemsPath: '$.response.CommonPrefixes', resultPath: JsonPath.DISCARD })
         .iterator(new tasks.StepFunctionsStartExecution(this, 'Process scoped package', {
           stateMachine: processPackageVersions,
+          associateWithParent: true,
           input: TaskInput.fromObject({
-            // Associate the child workflow with the execution that started it,
-            AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID: JsonPath.stringAt('$$.Execution.Id'),
             Prefix: JsonPath.stringAt('$.Prefix'),
           }),
           integrationPattern: IntegrationPattern.RUN_JOB,
-        })));
+        }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })));
     processNamespace.next(new Choice(this, 'Has more packages?')
       .when(Condition.isPresent('$.response.NextContinuationToken'), processNamespace)
       .otherwise(new Succeed(this, 'All Done')));
@@ -560,13 +558,12 @@ class RegenerateAllDocumentation extends Construct {
             .when(Condition.stringMatches('$.Prefix', `${STORAGE_KEY_PREFIX}@*`), processNamespace)
             .otherwise(new tasks.StepFunctionsStartExecution(this, 'Process unscoped package', {
               stateMachine: processPackageVersions,
+              associateWithParent: true,
               input: TaskInput.fromObject({
-                // Associate the child workflow with the execution that started it,
-                AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID: JsonPath.stringAt('$$.Execution.Id'),
                 Prefix: JsonPath.stringAt('$.Prefix'),
               }),
               integrationPattern: IntegrationPattern.RUN_JOB,
-            }))
+            }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] }))
             .afterwards(),
         ));
 

@@ -6,9 +6,9 @@ import { RetentionDays } from '@aws-cdk/aws-logs';
 import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
 import { BucketDeployment, Source } from '@aws-cdk/aws-s3-deployment';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
-import { StateMachine, JsonPath, Choice, Succeed, Condition, Map } from '@aws-cdk/aws-stepfunctions';
-import { CallAwsService, LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
-import { Construct, Duration } from '@aws-cdk/core';
+import { StateMachine, JsonPath, Choice, Succeed, Condition, Map, TaskInput, IntegrationPattern } from '@aws-cdk/aws-stepfunctions';
+import { CallAwsService, LambdaInvoke, StepFunctionsStartExecution } from '@aws-cdk/aws-stepfunctions-tasks';
+import { Construct, Duration, Stack, ArnFormat } from '@aws-cdk/core';
 import { Repository } from '../../codeartifact/repository';
 import { ConfigFile } from '../../config-file';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
@@ -303,8 +303,8 @@ class ReprocessIngestionWorkflow extends Construct {
     props.bucket.grantRead(lambdaFunction, `${STORAGE_KEY_PREFIX}*${METADATA_KEY_SUFFIX}`);
     props.bucket.grantRead(lambdaFunction, `${STORAGE_KEY_PREFIX}*${PACKAGE_KEY_SUFFIX}`);
 
-    const listBucket = new Choice(this, 'Has a NextContinuationToken?')
-      .when(Condition.isPresent('$.response.NextContinuationToken'),
+    const listBucket = new Choice(this, 'Has a ContinuationToken?')
+      .when(Condition.isPresent('$.ContinuationToken'),
         new CallAwsService(this, 'S3.ListObjectsV2(NextPage)', {
           service: 's3',
           action: 'listObjectsV2',
@@ -312,8 +312,7 @@ class ReprocessIngestionWorkflow extends Construct {
           iamResources: [props.bucket.bucketArn],
           parameters: {
             Bucket: props.bucket.bucketName,
-            ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken'),
-            MaxKeys: 250, // <- Limits the response size, and ensures we don't spawn too many Lambdas at once in the Map state.
+            ContinuationToken: JsonPath.stringAt('$.ContinuationToken'),
             Prefix: STORAGE_KEY_PREFIX,
           },
           resultPath: '$.response',
@@ -344,16 +343,42 @@ class ReprocessIngestionWorkflow extends Construct {
         .otherwise(new Succeed(this, 'Nothing to do')),
     );
 
+    // Need to physical-name the state machine so it can self-invoke.
+    const stateMachineName = stateMachineNameFrom(this.node.path);
     listBucket.next(process.next(new Choice(this, 'Is there more?')
-      .when(Condition.isPresent('$.response.NextContinuationToken'), listBucket)
+      .when(
+        Condition.isPresent('$.response.NextContinuationToken'),
+        new StepFunctionsStartExecution(this, 'Continue as new', {
+          associateWithParent: true,
+          stateMachine: StateMachine.fromStateMachineArn(this, 'ThisStateMachine', Stack.of(this).formatArn({
+            arnFormat: ArnFormat.COLON_RESOURCE_NAME,
+            service: 'states',
+            resource: 'stateMachine',
+            resourceName: stateMachineName,
+          })),
+          input: TaskInput.fromObject({ ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken') }),
+          integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
+        }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] }),
+      )
       .otherwise(new Succeed(this, 'All Done'))));
 
     const stateMachine = new StateMachine(this, 'StateMachine', {
       definition: listBucket,
+      stateMachineName,
       timeout: Duration.hours(1),
     });
 
     props.bucket.grantRead(stateMachine);
     props.queue.grantSendMessages(stateMachine);
   }
+}
+
+/**
+ * This turns a node path into a valid state machine name, to try and improve
+ * the StepFunction's AWS console experience while minimizing the risk for
+ * collisons.
+ */
+function stateMachineNameFrom(nodePath: string): string {
+  // Poor man's replace all...
+  return nodePath.split(/[^a-z0-9+!@.()=_'-]+/i).join('.');
 }
