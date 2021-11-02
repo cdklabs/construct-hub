@@ -297,6 +297,7 @@ class ReprocessIngestionWorkflow extends Construct {
       description: '[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion',
       environment: { BUCKET_NAME: props.bucket.bucketName, QUEUE_URL: props.queue.queueUrl },
       tracing: Tracing.ACTIVE,
+      timeout: Duration.seconds(15),
     });
 
     props.queue.grantSendMessages(lambdaFunction);
