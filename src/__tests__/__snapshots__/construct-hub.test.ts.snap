@@ -93,6 +93,18 @@ Object {
       "Description": "S3 key for asset version \\"4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbc\\"",
       "Type": "String",
     },
+    "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130ArtifactHash958B92A3": Object {
+      "Description": "Artifact hash for asset \\"4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130\\"",
+      "Type": "String",
+    },
+    "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3BucketB85B9551": Object {
+      "Description": "S3 bucket for asset \\"4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130\\"",
+      "Type": "String",
+    },
+    "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3VersionKey9D681A75": Object {
+      "Description": "S3 key for asset version \\"4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130\\"",
+      "Type": "String",
+    },
     "AssetParameters663fcf0912a43161b04556b6e82be6ae6e1f55c7b06466d6939c51a53a7c4be3ArtifactHashDE1DA343": Object {
       "Description": "Artifact hash for asset \\"663fcf0912a43161b04556b6e82be6ae6e1f55c7b06466d6939c51a53a7c4be3\\"",
       "Type": "String",
@@ -199,18 +211,6 @@ Object {
     },
     "AssetParameterscc6d7142efe459ae578414b0f727c0634382fe26ad2ad67f59029ba7d82d7988S3VersionKeyC76335A1": Object {
       "Description": "S3 key for asset version \\"cc6d7142efe459ae578414b0f727c0634382fe26ad2ad67f59029ba7d82d7988\\"",
-      "Type": "String",
-    },
-    "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeArtifactHash738ED3EA": Object {
-      "Description": "Artifact hash for asset \\"e93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bde\\"",
-      "Type": "String",
-    },
-    "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3Bucket8A7AA54B": Object {
-      "Description": "S3 bucket for asset \\"e93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bde\\"",
-      "Type": "String",
-    },
-    "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3VersionKey2D6C2ABE": Object {
-      "Description": "S3 key for asset version \\"e93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bde\\"",
       "Type": "String",
     },
     "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
@@ -2689,7 +2689,15 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Has a NextContinuationToken?\\",\\"States\\":{\\"Has a NextContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Has a NextContinuationToken?\\"}],\\"Default\\":\\"All Done\\"},\\"Process Result\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Is there more?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is metadata object?\\",\\"States\\":{\\"Is metadata object?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Key\\",\\"StringMatches\\":\\"*/metadata.json\\",\\"Next\\":\\"Send for reprocessing\\"}],\\"Default\\":\\"Nothing to do\\"},\\"Nothing to do\\":{\\"Type\\":\\"Succeed\\"},\\"Send for reprocessing\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"Prefix\\":\\"data/\\"}},\\"Process Result\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Is there more?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is metadata object?\\",\\"States\\":{\\"Is metadata object?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Key\\",\\"StringMatches\\":\\"*/metadata.json\\",\\"Next\\":\\"Send for reprocessing\\"}],\\"Default\\":\\"Nothing to do\\"},\\"Nothing to do\\":{\\"Type\\":\\"Succeed\\"},\\"Send for reprocessing\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -2700,7 +2708,7 @@ Direct link to the function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}}}},\\"ItemsPath\\":\\"$.response.Contents\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}}}},\\"ItemsPath\\":\\"$.response.Contents\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -2708,15 +2716,23 @@ Direct link to the function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Prefix\\":\\"data/\\"}},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"ContinuationToken.$\\":\\"$.ContinuationToken\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"All Done\\"},\\"All Done\\":{\\"Type\\":\\"Succeed\\"},\\"Continue as new\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              ":states:::states:startExecution\\",\\"Parameters\\":{\\"Input\\":{\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\"},\\"StateMachineArn\\":\\"arn:",
               Object {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
+                "Ref": "AWS::Partition",
               },
-              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"MaxKeys\\":250,\\"Prefix\\":\\"data/\\"}},\\"All Done\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":3600}",
+              ":states:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow\\"}}},\\"TimeoutSeconds\\":3600}",
             ],
           ],
         },
@@ -2726,6 +2742,7 @@ Direct link to the function: /lambda/home#/functions/",
             "Arn",
           ],
         },
+        "StateMachineName": "Test.ConstructHub.Ingestion.ReprocessWorkflow",
       },
       "Type": "AWS::StepFunctions::StateMachine",
     },
@@ -2768,6 +2785,30 @@ Direct link to the function: /lambda/home#/functions/",
                 "Fn::GetAtt": Array [
                   "ConstructHubPackageDataDC5EF35E",
                   "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":states:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow",
+                  ],
                 ],
               },
             },
@@ -6536,19 +6577,19 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Get prefix page\\",\\"States\\":{\\"Get prefix page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next prefixes page\\"}],\\"Default\\":\\"First prefix page\\"},\\"Has more prefixes?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get prefix page\\"}],\\"Default\\":\\"Done\\"},\\"For each prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more prefixes?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is this a @scope-- prefix?\\",\\"States\\":{\\"Is this a @scope-- prefix?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Prefix\\",\\"StringMatches\\":\\"data/@*\\",\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"Process unscoped package\\"},\\"Process unscoped package\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Get prefix page\\",\\"States\\":{\\"Get prefix page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next prefixes page\\"}],\\"Default\\":\\"First prefix page\\"},\\"Has more prefixes?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get prefix page\\"}],\\"Default\\":\\"Done\\"},\\"For each prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more prefixes?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is this a @scope-- prefix?\\",\\"States\\":{\\"Is this a @scope-- prefix?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Prefix\\",\\"StringMatches\\":\\"data/@*\\",\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"Process unscoped package\\"},\\"Process unscoped package\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"Prefix.$\\":\\"$.Prefix\\"},\\"StateMachineArn\\":\\"",
+              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"Prefix.$\\":\\"$.Prefix\\",\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\"},\\"StateMachineArn\\":\\"",
               Object {
                 "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
               },
-              "\\"}},\\"Get @scope page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next @scope page\\"}],\\"Default\\":\\"First @scope page\\"},\\"Has more packages?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"All Done\\"},\\"For each @scope--pkg\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more packages?\\",\\"Iterator\\":{\\"StartAt\\":\\"Process scoped package\\",\\"States\\":{\\"Process scoped package\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "\\"}},\\"Get @scope page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next @scope page\\"}],\\"Default\\":\\"First @scope page\\"},\\"Has more packages?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"All Done\\"},\\"For each @scope--pkg\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more packages?\\",\\"Iterator\\":{\\"StartAt\\":\\"Process scoped package\\",\\"States\\":{\\"Process scoped package\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"Prefix.$\\":\\"$.Prefix\\"},\\"StateMachineArn\\":\\"",
+              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"Prefix.$\\":\\"$.Prefix\\",\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\"},\\"StateMachineArn\\":\\"",
               Object {
                 "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
               },
@@ -6611,15 +6652,15 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Get package versions page\\",\\"States\\":{\\"Get package versions page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next versions page\\"}],\\"Default\\":\\"First versions page\\"},\\"Has more versions?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get package versions page\\"}],\\"Default\\":\\"Success\\"},\\"For each key prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more versions?\\",\\"Iterator\\":{\\"StartAt\\":\\"Start Orchestration Workflow\\",\\"States\\":{\\"Start Orchestration Workflow\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Get package versions page\\",\\"States\\":{\\"Get package versions page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next versions page\\"}],\\"Default\\":\\"First versions page\\"},\\"Has more versions?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get package versions page\\"}],\\"Default\\":\\"Success\\"},\\"For each key prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more versions?\\",\\"Iterator\\":{\\"StartAt\\":\\"Start Orchestration Workflow\\",\\"States\\":{\\"Start Orchestration Workflow\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::states:startExecution\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"bucket\\":\\"",
+              ":states:::states:startExecution\\",\\"Parameters\\":{\\"Input\\":{\\"bucket\\":\\"",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"assembly\\":{\\"key.$\\":\\"States.Format('{}assembly.json', $.Prefix)\\"},\\"metadata\\":{\\"key.$\\":\\"States.Format('{}metadata.json', $.Prefix)\\"},\\"package\\":{\\"key.$\\":\\"States.Format('{}package.tgz', $.Prefix)\\"}},\\"StateMachineArn\\":\\"",
+              "\\",\\"assembly\\":{\\"key.$\\":\\"States.Format('{}assembly.json', $.Prefix)\\"},\\"metadata\\":{\\"key.$\\":\\"States.Format('{}metadata.json', $.Prefix)\\"},\\"package\\":{\\"key.$\\":\\"States.Format('{}package.tgz', $.Prefix)\\"},\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\"},\\"StateMachineArn\\":\\"",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -7236,7 +7277,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:1817cf32446f1f15320ddeb738d78324fc50200c9c67a8552f80f3cde31e2b46",
+                  "/aws-cdk/assets:ed1551acbde93ad8b2369fd7f9bb4f9d8d46fe6897e54b52d9e6c823ba7dd8b6",
                 ],
               ],
             },
@@ -9415,7 +9456,7 @@ function handler(event) {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3Bucket8A7AA54B",
+            "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3BucketB85B9551",
           },
         ],
         "SourceObjectKeys": Array [
@@ -9430,7 +9471,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3VersionKey2D6C2ABE",
+                          "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3VersionKey9D681A75",
                         },
                       ],
                     },
@@ -9443,7 +9484,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3VersionKey2D6C2ABE",
+                          "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3VersionKey9D681A75",
                         },
                       ],
                     },
@@ -10040,7 +10081,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3Bucket8A7AA54B",
+                        "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3BucketB85B9551",
                       },
                     ],
                   ],
@@ -10055,7 +10096,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3Bucket8A7AA54B",
+                        "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3BucketB85B9551",
                       },
                       "/*",
                     ],
@@ -10364,6 +10405,18 @@ Object {
       "Description": "S3 key for asset version \\"4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbc\\"",
       "Type": "String",
     },
+    "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130ArtifactHash958B92A3": Object {
+      "Description": "Artifact hash for asset \\"4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130\\"",
+      "Type": "String",
+    },
+    "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3BucketB85B9551": Object {
+      "Description": "S3 bucket for asset \\"4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130\\"",
+      "Type": "String",
+    },
+    "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3VersionKey9D681A75": Object {
+      "Description": "S3 key for asset version \\"4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130\\"",
+      "Type": "String",
+    },
     "AssetParameters663fcf0912a43161b04556b6e82be6ae6e1f55c7b06466d6939c51a53a7c4be3ArtifactHashDE1DA343": Object {
       "Description": "Artifact hash for asset \\"663fcf0912a43161b04556b6e82be6ae6e1f55c7b06466d6939c51a53a7c4be3\\"",
       "Type": "String",
@@ -10470,18 +10523,6 @@ Object {
     },
     "AssetParameterscc6d7142efe459ae578414b0f727c0634382fe26ad2ad67f59029ba7d82d7988S3VersionKeyC76335A1": Object {
       "Description": "S3 key for asset version \\"cc6d7142efe459ae578414b0f727c0634382fe26ad2ad67f59029ba7d82d7988\\"",
-      "Type": "String",
-    },
-    "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeArtifactHash738ED3EA": Object {
-      "Description": "Artifact hash for asset \\"e93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bde\\"",
-      "Type": "String",
-    },
-    "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3Bucket8A7AA54B": Object {
-      "Description": "S3 bucket for asset \\"e93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bde\\"",
-      "Type": "String",
-    },
-    "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3VersionKey2D6C2ABE": Object {
-      "Description": "S3 key for asset version \\"e93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bde\\"",
       "Type": "String",
     },
     "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
@@ -12913,7 +12954,15 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Has a NextContinuationToken?\\",\\"States\\":{\\"Has a NextContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Has a NextContinuationToken?\\"}],\\"Default\\":\\"All Done\\"},\\"Process Result\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Is there more?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is metadata object?\\",\\"States\\":{\\"Is metadata object?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Key\\",\\"StringMatches\\":\\"*/metadata.json\\",\\"Next\\":\\"Send for reprocessing\\"}],\\"Default\\":\\"Nothing to do\\"},\\"Nothing to do\\":{\\"Type\\":\\"Succeed\\"},\\"Send for reprocessing\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"Prefix\\":\\"data/\\"}},\\"Process Result\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Is there more?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is metadata object?\\",\\"States\\":{\\"Is metadata object?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Key\\",\\"StringMatches\\":\\"*/metadata.json\\",\\"Next\\":\\"Send for reprocessing\\"}],\\"Default\\":\\"Nothing to do\\"},\\"Nothing to do\\":{\\"Type\\":\\"Succeed\\"},\\"Send for reprocessing\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -12924,7 +12973,7 @@ Direct link to the function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}}}},\\"ItemsPath\\":\\"$.response.Contents\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}}}},\\"ItemsPath\\":\\"$.response.Contents\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -12932,15 +12981,23 @@ Direct link to the function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Prefix\\":\\"data/\\"}},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"ContinuationToken.$\\":\\"$.ContinuationToken\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"All Done\\"},\\"All Done\\":{\\"Type\\":\\"Succeed\\"},\\"Continue as new\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              ":states:::states:startExecution\\",\\"Parameters\\":{\\"Input\\":{\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\"},\\"StateMachineArn\\":\\"arn:",
               Object {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
+                "Ref": "AWS::Partition",
               },
-              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"MaxKeys\\":250,\\"Prefix\\":\\"data/\\"}},\\"All Done\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":3600}",
+              ":states:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow\\"}}},\\"TimeoutSeconds\\":3600}",
             ],
           ],
         },
@@ -12950,6 +13007,7 @@ Direct link to the function: /lambda/home#/functions/",
             "Arn",
           ],
         },
+        "StateMachineName": "Test.ConstructHub.Ingestion.ReprocessWorkflow",
       },
       "Type": "AWS::StepFunctions::StateMachine",
     },
@@ -12992,6 +13050,30 @@ Direct link to the function: /lambda/home#/functions/",
                 "Fn::GetAtt": Array [
                   "ConstructHubPackageDataDC5EF35E",
                   "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":states:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow",
+                  ],
                 ],
               },
             },
@@ -16775,19 +16857,19 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Get prefix page\\",\\"States\\":{\\"Get prefix page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next prefixes page\\"}],\\"Default\\":\\"First prefix page\\"},\\"Has more prefixes?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get prefix page\\"}],\\"Default\\":\\"Done\\"},\\"For each prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more prefixes?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is this a @scope-- prefix?\\",\\"States\\":{\\"Is this a @scope-- prefix?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Prefix\\",\\"StringMatches\\":\\"data/@*\\",\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"Process unscoped package\\"},\\"Process unscoped package\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Get prefix page\\",\\"States\\":{\\"Get prefix page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next prefixes page\\"}],\\"Default\\":\\"First prefix page\\"},\\"Has more prefixes?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get prefix page\\"}],\\"Default\\":\\"Done\\"},\\"For each prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more prefixes?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is this a @scope-- prefix?\\",\\"States\\":{\\"Is this a @scope-- prefix?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Prefix\\",\\"StringMatches\\":\\"data/@*\\",\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"Process unscoped package\\"},\\"Process unscoped package\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"Prefix.$\\":\\"$.Prefix\\"},\\"StateMachineArn\\":\\"",
+              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"Prefix.$\\":\\"$.Prefix\\",\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\"},\\"StateMachineArn\\":\\"",
               Object {
                 "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
               },
-              "\\"}},\\"Get @scope page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next @scope page\\"}],\\"Default\\":\\"First @scope page\\"},\\"Has more packages?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"All Done\\"},\\"For each @scope--pkg\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more packages?\\",\\"Iterator\\":{\\"StartAt\\":\\"Process scoped package\\",\\"States\\":{\\"Process scoped package\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "\\"}},\\"Get @scope page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next @scope page\\"}],\\"Default\\":\\"First @scope page\\"},\\"Has more packages?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"All Done\\"},\\"For each @scope--pkg\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more packages?\\",\\"Iterator\\":{\\"StartAt\\":\\"Process scoped package\\",\\"States\\":{\\"Process scoped package\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"Prefix.$\\":\\"$.Prefix\\"},\\"StateMachineArn\\":\\"",
+              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"Prefix.$\\":\\"$.Prefix\\",\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\"},\\"StateMachineArn\\":\\"",
               Object {
                 "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
               },
@@ -16850,15 +16932,15 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Get package versions page\\",\\"States\\":{\\"Get package versions page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next versions page\\"}],\\"Default\\":\\"First versions page\\"},\\"Has more versions?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get package versions page\\"}],\\"Default\\":\\"Success\\"},\\"For each key prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more versions?\\",\\"Iterator\\":{\\"StartAt\\":\\"Start Orchestration Workflow\\",\\"States\\":{\\"Start Orchestration Workflow\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Get package versions page\\",\\"States\\":{\\"Get package versions page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next versions page\\"}],\\"Default\\":\\"First versions page\\"},\\"Has more versions?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get package versions page\\"}],\\"Default\\":\\"Success\\"},\\"For each key prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more versions?\\",\\"Iterator\\":{\\"StartAt\\":\\"Start Orchestration Workflow\\",\\"States\\":{\\"Start Orchestration Workflow\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::states:startExecution\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"bucket\\":\\"",
+              ":states:::states:startExecution\\",\\"Parameters\\":{\\"Input\\":{\\"bucket\\":\\"",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"assembly\\":{\\"key.$\\":\\"States.Format('{}assembly.json', $.Prefix)\\"},\\"metadata\\":{\\"key.$\\":\\"States.Format('{}metadata.json', $.Prefix)\\"},\\"package\\":{\\"key.$\\":\\"States.Format('{}package.tgz', $.Prefix)\\"}},\\"StateMachineArn\\":\\"",
+              "\\",\\"assembly\\":{\\"key.$\\":\\"States.Format('{}assembly.json', $.Prefix)\\"},\\"metadata\\":{\\"key.$\\":\\"States.Format('{}metadata.json', $.Prefix)\\"},\\"package\\":{\\"key.$\\":\\"States.Format('{}package.tgz', $.Prefix)\\"},\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\"},\\"StateMachineArn\\":\\"",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -17475,7 +17557,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:1817cf32446f1f15320ddeb738d78324fc50200c9c67a8552f80f3cde31e2b46",
+                  "/aws-cdk/assets:ed1551acbde93ad8b2369fd7f9bb4f9d8d46fe6897e54b52d9e6c823ba7dd8b6",
                 ],
               ],
             },
@@ -19662,7 +19744,7 @@ function handler(event) {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3Bucket8A7AA54B",
+            "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3BucketB85B9551",
           },
         ],
         "SourceObjectKeys": Array [
@@ -19677,7 +19759,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3VersionKey2D6C2ABE",
+                          "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3VersionKey9D681A75",
                         },
                       ],
                     },
@@ -19690,7 +19772,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3VersionKey2D6C2ABE",
+                          "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3VersionKey9D681A75",
                         },
                       ],
                     },
@@ -20287,7 +20369,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3Bucket8A7AA54B",
+                        "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3BucketB85B9551",
                       },
                     ],
                   ],
@@ -20302,7 +20384,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3Bucket8A7AA54B",
+                        "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3BucketB85B9551",
                       },
                       "/*",
                     ],
@@ -20621,6 +20703,18 @@ Object {
       "Description": "S3 key for asset version \\"4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbc\\"",
       "Type": "String",
     },
+    "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130ArtifactHash958B92A3": Object {
+      "Description": "Artifact hash for asset \\"4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130\\"",
+      "Type": "String",
+    },
+    "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3BucketB85B9551": Object {
+      "Description": "S3 bucket for asset \\"4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130\\"",
+      "Type": "String",
+    },
+    "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3VersionKey9D681A75": Object {
+      "Description": "S3 key for asset version \\"4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130\\"",
+      "Type": "String",
+    },
     "AssetParameters5465af3e563838faf87f189369af003b61ed4608e6c6423cf21af7189e21abafArtifactHash1E43F8AF": Object {
       "Description": "Artifact hash for asset \\"5465af3e563838faf87f189369af003b61ed4608e6c6423cf21af7189e21abaf\\"",
       "Type": "String",
@@ -20751,18 +20845,6 @@ Object {
     },
     "AssetParameterscc6d7142efe459ae578414b0f727c0634382fe26ad2ad67f59029ba7d82d7988S3VersionKeyC76335A1": Object {
       "Description": "S3 key for asset version \\"cc6d7142efe459ae578414b0f727c0634382fe26ad2ad67f59029ba7d82d7988\\"",
-      "Type": "String",
-    },
-    "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeArtifactHash738ED3EA": Object {
-      "Description": "Artifact hash for asset \\"e93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bde\\"",
-      "Type": "String",
-    },
-    "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3Bucket8A7AA54B": Object {
-      "Description": "S3 bucket for asset \\"e93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bde\\"",
-      "Type": "String",
-    },
-    "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3VersionKey2D6C2ABE": Object {
-      "Description": "S3 key for asset version \\"e93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bde\\"",
       "Type": "String",
     },
     "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
@@ -23390,7 +23472,15 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Has a NextContinuationToken?\\",\\"States\\":{\\"Has a NextContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Has a NextContinuationToken?\\"}],\\"Default\\":\\"All Done\\"},\\"Process Result\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Is there more?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is metadata object?\\",\\"States\\":{\\"Is metadata object?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Key\\",\\"StringMatches\\":\\"*/metadata.json\\",\\"Next\\":\\"Send for reprocessing\\"}],\\"Default\\":\\"Nothing to do\\"},\\"Nothing to do\\":{\\"Type\\":\\"Succeed\\"},\\"Send for reprocessing\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"Prefix\\":\\"data/\\"}},\\"Process Result\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Is there more?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is metadata object?\\",\\"States\\":{\\"Is metadata object?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Key\\",\\"StringMatches\\":\\"*/metadata.json\\",\\"Next\\":\\"Send for reprocessing\\"}],\\"Default\\":\\"Nothing to do\\"},\\"Nothing to do\\":{\\"Type\\":\\"Succeed\\"},\\"Send for reprocessing\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -23401,7 +23491,7 @@ Direct link to the function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}}}},\\"ItemsPath\\":\\"$.response.Contents\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}}}},\\"ItemsPath\\":\\"$.response.Contents\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -23409,15 +23499,23 @@ Direct link to the function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Prefix\\":\\"data/\\"}},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"ContinuationToken.$\\":\\"$.ContinuationToken\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"All Done\\"},\\"All Done\\":{\\"Type\\":\\"Succeed\\"},\\"Continue as new\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              ":states:::states:startExecution\\",\\"Parameters\\":{\\"Input\\":{\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\"},\\"StateMachineArn\\":\\"arn:",
               Object {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
+                "Ref": "AWS::Partition",
               },
-              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"MaxKeys\\":250,\\"Prefix\\":\\"data/\\"}},\\"All Done\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":3600}",
+              ":states:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow\\"}}},\\"TimeoutSeconds\\":3600}",
             ],
           ],
         },
@@ -23427,6 +23525,7 @@ Direct link to the function: /lambda/home#/functions/",
             "Arn",
           ],
         },
+        "StateMachineName": "Test.ConstructHub.Ingestion.ReprocessWorkflow",
       },
       "Type": "AWS::StepFunctions::StateMachine",
     },
@@ -23469,6 +23568,30 @@ Direct link to the function: /lambda/home#/functions/",
                 "Fn::GetAtt": Array [
                   "ConstructHubPackageDataDC5EF35E",
                   "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":states:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow",
+                  ],
                 ],
               },
             },
@@ -27259,19 +27382,19 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Get prefix page\\",\\"States\\":{\\"Get prefix page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next prefixes page\\"}],\\"Default\\":\\"First prefix page\\"},\\"Has more prefixes?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get prefix page\\"}],\\"Default\\":\\"Done\\"},\\"For each prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more prefixes?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is this a @scope-- prefix?\\",\\"States\\":{\\"Is this a @scope-- prefix?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Prefix\\",\\"StringMatches\\":\\"data/@*\\",\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"Process unscoped package\\"},\\"Process unscoped package\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Get prefix page\\",\\"States\\":{\\"Get prefix page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next prefixes page\\"}],\\"Default\\":\\"First prefix page\\"},\\"Has more prefixes?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get prefix page\\"}],\\"Default\\":\\"Done\\"},\\"For each prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more prefixes?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is this a @scope-- prefix?\\",\\"States\\":{\\"Is this a @scope-- prefix?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Prefix\\",\\"StringMatches\\":\\"data/@*\\",\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"Process unscoped package\\"},\\"Process unscoped package\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"Prefix.$\\":\\"$.Prefix\\"},\\"StateMachineArn\\":\\"",
+              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"Prefix.$\\":\\"$.Prefix\\",\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\"},\\"StateMachineArn\\":\\"",
               Object {
                 "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
               },
-              "\\"}},\\"Get @scope page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next @scope page\\"}],\\"Default\\":\\"First @scope page\\"},\\"Has more packages?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"All Done\\"},\\"For each @scope--pkg\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more packages?\\",\\"Iterator\\":{\\"StartAt\\":\\"Process scoped package\\",\\"States\\":{\\"Process scoped package\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "\\"}},\\"Get @scope page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next @scope page\\"}],\\"Default\\":\\"First @scope page\\"},\\"Has more packages?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"All Done\\"},\\"For each @scope--pkg\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more packages?\\",\\"Iterator\\":{\\"StartAt\\":\\"Process scoped package\\",\\"States\\":{\\"Process scoped package\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"Prefix.$\\":\\"$.Prefix\\"},\\"StateMachineArn\\":\\"",
+              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"Prefix.$\\":\\"$.Prefix\\",\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\"},\\"StateMachineArn\\":\\"",
               Object {
                 "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
               },
@@ -27334,15 +27457,15 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Get package versions page\\",\\"States\\":{\\"Get package versions page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next versions page\\"}],\\"Default\\":\\"First versions page\\"},\\"Has more versions?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get package versions page\\"}],\\"Default\\":\\"Success\\"},\\"For each key prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more versions?\\",\\"Iterator\\":{\\"StartAt\\":\\"Start Orchestration Workflow\\",\\"States\\":{\\"Start Orchestration Workflow\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Get package versions page\\",\\"States\\":{\\"Get package versions page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next versions page\\"}],\\"Default\\":\\"First versions page\\"},\\"Has more versions?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get package versions page\\"}],\\"Default\\":\\"Success\\"},\\"For each key prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more versions?\\",\\"Iterator\\":{\\"StartAt\\":\\"Start Orchestration Workflow\\",\\"States\\":{\\"Start Orchestration Workflow\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::states:startExecution\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"bucket\\":\\"",
+              ":states:::states:startExecution\\",\\"Parameters\\":{\\"Input\\":{\\"bucket\\":\\"",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"assembly\\":{\\"key.$\\":\\"States.Format('{}assembly.json', $.Prefix)\\"},\\"metadata\\":{\\"key.$\\":\\"States.Format('{}metadata.json', $.Prefix)\\"},\\"package\\":{\\"key.$\\":\\"States.Format('{}package.tgz', $.Prefix)\\"}},\\"StateMachineArn\\":\\"",
+              "\\",\\"assembly\\":{\\"key.$\\":\\"States.Format('{}assembly.json', $.Prefix)\\"},\\"metadata\\":{\\"key.$\\":\\"States.Format('{}metadata.json', $.Prefix)\\"},\\"package\\":{\\"key.$\\":\\"States.Format('{}package.tgz', $.Prefix)\\"},\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\"},\\"StateMachineArn\\":\\"",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -27959,7 +28082,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:1817cf32446f1f15320ddeb738d78324fc50200c9c67a8552f80f3cde31e2b46",
+                  "/aws-cdk/assets:ed1551acbde93ad8b2369fd7f9bb4f9d8d46fe6897e54b52d9e6c823ba7dd8b6",
                 ],
               ],
             },
@@ -30190,7 +30313,7 @@ function handler(event) {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3Bucket8A7AA54B",
+            "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3BucketB85B9551",
           },
         ],
         "SourceObjectKeys": Array [
@@ -30205,7 +30328,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3VersionKey2D6C2ABE",
+                          "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3VersionKey9D681A75",
                         },
                       ],
                     },
@@ -30218,7 +30341,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3VersionKey2D6C2ABE",
+                          "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3VersionKey9D681A75",
                         },
                       ],
                     },
@@ -31042,7 +31165,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3Bucket8A7AA54B",
+                        "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3BucketB85B9551",
                       },
                     ],
                   ],
@@ -31057,7 +31180,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3Bucket8A7AA54B",
+                        "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3BucketB85B9551",
                       },
                       "/*",
                     ],
@@ -31366,6 +31489,18 @@ Object {
       "Description": "S3 key for asset version \\"4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbc\\"",
       "Type": "String",
     },
+    "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130ArtifactHash958B92A3": Object {
+      "Description": "Artifact hash for asset \\"4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130\\"",
+      "Type": "String",
+    },
+    "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3BucketB85B9551": Object {
+      "Description": "S3 bucket for asset \\"4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130\\"",
+      "Type": "String",
+    },
+    "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3VersionKey9D681A75": Object {
+      "Description": "S3 key for asset version \\"4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130\\"",
+      "Type": "String",
+    },
     "AssetParameters663fcf0912a43161b04556b6e82be6ae6e1f55c7b06466d6939c51a53a7c4be3ArtifactHashDE1DA343": Object {
       "Description": "Artifact hash for asset \\"663fcf0912a43161b04556b6e82be6ae6e1f55c7b06466d6939c51a53a7c4be3\\"",
       "Type": "String",
@@ -31472,18 +31607,6 @@ Object {
     },
     "AssetParameterscc6d7142efe459ae578414b0f727c0634382fe26ad2ad67f59029ba7d82d7988S3VersionKeyC76335A1": Object {
       "Description": "S3 key for asset version \\"cc6d7142efe459ae578414b0f727c0634382fe26ad2ad67f59029ba7d82d7988\\"",
-      "Type": "String",
-    },
-    "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeArtifactHash738ED3EA": Object {
-      "Description": "Artifact hash for asset \\"e93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bde\\"",
-      "Type": "String",
-    },
-    "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3Bucket8A7AA54B": Object {
-      "Description": "S3 bucket for asset \\"e93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bde\\"",
-      "Type": "String",
-    },
-    "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3VersionKey2D6C2ABE": Object {
-      "Description": "S3 key for asset version \\"e93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bde\\"",
       "Type": "String",
     },
     "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
@@ -33897,7 +34020,15 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Has a NextContinuationToken?\\",\\"States\\":{\\"Has a NextContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Has a NextContinuationToken?\\"}],\\"Default\\":\\"All Done\\"},\\"Process Result\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Is there more?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is metadata object?\\",\\"States\\":{\\"Is metadata object?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Key\\",\\"StringMatches\\":\\"*/metadata.json\\",\\"Next\\":\\"Send for reprocessing\\"}],\\"Default\\":\\"Nothing to do\\"},\\"Nothing to do\\":{\\"Type\\":\\"Succeed\\"},\\"Send for reprocessing\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"Prefix\\":\\"data/\\"}},\\"Process Result\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Is there more?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is metadata object?\\",\\"States\\":{\\"Is metadata object?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Key\\",\\"StringMatches\\":\\"*/metadata.json\\",\\"Next\\":\\"Send for reprocessing\\"}],\\"Default\\":\\"Nothing to do\\"},\\"Nothing to do\\":{\\"Type\\":\\"Succeed\\"},\\"Send for reprocessing\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -33908,7 +34039,7 @@ Direct link to the function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}}}},\\"ItemsPath\\":\\"$.response.Contents\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}}}},\\"ItemsPath\\":\\"$.response.Contents\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -33916,15 +34047,23 @@ Direct link to the function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Prefix\\":\\"data/\\"}},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"ContinuationToken.$\\":\\"$.ContinuationToken\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"All Done\\"},\\"All Done\\":{\\"Type\\":\\"Succeed\\"},\\"Continue as new\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              ":states:::states:startExecution\\",\\"Parameters\\":{\\"Input\\":{\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\"},\\"StateMachineArn\\":\\"arn:",
               Object {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
+                "Ref": "AWS::Partition",
               },
-              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"MaxKeys\\":250,\\"Prefix\\":\\"data/\\"}},\\"All Done\\":{\\"Type\\":\\"Succeed\\"}},\\"TimeoutSeconds\\":3600}",
+              ":states:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow\\"}}},\\"TimeoutSeconds\\":3600}",
             ],
           ],
         },
@@ -33934,6 +34073,7 @@ Direct link to the function: /lambda/home#/functions/",
             "Arn",
           ],
         },
+        "StateMachineName": "Test.ConstructHub.Ingestion.ReprocessWorkflow",
       },
       "Type": "AWS::StepFunctions::StateMachine",
     },
@@ -33976,6 +34116,30 @@ Direct link to the function: /lambda/home#/functions/",
                 "Fn::GetAtt": Array [
                   "ConstructHubPackageDataDC5EF35E",
                   "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":states:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":stateMachine:Test.ConstructHub.Ingestion.ReprocessWorkflow",
+                  ],
                 ],
               },
             },
@@ -36554,19 +36718,19 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Get prefix page\\",\\"States\\":{\\"Get prefix page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next prefixes page\\"}],\\"Default\\":\\"First prefix page\\"},\\"Has more prefixes?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get prefix page\\"}],\\"Default\\":\\"Done\\"},\\"For each prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more prefixes?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is this a @scope-- prefix?\\",\\"States\\":{\\"Is this a @scope-- prefix?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Prefix\\",\\"StringMatches\\":\\"data/@*\\",\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"Process unscoped package\\"},\\"Process unscoped package\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Get prefix page\\",\\"States\\":{\\"Get prefix page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next prefixes page\\"}],\\"Default\\":\\"First prefix page\\"},\\"Has more prefixes?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get prefix page\\"}],\\"Default\\":\\"Done\\"},\\"For each prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more prefixes?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is this a @scope-- prefix?\\",\\"States\\":{\\"Is this a @scope-- prefix?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Prefix\\",\\"StringMatches\\":\\"data/@*\\",\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"Process unscoped package\\"},\\"Process unscoped package\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"Prefix.$\\":\\"$.Prefix\\"},\\"StateMachineArn\\":\\"",
+              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"Prefix.$\\":\\"$.Prefix\\",\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\"},\\"StateMachineArn\\":\\"",
               Object {
                 "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
               },
-              "\\"}},\\"Get @scope page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next @scope page\\"}],\\"Default\\":\\"First @scope page\\"},\\"Has more packages?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"All Done\\"},\\"For each @scope--pkg\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more packages?\\",\\"Iterator\\":{\\"StartAt\\":\\"Process scoped package\\",\\"States\\":{\\"Process scoped package\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "\\"}},\\"Get @scope page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next @scope page\\"}],\\"Default\\":\\"First @scope page\\"},\\"Has more packages?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get @scope page\\"}],\\"Default\\":\\"All Done\\"},\\"For each @scope--pkg\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more packages?\\",\\"Iterator\\":{\\"StartAt\\":\\"Process scoped package\\",\\"States\\":{\\"Process scoped package\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"Prefix.$\\":\\"$.Prefix\\"},\\"StateMachineArn\\":\\"",
+              ":states:::states:startExecution.sync:2\\",\\"Parameters\\":{\\"Input\\":{\\"Prefix.$\\":\\"$.Prefix\\",\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\"},\\"StateMachineArn\\":\\"",
               Object {
                 "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
               },
@@ -36629,15 +36793,15 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Get package versions page\\",\\"States\\":{\\"Get package versions page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next versions page\\"}],\\"Default\\":\\"First versions page\\"},\\"Has more versions?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get package versions page\\"}],\\"Default\\":\\"Success\\"},\\"For each key prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more versions?\\",\\"Iterator\\":{\\"StartAt\\":\\"Start Orchestration Workflow\\",\\"States\\":{\\"Start Orchestration Workflow\\":{\\"End\\":true,\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Get package versions page\\",\\"States\\":{\\"Get package versions page\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Next versions page\\"}],\\"Default\\":\\"First versions page\\"},\\"Has more versions?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Get package versions page\\"}],\\"Default\\":\\"Success\\"},\\"For each key prefix\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Has more versions?\\",\\"Iterator\\":{\\"StartAt\\":\\"Start Orchestration Workflow\\",\\"States\\":{\\"Start Orchestration Workflow\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
-              ":states:::states:startExecution\\",\\"Parameters\\":{\\"Input\\":{\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\",\\"bucket\\":\\"",
+              ":states:::states:startExecution\\",\\"Parameters\\":{\\"Input\\":{\\"bucket\\":\\"",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"assembly\\":{\\"key.$\\":\\"States.Format('{}assembly.json', $.Prefix)\\"},\\"metadata\\":{\\"key.$\\":\\"States.Format('{}metadata.json', $.Prefix)\\"},\\"package\\":{\\"key.$\\":\\"States.Format('{}package.tgz', $.Prefix)\\"}},\\"StateMachineArn\\":\\"",
+              "\\",\\"assembly\\":{\\"key.$\\":\\"States.Format('{}assembly.json', $.Prefix)\\"},\\"metadata\\":{\\"key.$\\":\\"States.Format('{}metadata.json', $.Prefix)\\"},\\"package\\":{\\"key.$\\":\\"States.Format('{}package.tgz', $.Prefix)\\"},\\"AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$\\":\\"$$.Execution.Id\\"},\\"StateMachineArn\\":\\"",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
@@ -37224,7 +37388,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:1817cf32446f1f15320ddeb738d78324fc50200c9c67a8552f80f3cde31e2b46",
+                  "/aws-cdk/assets:ed1551acbde93ad8b2369fd7f9bb4f9d8d46fe6897e54b52d9e6c823ba7dd8b6",
                 ],
               ],
             },
@@ -39403,7 +39567,7 @@ function handler(event) {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3Bucket8A7AA54B",
+            "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3BucketB85B9551",
           },
         ],
         "SourceObjectKeys": Array [
@@ -39418,7 +39582,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3VersionKey2D6C2ABE",
+                          "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3VersionKey9D681A75",
                         },
                       ],
                     },
@@ -39431,7 +39595,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3VersionKey2D6C2ABE",
+                          "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3VersionKey9D681A75",
                         },
                       ],
                     },
@@ -40028,7 +40192,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3Bucket8A7AA54B",
+                        "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3BucketB85B9551",
                       },
                     ],
                   ],
@@ -40043,7 +40207,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameterse93c6dd2434e49ad380a1c9cb913eb0f325e2c09992acf35c60084cb61302bdeS3Bucket8A7AA54B",
+                        "Ref": "AssetParameters4251843552ca3ae129a06633a70fa27fc92b47ab849687033c3ad1e7fce03130S3BucketB85B9551",
                       },
                       "/*",
                     ],
