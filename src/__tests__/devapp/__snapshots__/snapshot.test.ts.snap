@@ -3824,6 +3824,24 @@ Resources:
               Fn::GetAtt:
                 - ConstructHubPackageDataDC5EF35E
                 - Arn
+          - Action: states:StartExecution
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - "arn:"
+                  - Ref: AWS::Partition
+                  - ":states:"
+                  - Ref: AWS::Region
+                  - ":"
+                  - Ref: AWS::AccountId
+                  - :stateMachine:dev.ConstructHub.Ingestion.ReprocessWorkflow
+          - Action: lambda:InvokeFunction
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ConstructHubIngestionReprocessWorkflowFunction47A2DE6E
+                - Arn
           - Action:
               - s3:GetObject*
               - s3:GetBucket*
@@ -3863,15 +3881,43 @@ Resources:
         Fn::Join:
           - ""
           - - '{"StartAt":"Has a ContinuationToken?","States":{"Has a
-              ContinuationToken?":{"Type":"Choice","Choices":[{"Variable":"$.ContinuationToken","IsPresent":true,"Next":"S3.ListObjectsV2(NextPage)"}],"Default":"S3.ListObjectsV2(FirstPage)"},"S3.ListObjectsV2(FirstPage)":{"End":true,"Type":"Task","ResultPath":"$.response","Resource":"arn:'
+              ContinuationToken?":{"Type":"Choice","Choices":[{"Variable":"$.ContinuationToken","IsPresent":true,"Next":"S3.ListObjectsV2(NextPage)"}],"Default":"S3.ListObjectsV2(FirstPage)"},"S3.ListObjectsV2(FirstPage)":{"Next":"Process
+              Result","Type":"Task","ResultPath":"$.response","Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
             - Ref: ConstructHubPackageDataDC5EF35E
-            - '","Prefix":"data/"}},"S3.ListObjectsV2(NextPage)":{"End":true,"Type":"Task","ResultPath":"$.response","Resource":"arn:'
+            - '","Prefix":"data/"}},"Process
+              Result":{"Type":"Map","ResultPath":null,"Next":"Is there
+              more?","Iterator":{"StartAt":"Is metadata object?","States":{"Is
+              metadata
+              object?":{"Type":"Choice","Choices":[{"Variable":"$.Key","StringMatches":"*/metadata.json","Next":"Send
+              for reprocessing"}],"Default":"Nothing to do"},"Nothing to
+              do":{"Type":"Succeed"},"Send for
+              reprocessing":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Type":"Task","Resource":"arn:'
+            - Ref: AWS::Partition
+            - :states:::lambda:invoke","Parameters":{"FunctionName":"
+            - Fn::GetAtt:
+                - ConstructHubIngestionReprocessWorkflowFunction47A2DE6E
+                - Arn
+            - '","Payload.$":"$"}}}},"ItemsPath":"$.response.Contents"},"S3.ListObjectsV2(NextPage)":{"Next":"Process
+              Result","Type":"Task","ResultPath":"$.response","Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
             - Ref: ConstructHubPackageDataDC5EF35E
-            - '","ContinuationToken.$":"$.ContinuationToken","MaxKeys":250,"Prefix":"data/"}}},"TimeoutSeconds":3600}'
+            - '","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/"}},"Is
+              there
+              more?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Continue
+              as new"}],"Default":"All Done"},"All
+              Done":{"Type":"Succeed"},"Continue as
+              new":{"End":true,"Retry":[{"ErrorEquals":["StepFunctions.ExecutionLimitExceeded"]}],"Type":"Task","Resource":"arn:'
+            - Ref: AWS::Partition
+            - ':states:::states:startExecution","Parameters":{"Input":{"ContinuationToken.$":"$.response.NextContinuationToken","AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$":"$$.Execution.Id"},"StateMachineArn":"arn:'
+            - Ref: AWS::Partition
+            - ":states:"
+            - Ref: AWS::Region
+            - ":"
+            - Ref: AWS::AccountId
+            - :stateMachine:dev.ConstructHub.Ingestion.ReprocessWorkflow"}}},"TimeoutSeconds":3600}
       StateMachineName: dev.ConstructHub.Ingestion.ReprocessWorkflow
     DependsOn:
       - ConstructHubIngestionReprocessWorkflowStateMachineRoleDefaultPolicy3A21E747
