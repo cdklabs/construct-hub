@@ -257,7 +257,7 @@ export class Orchestration extends Construct {
             maxAttempts: 3,
           })
           .addRetry({ maxAttempts: 3 })
-          .addCatch(            sendToDeadLetterQueue,            { errors: ['States.Timeout'], resultPath: '$.error' },          )
+          .addCatch( sendToDeadLetterQueue, { errors: ['States.Timeout'], resultPath: '$.error' } )
           .addCatch(sendToDeadLetterQueue, { errors: ['ECS.AmazonECSException', 'ECS.InvalidParameterException'], resultPath: '$.error' })
           .addCatch(sendToDeadLetterQueue, { errors: ['States.TaskFailed'], resultPath: '$.error' })
           .addCatch(sendToDeadLetterQueue, { errors: ['States.ALL'], resultPath: '$.error' })
