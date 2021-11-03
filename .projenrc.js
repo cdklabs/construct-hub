@@ -479,7 +479,8 @@ function newEcsTask(entrypoint) {
   main.line('  console.log(\'Task failed:\', err);');
   main.line('  process.exitCode = 1;');
   main.open('  await sfn.send(new SendTaskFailureCommand({');
-  main.line('  cause: JSON.stringify(err),');
+  // Note: JSON.stringify(some Error) returns '{}', which is not super helpful...
+  main.line('  cause: JSON.stringify(err instanceof Error ? { message: err.message, name: err.name, stack: err.stack } : err),');
   main.line('  error: err.name ?? err.constructor.name ?? \'Error\',');
   main.line('  taskToken,');
   main.close('  }));');

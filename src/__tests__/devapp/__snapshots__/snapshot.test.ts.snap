@@ -2732,7 +2732,7 @@ Resources:
                 - Ref: AWS::Region
                 - .
                 - Ref: AWS::URLSuffix
-                - /aws-cdk/assets:d6320b5c3aa035b559e64f686d18308a724600b9fab18c5f15d659d1b23285e3
+                - /aws-cdk/assets:c69861d8b8c67d7ce7ce3be0240318e1b64f94fcd43619b6bf95186bbb9c1211
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -2942,9 +2942,15 @@ Resources:
               doc-gen ECS Command"},"Prepare doc-gen ECS
               Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate
               docs"},"Generate docs":{"Next":"Check whether catalog needs
-              udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
-              docs\\" timed
-              out"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"Next":"Fault"},{"ErrorEquals":["States.TaskFailed"],"Next":"Failure"},{"ErrorEquals":["States.ALL"],"Next":"Fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.docGen.command","ResultPath":"$.docGenOutput","Resource":"arn:'
+              udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send
+              to Dead Letter
+              Queue"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"ResultPath":"$.error","Next":"Send
+              to Dead Letter
+              Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send
+              to Dead Letter
+              Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send
+              to Dead Letter
+              Queue"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.docGen.command","ResultPath":"$.docGenOutput","Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
@@ -2960,7 +2966,13 @@ Resources:
                 - GroupId
             - '"]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"Check
               whether catalog needs udpating":{"Next":"Is catalog update
-              needed?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"Next":"Throttled"},{"ErrorEquals":["States.TaskFailed"],"Next":"Failure"},{"ErrorEquals":["States.ALL"],"Next":"Fault"}],"Type":"Task","ResultPath":"$.catalogNeedsUpdating","Resource":"'
+              needed?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"ResultPath":"$.error","Next":"Send
+              to Dead Letter
+              Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send
+              to Dead Letter
+              Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send
+              to Dead Letter
+              Queue"}],"Type":"Task","ResultPath":"$.catalogNeedsUpdating","Resource":"'
             - Fn::GetAtt:
                 - ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC
                 - Arn
@@ -2969,24 +2981,24 @@ Resources:
               to
               catalog.json"}],"Default":"Done"},"Done":{"Type":"Succeed"},"Add
               to
-              catalog.json":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"Next":"Throttled"},{"ErrorEquals":["States.TaskFailed"],"Next":"Failure"},{"ErrorEquals":["States.ALL"],"Next":"Fault"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:'
+              catalog.json":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"ResultPath":"$.error","Next":"Send
+              to Dead Letter
+              Queue"},{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"Send
+              to Dead Letter
+              Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send
+              to Dead Letter
+              Queue"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::lambda:invoke","Parameters":{"FunctionName":"
             - Fn::GetAtt:
                 - ConstructHubOrchestrationCatalogBuilder7C964951
                 - Arn
-            - '","Payload.$":"$"}},"Throttled":{"Type":"Pass","ResultPath":"$.error","Parameters":{"error.$":"$.Cause"},"Next":"Send
-              to Dead Letter Queue"},"Send to Dead Letter Queue":{"Next":"Sent
-              to DLQ","Type":"Task","ResultPath":null,"Resource":"arn:'
+            - '","Payload.$":"$"}},"Send to Dead Letter Queue":{"Next":"Sent to
+              DLQ","Type":"Task","ResultPath":null,"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::sqs:sendMessage","Parameters":{"QueueUrl":"
             - Ref: ConstructHubOrchestrationDLQ9C6D9BD4
-            - '","MessageBody.$":"$"}},"Failure":{"Type":"Pass","ResultPath":"$.error","Parameters":{"error.$":"States.StringToJson($.Cause)"},"Next":"Send
-              to Dead Letter
-              Queue"},"Fault":{"Type":"Pass","ResultPath":"$.error","Parameters":{"error.$":"$.Cause"},"Next":"Send
-              to Dead Letter Queue"},"\\"Generate docs\\" timed
-              out":{"Type":"Pass","Parameters":{"error":"Timed
-              out!"},"Next":"Send to Dead Letter Queue"},"Sent to
+            - '","MessageBody.$":"$"}},"Sent to
               DLQ":{"Type":"Succeed"}},"TimeoutSeconds":86400}'
       StateMachineName: dev.ConstructHub.Orchestration
       TracingConfiguration:
