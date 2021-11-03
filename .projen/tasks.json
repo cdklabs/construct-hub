@@ -73,6 +73,9 @@
           "spawn": "bundle:canary"
         },
         {
+          "spawn": "bundle:needs-catalog-update"
+        },
+        {
           "spawn": "bundle:redrive-state-machine"
         },
         {
@@ -309,6 +312,9 @@
         },
         {
           "spawn": "bundle:canary"
+        },
+        {
+          "spawn": "bundle:needs-catalog-update"
         },
         {
           "spawn": "bundle:redrive-state-machine"
@@ -558,6 +564,24 @@
         }
       ]
     },
+    "bundle:needs-catalog-update": {
+      "name": "bundle:needs-catalog-update",
+      "description": "Create an AWS Lambda bundle from src/backend/orchestration/needs-catalog-update.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/orchestration/needs-catalog-update.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/orchestration/needs-catalog-update.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:needs-catalog-update:watch": {
+      "name": "bundle:needs-catalog-update:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/orchestration/needs-catalog-update.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/orchestration/needs-catalog-update.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/orchestration/needs-catalog-update.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
     "bundle:redrive-state-machine": {
       "name": "bundle:redrive-state-machine",
       "description": "Create an AWS Lambda bundle from src/backend/orchestration/redrive-state-machine.lambda.ts",
@@ -689,7 +713,7 @@
       "description": "Continuously bundle all AWS Lambda functions",
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/package-stats/package-stats.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/monitoring/http-get-function.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch"
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/package-stats/package-stats.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/monitoring/http-get-function.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },

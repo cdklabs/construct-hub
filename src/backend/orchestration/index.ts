@@ -12,10 +12,12 @@ import { Repository } from '../../codeartifact/repository';
 import { sqsQueueUrl, stateMachineUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { RUNBOOK_URL } from '../../runbook-url';
+import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 import { CatalogBuilder } from '../catalog-builder';
 import { DenyList } from '../deny-list';
-import { ASSEMBLY_KEY_SUFFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX, STORAGE_KEY_PREFIX } from '../shared/constants';
+import { ASSEMBLY_KEY_SUFFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX, STORAGE_KEY_PREFIX, CATALOG_KEY } from '../shared/constants';
 import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
+import { NeedsCatalogUpdate } from './needs-catalog-update';
 import { RedriveStateMachine } from './redrive-state-machine';
 
 /**
@@ -165,6 +167,20 @@ export class Orchestration extends Construct {
 
     this.catalogBuilder = new CatalogBuilder(this, 'CatalogBuilder', props);
 
+    const onThrottled = new Pass(this, 'Throttled', {
+      parameters: { 'error.$': '$.Cause' },
+      resultPath: '$.error',
+    }).next(sendToDeadLetterQueue);
+    const onFailure = new Pass(this, 'Failure', {
+      parameters: { 'error.$': 'States.StringToJson($.Cause)' },
+      resultPath: '$.error',
+    }).next(sendToDeadLetterQueue);
+    // Like onFailure, except does not attempt to JSON-parse the error cause
+    const onFault = new Pass(this, 'Fault', {
+      parameters: { 'error.$': '$.Cause' },
+      resultPath: '$.error',
+    }).next(sendToDeadLetterQueue);
+
     const addToCatalog = new tasks.LambdaInvoke(this, 'Add to catalog.json', {
       lambdaFunction: this.catalogBuilder.function,
       resultPath: '$.catalogBuilderOutput',
@@ -175,24 +191,33 @@ export class Orchestration extends Construct {
     })
       // This has a concurrency of 1, so we want to aggressively retry being throttled here.
       .addRetry({ errors: ['Lambda.TooManyRequestsException'], ...THROTTLE_RETRY_POLICY })
-      .addCatch(
-        new Pass(this, '"Add to catalog.json" throttled', {
-          parameters: { 'error.$': '$.Cause' },
-          resultPath: '$.error',
-        }).next(sendToDeadLetterQueue),
-        { errors: ['Lambda.TooManyRequestsException'] },
-      )
-      .addCatch(
-        new Pass(this, '"Add to catalog.json" failure', {
-          parameters: { 'error.$': 'States.StringToJson($.Cause)' },
-          resultPath: '$.error',
-        }).next(sendToDeadLetterQueue),
-        { errors: ['States.TaskFailed'] },
-      )
-      .addCatch(new Pass(this, '"Add to catalog.json" fault', {
-        parameters: { 'error.$': '$.Cause' },
-        resultPath: '$.error',
-      }).next(sendToDeadLetterQueue), { errors: ['States.ALL'] });
+      .addCatch( onThrottled, { errors: ['Lambda.TooManyRequestsException'] } )
+      .addCatch( onFailure, { errors: ['States.TaskFailed'] } )
+      .addCatch(onFault, { errors: ['States.ALL'] });
+
+    const needsCatalogUpdateFunction = new NeedsCatalogUpdate(this, 'NeedsCatalogUpdate', {
+      architecture: gravitonLambdaIfAvailable(this),
+      description: '[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether a package version requires a catalog update',
+      environment: { CATALOG_BUCKET_NAME: props.bucket.bucketName, CATALOG_OBJECT_KEY: CATALOG_KEY },
+      memorySize: 1_024,
+      timeout: Duration.minutes(1),
+    });
+    props.bucket.grantRead(needsCatalogUpdateFunction);
+
+    // Check whether the catalog needs updating. If so, trigger addToCatalog.
+    const addToCatalogIfNeeded = new tasks.LambdaInvoke(this, 'Check whether catalog needs udpating', {
+      lambdaFunction: needsCatalogUpdateFunction,
+      payloadResponseOnly: true,
+      resultPath: '$.catalogNeedsUpdating',
+    })
+      .addRetry({ errors: ['Lambda.TooManyRequestsException'], ...THROTTLE_RETRY_POLICY })
+      .addCatch(onThrottled, { errors: ['Lambda.TooManyRequestsException'] } )
+      .addCatch(onFailure, { errors: ['States.TaskFailed'] } )
+      .addCatch(onFault, { errors: ['States.ALL'] })
+      .next(new Choice(this, 'Is catalog update needed?')
+        .when(Condition.booleanEquals('$.catalogNeedsUpdating', true), addToCatalog)
+        .afterwards({ includeOtherwise: true }),
+      );
 
     this.ecsCluster = new Cluster(this, 'Cluster', {
       containerInsights: true,
@@ -251,21 +276,10 @@ export class Orchestration extends Construct {
               .next(sendToDeadLetterQueue),
             { errors: ['States.Timeout'] },
           )
-          .addCatch(
-            new Pass(this, '"Generate docs" service error', { parameters: { 'error.$': '$.Cause' } })
-              .next(sendToDeadLetterQueue),
-            { errors: ['ECS.AmazonECSException', 'ECS.InvalidParameterException'] },
-          )
-          .addCatch(
-            new Pass(this, '"Generate docs" failure', { parameters: { 'error.$': 'States.StringToJson($.Cause)' } })
-              .next(sendToDeadLetterQueue),
-            { errors: ['States.TaskFailed'] },
-          )
-          .addCatch(
-            new Pass(this, '"Generate docs" fault', { parameters: { 'error.$': '$.Cause' } })
-              .next(sendToDeadLetterQueue),
-            { errors: ['States.ALL'] },
-          ).next(addToCatalog),
+          .addCatch(onFault, { errors: ['ECS.AmazonECSException', 'ECS.InvalidParameterException'] })
+          .addCatch( onFailure, { errors: ['States.TaskFailed'] } )
+          .addCatch(onFault, { errors: ['States.ALL'] })
+          .next(addToCatalogIfNeeded),
       );
 
     this.stateMachine = new StateMachine(this, 'Resource', {

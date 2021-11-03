@@ -3,14 +3,18 @@ import { CatalogModel, PackageInfo } from '.';
 import { s3 } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 
+export interface ICatalogClient {
+  readonly packages: readonly PackageInfo[];
+}
+
 /**
  * A client for working with the catalog.
  */
-export class CatalogClient {
+export class CatalogClient implements ICatalogClient {
   /**
    * Creates a new client for accessing the catalog.
    */
-  public static async newClient() {
+  public static async newClient(): Promise<ICatalogClient> {
     const client = new CatalogClient();
     await client.init();
     return client;

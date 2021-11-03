@@ -1926,7 +1926,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters8b4f188e67a5c611b20f83c552ddd788781e973ff98213acf1b7b0e884f65e25S3Bucket5A45FC66
+          Ref: AssetParameters61bc79f958f9606f69e3b5b7b7087f0d946cc760e61d06a7c92145c3b2fde1d8S3Bucket6B91F01B
         S3Key:
           Fn::Join:
             - ""
@@ -1934,12 +1934,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters8b4f188e67a5c611b20f83c552ddd788781e973ff98213acf1b7b0e884f65e25S3VersionKeyE790FA05
+                      - Ref: AssetParameters61bc79f958f9606f69e3b5b7b7087f0d946cc760e61d06a7c92145c3b2fde1d8S3VersionKey9C519B8E
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters8b4f188e67a5c611b20f83c552ddd788781e973ff98213acf1b7b0e884f65e25S3VersionKeyE790FA05
+                      - Ref: AssetParameters61bc79f958f9606f69e3b5b7b7087f0d946cc760e61d06a7c92145c3b2fde1d8S3VersionKey9C519B8E
       Role:
         Fn::GetAtt:
           - ConstructHubStatsServiceRole48DCA379
@@ -2274,6 +2274,83 @@ Resources:
             Stat: Maximum
           ReturnData: false
       Threshold: -5
+  ConstructHubOrchestrationNeedsCatalogUpdateServiceRoleE6BF31C3:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  ConstructHubOrchestrationNeedsCatalogUpdateServiceRoleDefaultPolicy4B4DEDD9:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /*
+        Version: 2012-10-17
+      PolicyName: ConstructHubOrchestrationNeedsCatalogUpdateServiceRoleDefaultPolicy4B4DEDD9
+      Roles:
+        - Ref: ConstructHubOrchestrationNeedsCatalogUpdateServiceRoleE6BF31C3
+  ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParametersdb18ecb4d937a110434a97a16ca8cadd2de557f8d65221d2f5faa360b7159af5S3BucketCE358D4A
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersdb18ecb4d937a110434a97a16ca8cadd2de557f8d65221d2f5faa360b7159af5S3VersionKey85CC5120
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersdb18ecb4d937a110434a97a16ca8cadd2de557f8d65221d2f5faa360b7159af5S3VersionKey85CC5120
+      Role:
+        Fn::GetAtt:
+          - ConstructHubOrchestrationNeedsCatalogUpdateServiceRoleE6BF31C3
+          - Arn
+      Description: "[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether
+        a package version requires a catalog update"
+      Environment:
+        Variables:
+          CATALOG_BUCKET_NAME:
+            Ref: ConstructHubPackageDataDC5EF35E
+          CATALOG_OBJECT_KEY: catalog.json
+      Handler: index.handler
+      MemorySize: 1024
+      Runtime: nodejs14.x
+      Timeout: 60
+    DependsOn:
+      - ConstructHubOrchestrationNeedsCatalogUpdateServiceRoleDefaultPolicy4B4DEDD9
+      - ConstructHubOrchestrationNeedsCatalogUpdateServiceRoleE6BF31C3
   ConstructHubOrchestrationCluster3D6F0081:
     Type: AWS::ECS::Cluster
     Properties:
@@ -2830,6 +2907,12 @@ Resources:
             Effect: Allow
             Resource:
               Fn::GetAtt:
+                - ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC
+                - Arn
+          - Action: lambda:InvokeFunction
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
                 - ConstructHubOrchestrationCatalogBuilder7C964951
                 - Arn
           - Action: sqs:SendMessage
@@ -2858,15 +2941,10 @@ Resources:
               Infos":{"Type":"Pass","ResultPath":"$.$TaskExecution","InputPath":"$$.Execution","Parameters":{"Id.$":"$.Id","Name.$":"$.Name","RoleArn.$":"$.RoleArn","StartTime.$":"$.StartTime"},"Next":"Prepare
               doc-gen ECS Command"},"Prepare doc-gen ECS
               Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate
-              docs"},"Generate docs":{"Next":"Add to
-              catalog.json","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
+              docs"},"Generate docs":{"Next":"Check whether catalog needs
+              udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"Next":"\\"Generate
               docs\\" timed
-              out"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"Next":"\\"Generate
-              docs\\" service
-              error"},{"ErrorEquals":["States.TaskFailed"],"Next":"\\"Generate
-              docs\\" failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Generate
-              docs\\"
-              fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.docGen.command","ResultPath":"$.docGenOutput","Resource":"arn:'
+              out"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"Next":"Fault"},{"ErrorEquals":["States.TaskFailed"],"Next":"Failure"},{"ErrorEquals":["States.ALL"],"Next":"Fault"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.docGen.command","ResultPath":"$.docGenOutput","Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
@@ -2880,41 +2958,33 @@ Resources:
             - Fn::GetAtt:
                 - ConstructHubOrchestrationGeneratedocsSecurityGroupC584DAC2
                 - GroupId
-            - '"]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"Add
-              to
-              catalog.json":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"Next":"\\"Add
-              to catalog.json\\"
-              throttled"},{"ErrorEquals":["States.TaskFailed"],"Next":"\\"Add to
-              catalog.json\\"
-              failure"},{"ErrorEquals":["States.ALL"],"Next":"\\"Add to
-              catalog.json\\"
-              fault"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:'
+            - '"]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"Check
+              whether catalog needs udpating":{"Next":"Is catalog update
+              needed?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"Next":"Throttled"},{"ErrorEquals":["States.TaskFailed"],"Next":"Failure"},{"ErrorEquals":["States.ALL"],"Next":"Fault"}],"Type":"Task","ResultPath":"$.catalogNeedsUpdating","Resource":"'
+            - Fn::GetAtt:
+                - ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC
+                - Arn
+            - '"},"Is catalog update
+              needed?":{"Type":"Choice","Choices":[{"Variable":"$.catalogNeedsUpdating","BooleanEquals":true,"Next":"Add
+              to catalog.json"}]},"Add to
+              catalog.json":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"Next":"Throttled"},{"ErrorEquals":["States.TaskFailed"],"Next":"Failure"},{"ErrorEquals":["States.ALL"],"Next":"Fault"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::lambda:invoke","Parameters":{"FunctionName":"
             - Fn::GetAtt:
                 - ConstructHubOrchestrationCatalogBuilder7C964951
                 - Arn
-            - '","Payload.$":"$"}},"\\"Add to catalog.json\\"
-              throttled":{"Type":"Pass","ResultPath":"$.error","Parameters":{"error.$":"$.Cause"},"Next":"Send
+            - '","Payload.$":"$"}},"Throttled":{"Type":"Pass","ResultPath":"$.error","Parameters":{"error.$":"$.Cause"},"Next":"Send
               to Dead Letter Queue"},"Send to Dead Letter Queue":{"Next":"Sent
               to DLQ","Type":"Task","ResultPath":null,"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::sqs:sendMessage","Parameters":{"QueueUrl":"
             - Ref: ConstructHubOrchestrationDLQ9C6D9BD4
-            - '","MessageBody.$":"$"}},"\\"Add to catalog.json\\"
-              failure":{"Type":"Pass","ResultPath":"$.error","Parameters":{"error.$":"States.StringToJson($.Cause)"},"Next":"Send
-              to Dead Letter Queue"},"\\"Add to catalog.json\\"
-              fault":{"Type":"Pass","ResultPath":"$.error","Parameters":{"error.$":"$.Cause"},"Next":"Send
+            - '","MessageBody.$":"$"}},"Failure":{"Type":"Pass","ResultPath":"$.error","Parameters":{"error.$":"States.StringToJson($.Cause)"},"Next":"Send
+              to Dead Letter
+              Queue"},"Fault":{"Type":"Pass","ResultPath":"$.error","Parameters":{"error.$":"$.Cause"},"Next":"Send
               to Dead Letter Queue"},"\\"Generate docs\\" timed
               out":{"Type":"Pass","Parameters":{"error":"Timed
-              out!"},"Next":"Send to Dead Letter Queue"},"\\"Generate docs\\"
-              service
-              error":{"Type":"Pass","Parameters":{"error.$":"$.Cause"},"Next":"Send
-              to Dead Letter Queue"},"\\"Generate docs\\"
-              failure":{"Type":"Pass","Parameters":{"error.$":"States.StringToJson($.Cause)"},"Next":"Send
-              to Dead Letter Queue"},"\\"Generate docs\\"
-              fault":{"Type":"Pass","Parameters":{"error.$":"$.Cause"},"Next":"Send
-              to Dead Letter Queue"},"Sent to
+              out!"},"Next":"Send to Dead Letter Queue"},"Sent to
               DLQ":{"Type":"Succeed"}},"TimeoutSeconds":86400}'
       StateMachineName: dev.ConstructHub.Orchestration
       TracingConfiguration:
@@ -6065,18 +6135,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "fe317c8530ec9736af6f26432f692374ee80abaf9d89c284cca0ba0c004f5710"
-  AssetParameters8b4f188e67a5c611b20f83c552ddd788781e973ff98213acf1b7b0e884f65e25S3Bucket5A45FC66:
+  AssetParameters61bc79f958f9606f69e3b5b7b7087f0d946cc760e61d06a7c92145c3b2fde1d8S3Bucket6B91F01B:
     Type: String
     Description: S3 bucket for asset
-      "8b4f188e67a5c611b20f83c552ddd788781e973ff98213acf1b7b0e884f65e25"
-  AssetParameters8b4f188e67a5c611b20f83c552ddd788781e973ff98213acf1b7b0e884f65e25S3VersionKeyE790FA05:
+      "61bc79f958f9606f69e3b5b7b7087f0d946cc760e61d06a7c92145c3b2fde1d8"
+  AssetParameters61bc79f958f9606f69e3b5b7b7087f0d946cc760e61d06a7c92145c3b2fde1d8S3VersionKey9C519B8E:
     Type: String
     Description: S3 key for asset version
-      "8b4f188e67a5c611b20f83c552ddd788781e973ff98213acf1b7b0e884f65e25"
-  AssetParameters8b4f188e67a5c611b20f83c552ddd788781e973ff98213acf1b7b0e884f65e25ArtifactHash1053AAA9:
+      "61bc79f958f9606f69e3b5b7b7087f0d946cc760e61d06a7c92145c3b2fde1d8"
+  AssetParameters61bc79f958f9606f69e3b5b7b7087f0d946cc760e61d06a7c92145c3b2fde1d8ArtifactHashF714DEDC:
     Type: String
     Description: Artifact hash for asset
-      "8b4f188e67a5c611b20f83c552ddd788781e973ff98213acf1b7b0e884f65e25"
+      "61bc79f958f9606f69e3b5b7b7087f0d946cc760e61d06a7c92145c3b2fde1d8"
   AssetParametersb120b13d9d868c7622e7db1b68bae4c0f82ffd0227b8c15f2cef38e186ff3827S3Bucket2070BA0A:
     Type: String
     Description: S3 bucket for asset
@@ -6101,6 +6171,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "2c925f7392862bfe49a085e8c14582f29a27d2f7ace85d039c2c1db500863148"
+  AssetParametersdb18ecb4d937a110434a97a16ca8cadd2de557f8d65221d2f5faa360b7159af5S3BucketCE358D4A:
+    Type: String
+    Description: S3 bucket for asset
+      "db18ecb4d937a110434a97a16ca8cadd2de557f8d65221d2f5faa360b7159af5"
+  AssetParametersdb18ecb4d937a110434a97a16ca8cadd2de557f8d65221d2f5faa360b7159af5S3VersionKey85CC5120:
+    Type: String
+    Description: S3 key for asset version
+      "db18ecb4d937a110434a97a16ca8cadd2de557f8d65221d2f5faa360b7159af5"
+  AssetParametersdb18ecb4d937a110434a97a16ca8cadd2de557f8d65221d2f5faa360b7159af5ArtifactHashC4665B30:
+    Type: String
+    Description: Artifact hash for asset
+      "db18ecb4d937a110434a97a16ca8cadd2de557f8d65221d2f5faa360b7159af5"
   AssetParametersfc986584c099ea5046c4cc9515c34013472214b465565366d7e634dd9705258fS3Bucket44863F75:
     Type: String
     Description: S3 bucket for asset
