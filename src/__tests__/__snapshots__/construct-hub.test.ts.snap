@@ -2689,7 +2689,7 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -2697,7 +2697,15 @@ Direct link to the function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Prefix\\":\\"data/\\"}},\\"Process Result\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Is there more?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is metadata object?\\",\\"States\\":{\\"Is metadata object?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Key\\",\\"StringMatches\\":\\"*/metadata.json\\",\\"Next\\":\\"Send for reprocessing\\"}],\\"Default\\":\\"Nothing to do\\"},\\"Nothing to do\\":{\\"Type\\":\\"Succeed\\"},\\"Send for reprocessing\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"Process Result\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"ContinuationToken.$\\":\\"$.ContinuationToken\\",\\"Prefix\\":\\"data/\\"}},\\"Process Result\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"End\\":true,\\"Iterator\\":{\\"StartAt\\":\\"Is metadata object?\\",\\"States\\":{\\"Is metadata object?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Key\\",\\"StringMatches\\":\\"*/metadata.json\\",\\"Next\\":\\"Send for reprocessing\\"}],\\"Default\\":\\"Nothing to do\\"},\\"Nothing to do\\":{\\"Type\\":\\"Succeed\\"},\\"Send for reprocessing\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -2708,15 +2716,7 @@ Direct link to the function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}}}},\\"ItemsPath\\":\\"$.response.Contents\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
-              Object {
-                "Ref": "AWS::Partition",
-              },
-              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
-              Object {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
-              },
-              "\\",\\"ContinuationToken.$\\":\\"$.ContinuationToken\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"All Done\\"},\\"All Done\\":{\\"Type\\":\\"Succeed\\"},\\"Continue as new\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}}}},\\"ItemsPath\\":\\"$.response.Contents\\"},\\"Continue as new\\":{\\"Next\\":\\"Process Result\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":null,\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -12954,7 +12954,7 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -12962,7 +12962,15 @@ Direct link to the function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Prefix\\":\\"data/\\"}},\\"Process Result\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Is there more?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is metadata object?\\",\\"States\\":{\\"Is metadata object?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Key\\",\\"StringMatches\\":\\"*/metadata.json\\",\\"Next\\":\\"Send for reprocessing\\"}],\\"Default\\":\\"Nothing to do\\"},\\"Nothing to do\\":{\\"Type\\":\\"Succeed\\"},\\"Send for reprocessing\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"Process Result\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"ContinuationToken.$\\":\\"$.ContinuationToken\\",\\"Prefix\\":\\"data/\\"}},\\"Process Result\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"End\\":true,\\"Iterator\\":{\\"StartAt\\":\\"Is metadata object?\\",\\"States\\":{\\"Is metadata object?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Key\\",\\"StringMatches\\":\\"*/metadata.json\\",\\"Next\\":\\"Send for reprocessing\\"}],\\"Default\\":\\"Nothing to do\\"},\\"Nothing to do\\":{\\"Type\\":\\"Succeed\\"},\\"Send for reprocessing\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -12973,15 +12981,7 @@ Direct link to the function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}}}},\\"ItemsPath\\":\\"$.response.Contents\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
-              Object {
-                "Ref": "AWS::Partition",
-              },
-              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
-              Object {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
-              },
-              "\\",\\"ContinuationToken.$\\":\\"$.ContinuationToken\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"All Done\\"},\\"All Done\\":{\\"Type\\":\\"Succeed\\"},\\"Continue as new\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}}}},\\"ItemsPath\\":\\"$.response.Contents\\"},\\"Continue as new\\":{\\"Next\\":\\"Process Result\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":null,\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -23472,7 +23472,7 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -23480,7 +23480,15 @@ Direct link to the function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Prefix\\":\\"data/\\"}},\\"Process Result\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Is there more?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is metadata object?\\",\\"States\\":{\\"Is metadata object?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Key\\",\\"StringMatches\\":\\"*/metadata.json\\",\\"Next\\":\\"Send for reprocessing\\"}],\\"Default\\":\\"Nothing to do\\"},\\"Nothing to do\\":{\\"Type\\":\\"Succeed\\"},\\"Send for reprocessing\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"Process Result\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"ContinuationToken.$\\":\\"$.ContinuationToken\\",\\"Prefix\\":\\"data/\\"}},\\"Process Result\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"End\\":true,\\"Iterator\\":{\\"StartAt\\":\\"Is metadata object?\\",\\"States\\":{\\"Is metadata object?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Key\\",\\"StringMatches\\":\\"*/metadata.json\\",\\"Next\\":\\"Send for reprocessing\\"}],\\"Default\\":\\"Nothing to do\\"},\\"Nothing to do\\":{\\"Type\\":\\"Succeed\\"},\\"Send for reprocessing\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -23491,15 +23499,7 @@ Direct link to the function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}}}},\\"ItemsPath\\":\\"$.response.Contents\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
-              Object {
-                "Ref": "AWS::Partition",
-              },
-              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
-              Object {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
-              },
-              "\\",\\"ContinuationToken.$\\":\\"$.ContinuationToken\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"All Done\\"},\\"All Done\\":{\\"Type\\":\\"Succeed\\"},\\"Continue as new\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}}}},\\"ItemsPath\\":\\"$.response.Contents\\"},\\"Continue as new\\":{\\"Next\\":\\"Process Result\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":null,\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -34020,7 +34020,7 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -34028,7 +34028,15 @@ Direct link to the function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Prefix\\":\\"data/\\"}},\\"Process Result\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"Next\\":\\"Is there more?\\",\\"Iterator\\":{\\"StartAt\\":\\"Is metadata object?\\",\\"States\\":{\\"Is metadata object?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Key\\",\\"StringMatches\\":\\"*/metadata.json\\",\\"Next\\":\\"Send for reprocessing\\"}],\\"Default\\":\\"Nothing to do\\"},\\"Nothing to do\\":{\\"Type\\":\\"Succeed\\"},\\"Send for reprocessing\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"Process Result\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
+              Object {
+                "Ref": "ConstructHubPackageDataDC5EF35E",
+              },
+              "\\",\\"ContinuationToken.$\\":\\"$.ContinuationToken\\",\\"Prefix\\":\\"data/\\"}},\\"Process Result\\":{\\"Type\\":\\"Map\\",\\"ResultPath\\":null,\\"End\\":true,\\"Iterator\\":{\\"StartAt\\":\\"Is metadata object?\\",\\"States\\":{\\"Is metadata object?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.Key\\",\\"StringMatches\\":\\"*/metadata.json\\",\\"Next\\":\\"Send for reprocessing\\"}],\\"Default\\":\\"Nothing to do\\"},\\"Nothing to do\\":{\\"Type\\":\\"Succeed\\"},\\"Send for reprocessing\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -34039,15 +34047,7 @@ Direct link to the function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\",\\"Payload.$\\":\\"$\\"}}}},\\"ItemsPath\\":\\"$.response.Contents\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Process Result\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
-              Object {
-                "Ref": "AWS::Partition",
-              },
-              ":states:::aws-sdk:s3:listObjectsV2\\",\\"Parameters\\":{\\"Bucket\\":\\"",
-              Object {
-                "Ref": "ConstructHubPackageDataDC5EF35E",
-              },
-              "\\",\\"ContinuationToken.$\\":\\"$.ContinuationToken\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"All Done\\"},\\"All Done\\":{\\"Type\\":\\"Succeed\\"},\\"Continue as new\\":{\\"End\\":true,\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Payload.$\\":\\"$\\"}}}},\\"ItemsPath\\":\\"$.response.Contents\\"},\\"Continue as new\\":{\\"Next\\":\\"Process Result\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"StepFunctions.ExecutionLimitExceeded\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":null,\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
