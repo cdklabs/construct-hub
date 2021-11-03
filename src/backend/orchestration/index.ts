@@ -458,7 +458,7 @@ class RegenerateAllDocumentation extends Construct {
           Prefix: JsonPath.stringAt('$.Prefix'),
         },
         resultPath: '$.response',
-      }))
+      }).addRetry({ errors: ['S3.SdkClientException'] }))
       .otherwise(new tasks.CallAwsService(this, 'First versions page', {
         service: 's3',
         action: 'listObjectsV2',
@@ -470,7 +470,7 @@ class RegenerateAllDocumentation extends Construct {
           Prefix: JsonPath.stringAt('$.Prefix'),
         },
         resultPath: '$.response',
-      }))
+      }).addRetry({ errors: ['S3.SdkClientException'] }))
       .afterwards()
       .next(new Map(this, 'For each key prefix', { itemsPath: '$.response.CommonPrefixes', resultPath: JsonPath.DISCARD })
         .iterator(new tasks.StepFunctionsStartExecution(this, 'Start Orchestration Workflow', {
@@ -508,7 +508,7 @@ class RegenerateAllDocumentation extends Construct {
           Prefix: JsonPath.stringAt('$.Prefix'),
         },
         resultPath: '$.response',
-      }))
+      }).addRetry({ errors: ['S3.SdkClientException'] }))
       .otherwise(new tasks.CallAwsService(this, 'First @scope page', {
         service: 's3',
         action: 'listObjectsV2',
@@ -520,7 +520,7 @@ class RegenerateAllDocumentation extends Construct {
           Prefix: JsonPath.stringAt('$.Prefix'),
         },
         resultPath: '$.response',
-      }))
+      }).addRetry({ errors: ['S3.SdkClientException'] }))
       .afterwards()
       .next(new Map(this, 'For each @scope/pkg', { itemsPath: '$.response.CommonPrefixes', resultPath: JsonPath.DISCARD })
         .iterator(new tasks.StepFunctionsStartExecution(this, 'Process scoped package', {
@@ -550,7 +550,7 @@ class RegenerateAllDocumentation extends Construct {
             Prefix: STORAGE_KEY_PREFIX,
           },
           resultPath: '$.response',
-        }),
+        }).addRetry({ errors: ['S3.SdkClientException'] }),
       )
       .otherwise(
         new tasks.CallAwsService(this, 'First prefix page', {
@@ -564,7 +564,7 @@ class RegenerateAllDocumentation extends Construct {
             Prefix: STORAGE_KEY_PREFIX,
           },
           resultPath: '$.response',
-        }),
+        }).addRetry({ errors: ['S3.SdkClientException'] }),
       ).afterwards()
       .next(new Map(this, 'For each prefix', { itemsPath: '$.response.CommonPrefixes', resultPath: JsonPath.DISCARD })
         .iterator(

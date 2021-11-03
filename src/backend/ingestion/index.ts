@@ -323,7 +323,7 @@ class ReprocessIngestionWorkflow extends Construct {
             Prefix: STORAGE_KEY_PREFIX,
           },
           resultPath: '$.response',
-        }))
+        }).addRetry({ errors: ['S3.SdkClientException'] }))
       .otherwise(new CallAwsService(this, 'S3.ListObjectsV2(FirstPage)', {
         service: 's3',
         action: 'listObjectsV2',
@@ -334,7 +334,7 @@ class ReprocessIngestionWorkflow extends Construct {
           Prefix: STORAGE_KEY_PREFIX,
         },
         resultPath: '$.response',
-      })).afterwards();
+      }).addRetry({ errors: ['S3.SdkClientException'] })).afterwards();
 
     const process = new Map(this, 'Process Result', {
       itemsPath: '$.response.Contents',
