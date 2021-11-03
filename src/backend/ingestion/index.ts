@@ -21,6 +21,7 @@ import { STORAGE_KEY_PREFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX } from '../
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { Ingestion as Handler } from './ingestion';
 import { ReIngest } from './re-ingest';
+import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 
 export interface IngestionProps {
   /**
@@ -294,10 +295,12 @@ class ReprocessIngestionWorkflow extends Construct {
     super(scope, id);
 
     const lambdaFunction = new ReIngest(this, 'Function', {
+      architecture: gravitonLambdaIfAvailable(this),
       description: '[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion',
       environment: { BUCKET_NAME: props.bucket.bucketName, QUEUE_URL: props.queue.queueUrl },
+      memorySize: 10_240,
       tracing: Tracing.ACTIVE,
-      timeout: Duration.seconds(15),
+      timeout: Duration.minutes(1),
     });
 
     props.queue.grantSendMessages(lambdaFunction);
