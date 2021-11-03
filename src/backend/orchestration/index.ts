@@ -216,7 +216,7 @@ export class Orchestration extends Construct {
       .addCatch(onFault, { errors: ['States.ALL'] })
       .next(new Choice(this, 'Is catalog update needed?')
         .when(Condition.booleanEquals('$.catalogNeedsUpdating', true), addToCatalog)
-        .afterwards({ includeOtherwise: true }),
+        .otherwise(new Succeed(this, 'Done')),
       );
 
     this.ecsCluster = new Cluster(this, 'Cluster', {

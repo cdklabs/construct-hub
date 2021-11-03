@@ -2966,7 +2966,9 @@ Resources:
                 - Arn
             - '"},"Is catalog update
               needed?":{"Type":"Choice","Choices":[{"Variable":"$.catalogNeedsUpdating","BooleanEquals":true,"Next":"Add
-              to catalog.json"}]},"Add to
+              to
+              catalog.json"}],"Default":"Done"},"Done":{"Type":"Succeed"},"Add
+              to
               catalog.json":{"End":true,"Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException"],"Next":"Throttled"},{"ErrorEquals":["States.TaskFailed"],"Next":"Failure"},{"ErrorEquals":["States.ALL"],"Next":"Fault"}],"Type":"Task","ResultPath":"$.catalogBuilderOutput","ResultSelector":{"ETag.$":"$.Payload.ETag","VersionId.$":"$.Payload.VersionId"},"Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::lambda:invoke","Parameters":{"FunctionName":"
