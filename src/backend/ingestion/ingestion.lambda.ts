@@ -180,13 +180,11 @@ export const handler = metricScope(
       if (codeArtifactProps) {
         console.log('Publishing to the internal CodeArtifact...');
         try {
-          const tarballBuff = Buffer.from(tarball.Body!);
-          const { packageJson } = await extractObjects(tarballBuff, { packageJson: { path: 'package/package.json', required: true } });
-          const { publishConfig } = JSON.parse(packageJson.toString('utf-8'));
+          const { publishConfig } = packageJsonObj;
           if (publishConfig) {
-            console.log(`Not publishing to CodeArtifact due to the presence of publishConfig in package.json: `, publishConfig);
+            console.log('Not publishing to CodeArtifact due to the presence of publishConfig in package.json: ', publishConfig);
           } else {
-            await codeArtifactPublishPackage(tarballBuff, codeArtifactProps);
+            await codeArtifactPublishPackage(Buffer.from(tarball.Body!), codeArtifactProps);
           }
         } catch (err) {
           console.error('Failed publishing to CodeArtifact: ', err);
