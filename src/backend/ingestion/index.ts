@@ -16,12 +16,12 @@ import { Monitoring } from '../../monitoring';
 import { PackageTagConfig } from '../../package-tag';
 import { RUNBOOK_URL } from '../../runbook-url';
 import type { PackageLinkConfig } from '../../webapp';
+import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 import { Orchestration } from '../orchestration';
 import { STORAGE_KEY_PREFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX } from '../shared/constants';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { Ingestion as Handler } from './ingestion';
 import { ReIngest } from './re-ingest';
-import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 
 export interface IngestionProps {
   /**
