@@ -3792,8 +3792,9 @@ Resources:
           QUEUE_URL:
             Ref: ConstructHubIngestionReprocessQueueADCE803E
       Handler: index.handler
+      MemorySize: 10240
       Runtime: nodejs14.x
-      Timeout: 15
+      Timeout: 60
       TracingConfig:
         Mode: Active
     DependsOn:
