@@ -167,20 +167,6 @@ export class Orchestration extends Construct {
 
     this.catalogBuilder = new CatalogBuilder(this, 'CatalogBuilder', props);
 
-    const onThrottled = new Pass(this, 'Throttled', {
-      parameters: { 'error.$': '$.Cause' },
-      resultPath: '$.error',
-    }).next(sendToDeadLetterQueue);
-    const onFailure = new Pass(this, 'Failure', {
-      parameters: { 'error.$': 'States.StringToJson($.Cause)' },
-      resultPath: '$.error',
-    }).next(sendToDeadLetterQueue);
-    // Like onFailure, except does not attempt to JSON-parse the error cause
-    const onFault = new Pass(this, 'Fault', {
-      parameters: { 'error.$': '$.Cause' },
-      resultPath: '$.error',
-    }).next(sendToDeadLetterQueue);
-
     const addToCatalog = new tasks.LambdaInvoke(this, 'Add to catalog.json', {
       lambdaFunction: this.catalogBuilder.function,
       resultPath: '$.catalogBuilderOutput',
@@ -191,9 +177,9 @@ export class Orchestration extends Construct {
     })
       // This has a concurrency of 1, so we want to aggressively retry being throttled here.
       .addRetry({ errors: ['Lambda.TooManyRequestsException'], ...THROTTLE_RETRY_POLICY })
-      .addCatch( onThrottled, { errors: ['Lambda.TooManyRequestsException'] } )
-      .addCatch( onFailure, { errors: ['States.TaskFailed'] } )
-      .addCatch(onFault, { errors: ['States.ALL'] });
+      .addCatch(sendToDeadLetterQueue, { errors: ['Lambda.TooManyRequestsException'], resultPath: '$.error' })
+      .addCatch(sendToDeadLetterQueue, { errors: ['States.TaskFailed'], resultPath: '$.error' })
+      .addCatch(sendToDeadLetterQueue, { errors: ['States.ALL'], resultPath: '$.error' });
 
     const needsCatalogUpdateFunction = new NeedsCatalogUpdate(this, 'NeedsCatalogUpdate', {
       architecture: gravitonLambdaIfAvailable(this),
@@ -211,9 +197,9 @@ export class Orchestration extends Construct {
       resultPath: '$.catalogNeedsUpdating',
     })
       .addRetry({ errors: ['Lambda.TooManyRequestsException'], ...THROTTLE_RETRY_POLICY })
-      .addCatch(onThrottled, { errors: ['Lambda.TooManyRequestsException'] } )
-      .addCatch(onFailure, { errors: ['States.TaskFailed'] } )
-      .addCatch(onFault, { errors: ['States.ALL'] })
+      .addCatch(sendToDeadLetterQueue, { errors: ['Lambda.TooManyRequestsException'], resultPath: '$.error' } )
+      .addCatch(sendToDeadLetterQueue, { errors: ['States.TaskFailed'], resultPath: '$.error' } )
+      .addCatch(sendToDeadLetterQueue, { errors: ['States.ALL'], resultPath: '$.error' })
       .next(new Choice(this, 'Is catalog update needed?')
         .when(Condition.booleanEquals('$.catalogNeedsUpdating', true), addToCatalog)
         .otherwise(new Succeed(this, 'Done')),
@@ -252,7 +238,7 @@ export class Orchestration extends Construct {
           timeout: Duration.hours(1),
           vpcSubnets: props.vpcSubnets,
         })
-        // Do not retry NoSpaceLeftOnDevice errors, these are typically not transient.
+          // Do not retry NoSpaceLeftOnDevice errors, these are typically not transient.
           .addRetry({ errors: ['jsii-docgen.NoSpaceLeftOnDevice'], maxAttempts: 0 })
           .addRetry({
             errors: [
@@ -271,14 +257,10 @@ export class Orchestration extends Construct {
             maxAttempts: 3,
           })
           .addRetry({ maxAttempts: 3 })
-          .addCatch(
-            new Pass(this, '"Generate docs" timed out', { parameters: { error: 'Timed out!' } })
-              .next(sendToDeadLetterQueue),
-            { errors: ['States.Timeout'] },
-          )
-          .addCatch(onFault, { errors: ['ECS.AmazonECSException', 'ECS.InvalidParameterException'] })
-          .addCatch( onFailure, { errors: ['States.TaskFailed'] } )
-          .addCatch(onFault, { errors: ['States.ALL'] })
+          .addCatch(            sendToDeadLetterQueue,            { errors: ['States.Timeout'], resultPath: '$.error' },          )
+          .addCatch(sendToDeadLetterQueue, { errors: ['ECS.AmazonECSException', 'ECS.InvalidParameterException'], resultPath: '$.error' })
+          .addCatch(sendToDeadLetterQueue, { errors: ['States.TaskFailed'], resultPath: '$.error' })
+          .addCatch(sendToDeadLetterQueue, { errors: ['States.ALL'], resultPath: '$.error' })
           .next(addToCatalogIfNeeded),
       );
 

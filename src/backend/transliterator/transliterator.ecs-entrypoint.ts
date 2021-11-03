@@ -36,7 +36,7 @@ async function main(): Promise<void> {
     console.log('Task failed:', err);
     process.exitCode = 1;
     await sfn.send(new SendTaskFailureCommand({
-      cause: JSON.stringify(err),
+      cause: JSON.stringify(err instanceof Error ? { message: err.message, name: err.name, stack: err.stack } : err),
       error: err.name ?? err.constructor.name ?? 'Error',
       taskToken,
     }));
