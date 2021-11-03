@@ -3199,13 +3199,13 @@ Resources:
             - Ref: ConstructHubOrchestration39161A46
             - '"}}}},"ItemsPath":"$.response.CommonPrefixes"},"First versions
               page":{"Next":"For each key
-              prefix","Type":"Task","ResultPath":"$.response","Resource":"arn:'
+              prefix","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
             - Ref: ConstructHubPackageDataDC5EF35E
             - '","Delimiter":"/","Prefix.$":"$.Prefix"}},"Next versions
               page":{"Next":"For each key
-              prefix","Type":"Task","ResultPath":"$.response","Resource":"arn:'
+              prefix","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
             - Ref: ConstructHubPackageDataDC5EF35E
@@ -3345,26 +3345,26 @@ Resources:
             - Ref: ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7
             - '"}}}},"ItemsPath":"$.response.CommonPrefixes"},"First @scope
               page":{"Next":"For each
-              @scope--pkg","Type":"Task","ResultPath":"$.response","Resource":"arn:'
+              @scope--pkg","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
             - Ref: ConstructHubPackageDataDC5EF35E
             - '","Delimiter":"/","Prefix.$":"$.Prefix"}},"Next @scope
               page":{"Next":"For each
-              @scope--pkg","Type":"Task","ResultPath":"$.response","Resource":"arn:'
+              @scope--pkg","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
             - Ref: ConstructHubPackageDataDC5EF35E
             - '","ContinuationToken.$":"$.response.NextContinuationToken","Delimiter":"/","Prefix.$":"$.Prefix"}},"All
               Done":{"Type":"Succeed"}}},"ItemsPath":"$.response.CommonPrefixes"},"First
               prefix page":{"Next":"For each
-              prefix","Type":"Task","ResultPath":"$.response","Resource":"arn:'
+              prefix","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
             - Ref: ConstructHubPackageDataDC5EF35E
             - '","Delimiter":"/","Prefix":"data/"}},"Next prefixes
               page":{"Next":"For each
-              prefix","Type":"Task","ResultPath":"$.response","Resource":"arn:'
+              prefix","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
             - Ref: ConstructHubPackageDataDC5EF35E
@@ -3957,7 +3957,7 @@ Resources:
           - - '{"StartAt":"Has a ContinuationToken?","States":{"Has a
               ContinuationToken?":{"Type":"Choice","Choices":[{"Variable":"$.ContinuationToken","IsPresent":true,"Next":"S3.ListObjectsV2(NextPage)"}],"Default":"S3.ListObjectsV2(FirstPage)"},"S3.ListObjectsV2(FirstPage)":{"Next":"Is
               there
-              more?","Type":"Task","ResultPath":"$.response","Resource":"arn:'
+              more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
             - Ref: ConstructHubPackageDataDC5EF35E
@@ -3965,7 +3965,7 @@ Resources:
               more?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Continue
               as new"}],"Default":"Process
               Result"},"S3.ListObjectsV2(NextPage)":{"Next":"Is there
-              more?","Type":"Task","ResultPath":"$.response","Resource":"arn:'
+              more?","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
             - Ref: ConstructHubPackageDataDC5EF35E

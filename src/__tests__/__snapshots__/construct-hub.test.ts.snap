@@ -2702,7 +2702,7 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -2710,7 +2710,7 @@ Direct link to the function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"Process Result\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"Process Result\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -6756,7 +6756,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
               },
-              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -6764,7 +6764,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -6772,7 +6772,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"All Done\\":{\\"Type\\":\\"Succeed\\"}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First prefix page\\":{\\"Next\\":\\"For each prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"All Done\\":{\\"Type\\":\\"Succeed\\"}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First prefix page\\":{\\"Next\\":\\"For each prefix\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -6780,7 +6780,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix\\":\\"data/\\"}},\\"Next prefixes page\\":{\\"Next\\":\\"For each prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix\\":\\"data/\\"}},\\"Next prefixes page\\":{\\"Next\\":\\"For each prefix\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -6827,7 +6827,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -6835,7 +6835,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -13140,7 +13140,7 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -13148,7 +13148,7 @@ Direct link to the function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"Process Result\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"Process Result\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -17209,7 +17209,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
               },
-              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -17217,7 +17217,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -17225,7 +17225,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"All Done\\":{\\"Type\\":\\"Succeed\\"}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First prefix page\\":{\\"Next\\":\\"For each prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"All Done\\":{\\"Type\\":\\"Succeed\\"}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First prefix page\\":{\\"Next\\":\\"For each prefix\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -17233,7 +17233,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix\\":\\"data/\\"}},\\"Next prefixes page\\":{\\"Next\\":\\"For each prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix\\":\\"data/\\"}},\\"Next prefixes page\\":{\\"Next\\":\\"For each prefix\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -17280,7 +17280,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -17288,7 +17288,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -23831,7 +23831,7 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -23839,7 +23839,7 @@ Direct link to the function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"Process Result\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"Process Result\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -27907,7 +27907,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
               },
-              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -27915,7 +27915,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -27923,7 +27923,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"All Done\\":{\\"Type\\":\\"Succeed\\"}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First prefix page\\":{\\"Next\\":\\"For each prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"All Done\\":{\\"Type\\":\\"Succeed\\"}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First prefix page\\":{\\"Next\\":\\"For each prefix\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -27931,7 +27931,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix\\":\\"data/\\"}},\\"Next prefixes page\\":{\\"Next\\":\\"For each prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix\\":\\"data/\\"}},\\"Next prefixes page\\":{\\"Next\\":\\"For each prefix\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -27978,7 +27978,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -27986,7 +27986,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -34552,7 +34552,7 @@ Direct link to the function: /lambda/home#/functions/",
           "Fn::Join": Array [
             "",
             Array [
-              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "{\\"StartAt\\":\\"Has a ContinuationToken?\\",\\"States\\":{\\"Has a ContinuationToken?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.ContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"S3.ListObjectsV2(NextPage)\\"}],\\"Default\\":\\"S3.ListObjectsV2(FirstPage)\\"},\\"S3.ListObjectsV2(FirstPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -34560,7 +34560,7 @@ Direct link to the function: /lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"Process Result\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Prefix\\":\\"data/\\"}},\\"Is there more?\\":{\\"Type\\":\\"Choice\\",\\"Choices\\":[{\\"Variable\\":\\"$.response.NextContinuationToken\\",\\"IsPresent\\":true,\\"Next\\":\\"Continue as new\\"}],\\"Default\\":\\"Process Result\\"},\\"S3.ListObjectsV2(NextPage)\\":{\\"Next\\":\\"Is there more?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -37416,7 +37416,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubOrchestrationRegenerateAllDocumentationPerPackage9CF0FFB7",
               },
-              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -37424,7 +37424,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next @scope page\\":{\\"Next\\":\\"For each @scope--pkg\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -37432,7 +37432,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"All Done\\":{\\"Type\\":\\"Succeed\\"}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First prefix page\\":{\\"Next\\":\\"For each prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"ContinuationToken.$\\":\\"$.response.NextContinuationToken\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"All Done\\":{\\"Type\\":\\"Succeed\\"}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First prefix page\\":{\\"Next\\":\\"For each prefix\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -37440,7 +37440,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix\\":\\"data/\\"}},\\"Next prefixes page\\":{\\"Next\\":\\"For each prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix\\":\\"data/\\"}},\\"Next prefixes page\\":{\\"Next\\":\\"For each prefix\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -37487,7 +37487,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\"}}}},\\"ItemsPath\\":\\"$.response.CommonPrefixes\\"},\\"First versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
@@ -37495,7 +37495,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               Object {
                 "Ref": "ConstructHubPackageDataDC5EF35E",
               },
-              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
+              "\\",\\"Delimiter\\":\\"/\\",\\"Prefix.$\\":\\"$.Prefix\\"}},\\"Next versions page\\":{\\"Next\\":\\"For each key prefix\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"S3.SdkClientException\\"]}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.response\\",\\"Resource\\":\\"arn:",
               Object {
                 "Ref": "AWS::Partition",
               },
