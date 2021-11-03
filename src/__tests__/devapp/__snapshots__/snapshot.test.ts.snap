@@ -3882,15 +3882,23 @@ Resources:
         Fn::Join:
           - ""
           - - '{"StartAt":"Has a ContinuationToken?","States":{"Has a
-              ContinuationToken?":{"Type":"Choice","Choices":[{"Variable":"$.ContinuationToken","IsPresent":true,"Next":"S3.ListObjectsV2(NextPage)"}],"Default":"S3.ListObjectsV2(FirstPage)"},"S3.ListObjectsV2(FirstPage)":{"Next":"Process
-              Result","Type":"Task","ResultPath":"$.response","Resource":"arn:'
+              ContinuationToken?":{"Type":"Choice","Choices":[{"Variable":"$.ContinuationToken","IsPresent":true,"Next":"S3.ListObjectsV2(NextPage)"}],"Default":"S3.ListObjectsV2(FirstPage)"},"S3.ListObjectsV2(FirstPage)":{"Next":"Is
+              there
+              more?","Type":"Task","ResultPath":"$.response","Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
             - Ref: ConstructHubPackageDataDC5EF35E
-            - '","Prefix":"data/"}},"Process
-              Result":{"Type":"Map","ResultPath":null,"Next":"Is there
-              more?","Iterator":{"StartAt":"Is metadata object?","States":{"Is
-              metadata
+            - '","Prefix":"data/"}},"Is there
+              more?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Continue
+              as new"}],"Default":"Process
+              Result"},"S3.ListObjectsV2(NextPage)":{"Next":"Is there
+              more?","Type":"Task","ResultPath":"$.response","Resource":"arn:'
+            - Ref: AWS::Partition
+            - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
+            - Ref: ConstructHubPackageDataDC5EF35E
+            - '","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/"}},"Process
+              Result":{"Type":"Map","ResultPath":null,"End":true,"Iterator":{"StartAt":"Is
+              metadata object?","States":{"Is metadata
               object?":{"Type":"Choice","Choices":[{"Variable":"$.Key","StringMatches":"*/metadata.json","Next":"Send
               for reprocessing"}],"Default":"Nothing to do"},"Nothing to
               do":{"Type":"Succeed"},"Send for
@@ -3900,17 +3908,9 @@ Resources:
             - Fn::GetAtt:
                 - ConstructHubIngestionReprocessWorkflowFunction47A2DE6E
                 - Arn
-            - '","Payload.$":"$"}}}},"ItemsPath":"$.response.Contents"},"S3.ListObjectsV2(NextPage)":{"Next":"Process
-              Result","Type":"Task","ResultPath":"$.response","Resource":"arn:'
-            - Ref: AWS::Partition
-            - :states:::aws-sdk:s3:listObjectsV2","Parameters":{"Bucket":"
-            - Ref: ConstructHubPackageDataDC5EF35E
-            - '","ContinuationToken.$":"$.ContinuationToken","Prefix":"data/"}},"Is
-              there
-              more?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Continue
-              as new"}],"Default":"All Done"},"All
-              Done":{"Type":"Succeed"},"Continue as
-              new":{"End":true,"Retry":[{"ErrorEquals":["StepFunctions.ExecutionLimitExceeded"]}],"Type":"Task","Resource":"arn:'
+            - '","Payload.$":"$"}}}},"ItemsPath":"$.response.Contents"},"Continue
+              as new":{"Next":"Process
+              Result","Retry":[{"ErrorEquals":["StepFunctions.ExecutionLimitExceeded"]}],"Type":"Task","ResultPath":null,"Resource":"arn:'
             - Ref: AWS::Partition
             - ':states:::states:startExecution","Parameters":{"Input":{"ContinuationToken.$":"$.response.NextContinuationToken","AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID.$":"$$.Execution.Id"},"StateMachineArn":"arn:'
             - Ref: AWS::Partition

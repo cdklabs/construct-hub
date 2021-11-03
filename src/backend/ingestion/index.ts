@@ -304,6 +304,9 @@ class ReprocessIngestionWorkflow extends Construct {
     props.bucket.grantRead(lambdaFunction, `${STORAGE_KEY_PREFIX}*${METADATA_KEY_SUFFIX}`);
     props.bucket.grantRead(lambdaFunction, `${STORAGE_KEY_PREFIX}*${PACKAGE_KEY_SUFFIX}`);
 
+    // Need to physical-name the state machine so it can self-invoke.
+    const stateMachineName = stateMachineNameFrom(this.node.path);
+
     const listBucket = new Choice(this, 'Has a ContinuationToken?')
       .when(Condition.isPresent('$.ContinuationToken'),
         new CallAwsService(this, 'S3.ListObjectsV2(NextPage)', {
@@ -344,24 +347,26 @@ class ReprocessIngestionWorkflow extends Construct {
         .otherwise(new Succeed(this, 'Nothing to do')),
     );
 
-    // Need to physical-name the state machine so it can self-invoke.
-    const stateMachineName = stateMachineNameFrom(this.node.path);
-    listBucket.next(process.next(new Choice(this, 'Is there more?')
-      .when(
-        Condition.isPresent('$.response.NextContinuationToken'),
-        new StepFunctionsStartExecution(this, 'Continue as new', {
-          associateWithParent: true,
-          stateMachine: StateMachine.fromStateMachineArn(this, 'ThisStateMachine', Stack.of(this).formatArn({
-            arnFormat: ArnFormat.COLON_RESOURCE_NAME,
-            service: 'states',
-            resource: 'stateMachine',
-            resourceName: stateMachineName,
-          })),
-          input: TaskInput.fromObject({ ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken') }),
-          integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
-        }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] }),
-      )
-      .otherwise(new Succeed(this, 'All Done'))));
+
+    listBucket.next(
+      new Choice(this, 'Is there more?')
+        .when(
+          Condition.isPresent('$.response.NextContinuationToken'),
+          new StepFunctionsStartExecution(this, 'Continue as new', {
+            associateWithParent: true,
+            stateMachine: StateMachine.fromStateMachineArn(this, 'ThisStateMachine', Stack.of(this).formatArn({
+              arnFormat: ArnFormat.COLON_RESOURCE_NAME,
+              service: 'states',
+              resource: 'stateMachine',
+              resourceName: stateMachineName,
+            })),
+            input: TaskInput.fromObject({ ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken') }),
+            integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
+            resultPath: JsonPath.DISCARD,
+          }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] }),
+        ).afterwards({ includeOtherwise: true })
+        .next(process),
+    );
 
     const stateMachine = new StateMachine(this, 'StateMachine', {
       definition: listBucket,
