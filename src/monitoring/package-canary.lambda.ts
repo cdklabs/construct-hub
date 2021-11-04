@@ -1,27 +1,21 @@
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
-import { AWSError, S3 } from 'aws-sdk';
+import type { AWSError, S3 } from 'aws-sdk';
+import * as https from 'https';
+import * as JSONStream from 'JSONStream';
 import * as aws from '../backend/shared/aws.lambda-shared';
-import { CATALOG_KEY } from '../backend/shared/constants';
-import { shellOut } from '../backend/shared/shell-out.lambda-shared';
+import { requireEnv } from '../backend/shared/env.lambda-shared';
+import { Readable } from 'stream';
 
 Configuration.namespace = 'ConstructHub';
 
-function env(key: string): string {
-  const value = process.env[key];
-  if (!value) {
-    throw new Error(`${key} environment variable is required`);
-  }
-  return value;
-}
-
 export async function handler(_: any) {
 
-  const packageName = env('PACKAGE_NAME');
-  const stateBucket = env('PACKAGE_CANARY_BUCKET_NAME');
-  const dataBucket = env('PACKAGE_DATA_BUCKET_NAME');
+  const packageName = requireEnv('PACKAGE_NAME');
+  const stateBucket = requireEnv('PACKAGE_CANARY_BUCKET_NAME');
+  const constructHubEndpoint = requireEnv('CONSTRUCT_HUB');
 
   const stateService = new CanaryStateService(stateBucket);
-  const constructHub = new ConstructHub(dataBucket);
+  const constructHub = new ConstructHub(constructHubEndpoint);
 
   let state = await stateService.load(packageName);
 
@@ -48,7 +42,7 @@ export async function handler(_: any) {
     }
 
     if (state.availableAt) {
-      const sla = (state.publishedAt.getTime() - state.availableAt.getTime()) / 1000;
+      const sla = (state.availableAt.getTime(), state.publishedAt.getTime()) / 1000;
       await constructHub.reportSLA(sla);
     }
 
@@ -60,7 +54,7 @@ export async function handler(_: any) {
 
 class ConstructHub {
 
-  constructor(private readonly dataBucket: string) {}
+  constructor(private readonly baseUrl: string) {}
 
   /**
    * Check if the package version is available on the hub.
@@ -78,24 +72,13 @@ class ConstructHub {
     await metricScope((metrics) => () => {
       // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
       metrics.setDimensions();
-      metrics.putMetric('SLA', seconds, Unit.Count);
+      metrics.putMetric('SLA', seconds, Unit.Seconds);
     })();
   }
 
   public async isSearchable(packageName: string, packageVersion: string): Promise<boolean> {
 
-    // TODO - This should be implemented with pupeteer and frontend queries
-
-    const catalogFile = await aws.s3().getObject({ Bucket: this.dataBucket, Key: CATALOG_KEY }).promise()
-      .catch((err: AWSError) => err.code !== 'NoSuchKey'
-        ? Promise.reject(err)
-        : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
-
-    if (!catalogFile.Body) {
-      return false;
-    }
-
-    const catalog = JSON.parse(catalogFile.Body.toString('utf-8'));
+    const catalog = await getJSON(`${this.baseUrl}/catalog.json`);
     const filtered = catalog.packages.filter((p: any) => p.name === packageName && p.version === packageVersion);
 
     if (filtered.length > 1) {
@@ -163,16 +146,12 @@ class CanaryStateService {
   public async latest(packageName: string): Promise<CanaryState> {
 
     console.log(`Fetching latest version information from NPM: ${packageName}`);
-
-    const version = (await shellOut('npm', 'view', packageName, 'version')).stdout;
-    const time = JSON.parse((await shellOut('npm', 'view', packageName, 'time', '--json')).stdout);
-
-    // yeah, the 'time` view returns published time for ALL versions, regardless of the request.
-    const publishedAt = new Date(time[version]);
+    const { version } = await getJSON(`https://registry.npmjs.org/${encodeURIComponent(packageName)}/latest`);
+    const publishedAt = await getJSON(`https://registry.npmjs.org/${encodeURIComponent(packageName)}`, ['time', version]);
 
     console.log(`Package: ${packageName} | Version : ${version} | Published At: ${publishedAt}`);
 
-    return { version, publishedAt };
+    return { version, publishedAt: new Date(publishedAt) };
   }
 
   private key(packageName: string): string {
@@ -203,5 +182,51 @@ interface CanaryState {
   availableAt?: Date;
 }
 
+/**
+ * Makes a request to the provided URL and returns the response after having
+ * parsed it from JSON.
+ *
+ * @param url the URL to get.
+ * @param jsonPath a JSON path to extract only a subset of the object.
+ */
+function getJSON(url: string, jsonPath?: string[]): Promise<any> {
+  return new Promise((ok, ko) => {
+    https.get(url, { headers: { 'Accept': 'application/json', 'Accept-Encoding': 'identity' } }, (res) => {
+      let chunks = new Array<Buffer>();
+      res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+      res.once('error', ko);
+      res.once('close', () => {
+        if (res.statusCode !== 200) {
+          const err = new Error(`GET ${url} -- HTTP ${res.statusCode} (${res.statusMessage})`);
+          Error.captureStackTrace(err);
+          ko(err);
+        } else {
+          const json = JSONStream.parse(jsonPath ?? true);
+          readerFrom(chunks).pipe(json);
+          json.once('error', ko);
+          json.once('data', (data) => {
+            ok(data);
+          });
+          json.once('end', () => {
+            // NOTE - If the `data` event fired already, the `ko` call here will
+            // simply be ignored, which is the desired behavior.
+            const err = new Error(`No JSON value found in response stream`);
+            Error.captureStackTrace(err);
+            ko(err);
+          });
+        }
+      });
+    });
+  });
+}
+
+function readerFrom(buffers: readonly Buffer[]): NodeJS.ReadableStream {
+  let reader = new Readable();
+  for (const buffer of buffers) {
+    reader.push(buffer);
+  }
+  reader.push(null);
+  return reader;
+}
 
 void handler({});

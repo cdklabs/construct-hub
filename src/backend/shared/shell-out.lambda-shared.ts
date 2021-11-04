@@ -1,31 +1,15 @@
 import { spawn } from 'child_process';
 
-export interface ShellOutput {
-  readonly stdout: string;
-  readonly stderr: string;
-}
-
 /**
  * Executes the specified command in a sub-shell, and asserts success.
  */
-export function shellOut(cmd: string, ...args: readonly string[]): Promise<ShellOutput> {
-  return new Promise<ShellOutput>((ok, ko) => {
-    const child = spawn(cmd, args, { stdio: ['ignore', 'pipe', 'pipe'] });
-
-    const stdout = new Array<Buffer>();
-
-    child.stdout.on('data', (chunk) => {
-      stdout.push(Buffer.from(chunk));
-    });
-    const stderr = new Array<Buffer>();
-    child.stderr.on('data', (chunk) => {
-      stderr.push(Buffer.from(chunk));
-    });
-
+export function shellOut(cmd: string, ...args: readonly string[]): Promise<void> {
+  return new Promise<void>((ok, ko) => {
+    const child = spawn(cmd, args, { stdio: ['ignore', 'inherit', 'inherit'] });
     child.once('error', ko);
     child.once('close', (code, signal) => {
       if (code === 0) {
-        return ok({ stdout: Buffer.concat(stdout).toString('utf-8').trim(), stderr: Buffer.concat(stderr).toString('utf-8').trim() });
+        return ok();
       }
       const reason = code != null
         ? `exit code ${code}`
