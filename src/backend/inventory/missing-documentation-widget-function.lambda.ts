@@ -40,7 +40,7 @@ export async function handler({ describe, widgetContext }: Event): Promise<strin
     const bucketName = requireEnv('BUCKET_NAME');
     const key = missingDocumentationKey(language);
 
-    let { Body, ContentEncoding } = await s3().getObject({
+    let { Body, ContentEncoding, LastModified } = await s3().getObject({
       Bucket: bucketName,
       Key: key,
     }).promise();
@@ -84,6 +84,8 @@ export async function handler({ describe, widgetContext }: Event): Promise<strin
           versions = semverSort(versions).reverse();
           return `${index + 1} | \`${name}\` | ${versions.length} | ${versions.map((v) => `\`${v}\``).join(', ')}`;
         }),
+        '',
+        `Last updated: \`${LastModified?.toISOString() ?? 'N/A'}\``,
       ].join('\n'),
     };
   } catch (error) {
