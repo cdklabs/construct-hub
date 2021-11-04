@@ -74,7 +74,6 @@ const project = new JsiiProject({
     'spdx-license-list',
     'tar-stream',
     'yaml',
-    'nano',
     'normalize-registry-metadata',
   ],
 
@@ -137,6 +136,13 @@ const project = new JsiiProject({
       },
     },
   },
+
+  jestOptions: {
+    jestConfig: {
+      // Ensure we don't try to parallelize too much, this causes timeouts.
+      maxConcurrency: 2,
+    },
+  },
 });
 
 function addDevApp() {
@@ -150,6 +156,11 @@ function addDevApp() {
       exec: `npx cdk ${cmd}`,
     });
   }
+  project.addTask('dev:hotswap', {
+    description: 'cdk deploy --hotswap',
+    cwd: devapp,
+    exec: 'npx cdk deploy --hotswap',
+  });
 
   project.gitignore.addPatterns(`${devapp}/cdk.out`);
 
@@ -254,7 +265,7 @@ function discoverIntegrationTests() {
   }
 }
 
-const bundleTask = project.addTask('bundle', { description: 'Bundle all lambda functions' });
+const bundleTask = project.addTask('bundle', { description: 'Bundle all lambda and ECS functions' });
 
 /**
  * Generates a construct for a pre-bundled AWS Lambda function:
@@ -286,7 +297,7 @@ function newLambdaHandler(entrypoint, trigger) {
   const dir = join(dirname(entrypoint), base);
   const entry = `${project.srcdir}/${entrypoint}`;
   const infra = `${project.srcdir}/${dir}.ts`;
-  const outdir = `${project.libdir}/${dir}.bundle`;
+  const outdir = `${project.libdir}/${dir}.lambda.bundle`;
   const outfile = `${outdir}/index.js`;
   const className = Case.pascal(basename(dir));
   const propsName = `${className}Props`;
@@ -333,24 +344,30 @@ function newLambdaHandler(entrypoint, trigger) {
   ts.close('}');
   ts.close('}');
 
+  const bundleCmd = [
+    'esbuild',
+    '--bundle',
+    entry,
+    '--target="node14"',
+    '--platform="node"',
+    `--outfile="${outfile}"`,
+    '--external:aws-sdk',
+    '--sourcemap',
+  ];
   const bundle = project.addTask(`bundle:${base}`, {
     description: `Create an AWS Lambda bundle from ${entry}`,
-    exec: [
-      'esbuild',
-      '--bundle',
-      entry,
-      '--target="node14"',
-      '--platform="node"',
-      `--outfile="${outfile}"`,
-      '--external:aws-sdk',
-      '--sourcemap',
-    ].join(' '),
+    exec: bundleCmd.join(' '),
+  });
+  const bundleWatch = project.addTask(`bundle:${base}:watch`, {
+    description: `Continuously update an AWS Lambda bundle from ${entry}`,
+    exec: [...bundleCmd, '--watch'].join(' '),
   });
 
   project.compileTask.spawn(bundle);
   bundleTask.spawn(bundle);
   console.error(`${base}: construct "${className}" under "${infra}"`);
   console.error(`${base}: bundle task "${bundle.name}"`);
+  console.error(`${base}: bundle watch task "${bundleWatch.name}"`);
 }
 
 function newEcsTask(entrypoint) {
@@ -362,14 +379,17 @@ function newEcsTask(entrypoint) {
     throw new Error(`${entrypoint} must have a .ecstask.ts extension`);
   }
 
+  // This uses the AWS SDK v3 client to achieve a smaller bundle size.
+  project.addDevDeps('@aws-sdk/client-sfn');
+
   entrypoint = relative(project.srcdir, entrypoint);
 
   const base = basename(entrypoint, '.ecstask.ts');
   const dir = join(dirname(entrypoint), base);
   const entry = `${project.srcdir}/${entrypoint}`;
   const infra = `${project.srcdir}/${dir}.ts`;
-  const outdir = `${project.libdir}/${dir}.bundle`;
-  const bash = `${outdir}/entrypoint.sh`;
+  const outdir = `${project.libdir}/${dir}.ecs-entrypoint.bundle`;
+  const ecsMain = `${project.srcdir}/${dir}.ecs-entrypoint.ts`;
   const outfile = `${outdir}/index.js`;
   const dockerfile = `${outdir}/Dockerfile`;
   const className = Case.pascal(basename(dir));
@@ -405,41 +425,74 @@ function newEcsTask(entrypoint) {
   ts.close('}');
   ts.close('}');
 
-  const sh = new SourceCode(project, bash);
-  sh.line('#!/bin/bash');
-  sh.line(`# ${FileBase.PROJEN_MARKER}`);
-  sh.line('exec node <<-EOF');
-  sh.line('const { env } = require(\'process\');');
-  sh.line('const { StepFunctions } = require(\'aws-sdk\');');
-  sh.line('const { handler } = require(\'/bundle/index.js\');');
-  sh.line('const sfn = new StepFunctions();');
-  sh.line('const taskToken = env.SFN_TASK_TOKEN;');
+  // This is created in the source-tree so that the generated handler gets type-checked and linted
+  // like the rest of the code. IT also gets processed by tsc/esbuild, which means it'll get the
+  // appropriate down-leveling (e.g: for use of the `??` operator).
+  const main = new SourceCode(project, ecsMain);
+  main.line('#!/usr/bin/env node');
+  main.line(`// ${FileBase.PROJEN_MARKER}`);
+  main.line();
+  main.line('import * as os from \'os\';');
+  main.line('import { argv, env, exit } from \'process\';');
+  main.line('import { SendTaskFailureCommand, SendTaskHeartbeatCommand, SendTaskSuccessCommand, SFNClient } from \'@aws-sdk/client-sfn\';');
+  main.line(`import { handler } from './${basename(entrypoint, '.ts')}';`);
+  main.line();
+  main.line('const sfn = new SFNClient({});');
+  main.line();
+  main.line('const taskToken = env.SFN_TASK_TOKEN!;');
+
   // Remove the SFN_TASK_TOKEN from the environment, so arbitrary code does not get to use it to mess up with our state machine's state
-  sh.line('delete env.SFN_TASK_TOKEN;');
-  // A heartbeat is sent every minute to StepFunctions
-  sh.open('const sendHeartbeat = () => sfn.sendTaskHeartbeat({ taskToken }).promise().then(');
-  sh.line('() => console.log(\'Successfully sent task heartbeat!\'),');
-  sh.line('(reason) => console.error(\'Failed to send task heartbeat:\', reason),');
-  sh.close(');');
-  // ... immediately at task start
-  sh.line('sendHeartbeat();');
-  // ... then every minute
-  sh.line('const heartbeat = setInterval(sendHeartbeat, 60000);');
-  // Wrapped in an `async` IIFE, so that the result is guaranteed to be a promise
-  sh.line('(async () => handler($@))()');
-  // Sending a success to StepFunctions right away
-  sh.open('  .then((value) => {');
-  sh.line('  console.log(\'Handler result:\', JSON.stringify(value, null, 2));');
-  sh.line('  return sfn.sendTaskSuccess({ output: JSON.stringify(value), taskToken }).promise()');
-  sh.close('  })');
-  // In case of errors, send task failure to StepFunctions
-  sh.open('  .catch((reason) => {');
-  sh.line('  console.error(\'Execution error:\', reason);');
-  sh.line('  return sfn.sendTaskFailure({ cause: JSON.stringify(reason), error: reason.name ?? reason.constructor.name ?? \'Error\', taskToken }).promise();');
-  sh.close('  })');
-  // Stop the heartbeat once we're all done...
-  sh.line('  .finally(() => clearInterval(heartbeat));');
-  sh.line('EOF');
+  main.line('delete env.SFN_TASK_TOKEN;');
+  main.line();
+
+  // A heartbeat is sent every minute to StepFunctions.
+  main.open('function sendHeartbeat(): void {');
+  // We don't return the promise as it is fully handled within the call. This prevents eslint from declaring a false
+  // positive unhandled promise on call sites.
+  main.open('sfn.send(new SendTaskHeartbeatCommand({ taskToken })).then(');
+  main.line('() => console.log(\'Successfully sent task heartbeat!\'),');
+  main.open('(reason) => {');
+  main.line('console.error(\'Failed to send task heartbeat:\', reason);');
+  // If this failed on TaskTimedOut, we will exit the VM right away, as the requesting StepFunctions execution is no longer
+  // interested in the result of this run. This avoids keeping left-over tasks lying around "forever".
+  main.open('if (reason.code === \'TaskTimedOut\') {');
+  main.line('exit(-(os.constants.errno.ETIMEDOUT || 1));');
+  main.close('}');
+  main.close('},');
+  main.close(');');
+  main.close('}');
+  main.line();
+  main.line('sendHeartbeat();');
+  main.line('const heartbeat = setInterval(sendHeartbeat, 60_000);');
+  main.line();
+
+  main.open('async function main(): Promise<void> {');
+  main.line('try {');
+  // Deserialize the input, which ECS provides as a sequence of JSON objects. We skip the first 2 values (argv[0] is the
+  // node binary, and argv[1] is this JS file).
+  main.line('  const input: readonly any[] = argv.slice(2).map((text) => JSON.parse(text));');
+  // Casting as opaque function so we evade the type-checking of the handler (can't generalize that)
+  main.line('  const result = await (handler as (...args: any[]) => unknown)(...input);');
+  main.line('  console.log(\'Task result:\', result);');
+  main.line('  await sfn.send(new SendTaskSuccessCommand({ output: JSON.stringify(result), taskToken }));');
+  main.line('} catch (err) {');
+  main.line('  console.log(\'Task failed:\', err);');
+  main.line('  process.exitCode = 1;');
+  main.open('  await sfn.send(new SendTaskFailureCommand({');
+  // Note: JSON.stringify(some Error) returns '{}', which is not super helpful...
+  main.line('  cause: JSON.stringify(err instanceof Error ? { message: err.message, name: err.name, stack: err.stack } : err),');
+  main.line('  error: err.name ?? err.constructor.name ?? \'Error\',');
+  main.line('  taskToken,');
+  main.close('  }));');
+  main.line('} finally {');
+  main.line('  clearInterval(heartbeat);');
+  main.line('}');
+  main.close('}');
+  main.line();
+  main.open('main().catch((cause) => {');
+  main.line('console.log(\'Unexpected error:\', cause);');
+  main.line('exit(-1);');
+  main.close('});');
 
   const df = new SourceCode(project, dockerfile);
   df.line(`# ${FileBase.PROJEN_MARKER}`);
@@ -447,16 +500,13 @@ function newEcsTask(entrypoint) {
   df.line('FROM public.ecr.aws/amazonlinux/amazonlinux:2');
   df.line();
   // Install node the regular way...
-  df.line('RUN curl -sL https://rpm.nodesource.com/setup_lts.x | bash - \\');
+  df.line('RUN curl -sL https://rpm.nodesource.com/setup_16.x | bash - \\');
   df.line(' && yum update -y \\');
   df.line(' && yum install -y git nodejs \\');
-  // The entry point requires aws-sdk to be available, so we install it locally.
-  df.line(' && npm install --no-save aws-sdk@^2.957.0 \\');
   // Clean up the yum cache in the interest of image size
   df.line(' && yum clean all \\');
   df.line(' && rm -rf /var/cache/yum');
   df.line();
-  df.line('COPY ./entrypoint.sh /bundle/entrypoint.sh');
   df.line('COPY ./index.js      /bundle/index.js');
   df.line('COPY ./Dockerfile    /bundle/Dockerfile');
   df.line();
@@ -466,31 +516,39 @@ function newEcsTask(entrypoint) {
   // following issue: https://github.com/npm/git/issues/31
   df.line('ENV GIT_SSH_COMMAND=ssh');
   df.line();
-  df.line('ENTRYPOINT ["/bin/bash", "/bundle/entrypoint.sh"]');
+  df.line('ENTRYPOINT ["/usr/bin/env", "node", "/bundle/index.js"]');
 
+  const bundleCmd = [
+    'esbuild',
+    '--bundle',
+    ecsMain,
+    '--target="node16"',
+    '--platform="node"',
+    `--outfile="${outfile}"`,
+    '--sourcemap',
+  ];
   const bundle = project.addTask(`bundle:${base}`, {
     description: `Create an AWS Fargate bundle from ${entry}`,
-    exec: [
-      'esbuild',
-      '--bundle',
-      entry,
-      '--target="node14"',
-      '--platform="node"',
-      `--outfile="${outfile}"`,
-      '--sourcemap',
-    ].join(' '),
+    exec: bundleCmd.join(' '),
+  });
+  const bundleWatch = project.addTask(`bundle:${base}:watch`, {
+    description: `Continuously update an AWS Fargate bundle from ${entry}`,
+    exec: [...bundleCmd, '--watch'].join(' '),
   });
 
   project.compileTask.spawn(bundle);
   bundleTask.spawn(bundle);
   console.error(`${base}: construct "${className}" under "${infra}"`);
   console.error(`${base}: bundle task "${bundle.name}"`);
+  console.error(`${base}: bundle watch task "${bundleWatch.name}"`);
 }
 
 /**
  * Auto-discovers all lambda functions.
  */
 function discoverLambdas() {
+  const entrypoints = [];
+
   // allow .lambda code to import dev-deps (since they are only needed during bundling)
   project.eslint.allowDevDeps('src/**/*.lambda.ts');
   // Allow .lambda-shared code to import dev-deps (these are not entry points, but are shared by several lambdas)
@@ -498,7 +556,25 @@ function discoverLambdas() {
   for (const entry of glob.sync('src/**/*.lambda.ts')) {
     const trigger = basename(entry).startsWith('trigger.');
     newLambdaHandler(entry, trigger);
+    entrypoints.push(entry);
   }
+
+  project.addTask('bundle:lambda:watch', {
+    description: 'Continuously bundle all AWS Lambda functions',
+    exec: [
+      'esbuild',
+      '--bundle',
+      ...entrypoints,
+      '--target="node14"',
+      '--platform="node"',
+      `--outbase="${project.srcdir}"`,
+      `--outdir="${project.libdir}"`,
+      '--entry-names="[dir]/[name].bundle/index"',
+      '--external:aws-sdk',
+      '--sourcemap',
+      '--watch',
+    ].join(' '),
+  });
 
   // Add the AWS Lambda type definitions, and ignore that it never resolves
   project.addDevDeps('@types/aws-lambda');
@@ -509,12 +585,33 @@ function discoverLambdas() {
 }
 
 function discoverEcsTasks() {
+  const entrypoints = [];
+
   // allow .fargate code to import dev-deps (since they are only needed during bundling)
   project.eslint.allowDevDeps('src/**/*.ecstask.ts');
+  project.eslint.allowDevDeps('src/**/*.ecs-entrypoint.ts');
 
   for (const entry of glob.sync('src/**/*.ecstask.ts')) {
     newEcsTask(entry);
+    entrypoints.push(entry);
   }
+
+  project.addTask('bundle:fargate:watch', {
+    description: 'Continuously bundle all AWS Fargate functions',
+    exec: [
+      'esbuild',
+      '--bundle',
+      ...entrypoints.map((file) => file.replace('ecstask.ts', 'ecs-entrypoint.ts')),
+      '--target="node16"',
+      '--platform="node"',
+      `--outbase="${project.srcdir}"`,
+      `--outdir="${project.libdir}"`,
+      '--entry-names="[dir]/[name].bundle/index"',
+      '--external:aws-sdk',
+      '--sourcemap',
+      '--watch',
+    ].join(' '),
+  });
 }
 
 function generateSpdxLicenseEnum() {

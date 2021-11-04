@@ -101,6 +101,12 @@ responsible for sending notifications to an SQS Queue about newly discovered
 packages. You may refer to the [sources.NpmJs] and [sources.CodeArtifact]
 implementations as a reference for hos this can be done.
 
+By default, download counts of NPM packages will be fetched periodically from
+NPM's public API by a Lambda. Since this is not desirable if you are using a
+private package registry, this is automatically disabled if you specify your own
+value for `packageSources`. (But this can be re-enabled through the
+`fetchPackageStats` property if needed).
+
 [sources.NpmJs]: src/package-sources/npmjs.ts
 [sources.CodeArtifact]: src/package-sources/code-artifact.ts
 
@@ -217,15 +223,53 @@ For example:
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
   packageTags: [{
-    label: 'Official',
-    color: '#00FF00',
+    id: 'official',
     condition: TagCondition.field('name').eq('construct-hub'),
+    keyword: {
+      label: 'Official',
+      color: '#00FF00',
+    },
+    highlight: {
+      label: 'Vended by AWS',
+      color: '#00FF00',
+    }
   }]
 });
 ```
 
 The above example will result in packages with the `name` of `construct-hub` to
-receive the `Official` tag, which is colored green.
+receive the `Official` tag, which is colored green and displayed amongst the
+list of keywords. Additionally the `highlight` key shows this as a highlighted
+item on the package's card.
+
+The `searchFilter` key can also be used to show tags as search filters grouped
+together.
+
+```ts
+const isAws = TagCondition.field('name').eq('construct-hub');
+new ConstructHub(this, "ConstructHub", {
+  ...myProps,
+  packageTags: [{
+    id: 'AWS',
+    condition: isAws,
+    searchFilter: {
+      groupBy: 'Authors',
+      display: 'AWS',
+    },
+  }, {
+    id: 'Community',
+    condition: TagCondition.not(isAws),
+    searchFilter: {
+      groupBy: 'Authors',
+      display: 'AWS',
+    },
+  }]
+});
+```
+
+The above will show a list of `Authors` filters on the search results page
+with a checkbox for each `AWS` and `Community` packages, allowing users to
+filter results by the presence of these tags.
 
 Combinations of conditions are also supported:
 ```ts
@@ -330,6 +374,13 @@ new ConstructHub(this, "ConstructHub", {
   }
 });
 ```
+
+#### Feature Flags
+
+Feature flags for the web app can be used to enable or disable experimental
+features. These can be customized through the `featureFlags` property - for
+more information about the available flags, check the documentation for
+https://github.com/cdklabs/construct-hub-webapp/.
 
 ## :raised_hand: Contributing
 

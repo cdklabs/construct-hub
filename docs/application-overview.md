@@ -40,23 +40,24 @@ ConstructHub provides two package source implementations: `NpmJs` and
 
 * The `NpmJs` source interfaces with the `npmjs.com` CouchDB replica (which is
   at `replicate.npmjs.com/registry`) by following it's `_changes` stream in
-  search of relevant packages. When such a package is identified, it is staged
-  into an S3 bucket then notified to the ingestion SQS queue. The CouchDB
-  follower is a Lambda function that is scheduled to run every `5 minutes`, and
-  stores the current CouchDB sequence ID in a specific object in the S3 bucket
-  used for staging packages.
+  search of relevant packages. When such a package is identified, a stager
+  function is invoked, which stages the package tarball into an S3 bucket then
+  notifies the ConstructHub ingestion SQS queue. The CouchDB follower is
+  scheduled to run every `5 minutes`, and stores the current CouchDB sequence ID
+  in a specific object in the S3 bucket used for staging package tarballs.
 
   > Back-filling is automatic for the `NpmJs` source. Upon initial deployment,
-  > it will start scanning the CouchDB `_changes` stream around transaction ID
-  > `1_800_000`, which is around the time of the initial developer preview
-  > release of the AWS CDK. Should there be a need to re-run a backfill of this
-  > source, the transaction marker object in S3 can be deleted to roll back to
-  > that initial transaction. The marker object is linked from the backend
-  > dashboard.
+  > it will start scanning the CouchDB `_changes` stream. Should there be a need
+  > to re-run a backfill of this source, the transaction marker object in S3 can
+  > be deleted to roll back to that initial transaction. The marker object is
+  > linked from the backend dashboard.
 
   - A **high-severity** alarm triggers if the NpmJs Follower is not running at
     the scheduled cadence, or if it encounters failures for more than
     `15 minutes`.
+
+  - A **high-severity** alarm triggers if the NpmJs Stager dead-letter queue is
+    not empty.
 
   - Troubleshooting the NpmJs Follower can be done by inspecting its log traces
     in CloudWatch Logs, or by looking at service maps in the X-Ray console.

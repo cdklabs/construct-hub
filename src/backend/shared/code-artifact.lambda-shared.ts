@@ -1,5 +1,8 @@
+import { tmpdir } from 'os';
+import { join } from 'path';
 import { CodeArtifact } from 'aws-sdk';
-import { shellOut } from './shell-out.lambda-shared';
+import { mkdtemp, remove, writeFile } from 'fs-extra';
+import { shellOut, shellOutWithOutput } from './shell-out.lambda-shared';
 
 export interface CodeArtifactProps {
   /**
@@ -41,4 +44,40 @@ export async function logInWithCodeArtifact({ endpoint, domain, domainOwner, api
   await shellOut('npm', 'config', 'set', `registry=${endpoint}`);
   await shellOut('npm', 'config', 'set', `${protoRelativeEndpoint}:_authToken=${authorizationToken}`);
   await shellOut('npm', 'config', 'set', `${protoRelativeEndpoint}:always-auth=true`);
+}
+
+/**
+ * Publishes the provided tarball to the specified CodeArtifact repository.
+ *
+ * @param tarball a Buffer containing the tarball for the published package.
+ * @param opts    the informations about the CodeArtifact repository.
+ */
+export async function codeArtifactPublishPackage(tarball: Buffer, opts: CodeArtifactProps) {
+  // Working in a temporary directory, so we can log into CodeArtifact and not leave traces.
+  const cwd = await mkdtemp(join(tmpdir(), 'npm-publish-'));
+  const oldHome = process.env.HOME;
+  try {
+    process.env.HOME = cwd;
+    await logInWithCodeArtifact(opts);
+    const tarballPath = join(cwd, 'tarball.tgz');
+    await writeFile(tarballPath, tarball);
+    const { exitCode, signal, stdout } = await shellOutWithOutput('npm', 'publish', '--json', tarballPath);
+    if (exitCode === 0) {
+      return;
+    }
+    if (signal != null) {
+      throw new Error(`npm publish was killed by signal ${signal}`);
+    }
+    const result = JSON.parse(stdout.toString('utf-8'));
+    if (result.error?.code === 'E409' || result.error?.code === 'EPUBLISHCONFLICT') {
+      console.log(`${result.error.code} - The package already exist; assuming idempotent success!`);
+      return;
+    } else {
+      throw new Error(`npm publish returned ${JSON.stringify(result)}`);
+    }
+  } finally {
+    // Restore the previous environment, and remove temporary directory
+    process.env.HOME = oldHome;
+    await remove(cwd);
+  }
 }

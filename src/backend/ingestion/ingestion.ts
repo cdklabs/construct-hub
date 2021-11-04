@@ -13,7 +13,7 @@ export class Ingestion extends lambda.Function {
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '/ingestion.bundle')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '/ingestion.lambda.bundle')),
     });
   }
 }

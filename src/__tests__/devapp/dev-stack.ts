@@ -2,6 +2,7 @@ import * as process from 'process';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { Construct, Stack } from '@aws-cdk/core';
 import { ConstructHub } from '../..';
+import { TagCondition } from '../../package-tag';
 
 export interface DevStackProps {
   /**
@@ -21,7 +22,14 @@ export class DevStack extends Stack {
       },
     });
 
+    const isAwsOfficial = TagCondition.field('name').startsWith('@aws-cdk/');
+    const authorSearchFilter = 'Author';
+
     new ConstructHub(this, 'ConstructHub', {
+      featureFlags: {
+        homeRedesign: true,
+        searchRedesign: true,
+      },
       denyList: [
         { packageName: '@aws-cdk/cdk', reason: 'This package has been deprecated in favor of @aws-cdk/core' },
         { packageName: 'cdk-foo-bar', reason: 'Dummy package' },
@@ -31,6 +39,19 @@ export class DevStack extends Stack {
       backendDashboardName: 'construct-hub-backend',
       isolateSensitiveTasks,
       logRetention: RetentionDays.ONE_WEEK,
+      packageTags: [{
+        id: 'aws-official',
+        condition: isAwsOfficial,
+        highlight: {
+          label: 'AWS Official',
+          color: '#ED3B00',
+          icon: '/assets/construct.png',
+        },
+        searchFilter: {
+          groupBy: authorSearchFilter,
+          display: 'AWS',
+        },
+      }],
     });
   }
 }

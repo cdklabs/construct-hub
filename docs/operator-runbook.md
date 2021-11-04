@@ -227,7 +227,66 @@ If messages are sent back to the dead-letter queue, perform the investigation
 steps again.
 
 
-### `ConstructHUb/Orchestration/Resource/ExecutionsFailed`
+### `ConstructHub/Orchestration/CatalogBuilder/ShrinkingCatalog`
+
+#### Description
+
+This alarm goes off if the count of entries in the `catalog.json` object, which
+backs the search experience of ConstructHub, reduces by more than 5 items,
+meaning packages are no longer accessible for search.
+
+#### Investigation
+
+Packages can be removed from `catalog.json` in normal circumstances: when a
+package is added the the deny-list of the deployment, it will eventually be
+pruned from the catalog. If many packages are added to the deny-list at the same
+time, this alarm might go off.
+
+Review the CloudWatch metric associated to the alarm to understand if the
+magnitude of the catalog size change corresponds to a known or expected event.
+If the change corresponds to an expected event (i.e: due to a change in
+deny-list contents), you can treat the alarm as a false positive.
+
+On the other hand, if the catalog contraction is unexpected, investigate the
+logs of the *Catalog Builder* function to identify any unexpected activity.
+
+#### Resolution
+
+The *package data bucket* is configured with object versioning. You can
+identify a previous "good" version of the `catalog.json` object by reviewing the
+object history in the S3 console (or using the AWS CLI or SDK). The number of
+elements in the `catalog.json` is reported in a metadata attribute of the object
+in S3 - which can help identify the correct previous version without necessarily
+having to download all of them for inspection.
+
+When the relevant version has been identified, it can be restored
+using the following AWS CLI command (replace `<bucket-name>` with the
+relevant *package data bucket* name, and `<version-id>` with the S3 version ID
+you have selected):
+
+```console
+$ aws s3api copy-object                                               \
+  --bucket='<bucket-name>'                                            \
+  --copy-source='<bucket-name>/catalog.json?versionId=<version-id>'   \
+  --key='catalog.json'
+```
+
+This will produce an output similar to the following (note that the `VersionId`
+value there is the **new** current version of  the `catalog.json` object, which
+will always be different from the version ID you copied from):
+
+```json
+{
+  "CopyObjectResult": {
+    "LastModified": "2015-11-10T01:07:25.000Z",
+    "ETag": "\"589c8b79c230a6ecd5a7e1d040a9a030\""
+  },
+  "VersionId": "YdnYvTCVDqRRFA.NFJjy36p0hxifMlkA"
+}
+```
+
+
+### `ConstructHub/Orchestration/Resource/ExecutionsFailed`
 
 #### Description
 
@@ -414,6 +473,84 @@ For additional recommendations for diving into CloudWatch Logs, refer to the
 
 The alarm will automatically go back to green once the Lambda function starts
 reporting `npmjs.com` registry changes again. No further action is needed.
+
+### `ConstructHub/Sources/NpmJs/Stager/DLQNotEmpty`
+
+#### Description
+
+This alarm is only provisioned when the `NpmJs` package source is configured. It
+triggers when the stager function has failed processing an input message 3 times
+in a row, which resulted in that message being sent to the dead-letter queue.
+
+The package versions that were targeted by those messages have hence not been
+ingested into ConstructHub.
+
+#### Investigation
+
+The *NpmJs Stager* receives messages from the *NpmJs Follower* function for each
+new package version identified. It downloads the npm package tarball, stores it
+into a staging S3 bucket, then notifies the ConstructHub *Ingestion queue* so
+the package version is indexed into ConstructHub.
+
+An `npmjs.com` outage could result in failures to download the tarballs, so
+start by checking the `npmjs.com` status updates and announcements.
+
+Additionally, review the logs of the *NpmJs Stager* function to identify any
+problem.
+
+For additional recommendations for diving into CloudWatch Logs, refer to the
+[Diving into Lambda Function logs in CloudWatch Logs][#lambda-log-dive] section.
+
+#### Resolution
+
+Once the root cause of the failures has been addressed, the messgaes from the
+dead-letter queue can be automatically re-processed through the Lambda function
+by enabling the SQS Trigger that is automatically configured on the function,
+but is disabled by default.
+
+Once all messages have cleared from the dead-letter queue, do not forget to
+disable the SQS Trigger again.
+
+--------------------------------------------------------------------------------
+
+## :repeat: Bulk Re-processing
+
+In some cases, it might be useful to re-process indexed packages though parts or
+all of the back-end. This section descripts the options offered by the back-end
+system and when it is appropriate to use them.
+
+### Overview
+
+Two workflows are available for bulk-reprocessing:
+
+1. The "re-ingest everything" workflow can be used to re-process packages
+   through the entire pipeline, including re-generating the `metadata.json`
+   object. This is usually not necessary, unless an issue has been identified
+   with many indexed packages (incorrect or missing `metadata.json`, incorrectly
+   identfied construct framework package, etc...). In most cases, re-generating
+   the documentation is sufficient.
+1. The "re-generate all documentation" workflow re-runs all indexed packages
+   through the documentation-generation process. This is useful when a new
+   language is added to ConstructHub, or the rendered documentation has
+   significantly changed, as it will guarantee all packages are on the latest
+   version of it.
+
+### Usage
+
+In the AWS Console, navigate to the StepFunctions console, and identify the
+ConstructHub workflows. Simply initiate a new execution of the workflow of your
+choice - the input payload is not relevant, and we recommend setting it to an
+object such as the following:
+
+```json
+{
+  "requester": "your-username",
+  "reason": "A short comment explaining why this workflow was ran"
+}
+```
+
+These informations may be useful to other operations as they observe the side
+effects of executing these workflows.
 
 --------------------------------------------------------------------------------
 

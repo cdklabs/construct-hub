@@ -13,7 +13,7 @@ export class ReIngest extends lambda.Function {
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '/re-ingest.bundle')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '/re-ingest.lambda.bundle')),
     });
   }
 }

@@ -1,7 +1,5 @@
-import { mkdtempSync, writeFileSync } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
-import { FeaturedPackages, PackageLinkConfig } from '.';
+import { FeaturedPackages, FeatureFlags, PackageLinkConfig } from '.';
+import { ConfigFile } from '../config-file';
 import { PackageTagConfig } from '../package-tag';
 
 interface FrontendPackageLinkConfig {
@@ -10,9 +8,25 @@ interface FrontendPackageLinkConfig {
   linkText?: string;
 }
 
-interface FrontendPackageTagConfig {
+interface FrontendPackageTagConfigBase {
   label: string;
   color?: string;
+}
+
+interface FrontendPackageTagHighlightConfig extends FrontendPackageTagConfigBase{
+  icon?: string;
+}
+
+interface FrontendPackageTagSearchFilterConfig {
+  display: string;
+  groupBy: string;
+}
+
+interface FrontendPackageTagConfig {
+  id: string;
+  keyword?: FrontendPackageTagConfigBase;
+  highlight?: FrontendPackageTagHighlightConfig;
+  searchFilter?: FrontendPackageTagSearchFilterConfig;
 }
 
 type FrontendFeaturedPackagesConfig = FeaturedPackages;
@@ -21,9 +35,11 @@ interface FrontendConfig {
   packageLinks?: FrontendPackageLinkConfig[];
   packageTags?: FrontendPackageTagConfig[];
   featuredPackages?: FrontendFeaturedPackagesConfig;
+  packageStats?: boolean;
+  featureFlags?: FeatureFlags;
 }
 
-interface WebappConfigProps {
+export interface WebappConfigProps {
   /**
    * Configuration for custom package page links.
    */
@@ -39,15 +55,24 @@ interface WebappConfigProps {
    * @default - Display the 10 most recently updated packages
    */
   readonly featuredPackages?: FeaturedPackages;
+
+  /**
+   * Configure feature flags for the web app.
+   */
+  readonly featureFlags?: FeatureFlags;
+
+  /**
+   * Whether to display package stats from `stats.json` on
+   * package cards.
+   * @default true
+   */
+  readonly showPackageStats?: boolean;
 }
 
 export class WebappConfig {
-  public readonly path: string;
-  public readonly dir: string;
+  public readonly file: ConfigFile;
   public constructor(private readonly props: WebappConfigProps) {
-    this.dir = mkdtempSync(join(tmpdir(), 'chwebapp'));
-    this.path = join(this.dir, 'config.json');
-    writeFileSync(this.path, JSON.stringify(this.frontendConfig));
+    this.file = new ConfigFile('config.json', JSON.stringify(this.frontendConfig));
   }
 
   private get frontendConfig(): FrontendConfig {
@@ -55,6 +80,8 @@ export class WebappConfig {
       packageLinks: this.packageLinks,
       packageTags: this.packageTags,
       featuredPackages: this.featuredPackages,
+      packageStats: this.props.showPackageStats ?? true,
+      featureFlags: this.props.featureFlags,
     };
   }
 

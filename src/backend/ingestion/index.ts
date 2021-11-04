@@ -1,18 +1,22 @@
 import { ComparisonOperator, MathExpression, Metric, MetricOptions, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
 import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
-import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
+import { FunctionProps, IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { RetentionDays } from '@aws-cdk/aws-logs';
-import { IBucket } from '@aws-cdk/aws-s3';
+import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
+import { BucketDeployment, Source } from '@aws-cdk/aws-s3-deployment';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
-import { StateMachine, JsonPath, Choice, Succeed, Condition, Map } from '@aws-cdk/aws-stepfunctions';
-import { CallAwsService, LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
-import { Construct, Duration } from '@aws-cdk/core';
+import { StateMachine, JsonPath, Choice, Succeed, Condition, Map, TaskInput, IntegrationPattern } from '@aws-cdk/aws-stepfunctions';
+import { CallAwsService, LambdaInvoke, StepFunctionsStartExecution } from '@aws-cdk/aws-stepfunctions-tasks';
+import { Construct, Duration, Stack, ArnFormat } from '@aws-cdk/core';
+import { Repository } from '../../codeartifact/repository';
+import { ConfigFile } from '../../config-file';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { PackageTagConfig } from '../../package-tag';
 import { RUNBOOK_URL } from '../../runbook-url';
 import type { PackageLinkConfig } from '../../webapp';
+import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 import { Orchestration } from '../orchestration';
 import { STORAGE_KEY_PREFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX } from '../shared/constants';
 import { MetricName, METRICS_NAMESPACE } from './constants';
@@ -24,6 +28,12 @@ export interface IngestionProps {
    * The bucket in which ingested objects are due to be inserted.
    */
   readonly bucket: IBucket;
+
+  /**
+   * The CodeArtifact repository to which packages should be published. This is
+   * the ConstructHub internal CodeArtifact repository, if one exists.
+   */
+  readonly codeArtifact?: Repository;
 
   /**
    * The monitoring handler to register alarms with.
@@ -99,15 +109,39 @@ export class Ingestion extends Construct implements IGrantable {
       visibilityTimeout: Duration.minutes(15),
     });
 
+    const configFilename = 'config.json';
+    const config = new ConfigFile(configFilename, JSON.stringify({
+      packageLinks: props.packageLinks ?? [],
+      packageTags: props.packageTags ?? [],
+    }));
+
+    const configBucket = new Bucket(this, 'ConfigBucket', {
+      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+      enforceSSL: true,
+    });
+
+    new BucketDeployment(this, 'DeployIngestionConfiguration', {
+      sources: [Source.asset(config.dir)],
+      destinationBucket: configBucket,
+    });
+
+    const environment: FunctionProps['environment'] = {
+      AWS_EMF_ENVIRONMENT: 'Local',
+      BUCKET_NAME: props.bucket.bucketName,
+      CONFIG_BUCKET_NAME: configBucket.bucketName,
+      CONFIG_FILE_KEY: configFilename,
+      STATE_MACHINE_ARN: props.orchestration.stateMachine.stateMachineArn,
+    };
+
+    if (props.codeArtifact) {
+      environment.CODE_ARTIFACT_REPOSITORY_ENDPOINT = props.codeArtifact.publishingRepositoryNpmEndpoint;
+      environment.CODE_ARTIFACT_DOMAIN_NAME = props.codeArtifact.repositoryDomainName;
+      environment.CODE_ARTIFACT_DOMAIN_OWNER = props.codeArtifact.repositoryDomainOwner;
+    }
+
     const handler = new Handler(this, 'Default', {
       description: '[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub',
-      environment: {
-        AWS_EMF_ENVIRONMENT: 'Local',
-        BUCKET_NAME: props.bucket.bucketName,
-        PACKAGE_LINKS: JSON.stringify(props.packageLinks ?? []),
-        PACKAGE_TAGS: JSON.stringify(props.packageTags ?? []),
-        STATE_MACHINE_ARN: props.orchestration.stateMachine.stateMachineArn,
-      },
+      environment,
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 10_240, // Currently the maximum possible setting
       timeout: Duration.minutes(15),
@@ -115,7 +149,9 @@ export class Ingestion extends Construct implements IGrantable {
     });
     this.function = handler;
 
+    configBucket.grantRead(handler);
     props.bucket.grantWrite(this.function);
+    props.codeArtifact?.grantPublishToRepository(handler);
     props.orchestration.stateMachine.grantStartExecution(this.function);
 
     this.function.addEventSource(new SqsEventSource(this.queue, { batchSize: 1 }));
@@ -259,17 +295,23 @@ class ReprocessIngestionWorkflow extends Construct {
     super(scope, id);
 
     const lambdaFunction = new ReIngest(this, 'Function', {
+      architecture: gravitonLambdaIfAvailable(this),
       description: '[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion',
       environment: { BUCKET_NAME: props.bucket.bucketName, QUEUE_URL: props.queue.queueUrl },
+      memorySize: 10_240,
       tracing: Tracing.ACTIVE,
+      timeout: Duration.minutes(1),
     });
 
     props.queue.grantSendMessages(lambdaFunction);
     props.bucket.grantRead(lambdaFunction, `${STORAGE_KEY_PREFIX}*${METADATA_KEY_SUFFIX}`);
     props.bucket.grantRead(lambdaFunction, `${STORAGE_KEY_PREFIX}*${PACKAGE_KEY_SUFFIX}`);
 
-    const listBucket = new Choice(this, 'Has a NextContinuationToken?')
-      .when(Condition.isPresent('$.response.NextContinuationToken'),
+    // Need to physical-name the state machine so it can self-invoke.
+    const stateMachineName = stateMachineNameFrom(this.node.path);
+
+    const listBucket = new Choice(this, 'Has a ContinuationToken?')
+      .when(Condition.isPresent('$.ContinuationToken'),
         new CallAwsService(this, 'S3.ListObjectsV2(NextPage)', {
           service: 's3',
           action: 'listObjectsV2',
@@ -277,12 +319,11 @@ class ReprocessIngestionWorkflow extends Construct {
           iamResources: [props.bucket.bucketArn],
           parameters: {
             Bucket: props.bucket.bucketName,
-            ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken'),
-            MaxKeys: 250, // <- Limits the response size, and ensures we don't spawn too many Lambdas at once in the Map state.
+            ContinuationToken: JsonPath.stringAt('$.ContinuationToken'),
             Prefix: STORAGE_KEY_PREFIX,
           },
           resultPath: '$.response',
-        }))
+        }).addRetry({ errors: ['S3.SdkClientException'] }))
       .otherwise(new CallAwsService(this, 'S3.ListObjectsV2(FirstPage)', {
         service: 's3',
         action: 'listObjectsV2',
@@ -293,7 +334,7 @@ class ReprocessIngestionWorkflow extends Construct {
           Prefix: STORAGE_KEY_PREFIX,
         },
         resultPath: '$.response',
-      })).afterwards();
+      }).addRetry({ errors: ['S3.SdkClientException'] })).afterwards();
 
     const process = new Map(this, 'Process Result', {
       itemsPath: '$.response.Contents',
@@ -309,16 +350,44 @@ class ReprocessIngestionWorkflow extends Construct {
         .otherwise(new Succeed(this, 'Nothing to do')),
     );
 
-    listBucket.next(process.next(new Choice(this, 'Is there more?')
-      .when(Condition.isPresent('$.response.NextContinuationToken'), listBucket)
-      .otherwise(new Succeed(this, 'All Done'))));
+
+    listBucket.next(
+      new Choice(this, 'Is there more?')
+        .when(
+          Condition.isPresent('$.response.NextContinuationToken'),
+          new StepFunctionsStartExecution(this, 'Continue as new', {
+            associateWithParent: true,
+            stateMachine: StateMachine.fromStateMachineArn(this, 'ThisStateMachine', Stack.of(this).formatArn({
+              arnFormat: ArnFormat.COLON_RESOURCE_NAME,
+              service: 'states',
+              resource: 'stateMachine',
+              resourceName: stateMachineName,
+            })),
+            input: TaskInput.fromObject({ ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken') }),
+            integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
+            resultPath: JsonPath.DISCARD,
+          }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] }),
+        ).afterwards({ includeOtherwise: true })
+        .next(process),
+    );
 
     const stateMachine = new StateMachine(this, 'StateMachine', {
       definition: listBucket,
+      stateMachineName,
       timeout: Duration.hours(1),
     });
 
     props.bucket.grantRead(stateMachine);
     props.queue.grantSendMessages(stateMachine);
   }
+}
+
+/**
+ * This turns a node path into a valid state machine name, to try and improve
+ * the StepFunction's AWS console experience while minimizing the risk for
+ * collisons.
+ */
+function stateMachineNameFrom(nodePath: string): string {
+  // Poor man's replace all...
+  return nodePath.split(/[^a-z0-9+!@.()=_'-]+/i).join('.');
 }

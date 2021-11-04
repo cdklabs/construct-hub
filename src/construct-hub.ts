@@ -14,6 +14,7 @@ import { DenyListRule } from './backend/deny-list/api';
 import { Inventory } from './backend/inventory';
 import { LicenseList } from './backend/license-list';
 import { Orchestration } from './backend/orchestration';
+import { PackageStats } from './backend/package-stats';
 import { CATALOG_KEY, STORAGE_KEY_PREFIX } from './backend/shared/constants';
 import { Repository } from './codeartifact/repository';
 import { Monitoring } from './monitoring';
@@ -21,7 +22,7 @@ import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
 import { PackageTag } from './package-tag';
 import { SpdxLicense } from './spdx-license';
-import { WebApp, PackageLinkConfig, FeaturedPackages } from './webapp';
+import { WebApp, PackageLinkConfig, FeaturedPackages, FeatureFlags } from './webapp';
 
 /**
  * Props for `ConstructHub`.
@@ -111,6 +112,21 @@ export interface ConstructHubProps {
    * @default - Display the 10 most recently updated packages
    */
   readonly featuredPackages?: FeaturedPackages;
+
+  /**
+   * Configure feature flags for the web app.
+   */
+  readonly featureFlags?: FeatureFlags;
+
+  /**
+   * Configure whether or not the backend should periodically query NPM
+   * for the number of downloads a package has in the past week, and
+   * display download counts on the web app.
+   *
+   * @default - true if packageSources is not specified (the defaults are
+   * used), false otherwise
+   */
+  readonly fetchPackageStats?: boolean;
 }
 
 /**
@@ -189,6 +205,23 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       monitoring: monitoring,
     });
 
+    // disable fetching package stats by default if a different package
+    // source is configured
+    const fetchPackageStats = props.fetchPackageStats ?? (
+      props.packageSources ? false : true
+    );
+
+    let packageStats: PackageStats | undefined;
+    const statsKey = 'stats.json';
+    if (fetchPackageStats) {
+      packageStats = new PackageStats(this, 'Stats', {
+        bucket: packageData,
+        monitoring,
+        logRetention: props.logRetention,
+        objectKey: statsKey,
+      });
+    }
+
     const orchestration = new Orchestration(this, 'Orchestration', {
       bucket: packageData,
       codeArtifact,
@@ -201,7 +234,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     });
 
     // rebuild the catalog when the deny list changes.
-    denyList.prune.onChangeInvoke(orchestration.catalogBuilder);
+    denyList.prune.onChangeInvoke(orchestration.catalogBuilder.function);
 
     const packageTagsSerialized = props.packageTags?.map((config) => {
       return {
@@ -212,6 +245,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     this.ingestion = new Ingestion(this, 'Ingestion', {
       bucket: packageData,
+      codeArtifact,
       orchestration,
       logRetention: props.logRetention,
       monitoring,
@@ -250,6 +284,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       inventory,
       orchestration,
       denyList,
+      packageStats,
     });
 
     new WebApp(this, 'WebApp', {
@@ -259,6 +294,8 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       packageLinks: props.packageLinks,
       packageTags: packageTagsSerialized,
       featuredPackages: props.featuredPackages,
+      packageStats,
+      featureFlags: props.featureFlags,
     });
   }
 

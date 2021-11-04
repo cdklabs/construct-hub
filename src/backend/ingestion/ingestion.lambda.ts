@@ -10,6 +10,7 @@ import type { PackageTagConfig } from '../../package-tag';
 import type { PackageLinkConfig } from '../../webapp';
 import type { StateMachineInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
+import { CodeArtifactProps, codeArtifactPublishPackage } from '../shared/code-artifact.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
@@ -29,8 +30,22 @@ export const handler = metricScope(
 
     const BUCKET_NAME = requireEnv('BUCKET_NAME');
     const STATE_MACHINE_ARN = requireEnv('STATE_MACHINE_ARN');
-    const PACKAGE_LINKS = requireEnv('PACKAGE_LINKS');
-    const PACKAGE_TAGS = requireEnv('PACKAGE_TAGS');
+    const CONFIG_BUCKET_NAME = requireEnv('CONFIG_BUCKET_NAME');
+    const CONFIG_FILE_KEY = requireEnv('CONFIG_FILE_KEY');
+
+    // Load configuration
+    const { packageTags: packageTagsConfig, packageLinks: allowedLinks }: Config = await getConfig(CONFIG_BUCKET_NAME, CONFIG_FILE_KEY);
+
+    const codeArtifactProps: CodeArtifactProps | undefined = (function () {
+      const endpoint = process.env.CODE_ARTIFACT_REPOSITORY_ENDPOINT;
+      if (!endpoint) {
+        return undefined;
+      }
+      const domain = requireEnv('CODE_ARTIFACT_DOMAIN_NAME');
+      const domainOwner = process.env.CODE_ARTIFACT_DOMAIN_OWNER;
+      const apiEndpoint = process.env.CODE_ARTIFACT_API_ENDPOINT;
+      return { endpoint, domain, domainOwner, apiEndpoint };
+    })();
 
     const result = new Array<string>();
 
@@ -135,9 +150,6 @@ export const handler = metricScope(
         Unit.Count,
       );
 
-      // Add custom links content to metdata for display on the frontend
-      const allowedLinks: PackageLinkConfig[] = JSON.parse(PACKAGE_LINKS);
-
       const packageLinks = allowedLinks.reduce((accum, { configKey, allowedDomains }) => {
         const pkgValue = constructHub?.packageLinks[configKey];
 
@@ -155,8 +167,6 @@ export const handler = metricScope(
         return { ...accum, [configKey]: pkgValue };
       }, {});
 
-      // Add computed tags to metadata
-      const packageTagsConfig: PackageTagConfig[] = JSON.parse(PACKAGE_TAGS);
       const packageTags = packageTagsConfig.reduce((accum: Array<Omit<PackageTagConfig, 'condition'>>, tagConfig) => {
         const { condition, ...tagData } = tagConfig;
         if (isTagApplicable(condition, packageJsonObj)) {
@@ -165,6 +175,21 @@ export const handler = metricScope(
 
         return accum;
       }, []);
+
+
+      if (codeArtifactProps) {
+        console.log('Publishing to the internal CodeArtifact...');
+        try {
+          const { publishConfig } = packageJsonObj;
+          if (publishConfig) {
+            console.log('Not publishing to CodeArtifact due to the presence of publishConfig in package.json: ', publishConfig);
+          } else {
+            await codeArtifactPublishPackage(Buffer.from(tarball.Body!), codeArtifactProps);
+          }
+        } catch (err) {
+          console.error('Failed publishing to CodeArtifact: ', err);
+        }
+      }
 
       const metadata = {
         constructFramework,
@@ -194,7 +219,7 @@ export const handler = metricScope(
             Bucket: BUCKET_NAME,
             Key: packageKey,
             Body: tarball.Body,
-            CacheControl: 'public',
+            CacheControl: 'public, max-age=86400, must-revalidate, s-maxage=300, proxy-revalidate',
             ContentType: 'application/octet-stream',
             Metadata: {
               'Lambda-Log-Group': context.logGroupName,
@@ -209,7 +234,7 @@ export const handler = metricScope(
             Bucket: BUCKET_NAME,
             Key: metadataKey,
             Body: JSON.stringify(metadata),
-            CacheControl: 'public',
+            CacheControl: 'public, max-age=300, must-revalidate, proxy-revalidate',
             ContentType: 'application/json',
             Metadata: {
               'Lambda-Log-Group': context.logGroupName,
@@ -228,7 +253,7 @@ export const handler = metricScope(
           Bucket: BUCKET_NAME,
           Key: assemblyKey,
           Body: dotJsii,
-          CacheControl: 'public',
+          CacheControl: 'public, max-age: 86400, must-revalidate, s-maxage=300, proxy-revalidate',
           ContentType: 'application/json',
           Metadata: {
             'Lambda-Log-Group': context.logGroupName,
@@ -281,7 +306,7 @@ const enum ConstructFrameworkName {
   CDKTF = 'cdktf',
 }
 
-interface ConstructFramework {
+export interface ConstructFramework {
   /**
    * The name of the construct framework.
    */
@@ -324,14 +349,14 @@ function detectConstructFramework(assembly: Assembly): ConstructFramework | unde
         return;
       }
       name = ConstructFrameworkName.AWS_CDK;
-    } else if (packageName === 'cdktf') {
+    } else if (packageName === 'cdktf' || packageName.startsWith('@cdktf/')) {
       if (name && name !== ConstructFrameworkName.CDKTF) {
         // Identified multiple candidates, so returning ambiguous...
         nameAmbiguous = true;
         return;
       }
       name = ConstructFrameworkName.CDKTF;
-    } else if (packageName === 'cdk8s') {
+    } else if (packageName === 'cdk8s' || /^cdk8s-plus(?:-(?:17|20|21|22))?$/.test(packageName)) {
       if (name && name !== ConstructFrameworkName.CDK8S) {
         // Identified multiple candidates, so returning ambiguous...
         nameAmbiguous = true;
@@ -396,4 +421,37 @@ function sfnExecutionNameFromParts(
     .digest('hex')
     .substring(0, 6);
   return `${name.substring(0, 80 - suffix.length - 1)}_${suffix}`;
+}
+
+/**
+ * Ingestion configuration for package links and tags
+ */
+interface Config {
+  packageTags: PackageTagConfig[];
+  packageLinks: PackageLinkConfig[];
+}
+
+/**
+ * Looks for the ingestion configuration file in the passed bucket and parses
+ * it. If it is not found or invalid then a default is returned.
+ */
+async function getConfig(bucket: string, key: string): Promise<Config> {
+  const defaultConfig = {
+    packageTags: [],
+    packageLinks: [],
+  };
+  try {
+    const req = await aws.s3().getObject({
+      Bucket: bucket,
+      Key: key,
+    }).promise();
+    const body = req?.Body?.toString();
+    if (body) {
+      return JSON.parse(body);
+    }
+    return defaultConfig;
+  } catch (e) {
+    console.error(e);
+    return defaultConfig;
+  }
 }

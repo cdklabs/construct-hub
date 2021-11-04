@@ -31,6 +31,7 @@ test('basic usage', () => {
             ],
           },
           RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
+          Upstreams: [{ 'Fn::GetAtt': ['RepoPublishing9FE3D602', 'Name'] }],
         },
       },
     },
@@ -85,6 +86,23 @@ test('external connection', () => {
             ],
           },
           RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
+          Upstreams: [
+            { 'Fn::GetAtt': ['RepoUpstreampublicnpmjsA8B06E28', 'Name'] },
+            { 'Fn::GetAtt': ['RepoPublishing9FE3D602', 'Name'] },
+          ],
+        },
+      },
+      RepoUpstreampublicnpmjsA8B06E28: {
+        Type: 'AWS::CodeArtifact::Repository',
+        Properties: {
+          Description: 'Upstream with external connection to public:npmjs',
+          DomainName: {
+            'Fn::GetAtt': [
+              'RepoDomainC79FB030',
+              'Name',
+            ],
+          },
+          RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907-npmjs',
           ExternalConnections: ['public:npmjs'],
         },
       },
@@ -118,6 +136,9 @@ test('custom domain name', () => {
             ],
           },
           RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
+          Upstreams: [
+            { 'Fn::GetAtt': ['RepoPublishing9FE3D602', 'Name'] },
+          ],
         },
       },
     },
@@ -150,6 +171,7 @@ test('custom repository name', () => {
             ],
           },
           RepositoryName: 'custom-repo',
+          Upstreams: [{ 'Fn::GetAtt': ['RepoPublishing9FE3D602', 'Name'] }],
         },
       },
     },
@@ -182,6 +204,7 @@ test('custom domain & repository name', () => {
             ],
           },
           RepositoryName: 'custom-repo',
+          Upstreams: [{ 'Fn::GetAtt': ['RepoPublishing9FE3D602', 'Name'] }],
         },
       },
     },
@@ -268,6 +291,7 @@ test('grantReadFromRepository', () => {
         Resource: [
           stack.resolve(repo.repositoryDomainArn),
           stack.resolve(repo.repositoryArn),
+          stack.resolve(repo.publishingRepositoryArn),
         ],
       }],
       Version: '2012-10-17',
@@ -314,6 +338,7 @@ test('throughVpcEndpoint', () => {
         Resource: [
           stack.resolve(repo.repositoryDomainArn),
           stack.resolve(repo.repositoryArn),
+          stack.resolve(repo.publishingRepositoryArn),
         ],
       }],
       Version: '2012-10-17',

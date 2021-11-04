@@ -1,5 +1,7 @@
 import * as os from 'os';
 import * as path from 'path';
+import { gzipSync } from 'zlib';
+import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { PromiseResult } from 'aws-sdk/lib/request';
 import * as fs from 'fs-extra';
 import * as docgen from 'jsii-docgen';
@@ -10,10 +12,12 @@ import { logInWithCodeArtifact } from '../shared/code-artifact.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DocumentationLanguage } from '../shared/language';
-import { shellOut } from '../shared/shell-out.lambda-shared';
+import { shellOut, shellOutWithOutput } from '../shared/shell-out.lambda-shared';
+import { MetricName, METRICS_NAMESPACE } from './constants';
+import { writeFile } from './util';
 
 const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)${constants.ASSEMBLY_KEY_SUFFIX}$`);
-// Capture groups:                                                    ┗━━━━━━━━━1━━━━━━━┛  ┗━━2━━┛
+// Capture groups:                                                            ┗━━━━━━━━━1━━━━━━━┛  ┗━━2━━┛
 
 /**
  * This function receives an S3 event, and for each record, proceeds to download
@@ -27,7 +31,7 @@ const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]
  * @returns nothing
  */
 export function handler(event: TransliteratorInput): Promise<S3Object[]> {
-  console.log(JSON.stringify(event, null, 2));
+  console.log(`Event: ${JSON.stringify(event, null, 2)}`);
   // We'll need a writable $HOME directory, or this won't work well, because
   // npm will try to write stuff like the `.npmrc` or package caches in there
   // and that'll bail out on EROFS if that fails.
@@ -52,7 +56,6 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
       await shellOut('npm', 'config', 'set', `cache=${npmCacheDir}`);
     }
 
-    const language = requireEnv('TARGET_LANGUAGE');
     const created = new Array<S3Object>();
 
     const [, packageName, packageVersion] = event.assembly.key.match(ASSEMBLY_KEY_REGEX) ?? [];
@@ -75,47 +78,124 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
     const assembly = JSON.parse(assemblyResponse.Body.toString('utf-8'));
     const submodules = Object.keys(assembly.submodules ?? {}).map(s => s.split('.')[1]);
 
-    if (language !== 'typescript' && assembly.targets[language] == null) {
-      console.error(`Package ${assembly.name}@${assembly.version} does not support ${language}, skipping!`);
-      console.log(`Assembly targets: ${JSON.stringify(assembly.targets, null, 2)}`);
-      for (const submodule of [undefined, ...submodules]) {
-        const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(language), submodule)) + constants.NOT_SUPPORTED_SUFFIX;
-        const response = await uploadFile(event.bucket, key, event.assembly.versionId);
-        created.push({ bucket: event.bucket, key, versionId: response.VersionId });
+    console.log(`Fetching package: ${event.package.key}`);
+    const tarballExists = await aws.s3ObjectExists(event.bucket, event.package.key);
+    if (!tarballExists) {
+      throw new Error(`Tarball does not exist at key ${event.package.key} in bucket ${event.bucket}.`);
+    }
+    const readStream = aws.s3().getObject({ Bucket: event.bucket, Key: event.package.key }).createReadStream();
+    const tmpdir = fs.mkdtempSync(path.join(os.tmpdir(), 'packages-'));
+    const tarball = path.join(tmpdir, 'package.tgz');
+    await writeFile(tarball, readStream);
+
+    const cwd = process.cwd();
+    try {
+      process.chdir(tmpdir);
+      console.log(`Preparing package install at ${tmpdir}`);
+      const installResult = await shellOutWithOutput(
+        'npm',
+        'install',
+        tarball,
+        '--ignore-scripts',
+        '--no-bin-links',
+        '--no-save',
+        '--include=dev',
+        '--no-package-lock',
+        '--json',
+      );
+      if (installResult.exitCode !== 0) {
+        if (installResult.signal) {
+          throw new Error(`"npm install" was killed by signal ${installResult.signal}`);
+        }
+        const toThrow = new Error(`"npm install" failed with exit code ${installResult.exitCode}`);
+        toThrow.name = 'jsii-docgen.NpmError';
+        try {
+          const json = JSON.parse(installResult.stdout.toString('utf-8'));
+          console.error(`Installation result: ${JSON.stringify(json, null, 2)}`);
+          if (json.error.code) {
+            toThrow.name += `.${json.error.code}`;
+          }
+        } catch (error) {
+          console.error(`Installation result: ${installResult.stdout.toString('utf-8')}`);
+        }
+        throw toThrow;
       }
-      return created;
+    } finally {
+      process.chdir(cwd);
     }
 
-    async function generateDocs(lang: string) {
-
-      const uploads = new Map<string, Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>>();
-      const docs = await docgen.Documentation.forPackage(packageFqn, { language: docgen.Language.fromString(lang) });
-
-      function renderAndDispatch(submodule?: string) {
-        console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
-        const page = docs.render({ submodule, linkFormatter: linkFormatter(docs) }).render();
-        const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(DocumentationLanguage.fromString(lang), submodule));
-        console.log(`Uploading ${key}`);
-        const upload = uploadFile(event.bucket, key, event.assembly.versionId, page);
-        uploads.set(key, upload);
+    const packageDir = path.join(tmpdir, 'node_modules', packageName);
+    console.log(`Generating documentation from ${packageDir}...`);
+    for (const language of DocumentationLanguage.ALL) {
+      if (event.languages && !event.languages[language.toString()]) {
+        console.log(`Skipping language ${language} as it was not requested!`);
+        continue;
       }
 
-      renderAndDispatch();
-      for (const submodule of submodules) {
-        renderAndDispatch(submodule);
+      const isSupported = language === DocumentationLanguage.TYPESCRIPT || assembly.targets[language.targetName];
+      if (!isSupported) {
+        console.error(`Package ${packageName}@${packageVersion} does not support ${language}, skipping!`);
+        console.log(`Assembly targets: ${JSON.stringify(assembly.targets, null, 2)}`);
+        for (const submodule of [undefined, ...submodules]) {
+          const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(language, submodule)) + constants.NOT_SUPPORTED_SUFFIX;
+          const response = await uploadFile(event.bucket, key, event.assembly.versionId);
+          created.push({ bucket: event.bucket, key, versionId: response.VersionId });
+        }
+        continue;
       }
 
-      for (const [key, upload] of uploads.entries()) {
-        const response = await upload;
-        created.push({ bucket: event.bucket, key, versionId: response.VersionId });
-        console.log(`Finished uploading ${key} (Version ID: ${response.VersionId})`);
-      }
+      const generateDocs = metricScope((metrics) => async (lang: DocumentationLanguage) => {
+        metrics.setDimensions();
+        metrics.setNamespace(METRICS_NAMESPACE);
 
+        const uploads = new Map<string, Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>>();
+        const docs = await docgen.Documentation.forProject(packageDir, {
+          assembliesDir: tmpdir,
+          language: docgen.Language.fromString(lang.name),
+        });
+
+        function renderAndDispatch(submodule?: string) {
+          console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
+          const page = Buffer.from(docs.render({ submodule, linkFormatter: linkFormatter(docs) }).render());
+          metrics.putMetric(MetricName.DOCUMENT_SIZE, page.length, Unit.Bytes);
+
+          const { buffer: body, contentEncoding } = compressContent(page);
+          metrics.putMetric(MetricName.COMPRESSED_DOCUMENT_SIZE, body.length, Unit.Bytes);
+
+          const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(lang, submodule));
+          console.log(`Uploading ${key}`);
+          const upload = uploadFile(event.bucket, key, event.assembly.versionId, body, contentEncoding);
+          uploads.set(key, upload);
+        }
+
+        renderAndDispatch();
+        for (const submodule of submodules) {
+          renderAndDispatch(submodule);
+        }
+
+        for (const [key, upload] of uploads.entries()) {
+          const response = await upload;
+          created.push({ bucket: event.bucket, key, versionId: response.VersionId });
+          console.log(`Finished uploading ${key} (Version ID: ${response.VersionId})`);
+        }
+      });
+      await generateDocs(language);
     }
-    await generateDocs(language);
 
     return created;
   });
+}
+
+function compressContent(buffer: Buffer): { readonly buffer: Buffer; readonly contentEncoding?: 'gzip' } {
+  if (buffer.length < 1_024) {
+    return { buffer };
+  }
+  const gz = gzipSync(buffer, { level: 9 });
+  // If it did not compress well, we'll keep the un-compressed original...
+  if (gz.length >= buffer.length) {
+    return { buffer };
+  }
+  return { buffer: gz, contentEncoding: 'gzip' };
 }
 
 async function ensureWritableHome<T>(cb: () => Promise<T>): Promise<T> {
@@ -133,12 +213,13 @@ async function ensureWritableHome<T>(cb: () => Promise<T>): Promise<T> {
   }
 }
 
-function uploadFile(bucket: string, key: string, sourceVersionId?: string, body?: AWS.S3.Body) {
+function uploadFile(bucket: string, key: string, sourceVersionId?: string, body?: AWS.S3.Body, contentEncoding?: 'gzip') {
   return aws.s3().putObject({
     Bucket: bucket,
     Key: key,
     Body: body,
-    CacheControl: 'public',
+    CacheControl: 'public, max-age=300, must-revalidate, proxy-revalidate', // Expire from cache after 10 minutes
+    ContentEncoding: contentEncoding,
     ContentType: 'text/markdown; charset=UTF-8',
     Metadata: {
       'Origin-Version-Id': sourceVersionId ?? 'N/A',

@@ -19,7 +19,7 @@ export class TriggerPruneTest extends lambda.Function {
       ...props,
       runtime: lambda.Runtime.NODEJS_14_X,
       handler: 'index.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, '/trigger.prune-test.bundle')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '/trigger.prune-test.lambda.bundle')),
     });
 
     new AfterCreate(this, 'Trigger', {
