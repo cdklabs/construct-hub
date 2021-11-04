@@ -359,7 +359,7 @@ export class BackendDashboard extends Construct {
           bucket: packageData,
           height: 6,
           language,
-          title: 'Missing Package Versions',
+          title: 'Package Versions missing documentation',
           width: 12,
         }),
         new GraphWidget({

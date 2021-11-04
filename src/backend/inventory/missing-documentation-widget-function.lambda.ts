@@ -71,6 +71,10 @@ export async function handler({ describe, widgetContext }: Event): Promise<strin
 
     return {
       markdown: [
+        'This widget shows the name and version(s) of all packages tracked by',
+        'this ConstructHub instance, and for which at least one documentation',
+        `object is missing for _${language.name}_.`,
+        '',
         ...(list.length > maxCount
           ? [
             `Showing only the first ${maxCount} packages.`,
