@@ -4,6 +4,7 @@ import { Construct, Duration } from '@aws-cdk/core';
 import { DenyList } from './backend/deny-list';
 import { Ingestion } from './backend/ingestion';
 import { Inventory } from './backend/inventory';
+import { MissingDocumentationWidget } from './backend/inventory/missing-documentation-widget';
 import { Orchestration } from './backend/orchestration';
 import { PackageStats } from './backend/package-stats';
 import { DocumentationLanguage } from './backend/shared/language';
@@ -272,7 +273,7 @@ export class BackendDashboard extends Construct {
     });
   }
 
-  private *catalogOverviewLanguageSections({ inventory, orchestration }: BackendDashboardProps): Generator<IWidget[]> {
+  private *catalogOverviewLanguageSections({ inventory, orchestration, packageData }: BackendDashboardProps): Generator<IWidget[]> {
     yield [
       new TextWidget({
         height: 2,
@@ -354,17 +355,12 @@ export class BackendDashboard extends Construct {
           leftYAxis: { showUnits: false },
           view: GraphWidgetView.PIE,
         }),
-        new GraphWidget({
+        new MissingDocumentationWidget(this, `MissingDocs-${language.name}`, {
+          bucket: packageData,
           height: 6,
-          width: 6,
-          title: 'Package Versions',
-          left: [
-            inventory.metricSupportedPackageVersionCount(language, { label: 'Available', color: '#2ca02c' }),
-            inventory.metricUnsupportedPackageVersionCount(language, { label: 'Unsupported', color: '#9467bd' }),
-            inventory.metricMissingPackageVersionCount(language, { label: 'Missing', color: '#d62728' }),
-          ],
-          leftYAxis: { showUnits: false },
-          stacked: true,
+          language,
+          title: 'Missing Package Versions',
+          width: 12,
         }),
         new GraphWidget({
           height: 6,
@@ -377,18 +373,6 @@ export class BackendDashboard extends Construct {
           ],
           leftYAxis: { showUnits: false },
           view: GraphWidgetView.PIE,
-        }),
-        new GraphWidget({
-          height: 6,
-          width: 6,
-          title: 'Package Version Submodules',
-          left: [
-            inventory.metricSupportedSubmoduleCount(language, { label: 'Available', color: '#2ca02c' }),
-            inventory.metricUnsupportedSubmoduleCount(language, { label: 'Unsupported', color: '#9467bd' }),
-            inventory.metricMissingSubmoduleCount(language, { label: 'Missing', color: '#d62728' }),
-          ],
-          leftYAxis: { showUnits: false },
-          stacked: true,
         }),
       ];
     }

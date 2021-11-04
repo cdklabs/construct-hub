@@ -1,6 +1,5 @@
 import * as os from 'os';
 import * as path from 'path';
-import { gzipSync } from 'zlib';
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { PromiseResult } from 'aws-sdk/lib/request';
 import * as fs from 'fs-extra';
@@ -9,6 +8,7 @@ import * as docgen from 'jsii-docgen';
 import type { TransliteratorInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
 import { logInWithCodeArtifact } from '../shared/code-artifact.lambda-shared';
+import { compressContent } from '../shared/compress-content.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DocumentationLanguage } from '../shared/language';
@@ -17,7 +17,7 @@ import { MetricName, METRICS_NAMESPACE } from './constants';
 import { writeFile } from './util';
 
 const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)${constants.ASSEMBLY_KEY_SUFFIX}$`);
-// Capture groups:                                                            ┗━━━━━━━━━1━━━━━━━┛  ┗━━2━━┛
+// Capture groups:                                                     ┗━━━━━━━━━1━━━━━━━┛  ┗━━2━━┛
 
 /**
  * This function receives an S3 event, and for each record, proceeds to download
@@ -184,18 +184,6 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
 
     return created;
   });
-}
-
-function compressContent(buffer: Buffer): { readonly buffer: Buffer; readonly contentEncoding?: 'gzip' } {
-  if (buffer.length < 1_024) {
-    return { buffer };
-  }
-  const gz = gzipSync(buffer, { level: 9 });
-  // If it did not compress well, we'll keep the un-compressed original...
-  if (gz.length >= buffer.length) {
-    return { buffer };
-  }
-  return { buffer: gz, contentEncoding: 'gzip' };
 }
 
 async function ensureWritableHome<T>(cb: () => Promise<T>): Promise<T> {

@@ -2,6 +2,7 @@ import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { Context, ScheduledEvent } from 'aws-lambda';
 import { SemVer } from 'semver';
 import * as aws from '../shared/aws.lambda-shared';
+import { compressContent } from '../shared/compress-content.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DocumentationLanguage } from '../shared/language';
@@ -9,7 +10,7 @@ import { METRICS_NAMESPACE, MetricName, LANGUAGE_DIMENSION } from './constants';
 
 Configuration.namespace = METRICS_NAMESPACE;
 
-export async function handler(event: ScheduledEvent, _context: Context) {
+export async function handler(event: ScheduledEvent, context: Context) {
   console.log('Event:', JSON.stringify(event, null, 2));
 
   const indexedPackages = new Map<string, IndexedPackageStatus>();
@@ -148,7 +149,7 @@ export async function handler(event: ScheduledEvent, _context: Context) {
   })();
 
   for (const entry of Array.from(perLanguage.entries())) {
-    await metricScope((metrics) => (language: DocumentationLanguage, data: PerLanguageData) => {
+    await metricScope((metrics) => async (language: DocumentationLanguage, data: PerLanguageData) => {
       console.log( '');
       console.log('##################################################');
       console.log(`### Start of data for ${language}`);
@@ -159,6 +160,34 @@ export async function handler(event: ScheduledEvent, _context: Context) {
         for (const [key, statuses] of Object.entries(data)) {
           let filtered = Array.from(statuses.entries()).filter(([, status]) => forStatus === status);
           let metricName = METRIC_NAME_BY_STATUS_AND_GRAIN[forStatus as PerLanguageStatus][key as keyof PerLanguageData];
+
+          if (forStatus === PerLanguageStatus.MISSING) {
+            // Creates an object in S3 with the outcome of the scan for this language.
+            const { buffer, contentEncoding } = compressContent(
+              Buffer.from(
+                JSON.stringify(
+                  filtered.map(([name]) => name).sort(),
+                  null,
+                  2,
+                ),
+              ),
+            );
+            const missingDocsKey = constants.missingDocumentationKey(language);
+            console.log(`Uploading missing documentation list to s3://${bucket}/${missingDocsKey}`);
+            await aws.s3().putObject({
+              Body: buffer,
+              Bucket: bucket,
+              ContentEncoding: contentEncoding,
+              ContentType: 'application/json',
+              Expires: new Date(Date.now() + 300_000), // 5 minutes from now
+              Key: missingDocsKey,
+              Metadata: {
+                'Lambda-Run-Id': context.awsRequestId,
+                'Lambda-Log-Group-Name': context.logGroupName,
+                'Lambda-Log-Stream-Name': context.logStreamName,
+              },
+            }).promise();
+          }
 
           console.log(`${forStatus} ${key} for ${language}: ${filtered.length} entries`);
           metrics.putMetric(metricName, filtered.length, Unit.Count);

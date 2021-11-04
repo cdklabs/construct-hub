@@ -1,8 +1,10 @@
+const fs = require('fs');
 const { basename, join, dirname, relative } = require('path');
 const Case = require('case');
 const glob = require('glob');
-const { SourceCode, FileBase, JsonFile, JsiiProject, DependenciesUpgradeMechanism, TextFile } = require('projen');
+const { SourceCode, FileBase, JsonFile, JsiiProject, TextFile } = require('projen');
 const spdx = require('spdx-license-list');
+const uuid = require('uuid');
 
 const peerDeps = [
   '@aws-cdk/aws-certificatemanager',
@@ -73,6 +75,7 @@ const project = new JsiiProject({
     'semver',
     'spdx-license-list',
     'tar-stream',
+    'uuid',
     'yaml',
     'normalize-registry-metadata',
   ],
@@ -291,6 +294,10 @@ function newLambdaHandler(entrypoint, trigger) {
     throw new Error(`${entrypoint} must have a .lambda.ts extension`);
   }
 
+  // We identify singleton functions by a "/// @singleton [purpose]" comment in the handler source.
+  const [isSingleton, singletonPurpose] =
+    /^[/]{3}[ \t]*@singleton(?:[ \t]+(.*?))?[ \t]*$/m.exec(fs.readFileSync(entrypoint, 'utf-8')) || [];
+
   entrypoint = relative(project.srcdir, entrypoint);
 
   const base = basename(entrypoint, '.lambda.ts');
@@ -322,7 +329,7 @@ function newLambdaHandler(entrypoint, trigger) {
   }
   ts.close('}');
   ts.line();
-  ts.open(`export class ${className} extends lambda.Function {`);
+  ts.open(`export class ${className} extends lambda.${isSingleton ? 'SingletonFunction' : 'Function'} {`);
   // NOTE: unlike the array splat (`[...arr]`), the object splat (`{...obj}`) is
   //       `undefined`-safe. We can hence save an unnecessary object allocation
   //       by not specifying a default value for the `props` argument here.
@@ -330,6 +337,13 @@ function newLambdaHandler(entrypoint, trigger) {
   ts.open('super(scope, id, {');
   ts.line(`description: '${entrypoint}',`);
   ts.line('...props,');
+  if (isSingleton) {
+    const SINGLETON_NAMESPACE = '0E7DE892-DDD6-42B0-9709-07C5B8E0965E';
+    ts.line(`uuid: '${uuid.v5(entrypoint, SINGLETON_NAMESPACE)}',`);
+    if (singletonPurpose) {
+      ts.line(`lambdaPurpose: '${singletonPurpose.replace(/([\\'])/g, '\\$1')}',`);
+    }
+  }
   ts.line('runtime: lambda.Runtime.NODEJS_14_X,');
   ts.line('handler: \'index.handler\',');
   ts.line(`code: lambda.Code.fromAsset(path.join(__dirname, '/${basename(outdir)}')),`);
