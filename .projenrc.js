@@ -59,7 +59,6 @@ const project = new JsiiProject({
     ...peerDeps,
     '@jsii/spec',
     '@types/fs-extra',
-    '@types/jsonstream',
     '@types/semver',
     '@types/tar-stream',
     cdkCli,
