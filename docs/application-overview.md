@@ -203,47 +203,22 @@ that were configured on the ConstructHub instance.
 
 ### 5. Discovery Canary
 
-The [discovery canary](../README.md#discovery-canary) is an optional canary that can be configured as part of the hub's deployment.
-Its job is to continuously validate that the hub is able to discover and process packages in a timely manner.
+The [discovery canary](../README.md#discovery-canary) is an optional canary that
+can be configured as part of the hub's deployment NpmJs package source. Its job
+is to continuously validate that the hub is able to discover and process
+packages in a timely manner.
 
-At a high level, the canary is implemented like so, assuming an SLA of 3 hours:
+The canary monitors the availability of new versions of a designated package
+in the ConstructHub instance (by default, this is `construct-hub-probe`), and
+emits metrics that help understand how much time elapses between the package
+publication to npmjs.com (`construct-hub-probe` gets a new version approximately
+every 3 hours), and when those packages are available to browse in ConstructHub.
 
-```text
-                                        │
-                                        │Invoke every 3 hours
-                                        │
-                                        ▼
-                         ┌────────────────────────────────┐
-          ┌──────────────┤ Detect latest version of probe ├─────────┐
-          │              └────────────────────────────────┘         │
-          │                                                         │
-          │                                                         │
-          │ No version found                         Found version X│
-          │                                                         │
-          ▼                                                         ▼
-┌─────────────────────┐                                ┌────────────────────────┐
-│Publish version 0.0.1│                      ┌─────────┤Ping CH for package data├────────┐
-└─────────┬───────────┘                      │         └────────────────────────┘        │
-          │                                  │                                           │
-          │                                  │Available                          Missing │
-          ▼                                  │                                           │
-       ┌──────┐                              ▼                                           ▼
-       │ Exit │                    ┌─────────────────────┐                    ┌───────────────────┐
-       └──────┘                    │Publish version X + 1│                    │Emit metric & Alarm│
-                                   └─────────┬───────────┘                    └──────────┬────────┘
-                                             │                                           │
-                                             ▼                                           ▼
-                                           ┌────┐                                    ┌──────┐
-                                           │Exit│                                    │ Exit │
-                                           └────┘                                    └──────┘
+A **low-severity** alarm triggers if the canary function is either
+malfunctioning or detects discovery SLA breaches. Troubleshooting these alarms
+is described in the operator runbook.
 
-```
-
-A **high-severity** alarm triggers if the canary function is either malfunctioning or detects discovery SLA breaches. Troubleshooting these alarms is described in the operator runbook.
-
-- [`ConstructHub/Canaries/Discovery/NotRunning`](./operator-runbook.md#constructhubcanariesdiscoverynotrunning)
-- [`ConstructHub/Canaries/Discovery/Failures`](./operator-runbook.md#constructhubcanariesdiscoveryfailures)
-- [`ConstructHub/Canaries/Discovery/Breached`](./operator-runbook.md#constructhubcanariesdiscoverybreached)
+- [`ConstructHub/Sources/NpmJs/Canary/SLA-Breached`](./operator-runbook.md#constructhub-sources-npmjs-canary-sla-breached)
 
 
 ## Monitoring & Alarming

@@ -554,49 +554,54 @@ effects of executing these workflows.
 
 --------------------------------------------------------------------------------
 
-### `ConstructHub/Canaries/Discovery/NotRunning`
+### `ConstructHub/Sources/NpmJs/Canary/SLA-Breached`
 
 #### Description
 
-This alarm is only provisioned in case the [discovery canary](../README.md#discovery-canary) was configured.
-It triggers when the canary is not running at the scheduled rate it was configured with.
-This means that the hub is unable to detect whether or not new packages are properly discovered.
+This alarm is only provisioned in case the [NpmJs package canary][package-canary]
+was configured. It triggers when the canary detects that a recently published
+package version (by default, the tracked package is `construct-hub-probe`) was
+not discovered and indexed within the predefined SLA period (by default, `5`
+minutes). This means the hub might not be discovering new packages versions.
+
+The alarm will persis as long as any tracked version of the probe package is
+still missing from the ConstructHub instance past the configured SLA, or if the
+latest version was ingested out-of-SLA.
+
+[package-canary]: ../README.md#discovery-canary)
 
 #### Investigation
 
-TBD
+If the alarm went off due to insufficient data, the canary might not be emitting
+metrics properly. In this case, start by ensuring the lambda function that
+implements the canary is executing as intended. It is normally scheduled to run
+every minute, but might have been unable to execute, for example, if your
+account ran out of Lambda concurrent executions for a while. The Lambda function
+can be found in the Lambda console: its description contains
+`Sources/NpmJs/PackageCanary`. If the function runs as intended,
+[dive into the Lambda logs][#lambda-log-dive] to understand why it might be
+unable to evaluate the metric.
+
+Otherwise, look for traces of the package version in the logs of each step in
+the pipeline:
+- The NpmJs follower function
+- The NpmJs stager function
+- The backend orchestration workflow
+- The Doc-Gen ECS task logs
+- The catalog builder
+
+For additional recommendations for diving into CloudWatch Logs, refer to the
+[Diving into Lambda Function logs in CloudWatch Logs][#lambda-log-dive] section.
 
 #### Resolution
 
-TBD
+The alarm will automatically go back to green once all outstanding versions of
+the configured canary package are available in the ConstructHub instance, and
+the latest revision thereof is within SLA.
 
-### `ConstructHub/Canaries/Discovery/Failures`
-
-#### Description
-
-This alarm is only provisioned in case the [discovery canary](../README.md#discovery-canary) was configured.
-It triggers when the canary is expriencing execution failures. Note that these are internal failures, it means the canary cannot
-perform its job, making the hub unable to detect whether or not new packages are properly discovered.
-
-#### Investigation
-
-#### Resolution
-
-### `ConstructHub/Canaries/Discovery/Breached`
-
-#### Description
-
-This alarm is only provisioned in case the [discovery canary](../README.md#discovery-canary) was configured.
-It triggers when the canary detects that a newly published package was not discovered within the predefined SLA period.
-This means the hub cannot discover new packages and is effectively disabled.
-
-#### Investigation
-
-TBD
-
-#### Resolution
-
-TBD
+If there is a reason why a tracked version cannot possibly be ingested, the S3
+object backing the canary state can be deleted, which will effectively
+re-initialize the canary to track only the latest available version.
 
 ## :information_source: General Recommendations
 
