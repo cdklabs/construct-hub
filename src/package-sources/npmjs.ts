@@ -427,7 +427,7 @@ export class NpmJs implements IPackageSource {
     const canary = new NpmJsPackageCanary(scope, 'Canary', { bucket, constructHubBaseUrl, packageName });
 
     const alarm = new MathExpression({
-      expression: 'MAX(mDwell, mTTC)',
+      expression: 'MAX([mDwell, mTTC])',
       period: Duration.minutes(1),
       usingMetrics: {
         mDwell: canary.metricDwellTime(),
@@ -443,7 +443,7 @@ export class NpmJs implements IPackageSource {
       evaluationPeriods: 2,
       // If there is no data, the canary might not be running, so... *Chuckles* we're in danger!
       treatMissingData: TreatMissingData.BREACHING,
-      threshold: visibilitySla.toMilliseconds(),
+      threshold: visibilitySla.toSeconds(),
     });
     monitoring.addLowSeverityAlarm('New version visibility SLA breached', alarm);
 
@@ -459,11 +459,11 @@ export class NpmJs implements IPackageSource {
         leftAnnotations: [{
           color: '#ff0000',
           label: `SLA (${visibilitySla.toHumanString()})`,
-          value: visibilitySla.toMilliseconds(),
+          value: visibilitySla.toSeconds(),
         }],
         leftYAxis: { min: 0 },
         right: [
-          canary.metricTrackedVersionCount({ label: 'Tracked Version' }),
+          canary.metricTrackedVersionCount({ label: 'Tracked Version Count' }),
         ],
         rightYAxis: { min: 0 },
       }),

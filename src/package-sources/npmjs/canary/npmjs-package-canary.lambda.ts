@@ -37,8 +37,22 @@ export async function handler(event: unknown): Promise<void> {
   const stateService = new CanaryStateService(stateBucket);
   const constructHub = new ConstructHub(constructHubEndpoint);
 
-  const state = await stateService.load(packageName);
   const latest = await stateService.latest(packageName);
+  const state: CanaryState = await stateService.load(packageName)
+    // If we did not have any state, we'll bootstrap using the current latest version.
+    ?? {
+    latest: {
+      ...latest,
+      // If that latest version is ALREADY in catalog, pretend it was
+      // "instantaneously" there, so we avoid possibly reporting an breach of
+      // SLA alarm, when we really just observed presence of the package in
+      // catalog too late.
+      availableAt: await constructHub.isInCatalog(packageName, latest.version)
+        ? latest.publishedAt
+        : undefined,
+    },
+    pending: {},
+  };
 
   // If the current "latest" isn't the one from state, update it.
   if (state.latest.version !== latest.version) {
@@ -196,7 +210,7 @@ class CanaryStateService {
   /**
    * Load the state file for this package from the bucket.
    */
-  public async load(packageName: string): Promise<CanaryState> {
+  public async load(packageName: string): Promise<CanaryState | undefined> {
 
     console.log(`Loading state for package '${packageName}'`);
 
@@ -211,7 +225,7 @@ class CanaryStateService {
 
     if (!data?.Body) {
       console.log(`Not found: ${url}`);
-      return { latest: await this.latest(packageName), pending: {} };
+      return undefined;
     }
 
     console.log(`Loaded: ${url}`);
