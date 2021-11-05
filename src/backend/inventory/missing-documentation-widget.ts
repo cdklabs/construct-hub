@@ -24,7 +24,7 @@ export class MissingDocumentationWidget extends ConcreteWidget {
 
     this.handler = new MissingDocumentationWidgetFunction(scope, id, {
       architecture: gravitonLambdaIfAvailable(scope),
-      description: '[ConstructHub/MissingDocumnetationWidget] Is a custom CloudWatch widget handler',
+      description: '[ConstructHub/MissingDocumentationWidget] Is a custom CloudWatch widget handler',
       environment: { BUCKET_NAME: props.bucket.bucketName },
       memorySize: 1_024,
       timeout: Duration.seconds(15),
