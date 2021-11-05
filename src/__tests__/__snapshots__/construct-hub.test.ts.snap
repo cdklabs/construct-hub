@@ -45,6 +45,18 @@ Object {
       "Description": "S3 key for asset version \\"0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9\\"",
       "Type": "String",
     },
+    "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aArtifactHashFAD0E1F8": Object {
+      "Description": "Artifact hash for asset \\"197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90a\\"",
+      "Type": "String",
+    },
+    "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3BucketAACF0F4A": Object {
+      "Description": "S3 bucket for asset \\"197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90a\\"",
+      "Type": "String",
+    },
+    "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3VersionKeyD116C455": Object {
+      "Description": "S3 key for asset version \\"197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90a\\"",
+      "Type": "String",
+    },
     "AssetParameters1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28ArtifactHashE770D013": Object {
       "Description": "Artifact hash for asset \\"1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28\\"",
       "Type": "String",
@@ -784,7 +796,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":64,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "\\",{\\"label\\":\\"Oldest Message\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":58,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Package Canary\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageCanary\\",\\"DwellTime\\",{\\"label\\":\\"Dwell Time\\",\\"period\\":60,\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/PackageCanary\\",\\"TimeToCatalog\\",{\\"label\\":\\"Time to Catalog\\",\\"period\\":60,\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/PackageCanary\\",\\"TrackedVersionCount\\",{\\"label\\":\\"Tracked Version\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff0000\\",\\"label\\":\\"SLA (5 minutes)\\",\\"value\\":300000,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":64,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -5317,7 +5333,18 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Failures\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Failures\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -5328,7 +5355,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -5339,7 +5366,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -5350,7 +5377,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -5361,7 +5388,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":60,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -5369,17 +5396,6 @@ Direct link to function: /lambda/home#/functions/",
               Object {
                 "Fn::GetAtt": Array [
                   "ConstructHubInventoryCanaryFailures5BDA8051",
-                  "Arn",
-                ],
-              },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":60,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002",
                   "Arn",
                 ],
               },
@@ -8437,6 +8453,270 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::Lambda::Function",
     },
+    "ConstructHubSourcesNpmJsCanary5558FC45": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B",
+        "ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3BucketAACF0F4A",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3VersionKeyD116C455",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3VersionKeyD116C455",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
+        "Environment": Object {
+          "Variables": Object {
+            "CONSTRUCT_HUB_BASE_URL": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "https://",
+                  Object {
+                    "Fn::GetAtt": Array [
+                      "ConstructHubWebAppDistribution1F181DC9",
+                      "DomainName",
+                    ],
+                  },
+                ],
+              ],
+            },
+            "PACKAGE_CANARY_BUCKET_NAME": Object {
+              "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+            },
+            "PACKAGE_NAME": "construct-hub-probe",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 10024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 60,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubSourcesNpmJsCanaryAlarmBE2B479E": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmDescription": "New versions of construct-hub-probe have been published over 
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/SLA-Breached",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 2,
+        "Metrics": Array [
+          Object {
+            "Expression": "MAX(mDwell, mTTC)",
+            "Id": "expr_1",
+          },
+          Object {
+            "Id": "mDwell",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "DwellTime",
+                "Namespace": "ConstructHub/PackageCanary",
+              },
+              "Period": 60,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+          Object {
+            "Id": "mTTC",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "TimeToCatalog",
+                "Namespace": "ConstructHub/PackageCanary",
+              },
+              "Period": 60,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Threshold": 300000,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanarySchedule4D94219F": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B",
+      ],
+      "Properties": Object {
+        "Description": "Scheduled executions of the NpmJS package canary",
+        "ScheduleExpression": "rate(1 minute)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubSourcesNpmJsCanary5558FC45",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubSourcesNpmJsCanaryScheduleAllowEventRuleTestConstructHubSourcesNpmJsCanary47220A990ABB5DFD": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B",
+      ],
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubSourcesNpmJsCanary5558FC45",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubSourcesNpmJsCanarySchedule4D94219F",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                          "Arn",
+                        ],
+                      },
+                      "/package-canary/*.state.json",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "ConstructHubSourcesNpmJsFollowerFailures86BCBA0D": Object {
       "Properties": Object {
         "AlarmActions": Array [
@@ -10530,6 +10810,18 @@ Object {
       "Description": "S3 key for asset version \\"0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9\\"",
       "Type": "String",
     },
+    "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aArtifactHashFAD0E1F8": Object {
+      "Description": "Artifact hash for asset \\"197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90a\\"",
+      "Type": "String",
+    },
+    "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3BucketAACF0F4A": Object {
+      "Description": "S3 bucket for asset \\"197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90a\\"",
+      "Type": "String",
+    },
+    "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3VersionKeyD116C455": Object {
+      "Description": "S3 key for asset version \\"197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90a\\"",
+      "Type": "String",
+    },
     "AssetParameters1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28ArtifactHashE770D013": Object {
       "Description": "Artifact hash for asset \\"1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28\\"",
       "Type": "String",
@@ -11269,7 +11561,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":64,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "\\",{\\"label\\":\\"Oldest Message\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":58,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Package Canary\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageCanary\\",\\"DwellTime\\",{\\"label\\":\\"Dwell Time\\",\\"period\\":60,\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/PackageCanary\\",\\"TimeToCatalog\\",{\\"label\\":\\"Time to Catalog\\",\\"period\\":60,\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/PackageCanary\\",\\"TrackedVersionCount\\",{\\"label\\":\\"Tracked Version\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff0000\\",\\"label\\":\\"SLA (5 minutes)\\",\\"value\\":300000,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":64,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -15770,7 +16066,18 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Failures\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Failures\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -15781,7 +16088,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -15792,7 +16099,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -15803,7 +16110,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -15814,7 +16121,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":60,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -15822,17 +16129,6 @@ Direct link to function: /lambda/home#/functions/",
               Object {
                 "Fn::GetAtt": Array [
                   "ConstructHubInventoryCanaryFailures5BDA8051",
-                  "Arn",
-                ],
-              },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":60,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002",
                   "Arn",
                 ],
               },
@@ -18898,6 +19194,270 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::Lambda::Function",
     },
+    "ConstructHubSourcesNpmJsCanary5558FC45": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B",
+        "ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3BucketAACF0F4A",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3VersionKeyD116C455",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3VersionKeyD116C455",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
+        "Environment": Object {
+          "Variables": Object {
+            "CONSTRUCT_HUB_BASE_URL": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "https://",
+                  Object {
+                    "Fn::GetAtt": Array [
+                      "ConstructHubWebAppDistribution1F181DC9",
+                      "DomainName",
+                    ],
+                  },
+                ],
+              ],
+            },
+            "PACKAGE_CANARY_BUCKET_NAME": Object {
+              "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+            },
+            "PACKAGE_NAME": "construct-hub-probe",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 10024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 60,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubSourcesNpmJsCanaryAlarmBE2B479E": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmDescription": "New versions of construct-hub-probe have been published over 
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/SLA-Breached",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 2,
+        "Metrics": Array [
+          Object {
+            "Expression": "MAX(mDwell, mTTC)",
+            "Id": "expr_1",
+          },
+          Object {
+            "Id": "mDwell",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "DwellTime",
+                "Namespace": "ConstructHub/PackageCanary",
+              },
+              "Period": 60,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+          Object {
+            "Id": "mTTC",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "TimeToCatalog",
+                "Namespace": "ConstructHub/PackageCanary",
+              },
+              "Period": 60,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Threshold": 300000,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanarySchedule4D94219F": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B",
+      ],
+      "Properties": Object {
+        "Description": "Scheduled executions of the NpmJS package canary",
+        "ScheduleExpression": "rate(1 minute)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubSourcesNpmJsCanary5558FC45",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubSourcesNpmJsCanaryScheduleAllowEventRuleTestConstructHubSourcesNpmJsCanary47220A990ABB5DFD": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B",
+      ],
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubSourcesNpmJsCanary5558FC45",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubSourcesNpmJsCanarySchedule4D94219F",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                          "Arn",
+                        ],
+                      },
+                      "/package-canary/*.state.json",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "ConstructHubSourcesNpmJsFollowerFailures86BCBA0D": Object {
       "Properties": Object {
         "AlarmActions": Array [
@@ -21001,6 +21561,18 @@ Object {
       "Description": "S3 key for asset version \\"0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9\\"",
       "Type": "String",
     },
+    "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aArtifactHashFAD0E1F8": Object {
+      "Description": "Artifact hash for asset \\"197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90a\\"",
+      "Type": "String",
+    },
+    "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3BucketAACF0F4A": Object {
+      "Description": "S3 bucket for asset \\"197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90a\\"",
+      "Type": "String",
+    },
+    "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3VersionKeyD116C455": Object {
+      "Description": "S3 key for asset version \\"197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90a\\"",
+      "Type": "String",
+    },
     "AssetParameters1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28ArtifactHashE770D013": Object {
       "Description": "Artifact hash for asset \\"1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28\\"",
       "Type": "String",
@@ -21913,7 +22485,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":64,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "\\",{\\"label\\":\\"Oldest Message\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":58,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Package Canary\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageCanary\\",\\"DwellTime\\",{\\"label\\":\\"Dwell Time\\",\\"period\\":60,\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/PackageCanary\\",\\"TimeToCatalog\\",{\\"label\\":\\"Time to Catalog\\",\\"period\\":60,\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/PackageCanary\\",\\"TrackedVersionCount\\",{\\"label\\":\\"Tracked Version\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff0000\\",\\"label\\":\\"SLA (5 minutes)\\",\\"value\\":300000,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":64,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -26446,62 +27022,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Failures\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubSourcesNpmJsFollowerFailures86BCBA0D",
-                  "Arn",
-                ],
-              },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Not Running\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubSourcesNpmJsFollowerNotRunningCEAF0E1E",
-                  "Arn",
-                ],
-              },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubSourcesTestConstructHubSourcesNpmJsStagerDLQNotEmpty30787871",
-                  "Arn",
-                ],
-              },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubInventoryCanaryNotRunningAF44D71C",
-                  "Arn",
-                ],
-              },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubInventoryCanaryFailures5BDA8051",
-                  "Arn",
-                ],
-              },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":60,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"ACM Certificate Expiry\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"ACM Certificate Expiry\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -26512,7 +27033,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":66,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Endpoint Certificate Expiry\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Endpoint Certificate Expiry\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -26523,7 +27044,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":72,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -26531,6 +27052,61 @@ Direct link to function: /lambda/home#/functions/",
               Object {
                 "Fn::GetAtt": Array [
                   "ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Failures\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesNpmJsFollowerFailures86BCBA0D",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Not Running\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesNpmJsFollowerNotRunningCEAF0E1E",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":60,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesTestConstructHubSourcesNpmJsStagerDLQNotEmpty30787871",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":66,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubInventoryCanaryNotRunningAF44D71C",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":72,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubInventoryCanaryFailures5BDA8051",
                   "Arn",
                 ],
               },
@@ -29588,6 +30164,257 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::Lambda::Function",
     },
+    "ConstructHubSourcesNpmJsCanary5558FC45": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B",
+        "ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3BucketAACF0F4A",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3VersionKeyD116C455",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3VersionKeyD116C455",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
+        "Environment": Object {
+          "Variables": Object {
+            "CONSTRUCT_HUB_BASE_URL": "https://my.construct.hub",
+            "PACKAGE_CANARY_BUCKET_NAME": Object {
+              "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+            },
+            "PACKAGE_NAME": "construct-hub-probe",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 10024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 60,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubSourcesNpmJsCanaryAlarmBE2B479E": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmDescription": "New versions of construct-hub-probe have been published over 
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/SLA-Breached",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 2,
+        "Metrics": Array [
+          Object {
+            "Expression": "MAX(mDwell, mTTC)",
+            "Id": "expr_1",
+          },
+          Object {
+            "Id": "mDwell",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "DwellTime",
+                "Namespace": "ConstructHub/PackageCanary",
+              },
+              "Period": 60,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+          Object {
+            "Id": "mTTC",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "TimeToCatalog",
+                "Namespace": "ConstructHub/PackageCanary",
+              },
+              "Period": 60,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Threshold": 300000,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanarySchedule4D94219F": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B",
+      ],
+      "Properties": Object {
+        "Description": "Scheduled executions of the NpmJS package canary",
+        "ScheduleExpression": "rate(1 minute)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubSourcesNpmJsCanary5558FC45",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubSourcesNpmJsCanaryScheduleAllowEventRuleTestConstructHubSourcesNpmJsCanary47220A990ABB5DFD": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B",
+      ],
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubSourcesNpmJsCanary5558FC45",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubSourcesNpmJsCanarySchedule4D94219F",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                          "Arn",
+                        ],
+                      },
+                      "/package-canary/*.state.json",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "ConstructHubSourcesNpmJsFollowerFailures86BCBA0D": Object {
       "Properties": Object {
         "AlarmActions": Array [
@@ -31960,6 +32787,18 @@ Object {
       "Description": "S3 key for asset version \\"0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9\\"",
       "Type": "String",
     },
+    "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aArtifactHashFAD0E1F8": Object {
+      "Description": "Artifact hash for asset \\"197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90a\\"",
+      "Type": "String",
+    },
+    "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3BucketAACF0F4A": Object {
+      "Description": "S3 bucket for asset \\"197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90a\\"",
+      "Type": "String",
+    },
+    "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3VersionKeyD116C455": Object {
+      "Description": "S3 key for asset version \\"197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90a\\"",
+      "Type": "String",
+    },
     "AssetParameters1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28ArtifactHashE770D013": Object {
       "Description": "Artifact hash for asset \\"1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28\\"",
       "Type": "String",
@@ -32699,7 +33538,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                   "QueueName",
                 ],
               },
-              "\\",{\\"label\\":\\"Oldest Message\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":64,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
+              "\\",{\\"label\\":\\"Oldest Message\\",\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}},\\"period\\":60}},{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":6,\\"x\\":12,\\"y\\":58,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Package Canary\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[\\"ConstructHub/PackageCanary\\",\\"DwellTime\\",{\\"label\\":\\"Dwell Time\\",\\"period\\":60,\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/PackageCanary\\",\\"TimeToCatalog\\",{\\"label\\":\\"Time to Catalog\\",\\"period\\":60,\\"stat\\":\\"Maximum\\"}],[\\"ConstructHub/PackageCanary\\",\\"TrackedVersionCount\\",{\\"label\\":\\"Tracked Version\\",\\"period\\":60,\\"stat\\":\\"Maximum\\",\\"yAxis\\":\\"right\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"color\\":\\"#ff0000\\",\\"label\\":\\"SLA (5 minutes)\\",\\"value\\":300000,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{\\"left\\":{\\"min\\":0},\\"right\\":{\\"min\\":0}}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":64,\\"properties\\":{\\"markdown\\":\\"# Ingestion Function\\\\n\\\\n[button:Ingestion Function](/lambda/home#/functions/",
               Object {
                 "Ref": "ConstructHubIngestion407909CE",
               },
@@ -35595,7 +36438,18 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Failures\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002",
+                  "Arn",
+                ],
+              },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Failures\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -35606,7 +36460,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":36,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Follower Not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -35617,7 +36471,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs/Stager DLQ Not Empty\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -35628,7 +36482,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":48,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is not Running\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -35639,7 +36493,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":54,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":60,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Inventory Canary is failing\\",\\"region\\":\\"",
               Object {
                 "Ref": "AWS::Region",
               },
@@ -35647,17 +36501,6 @@ Direct link to function: /lambda/home#/functions/",
               Object {
                 "Fn::GetAtt": Array [
                   "ConstructHubInventoryCanaryFailures5BDA8051",
-                  "Arn",
-                ],
-              },
-              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":60,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Home Page Canary\\",\\"region\\":\\"",
-              Object {
-                "Ref": "AWS::Region",
-              },
-              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
-              Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002",
                   "Arn",
                 ],
               },
@@ -39066,6 +39909,270 @@ Direct link to Lambda function: /lambda/home#/functions/",
         },
       },
       "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubSourcesNpmJsCanary5558FC45": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B",
+        "ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3BucketAACF0F4A",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3VersionKeyD116C455",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters197bcdec3a85a08db60d67fdbea191e55dbe0e8495d8dfdba1893e69036cc90aS3VersionKeyD116C455",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
+        "Environment": Object {
+          "Variables": Object {
+            "CONSTRUCT_HUB_BASE_URL": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "https://",
+                  Object {
+                    "Fn::GetAtt": Array [
+                      "ConstructHubWebAppDistribution1F181DC9",
+                      "DomainName",
+                    ],
+                  },
+                ],
+              ],
+            },
+            "PACKAGE_CANARY_BUCKET_NAME": Object {
+              "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+            },
+            "PACKAGE_NAME": "construct-hub-probe",
+          },
+        },
+        "Handler": "index.handler",
+        "MemorySize": 10024,
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 60,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ConstructHubSourcesNpmJsCanaryAlarmBE2B479E": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmDescription": "New versions of construct-hub-probe have been published over 
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/SLA-Breached",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 2,
+        "Metrics": Array [
+          Object {
+            "Expression": "MAX(mDwell, mTTC)",
+            "Id": "expr_1",
+          },
+          Object {
+            "Id": "mDwell",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "DwellTime",
+                "Namespace": "ConstructHub/PackageCanary",
+              },
+              "Period": 60,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+          Object {
+            "Id": "mTTC",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "TimeToCatalog",
+                "Namespace": "ConstructHub/PackageCanary",
+              },
+              "Period": 60,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Threshold": 300000,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanarySchedule4D94219F": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B",
+      ],
+      "Properties": Object {
+        "Description": "Scheduled executions of the NpmJS package canary",
+        "ScheduleExpression": "rate(1 minute)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubSourcesNpmJsCanary5558FC45",
+                "Arn",
+              ],
+            },
+            "Id": "Target0",
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
+    "ConstructHubSourcesNpmJsCanaryScheduleAllowEventRuleTestConstructHubSourcesNpmJsCanary47220A990ABB5DFD": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+        "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B",
+      ],
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubSourcesNpmJsCanary5558FC45",
+            "Arn",
+          ],
+        },
+        "Principal": "events.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubSourcesNpmJsCanarySchedule4D94219F",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+                          "Arn",
+                        ],
+                      },
+                      "/package-canary/*.state.json",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubSourcesNpmJsFollowerFailures86BCBA0D": Object {
       "Properties": Object {

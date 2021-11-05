@@ -122,8 +122,10 @@ export interface WebAppProps extends WebappConfigProps {
 }
 
 export class WebApp extends Construct {
+  public readonly baseUrl: string;
   public readonly bucket: s3.Bucket;
   public readonly distribution: cloudfront.Distribution;
+
   public constructor(scope: Construct, id: string, props: WebAppProps) {
     super(scope, id);
 
@@ -161,6 +163,10 @@ export class WebApp extends Construct {
       })),
       minimumProtocolVersion: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2018,
     });
+
+    // The base URL is currently the custom DNS if any was used, or the distribution domain name.
+    // This needs changing in case, for example, we add support for a custom URL prefix.
+    this.baseUrl = `https://${props.domain ? props.domain.zone.zoneName : this.distribution.distributionDomainName}`;
 
     const jsiiObjOrigin = new origins.S3Origin(props.packageData);
     this.distribution.addBehavior('/data/*', jsiiObjOrigin, behaviorOptions);
