@@ -97,6 +97,20 @@ export const NOT_SUPPORTED_SUFFIX = '.not-supported';
 export const CATALOG_KEY = 'catalog.json';
 
 /**
+ * The keys for missing documentation lists.
+ *
+ * @param language the language for which missing documentation is requested.
+ */
+export function missingDocumentationKey(language: DocumentationLanguage): string {
+  return `missing-objects/${language.name}-documentation.json`;
+}
+
+/**
+ * The key pattern for objects containing missing documentation lists.
+ */
+export const MISSING_DOCUMENTATION_KEY_PATTERN = 'missing-objects/*-documentation.json';
+
+/**
  * A regular expression that can be used to parse out a storage key.
  */
 export const STORAGE_KEY_FORMAT_REGEX = new RegExp(`^${STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`);

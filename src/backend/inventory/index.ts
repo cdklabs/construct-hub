@@ -8,6 +8,7 @@ import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { RUNBOOK_URL } from '../../runbook-url';
+import { MISSING_DOCUMENTATION_KEY_PATTERN } from '../shared/constants';
 import { DocumentationLanguage } from '../shared/language';
 import { Canary } from './canary';
 import { METRICS_NAMESPACE, MetricName, LANGUAGE_DIMENSION } from './constants';
@@ -58,12 +59,13 @@ export class Inventory extends Construct {
       memorySize: 10_240,
       timeout: rate,
     });
-    const grant = props.bucket.grantRead(this.canary);
+    const grantRead = props.bucket.grantRead(this.canary);
+    const grantWrite = props.bucket.grantWrite(this.canary, MISSING_DOCUMENTATION_KEY_PATTERN);
 
     new Rule(this, 'ScheduleRule', {
       schedule: Schedule.rate(rate),
       targets: [new LambdaFunction(this.canary)],
-    }).node.addDependency(grant);
+    }).node.addDependency(grantRead, grantWrite);
 
     props.monitoring.addHighSeverityAlarm(
       'Inventory Canary is not Running',
