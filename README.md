@@ -168,9 +168,9 @@ you may set the `isolateLambdas` setting to `false`.
 ### :baby_chick: Deployment Canaries
 
 Construct Hub provides several built-in validation mechanisms to make sure the
-deploylment of your instance is continuously operating as expected.
+deployment of your instance is continuously operating as expected.
 
-Thess mechanisms come in the form of canary testers that are part of the
+These mechanisms come in the form of canary testers that are part of the
 ConstructHub deployment stack. Each canary runs periodically and performs a
 different check, triggering a different CloudWatch alarm in case it detects a
 failure.
