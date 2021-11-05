@@ -328,7 +328,7 @@ function getJSON(url: string, jsonPath?: string[]): Promise<any> {
           const json = JSONStream.parse(jsonPath ?? true);
           readerFrom(chunks).pipe(json);
           json.once('error', ko);
-          json.once('data', (data) => {
+          json.once('data', (data: any) => {
             ok(data);
           });
           json.once('end', () => {
