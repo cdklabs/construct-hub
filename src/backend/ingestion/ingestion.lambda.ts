@@ -280,6 +280,12 @@ export const handler = metricScope(
       };
       console.log(`Created objects: ${JSON.stringify(created, null, 2)}`);
 
+      if (payload.skipDocgen) {
+        console.log('skipDocgen enabled, skipping StateMachine execution.');
+        continue;
+      }
+
+      // Hand off work to the orchestrator / doc generator
       const sfn = await aws
         .stepFunctions()
         .startExecution({

@@ -525,10 +525,12 @@ Two workflows are available for bulk-reprocessing:
 
 1. The "re-ingest everything" workflow can be used to re-process packages
    through the entire pipeline, including re-generating the `metadata.json`
-   object. This is usually not necessary, unless an issue has been identified
-   with many indexed packages (incorrect or missing `metadata.json`, incorrectly
-   identfied construct framework package, etc...). In most cases, re-generating
-   the documentation is sufficient.
+   object and re-generating all docs. This is usually not necessary, unless an
+   issue has been identified with many indexed packages (incorrect or missing
+   `metadata.json`, incorrectly identfied construct framework package, etc...).
+   In most cases, re-generating the documentation is sufficient. To skip
+   regenerating docs, you can initiate the workflow with the
+   `"skipDocgen": true` option.
 1. The "re-generate all documentation" workflow re-runs all indexed packages
    through the documentation-generation process. This is useful when a new
    language is added to ConstructHub, or the rendered documentation has

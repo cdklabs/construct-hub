@@ -1771,6 +1771,146 @@ test('missing package.json file', async () => {
     .resolves.toBeUndefined();
 });
 
+test('skip docgen', async () => {
+  const mockBucketName = 'fake-bucket';
+  const mockStateMachineArn = 'fake-state-machine-arn';
+  const mockConfigBucket = 'fake-config-bucket';
+  const mockConfigkey = 'fake-config-obj-key';
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
+  mockRequireEnv.mockImplementation((name) => {
+    if (name === 'BUCKET_NAME') {
+      return mockBucketName;
+    }
+    if (name === 'STATE_MACHINE_ARN') {
+      return mockStateMachineArn;
+    }
+    if (name === 'CONFIG_BUCKET_NAME') {
+      return mockConfigBucket;
+    }
+    if (name === 'CONFIG_FILE_KEY') {
+      return mockConfigkey;
+    }
+    throw new Error(`Bad environment variable: "${name}"`);
+  });
+
+  const stagingBucket = 'staging-bucket';
+  const stagingKey = 'staging-key';
+  const stagingVersion = 'staging-version-id';
+  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
+  const fakeTar = Buffer.from('fake-tarball-content');
+  const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
+  const time = '2021-07-12T15:18:00.000000+02:00';
+  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
+  const packageName = '@package-scope/package-name';
+  const packageVersion = '1.2.3-pre.4';
+  const packageLicense = 'Apache-2.0';
+  const fakeDotJsii = JSON.stringify(fakeAssembly(packageName, packageVersion, packageLicense));
+  const mockConfig = Buffer.from(JSON.stringify({
+    packageLinks: [],
+    packageTags: [],
+  }));
+
+  const context: Context = {
+    awsRequestId: 'Fake-Request-ID',
+    logGroupName: 'Fake-Log-Group',
+    logStreamName: 'Fake-Log-Stream',
+  } as any;
+
+  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+    if (req.Bucket === mockConfigBucket) {
+      try {
+        expect(req.Bucket).toBe(mockConfigBucket);
+        expect(req.Key).toBe(mockConfigkey);
+      } catch (e) {
+        return cb(e);
+      }
+      return cb(null, { Body: mockConfig });
+    }
+
+    try {
+      expect(req.Bucket).toBe(stagingBucket);
+      expect(req.Key).toBe(stagingKey);
+      expect(req.VersionId).toBe(stagingVersion);
+    } catch (e) {
+      return cb(e);
+    }
+    return cb(null, { Body: fakeTarGz });
+  });
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<typeof createGunzip>;
+  mockCreateGunzip.mockImplementation(() => new FakeGunzip(fakeTarGz, fakeTar) as any);
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockExtract = require('tar-stream').extract as jest.MockedFunction<typeof extract>;
+  mockExtract.mockImplementation(() => new FakeExtract(fakeTar, {
+    'package/.jsii': fakeDotJsii,
+    'package/index.js': '// Ignore me!',
+    'package/package.json': JSON.stringify({ name: packageName, version: packageVersion, license: packageLicense }),
+  }) as any);
+
+  let mockTarballCreated = false;
+  let mockMetadataCreated = false;
+  const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(packageName, packageVersion);
+  AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
+    try {
+      expect(req.Bucket).toBe(mockBucketName);
+      expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+      expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
+      expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+      switch (req.Key) {
+        case assemblyKey:
+          expect(req.ContentType).toBe('application/json');
+          expect(req.Body).toEqual(Buffer.from(fakeDotJsii));
+          // Must be created strictly after the tarball and metadata files have been uploaded.
+          expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+          break;
+        case metadataKey:
+          expect(req.ContentType).toBe('application/json');
+          expect(Buffer.from(req.Body!)).toEqual(Buffer.from(JSON.stringify({ date: time, packageLinks: {}, packageTags: [] })));
+          mockMetadataCreated = true;
+          break;
+        case packageKey:
+          expect(req.ContentType).toBe('application/octet-stream');
+          expect(req.Body).toEqual(fakeTarGz);
+          mockTarballCreated = true;
+          break;
+        default:
+          fail(`Unexpected key: "${req.Key}"`);
+      }
+    } catch (e) {
+      return cb(e);
+    }
+    return cb(null, { VersionId: `${req.Key}-NewVersion` });
+  });
+
+  const event: SQSEvent = {
+    Records: [{
+      attributes: {} as any,
+      awsRegion: 'test-bermuda-1',
+      body: JSON.stringify({ tarballUri, integrity, time, skipDocgen: true }),
+      eventSource: 'sqs',
+      eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
+      md5OfBody: 'Fake-MD5-Of-Body',
+      messageAttributes: {},
+      messageId: 'Fake-Message-ID',
+      receiptHandle: 'Fake-Receipt-Handke',
+    }],
+  };
+
+  // We require the handler here so that any mocks to metricScope are set up
+  // prior to the handler being created.
+  //
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  await expect(require('../../../backend/ingestion/ingestion.lambda').handler(event, context))
+    .resolves.toEqual([]); // no execution ARNs returned because docgen is skipped
+
+  expect(mockPutMetric).toHaveBeenCalledWith(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 0, 'Count');
+  expect(mockPutMetric).toHaveBeenCalledWith(MetricName.FOUND_LICENSE_FILE, 0, 'Count');
+});
+
 type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
 
 class FakeGunzip extends EventEmitter {

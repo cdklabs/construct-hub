@@ -6,7 +6,7 @@ import { RetentionDays } from '@aws-cdk/aws-logs';
 import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
 import { BucketDeployment, Source } from '@aws-cdk/aws-s3-deployment';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
-import { StateMachine, JsonPath, Choice, Succeed, Condition, Map, TaskInput, IntegrationPattern } from '@aws-cdk/aws-stepfunctions';
+import { StateMachine, JsonPath, Choice, Succeed, Condition, Map, TaskInput, IntegrationPattern, Pass } from '@aws-cdk/aws-stepfunctions';
 import { CallAwsService, LambdaInvoke, StepFunctionsStartExecution } from '@aws-cdk/aws-stepfunctions-tasks';
 import { Construct, Duration, Stack, ArnFormat } from '@aws-cdk/core';
 import { Repository } from '../../codeartifact/repository';
@@ -287,6 +287,16 @@ interface ReprocessIngestionWorkflowProps {
  * through the ingestion function. This should not be frequently required, but
  * can come in handy at times.
  *
+ * This uses a Step Functions state machine to loop through package versions in
+ * the package data bucket, identifying them by their `metadata.json` object.
+ * Whenever it finds a package, it adds a message with the `metadata.json` and
+ * tarball object keys to a SQS queue, which is provided as an event source to
+ * the main Ingestion lambda.
+ *
+ * By default, successfully re-ingested packages will continue to have their
+ * docs re-generated. This can be skipped by passing { "skipDocgen": true } in
+ * the initial request.
+ *
  * For more information, refer to the runbook at
  * https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
  */
@@ -310,7 +320,11 @@ class ReprocessIngestionWorkflow extends Construct {
     // Need to physical-name the state machine so it can self-invoke.
     const stateMachineName = stateMachineNameFrom(this.node.path);
 
-    const listBucket = new Choice(this, 'Has a ContinuationToken?')
+    const listBucket = new Pass(this, 'Move input into $.params', {
+      parameters: {
+        'params.$': '$',
+      },
+    }).next(new Choice(this, 'Has a ContinuationToken?')
       .when(Condition.isPresent('$.ContinuationToken'),
         new CallAwsService(this, 'S3.ListObjectsV2(NextPage)', {
           service: 's3',
@@ -334,15 +348,19 @@ class ReprocessIngestionWorkflow extends Construct {
           Prefix: STORAGE_KEY_PREFIX,
         },
         resultPath: '$.response',
-      }).addRetry({ errors: ['S3.SdkClientException'] })).afterwards();
+      }).addRetry({ errors: ['S3.SdkClientException'] })).afterwards());
 
     const process = new Map(this, 'Process Result', {
       itemsPath: '$.response.Contents',
+      parameters: {
+        's3Object.$': '$$.Map.Item.Value',
+        'params.$': '$.params',
+      },
       resultPath: JsonPath.DISCARD,
     }).iterator(
       new Choice(this, 'Is metadata object?')
         .when(
-          Condition.stringMatches('$.Key', `*${METADATA_KEY_SUFFIX}`),
+          Condition.stringMatches('$.s3Object.Key', `*${METADATA_KEY_SUFFIX}`),
           new LambdaInvoke(this, 'Send for reprocessing', { lambdaFunction })
             // Ample retries here... We should never fail because of throttling....
             .addRetry({ errors: ['Lambda.TooManyRequestsException'], backoffRate: 1.1, interval: Duration.minutes(1), maxAttempts: 30 }),

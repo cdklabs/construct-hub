@@ -22,4 +22,11 @@ export interface IngestionInput {
    * The time at which the version was published, encoded in ISO-8601 format.
    */
   readonly time: string;
+
+  /**
+   * Skip generating docs.
+   *
+   * @default false
+   */
+  readonly skipDocgen?: boolean;
 }

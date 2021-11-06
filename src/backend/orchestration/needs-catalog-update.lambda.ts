@@ -20,7 +20,7 @@ export type Input = Pick<StateMachineInput, 'package'>;
 export async function handler(event: Input): Promise<boolean> {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
 
-  const [, packageName, version] = STORAGE_KEY_FORMAT_REGEX.exec(event.package.key) ?? die(`Unecpedted/invalid package key: ${event.package.key}`);
+  const [, packageName, version] = STORAGE_KEY_FORMAT_REGEX.exec(event.package.key) ?? die(`Unexpected/invalid package key: ${event.package.key}`);
   const packageMajor = major(version);
 
   const catalogClient = await CatalogClient.newClient();

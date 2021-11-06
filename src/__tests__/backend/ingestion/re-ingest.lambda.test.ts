@@ -35,7 +35,9 @@ afterEach((done) => {
 test('basic case', () => {
   // GIVEN
   const event = {
-    Key: `${STORAGE_KEY_PREFIX}dummy${METADATA_KEY_SUFFIX}`,
+    s3Object: {
+      Key: `${STORAGE_KEY_PREFIX}dummy${METADATA_KEY_SUFFIX}`,
+    },
   };
   const mockTime = '2021-10-11T10:33:56.511Z';
   const tarballKey = `${STORAGE_KEY_PREFIX}dummy${PACKAGE_KEY_SUFFIX}`;
@@ -49,7 +51,7 @@ test('basic case', () => {
   AWSMock.mock('S3', 'getObject', (request, cb) => {
     try {
       expect(request.Bucket).toBe(mockBucketName);
-      if (request.Key === event.Key) {
+      if (request.Key === event.s3Object.Key) {
         cb(null, { Body: JSON.stringify({ date: mockTime }) });
       } else if (request.Key === tarballKey) {
         cb(null, { Body: Buffer.from('this-is-a-tarball-believe-me') });
@@ -73,6 +75,66 @@ test('basic case', () => {
         },
         tarballUri: `s3://${mockBucketName}/${STORAGE_KEY_PREFIX}dummy${PACKAGE_KEY_SUFFIX}`,
         time: mockTime,
+      });
+      cb(null, {});
+    } catch (e) {
+      cb(e, undefined);
+    }
+  });
+
+  // THEN
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  return expect(require('../../../backend/ingestion/re-ingest.lambda').handler(event, context))
+    .resolves.not.toThrowError();
+});
+
+test('skip docgen', () => {
+  // GIVEN
+  const event = {
+    s3Object: {
+      Key: `${STORAGE_KEY_PREFIX}dummy${METADATA_KEY_SUFFIX}`,
+    },
+    params: {
+      skipDocgen: true,
+    },
+  };
+  const mockTime = '2021-10-11T10:33:56.511Z';
+  const tarballKey = `${STORAGE_KEY_PREFIX}dummy${PACKAGE_KEY_SUFFIX}`;
+
+  const context = {
+    awsRequestId: 'dummy-request-id',
+    logGroupName: 'log-group-name',
+    logStreamName: 'log-stream-name',
+  } as any;
+
+  AWSMock.mock('S3', 'getObject', (request, cb) => {
+    try {
+      expect(request.Bucket).toBe(mockBucketName);
+      if (request.Key === event.s3Object.Key) {
+        cb(null, { Body: JSON.stringify({ date: mockTime }) });
+      } else if (request.Key === tarballKey) {
+        cb(null, { Body: Buffer.from('this-is-a-tarball-believe-me') });
+      } else {
+        fail(`Unexpected object key: ${request.Key}`);
+      }
+    } catch (e) {
+      cb(e, undefined);
+    }
+  });
+
+  AWSMock.mock('SQS', 'sendMessage', (request, cb) => {
+    try {
+      expect(request.QueueUrl).toBe(mockQueueUrl);
+      expect(JSON.parse(request.MessageBody)).toEqual({
+        integrity: 'sha384-sQ9dnSmDKM875DcJKcQNmU6VKy/nJe3iA5GmaREMnoXxFOpjxEOxNYqwByBj/iyb',
+        metadata: {
+          reprocessLogGroup: context.logGroupName,
+          reprocessLogStream: context.logStreamName,
+          reprocessRequestId: context.awsRequestId,
+        },
+        tarballUri: `s3://${mockBucketName}/${STORAGE_KEY_PREFIX}dummy${PACKAGE_KEY_SUFFIX}`,
+        time: mockTime,
+        skipDocgen: true,
       });
       cb(null, {});
     } catch (e) {

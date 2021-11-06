@@ -5,8 +5,9 @@ import { METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX } from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
 
-interface Input extends AWS.S3.Object {
-  Key: string;
+interface Input {
+  s3Object: AWS.S3.Object;
+  params: { skipDocgen?: boolean };
 }
 
 export async function handler(event: Input, context: Context) {
@@ -15,15 +16,20 @@ export async function handler(event: Input, context: Context) {
   const bucket = requireEnv('BUCKET_NAME');
   const queueUrl = requireEnv('QUEUE_URL');
 
-  console.log(`Download metadata object at ${bucket}/${event.Key}`);
-  const { Body: jsonMetadata } = await aws.s3().getObject({ Bucket: bucket, Key: event.Key }).promise();
+  const metadataKey = event.s3Object.Key;
+  if (!metadataKey) {
+    throw new Error('No key found.');
+  }
+
+  console.log(`Download metadata object at ${bucket}/${metadataKey}`);
+  const { Body: jsonMetadata } = await aws.s3().getObject({ Bucket: bucket, Key: metadataKey }).promise();
   if (jsonMetadata == null) {
-    console.error(`No body found in ${bucket}/${event.Key}, aborting.`);
+    console.error(`No body found in ${bucket}/${metadataKey}, aborting.`);
     return;
   }
   const { date: time } = JSON.parse(jsonMetadata.toString('utf-8'));
 
-  const tarballKey = `${event.Key.substr(0, event.Key.length - METADATA_KEY_SUFFIX.length)}${PACKAGE_KEY_SUFFIX}`;
+  const tarballKey = `${metadataKey.substr(0, metadataKey.length - METADATA_KEY_SUFFIX.length)}${PACKAGE_KEY_SUFFIX}`;
   console.log(`Download metadata object at ${bucket}/${tarballKey}`);
   const { Body: tarball, VersionId: versionId } = await aws.s3().getObject({ Bucket: bucket, Key: tarballKey }).promise();
   if (tarball == null) {
@@ -39,6 +45,7 @@ export async function handler(event: Input, context: Context) {
       reprocessLogGroup: context.logGroupName,
       reprocessLogStream: context.logStreamName,
     },
+    skipDocgen: event.params?.skipDocgen,
   }, Buffer.from(tarball));
 
   console.log(`Sending message to reprocess queue: ${JSON.stringify(ingestionInput, null, 2)}`);
