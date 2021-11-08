@@ -29,5 +29,7 @@ function handler(event: CloudFrontResponse) {
       ].join(' '),
   };
 
+  headers['clear-site-data'] = { value: '"cache", "storage"' };
+
   return response;
 }
