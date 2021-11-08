@@ -654,7 +654,7 @@ Resources:
       Description: Upstream with external connection to public:npmjs
       ExternalConnections:
         - public:npmjs
-  ConstructHubLambdaVPCE85ABF51:
+  ConstructHubVPC16ECCEA2:
     Type: AWS::EC2::VPC
     Properties:
       CidrBlock: 10.0.0.0/16
@@ -663,13 +663,13 @@ Resources:
       InstanceTenancy: default
       Tags:
         - Key: Name
-          Value: dev/ConstructHub/Lambda-VPC
-  ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B:
+          Value: dev/ConstructHub/VPC
+  ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A:
     Type: AWS::EC2::Subnet
     Properties:
       CidrBlock: 10.0.128.0/19
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
+        Ref: ConstructHubVPC16ECCEA2
       AvailabilityZone:
         Fn::Select:
           - 0
@@ -681,28 +681,28 @@ Resources:
         - Key: aws-cdk:subnet-type
           Value: Isolated
         - Key: Name
-          Value: dev/ConstructHub/Lambda-VPC/IsolatedSubnet1
-  ConstructHubLambdaVPCIsolatedSubnet1RouteTable65529AB4:
+          Value: dev/ConstructHub/VPC/IsolatedSubnet1
+  ConstructHubVPCIsolatedSubnet1RouteTable750E6F36:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
+        Ref: ConstructHubVPC16ECCEA2
       Tags:
         - Key: Name
-          Value: dev/ConstructHub/Lambda-VPC/IsolatedSubnet1
-  ConstructHubLambdaVPCIsolatedSubnet1RouteTableAssociation26A1CF34:
+          Value: dev/ConstructHub/VPC/IsolatedSubnet1
+  ConstructHubVPCIsolatedSubnet1RouteTableAssociation3F8E4C37:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId:
-        Ref: ConstructHubLambdaVPCIsolatedSubnet1RouteTable65529AB4
+        Ref: ConstructHubVPCIsolatedSubnet1RouteTable750E6F36
       SubnetId:
-        Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
-  ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B:
+        Ref: ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A
+  ConstructHubVPCIsolatedSubnet2Subnet483D4302:
     Type: AWS::EC2::Subnet
     Properties:
       CidrBlock: 10.0.160.0/19
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
+        Ref: ConstructHubVPC16ECCEA2
       AvailabilityZone:
         Fn::Select:
           - 1
@@ -714,39 +714,39 @@ Resources:
         - Key: aws-cdk:subnet-type
           Value: Isolated
         - Key: Name
-          Value: dev/ConstructHub/Lambda-VPC/IsolatedSubnet2
-  ConstructHubLambdaVPCIsolatedSubnet2RouteTable57ABF8F6:
+          Value: dev/ConstructHub/VPC/IsolatedSubnet2
+  ConstructHubVPCIsolatedSubnet2RouteTable18129C5D:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
+        Ref: ConstructHubVPC16ECCEA2
       Tags:
         - Key: Name
-          Value: dev/ConstructHub/Lambda-VPC/IsolatedSubnet2
-  ConstructHubLambdaVPCIsolatedSubnet2RouteTableAssociation78494BD1:
+          Value: dev/ConstructHub/VPC/IsolatedSubnet2
+  ConstructHubVPCIsolatedSubnet2RouteTableAssociationF8AD0E0F:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
       RouteTableId:
-        Ref: ConstructHubLambdaVPCIsolatedSubnet2RouteTable57ABF8F6
+        Ref: ConstructHubVPCIsolatedSubnet2RouteTable18129C5D
       SubnetId:
-        Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
-  ConstructHubLambdaVPCIGWBD019E6D:
+        Ref: ConstructHubVPCIsolatedSubnet2Subnet483D4302
+  ConstructHubVPCIGW935F4C28:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
-          Value: dev/ConstructHub/Lambda-VPC
-  ConstructHubLambdaVPCVPCGWF32CA0BD:
+          Value: dev/ConstructHub/VPC
+  ConstructHubVPCVPCGWDF75BD8E:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
+        Ref: ConstructHubVPC16ECCEA2
       InternetGatewayId:
-        Ref: ConstructHubLambdaVPCIGWBD019E6D
-  ConstructHubLambdaVPCCodeArtifactAPISecurityGroup4732A9BF:
+        Ref: ConstructHubVPCIGW935F4C28
+  ConstructHubVPCCodeArtifactAPISecurityGroupBE06BEF9:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: dev/ConstructHub/Lambda-VPC/CodeArtifact.API/SecurityGroup
+      GroupDescription: dev/ConstructHub/VPC/CodeArtifact.API/SecurityGroup
       SecurityGroupEgress:
         - CidrIp: 0.0.0.0/0
           Description: Allow all outbound traffic by default
@@ -754,14 +754,14 @@ Resources:
       SecurityGroupIngress:
         - CidrIp:
             Fn::GetAtt:
-              - ConstructHubLambdaVPCE85ABF51
+              - ConstructHubVPC16ECCEA2
               - CidrBlock
           Description:
             Fn::Join:
               - ""
               - - "from "
                 - Fn::GetAtt:
-                    - ConstructHubLambdaVPCE85ABF51
+                    - ConstructHubVPC16ECCEA2
                     - CidrBlock
                 - :443
           FromPort: 443
@@ -769,10 +769,10 @@ Resources:
           ToPort: 443
       Tags:
         - Key: Name
-          Value: dev/ConstructHub/Lambda-VPC
+          Value: dev/ConstructHub/VPC
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
-  ConstructHubLambdaVPCCodeArtifactAPI0A2356B9:
+        Ref: ConstructHubVPC16ECCEA2
+  ConstructHubVPCCodeArtifactAPI954CFDE1:
     Type: AWS::EC2::VPCEndpoint
     Properties:
       ServiceName:
@@ -782,7 +782,7 @@ Resources:
             - Ref: AWS::Region
             - .codeartifact.api
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
+        Ref: ConstructHubVPC16ECCEA2
       PolicyDocument:
         Statement:
           - Action: sts:GetServiceBearerToken
@@ -816,16 +816,16 @@ Resources:
       PrivateDnsEnabled: false
       SecurityGroupIds:
         - Fn::GetAtt:
-            - ConstructHubLambdaVPCCodeArtifactAPISecurityGroup4732A9BF
+            - ConstructHubVPCCodeArtifactAPISecurityGroupBE06BEF9
             - GroupId
       SubnetIds:
-        - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
-        - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
+        - Ref: ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A
+        - Ref: ConstructHubVPCIsolatedSubnet2Subnet483D4302
       VpcEndpointType: Interface
-  ConstructHubLambdaVPCCodeArtifactSecurityGroup81DA2A6B:
+  ConstructHubVPCCodeArtifactSecurityGroupBCADE40D:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: dev/ConstructHub/Lambda-VPC/CodeArtifact/SecurityGroup
+      GroupDescription: dev/ConstructHub/VPC/CodeArtifact/SecurityGroup
       SecurityGroupEgress:
         - CidrIp: 0.0.0.0/0
           Description: Allow all outbound traffic by default
@@ -833,14 +833,14 @@ Resources:
       SecurityGroupIngress:
         - CidrIp:
             Fn::GetAtt:
-              - ConstructHubLambdaVPCE85ABF51
+              - ConstructHubVPC16ECCEA2
               - CidrBlock
           Description:
             Fn::Join:
               - ""
               - - "from "
                 - Fn::GetAtt:
-                    - ConstructHubLambdaVPCE85ABF51
+                    - ConstructHubVPC16ECCEA2
                     - CidrBlock
                 - :443
           FromPort: 443
@@ -848,10 +848,10 @@ Resources:
           ToPort: 443
       Tags:
         - Key: Name
-          Value: dev/ConstructHub/Lambda-VPC
+          Value: dev/ConstructHub/VPC
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
-  ConstructHubLambdaVPCCodeArtifactBBCFE15F:
+        Ref: ConstructHubVPC16ECCEA2
+  ConstructHubVPCCodeArtifactBD6E076F:
     Type: AWS::EC2::VPCEndpoint
     Properties:
       ServiceName:
@@ -861,7 +861,7 @@ Resources:
             - Ref: AWS::Region
             - .codeartifact.repositories
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
+        Ref: ConstructHubVPC16ECCEA2
       PolicyDocument:
         Statement:
           - Action: codeartifact:ReadFromRepository
@@ -879,16 +879,16 @@ Resources:
       PrivateDnsEnabled: true
       SecurityGroupIds:
         - Fn::GetAtt:
-            - ConstructHubLambdaVPCCodeArtifactSecurityGroup81DA2A6B
+            - ConstructHubVPCCodeArtifactSecurityGroupBCADE40D
             - GroupId
       SubnetIds:
-        - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
-        - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
+        - Ref: ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A
+        - Ref: ConstructHubVPCIsolatedSubnet2Subnet483D4302
       VpcEndpointType: Interface
-  ConstructHubLambdaVPCCloudWatchLogsSecurityGroup2DDE0C8C:
+  ConstructHubVPCCloudWatchLogsSecurityGroupA76B1F47:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: dev/ConstructHub/Lambda-VPC/CloudWatch.Logs/SecurityGroup
+      GroupDescription: dev/ConstructHub/VPC/CloudWatch.Logs/SecurityGroup
       SecurityGroupEgress:
         - CidrIp: 0.0.0.0/0
           Description: Allow all outbound traffic by default
@@ -896,14 +896,14 @@ Resources:
       SecurityGroupIngress:
         - CidrIp:
             Fn::GetAtt:
-              - ConstructHubLambdaVPCE85ABF51
+              - ConstructHubVPC16ECCEA2
               - CidrBlock
           Description:
             Fn::Join:
               - ""
               - - "from "
                 - Fn::GetAtt:
-                    - ConstructHubLambdaVPCE85ABF51
+                    - ConstructHubVPC16ECCEA2
                     - CidrBlock
                 - :443
           FromPort: 443
@@ -911,10 +911,10 @@ Resources:
           ToPort: 443
       Tags:
         - Key: Name
-          Value: dev/ConstructHub/Lambda-VPC
+          Value: dev/ConstructHub/VPC
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
-  ConstructHubLambdaVPCCloudWatchLogsE401CF75:
+        Ref: ConstructHubVPC16ECCEA2
+  ConstructHubVPCCloudWatchLogsDF3CC579:
     Type: AWS::EC2::VPCEndpoint
     Properties:
       ServiceName:
@@ -924,7 +924,7 @@ Resources:
             - Ref: AWS::Region
             - .logs
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
+        Ref: ConstructHubVPC16ECCEA2
       PolicyDocument:
         Statement:
           - Action:
@@ -963,16 +963,16 @@ Resources:
       PrivateDnsEnabled: true
       SecurityGroupIds:
         - Fn::GetAtt:
-            - ConstructHubLambdaVPCCloudWatchLogsSecurityGroup2DDE0C8C
+            - ConstructHubVPCCloudWatchLogsSecurityGroupA76B1F47
             - GroupId
       SubnetIds:
-        - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
-        - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
+        - Ref: ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A
+        - Ref: ConstructHubVPCIsolatedSubnet2Subnet483D4302
       VpcEndpointType: Interface
-  ConstructHubLambdaVPCECRAPISecurityGroupA3F344BC:
+  ConstructHubVPCECRAPISecurityGroup8D2AF9AB:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: dev/ConstructHub/Lambda-VPC/ECR.API/SecurityGroup
+      GroupDescription: dev/ConstructHub/VPC/ECR.API/SecurityGroup
       SecurityGroupEgress:
         - CidrIp: 0.0.0.0/0
           Description: Allow all outbound traffic by default
@@ -980,14 +980,14 @@ Resources:
       SecurityGroupIngress:
         - CidrIp:
             Fn::GetAtt:
-              - ConstructHubLambdaVPCE85ABF51
+              - ConstructHubVPC16ECCEA2
               - CidrBlock
           Description:
             Fn::Join:
               - ""
               - - "from "
                 - Fn::GetAtt:
-                    - ConstructHubLambdaVPCE85ABF51
+                    - ConstructHubVPC16ECCEA2
                     - CidrBlock
                 - :443
           FromPort: 443
@@ -995,10 +995,10 @@ Resources:
           ToPort: 443
       Tags:
         - Key: Name
-          Value: dev/ConstructHub/Lambda-VPC
+          Value: dev/ConstructHub/VPC
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
-  ConstructHubLambdaVPCECRAPI8A74C5DC:
+        Ref: ConstructHubVPC16ECCEA2
+  ConstructHubVPCECRAPI4A1FDD7F:
     Type: AWS::EC2::VPCEndpoint
     Properties:
       ServiceName:
@@ -1008,7 +1008,7 @@ Resources:
             - Ref: AWS::Region
             - .ecr.api
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
+        Ref: ConstructHubVPC16ECCEA2
       PolicyDocument:
         Statement:
           - Action: ecr:GetAuthorizationToken
@@ -1024,16 +1024,16 @@ Resources:
       PrivateDnsEnabled: true
       SecurityGroupIds:
         - Fn::GetAtt:
-            - ConstructHubLambdaVPCECRAPISecurityGroupA3F344BC
+            - ConstructHubVPCECRAPISecurityGroup8D2AF9AB
             - GroupId
       SubnetIds:
-        - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
-        - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
+        - Ref: ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A
+        - Ref: ConstructHubVPCIsolatedSubnet2Subnet483D4302
       VpcEndpointType: Interface
-  ConstructHubLambdaVPCECRDockerSecurityGroup62F11080:
+  ConstructHubVPCECRDockerSecurityGroup551A7124:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: dev/ConstructHub/Lambda-VPC/ECR.Docker/SecurityGroup
+      GroupDescription: dev/ConstructHub/VPC/ECR.Docker/SecurityGroup
       SecurityGroupEgress:
         - CidrIp: 0.0.0.0/0
           Description: Allow all outbound traffic by default
@@ -1041,14 +1041,14 @@ Resources:
       SecurityGroupIngress:
         - CidrIp:
             Fn::GetAtt:
-              - ConstructHubLambdaVPCE85ABF51
+              - ConstructHubVPC16ECCEA2
               - CidrBlock
           Description:
             Fn::Join:
               - ""
               - - "from "
                 - Fn::GetAtt:
-                    - ConstructHubLambdaVPCE85ABF51
+                    - ConstructHubVPC16ECCEA2
                     - CidrBlock
                 - :443
           FromPort: 443
@@ -1056,10 +1056,10 @@ Resources:
           ToPort: 443
       Tags:
         - Key: Name
-          Value: dev/ConstructHub/Lambda-VPC
+          Value: dev/ConstructHub/VPC
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
-  ConstructHubLambdaVPCECRDocker6B5A9047:
+        Ref: ConstructHubVPC16ECCEA2
+  ConstructHubVPCECRDocker6B2F6942:
     Type: AWS::EC2::VPCEndpoint
     Properties:
       ServiceName:
@@ -1069,7 +1069,7 @@ Resources:
             - Ref: AWS::Region
             - .ecr.dkr
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
+        Ref: ConstructHubVPC16ECCEA2
       PolicyDocument:
         Statement:
           - Action:
@@ -1097,13 +1097,13 @@ Resources:
       PrivateDnsEnabled: true
       SecurityGroupIds:
         - Fn::GetAtt:
-            - ConstructHubLambdaVPCECRDockerSecurityGroup62F11080
+            - ConstructHubVPCECRDockerSecurityGroup551A7124
             - GroupId
       SubnetIds:
-        - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
-        - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
+        - Ref: ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A
+        - Ref: ConstructHubVPCIsolatedSubnet2Subnet483D4302
       VpcEndpointType: Interface
-  ConstructHubLambdaVPCS3E3D830AE:
+  ConstructHubVPCS319E90CB6:
     Type: AWS::EC2::VPCEndpoint
     Properties:
       ServiceName:
@@ -1113,7 +1113,7 @@ Resources:
             - Ref: AWS::Region
             - .s3
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
+        Ref: ConstructHubVPC16ECCEA2
       PolicyDocument:
         Statement:
           - Action: s3:GetObject
@@ -1441,13 +1441,13 @@ Resources:
                     - /data/*/docs-*-csharp.md.not-supported
         Version: 2012-10-17
       RouteTableIds:
-        - Ref: ConstructHubLambdaVPCIsolatedSubnet1RouteTable65529AB4
-        - Ref: ConstructHubLambdaVPCIsolatedSubnet2RouteTable57ABF8F6
+        - Ref: ConstructHubVPCIsolatedSubnet1RouteTable750E6F36
+        - Ref: ConstructHubVPCIsolatedSubnet2RouteTable18129C5D
       VpcEndpointType: Gateway
-  ConstructHubLambdaVPCStepFunctionsSecurityGroup7870779C:
+  ConstructHubVPCStepFunctionsSecurityGroup1757018B:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: dev/ConstructHub/Lambda-VPC/StepFunctions/SecurityGroup
+      GroupDescription: dev/ConstructHub/VPC/StepFunctions/SecurityGroup
       SecurityGroupEgress:
         - CidrIp: 0.0.0.0/0
           Description: Allow all outbound traffic by default
@@ -1455,14 +1455,14 @@ Resources:
       SecurityGroupIngress:
         - CidrIp:
             Fn::GetAtt:
-              - ConstructHubLambdaVPCE85ABF51
+              - ConstructHubVPC16ECCEA2
               - CidrBlock
           Description:
             Fn::Join:
               - ""
               - - "from "
                 - Fn::GetAtt:
-                    - ConstructHubLambdaVPCE85ABF51
+                    - ConstructHubVPC16ECCEA2
                     - CidrBlock
                 - :443
           FromPort: 443
@@ -1470,10 +1470,10 @@ Resources:
           ToPort: 443
       Tags:
         - Key: Name
-          Value: dev/ConstructHub/Lambda-VPC
+          Value: dev/ConstructHub/VPC
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
-  ConstructHubLambdaVPCStepFunctions5DBDA356:
+        Ref: ConstructHubVPC16ECCEA2
+  ConstructHubVPCStepFunctionsBE8464F5:
     Type: AWS::EC2::VPCEndpoint
     Properties:
       ServiceName:
@@ -1483,7 +1483,7 @@ Resources:
             - Ref: AWS::Region
             - .states
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
+        Ref: ConstructHubVPC16ECCEA2
       PolicyDocument:
         Statement:
           - Action:
@@ -1502,11 +1502,11 @@ Resources:
       PrivateDnsEnabled: true
       SecurityGroupIds:
         - Fn::GetAtt:
-            - ConstructHubLambdaVPCStepFunctionsSecurityGroup7870779C
+            - ConstructHubVPCStepFunctionsSecurityGroup1757018B
             - GroupId
       SubnetIds:
-        - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
-        - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
+        - Ref: ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A
+        - Ref: ConstructHubVPCIsolatedSubnet2Subnet483D4302
       VpcEndpointType: Interface
   ConstructHubDenyListBucketNotifications2269EB2A:
     Type: Custom::S3BucketNotifications
@@ -2706,7 +2706,7 @@ Resources:
                       - Fn::Select:
                           - 0
                           - Fn::GetAtt:
-                              - ConstructHubLambdaVPCCodeArtifactAPI0A2356B9
+                              - ConstructHubVPCCodeArtifactAPI954CFDE1
                               - DnsEntries
             - Name: CODE_ARTIFACT_DOMAIN_NAME
               Value:
@@ -2810,7 +2810,7 @@ Resources:
           Description: Allow all outbound traffic by default
           IpProtocol: "-1"
       VpcId:
-        Ref: ConstructHubLambdaVPCE85ABF51
+        Ref: ConstructHubVPC16ECCEA2
   ConstructHubOrchestrationRoleF4CF6987:
     Type: AWS::IAM::Role
     Properties:
@@ -2827,7 +2827,7 @@ Resources:
                     - .amazonaws.com
         Version: 2012-10-17
     DependsOn:
-      - ConstructHubLambdaVPCIGWBD019E6D
+      - ConstructHubVPCIGW935F4C28
   ConstructHubOrchestrationRoleDefaultPolicyEACD181F:
     Type: AWS::IAM::Policy
     Properties:
@@ -2926,7 +2926,7 @@ Resources:
       Roles:
         - Ref: ConstructHubOrchestrationRoleF4CF6987
     DependsOn:
-      - ConstructHubLambdaVPCIGWBD019E6D
+      - ConstructHubVPCIGW935F4C28
   ConstructHubOrchestration39161A46:
     Type: AWS::StepFunctions::StateMachine
     Properties:
@@ -2957,9 +2957,9 @@ Resources:
                 - ConstructHubOrchestrationCluster3D6F0081
                 - Arn
             - '","TaskDefinition":"devConstructHubOrchestrationTransliteratorTaskDefinitionBB251CCC","NetworkConfiguration":{"AwsvpcConfiguration":{"Subnets":["'
-            - Ref: ConstructHubLambdaVPCIsolatedSubnet1Subnet33EDE47B
+            - Ref: ConstructHubVPCIsolatedSubnet1SubnetEA28FD1A
             - '","'
-            - Ref: ConstructHubLambdaVPCIsolatedSubnet2Subnet825B4A7B
+            - Ref: ConstructHubVPCIsolatedSubnet2Subnet483D4302
             - '"],"SecurityGroups":["'
             - Fn::GetAtt:
                 - ConstructHubOrchestrationGeneratedocsSecurityGroupC584DAC2
@@ -3004,9 +3004,9 @@ Resources:
       TracingConfiguration:
         Enabled: true
     DependsOn:
-      - ConstructHubLambdaVPCIGWBD019E6D
       - ConstructHubOrchestrationRoleDefaultPolicyEACD181F
       - ConstructHubOrchestrationRoleF4CF6987
+      - ConstructHubVPCIGW935F4C28
   ConstructHubOrchestrationOrchestrationFailed5AF50838:
     Type: AWS::CloudWatch::Alarm
     Properties:
@@ -6090,6 +6090,9 @@ Resources:
             - - "arn:"
               - Ref: AWS::Partition
               - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Tags:
+        - Key: function-purpose
+          Value: cloudwatch-custom-widget
   MissingDocumnetationWidgetHandler136351bde63b5de8bb16730ac238d703ServiceRoleDefaultPolicyA35687F7:
     Type: AWS::IAM::Policy
     Properties:
@@ -6146,6 +6149,9 @@ Resources:
       Handler: index.handler
       MemorySize: 1024
       Runtime: nodejs14.x
+      Tags:
+        - Key: function-purpose
+          Value: cloudwatch-custom-widget
       Timeout: 15
     DependsOn:
       - MissingDocumnetationWidgetHandler136351bde63b5de8bb16730ac238d703ServiceRoleDefaultPolicyA35687F7

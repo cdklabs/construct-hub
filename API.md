@@ -306,14 +306,15 @@ Configure whether or not the backend should periodically query NPM for the numbe
 
 ---
 
-##### `isolateSensitiveTasks`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.isolateSensitiveTasks"></a>
+##### ~~`isolateSensitiveTasks`~~<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.isolateSensitiveTasks"></a>
+
+- *Deprecated:* use sensitiveTaskIsolation instead.
 
 ```typescript
 public readonly isolateSensitiveTasks: boolean;
 ```
 
 - *Type:* `boolean`
-- *Default:* true
 
 Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments.
 
@@ -371,6 +372,25 @@ public readonly packageTags: PackageTag[];
 - *Type:* [`construct-hub.PackageTag`](#construct-hub.PackageTag)[]
 
 Configuration for custom package tags.
+
+---
+
+##### `sensitiveTaskIsolation`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.sensitiveTaskIsolation"></a>
+
+```typescript
+public readonly sensitiveTaskIsolation: Isolation;
+```
+
+- *Type:* [`construct-hub.Isolation`](#construct-hub.Isolation)
+- *Default:* Isolation.NO_INTERNET_ACCESS
+
+Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments.
+
+This implies the creation of additonal resources, including:
+
+- A VPC with only isolated subnets.
+- VPC Endpoints (CloudWatch Logs, CodeArtifact, CodeArtifact API, S3, ...)
+- A CodeArtifact Repository with an external connection to npmjs.com
 
 ---
 
@@ -6124,6 +6144,46 @@ the id of the external connection (i.e: `public:npmjs`).
 
 
 ## Enums <a name="Enums"></a>
+
+### Isolation <a name="Isolation"></a>
+
+How possibly risky operations (such as doc-generation, which requires installing the indexed packages in order to trans-literate sample code) are isolated to mitigate possible arbitrary code execution vulnerabilities in and around `npm install` or the transliterator's use of the TypeScript compiler.
+
+#### `UNLIMITED_INTERNET_ACCESS` <a name="construct-hub.Isolation.UNLIMITED_INTERNET_ACCESS"></a>
+
+No isolation is done whatsoever. The doc-generation process still is provisioned with least-privilege permissions, but retains complete access to internet.
+
+While this maximizes the chances of successfully installing packages (and
+hence successfully generating documentation for those), it is also the
+least secure mode of operation.
+
+We advise you only consider using this isolation mode if you are hosting a
+ConstructHub instance that only indexes trusted packages (including
+transitive dependencies).
+
+---
+
+
+#### `LIMITED_INTERNET_ACCESS` <a name="construct-hub.Isolation.LIMITED_INTERNET_ACCESS"></a>
+
+The same protections as `UNLIMITED_INTERNET_ACCESS`, except outbound internet connections are limited to IP address ranges corresponding to hosting endpoints for npmjs.com.
+
+---
+
+
+#### `NO_INTERNET_ACCESS` <a name="construct-hub.Isolation.NO_INTERNET_ACCESS"></a>
+
+The same protections as `LIMITED_INTERNET_ACCESS`, except all remaining internet access is removed.
+
+All traffic to AWS service endpoints is routed
+through VPC Endpoints, as the compute nodes are jailed in a completely
+isolated VPC.
+
+This is the most secure (and recommended) mode of operation for
+ConstructHub instances.
+
+---
+
 
 ### TagConditionLogicType <a name="TagConditionLogicType"></a>
 

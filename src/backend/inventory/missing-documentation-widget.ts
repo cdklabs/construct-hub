@@ -29,7 +29,8 @@ export class MissingDocumentationWidget extends ConcreteWidget {
       memorySize: 1_024,
       timeout: Duration.seconds(15),
     });
-    Tags.of(this.handler).add('function-purpose', 'cloudwatch-custom-widget');
+    // NOTE: The handler is a SingletonFunction, so appending tags to it requires accessing a private field.
+    Tags.of((this.handler as any).lambdaFunction).add('function-purpose', 'cloudwatch-custom-widget');
 
     props.bucket.grantRead(this.handler, MISSING_DOCUMENTATION_KEY_PATTERN);
 

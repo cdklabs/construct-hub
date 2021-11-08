@@ -1,5 +1,5 @@
 import { ComparisonOperator, MathExpression, MathExpressionOptions, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
-import { SubnetSelection, Vpc } from '@aws-cdk/aws-ec2';
+import { SubnetSelection, Vpc, ISecurityGroup } from '@aws-cdk/aws-ec2';
 import { Cluster, ICluster } from '@aws-cdk/aws-ecs';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
@@ -68,6 +68,11 @@ export interface OrchestrationProps {
    * VPC endpoints to use for interacting with CodeArtifact and S3.
    */
   readonly vpcEndpoints?: TransliteratorVpcEndpoints;
+
+  /**
+   * VPC Security groups to associate with the ECS tasks.
+   */
+  readonly vpcSecurityGroups?: ISecurityGroup[];
 
   /**
    * How long should execution logs be retained?
@@ -213,6 +218,7 @@ export class Orchestration extends Construct {
 
     this.transliterator = new Transliterator(this, 'Transliterator', props);
 
+
     const definition = new Pass(this, 'Track Execution Infos', {
       inputPath: '$$.Execution',
       parameters: {
@@ -237,6 +243,7 @@ export class Orchestration extends Construct {
           // Expect this to complete within one hour
           timeout: Duration.hours(1),
           vpcSubnets: props.vpcSubnets,
+          securityGroups: props.vpcSecurityGroups,
         })
           // Do not retry NoSpaceLeftOnDevice errors, these are typically not transient.
           .addRetry({ errors: ['jsii-docgen.NoSpaceLeftOnDevice'], maxAttempts: 0 })
