@@ -1,27 +1,10 @@
-import * as buffer from 'buffer';
 import { EventEmitter } from 'events';
 import { OutgoingHttpHeaders } from 'http';
 import { Agent, request } from 'https';
+import { Readable } from 'stream';
 import { URL } from 'url';
-import { gunzipSync } from 'zlib';
-
-/**
- * The maximum length of a response body we can accept that we will be able to
- * successfully parse out. There is a limit in node on how big a string instance
- * can be, and `JSON.parse` only operates on string instances. If we get too
- * many unicode code-points, we will simply not be able to parse the result out,
- * and will thow an error with an appropriate error message.
- */
-const MAX_DATA_LENGTH = Math.min(
-  // NOTE: MAX_STRING_LENGTH is expressed in UTF-16 code units. We expect to receive JSON
-  // which ultimately is UTF-8-encoded text. An UTF-16 code unit is 32 bits, but this
-  // maps to between 8 and 32 bits in UTF-8... Consequently, we can't allow more than
-  // MAX_StRING_LENGTH / 4 if we want to be certain we can stringify the buffer.
-  Math.floor(buffer.constants.MAX_STRING_LENGTH / 4),
-  // This is the maximum length of a Buffer instance. We cannot technically accept any
-  // more data than this... so we won't even be trying to.
-  buffer.constants.MAX_LENGTH,
-);
+import { createGunzip } from 'zlib';
+import * as JSONStream from 'JSONStream';
 
 /**
  * A utility class that helps with traversing CouchDB database changes streams
@@ -75,18 +58,7 @@ export class CouchChanges extends EventEmitter {
 
     const filter = { name: { $gt: null } };
 
-    try {
-      return await this.https('post', changesUrl, filter) as any;
-    } catch (err) {
-      if (err instanceof ResponseTooLargeError && batchSize > 1) {
-        // The response was too large, try again, but with a smaller batch size
-        const smallerBatchSize = Math.max(1, Math.floor(batchSize / 2));
-        console.log(`Batch of ${batchSize} from ${since} was too large... Trying again with batch size of ${smallerBatchSize}`);
-        return this.changes(since, { ...opts, batchSize: smallerBatchSize });
-      }
-      // Else simply forward the error out again...
-      return Promise.reject(err);
-    }
+    return this.https('post', changesUrl, filter) as any;
   }
 
   /**
@@ -153,9 +125,7 @@ export class CouchChanges extends EventEmitter {
             return ko(error);
           }
 
-          res.once('error', (err: Error & { code?: string }) => {
-            // Don't call the `close` handler - we are reporting failure or retrying in a new request here...
-            res.removeAllListeners('close');
+          const onError = (err: Error & { code?: string }) => {
             if (err.code === 'ECONNRESET') {
               // Transient networking problem?
               console.error(`[RETRYABLE] ${err.code} - ${method.toUpperCase()} ${url}`);
@@ -163,67 +133,16 @@ export class CouchChanges extends EventEmitter {
             } else {
               ko(err);
             }
-          });
+          };
 
-          // We'll increase the buffer size by at least this much if the buffer we currently have is
-          // not large enough. CouchDB typically sends response in `chunked` encoding, so we don't
-          // know the full length of the response in advance... We hence try to avoid doing too many
-          // expensive copies if the response is very large (it can be!).
-          const bufferIncrements = 1_048_576; /* 1MiB */
-          let data = Buffer.alloc(
-            typeof res.headers['content-length'] === 'string'
-              ? Number.parseInt(res.headers['content-length'])
-              : bufferIncrements,
-          );
-          let dataLength = 0;
-          res.on('data', (chunk) => {
-            const chunkBuffer = chunk = Buffer.from(chunk);
-            // Check if we still have capacity to accept that data without going too large to parse...
-            if (dataLength + chunkBuffer.length > MAX_DATA_LENGTH) {
-              console.log(`Response too large (> ${MAX_DATA_LENGTH}), aborting: ${method.toUpperCase()} ${url}`);
-              // We won't be able to stringify this... no point in continuing. Calling destroy with
-              // an error will cause the `error` event to be emitted, then the `close` event will be
-              // emitted. Any outstanding data will be dropped, the socket will be destroyed.
-              req.destroy(new ResponseTooLargeError(method, url));
-              return;
-            }
-            if (dataLength + chunkBuffer.length > data.length) {
-              // Buffer is not large enough, extend it to fit new data...
-              const existing = data;
-              data = Buffer.alloc(Math.min(data.length + Math.max(chunkBuffer.length, bufferIncrements), buffer.constants.MAX_LENGTH));
-              existing.copy(data);
-            }
-            chunkBuffer.copy(data, dataLength);
-            dataLength += chunkBuffer.length;
-          });
+          res.once('error', onError);
 
-          res.once('close', () => {
-            // Ensure buffer is trimmed to correct length.
-            data = data.subarray(0, dataLength);
-            try {
-              if (res.headers['content-encoding'] === 'gzip') {
-                data = gunzipSync(data);
-              }
-              console.log(`Response: ${method.toUpperCase()} ${url} => ${dataLength} bytes`);
-              try {
-                ok(JSON.parse(data.toString('utf-8')));
-              } catch (err) {
-                if (err.code === 'ERR_STRING_TOO_LONG') {
-                  ko(new ResponseTooLargeError(method, url, err));
-                } else {
-                  ko(err);
-                }
-              }
-            } catch (error) {
-              if ((error as Error & { code?: string }).code === 'Z_BUF_ERROR') {
-                // Truncated payload... Connection cut too early?
-                console.error(`[RETRYABLE] Z_BUF_ERROR (${error.message}) - ${method.toUpperCase()} ${url}`);
-                retry();
-              } else {
-                ko(error);
-              }
-            }
-          });
+          const json = JSONStream.parse(true);
+          json.once('data', ok);
+          json.once('error', onError);
+
+          const plainPayload = res.headers['content-encoding'] === 'gzip' ? gunzip(res) : res;
+          plainPayload.pipe(json, { end: true });
         },
       );
       req.end(body && JSON.stringify(body, null, 2));
@@ -294,11 +213,8 @@ export interface DatabaseInfos {
   readonly update_seq: string | number;
 }
 
-class ResponseTooLargeError extends Error {
-  public readonly name = ResponseTooLargeError.name;
-
-  public constructor(method: string, url: URL, public readonly cause?: any) {
-    super(`The response to ${method.toUpperCase()} ${url} is too large, and cannot be JSON.parse'd.`);
-    Error.captureStackTrace(this, ResponseTooLargeError);
-  }
+function gunzip(readable: Readable): Readable {
+  const gz = createGunzip();
+  readable.pipe(gz, { end: true });
+  return gz;
 }
