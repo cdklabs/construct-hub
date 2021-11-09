@@ -300,7 +300,7 @@ class ReprocessIngestionWorkflow extends Construct {
       environment: { BUCKET_NAME: props.bucket.bucketName, QUEUE_URL: props.queue.queueUrl },
       memorySize: 10_240,
       tracing: Tracing.ACTIVE,
-      timeout: Duration.minutes(1),
+      timeout: Duration.minutes(3),
     });
 
     props.queue.grantSendMessages(lambdaFunction);

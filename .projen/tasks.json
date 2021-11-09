@@ -2,22 +2,25 @@
   "tasks": {
     "build": {
       "name": "build",
-      "description": "Full release build (test+compile)",
+      "description": "Full release build",
       "steps": [
         {
-          "exec": "npx projen"
+          "spawn": "default"
+        },
+        {
+          "spawn": "pre-compile"
         },
         {
           "spawn": "compile"
+        },
+        {
+          "spawn": "post-compile"
         },
         {
           "spawn": "test"
         },
         {
           "spawn": "package"
-        },
-        {
-          "spawn": "docgen"
         }
       ]
     },
@@ -67,6 +70,9 @@
         },
         {
           "spawn": "bundle:canary"
+        },
+        {
+          "spawn": "bundle:missing-documentation-widget-function"
         },
         {
           "spawn": "bundle:needs-catalog-update"
@@ -240,7 +246,25 @@
       "description": "Continuously bundle all AWS Lambda functions",
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/package-stats/package-stats.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/monitoring/http-get-function.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch"
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/inventory/missing-documentation-widget-function.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/package-stats/package-stats.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/monitoring/http-get-function.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:missing-documentation-widget-function": {
+      "name": "bundle:missing-documentation-widget-function",
+      "description": "Create an AWS Lambda bundle from src/backend/inventory/missing-documentation-widget-function.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/inventory/missing-documentation-widget-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/missing-documentation-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:missing-documentation-widget-function:watch": {
+      "name": "bundle:missing-documentation-widget-function:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/inventory/missing-documentation-widget-function.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/inventory/missing-documentation-widget-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/missing-documentation-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -542,6 +566,9 @@
           "spawn": "bundle:canary"
         },
         {
+          "spawn": "bundle:missing-documentation-widget-function"
+        },
+        {
           "spawn": "bundle:needs-catalog-update"
         },
         {
@@ -575,6 +602,7 @@
     },
     "default": {
       "name": "default",
+      "description": "Synthesize project files",
       "steps": [
         {
           "exec": "node .projenrc.js"
@@ -712,12 +740,25 @@
     },
     "package": {
       "name": "package",
-      "description": "Create an npm tarball",
+      "description": "Creates the distribution package",
       "steps": [
         {
           "exec": "jsii-pacmak"
         }
       ]
+    },
+    "post-compile": {
+      "name": "post-compile",
+      "description": "Runs after successful compilation",
+      "steps": [
+        {
+          "spawn": "docgen"
+        }
+      ]
+    },
+    "pre-compile": {
+      "name": "pre-compile",
+      "description": "Prepare the project for compilation"
     },
     "publish:github": {
       "name": "publish:github",
@@ -860,7 +901,7 @@
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @aws-sdk/client-sfn @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case cdk-triggers construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak json-schema JSONStream normalize-registry-metadata npm-check-updates projen semver spdx-license-list standard-version tar-stream typescript yaml"
+          "exec": "yarn upgrade @aws-sdk/client-sfn @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case cdk-triggers construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak json-schema JSONStream normalize-registry-metadata npm-check-updates projen semver spdx-license-list standard-version tar-stream typescript uuid yaml"
         },
         {
           "exec": "npx projen"
