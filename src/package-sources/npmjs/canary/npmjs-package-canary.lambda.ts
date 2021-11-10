@@ -55,17 +55,8 @@ export async function handler(event: unknown): Promise<void> {
       pending: {},
     };
 
-  // If the current "latest" isn't the one from state, update it.
-  if (state.latest.version !== latest.version) {
-    // If the current "latest" isn't available yet, keep tracking it.
-    if (state.latest.availableAt == null) {
-      state.pending = state.pending ?? {};
-      // The TypeScript version of jsii doesn't do control flow analysis well enough here to
-      // determine that the`if` branch guarantees `availableAt` is undefined here.
-      state.pending[state.latest.version] = { ...state.latest, availableAt: undefined };
-    }
-    state.latest = latest;
-  }
+  // If the current "latest" isn't the one from state, it needs updating.
+  updateLatestIfNeeded(state, latest);
 
   try {
     await metricScope((metrics) => () => {
@@ -169,7 +160,7 @@ class ConstructHub {
           if (res.statusCode === 200) {
             // This returns HTTP 200 with text/html if it's a 404, due to how
             // we configured CloudFront behaviors.
-            return ok(res.headers['content-type']?.startsWith('text/markdown'));
+            return ok(!!res.headers['content-type']?.startsWith('text/markdown'));
           }
           const err = new Error(`HEAD ${url} -- HTTP ${res.statusCode} (${res.statusMessage})`);
           Error.captureStackTrace(err);
@@ -333,6 +324,31 @@ function getJSON(url: string, jsonPath?: string[]): Promise<any> {
       plainPayload.pipe(json, { end: true });
     });
   });
+}
+
+/**
+ * Updates the `latest` property of `state` ti the provided `latest` value,
+ * unless this is already the current latest.
+ *
+ * If the previous latest version does not have the `availableAt` property, adds
+ * that to the `pending` set.
+ *
+ * @param state  the state to be updated.
+ * @param latest the current "latest" version of the tracked package.
+ */
+function updateLatestIfNeeded(state: CanaryState, latest: CanaryState['latest']): void {
+  if (state.latest.version === latest.version) {
+    return;
+  }
+
+  // If the current "latest" isn't available yet, add it to the `pending` versions.
+  if (state.latest.availableAt == null) {
+    // The TypeScript version of jsii doesn't do control flow analysis well enough here to
+    // determine that the`if` branch guarantees `availableAt` is undefined here.
+    state.pending[state.latest.version] = { ...state.latest, availableAt: undefined };
+  }
+
+  state.latest = latest;
 }
 
 function gunzip(readable: Readable): Readable {
