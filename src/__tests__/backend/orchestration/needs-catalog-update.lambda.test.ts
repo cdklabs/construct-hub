@@ -1,15 +1,30 @@
-import { CatalogClient } from '../../../backend/catalog-builder/client.lambda-shared';
+import { CatalogClient, CatalogNotFoundError } from '../../../backend/catalog-builder/client.lambda-shared';
 import { handler, Input } from '../../../backend/orchestration/needs-catalog-update.lambda';
 import { STORAGE_KEY_PREFIX, PACKAGE_KEY_SUFFIX } from '../../../backend/shared/constants';
 
-const mockNewClient = jest.spyOn(CatalogClient, 'newClient');
-mockNewClient.mockReturnValue(Promise.resolve({
-  packages: [
-    // Omitting fields that are not relevant to this test.
-    { name: '@dummy/existing-package', major: 1, version: '1.2.3' } as any,
-    { name: '@dummy/existing-package', major: 2, version: '2.3.4' } as any,
-  ],
-}));
+beforeEach(() => {
+  const mockNewClient = jest.spyOn(CatalogClient, 'newClient');
+  mockNewClient.mockReturnValue(Promise.resolve({
+    packages: [
+      // Omitting fields that are not relevant to this test.
+      { name: '@dummy/existing-package', major: 1, version: '1.2.3' } as any,
+      { name: '@dummy/existing-package', major: 2, version: '2.3.4' } as any,
+    ],
+  }));
+});
+
+afterEach(() => {
+  jest.resetAllMocks();
+});
+
+test('catalog doesnt exist', () => {
+  const packageName = '@dummy/new-package';
+  const packageVersion = '42.1337.0';
+  const key = `${STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${PACKAGE_KEY_SUFFIX}`;
+  jest.spyOn(CatalogClient, 'newClient').mockReturnValue(Promise.reject(new CatalogNotFoundError('key')));
+  const event: Input = { package: { key } };
+  return expect(handler(event)).resolves.toBeTruthy();
+});
 
 test('input is broken', () => {
   const event: Input = { package: { key: 'not-a-valid-key' } };

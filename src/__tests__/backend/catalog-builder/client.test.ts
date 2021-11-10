@@ -1,7 +1,7 @@
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import type { PackageInfo } from '../../../backend/catalog-builder';
-import { CatalogClient } from '../../../backend/catalog-builder/client.lambda-shared';
+import { CatalogClient, CatalogNotFoundError } from '../../../backend/catalog-builder/client.lambda-shared';
 import * as aws from '../../../backend/shared/aws.lambda-shared';
 
 const samplePackages: Partial<PackageInfo>[] = [
@@ -51,7 +51,7 @@ test('s3 object not found error', async () => {
     callback(err, null);
   });
 
-  const expected = new Error('No catalog was found at catalog-bucket-name/catalog.json');
+  const expected = new CatalogNotFoundError('catalog-bucket-name/catalog.json');
   return expect(async () => CatalogClient.newClient()).rejects.toEqual(expected);
 });
 
@@ -62,7 +62,7 @@ test('s3 bucket not found error', async () => {
     callback(err, null);
   });
 
-  const expected = new Error('No catalog was found at catalog-bucket-name/catalog.json');
+  const expected = new CatalogNotFoundError('catalog-bucket-name/catalog.json');
   return expect(async () => CatalogClient.newClient()).rejects.toEqual(expected);
 });
 
