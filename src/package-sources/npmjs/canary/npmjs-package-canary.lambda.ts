@@ -1,5 +1,6 @@
 import * as https from 'https';
 import { Readable } from 'stream';
+import { createGunzip } from 'zlib';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { AWSError, S3 } from 'aws-sdk';
 import * as JSONStream from 'JSONStream';
@@ -316,41 +317,26 @@ interface CanaryState {
 function getJSON(url: string, jsonPath?: string[]): Promise<any> {
   return new Promise((ok, ko) => {
     https.get(url, { headers: { 'Accept': 'application/json', 'Accept-Encoding': 'identity' } }, (res) => {
-      let chunks = new Array<Buffer>();
-      res.on('data', (chunk) => chunks.push(Buffer.from(chunk)));
+      if (res.statusCode !== 200) {
+        const error = new Error(`GET ${url} - HTTP ${res.statusCode} (${res.statusMessage})`);
+        Error.captureStackTrace(error);
+        return ko(error);
+      }
+
       res.once('error', ko);
-      res.once('close', () => {
-        if (res.statusCode !== 200) {
-          const err = new Error(`GET ${url} -- HTTP ${res.statusCode} (${res.statusMessage})`);
-          Error.captureStackTrace(err);
-          ko(err);
-        } else {
-          const json = JSONStream.parse(jsonPath ?? true);
-          readerFrom(chunks).pipe(json);
-          json.once('error', ko);
-          json.once('data', (data: any) => {
-            ok(data);
-          });
-          json.once('end', () => {
-            // NOTE - If the `data` event fired already, the `ko` call here will
-            // simply be ignored, which is the desired behavior.
-            const err = new Error('No JSON value found in response stream');
-            Error.captureStackTrace(err);
-            ko(err);
-          });
-        }
-      });
+
+      const json = JSONStream.parse(jsonPath);
+      json.once('data', ok);
+      json.once('error', ko);
+
+      const plainPayload = res.headers['content-encoding'] === 'gzip' ? gunzip(res) : res;
+      plainPayload.pipe(json, { end: true });
     });
   });
 }
 
-function readerFrom(buffers: readonly Buffer[]): NodeJS.ReadableStream {
-  let reader = new Readable();
-  for (const buffer of buffers) {
-    reader.push(buffer);
-  }
-  reader.push(null);
-  return reader;
+function gunzip(readable: Readable): Readable {
+  const gz = createGunzip();
+  readable.pipe(gz, { end: true });
+  return gz;
 }
-
-void handler({});

@@ -1,7 +1,7 @@
 /**
  * Partial hand-written declarations for the JSONStream module. Refer to the JS
  * module's documentation for additional operations, and more explanations on
- * posisble usage.
+ * possible usage.
  *
  * @see https://github.com/dominictarr/JSONStream
  */
