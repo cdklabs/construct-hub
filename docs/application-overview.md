@@ -27,9 +27,7 @@ that performes the following tasks:
 1. The *prune* function enforces the configured deny-list and ensures previously
    indexed packages that are now part of the deny-list are removed from storage
    within an hour.
-1. The *discovery canary*, if configured, is a Lambda function the will periodically
-   publish new versions of a dummy package and validate the hub is able to discover that
-   package within a predefined SLA.
+1. The *discovery canary*, if configured, is a Lambda function the will periodically validate the hub is able to discover new packages within a predefined SLA.
 
 [cdklabs/construct-hub-webapp]: https://github.com/cdklabs/construct-hub-webapp
 
@@ -218,7 +216,7 @@ A **low-severity** alarm triggers if the canary function is either
 malfunctioning or detects discovery SLA breaches. Troubleshooting these alarms
 is described in the operator runbook.
 
-- [`ConstructHub/Sources/NpmJs/Canary/SLA-Breached`](./operator-runbook.md#constructhub-sources-npmjs-canary-sla-breached)
+- [`ConstructHub/Sources/NpmJs/Canary/SLA-Breached`](./operator-runbook.md#constructhubsourcesnpmjscanarysla-breached)
 
 
 ## Monitoring & Alarming

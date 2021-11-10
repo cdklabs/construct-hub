@@ -47,7 +47,7 @@ export async function handler(event: unknown): Promise<void> {
         // If that latest version is ALREADY in catalog, pretend it was
         // "instantaneously" there, so we avoid possibly reporting an breach of
         // SLA alarm, when we really just observed presence of the package in
-        // catalog too late.
+        // catalog too late, for example on first deployment of the canary.
         availableAt: await constructHub.isInCatalog(packageName, latest.version)
           ? latest.publishedAt
           : undefined,

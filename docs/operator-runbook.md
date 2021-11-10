@@ -564,7 +564,7 @@ package version (by default, the tracked package is `construct-hub-probe`) was
 not discovered and indexed within the predefined SLA period (by default, `5`
 minutes). This means the hub might not be discovering new packages versions.
 
-The alarm will persis as long as any tracked version of the probe package is
+The alarm will persist as long as any tracked version of the probe package is
 still missing from the ConstructHub instance past the configured SLA, or if the
 latest version was ingested out-of-SLA.
 
