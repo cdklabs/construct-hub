@@ -436,7 +436,7 @@ export class NpmJs implements IPackageSource {
     }).createAlarm(canary, 'Alarm', {
       alarmName: `${canary.node.path}/SLA-Breached`,
       alarmDescription: [
-        `New versions of ${packageName} have been published over ${sla} minutes ago and are still not visible in construct hub`,
+        `New versions of ${packageName} have been published over ${visibilitySla.toHumanString()} ago and are still not visible in construct hub`,
         `Runbook: ${RUNBOOK_URL}`,
       ].join('\n'),
       comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
