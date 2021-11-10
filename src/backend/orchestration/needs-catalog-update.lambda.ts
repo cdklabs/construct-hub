@@ -1,5 +1,5 @@
 import { compare, major } from 'semver';
-import { CatalogClient } from '../catalog-builder/client.lambda-shared';
+import { CatalogClient, CatalogNotFoundError } from '../catalog-builder/client.lambda-shared';
 import type { StateMachineInput } from '../payload-schema';
 import { STORAGE_KEY_FORMAT_REGEX } from '../shared/constants';
 
@@ -20,16 +20,25 @@ export type Input = Pick<StateMachineInput, 'package'>;
 export async function handler(event: Input): Promise<boolean> {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
 
-  const [, packageName, version] = STORAGE_KEY_FORMAT_REGEX.exec(event.package.key) ?? die(`Unecpedted/invalid package key: ${event.package.key}`);
+  const [, packageName, version] = STORAGE_KEY_FORMAT_REGEX.exec(event.package.key) ?? die(`Unexpected/invalid package key: ${event.package.key}`);
   const packageMajor = major(version);
 
-  const catalogClient = await CatalogClient.newClient();
-  const existingEntry = catalogClient.packages.find((pkg) => pkg.name === packageName && pkg.major === packageMajor);
-  if (existingEntry == null) {
-    return true;
+  try {
+    const catalogClient = await CatalogClient.newClient();
+    const existingEntry = catalogClient.packages.find((pkg) => pkg.name === packageName && pkg.major === packageMajor);
+    if (existingEntry == null) {
+      return true;
+    }
+
+    return compare(version, existingEntry.version) >= 0;
+  } catch (e) {
+    if (e instanceof CatalogNotFoundError) {
+      // before the very first package was added, or after the catalog was deleted for some reason.
+      return true;
+    }
+    throw e;
   }
 
-  return compare(version, existingEntry.version) >= 0;
 }
 
 function die(message: string): never {
