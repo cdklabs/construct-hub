@@ -4940,7 +4940,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters704910c1d5f8cad4b961698573290439cac8c2285283b4c040701705004e57a6S3Bucket6E574610
+          Ref: AssetParametersd0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46S3Bucket0DFA8046
         S3Key:
           Fn::Join:
             - ""
@@ -4948,12 +4948,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters704910c1d5f8cad4b961698573290439cac8c2285283b4c040701705004e57a6S3VersionKeyD40FB44B
+                      - Ref: AssetParametersd0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46S3VersionKey65421A4C
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters704910c1d5f8cad4b961698573290439cac8c2285283b4c040701705004e57a6S3VersionKeyD40FB44B
+                      - Ref: AssetParametersd0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46S3VersionKey65421A4C
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2
@@ -5020,7 +5020,8 @@ Resources:
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 2
       AlarmDescription: >-
-        New versions of construct-hub-probe have been published over 
+        New versions of construct-hub-probe have been published over 5 minutes
+        ago and are still not visible in construct hub
 
         Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
       AlarmName: dev/ConstructHub/Sources/NpmJs/Canary/SLA-Breached
@@ -6667,18 +6668,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "da259481087e617cddf544931de12aab5204222e9fa77e0e93611494a07439c5"
-  AssetParameters704910c1d5f8cad4b961698573290439cac8c2285283b4c040701705004e57a6S3Bucket6E574610:
+  AssetParametersd0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46S3Bucket0DFA8046:
     Type: String
     Description: S3 bucket for asset
-      "704910c1d5f8cad4b961698573290439cac8c2285283b4c040701705004e57a6"
-  AssetParameters704910c1d5f8cad4b961698573290439cac8c2285283b4c040701705004e57a6S3VersionKeyD40FB44B:
+      "d0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46"
+  AssetParametersd0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46S3VersionKey65421A4C:
     Type: String
     Description: S3 key for asset version
-      "704910c1d5f8cad4b961698573290439cac8c2285283b4c040701705004e57a6"
-  AssetParameters704910c1d5f8cad4b961698573290439cac8c2285283b4c040701705004e57a6ArtifactHash37531157:
+      "d0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46"
+  AssetParametersd0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46ArtifactHashC07E5524:
     Type: String
     Description: Artifact hash for asset
-      "704910c1d5f8cad4b961698573290439cac8c2285283b4c040701705004e57a6"
+      "d0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46"
   AssetParameters5af0e476215eecf6a11d9344451dbb927349489ea7d76b481334b7558057b5c3S3Bucket9C2F7A99:
     Type: String
     Description: S3 bucket for asset
