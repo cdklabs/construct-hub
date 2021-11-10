@@ -21,14 +21,22 @@ export const enum MetricName {
   PER_LANGUAGE_MISSING_MAJORS = 'MissingMajorVersionCount',
   PER_LANGUAGE_MISSING_VERSIONS = 'MissingPackageVersionCount',
   PER_LANGUAGE_MISSING_SUBMODULES = 'MissingSubmoduleCount',
+
   PER_LANGUAGE_SUPPORTED_PACKAGES = 'SupportedPackageCount',
   PER_LANGUAGE_SUPPORTED_MAJORS = 'SupportedMajorVersionCount',
   PER_LANGUAGE_SUPPORTED_VERSIONS = 'SupportedPackageVersionCount',
   PER_LANGUAGE_SUPPORTED_SUBMODULES = 'SupportedSubmoduleCount',
+
   PER_LANGUAGE_UNSUPPORTED_PACKAGES = 'UnsupportedPackageCount',
   PER_LANGUAGE_UNSUPPORTED_MAJORS = 'UnsupportedMajorVersionCount',
   PER_LANGUAGE_UNSUPPORTED_VERSIONS = 'UnsupportedPackageVersionCount',
   PER_LANGUAGE_UNSUPPORTED_SUBMODULES = 'UnsupportedSubmoduleCount',
+
+  PER_LANGUAGE_UNPROCESSABLE_PACKAGES = 'UnprocessablePackageCount',
+  PER_LANGUAGE_UNPROCESSABLE_MAJORS = 'UnprocessableMajorVersionCount',
+  PER_LANGUAGE_UNPROCESSABLE_VERSIONS = 'UnprocessablePackageVersionCount',
+  PER_LANGUAGE_UNPROCESSABLE_SUBMODULES = 'UnprocessableSubmoduleCount',
+
 }
 
 /**

@@ -4,9 +4,10 @@ import { Construct, Duration } from '@aws-cdk/core';
 import { DenyList } from './backend/deny-list';
 import { Ingestion } from './backend/ingestion';
 import { Inventory } from './backend/inventory';
-import { MissingDocumentationWidget } from './backend/inventory/missing-documentation-widget';
+import { PackageVersionsTableWidget } from './backend/inventory/package-versions-table-widget';
 import { Orchestration } from './backend/orchestration';
 import { PackageStats } from './backend/package-stats';
+import { missingDocumentationKey, unProcessableAssemblyKey } from './backend/shared/constants';
 import { DocumentationLanguage } from './backend/shared/language';
 import { ecsClusterUrl, lambdaFunctionUrl, lambdaSearchLogGroupUrl, logGroupUrl, s3ObjectUrl, sqsQueueUrl, stateMachineUrl } from './deep-link';
 import { fillMetric } from './metric-utils';
@@ -355,11 +356,30 @@ export class BackendDashboard extends Construct {
           leftYAxis: { showUnits: false },
           view: GraphWidgetView.PIE,
         }),
-        new MissingDocumentationWidget(this, `MissingDocs-${language.name}`, {
-          bucket: packageData,
-          height: 6,
-          language,
+        new PackageVersionsTableWidget(this, `MissingDocs-${language.name}`, {
           title: 'Package Versions missing documentation',
+          bucket: packageData,
+          key: missingDocumentationKey(language),
+          description: [
+            'This widget shows the name and version(s) of all packages tracked by',
+            'this ConstructHub instance, and for which at least one documentation',
+            `object is missing for _${language.name}_.`,
+            '',
+          ].join('\n'),
+          height: 6,
+          width: 12,
+        }),
+        new PackageVersionsTableWidget(this, `MissingDocs-${language.name}`, {
+          title: 'Package Versions with unprocessable assembly',
+          bucket: packageData,
+          key: unProcessableAssemblyKey(language),
+          description: [
+            'This widget shows the name and version(s) of all packages tracked by',
+            'this ConstructHub instance, and for which at least one documentation',
+            `object cannot be created due to an unprocessable assembly for _${language.name}_.`,
+            '',
+          ].join('\n'),
+          height: 6,
           width: 12,
         }),
         new GraphWidget({

@@ -126,6 +126,9 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
 
     const packageDir = path.join(tmpdir, 'node_modules', packageName);
     console.log(`Generating documentation from ${packageDir}...`);
+
+    let unProcessable = false;
+
     for (const language of DocumentationLanguage.ALL) {
       if (event.languages && !event.languages[language.toString()]) {
         console.log(`Skipping language ${language} as it was not requested!`);
@@ -155,17 +158,33 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
         });
 
         function renderAndDispatch(submodule?: string) {
-          console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
-          const page = Buffer.from(docs.render({ submodule, linkFormatter: linkFormatter(docs) }).render());
-          metrics.putMetric(MetricName.DOCUMENT_SIZE, page.length, Unit.Bytes);
 
-          const { buffer: body, contentEncoding } = compressContent(page);
-          metrics.putMetric(MetricName.COMPRESSED_DOCUMENT_SIZE, body.length, Unit.Bytes);
+          try {
 
-          const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(lang, submodule));
-          console.log(`Uploading ${key}`);
-          const upload = uploadFile(event.bucket, key, event.assembly.versionId, body, contentEncoding);
-          uploads.set(key, upload);
+            console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
+            const page = Buffer.from(docs.render({ submodule, linkFormatter: linkFormatter(docs) }).render());
+            metrics.putMetric(MetricName.DOCUMENT_SIZE, page.length, Unit.Bytes);
+
+            const { buffer: body, contentEncoding } = compressContent(page);
+            metrics.putMetric(MetricName.COMPRESSED_DOCUMENT_SIZE, body.length, Unit.Bytes);
+
+            const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(lang, submodule));
+            console.log(`Uploading ${key}`);
+            const upload = uploadFile(event.bucket, key, event.assembly.versionId, body, contentEncoding);
+            uploads.set(key, upload);
+
+          } catch (e) {
+            if (e instanceof Error && e.message.includes('not found in assembly')) {
+              // mark this for inventory sake
+              const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(lang, submodule) + constants.UNPROCESSABLE_ASSEMBLY_SUFFIX);
+              console.log(`Uploading ${key}`);
+              const upload = uploadFile(event.bucket, key, event.assembly.versionId, Buffer.from(e.message));
+              uploads.set(key, upload);
+              unProcessable = true;
+            } else {
+              throw e;
+            }
+          }
         }
 
         renderAndDispatch();
@@ -180,6 +199,14 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
         }
       });
       await generateDocs(language);
+    }
+
+    if (unProcessable) {
+      // throw a custom error so that we can divert this package
+      // away from the DLQ.
+      const error = new Error('Package is unprocessable');
+      error.name = constants.UNPROCESSABLE_ASSEMBLY_ERROR_NAME;
+      throw error;
     }
 
     return created;

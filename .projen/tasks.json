@@ -72,7 +72,7 @@
           "spawn": "bundle:canary"
         },
         {
-          "spawn": "bundle:missing-documentation-widget-function"
+          "spawn": "bundle:package-versions-table-widget-function"
         },
         {
           "spawn": "bundle:needs-catalog-update"
@@ -91,6 +91,9 @@
         },
         {
           "spawn": "bundle:code-artifact-forwarder"
+        },
+        {
+          "spawn": "bundle:npmjs-package-canary"
         },
         {
           "spawn": "bundle:npm-js-follower"
@@ -243,25 +246,7 @@
       "description": "Continuously bundle all AWS Lambda functions",
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/inventory/missing-documentation-widget-function.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/package-stats/package-stats.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/monitoring/http-get-function.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch"
-        }
-      ]
-    },
-    "bundle:missing-documentation-widget-function": {
-      "name": "bundle:missing-documentation-widget-function",
-      "description": "Create an AWS Lambda bundle from src/backend/inventory/missing-documentation-widget-function.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/backend/inventory/missing-documentation-widget-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/missing-documentation-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
-        }
-      ]
-    },
-    "bundle:missing-documentation-widget-function:watch": {
-      "name": "bundle:missing-documentation-widget-function:watch",
-      "description": "Continuously update an AWS Lambda bundle from src/backend/inventory/missing-documentation-widget-function.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/backend/inventory/missing-documentation-widget-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/missing-documentation-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/inventory/package-versions-table-widget-function.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/package-stats/package-stats.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/monitoring/http-get-function.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -301,6 +286,24 @@
         }
       ]
     },
+    "bundle:npmjs-package-canary": {
+      "name": "bundle:npmjs-package-canary",
+      "description": "Create an AWS Lambda bundle from src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/canary/npmjs-package-canary.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:npmjs-package-canary:watch": {
+      "name": "bundle:npmjs-package-canary:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/canary/npmjs-package-canary.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
     "bundle:package-stats": {
       "name": "bundle:package-stats",
       "description": "Create an AWS Lambda bundle from src/backend/package-stats/package-stats.lambda.ts",
@@ -316,6 +319,24 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/backend/package-stats/package-stats.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:package-versions-table-widget-function": {
+      "name": "bundle:package-versions-table-widget-function",
+      "description": "Create an AWS Lambda bundle from src/backend/inventory/package-versions-table-widget-function.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/inventory/package-versions-table-widget-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/package-versions-table-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:package-versions-table-widget-function:watch": {
+      "name": "bundle:package-versions-table-widget-function:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/inventory/package-versions-table-widget-function.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/inventory/package-versions-table-widget-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/package-versions-table-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -545,7 +566,7 @@
           "spawn": "bundle:canary"
         },
         {
-          "spawn": "bundle:missing-documentation-widget-function"
+          "spawn": "bundle:package-versions-table-widget-function"
         },
         {
           "spawn": "bundle:needs-catalog-update"
@@ -564,6 +585,9 @@
         },
         {
           "spawn": "bundle:code-artifact-forwarder"
+        },
+        {
+          "spawn": "bundle:npmjs-package-canary"
         },
         {
           "spawn": "bundle:npm-js-follower"

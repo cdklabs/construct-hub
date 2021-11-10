@@ -1,44 +1,21 @@
 import { gunzipSync } from 'zlib';
 import { sort as semverSort } from 'semver';
 import { s3 } from '../shared/aws.lambda-shared';
-import { missingDocumentationKey } from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
-import { DocumentationLanguage } from '../shared/language';
 
 /// @singleton MissingDocumnetationWidget-Handler
 
 interface Event {
-  readonly describe: boolean;
+  readonly key: string;
+  readonly description: string;
   readonly widgetContext: WidgetContext;
 }
 
-export async function handler({ describe, widgetContext }: Event): Promise<string | { markdown: string }> {
+export async function handler({ key, description, widgetContext }: Event): Promise<string | { markdown: string }> {
   console.log(`Event: ${JSON.stringify({ describe, widgetContext }, null, 2)}`);
 
-  if (describe) {
-    // Description is naked markdown, and nothing else. The first YAML block it
-    // contains is going to be used to pre-populate parameters in the widget
-    // creation GUI.
-    return [
-      '### Missing Documentation widget',
-      '',
-      'This widget will render the contents of the missing documentations object',
-      'from S3. It requires the following parameters:',
-      '',
-      '- `language`: the DocumentationLanguage for which missing documentation should',
-      '  be listed.',
-      '',
-      'Example:',
-      '```yaml',
-      `language: csharp # One of: ${DocumentationLanguage.ALL.map(({ name }) => name).join(' | ')}`,
-      '```',
-    ].join('\n');
-  }
-
   try {
-    const language = DocumentationLanguage.fromString(widgetContext.params.language);
     const bucketName = requireEnv('BUCKET_NAME');
-    const key = missingDocumentationKey(language);
 
     let { Body, ContentEncoding, LastModified } = await s3().getObject({
       Bucket: bucketName,
@@ -71,10 +48,7 @@ export async function handler({ describe, widgetContext }: Event): Promise<strin
 
     return {
       markdown: [
-        'This widget shows the name and version(s) of all packages tracked by',
-        'this ConstructHub instance, and for which at least one documentation',
-        `object is missing for _${language.name}_.`,
-        '',
+        description,
         ...(list.length > maxCount
           ? [
             `Showing only the first ${maxCount} packages.`,
@@ -93,17 +67,20 @@ export async function handler({ describe, widgetContext }: Event): Promise<strin
       ].join('\n'),
     };
   } catch (error) {
-    return {
-      markdown: [
-        '**⚠️ An error occurred**',
-        `- **name:** \`${error.name}\``,
-        `- **message:** ${error.message}`,
-        '- **stack:**',
-        '  ```',
-        error.stack?.replace(/^/g, '  '),
-        '  ```',
-      ].join('\n'),
+    if (error instanceof Error) {
+      return {
+        markdown: [
+          '**⚠️ An error occurred**',
+          `- **name:** \`${error.name}\``,
+          `- **message:** ${error.message}`,
+          '- **stack:**',
+          '  ```',
+          error.stack?.replace(/^/g, '  '),
+          '  ```',
+        ].join('\n'),
+      };
     };
+    throw error;
   }
 }
 

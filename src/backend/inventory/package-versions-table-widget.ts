@@ -2,38 +2,39 @@ import { ConcreteWidget } from '@aws-cdk/aws-cloudwatch';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Tags, Duration } from '@aws-cdk/core';
 import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
-import { MISSING_DOCUMENTATION_KEY_PATTERN } from '../shared/constants';
-import { DocumentationLanguage } from '../shared/language';
-import { MissingDocumentationWidgetFunction } from './missing-documentation-widget-function';
+import { PackageVersionsTableWidgetFunction } from './package-versions-table-widget-function';
 
-export interface MissingDocumentationWidgetProps {
+export interface PackageVersionsTableWidgetProps {
   readonly bucket: IBucket;
-  readonly language: DocumentationLanguage;
+  readonly key: string;
+  readonly description: string;
   readonly title?: string;
   readonly width?: number;
   readonly height?: number;
 }
 
-export class MissingDocumentationWidget extends ConcreteWidget {
-  private readonly handler: MissingDocumentationWidgetFunction;
-  private readonly language: DocumentationLanguage;
+export class PackageVersionsTableWidget extends ConcreteWidget {
+  private readonly handler: PackageVersionsTableWidgetFunction;
+  private readonly key: string;
+  private readonly description: string;
   private readonly title?: string;
 
-  public constructor(scope: Construct, id: string, props: MissingDocumentationWidgetProps) {
+  public constructor(scope: Construct, id: string, props: PackageVersionsTableWidgetProps) {
     super(props.width ?? 6, props.height ?? 6);
 
-    this.handler = new MissingDocumentationWidgetFunction(scope, id, {
+    this.handler = new PackageVersionsTableWidgetFunction(scope, id, {
       architecture: gravitonLambdaIfAvailable(scope),
       description: '[ConstructHub/MissingDocumentationWidget] Is a custom CloudWatch widget handler',
-      environment: { BUCKET_NAME: props.bucket.bucketName },
+      environment: { BUCKET_NAME: props.bucket.bucketName, OBJECT_KEY: props.key },
       memorySize: 1_024,
       timeout: Duration.seconds(15),
     });
     Tags.of(this.handler).add('function-purpose', 'cloudwatch-custom-widget');
 
-    props.bucket.grantRead(this.handler, MISSING_DOCUMENTATION_KEY_PATTERN);
+    props.bucket.grantRead(this.handler, props.key);
 
-    this.language = props.language;
+    this.key = props.key;
+    this.description = props.description;
     this.title = props.title;
   }
 
@@ -47,7 +48,8 @@ export class MissingDocumentationWidget extends ConcreteWidget {
       properties: {
         endpoint: this.handler.functionArn,
         params: {
-          language: this.language.name,
+          key: this.key,
+          description: this.description,
         },
         title: this.title,
         updateOn: {

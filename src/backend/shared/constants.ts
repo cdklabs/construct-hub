@@ -92,6 +92,17 @@ export function docsKeySuffix(lang?: DocumentationLanguage | '*', submodule?: st
 export const NOT_SUPPORTED_SUFFIX = '.not-supported';
 
 /**
+ * Key suffix for beacon files when a package cannot be processed for
+ * documentation generation. It marks packages that require author atttention.
+ */
+export const UNPROCESSABLE_ASSEMBLY_SUFFIX = '.unprocessable-assembly';
+
+/**
+ * Name of the error denoting an unprocessable assembly for documentation generation.
+ */
+export const UNPROCESSABLE_ASSEMBLY_ERROR_NAME = 'jsii-docgen.UnprocessableAssembly';
+
+/**
  * The key for the catalog document.
  */
 export const CATALOG_KEY = 'catalog.json';
@@ -103,6 +114,15 @@ export const CATALOG_KEY = 'catalog.json';
  */
 export function missingDocumentationKey(language: DocumentationLanguage): string {
   return `missing-objects/${language.name}-documentation.json`;
+}
+
+/**
+ * The keys for unprocessables assembly lists.
+ *
+ * @param language the language for which unprocessable assembly is requested.
+ */
+export function unProcessableAssemblyKey(language: DocumentationLanguage): string {
+  return `unprocessable-objects/${language.name}-assembly.json`;
 }
 
 /**

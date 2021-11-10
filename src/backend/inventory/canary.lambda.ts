@@ -99,6 +99,9 @@ export async function handler(event: ScheduledEvent, context: Context) {
         } else if (key.endsWith(constants.docsKeySuffix(language) + constants.NOT_SUPPORTED_SUFFIX)) {
           recordPerLanguage(language, PerLanguageStatus.UNSUPPORTED, name, majorVersion, fullName);
           identified = true;
+        } else if (key.endsWith(constants.docsKeySuffix(language) + constants.UNPROCESSABLE_ASSEMBLY_SUFFIX)) {
+          recordPerLanguage(language, PerLanguageStatus.UNPROCESSABLE, name, majorVersion, fullName);
+          identified = true;
         }
       }
       if (!identified) {
@@ -156,12 +159,17 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
       metrics.setDimensions({ [LANGUAGE_DIMENSION]: language.toString() });
 
-      for (const forStatus of [PerLanguageStatus.SUPPORTED, PerLanguageStatus.UNSUPPORTED, PerLanguageStatus.MISSING]) {
+      for (const forStatus of [
+        PerLanguageStatus.SUPPORTED,
+        PerLanguageStatus.UNSUPPORTED,
+        PerLanguageStatus.MISSING,
+        PerLanguageStatus.UNPROCESSABLE,
+      ]) {
         for (const [key, statuses] of Object.entries(data)) {
           let filtered = Array.from(statuses.entries()).filter(([, status]) => forStatus === status);
           let metricName = METRIC_NAME_BY_STATUS_AND_GRAIN[forStatus as PerLanguageStatus][key as keyof PerLanguageData];
 
-          if (forStatus === PerLanguageStatus.MISSING) {
+          if (forStatus === PerLanguageStatus.MISSING || forStatus === PerLanguageStatus.UNPROCESSABLE) {
             // Creates an object in S3 with the outcome of the scan for this language.
             const { buffer, contentEncoding } = compressContent(
               Buffer.from(
@@ -172,8 +180,10 @@ export async function handler(event: ScheduledEvent, context: Context) {
                 ),
               ),
             );
-            const missingDocsKey = constants.missingDocumentationKey(language);
-            console.log(`Uploading missing documentation list to s3://${bucket}/${missingDocsKey}`);
+            const missingDocsKey = forStatus === PerLanguageStatus.MISSING ?
+              constants.missingDocumentationKey(language) :
+              constants.unProcessableAssemblyKey(language);
+            console.log(`Uploading list to s3://${bucket}/${missingDocsKey}`);
             await aws.s3().putObject({
               Body: buffer,
               Bucket: bucket,
@@ -261,6 +271,7 @@ type PerLanguageData = { readonly [grain in Grain]: Map<string, PerLanguageStatu
 const enum PerLanguageStatus {
   MISSING = 'Missing',
   UNSUPPORTED = 'Unsupported',
+  UNPROCESSABLE = 'Unprocessable',
   SUPPORTED = 'Supported',
 }
 
@@ -282,6 +293,12 @@ const METRIC_NAME_BY_STATUS_AND_GRAIN: { readonly [status in PerLanguageStatus]:
     [Grain.PACKAGE_MAJOR_VERSIONS]: MetricName.PER_LANGUAGE_SUPPORTED_MAJORS,
     [Grain.PACKAGE_VERSIONS]: MetricName.PER_LANGUAGE_SUPPORTED_VERSIONS,
     [Grain.PACKAGE_VERSION_SUBMODULES]: MetricName.PER_LANGUAGE_SUPPORTED_SUBMODULES,
+  },
+  [PerLanguageStatus.UNPROCESSABLE]: {
+    [Grain.PACKAGES]: MetricName.PER_LANGUAGE_UNPROCESSABLE_PACKAGES,
+    [Grain.PACKAGE_MAJOR_VERSIONS]: MetricName.PER_LANGUAGE_UNPROCESSABLE_MAJORS,
+    [Grain.PACKAGE_VERSIONS]: MetricName.PER_LANGUAGE_UNPROCESSABLE_VERSIONS,
+    [Grain.PACKAGE_VERSION_SUBMODULES]: MetricName.PER_LANGUAGE_UNPROCESSABLE_SUBMODULES,
   },
 };
 
