@@ -18,8 +18,6 @@ jobs:
         run: |-
           curl -SsL "https://www.cloudflare.com/ips-v4" \
                -o resources/vpc-allow-lists/cloudflare-IPv4.txt
-          curl -SsL "https://www.cloudflare.com/ips-v6" \
-               -o resources/vpc-allow-lists/cloudflare-IPv6.txt
       - name: Setup Node
         using: actions/setup-node@v2
       - name: Update GitHub IP lists

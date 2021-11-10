@@ -13,6 +13,7 @@ import { CATALOG_KEY } from '../backend/shared/constants';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
 import { WebappConfig, WebappConfigProps } from './config';
+import { HomeResponseFunction } from './home-response-function';
 import { ResponseFunction } from './response-function';
 
 export interface PackageLinkConfig {
@@ -122,8 +123,10 @@ export interface WebAppProps extends WebappConfigProps {
 }
 
 export class WebApp extends Construct {
+  public readonly baseUrl: string;
   public readonly bucket: s3.Bucket;
   public readonly distribution: cloudfront.Distribution;
+
   public constructor(scope: Construct, id: string, props: WebAppProps) {
     super(scope, id);
 
@@ -137,13 +140,25 @@ export class WebApp extends Construct {
     // it is changed the function will be recreated.
     // see https://github.com/aws/aws-cdk/issues/15523
     const functionId = `AddHeadersFunction${this.node.addr}`;
+    const indexFunctionId = `IndexHeadersFunction${this.node.addr}`;
 
     const behaviorOptions: cloudfront.AddBehaviorOptions = {
       compress: true,
-      cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+      cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
       functionAssociations: [{
         function: new ResponseFunction(this, functionId, {
           functionName: functionId,
+        }),
+        eventType: cloudfront.FunctionEventType.VIEWER_RESPONSE,
+      }],
+    };
+
+    const indexBehaviorOptions: cloudfront.AddBehaviorOptions = {
+      compress: true,
+      cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+      functionAssociations: [{
+        function: new HomeResponseFunction(this, indexFunctionId, {
+          functionName: indexFunctionId,
         }),
         eventType: cloudfront.FunctionEventType.VIEWER_RESPONSE,
       }],
@@ -162,12 +177,19 @@ export class WebApp extends Construct {
       minimumProtocolVersion: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2018,
     });
 
+    // The base URL is currently the custom DNS if any was used, or the distribution domain name.
+    // This needs changing in case, for example, we add support for a custom URL prefix.
+    this.baseUrl = `https://${props.domain ? props.domain.zone.zoneName : this.distribution.distributionDomainName}`;
+
     const jsiiObjOrigin = new origins.S3Origin(props.packageData);
     this.distribution.addBehavior('/data/*', jsiiObjOrigin, behaviorOptions);
     this.distribution.addBehavior(`/${CATALOG_KEY}`, jsiiObjOrigin, behaviorOptions);
     if (props.packageStats) {
       this.distribution.addBehavior(`/${props.packageStats.statsKey}`, jsiiObjOrigin, behaviorOptions);
     }
+
+    const websiteOrigin = new origins.S3Origin(this.bucket);
+    this.distribution.addBehavior('/index.html', websiteOrigin, indexBehaviorOptions);
 
     // if we use a domain, and A records with a CloudFront alias
     if (props.domain) {

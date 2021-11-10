@@ -72,6 +72,7 @@ const project = new JsiiProject({
     'esbuild',
     'fs-extra',
     'got',
+    'JSONStream',
     'semver',
     'spdx-license-list',
     'tar-stream',

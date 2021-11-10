@@ -289,10 +289,22 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       ],
     });
 
+    const webApp = new WebApp(this, 'WebApp', {
+      domain: props.domain,
+      monitoring,
+      packageData,
+      packageLinks: props.packageLinks,
+      packageTags: packageTagsSerialized,
+      featuredPackages: props.featuredPackages,
+      packageStats,
+      featureFlags: props.featureFlags,
+    });
+
     const sources = new CoreConstruct(this, 'Sources');
     const packageSources = (props.packageSources ?? [new NpmJs()]).map(
       (source) =>
         source.bind(sources, {
+          baseUrl: webApp.baseUrl,
           denyList,
           ingestion: this.ingestion,
           licenseList,
@@ -313,17 +325,6 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       orchestration,
       denyList,
       packageStats,
-    });
-
-    new WebApp(this, 'WebApp', {
-      domain: props.domain,
-      monitoring,
-      packageData,
-      packageLinks: props.packageLinks,
-      packageTags: packageTagsSerialized,
-      featuredPackages: props.featuredPackages,
-      packageStats,
-      featureFlags: props.featureFlags,
     });
   }
 

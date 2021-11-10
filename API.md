@@ -856,6 +856,18 @@ import { PackageSourceBindOptions } from 'construct-hub'
 const packageSourceBindOptions: PackageSourceBindOptions = { ... }
 ```
 
+##### `baseUrl`<sup>Required</sup> <a name="construct-hub.PackageSourceBindOptions.property.baseUrl"></a>
+
+```typescript
+public readonly baseUrl: string;
+```
+
+- *Type:* `string`
+
+The base URL of the bound ConstructHub instance.
+
+---
+
 ##### `ingestion`<sup>Required</sup> <a name="construct-hub.PackageSourceBindOptions.property.ingestion"></a>
 
 ```typescript

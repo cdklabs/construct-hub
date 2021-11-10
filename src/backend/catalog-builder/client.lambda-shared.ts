@@ -7,6 +7,12 @@ export interface ICatalogClient {
   readonly packages: readonly PackageInfo[];
 }
 
+export class CatalogNotFoundError extends Error {
+  constructor(key: string) {
+    super(`No catalog was found at ${key}`);
+  }
+}
+
 /**
  * A client for working with the catalog.
  */
@@ -52,7 +58,7 @@ export class CatalogClient implements ICatalogClient {
       const data = await this.s3.getObject(params).promise();
       body = data.Body;
     } catch (e) {
-      throw new Error(`No catalog was found at ${this.bucketName}/${this.objectKey}`);
+      throw new CatalogNotFoundError(`${this.bucketName}/${this.objectKey}`);
     }
 
     if (!body) {
