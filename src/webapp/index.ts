@@ -5,16 +5,14 @@ import * as r53 from '@aws-cdk/aws-route53';
 import * as r53targets from '@aws-cdk/aws-route53-targets';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
-import { CacheControl } from '@aws-cdk/aws-s3-deployment';
-import { CfnOutput, Construct, Duration } from '@aws-cdk/core';
+import { CfnOutput, Construct } from '@aws-cdk/core';
 import { Domain } from '../api';
 import { PackageStats } from '../backend/package-stats';
 import { CATALOG_KEY } from '../backend/shared/constants';
+import { CacheStrategy } from '../caching';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
 import { WebappConfig, WebappConfigProps } from './config';
-import { HomeResponseFunction } from './home-response-function';
-import { ResponseFunction } from './response-function';
 
 export interface PackageLinkConfig {
   /**
@@ -135,37 +133,52 @@ export class WebApp extends Construct {
       enforceSSL: true,
     });
 
-    // generate a stable unique id for the cloudfront function and use it
-    // both for the function name and the logical id of the function so if
-    // it is changed the function will be recreated.
-    // see https://github.com/aws/aws-cdk/issues/15523
-    const functionId = `AddHeadersFunction${this.node.addr}`;
-    const indexFunctionId = `IndexHeadersFunction${this.node.addr}`;
-
-    const behaviorOptions: cloudfront.AddBehaviorOptions = {
-      compress: true,
-      cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
-      functionAssociations: [{
-        function: new ResponseFunction(this, functionId, {
-          functionName: functionId,
-        }),
-        eventType: cloudfront.FunctionEventType.VIEWER_RESPONSE,
-      }],
+    const defaultResponseHeaders = {
+      'x-frame-options': 'deny',
+      'x-xss-protection': '1; mode=block',
+      'x-content-type-options': 'nosniff',
+      'strict-transport-security': 'max-age=47304000; includeSubDomains',
+      'content-security-policy': [
+        "default-src 'self' 'unsafe-inline' https://*.awsstatic.com;",
+        "connect-src 'self' https://*.shortbread.aws.dev;",
+        "frame-src 'none';",
+        "img-src 'self' https://* http://*.omtrdc.net;",
+        "object-src 'none';",
+        "style-src 'self' 'unsafe-inline';",
+      ].join(' '),
     };
 
-    const indexBehaviorOptions: cloudfront.AddBehaviorOptions = {
-      compress: true,
-      cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
-      functionAssociations: [{
-        function: new HomeResponseFunction(this, indexFunctionId, {
-          functionName: indexFunctionId,
-        }),
-        eventType: cloudfront.FunctionEventType.VIEWER_RESPONSE,
-      }],
-    };
+    // (default) cache policy for mutable data that frequently changes
+    const mutableFrequentResourceOptions: cloudfront.AddBehaviorOptions =
+      CacheStrategy.mutableFrequent().toCloudfrontBehavior(this, 'MutableFrequent', {
+        responseHeaders: defaultResponseHeaders,
+      });
+
+    // cache policy for mutable but infrequently changing data
+    const mutableInfrequentResourceOptions: cloudfront.AddBehaviorOptions =
+      CacheStrategy.mutableInfrequent().toCloudfrontBehavior(this, 'MutableInfrequent', {
+        responseHeaders: defaultResponseHeaders,
+      });
+
+    // cache policy for static data
+    const staticResourceOptions: cloudfront.AddBehaviorOptions =
+      CacheStrategy.static().toCloudfrontBehavior(this, 'Static', {
+        responseHeaders: defaultResponseHeaders,
+      });
+
+    // cache policy for index.html. same as mutableFrequent, but includes
+    // extra Clear-Site-Data HTTP header to evict service workers
+    // TODO(2022): remove
+    const indexHtmlOptions: cloudfront.AddBehaviorOptions =
+      CacheStrategy.mutableFrequent().toCloudfrontBehavior(this, 'IndexHtml', {
+        responseHeaders: {
+          ...defaultResponseHeaders,
+          'clear-site-data': '\\"cache\\", \\"storage\\"',
+        },
+      });
 
     this.distribution = new cloudfront.Distribution(this, 'Distribution', {
-      defaultBehavior: { origin: new origins.S3Origin(this.bucket), ...behaviorOptions },
+      defaultBehavior: { origin: new origins.S3Origin(this.bucket), ...mutableFrequentResourceOptions },
       domainNames: props.domain ? [props.domain.zone.zoneName] : undefined,
       certificate: props.domain ? props.domain.cert : undefined,
       defaultRootObject: 'index.html',
@@ -181,15 +194,30 @@ export class WebApp extends Construct {
     // This needs changing in case, for example, we add support for a custom URL prefix.
     this.baseUrl = `https://${props.domain ? props.domain.zone.zoneName : this.distribution.distributionDomainName}`;
 
+    /* eslint-disable no-multi-spaces */
     const jsiiObjOrigin = new origins.S3Origin(props.packageData);
-    this.distribution.addBehavior('/data/*', jsiiObjOrigin, behaviorOptions);
-    this.distribution.addBehavior(`/${CATALOG_KEY}`, jsiiObjOrigin, behaviorOptions);
+    const websiteOrigin = new origins.S3Origin(this.bucket);
+
+    // note: there is a limit of 25 behaviors per distribution
+    this.distribution.addBehavior(`/${CATALOG_KEY}`,   jsiiObjOrigin, mutableFrequentResourceOptions);
+    this.distribution.addBehavior('*.md',              jsiiObjOrigin, mutableInfrequentResourceOptions);
+    this.distribution.addBehavior('*/metadata.json',   jsiiObjOrigin, mutableInfrequentResourceOptions);
+    this.distribution.addBehavior('*/assembly.json',   jsiiObjOrigin, staticResourceOptions);
     if (props.packageStats) {
-      this.distribution.addBehavior(`/${props.packageStats.statsKey}`, jsiiObjOrigin, behaviorOptions);
+      this.distribution.addBehavior(`/${props.packageStats.statsKey}`, jsiiObjOrigin, mutableInfrequentResourceOptions);
     }
 
-    const websiteOrigin = new origins.S3Origin(this.bucket);
-    this.distribution.addBehavior('/index.html', websiteOrigin, indexBehaviorOptions);
+    this.distribution.addBehavior('/index.html',        websiteOrigin, indexHtmlOptions);
+    this.distribution.addBehavior('/config.json',       websiteOrigin, mutableFrequentResourceOptions);
+    this.distribution.addBehavior('/manifest.json',     websiteOrigin, mutableFrequentResourceOptions);
+    this.distribution.addBehavior('/robots.txt',        websiteOrigin, mutableFrequentResourceOptions);
+    this.distribution.addBehavior('/service-worker.js', websiteOrigin, mutableFrequentResourceOptions);
+    this.distribution.addBehavior('/assets/*',          websiteOrigin, staticResourceOptions);
+    this.distribution.addBehavior('/static/*',          websiteOrigin, staticResourceOptions);
+    this.distribution.addBehavior('/logo192.png',       websiteOrigin, staticResourceOptions);
+    this.distribution.addBehavior('/logo512.png',       websiteOrigin, staticResourceOptions);
+    this.distribution.addBehavior('/favicon.ico',       websiteOrigin, staticResourceOptions);
+    /* eslint-enable no-multi-spaces */
 
     // if we use a domain, and A records with a CloudFront alias
     if (props.domain) {
@@ -222,13 +250,6 @@ export class WebApp extends Construct {
     const webappDir = path.join(__dirname, '..', '..', 'website');
 
     new s3deploy.BucketDeployment(this, 'DeployWebsite', {
-      cacheControl: [
-        CacheControl.setPublic(),
-        CacheControl.maxAge(Duration.hours(1)),
-        CacheControl.mustRevalidate(),
-        CacheControl.sMaxAge(Duration.minutes(5)),
-        CacheControl.proxyRevalidate(),
-      ],
       destinationBucket: this.bucket,
       distribution: this.distribution,
       prune: false,
@@ -245,13 +266,6 @@ export class WebApp extends Construct {
     });
 
     new s3deploy.BucketDeployment(this, 'DeployWebsiteConfig', {
-      cacheControl: [
-        CacheControl.setPublic(),
-        CacheControl.maxAge(Duration.hours(1)),
-        CacheControl.mustRevalidate(),
-        CacheControl.sMaxAge(Duration.minutes(5)),
-        CacheControl.proxyRevalidate(),
-      ],
       sources: [s3deploy.Source.asset(config.file.dir)],
       destinationBucket: this.bucket,
       distribution: this.distribution,

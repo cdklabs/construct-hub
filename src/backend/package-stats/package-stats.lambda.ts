@@ -1,6 +1,7 @@
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
 import got from 'got';
+import { CacheStrategy } from '../../caching';
 import { CatalogClient } from '../catalog-builder/client.lambda-shared';
 import * as aws from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
@@ -64,7 +65,7 @@ export async function handler(event: any, context: Context) {
     Key: STATS_OBJECT_KEY,
     Body: JSON.stringify(stats, null, 2),
     ContentType: 'application/json',
-    CacheControl: 'public, max-age=300, must-revalidate, proxy-revalidate', // Expire from cache after 5 minutes
+    CacheControl: CacheStrategy.mutableFrequent().toString(),
     Metadata: {
       'Lambda-Log-Group': context.logGroupName,
       'Lambda-Log-Stream': context.logStreamName,

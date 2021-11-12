@@ -6,6 +6,7 @@ import { Assembly, validateAssembly } from '@jsii/spec';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { Context, SQSEvent } from 'aws-lambda';
 import { minVersion } from 'semver';
+import { CacheStrategy } from '../../caching';
 import type { PackageTagConfig } from '../../package-tag';
 import type { PackageLinkConfig } from '../../webapp';
 import type { StateMachineInput } from '../payload-schema';
@@ -219,7 +220,7 @@ export const handler = metricScope(
             Bucket: BUCKET_NAME,
             Key: packageKey,
             Body: tarball.Body,
-            CacheControl: 'public, max-age=86400, must-revalidate, s-maxage=300, proxy-revalidate',
+            CacheControl: CacheStrategy.static().toString(),
             ContentType: 'application/octet-stream',
             Metadata: {
               'Lambda-Log-Group': context.logGroupName,
@@ -234,7 +235,7 @@ export const handler = metricScope(
             Bucket: BUCKET_NAME,
             Key: metadataKey,
             Body: JSON.stringify(metadata),
-            CacheControl: 'public, max-age=300, must-revalidate, proxy-revalidate',
+            CacheControl: CacheStrategy.mutableInfrequent().toString(),
             ContentType: 'application/json',
             Metadata: {
               'Lambda-Log-Group': context.logGroupName,
@@ -253,7 +254,7 @@ export const handler = metricScope(
           Bucket: BUCKET_NAME,
           Key: assemblyKey,
           Body: dotJsii,
-          CacheControl: 'public, max-age: 86400, must-revalidate, s-maxage=300, proxy-revalidate',
+          CacheControl: CacheStrategy.static().toString(),
           ContentType: 'application/json',
           Metadata: {
             'Lambda-Log-Group': context.logGroupName,

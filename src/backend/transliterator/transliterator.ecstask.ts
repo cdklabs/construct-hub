@@ -5,6 +5,7 @@ import type { PromiseResult } from 'aws-sdk/lib/request';
 import * as fs from 'fs-extra';
 import * as docgen from 'jsii-docgen';
 
+import { CacheStrategy } from '../../caching';
 import type { TransliteratorInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
 import { logInWithCodeArtifact } from '../shared/code-artifact.lambda-shared';
@@ -206,7 +207,7 @@ function uploadFile(bucket: string, key: string, sourceVersionId?: string, body?
     Bucket: bucket,
     Key: key,
     Body: body,
-    CacheControl: 'public, max-age=300, must-revalidate, proxy-revalidate', // Expire from cache after 10 minutes
+    CacheControl: CacheStrategy.mutableInfrequent().toString(),
     ContentEncoding: contentEncoding,
     ContentType: 'text/markdown; charset=UTF-8',
     Metadata: {
