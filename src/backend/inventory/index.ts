@@ -8,7 +8,7 @@ import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { RUNBOOK_URL } from '../../runbook-url';
-import { MISSING_DOCUMENTATION_KEY_PATTERN } from '../shared/constants';
+import { MISSING_DOCUMENTATION_KEY_PATTERN, UNPROCESSABLE_ASSEMBLY_KEY_PATTERN } from '../shared/constants';
 import { DocumentationLanguage } from '../shared/language';
 import { Canary } from './canary';
 import { METRICS_NAMESPACE, MetricName, LANGUAGE_DIMENSION } from './constants';
@@ -60,12 +60,16 @@ export class Inventory extends Construct {
       timeout: rate,
     });
     const grantRead = props.bucket.grantRead(this.canary);
-    const grantWrite = props.bucket.grantWrite(this.canary, MISSING_DOCUMENTATION_KEY_PATTERN);
+    const grantWriteMissing = props.bucket.grantWrite(this.canary, MISSING_DOCUMENTATION_KEY_PATTERN);
+    const grantWriteUnprocessable = props.bucket.grantWrite(this.canary, UNPROCESSABLE_ASSEMBLY_KEY_PATTERN);
 
-    new Rule(this, 'ScheduleRule', {
+    const rule = new Rule(this, 'ScheduleRule', {
       schedule: Schedule.rate(rate),
       targets: [new LambdaFunction(this.canary)],
-    }).node.addDependency(grantRead, grantWrite);
+    });
+
+    rule.node.addDependency(grantRead, grantWriteMissing);
+    rule.node.addDependency(grantRead, grantWriteUnprocessable);
 
     props.monitoring.addHighSeverityAlarm(
       'Inventory Canary is not Running',
@@ -391,4 +395,22 @@ export class Inventory extends Construct {
       namespace: METRICS_NAMESPACE,
     });
   }
+
+  /**
+   * The count of package versions that failed documentation generation for the provided
+   * `DocumentationLanguage` due to an unprocessable assembly.
+   */
+  public metricUnprocessableAssemblyPackageVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_UNPROCESSABLE_VERSIONS,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
 }

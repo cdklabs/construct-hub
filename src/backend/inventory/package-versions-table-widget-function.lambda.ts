@@ -3,7 +3,7 @@ import { sort as semverSort } from 'semver';
 import { s3 } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 
-/// @singleton MissingDocumnetationWidget-Handler
+/// @singleton PackageVersionsTableWidget-Handler
 
 interface Event {
   readonly key: string;
@@ -12,7 +12,7 @@ interface Event {
 }
 
 export async function handler({ key, description, widgetContext }: Event): Promise<string | { markdown: string }> {
-  console.log(`Event: ${JSON.stringify({ describe, widgetContext }, null, 2)}`);
+  console.log(`Event: ${JSON.stringify({ key, description, widgetContext }, null, 2)}`);
 
   try {
     const bucketName = requireEnv('BUCKET_NAME');

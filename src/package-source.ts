@@ -28,6 +28,11 @@ export interface IPackageSource {
  */
 export interface PackageSourceBindOptions {
   /**
+   * The base URL of the bound ConstructHub instance.
+   */
+  readonly baseUrl: string;
+
+  /**
    * The configured `DenyList` for the bound Construct Hub instance, if any.
    */
   readonly denyList?: IDenyList;

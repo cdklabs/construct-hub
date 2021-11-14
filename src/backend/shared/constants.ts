@@ -131,6 +131,11 @@ export function unProcessableAssemblyKey(language: DocumentationLanguage): strin
 export const MISSING_DOCUMENTATION_KEY_PATTERN = 'missing-objects/*-documentation.json';
 
 /**
+ * The key pattern for objects containing unprocessable assembly lists.
+ */
+export const UNPROCESSABLE_ASSEMBLY_KEY_PATTERN = 'unprocessable-objects/*-assembly.json';
+
+/**
  * A regular expression that can be used to parse out a storage key.
  */
 export const STORAGE_KEY_FORMAT_REGEX = new RegExp(`^${STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`);

@@ -144,6 +144,8 @@ export class Transliterator extends Construct {
       bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language, '*')}`);
       bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}${constants.NOT_SUPPORTED_SUFFIX}`);
       bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language, '*')}${constants.NOT_SUPPORTED_SUFFIX}`);
+      bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}${constants.UNPROCESSABLE_ASSEMBLY_SUFFIX}`);
+      bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language, '*')}${constants.UNPROCESSABLE_ASSEMBLY_SUFFIX}`);
     }
 
     const executionRole = this.taskDefinition.obtainExecutionRole();

@@ -224,47 +224,47 @@ Resources:
             - Fn::GetAtt:
                 - ConstructHubIngestionFailureAlarm9D0028DD
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"NpmJs/Follower
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"Home
+              Page Canary","region":"'
+            - Ref: AWS::Region
+            - '","annotations":{"alarms":["'
+            - Fn::GetAtt:
+                - ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002
+                - Arn
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"NpmJs/Follower
               Failures","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubSourcesNpmJsFollowerFailures86BCBA0D
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"NpmJs/Follower
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"NpmJs/Follower
               Not Running","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubSourcesNpmJsFollowerNotRunningCEAF0E1E
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"NpmJs/Stager
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":48,"properties":{"view":"timeSeries","title":"NpmJs/Stager
               DLQ Not Empty","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubSourcesdevConstructHubSourcesNpmJsStagerDLQNotEmpty3777A4EA
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":48,"properties":{"view":"timeSeries","title":"Inventory
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":54,"properties":{"view":"timeSeries","title":"Inventory
               Canary is not Running","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubInventoryCanaryNotRunningAF44D71C
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":54,"properties":{"view":"timeSeries","title":"Inventory
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":60,"properties":{"view":"timeSeries","title":"Inventory
               Canary is failing","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubInventoryCanaryFailures5BDA8051
-                - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":60,"properties":{"view":"timeSeries","title":"Home
-              Page Canary","region":"'
-            - Ref: AWS::Region
-            - '","annotations":{"alarms":["'
-            - Fn::GetAtt:
-                - ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002
                 - Arn
             - '"]},"yAxis":{}}}]}'
   ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionServiceRole9AAAD93C:
@@ -2180,7 +2180,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters51e6101c826732d4e632b2ee6a67e76518b05cea28bb0a00d6c5c697c83d89baS3Bucket583A6B8D
+          Ref: AssetParameters757b86a74dc666bd669d018076821bc365b5ee19b66ad5bf5a3802a01f3fc72bS3BucketD0AFED02
         S3Key:
           Fn::Join:
             - ""
@@ -2188,12 +2188,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters51e6101c826732d4e632b2ee6a67e76518b05cea28bb0a00d6c5c697c83d89baS3VersionKey13E12D1A
+                      - Ref: AssetParameters757b86a74dc666bd669d018076821bc365b5ee19b66ad5bf5a3802a01f3fc72bS3VersionKey67D8A736
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters51e6101c826732d4e632b2ee6a67e76518b05cea28bb0a00d6c5c697c83d89baS3VersionKey13E12D1A
+                      - Ref: AssetParameters757b86a74dc666bd669d018076821bc365b5ee19b66ad5bf5a3802a01f3fc72bS3VersionKey67D8A736
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
@@ -2319,7 +2319,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters6ec73e581e31f8d963e8fa20ab9289b8350615617545dd8b65ba56830828d519S3Bucket6B2CC376
+          Ref: AssetParameters173d31b69a48f1dff46e0bb06ffabab362d55341c1ff6c621a2d2253dfeff13dS3Bucket83102B05
         S3Key:
           Fn::Join:
             - ""
@@ -2327,12 +2327,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters6ec73e581e31f8d963e8fa20ab9289b8350615617545dd8b65ba56830828d519S3VersionKey8F8ABCFE
+                      - Ref: AssetParameters173d31b69a48f1dff46e0bb06ffabab362d55341c1ff6c621a2d2253dfeff13dS3VersionKeyEA2DB7D2
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters6ec73e581e31f8d963e8fa20ab9289b8350615617545dd8b65ba56830828d519S3VersionKey8F8ABCFE
+                      - Ref: AssetParameters173d31b69a48f1dff46e0bb06ffabab362d55341c1ff6c621a2d2253dfeff13dS3VersionKeyEA2DB7D2
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationNeedsCatalogUpdateServiceRoleE6BF31C3
@@ -2732,7 +2732,7 @@ Resources:
                 - Ref: AWS::Region
                 - .
                 - Ref: AWS::URLSuffix
-                - /aws-cdk/assets:2081de08768aa22ac60ddc034dc8cd4bf82b7d6d9fb3b45878592e6cd73e1961
+                - /aws-cdk/assets:82ad7b48d49f422f59eeff529af7374a62b9fefd910b7984fad3bedb8baff445
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -2942,7 +2942,9 @@ Resources:
               doc-gen ECS Command"},"Prepare doc-gen ECS
               Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate
               docs"},"Generate docs":{"Next":"Check whether catalog needs
-              udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send
+              udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["jsii-docgen.UnprocessableAssembly"],"Next":"Ignore
+              unprocessable
+              package"},{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send
               to Dead Letter
               Queue"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"ResultPath":"$.error","Next":"Send
               to Dead Letter
@@ -2998,8 +3000,9 @@ Resources:
             - Ref: AWS::Partition
             - :states:::sqs:sendMessage","Parameters":{"QueueUrl":"
             - Ref: ConstructHubOrchestrationDLQ9C6D9BD4
-            - '","MessageBody.$":"$"}},"Sent to
-              DLQ":{"Type":"Succeed"}},"TimeoutSeconds":86400}'
+            - '","MessageBody.$":"$"}},"Sent to DLQ":{"Type":"Succeed"},"Ignore
+              unprocessable
+              package":{"Type":"Pass","End":true}},"TimeoutSeconds":86400}'
       StateMachineName: dev.ConstructHub.Orchestration
       TracingConfiguration:
         Enabled: true
@@ -3666,7 +3669,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters945f3968c550f4c12b8d7f7f78f1ce8536d7007002590472233082927ae2dd17S3Bucket6A002A15
+          Ref: AssetParametersdebf96a2989d276ed0c3520f319f0abb019673260f9f53cd77be723dda0c6d21S3Bucket36E1C5C1
         S3Key:
           Fn::Join:
             - ""
@@ -3674,12 +3677,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters945f3968c550f4c12b8d7f7f78f1ce8536d7007002590472233082927ae2dd17S3VersionKeyAC01152C
+                      - Ref: AssetParametersdebf96a2989d276ed0c3520f319f0abb019673260f9f53cd77be723dda0c6d21S3VersionKey53FAD133
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters945f3968c550f4c12b8d7f7f78f1ce8536d7007002590472233082927ae2dd17S3VersionKeyAC01152C
+                      - Ref: AssetParametersdebf96a2989d276ed0c3520f319f0abb019673260f9f53cd77be723dda0c6d21S3VersionKey53FAD133
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
@@ -3849,7 +3852,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters0609b74426991bff02eabb105c021a431b0c6bc6082837b3b882e331fb3bd8c2S3BucketF895C157
+          Ref: AssetParameters9660b084de17970d289252b7bf2f6579fe57fec368d6e26771d395ff9b1177efS3BucketB8D9C39D
         S3Key:
           Fn::Join:
             - ""
@@ -3857,12 +3860,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters0609b74426991bff02eabb105c021a431b0c6bc6082837b3b882e331fb3bd8c2S3VersionKey5A51414E
+                      - Ref: AssetParameters9660b084de17970d289252b7bf2f6579fe57fec368d6e26771d395ff9b1177efS3VersionKeyCB518F08
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters0609b74426991bff02eabb105c021a431b0c6bc6082837b3b882e331fb3bd8c2S3VersionKey5A51414E
+                      - Ref: AssetParameters9660b084de17970d289252b7bf2f6579fe57fec368d6e26771d395ff9b1177efS3VersionKeyCB518F08
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionReprocessWorkflowFunctionServiceRoleA59056B1
@@ -4186,6 +4189,362 @@ Resources:
       Prune: true
     UpdateReplacePolicy: Delete
     DeletionPolicy: Delete
+  ConstructHubWebAppWebsiteBucket4B2B9DB2:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+  ConstructHubWebAppWebsiteBucketPolicy17174C06:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
+      PolicyDocument:
+        Statement:
+          - Action: s3:*
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"
+            Effect: Deny
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubWebAppWebsiteBucket4B2B9DB2
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubWebAppWebsiteBucket4B2B9DB2
+                        - Arn
+                    - /*
+          - Action: s3:GetObject
+            Effect: Allow
+            Principal:
+              CanonicalUser:
+                Fn::GetAtt:
+                  - ConstructHubWebAppDistributionOrigin1S3Origin694AF937
+                  - S3CanonicalUserId
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubWebAppWebsiteBucket4B2B9DB2
+                      - Arn
+                  - /*
+          - Action: s3:GetObject
+            Effect: Allow
+            Principal:
+              CanonicalUser:
+                Fn::GetAtt:
+                  - ConstructHubWebAppDistributionOrigin3S3Origin978233F9
+                  - S3CanonicalUserId
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubWebAppWebsiteBucket4B2B9DB2
+                      - Arn
+                  - /*
+        Version: 2012-10-17
+  ConstructHubWebAppAddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7E9FDB69:
+    Type: AWS::CloudFront::Function
+    Properties:
+      Name: AddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
+      AutoPublish: true
+      FunctionCode: >-
+        "use strict";
+
+        // ignore "duplicate function implementation" conflict with other response functions
+
+        // @ts-expect-error
+
+        function handler(event) {
+            var response = event.response;
+            var headers = response.headers;
+            headers['x-frame-options'] = { value: 'deny' };
+            headers['x-xss-protection'] = { value: '1; mode=block' };
+            headers['x-content-type-options'] = { value: 'nosniff' };
+            headers['strict-transport-security'] = { value: 'max-age=47304000; includeSubDomains' };
+            headers['content-security-policy'] = {
+                value: [
+                    "default-src 'self' 'unsafe-inline' https://*.awsstatic.com;",
+                    "connect-src 'self' https://*.shortbread.aws.dev;",
+                    "frame-src 'none';",
+                    "img-src 'self' https://* http://*.omtrdc.net;",
+                    "object-src 'none';",
+                    "style-src 'self' 'unsafe-inline';",
+                ].join(' '),
+            };
+            return response;
+        }
+
+        //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxvRkFBb0Y7QUFDcEYsbUJBQW1CO0FBQ25CLFNBQVMsT0FBTyxDQUFDLEtBQXlCO0lBQ3hDLElBQUksUUFBUSxHQUFHLEtBQUssQ0FBQyxRQUFRLENBQUM7SUFDOUIsSUFBSSxPQUFPLEdBQUcsUUFBUSxDQUFDLE9BQU8sQ0FBQztJQUUvQixPQUFPLENBQUMsaUJBQWlCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxNQUFNLEVBQUUsQ0FBQztJQUMvQyxPQUFPLENBQUMsa0JBQWtCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxlQUFlLEVBQUUsQ0FBQztJQUN6RCxPQUFPLENBQUMsd0JBQXdCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxTQUFTLEVBQUUsQ0FBQztJQUN6RCxPQUFPLENBQUMsMkJBQTJCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxxQ0FBcUMsRUFBRSxDQUFDO0lBQ3hGLE9BQU8sQ0FBQyx5QkFBeUIsQ0FBQyxHQUFHO1FBQ25DLEtBQUssRUFDSDtZQUNFLDZEQUE2RDtZQUM3RCxrREFBa0Q7WUFDbEQsbUJBQW1CO1lBQ25CLCtDQUErQztZQUMvQyxvQkFBb0I7WUFDcEIsbUNBQW1DO1NBQ3BDLENBQUMsSUFBSSxDQUFDLEdBQUcsQ0FBQztLQUNkLENBQUM7SUFFRixPQUFPLFFBQVEsQ0FBQztBQUNsQixDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiaW50ZXJmYWNlIENsb3VkRnJvbnRSZXNwb25zZSB7XG4gIHJlc3BvbnNlOiBhbnk7XG4gIGhlYWRlcnM6IHtcbiAgICBba2V5OiBzdHJpbmddOiB7XG4gICAgICB2YWx1ZTogc3RyaW5nO1xuICAgIH07XG4gIH07XG59XG5cbi8vIGlnbm9yZSBcImR1cGxpY2F0ZSBmdW5jdGlvbiBpbXBsZW1lbnRhdGlvblwiIGNvbmZsaWN0IHdpdGggb3RoZXIgcmVzcG9uc2UgZnVuY3Rpb25zXG4vLyBAdHMtZXhwZWN0LWVycm9yXG5mdW5jdGlvbiBoYW5kbGVyKGV2ZW50OiBDbG91ZEZyb250UmVzcG9uc2UpIHtcbiAgdmFyIHJlc3BvbnNlID0gZXZlbnQucmVzcG9uc2U7XG4gIHZhciBoZWFkZXJzID0gcmVzcG9uc2UuaGVhZGVycztcblxuICBoZWFkZXJzWyd4LWZyYW1lLW9wdGlvbnMnXSA9IHsgdmFsdWU6ICdkZW55JyB9O1xuICBoZWFkZXJzWyd4LXhzcy1wcm90ZWN0aW9uJ10gPSB7IHZhbHVlOiAnMTsgbW9kZT1ibG9jaycgfTtcbiAgaGVhZGVyc1sneC1jb250ZW50LXR5cGUtb3B0aW9ucyddID0geyB2YWx1ZTogJ25vc25pZmYnIH07XG4gIGhlYWRlcnNbJ3N0cmljdC10cmFuc3BvcnQtc2VjdXJpdHknXSA9IHsgdmFsdWU6ICdtYXgtYWdlPTQ3MzA0MDAwOyBpbmNsdWRlU3ViRG9tYWlucycgfTtcbiAgaGVhZGVyc1snY29udGVudC1zZWN1cml0eS1wb2xpY3knXSA9IHtcbiAgICB2YWx1ZTpcbiAgICAgIFtcbiAgICAgICAgXCJkZWZhdWx0LXNyYyAnc2VsZicgJ3Vuc2FmZS1pbmxpbmUnIGh0dHBzOi8vKi5hd3NzdGF0aWMuY29tO1wiLFxuICAgICAgICBcImNvbm5lY3Qtc3JjICdzZWxmJyBodHRwczovLyouc2hvcnRicmVhZC5hd3MuZGV2O1wiLFxuICAgICAgICBcImZyYW1lLXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwiaW1nLXNyYyAnc2VsZicgaHR0cHM6Ly8qIGh0dHA6Ly8qLm9tdHJkYy5uZXQ7XCIsXG4gICAgICAgIFwib2JqZWN0LXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwic3R5bGUtc3JjICdzZWxmJyAndW5zYWZlLWlubGluZSc7XCIsXG4gICAgICBdLmpvaW4oJyAnKSxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=
+      FunctionConfig:
+        Comment: AddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
+        Runtime: cloudfront-js-1.0
+  ConstructHubWebAppIndexHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c419C6E5D:
+    Type: AWS::CloudFront::Function
+    Properties:
+      Name: IndexHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
+      AutoPublish: true
+      FunctionCode: >-
+        "use strict";
+
+        // ignore "duplicate function implementation" conflict with other response functions
+
+        // @ts-expect-error
+
+        function handler(event) {
+            var response = event.response;
+            var headers = response.headers;
+            headers['x-frame-options'] = { value: 'deny' };
+            headers['x-xss-protection'] = { value: '1; mode=block' };
+            headers['x-content-type-options'] = { value: 'nosniff' };
+            headers['strict-transport-security'] = { value: 'max-age=47304000; includeSubDomains' };
+            headers['content-security-policy'] = {
+                value: [
+                    "default-src 'self' 'unsafe-inline' https://*.awsstatic.com;",
+                    "connect-src 'self' https://*.shortbread.aws.dev;",
+                    "frame-src 'none';",
+                    "img-src 'self' https://* http://*.omtrdc.net;",
+                    "object-src 'none';",
+                    "style-src 'self' 'unsafe-inline';",
+                ].join(' '),
+            };
+            headers['clear-site-data'] = { value: '"cache", "storage"' };
+            return response;
+        }
+
+        //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaG9tZS1yZXNwb25zZS1mdW5jdGlvbi5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NyYy93ZWJhcHAvaG9tZS1yZXNwb25zZS1mdW5jdGlvbi9ob21lLXJlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxvRkFBb0Y7QUFDcEYsbUJBQW1CO0FBQ25CLFNBQVMsT0FBTyxDQUFDLEtBQXlCO0lBQ3hDLElBQUksUUFBUSxHQUFHLEtBQUssQ0FBQyxRQUFRLENBQUM7SUFDOUIsSUFBSSxPQUFPLEdBQUcsUUFBUSxDQUFDLE9BQU8sQ0FBQztJQUUvQixPQUFPLENBQUMsaUJBQWlCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxNQUFNLEVBQUUsQ0FBQztJQUMvQyxPQUFPLENBQUMsa0JBQWtCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxlQUFlLEVBQUUsQ0FBQztJQUN6RCxPQUFPLENBQUMsd0JBQXdCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxTQUFTLEVBQUUsQ0FBQztJQUN6RCxPQUFPLENBQUMsMkJBQTJCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxxQ0FBcUMsRUFBRSxDQUFDO0lBQ3hGLE9BQU8sQ0FBQyx5QkFBeUIsQ0FBQyxHQUFHO1FBQ25DLEtBQUssRUFDSDtZQUNFLDZEQUE2RDtZQUM3RCxrREFBa0Q7WUFDbEQsbUJBQW1CO1lBQ25CLCtDQUErQztZQUMvQyxvQkFBb0I7WUFDcEIsbUNBQW1DO1NBQ3BDLENBQUMsSUFBSSxDQUFDLEdBQUcsQ0FBQztLQUNkLENBQUM7SUFFRixPQUFPLENBQUMsaUJBQWlCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxvQkFBb0IsRUFBRSxDQUFDO0lBRTdELE9BQU8sUUFBUSxDQUFDO0FBQ2xCLENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyJpbnRlcmZhY2UgQ2xvdWRGcm9udFJlc3BvbnNlIHtcbiAgcmVzcG9uc2U6IGFueTtcbiAgaGVhZGVyczoge1xuICAgIFtrZXk6IHN0cmluZ106IHtcbiAgICAgIHZhbHVlOiBzdHJpbmc7XG4gICAgfTtcbiAgfTtcbn1cblxuLy8gaWdub3JlIFwiZHVwbGljYXRlIGZ1bmN0aW9uIGltcGxlbWVudGF0aW9uXCIgY29uZmxpY3Qgd2l0aCBvdGhlciByZXNwb25zZSBmdW5jdGlvbnNcbi8vIEB0cy1leHBlY3QtZXJyb3JcbmZ1bmN0aW9uIGhhbmRsZXIoZXZlbnQ6IENsb3VkRnJvbnRSZXNwb25zZSkge1xuICB2YXIgcmVzcG9uc2UgPSBldmVudC5yZXNwb25zZTtcbiAgdmFyIGhlYWRlcnMgPSByZXNwb25zZS5oZWFkZXJzO1xuXG4gIGhlYWRlcnNbJ3gtZnJhbWUtb3B0aW9ucyddID0geyB2YWx1ZTogJ2RlbnknIH07XG4gIGhlYWRlcnNbJ3gteHNzLXByb3RlY3Rpb24nXSA9IHsgdmFsdWU6ICcxOyBtb2RlPWJsb2NrJyB9O1xuICBoZWFkZXJzWyd4LWNvbnRlbnQtdHlwZS1vcHRpb25zJ10gPSB7IHZhbHVlOiAnbm9zbmlmZicgfTtcbiAgaGVhZGVyc1snc3RyaWN0LXRyYW5zcG9ydC1zZWN1cml0eSddID0geyB2YWx1ZTogJ21heC1hZ2U9NDczMDQwMDA7IGluY2x1ZGVTdWJEb21haW5zJyB9O1xuICBoZWFkZXJzWydjb250ZW50LXNlY3VyaXR5LXBvbGljeSddID0ge1xuICAgIHZhbHVlOlxuICAgICAgW1xuICAgICAgICBcImRlZmF1bHQtc3JjICdzZWxmJyAndW5zYWZlLWlubGluZScgaHR0cHM6Ly8qLmF3c3N0YXRpYy5jb207XCIsXG4gICAgICAgIFwiY29ubmVjdC1zcmMgJ3NlbGYnIGh0dHBzOi8vKi5zaG9ydGJyZWFkLmF3cy5kZXY7XCIsXG4gICAgICAgIFwiZnJhbWUtc3JjICdub25lJztcIixcbiAgICAgICAgXCJpbWctc3JjICdzZWxmJyBodHRwczovLyogaHR0cDovLyoub210cmRjLm5ldDtcIixcbiAgICAgICAgXCJvYmplY3Qtc3JjICdub25lJztcIixcbiAgICAgICAgXCJzdHlsZS1zcmMgJ3NlbGYnICd1bnNhZmUtaW5saW5lJztcIixcbiAgICAgIF0uam9pbignICcpLFxuICB9O1xuXG4gIGhlYWRlcnNbJ2NsZWFyLXNpdGUtZGF0YSddID0geyB2YWx1ZTogJ1wiY2FjaGVcIiwgXCJzdG9yYWdlXCInIH07XG5cbiAgcmV0dXJuIHJlc3BvbnNlO1xufVxuIl19
+      FunctionConfig:
+        Comment: IndexHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
+        Runtime: cloudfront-js-1.0
+  ConstructHubWebAppDistributionOrigin1S3Origin694AF937:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: Identity for devConstructHubWebAppDistributionOrigin1FBBA04AE
+  ConstructHubWebAppDistribution1F181DC9:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        CacheBehaviors:
+          - CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+            Compress: true
+            FunctionAssociations:
+              - EventType: viewer-response
+                FunctionARN:
+                  Fn::GetAtt:
+                    - ConstructHubWebAppAddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7E9FDB69
+                    - FunctionARN
+            PathPattern: /data/*
+            TargetOriginId: devConstructHubWebAppDistributionOrigin2A726FD66
+            ViewerProtocolPolicy: allow-all
+          - CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+            Compress: true
+            FunctionAssociations:
+              - EventType: viewer-response
+                FunctionARN:
+                  Fn::GetAtt:
+                    - ConstructHubWebAppAddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7E9FDB69
+                    - FunctionARN
+            PathPattern: /catalog.json
+            TargetOriginId: devConstructHubWebAppDistributionOrigin2A726FD66
+            ViewerProtocolPolicy: allow-all
+          - CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+            Compress: true
+            FunctionAssociations:
+              - EventType: viewer-response
+                FunctionARN:
+                  Fn::GetAtt:
+                    - ConstructHubWebAppAddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7E9FDB69
+                    - FunctionARN
+            PathPattern: /stats.json
+            TargetOriginId: devConstructHubWebAppDistributionOrigin2A726FD66
+            ViewerProtocolPolicy: allow-all
+          - CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+            Compress: true
+            FunctionAssociations:
+              - EventType: viewer-response
+                FunctionARN:
+                  Fn::GetAtt:
+                    - ConstructHubWebAppIndexHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c419C6E5D
+                    - FunctionARN
+            PathPattern: /index.html
+            TargetOriginId: devConstructHubWebAppDistributionOrigin37A24F07B
+            ViewerProtocolPolicy: allow-all
+        CustomErrorResponses:
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+        DefaultCacheBehavior:
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
+          Compress: true
+          FunctionAssociations:
+            - EventType: viewer-response
+              FunctionARN:
+                Fn::GetAtt:
+                  - ConstructHubWebAppAddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7E9FDB69
+                  - FunctionARN
+          TargetOriginId: devConstructHubWebAppDistributionOrigin1FBBA04AE
+          ViewerProtocolPolicy: allow-all
+        DefaultRootObject: index.html
+        Enabled: true
+        HttpVersion: http2
+        IPV6Enabled: true
+        Origins:
+          - DomainName:
+              Fn::GetAtt:
+                - ConstructHubWebAppWebsiteBucket4B2B9DB2
+                - RegionalDomainName
+            Id: devConstructHubWebAppDistributionOrigin1FBBA04AE
+            S3OriginConfig:
+              OriginAccessIdentity:
+                Fn::Join:
+                  - ""
+                  - - origin-access-identity/cloudfront/
+                    - Ref: ConstructHubWebAppDistributionOrigin1S3Origin694AF937
+          - DomainName:
+              Fn::GetAtt:
+                - ConstructHubPackageDataDC5EF35E
+                - RegionalDomainName
+            Id: devConstructHubWebAppDistributionOrigin2A726FD66
+            S3OriginConfig:
+              OriginAccessIdentity:
+                Fn::Join:
+                  - ""
+                  - - origin-access-identity/cloudfront/
+                    - Ref: ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4
+          - DomainName:
+              Fn::GetAtt:
+                - ConstructHubWebAppWebsiteBucket4B2B9DB2
+                - RegionalDomainName
+            Id: devConstructHubWebAppDistributionOrigin37A24F07B
+            S3OriginConfig:
+              OriginAccessIdentity:
+                Fn::Join:
+                  - ""
+                  - - origin-access-identity/cloudfront/
+                    - Ref: ConstructHubWebAppDistributionOrigin3S3Origin978233F9
+  ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: Identity for devConstructHubWebAppDistributionOrigin2A726FD66
+  ConstructHubWebAppDistributionOrigin3S3Origin978233F9:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: Identity for devConstructHubWebAppDistributionOrigin37A24F07B
+  ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      Content:
+        S3Bucket:
+          Ref: AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F
+      Description: /opt/awscli/aws
+  ConstructHubWebAppDeployWebsiteCustomResourceE6DF98C9:
+    Type: Custom::CDKBucketDeployment
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
+          - Arn
+      SourceBucketNames:
+        - Ref: AssetParametersce62199f914c6331292efd99ff64833e05ccfa2f55cebb11777655824260ed50S3Bucket14C3850B
+      SourceObjectKeys:
+        - Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersce62199f914c6331292efd99ff64833e05ccfa2f55cebb11777655824260ed50S3VersionKeyE4476F07
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersce62199f914c6331292efd99ff64833e05ccfa2f55cebb11777655824260ed50S3VersionKeyE4476F07
+      DestinationBucketName:
+        Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
+      Prune: false
+      SystemMetadata:
+        cache-control: public, max-age=3600, must-revalidate, s-maxage=300, proxy-revalidate
+      DistributionId:
+        Ref: ConstructHubWebAppDistribution1F181DC9
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+  ConstructHubWebAppDeployWebsiteConfigAwsCliLayer8DFDB17A:
+    Type: AWS::Lambda::LayerVersion
+    Properties:
+      Content:
+        S3Bucket:
+          Ref: AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F
+      Description: /opt/awscli/aws
+  ConstructHubWebAppDeployWebsiteConfigCustomResource2D18C708:
+    Type: Custom::CDKBucketDeployment
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
+          - Arn
+      SourceBucketNames:
+        - Ref: AssetParameters15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622fS3BucketD12474B4
+      SourceObjectKeys:
+        - Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622fS3VersionKey99E4F89D
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622fS3VersionKey99E4F89D
+      DestinationBucketName:
+        Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
+      Prune: false
+      DistributionId:
+        Ref: ConstructHubWebAppDistribution1F181DC9
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
   ConstructHubSourcesNpmJsStagingBucketB286F0E6:
     Type: AWS::S3::Bucket
     Properties:
@@ -4485,7 +4844,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28S3Bucket58E2E453
+          Ref: AssetParametersda259481087e617cddf544931de12aab5204222e9fa77e0e93611494a07439c5S3Bucket9A98EAF8
         S3Key:
           Fn::Join:
             - ""
@@ -4493,12 +4852,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28S3VersionKeyDDAC85C3
+                      - Ref: AssetParametersda259481087e617cddf544931de12aab5204222e9fa77e0e93611494a07439c5S3VersionKey8CD7C9B0
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28S3VersionKeyDDAC85C3
+                      - Ref: AssetParametersda259481087e617cddf544931de12aab5204222e9fa77e0e93611494a07439c5S3VersionKey8CD7C9B0
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsServiceRoleAC3F7AA6
@@ -4530,6 +4889,169 @@ Resources:
       - ConstructHubLicenseListCustomResource323F0FD4
       - ConstructHubSourcesNpmJsServiceRoleDefaultPolicy65FBFA22
       - ConstructHubSourcesNpmJsServiceRoleAC3F7AA6
+  ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    DependsOn:
+      - ConstructHubLicenseListAwsCliLayer59592811
+      - ConstructHubLicenseListCustomResource323F0FD4
+  ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubSourcesNpmJsStagingBucketB286F0E6
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubSourcesNpmJsStagingBucketB286F0E6
+                        - Arn
+                    - /package-canary/*.state.json
+        Version: 2012-10-17
+      PolicyName: ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B
+      Roles:
+        - Ref: ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2
+    DependsOn:
+      - ConstructHubLicenseListAwsCliLayer59592811
+      - ConstructHubLicenseListCustomResource323F0FD4
+  ConstructHubSourcesNpmJsCanary5558FC45:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParametersd0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46S3Bucket0DFA8046
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersd0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46S3VersionKey65421A4C
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParametersd0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46S3VersionKey65421A4C
+      Role:
+        Fn::GetAtt:
+          - ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2
+          - Arn
+      Description: "[dev/ConstructHub/Sources/NpmJs/PackageCanary] Monitors
+        construct-hub-probe versions availability"
+      Environment:
+        Variables:
+          CONSTRUCT_HUB_BASE_URL:
+            Fn::Join:
+              - ""
+              - - https://
+                - Fn::GetAtt:
+                    - ConstructHubWebAppDistribution1F181DC9
+                    - DomainName
+          PACKAGE_CANARY_BUCKET_NAME:
+            Ref: ConstructHubSourcesNpmJsStagingBucketB286F0E6
+          PACKAGE_NAME: construct-hub-probe
+      Handler: index.handler
+      MemorySize: 10024
+      Runtime: nodejs14.x
+      Timeout: 60
+    DependsOn:
+      - ConstructHubLicenseListAwsCliLayer59592811
+      - ConstructHubLicenseListCustomResource323F0FD4
+      - ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B
+      - ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2
+  ConstructHubSourcesNpmJsCanarySchedule4D94219F:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Scheduled executions of the NpmJS package canary
+      ScheduleExpression: rate(1 minute)
+      State: ENABLED
+      Targets:
+        - Arn:
+            Fn::GetAtt:
+              - ConstructHubSourcesNpmJsCanary5558FC45
+              - Arn
+          Id: Target0
+    DependsOn:
+      - ConstructHubLicenseListAwsCliLayer59592811
+      - ConstructHubLicenseListCustomResource323F0FD4
+      - ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B
+  ConstructHubSourcesNpmJsCanaryScheduleAllowEventRuledevConstructHubSourcesNpmJsCanaryC48E9D5AD1BB0C82:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - ConstructHubSourcesNpmJsCanary5558FC45
+          - Arn
+      Principal: events.amazonaws.com
+      SourceArn:
+        Fn::GetAtt:
+          - ConstructHubSourcesNpmJsCanarySchedule4D94219F
+          - Arn
+    DependsOn:
+      - ConstructHubLicenseListAwsCliLayer59592811
+      - ConstructHubLicenseListCustomResource323F0FD4
+      - ConstructHubSourcesNpmJsCanaryServiceRoleDefaultPolicy630F813B
+  ConstructHubSourcesNpmJsCanaryAlarmBE2B479E:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 2
+      AlarmDescription: >-
+        New versions of construct-hub-probe have been published over 5 minutes
+        ago and are still not visible in construct hub
+
+        Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+      AlarmName: dev/ConstructHub/Sources/NpmJs/Canary/SLA-Breached
+      Metrics:
+        - Expression: MAX([mDwell, mTTC])
+          Id: expr_1
+        - Id: mDwell
+          MetricStat:
+            Metric:
+              MetricName: DwellTime
+              Namespace: ConstructHub/PackageCanary
+            Period: 60
+            Stat: Maximum
+          ReturnData: false
+        - Id: mTTC
+          MetricStat:
+            Metric:
+              MetricName: TimeToCatalog
+              Namespace: ConstructHub/PackageCanary
+            Period: 60
+            Stat: Maximum
+          ReturnData: false
+      Threshold: 300
+      TreatMissingData: breaching
+    DependsOn:
+      - ConstructHubLicenseListAwsCliLayer59592811
+      - ConstructHubLicenseListCustomResource323F0FD4
   ConstructHubSourcesNpmJsSchedule34031870:
     Type: AWS::Events::Rule
     Properties:
@@ -4752,6 +5274,21 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /missing-objects/*-documentation.json
+          - Action:
+              - s3:DeleteObject*
+              - s3:PutObject*
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /unprocessable-objects/*-assembly.json
         Version: 2012-10-17
       PolicyName: ConstructHubInventoryCanaryServiceRoleDefaultPolicy144783F1
       Roles:
@@ -4761,7 +5298,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters5af0e476215eecf6a11d9344451dbb927349489ea7d76b481334b7558057b5c3S3Bucket9C2F7A99
+          Ref: AssetParameters148248da84a2e7d222de1b675214537a684ae7124cb5e92daa11d8c35c04771bS3BucketD71E0405
         S3Key:
           Fn::Join:
             - ""
@@ -4769,12 +5306,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters5af0e476215eecf6a11d9344451dbb927349489ea7d76b481334b7558057b5c3S3VersionKeyDCE085DD
+                      - Ref: AssetParameters148248da84a2e7d222de1b675214537a684ae7124cb5e92daa11d8c35c04771bS3VersionKey584D55D2
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters5af0e476215eecf6a11d9344451dbb927349489ea7d76b481334b7558057b5c3S3VersionKeyDCE085DD
+                      - Ref: AssetParameters148248da84a2e7d222de1b675214537a684ae7124cb5e92daa11d8c35c04771bS3VersionKey584D55D2
       Role:
         Fn::GetAtt:
           - ConstructHubInventoryCanaryServiceRole7684EDDE
@@ -4973,57 +5510,110 @@ Resources:
               typescript"}},{"type":"metric","width":6,"height":6,"x":0,"y":17,"properties":{"view":"pie","title":"Package
               Versions","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","typescript",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","typescript",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"custom","width":12,"height":6,"x":6,"y":17,"properties":{"endpoint":"'
+            - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","typescript",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","typescript",{"color":"#d62728","label":"Missing","stat":"Maximum"}],["ConstructHub/Inventory","UnprocessablePackageVersionCount","Language","typescript",{"color":"#397BC4","label":"Unprocessable","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"custom","width":12,"height":6,"x":6,"y":17,"properties":{"endpoint":"'
             - Fn::GetAtt:
-                - MissingDocumnetationWidgetHandler136351bde63b5de8bb16730ac238d7034EC80EB0
+                - PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfBE2C27C2
                 - Arn
-            - '","params":{"language":"typescript"},"title":"Package Versions
-              missing
-              documentation","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"metric","width":6,"height":6,"x":18,"y":17,"properties":{"view":"pie","title":"Package
+            - '","params":{"key":"missing-objects/typescript-documentation.json","description":"This
+              widget shows the name and version(s) of all packages tracked
+              by\\nthis ConstructHub instance, and for which at least one
+              documentation\\nobject is missing for
+              _typescript_.\\n"},"title":"Package Versions missing
+              documentation","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"custom","width":12,"height":6,"x":0,"y":23,"properties":{"endpoint":"'
+            - Fn::GetAtt:
+                - PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfBE2C27C2
+                - Arn
+            - '","params":{"key":"unprocessable-objects/typescript-assembly.json","description":"This
+              widget shows the name and version(s) of all packages tracked
+              by\\nthis ConstructHub instance, and for which at least one
+              documentation\\nobject cannot be created due to an unprocessable
+              assembly for _typescript_.\\n"},"title":"Package Versions with
+              unprocessable
+              assembly","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"metric","width":6,"height":6,"x":12,"y":23,"properties":{"view":"pie","title":"Package
               Version Submodules","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","typescript",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","typescript",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":23,"properties":{"markdown":"##
+            - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","typescript",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","typescript",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":29,"properties":{"markdown":"##
               Language:
-              python"}},{"type":"metric","width":6,"height":6,"x":0,"y":24,"properties":{"view":"pie","title":"Package
+              python"}},{"type":"metric","width":6,"height":6,"x":0,"y":30,"properties":{"view":"pie","title":"Package
               Versions","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","python",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","python",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","python",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"custom","width":12,"height":6,"x":6,"y":24,"properties":{"endpoint":"'
+            - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","python",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","python",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","python",{"color":"#d62728","label":"Missing","stat":"Maximum"}],["ConstructHub/Inventory","UnprocessablePackageVersionCount","Language","python",{"color":"#397BC4","label":"Unprocessable","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"custom","width":12,"height":6,"x":6,"y":30,"properties":{"endpoint":"'
             - Fn::GetAtt:
-                - MissingDocumnetationWidgetHandler136351bde63b5de8bb16730ac238d7034EC80EB0
+                - PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfBE2C27C2
                 - Arn
-            - '","params":{"language":"python"},"title":"Package Versions
-              missing
-              documentation","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"metric","width":6,"height":6,"x":18,"y":24,"properties":{"view":"pie","title":"Package
+            - '","params":{"key":"missing-objects/python-documentation.json","description":"This
+              widget shows the name and version(s) of all packages tracked
+              by\\nthis ConstructHub instance, and for which at least one
+              documentation\\nobject is missing for
+              _python_.\\n"},"title":"Package Versions missing
+              documentation","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"custom","width":12,"height":6,"x":0,"y":36,"properties":{"endpoint":"'
+            - Fn::GetAtt:
+                - PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfBE2C27C2
+                - Arn
+            - '","params":{"key":"unprocessable-objects/python-assembly.json","description":"This
+              widget shows the name and version(s) of all packages tracked
+              by\\nthis ConstructHub instance, and for which at least one
+              documentation\\nobject cannot be created due to an unprocessable
+              assembly for _python_.\\n"},"title":"Package Versions with
+              unprocessable
+              assembly","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"metric","width":6,"height":6,"x":12,"y":36,"properties":{"view":"pie","title":"Package
               Version Submodules","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","python",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","python",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","python",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":30,"properties":{"markdown":"##
+            - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","python",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","python",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","python",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":42,"properties":{"markdown":"##
               Language:
-              java"}},{"type":"metric","width":6,"height":6,"x":0,"y":31,"properties":{"view":"pie","title":"Package
+              java"}},{"type":"metric","width":6,"height":6,"x":0,"y":43,"properties":{"view":"pie","title":"Package
               Versions","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","java",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","java",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","java",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"custom","width":12,"height":6,"x":6,"y":31,"properties":{"endpoint":"'
+            - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","java",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","java",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","java",{"color":"#d62728","label":"Missing","stat":"Maximum"}],["ConstructHub/Inventory","UnprocessablePackageVersionCount","Language","java",{"color":"#397BC4","label":"Unprocessable","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"custom","width":12,"height":6,"x":6,"y":43,"properties":{"endpoint":"'
             - Fn::GetAtt:
-                - MissingDocumnetationWidgetHandler136351bde63b5de8bb16730ac238d7034EC80EB0
+                - PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfBE2C27C2
                 - Arn
-            - '","params":{"language":"java"},"title":"Package Versions missing
-              documentation","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"metric","width":6,"height":6,"x":18,"y":31,"properties":{"view":"pie","title":"Package
+            - '","params":{"key":"missing-objects/java-documentation.json","description":"This
+              widget shows the name and version(s) of all packages tracked
+              by\\nthis ConstructHub instance, and for which at least one
+              documentation\\nobject is missing for _java_.\\n"},"title":"Package
+              Versions missing
+              documentation","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"custom","width":12,"height":6,"x":0,"y":49,"properties":{"endpoint":"'
+            - Fn::GetAtt:
+                - PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfBE2C27C2
+                - Arn
+            - '","params":{"key":"unprocessable-objects/java-assembly.json","description":"This
+              widget shows the name and version(s) of all packages tracked
+              by\\nthis ConstructHub instance, and for which at least one
+              documentation\\nobject cannot be created due to an unprocessable
+              assembly for _java_.\\n"},"title":"Package Versions with
+              unprocessable
+              assembly","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"metric","width":6,"height":6,"x":12,"y":49,"properties":{"view":"pie","title":"Package
               Version Submodules","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","java",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","java",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","java",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":37,"properties":{"markdown":"##
+            - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","java",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","java",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","java",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":55,"properties":{"markdown":"##
               Language:
-              csharp"}},{"type":"metric","width":6,"height":6,"x":0,"y":38,"properties":{"view":"pie","title":"Package
+              csharp"}},{"type":"metric","width":6,"height":6,"x":0,"y":56,"properties":{"view":"pie","title":"Package
               Versions","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","csharp",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","csharp",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","csharp",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"custom","width":12,"height":6,"x":6,"y":38,"properties":{"endpoint":"'
+            - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","csharp",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","csharp",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","csharp",{"color":"#d62728","label":"Missing","stat":"Maximum"}],["ConstructHub/Inventory","UnprocessablePackageVersionCount","Language","csharp",{"color":"#397BC4","label":"Unprocessable","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"custom","width":12,"height":6,"x":6,"y":56,"properties":{"endpoint":"'
             - Fn::GetAtt:
-                - MissingDocumnetationWidgetHandler136351bde63b5de8bb16730ac238d7034EC80EB0
+                - PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfBE2C27C2
                 - Arn
-            - '","params":{"language":"csharp"},"title":"Package Versions
-              missing
-              documentation","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"metric","width":6,"height":6,"x":18,"y":38,"properties":{"view":"pie","title":"Package
+            - '","params":{"key":"missing-objects/csharp-documentation.json","description":"This
+              widget shows the name and version(s) of all packages tracked
+              by\\nthis ConstructHub instance, and for which at least one
+              documentation\\nobject is missing for
+              _csharp_.\\n"},"title":"Package Versions missing
+              documentation","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"custom","width":12,"height":6,"x":0,"y":62,"properties":{"endpoint":"'
+            - Fn::GetAtt:
+                - PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfBE2C27C2
+                - Arn
+            - '","params":{"key":"unprocessable-objects/csharp-assembly.json","description":"This
+              widget shows the name and version(s) of all packages tracked
+              by\\nthis ConstructHub instance, and for which at least one
+              documentation\\nobject cannot be created due to an unprocessable
+              assembly for _csharp_.\\n"},"title":"Package Versions with
+              unprocessable
+              assembly","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"metric","width":6,"height":6,"x":12,"y":62,"properties":{"view":"pie","title":"Package
               Version Submodules","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","csharp",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","csharp",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","csharp",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":2,"x":0,"y":44,"properties":{"markdown":"#
+            - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","csharp",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","csharp",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","csharp",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":2,"x":0,"y":68,"properties":{"markdown":"#
               dev/ConstructHub/Sources/NpmJs\\n\\n[button:primary:NpmJs
               Follower](/lambda/home#/functions/'
             - Ref: ConstructHubSourcesNpmJs15A77D2D
@@ -5039,7 +5629,7 @@ Resources:
             - Fn::GetAtt:
                 - ConstructHubSourcesStagerDLQ80BD2600
                 - QueueName
-            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":46,"properties":{"view":"timeSeries","title":"Follower
+            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":70,"properties":{"view":"timeSeries","title":"Follower
               Health","region":"
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Invocations","expression":"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2,
@@ -5049,7 +5639,7 @@ Resources:
               0)"}],["AWS/Lambda","Errors","FunctionName","'
             - Ref: ConstructHubSourcesNpmJs15A77D2D
             - '",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}],["ConstructHub/PackageSource/NpmJs/Follower","RemainingTime",{"label":"Remaining
-              Time","stat":"Minimum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":46,"properties":{"view":"timeSeries","title":"Stager
+              Time","stat":"Minimum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":70,"properties":{"view":"timeSeries","title":"Stager
               Health","region":"'
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Invocations","expression":"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2,
@@ -5060,7 +5650,7 @@ Resources:
             - Ref: ConstructHubSourcesNpmJsStageAndNotify591C0CFA
             - '",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}],["AWS/Lambda","Duration","FunctionName","'
             - Ref: ConstructHubSourcesNpmJsStageAndNotify591C0CFA
-            - '",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":52,"properties":{"view":"timeSeries","title":"CouchDB
+            - '",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":76,"properties":{"view":"timeSeries","title":"CouchDB
               Follower","region":"'
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Change
@@ -5077,14 +5667,14 @@ Resources:
               Age","expression":"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4,
               REPEAT)","yAxis":"right"}],["ConstructHub/PackageSource/NpmJs/Follower","PackageVersionAge",{"label":"Package
               Version
-              Age","stat":"Maximum","visible":false,"id":"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4"}]],"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":52,"properties":{"view":"timeSeries","title":"CouchDB
+              Age","stat":"Maximum","visible":false,"id":"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4"}]],"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":76,"properties":{"view":"timeSeries","title":"CouchDB
               Changes","region":"'
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Last Sequence
               Number","expression":"FILL(mcc89a801dd7db60ea52e74b9851bd34a3899e7a26323ac98feb632cdf70c2500,
               REPEAT)"}],["ConstructHub/PackageSource/NpmJs/Follower","LastSeq",{"label":"Last
               Sequence
-              Number","stat":"Maximum","visible":false,"id":"mcc89a801dd7db60ea52e74b9851bd34a3899e7a26323ac98feb632cdf70c2500"}]],"yAxis":{},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":58,"properties":{"view":"timeSeries","title":"Stager
+              Number","stat":"Maximum","visible":false,"id":"mcc89a801dd7db60ea52e74b9851bd34a3899e7a26323ac98feb632cdf70c2500"}]],"yAxis":{},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":82,"properties":{"view":"timeSeries","title":"Stager
               Dead-Letter Queue","region":"'
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Visible
@@ -5106,7 +5696,17 @@ Resources:
                 - ConstructHubSourcesStagerDLQ80BD2600
                 - QueueName
             - '",{"label":"Oldest
-              Message","stat":"Maximum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":64,"properties":{"markdown":"#
+              Message","stat":"Maximum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":12,"y":82,"properties":{"view":"timeSeries","title":"Package
+              Canary","region":"'
+            - Ref: AWS::Region
+            - '","metrics":[["ConstructHub/PackageCanary","DwellTime",{"label":"Dwell
+              Time","period":60,"stat":"Maximum"}],["ConstructHub/PackageCanary","TimeToCatalog",{"label":"Time
+              to
+              Catalog","period":60,"stat":"Maximum"}],["ConstructHub/PackageCanary","TrackedVersionCount",{"label":"Tracked
+              Version
+              Count","period":60,"stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"SLA
+              (5
+              minutes)","value":300,"yAxis":"left"}]},"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":88,"properties":{"markdown":"#
               Ingestion Function\\n\\n[button:Ingestion
               Function](/lambda/home#/functions/'
             - Ref: ConstructHubIngestion407909CE
@@ -5121,7 +5721,7 @@ Resources:
             - Fn::GetAtt:
                 - ConstructHubIngestionDLQ3E96A5F2
                 - QueueName
-            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":66,"properties":{"view":"timeSeries","title":"Function
+            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":90,"properties":{"view":"timeSeries","title":"Function
               Health","region":"
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Invocations","expression":"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2,
@@ -5130,7 +5730,7 @@ Resources:
             - '",{"label":"Invocations","stat":"Sum","visible":false,"id":"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2"}],[{"label":"Errors","expression":"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55,
               0)"}],["AWS/Lambda","Errors","FunctionName","'
             - Ref: ConstructHubIngestion407909CE
-            - '",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":12,"y":66,"properties":{"view":"timeSeries","title":"Input
+            - '",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":12,"y":90,"properties":{"view":"timeSeries","title":"Input
               Queue","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","'
@@ -5149,7 +5749,7 @@ Resources:
                 - QueueName
             - '",{"label":"Oldest Message
               Age","period":60,"stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"10
-              Minutes","value":600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":0,"y":72,"properties":{"view":"timeSeries","title":"Input
+              Minutes","value":600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":0,"y":96,"properties":{"view":"timeSeries","title":"Input
               Quality","region":"'
             - Ref: AWS::Region
             - '","stacked":true,"metrics":[[{"label":"Invalid
@@ -5169,7 +5769,7 @@ Resources:
               file","expression":"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661,
               0)"}],["ConstructHub/Ingestion","FoundLicenseFile",{"label":"Found
               License
-              file","stat":"Sum","visible":false,"id":"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661"}]],"yAxis":{"left":{"label":"Count","min":0,"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":72,"properties":{"view":"timeSeries","title":"Dead
+              file","stat":"Sum","visible":false,"id":"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661"}]],"yAxis":{"left":{"label":"Count","min":0,"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":96,"properties":{"view":"timeSeries","title":"Dead
               Letters","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","'
@@ -5190,7 +5790,7 @@ Resources:
               Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10
               days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14
               days (DLQ
-              Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":78,"properties":{"markdown":"#
+              Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":102,"properties":{"markdown":"#
               Orchestration\\n\\n[button:primary:State
               Machine](/states/home#/statemachines/view/'
             - Ref: ConstructHubOrchestration39161A46
@@ -5207,7 +5807,7 @@ Resources:
             - )\\n[button:Regenerate All
               Documentation](/states/home#/statemachines/view/
             - Ref: ConstructHubOrchestrationRegenerateAllDocumentationE9FAB254
-            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":80,"properties":{"view":"timeSeries","title":"State
+            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":104,"properties":{"view":"timeSeries","title":"State
               Machine Executions","region":"
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Started","expression":"FILL(m392141ff4cfa3bbe1889b2db42bcf20599513e199a0b9fb8dc736cde893c1d7c,
@@ -5232,7 +5832,7 @@ Resources:
             - '",{"label":"Timed
               Out","stat":"Sum","visible":false,"id":"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21"}],["AWS/States","ExecutionTime","StateMachineArn","'
             - Ref: ConstructHubOrchestration39161A46
-            - '",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":80,"properties":{"view":"timeSeries","title":"Dead
+            - '",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":104,"properties":{"view":"timeSeries","title":"Dead
               Letter Queue","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","'
@@ -5253,7 +5853,7 @@ Resources:
               Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10
               days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14
               days (DLQ
-              Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":86,"properties":{"markdown":"#
+              Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":110,"properties":{"markdown":"#
               Deny List\\n\\n[button:primary:Deny List Object](/s3/object/'
             - Ref: ConstructHubDenyListBucket1B3C2C2E
             - ?prefix=deny-list.json)\\n[button:Prune
@@ -5274,7 +5874,7 @@ Resources:
             - )\\n[button:Delete
               Logs](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f
             - Ref: ConstructHubDenyListPrunePruneQueueHandlerF7EB599B
-            - /log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":88,"properties":{"view":"timeSeries","title":"Deny
+            - /log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":112,"properties":{"view":"timeSeries","title":"Deny
               List","region":"
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Rules","expression":"FILL(m41327b0edbbef1ca627d9503d1b9b9fab401700118519537b58e0557adee7e4f,
@@ -5283,7 +5883,7 @@ Resources:
                 - ConstructHubDenyListPruneDeleteQueueBBF60185
                 - QueueName
             - '",{"label":"Deleted
-              Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":88,"properties":{"view":"timeSeries","title":"Prune
+              Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":112,"properties":{"view":"timeSeries","title":"Prune
               Function Health","region":"'
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Invocations","expression":"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2,
@@ -5292,7 +5892,7 @@ Resources:
             - '",{"label":"Invocations","stat":"Sum","visible":false,"id":"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2"}],[{"label":"Errors","expression":"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55,
               0)"}],["AWS/Lambda","Errors","FunctionName","'
             - Ref: ConstructHubDenyListPrunePruneHandler30B33551
-            - '",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":94,"properties":{"markdown":"#
+            - '",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":118,"properties":{"markdown":"#
               Package Stats\\n\\n[button:primary:Package Stats
               Object](/s3/object/'
             - Ref: ConstructHubPackageDataDC5EF35E
@@ -5302,14 +5902,14 @@ Resources:
             - )\\n[button:Package Stats
               Logs](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f
             - Ref: ConstructHubStats61DB07B1
-            - /log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":96,"properties":{"view":"timeSeries","title":"Number
+            - /log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":120,"properties":{"view":"timeSeries","title":"Number
               of Package Stats Recorded","region":"
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Packages with
               stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f,
               REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages
               with
-              stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":96,"properties":{"view":"timeSeries","title":"Invocation
+              stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":120,"properties":{"view":"timeSeries","title":"Invocation
               Duration","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/Lambda","Duration","FunctionName","'
@@ -5318,362 +5918,6 @@ Resources:
               minutes (Lambda
               timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}}]}'
       DashboardName: construct-hub-backend
-  ConstructHubWebAppWebsiteBucket4B2B9DB2:
-    Type: AWS::S3::Bucket
-    Properties:
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        BlockPublicPolicy: true
-        IgnorePublicAcls: true
-        RestrictPublicBuckets: true
-    UpdateReplacePolicy: Retain
-    DeletionPolicy: Retain
-  ConstructHubWebAppWebsiteBucketPolicy17174C06:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket:
-        Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
-      PolicyDocument:
-        Statement:
-          - Action: s3:*
-            Condition:
-              Bool:
-                aws:SecureTransport: "false"
-            Effect: Deny
-            Principal:
-              AWS: "*"
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubWebAppWebsiteBucket4B2B9DB2
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubWebAppWebsiteBucket4B2B9DB2
-                        - Arn
-                    - /*
-          - Action: s3:GetObject
-            Effect: Allow
-            Principal:
-              CanonicalUser:
-                Fn::GetAtt:
-                  - ConstructHubWebAppDistributionOrigin1S3Origin694AF937
-                  - S3CanonicalUserId
-            Resource:
-              Fn::Join:
-                - ""
-                - - Fn::GetAtt:
-                      - ConstructHubWebAppWebsiteBucket4B2B9DB2
-                      - Arn
-                  - /*
-          - Action: s3:GetObject
-            Effect: Allow
-            Principal:
-              CanonicalUser:
-                Fn::GetAtt:
-                  - ConstructHubWebAppDistributionOrigin3S3Origin978233F9
-                  - S3CanonicalUserId
-            Resource:
-              Fn::Join:
-                - ""
-                - - Fn::GetAtt:
-                      - ConstructHubWebAppWebsiteBucket4B2B9DB2
-                      - Arn
-                  - /*
-        Version: 2012-10-17
-  ConstructHubWebAppAddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7E9FDB69:
-    Type: AWS::CloudFront::Function
-    Properties:
-      Name: AddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
-      AutoPublish: true
-      FunctionCode: >-
-        "use strict";
-
-        // ignore "duplicate function implementation" conflict with other response functions
-
-        // @ts-expect-error
-
-        function handler(event) {
-            var response = event.response;
-            var headers = response.headers;
-            headers['x-frame-options'] = { value: 'deny' };
-            headers['x-xss-protection'] = { value: '1; mode=block' };
-            headers['x-content-type-options'] = { value: 'nosniff' };
-            headers['strict-transport-security'] = { value: 'max-age=47304000; includeSubDomains' };
-            headers['content-security-policy'] = {
-                value: [
-                    "default-src 'self' 'unsafe-inline' https://*.awsstatic.com;",
-                    "connect-src 'self' https://*.shortbread.aws.dev;",
-                    "frame-src 'none';",
-                    "img-src 'self' https://* http://*.omtrdc.net;",
-                    "object-src 'none';",
-                    "style-src 'self' 'unsafe-inline';",
-                ].join(' '),
-            };
-            return response;
-        }
-
-        //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxvRkFBb0Y7QUFDcEYsbUJBQW1CO0FBQ25CLFNBQVMsT0FBTyxDQUFDLEtBQXlCO0lBQ3hDLElBQUksUUFBUSxHQUFHLEtBQUssQ0FBQyxRQUFRLENBQUM7SUFDOUIsSUFBSSxPQUFPLEdBQUcsUUFBUSxDQUFDLE9BQU8sQ0FBQztJQUUvQixPQUFPLENBQUMsaUJBQWlCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxNQUFNLEVBQUUsQ0FBQztJQUMvQyxPQUFPLENBQUMsa0JBQWtCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxlQUFlLEVBQUUsQ0FBQztJQUN6RCxPQUFPLENBQUMsd0JBQXdCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxTQUFTLEVBQUUsQ0FBQztJQUN6RCxPQUFPLENBQUMsMkJBQTJCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxxQ0FBcUMsRUFBRSxDQUFDO0lBQ3hGLE9BQU8sQ0FBQyx5QkFBeUIsQ0FBQyxHQUFHO1FBQ25DLEtBQUssRUFDSDtZQUNFLDZEQUE2RDtZQUM3RCxrREFBa0Q7WUFDbEQsbUJBQW1CO1lBQ25CLCtDQUErQztZQUMvQyxvQkFBb0I7WUFDcEIsbUNBQW1DO1NBQ3BDLENBQUMsSUFBSSxDQUFDLEdBQUcsQ0FBQztLQUNkLENBQUM7SUFFRixPQUFPLFFBQVEsQ0FBQztBQUNsQixDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiaW50ZXJmYWNlIENsb3VkRnJvbnRSZXNwb25zZSB7XG4gIHJlc3BvbnNlOiBhbnk7XG4gIGhlYWRlcnM6IHtcbiAgICBba2V5OiBzdHJpbmddOiB7XG4gICAgICB2YWx1ZTogc3RyaW5nO1xuICAgIH07XG4gIH07XG59XG5cbi8vIGlnbm9yZSBcImR1cGxpY2F0ZSBmdW5jdGlvbiBpbXBsZW1lbnRhdGlvblwiIGNvbmZsaWN0IHdpdGggb3RoZXIgcmVzcG9uc2UgZnVuY3Rpb25zXG4vLyBAdHMtZXhwZWN0LWVycm9yXG5mdW5jdGlvbiBoYW5kbGVyKGV2ZW50OiBDbG91ZEZyb250UmVzcG9uc2UpIHtcbiAgdmFyIHJlc3BvbnNlID0gZXZlbnQucmVzcG9uc2U7XG4gIHZhciBoZWFkZXJzID0gcmVzcG9uc2UuaGVhZGVycztcblxuICBoZWFkZXJzWyd4LWZyYW1lLW9wdGlvbnMnXSA9IHsgdmFsdWU6ICdkZW55JyB9O1xuICBoZWFkZXJzWyd4LXhzcy1wcm90ZWN0aW9uJ10gPSB7IHZhbHVlOiAnMTsgbW9kZT1ibG9jaycgfTtcbiAgaGVhZGVyc1sneC1jb250ZW50LXR5cGUtb3B0aW9ucyddID0geyB2YWx1ZTogJ25vc25pZmYnIH07XG4gIGhlYWRlcnNbJ3N0cmljdC10cmFuc3BvcnQtc2VjdXJpdHknXSA9IHsgdmFsdWU6ICdtYXgtYWdlPTQ3MzA0MDAwOyBpbmNsdWRlU3ViRG9tYWlucycgfTtcbiAgaGVhZGVyc1snY29udGVudC1zZWN1cml0eS1wb2xpY3knXSA9IHtcbiAgICB2YWx1ZTpcbiAgICAgIFtcbiAgICAgICAgXCJkZWZhdWx0LXNyYyAnc2VsZicgJ3Vuc2FmZS1pbmxpbmUnIGh0dHBzOi8vKi5hd3NzdGF0aWMuY29tO1wiLFxuICAgICAgICBcImNvbm5lY3Qtc3JjICdzZWxmJyBodHRwczovLyouc2hvcnRicmVhZC5hd3MuZGV2O1wiLFxuICAgICAgICBcImZyYW1lLXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwiaW1nLXNyYyAnc2VsZicgaHR0cHM6Ly8qIGh0dHA6Ly8qLm9tdHJkYy5uZXQ7XCIsXG4gICAgICAgIFwib2JqZWN0LXNyYyAnbm9uZSc7XCIsXG4gICAgICAgIFwic3R5bGUtc3JjICdzZWxmJyAndW5zYWZlLWlubGluZSc7XCIsXG4gICAgICBdLmpvaW4oJyAnKSxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=
-      FunctionConfig:
-        Comment: AddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
-        Runtime: cloudfront-js-1.0
-  ConstructHubWebAppIndexHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c419C6E5D:
-    Type: AWS::CloudFront::Function
-    Properties:
-      Name: IndexHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
-      AutoPublish: true
-      FunctionCode: >-
-        "use strict";
-
-        // ignore "duplicate function implementation" conflict with other response functions
-
-        // @ts-expect-error
-
-        function handler(event) {
-            var response = event.response;
-            var headers = response.headers;
-            headers['x-frame-options'] = { value: 'deny' };
-            headers['x-xss-protection'] = { value: '1; mode=block' };
-            headers['x-content-type-options'] = { value: 'nosniff' };
-            headers['strict-transport-security'] = { value: 'max-age=47304000; includeSubDomains' };
-            headers['content-security-policy'] = {
-                value: [
-                    "default-src 'self' 'unsafe-inline' https://*.awsstatic.com;",
-                    "connect-src 'self' https://*.shortbread.aws.dev;",
-                    "frame-src 'none';",
-                    "img-src 'self' https://* http://*.omtrdc.net;",
-                    "object-src 'none';",
-                    "style-src 'self' 'unsafe-inline';",
-                ].join(' '),
-            };
-            headers['clear-site-data'] = { value: '"cache", "storage"' };
-            return response;
-        }
-
-        //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaG9tZS1yZXNwb25zZS1mdW5jdGlvbi5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3NyYy93ZWJhcHAvaG9tZS1yZXNwb25zZS1mdW5jdGlvbi9ob21lLXJlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxvRkFBb0Y7QUFDcEYsbUJBQW1CO0FBQ25CLFNBQVMsT0FBTyxDQUFDLEtBQXlCO0lBQ3hDLElBQUksUUFBUSxHQUFHLEtBQUssQ0FBQyxRQUFRLENBQUM7SUFDOUIsSUFBSSxPQUFPLEdBQUcsUUFBUSxDQUFDLE9BQU8sQ0FBQztJQUUvQixPQUFPLENBQUMsaUJBQWlCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxNQUFNLEVBQUUsQ0FBQztJQUMvQyxPQUFPLENBQUMsa0JBQWtCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxlQUFlLEVBQUUsQ0FBQztJQUN6RCxPQUFPLENBQUMsd0JBQXdCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxTQUFTLEVBQUUsQ0FBQztJQUN6RCxPQUFPLENBQUMsMkJBQTJCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxxQ0FBcUMsRUFBRSxDQUFDO0lBQ3hGLE9BQU8sQ0FBQyx5QkFBeUIsQ0FBQyxHQUFHO1FBQ25DLEtBQUssRUFDSDtZQUNFLDZEQUE2RDtZQUM3RCxrREFBa0Q7WUFDbEQsbUJBQW1CO1lBQ25CLCtDQUErQztZQUMvQyxvQkFBb0I7WUFDcEIsbUNBQW1DO1NBQ3BDLENBQUMsSUFBSSxDQUFDLEdBQUcsQ0FBQztLQUNkLENBQUM7SUFFRixPQUFPLENBQUMsaUJBQWlCLENBQUMsR0FBRyxFQUFFLEtBQUssRUFBRSxvQkFBb0IsRUFBRSxDQUFDO0lBRTdELE9BQU8sUUFBUSxDQUFDO0FBQ2xCLENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyJpbnRlcmZhY2UgQ2xvdWRGcm9udFJlc3BvbnNlIHtcbiAgcmVzcG9uc2U6IGFueTtcbiAgaGVhZGVyczoge1xuICAgIFtrZXk6IHN0cmluZ106IHtcbiAgICAgIHZhbHVlOiBzdHJpbmc7XG4gICAgfTtcbiAgfTtcbn1cblxuLy8gaWdub3JlIFwiZHVwbGljYXRlIGZ1bmN0aW9uIGltcGxlbWVudGF0aW9uXCIgY29uZmxpY3Qgd2l0aCBvdGhlciByZXNwb25zZSBmdW5jdGlvbnNcbi8vIEB0cy1leHBlY3QtZXJyb3JcbmZ1bmN0aW9uIGhhbmRsZXIoZXZlbnQ6IENsb3VkRnJvbnRSZXNwb25zZSkge1xuICB2YXIgcmVzcG9uc2UgPSBldmVudC5yZXNwb25zZTtcbiAgdmFyIGhlYWRlcnMgPSByZXNwb25zZS5oZWFkZXJzO1xuXG4gIGhlYWRlcnNbJ3gtZnJhbWUtb3B0aW9ucyddID0geyB2YWx1ZTogJ2RlbnknIH07XG4gIGhlYWRlcnNbJ3gteHNzLXByb3RlY3Rpb24nXSA9IHsgdmFsdWU6ICcxOyBtb2RlPWJsb2NrJyB9O1xuICBoZWFkZXJzWyd4LWNvbnRlbnQtdHlwZS1vcHRpb25zJ10gPSB7IHZhbHVlOiAnbm9zbmlmZicgfTtcbiAgaGVhZGVyc1snc3RyaWN0LXRyYW5zcG9ydC1zZWN1cml0eSddID0geyB2YWx1ZTogJ21heC1hZ2U9NDczMDQwMDA7IGluY2x1ZGVTdWJEb21haW5zJyB9O1xuICBoZWFkZXJzWydjb250ZW50LXNlY3VyaXR5LXBvbGljeSddID0ge1xuICAgIHZhbHVlOlxuICAgICAgW1xuICAgICAgICBcImRlZmF1bHQtc3JjICdzZWxmJyAndW5zYWZlLWlubGluZScgaHR0cHM6Ly8qLmF3c3N0YXRpYy5jb207XCIsXG4gICAgICAgIFwiY29ubmVjdC1zcmMgJ3NlbGYnIGh0dHBzOi8vKi5zaG9ydGJyZWFkLmF3cy5kZXY7XCIsXG4gICAgICAgIFwiZnJhbWUtc3JjICdub25lJztcIixcbiAgICAgICAgXCJpbWctc3JjICdzZWxmJyBodHRwczovLyogaHR0cDovLyoub210cmRjLm5ldDtcIixcbiAgICAgICAgXCJvYmplY3Qtc3JjICdub25lJztcIixcbiAgICAgICAgXCJzdHlsZS1zcmMgJ3NlbGYnICd1bnNhZmUtaW5saW5lJztcIixcbiAgICAgIF0uam9pbignICcpLFxuICB9O1xuXG4gIGhlYWRlcnNbJ2NsZWFyLXNpdGUtZGF0YSddID0geyB2YWx1ZTogJ1wiY2FjaGVcIiwgXCJzdG9yYWdlXCInIH07XG5cbiAgcmV0dXJuIHJlc3BvbnNlO1xufVxuIl19
-      FunctionConfig:
-        Comment: IndexHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
-        Runtime: cloudfront-js-1.0
-  ConstructHubWebAppDistributionOrigin1S3Origin694AF937:
-    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
-    Properties:
-      CloudFrontOriginAccessIdentityConfig:
-        Comment: Identity for devConstructHubWebAppDistributionOrigin1FBBA04AE
-  ConstructHubWebAppDistribution1F181DC9:
-    Type: AWS::CloudFront::Distribution
-    Properties:
-      DistributionConfig:
-        CacheBehaviors:
-          - CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
-            Compress: true
-            FunctionAssociations:
-              - EventType: viewer-response
-                FunctionARN:
-                  Fn::GetAtt:
-                    - ConstructHubWebAppAddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7E9FDB69
-                    - FunctionARN
-            PathPattern: /data/*
-            TargetOriginId: devConstructHubWebAppDistributionOrigin2A726FD66
-            ViewerProtocolPolicy: allow-all
-          - CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
-            Compress: true
-            FunctionAssociations:
-              - EventType: viewer-response
-                FunctionARN:
-                  Fn::GetAtt:
-                    - ConstructHubWebAppAddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7E9FDB69
-                    - FunctionARN
-            PathPattern: /catalog.json
-            TargetOriginId: devConstructHubWebAppDistributionOrigin2A726FD66
-            ViewerProtocolPolicy: allow-all
-          - CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
-            Compress: true
-            FunctionAssociations:
-              - EventType: viewer-response
-                FunctionARN:
-                  Fn::GetAtt:
-                    - ConstructHubWebAppAddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7E9FDB69
-                    - FunctionARN
-            PathPattern: /stats.json
-            TargetOriginId: devConstructHubWebAppDistributionOrigin2A726FD66
-            ViewerProtocolPolicy: allow-all
-          - CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
-            Compress: true
-            FunctionAssociations:
-              - EventType: viewer-response
-                FunctionARN:
-                  Fn::GetAtt:
-                    - ConstructHubWebAppIndexHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c419C6E5D
-                    - FunctionARN
-            PathPattern: /index.html
-            TargetOriginId: devConstructHubWebAppDistributionOrigin37A24F07B
-            ViewerProtocolPolicy: allow-all
-        CustomErrorResponses:
-          - ErrorCode: 404
-            ResponseCode: 200
-            ResponsePagePath: /index.html
-          - ErrorCode: 403
-            ResponseCode: 200
-            ResponsePagePath: /index.html
-        DefaultCacheBehavior:
-          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
-          Compress: true
-          FunctionAssociations:
-            - EventType: viewer-response
-              FunctionARN:
-                Fn::GetAtt:
-                  - ConstructHubWebAppAddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7E9FDB69
-                  - FunctionARN
-          TargetOriginId: devConstructHubWebAppDistributionOrigin1FBBA04AE
-          ViewerProtocolPolicy: allow-all
-        DefaultRootObject: index.html
-        Enabled: true
-        HttpVersion: http2
-        IPV6Enabled: true
-        Origins:
-          - DomainName:
-              Fn::GetAtt:
-                - ConstructHubWebAppWebsiteBucket4B2B9DB2
-                - RegionalDomainName
-            Id: devConstructHubWebAppDistributionOrigin1FBBA04AE
-            S3OriginConfig:
-              OriginAccessIdentity:
-                Fn::Join:
-                  - ""
-                  - - origin-access-identity/cloudfront/
-                    - Ref: ConstructHubWebAppDistributionOrigin1S3Origin694AF937
-          - DomainName:
-              Fn::GetAtt:
-                - ConstructHubPackageDataDC5EF35E
-                - RegionalDomainName
-            Id: devConstructHubWebAppDistributionOrigin2A726FD66
-            S3OriginConfig:
-              OriginAccessIdentity:
-                Fn::Join:
-                  - ""
-                  - - origin-access-identity/cloudfront/
-                    - Ref: ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4
-          - DomainName:
-              Fn::GetAtt:
-                - ConstructHubWebAppWebsiteBucket4B2B9DB2
-                - RegionalDomainName
-            Id: devConstructHubWebAppDistributionOrigin37A24F07B
-            S3OriginConfig:
-              OriginAccessIdentity:
-                Fn::Join:
-                  - ""
-                  - - origin-access-identity/cloudfront/
-                    - Ref: ConstructHubWebAppDistributionOrigin3S3Origin978233F9
-  ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4:
-    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
-    Properties:
-      CloudFrontOriginAccessIdentityConfig:
-        Comment: Identity for devConstructHubWebAppDistributionOrigin2A726FD66
-  ConstructHubWebAppDistributionOrigin3S3Origin978233F9:
-    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
-    Properties:
-      CloudFrontOriginAccessIdentityConfig:
-        Comment: Identity for devConstructHubWebAppDistributionOrigin37A24F07B
-  ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1:
-    Type: AWS::Lambda::LayerVersion
-    Properties:
-      Content:
-        S3Bucket:
-          Ref: AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F
-      Description: /opt/awscli/aws
-  ConstructHubWebAppDeployWebsiteCustomResourceE6DF98C9:
-    Type: Custom::CDKBucketDeployment
-    Properties:
-      ServiceToken:
-        Fn::GetAtt:
-          - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
-          - Arn
-      SourceBucketNames:
-        - Ref: AssetParametersdb68808056dddd29d69f21d6e61c1338671d29364cdebd04c0c74a2ee619995aS3BucketD2EFF7AF
-      SourceObjectKeys:
-        - Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersdb68808056dddd29d69f21d6e61c1338671d29364cdebd04c0c74a2ee619995aS3VersionKey1D3DB7D8
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersdb68808056dddd29d69f21d6e61c1338671d29364cdebd04c0c74a2ee619995aS3VersionKey1D3DB7D8
-      DestinationBucketName:
-        Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
-      Prune: false
-      SystemMetadata:
-        cache-control: public, max-age=3600, must-revalidate, s-maxage=300, proxy-revalidate
-      DistributionId:
-        Ref: ConstructHubWebAppDistribution1F181DC9
-    UpdateReplacePolicy: Delete
-    DeletionPolicy: Delete
-  ConstructHubWebAppDeployWebsiteConfigAwsCliLayer8DFDB17A:
-    Type: AWS::Lambda::LayerVersion
-    Properties:
-      Content:
-        S3Bucket:
-          Ref: AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F
-      Description: /opt/awscli/aws
-  ConstructHubWebAppDeployWebsiteConfigCustomResource2D18C708:
-    Type: Custom::CDKBucketDeployment
-    Properties:
-      ServiceToken:
-        Fn::GetAtt:
-          - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
-          - Arn
-      SourceBucketNames:
-        - Ref: AssetParameters15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622fS3BucketD12474B4
-      SourceObjectKeys:
-        - Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622fS3VersionKey99E4F89D
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622fS3VersionKey99E4F89D
-      DestinationBucketName:
-        Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
-      Prune: false
-      DistributionId:
-        Ref: ConstructHubWebAppDistribution1F181DC9
-    UpdateReplacePolicy: Delete
-    DeletionPolicy: Delete
   AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2:
     Type: AWS::IAM::Role
     Properties:
@@ -5861,13 +6105,13 @@ Resources:
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParametersdb68808056dddd29d69f21d6e61c1338671d29364cdebd04c0c74a2ee619995aS3BucketD2EFF7AF
+                    - Ref: AssetParametersce62199f914c6331292efd99ff64833e05ccfa2f55cebb11777655824260ed50S3Bucket14C3850B
               - Fn::Join:
                   - ""
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParametersdb68808056dddd29d69f21d6e61c1338671d29364cdebd04c0c74a2ee619995aS3BucketD2EFF7AF
+                    - Ref: AssetParametersce62199f914c6331292efd99ff64833e05ccfa2f55cebb11777655824260ed50S3Bucket14C3850B
                     - /*
           - Action:
               - s3:GetObject*
@@ -6156,7 +6400,7 @@ Resources:
     DependsOn:
       - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB
       - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB
-  MissingDocumnetationWidgetHandler136351bde63b5de8bb16730ac238d703ServiceRoleA1203DAF:
+  PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfServiceRole060BA12C:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -6172,7 +6416,10 @@ Resources:
             - - "arn:"
               - Ref: AWS::Partition
               - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
-  MissingDocumnetationWidgetHandler136351bde63b5de8bb16730ac238d703ServiceRoleDefaultPolicyA35687F7:
+      Tags:
+        - Key: function-purpose
+          Value: cloudwatch-custom-widget
+  PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfServiceRoleDefaultPolicy873D958D:
     Type: AWS::IAM::Policy
     Properties:
       PolicyDocument:
@@ -6191,17 +6438,122 @@ Resources:
                   - - Fn::GetAtt:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
-                    - /missing-objects/*-documentation.json
+                    - /missing-objects/typescript-documentation.json
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /unprocessable-objects/typescript-assembly.json
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /missing-objects/python-documentation.json
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /unprocessable-objects/python-assembly.json
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /missing-objects/java-documentation.json
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /unprocessable-objects/java-assembly.json
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /missing-objects/csharp-documentation.json
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /unprocessable-objects/csharp-assembly.json
         Version: 2012-10-17
-      PolicyName: MissingDocumnetationWidgetHandler136351bde63b5de8bb16730ac238d703ServiceRoleDefaultPolicyA35687F7
+      PolicyName: PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfServiceRoleDefaultPolicy873D958D
       Roles:
-        - Ref: MissingDocumnetationWidgetHandler136351bde63b5de8bb16730ac238d703ServiceRoleA1203DAF
-  MissingDocumnetationWidgetHandler136351bde63b5de8bb16730ac238d7034EC80EB0:
+        - Ref: PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfServiceRole060BA12C
+  PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfBE2C27C2:
     Type: AWS::Lambda::Function
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersc1f9f7fee97e2df480da35de932afbbb65f72ae5b9a0ed8e71a5ac9e2ab57054S3BucketB2F3BADD
+          Ref: AssetParameters64c61458a3c7afb6a1a73dce90c70ec1598b1509c5858857def41a8a33975264S3BucketFD24A793
         S3Key:
           Fn::Join:
             - ""
@@ -6209,15 +6561,15 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersc1f9f7fee97e2df480da35de932afbbb65f72ae5b9a0ed8e71a5ac9e2ab57054S3VersionKeyFE6A2A43
+                      - Ref: AssetParameters64c61458a3c7afb6a1a73dce90c70ec1598b1509c5858857def41a8a33975264S3VersionKeyC9548403
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersc1f9f7fee97e2df480da35de932afbbb65f72ae5b9a0ed8e71a5ac9e2ab57054S3VersionKeyFE6A2A43
+                      - Ref: AssetParameters64c61458a3c7afb6a1a73dce90c70ec1598b1509c5858857def41a8a33975264S3VersionKeyC9548403
       Role:
         Fn::GetAtt:
-          - MissingDocumnetationWidgetHandler136351bde63b5de8bb16730ac238d703ServiceRoleA1203DAF
+          - PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfServiceRole060BA12C
           - Arn
       Description: "[ConstructHub/MissingDocumentationWidget] Is a custom CloudWatch
         widget handler"
@@ -6225,13 +6577,17 @@ Resources:
         Variables:
           BUCKET_NAME:
             Ref: ConstructHubPackageDataDC5EF35E
+          OBJECT_KEY: missing-objects/typescript-documentation.json
       Handler: index.handler
       MemorySize: 1024
       Runtime: nodejs14.x
+      Tags:
+        - Key: function-purpose
+          Value: cloudwatch-custom-widget
       Timeout: 15
     DependsOn:
-      - MissingDocumnetationWidgetHandler136351bde63b5de8bb16730ac238d703ServiceRoleDefaultPolicyA35687F7
-      - MissingDocumnetationWidgetHandler136351bde63b5de8bb16730ac238d703ServiceRoleA1203DAF
+      - PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfServiceRoleDefaultPolicy873D958D
+      - PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfServiceRole060BA12C
 Outputs:
   ConstructHubMonitoringWatchfulWatchfulDashboard75D318D0:
     Value:
@@ -6345,30 +6701,30 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "b120b13d9d868c7622e7db1b68bae4c0f82ffd0227b8c15f2cef38e186ff3827"
-  AssetParameters51e6101c826732d4e632b2ee6a67e76518b05cea28bb0a00d6c5c697c83d89baS3Bucket583A6B8D:
+  AssetParameters757b86a74dc666bd669d018076821bc365b5ee19b66ad5bf5a3802a01f3fc72bS3BucketD0AFED02:
     Type: String
     Description: S3 bucket for asset
-      "51e6101c826732d4e632b2ee6a67e76518b05cea28bb0a00d6c5c697c83d89ba"
-  AssetParameters51e6101c826732d4e632b2ee6a67e76518b05cea28bb0a00d6c5c697c83d89baS3VersionKey13E12D1A:
+      "757b86a74dc666bd669d018076821bc365b5ee19b66ad5bf5a3802a01f3fc72b"
+  AssetParameters757b86a74dc666bd669d018076821bc365b5ee19b66ad5bf5a3802a01f3fc72bS3VersionKey67D8A736:
     Type: String
     Description: S3 key for asset version
-      "51e6101c826732d4e632b2ee6a67e76518b05cea28bb0a00d6c5c697c83d89ba"
-  AssetParameters51e6101c826732d4e632b2ee6a67e76518b05cea28bb0a00d6c5c697c83d89baArtifactHash102D0396:
+      "757b86a74dc666bd669d018076821bc365b5ee19b66ad5bf5a3802a01f3fc72b"
+  AssetParameters757b86a74dc666bd669d018076821bc365b5ee19b66ad5bf5a3802a01f3fc72bArtifactHashB1F1CFEE:
     Type: String
     Description: Artifact hash for asset
-      "51e6101c826732d4e632b2ee6a67e76518b05cea28bb0a00d6c5c697c83d89ba"
-  AssetParameters6ec73e581e31f8d963e8fa20ab9289b8350615617545dd8b65ba56830828d519S3Bucket6B2CC376:
+      "757b86a74dc666bd669d018076821bc365b5ee19b66ad5bf5a3802a01f3fc72b"
+  AssetParameters173d31b69a48f1dff46e0bb06ffabab362d55341c1ff6c621a2d2253dfeff13dS3Bucket83102B05:
     Type: String
     Description: S3 bucket for asset
-      "6ec73e581e31f8d963e8fa20ab9289b8350615617545dd8b65ba56830828d519"
-  AssetParameters6ec73e581e31f8d963e8fa20ab9289b8350615617545dd8b65ba56830828d519S3VersionKey8F8ABCFE:
+      "173d31b69a48f1dff46e0bb06ffabab362d55341c1ff6c621a2d2253dfeff13d"
+  AssetParameters173d31b69a48f1dff46e0bb06ffabab362d55341c1ff6c621a2d2253dfeff13dS3VersionKeyEA2DB7D2:
     Type: String
     Description: S3 key for asset version
-      "6ec73e581e31f8d963e8fa20ab9289b8350615617545dd8b65ba56830828d519"
-  AssetParameters6ec73e581e31f8d963e8fa20ab9289b8350615617545dd8b65ba56830828d519ArtifactHashB950AF05:
+      "173d31b69a48f1dff46e0bb06ffabab362d55341c1ff6c621a2d2253dfeff13d"
+  AssetParameters173d31b69a48f1dff46e0bb06ffabab362d55341c1ff6c621a2d2253dfeff13dArtifactHash1CD221ED:
     Type: String
     Description: Artifact hash for asset
-      "6ec73e581e31f8d963e8fa20ab9289b8350615617545dd8b65ba56830828d519"
+      "173d31b69a48f1dff46e0bb06ffabab362d55341c1ff6c621a2d2253dfeff13d"
   AssetParametersfc986584c099ea5046c4cc9515c34013472214b465565366d7e634dd9705258fS3Bucket44863F75:
     Type: String
     Description: S3 bucket for asset
@@ -6393,30 +6749,30 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "b69f8e77829ba765ee3a37c088671f56d5982ab8e2a57c2f3103bea15181e67b"
-  AssetParameters945f3968c550f4c12b8d7f7f78f1ce8536d7007002590472233082927ae2dd17S3Bucket6A002A15:
+  AssetParametersdebf96a2989d276ed0c3520f319f0abb019673260f9f53cd77be723dda0c6d21S3Bucket36E1C5C1:
     Type: String
     Description: S3 bucket for asset
-      "945f3968c550f4c12b8d7f7f78f1ce8536d7007002590472233082927ae2dd17"
-  AssetParameters945f3968c550f4c12b8d7f7f78f1ce8536d7007002590472233082927ae2dd17S3VersionKeyAC01152C:
+      "debf96a2989d276ed0c3520f319f0abb019673260f9f53cd77be723dda0c6d21"
+  AssetParametersdebf96a2989d276ed0c3520f319f0abb019673260f9f53cd77be723dda0c6d21S3VersionKey53FAD133:
     Type: String
     Description: S3 key for asset version
-      "945f3968c550f4c12b8d7f7f78f1ce8536d7007002590472233082927ae2dd17"
-  AssetParameters945f3968c550f4c12b8d7f7f78f1ce8536d7007002590472233082927ae2dd17ArtifactHash3E3A0986:
+      "debf96a2989d276ed0c3520f319f0abb019673260f9f53cd77be723dda0c6d21"
+  AssetParametersdebf96a2989d276ed0c3520f319f0abb019673260f9f53cd77be723dda0c6d21ArtifactHashCEB5A709:
     Type: String
     Description: Artifact hash for asset
-      "945f3968c550f4c12b8d7f7f78f1ce8536d7007002590472233082927ae2dd17"
-  AssetParameters0609b74426991bff02eabb105c021a431b0c6bc6082837b3b882e331fb3bd8c2S3BucketF895C157:
+      "debf96a2989d276ed0c3520f319f0abb019673260f9f53cd77be723dda0c6d21"
+  AssetParameters9660b084de17970d289252b7bf2f6579fe57fec368d6e26771d395ff9b1177efS3BucketB8D9C39D:
     Type: String
     Description: S3 bucket for asset
-      "0609b74426991bff02eabb105c021a431b0c6bc6082837b3b882e331fb3bd8c2"
-  AssetParameters0609b74426991bff02eabb105c021a431b0c6bc6082837b3b882e331fb3bd8c2S3VersionKey5A51414E:
+      "9660b084de17970d289252b7bf2f6579fe57fec368d6e26771d395ff9b1177ef"
+  AssetParameters9660b084de17970d289252b7bf2f6579fe57fec368d6e26771d395ff9b1177efS3VersionKeyCB518F08:
     Type: String
     Description: S3 key for asset version
-      "0609b74426991bff02eabb105c021a431b0c6bc6082837b3b882e331fb3bd8c2"
-  AssetParameters0609b74426991bff02eabb105c021a431b0c6bc6082837b3b882e331fb3bd8c2ArtifactHash0B2B7704:
+      "9660b084de17970d289252b7bf2f6579fe57fec368d6e26771d395ff9b1177ef"
+  AssetParameters9660b084de17970d289252b7bf2f6579fe57fec368d6e26771d395ff9b1177efArtifactHashDD1704C9:
     Type: String
     Description: Artifact hash for asset
-      "0609b74426991bff02eabb105c021a431b0c6bc6082837b3b882e331fb3bd8c2"
+      "9660b084de17970d289252b7bf2f6579fe57fec368d6e26771d395ff9b1177ef"
   AssetParameters2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658S3BucketF36A877E:
     Type: String
     Description: S3 bucket for asset
@@ -6429,66 +6785,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "2d57e6bb8a166048eeaa118c1f0e1a8d760395e6f71185ebbd03869b25a22658"
-  AssetParametersa01d4ca81a4167a5f4a8084ccd5b7f926995c222c590c70973b3ee2c7087b534S3Bucket49DBE9D6:
+  AssetParametersce62199f914c6331292efd99ff64833e05ccfa2f55cebb11777655824260ed50S3Bucket14C3850B:
     Type: String
     Description: S3 bucket for asset
-      "a01d4ca81a4167a5f4a8084ccd5b7f926995c222c590c70973b3ee2c7087b534"
-  AssetParametersa01d4ca81a4167a5f4a8084ccd5b7f926995c222c590c70973b3ee2c7087b534S3VersionKeyA7F231B6:
+      "ce62199f914c6331292efd99ff64833e05ccfa2f55cebb11777655824260ed50"
+  AssetParametersce62199f914c6331292efd99ff64833e05ccfa2f55cebb11777655824260ed50S3VersionKeyE4476F07:
     Type: String
     Description: S3 key for asset version
-      "a01d4ca81a4167a5f4a8084ccd5b7f926995c222c590c70973b3ee2c7087b534"
-  AssetParametersa01d4ca81a4167a5f4a8084ccd5b7f926995c222c590c70973b3ee2c7087b534ArtifactHash1057C76B:
+      "ce62199f914c6331292efd99ff64833e05ccfa2f55cebb11777655824260ed50"
+  AssetParametersce62199f914c6331292efd99ff64833e05ccfa2f55cebb11777655824260ed50ArtifactHashEFFEE48D:
     Type: String
     Description: Artifact hash for asset
-      "a01d4ca81a4167a5f4a8084ccd5b7f926995c222c590c70973b3ee2c7087b534"
-  AssetParameters1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28S3Bucket58E2E453:
-    Type: String
-    Description: S3 bucket for asset
-      "1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28"
-  AssetParameters1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28S3VersionKeyDDAC85C3:
-    Type: String
-    Description: S3 key for asset version
-      "1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28"
-  AssetParameters1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28ArtifactHashE770D013:
-    Type: String
-    Description: Artifact hash for asset
-      "1d620d4124ee5160192eccc4817c0f6b0e2625d7504332aee3b12f257746ed28"
-  AssetParameters5af0e476215eecf6a11d9344451dbb927349489ea7d76b481334b7558057b5c3S3Bucket9C2F7A99:
-    Type: String
-    Description: S3 bucket for asset
-      "5af0e476215eecf6a11d9344451dbb927349489ea7d76b481334b7558057b5c3"
-  AssetParameters5af0e476215eecf6a11d9344451dbb927349489ea7d76b481334b7558057b5c3S3VersionKeyDCE085DD:
-    Type: String
-    Description: S3 key for asset version
-      "5af0e476215eecf6a11d9344451dbb927349489ea7d76b481334b7558057b5c3"
-  AssetParameters5af0e476215eecf6a11d9344451dbb927349489ea7d76b481334b7558057b5c3ArtifactHash24767E28:
-    Type: String
-    Description: Artifact hash for asset
-      "5af0e476215eecf6a11d9344451dbb927349489ea7d76b481334b7558057b5c3"
-  AssetParametersc1f9f7fee97e2df480da35de932afbbb65f72ae5b9a0ed8e71a5ac9e2ab57054S3BucketB2F3BADD:
-    Type: String
-    Description: S3 bucket for asset
-      "c1f9f7fee97e2df480da35de932afbbb65f72ae5b9a0ed8e71a5ac9e2ab57054"
-  AssetParametersc1f9f7fee97e2df480da35de932afbbb65f72ae5b9a0ed8e71a5ac9e2ab57054S3VersionKeyFE6A2A43:
-    Type: String
-    Description: S3 key for asset version
-      "c1f9f7fee97e2df480da35de932afbbb65f72ae5b9a0ed8e71a5ac9e2ab57054"
-  AssetParametersc1f9f7fee97e2df480da35de932afbbb65f72ae5b9a0ed8e71a5ac9e2ab57054ArtifactHash1B78EE65:
-    Type: String
-    Description: Artifact hash for asset
-      "c1f9f7fee97e2df480da35de932afbbb65f72ae5b9a0ed8e71a5ac9e2ab57054"
-  AssetParametersdb68808056dddd29d69f21d6e61c1338671d29364cdebd04c0c74a2ee619995aS3BucketD2EFF7AF:
-    Type: String
-    Description: S3 bucket for asset
-      "db68808056dddd29d69f21d6e61c1338671d29364cdebd04c0c74a2ee619995a"
-  AssetParametersdb68808056dddd29d69f21d6e61c1338671d29364cdebd04c0c74a2ee619995aS3VersionKey1D3DB7D8:
-    Type: String
-    Description: S3 key for asset version
-      "db68808056dddd29d69f21d6e61c1338671d29364cdebd04c0c74a2ee619995a"
-  AssetParametersdb68808056dddd29d69f21d6e61c1338671d29364cdebd04c0c74a2ee619995aArtifactHash47B0D876:
-    Type: String
-    Description: Artifact hash for asset
-      "db68808056dddd29d69f21d6e61c1338671d29364cdebd04c0c74a2ee619995a"
+      "ce62199f914c6331292efd99ff64833e05ccfa2f55cebb11777655824260ed50"
   AssetParameters15477b1cef671e2df0f65fb8523278d3a6331c3ae8912a7e3a85d656f694622fS3BucketD12474B4:
     Type: String
     Description: S3 bucket for asset
@@ -6513,5 +6821,65 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "cc6d7142efe459ae578414b0f727c0634382fe26ad2ad67f59029ba7d82d7988"
+  AssetParametersa01d4ca81a4167a5f4a8084ccd5b7f926995c222c590c70973b3ee2c7087b534S3Bucket49DBE9D6:
+    Type: String
+    Description: S3 bucket for asset
+      "a01d4ca81a4167a5f4a8084ccd5b7f926995c222c590c70973b3ee2c7087b534"
+  AssetParametersa01d4ca81a4167a5f4a8084ccd5b7f926995c222c590c70973b3ee2c7087b534S3VersionKeyA7F231B6:
+    Type: String
+    Description: S3 key for asset version
+      "a01d4ca81a4167a5f4a8084ccd5b7f926995c222c590c70973b3ee2c7087b534"
+  AssetParametersa01d4ca81a4167a5f4a8084ccd5b7f926995c222c590c70973b3ee2c7087b534ArtifactHash1057C76B:
+    Type: String
+    Description: Artifact hash for asset
+      "a01d4ca81a4167a5f4a8084ccd5b7f926995c222c590c70973b3ee2c7087b534"
+  AssetParametersda259481087e617cddf544931de12aab5204222e9fa77e0e93611494a07439c5S3Bucket9A98EAF8:
+    Type: String
+    Description: S3 bucket for asset
+      "da259481087e617cddf544931de12aab5204222e9fa77e0e93611494a07439c5"
+  AssetParametersda259481087e617cddf544931de12aab5204222e9fa77e0e93611494a07439c5S3VersionKey8CD7C9B0:
+    Type: String
+    Description: S3 key for asset version
+      "da259481087e617cddf544931de12aab5204222e9fa77e0e93611494a07439c5"
+  AssetParametersda259481087e617cddf544931de12aab5204222e9fa77e0e93611494a07439c5ArtifactHash6964816D:
+    Type: String
+    Description: Artifact hash for asset
+      "da259481087e617cddf544931de12aab5204222e9fa77e0e93611494a07439c5"
+  AssetParametersd0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46S3Bucket0DFA8046:
+    Type: String
+    Description: S3 bucket for asset
+      "d0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46"
+  AssetParametersd0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46S3VersionKey65421A4C:
+    Type: String
+    Description: S3 key for asset version
+      "d0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46"
+  AssetParametersd0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46ArtifactHashC07E5524:
+    Type: String
+    Description: Artifact hash for asset
+      "d0f646beef8c8dd33ab9871408423aec3ca63328ddc3ce795df744ef5c3a5d46"
+  AssetParameters148248da84a2e7d222de1b675214537a684ae7124cb5e92daa11d8c35c04771bS3BucketD71E0405:
+    Type: String
+    Description: S3 bucket for asset
+      "148248da84a2e7d222de1b675214537a684ae7124cb5e92daa11d8c35c04771b"
+  AssetParameters148248da84a2e7d222de1b675214537a684ae7124cb5e92daa11d8c35c04771bS3VersionKey584D55D2:
+    Type: String
+    Description: S3 key for asset version
+      "148248da84a2e7d222de1b675214537a684ae7124cb5e92daa11d8c35c04771b"
+  AssetParameters148248da84a2e7d222de1b675214537a684ae7124cb5e92daa11d8c35c04771bArtifactHash25FB8E41:
+    Type: String
+    Description: Artifact hash for asset
+      "148248da84a2e7d222de1b675214537a684ae7124cb5e92daa11d8c35c04771b"
+  AssetParameters64c61458a3c7afb6a1a73dce90c70ec1598b1509c5858857def41a8a33975264S3BucketFD24A793:
+    Type: String
+    Description: S3 bucket for asset
+      "64c61458a3c7afb6a1a73dce90c70ec1598b1509c5858857def41a8a33975264"
+  AssetParameters64c61458a3c7afb6a1a73dce90c70ec1598b1509c5858857def41a8a33975264S3VersionKeyC9548403:
+    Type: String
+    Description: S3 key for asset version
+      "64c61458a3c7afb6a1a73dce90c70ec1598b1509c5858857def41a8a33975264"
+  AssetParameters64c61458a3c7afb6a1a73dce90c70ec1598b1509c5858857def41a8a33975264ArtifactHash76A71005:
+    Type: String
+    Description: Artifact hash for asset
+      "64c61458a3c7afb6a1a73dce90c70ec1598b1509c5858857def41a8a33975264"
 
 `;

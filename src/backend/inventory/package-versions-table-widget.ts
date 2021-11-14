@@ -29,7 +29,10 @@ export class PackageVersionsTableWidget extends ConcreteWidget {
       memorySize: 1_024,
       timeout: Duration.seconds(15),
     });
-    Tags.of(this.handler).add('function-purpose', 'cloudwatch-custom-widget');
+    // The handler is a SingletonFunction, so the actual Function resource is
+    // not in the construct's scope, instead it's in the Stack scope. We must
+    // hence refer to the REAL function via a private property (UGLY!).
+    Tags.of((this.handler as any).lambdaFunction).add('function-purpose', 'cloudwatch-custom-widget');
 
     props.bucket.grantRead(this.handler, props.key);
 

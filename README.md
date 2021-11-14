@@ -165,6 +165,67 @@ you may set the `isolateLambdas` setting to `false`.
    navigate a ConstructHub instance when they are reacting to an alarm or bug
    report.
 
+### :baby_chick: Deployment Canaries
+
+Construct Hub provides several built-in validation mechanisms to make sure the
+deployment of your instance is continuously operating as expected.
+
+These mechanisms come in the form of canary testers that are part of the
+ConstructHub deployment stack. Each canary runs periodically and performs a
+different check, triggering a different CloudWatch alarm in case it detects a
+failure.
+
+We recommend that you use staged deployments, and block promotions to the
+production stage in case any preivous stage triggers an alarm within a specific
+timeframe.
+
+#### Discovery Canary
+
+When configuring an `NpmJs` package source, a package discovery canary can be
+enabled using the `enableCanary` property (and optionally configured using the
+`canaryPackage` and `canarySla` properties). This feature is activated by
+default and monitors availability of releases of the `construct-hub-probe` npm
+package in the ConstructHub instance.
+
+Probe packages, such as `construct-hub-probe` are published frequently (e.g:
+every 3 hours or more frequently), and can be used to ensure the ConstructHub
+instance correctly discovers, indexes and represents those packages.
+
+If a different package or SLA should be used, you can configure the `NpmJs`
+package source manually like so:
+
+```ts
+import * as codeartifact from '@aws-cdk/aws-codeartifact';
+import { App, Stack } from '@aws-cdk/core';
+import { sources, ConstructHub } from 'construct-hub';
+
+const app = new App();
+const stack = new Stack(app, 'StackName', { /* ... */ });
+
+new ConstructHub(stack, 'ConstructHub', {
+  // ...
+  packageSources: [
+    // ...
+    new sources.NpmJs({
+      enableCanary: true, // This is the default
+      canaryPackage: '@acme/my-constructhub-probe',
+      canarySla: Duration.minutes(30),
+    }),
+    // ...
+  ],
+  // ...
+});
+```
+
+In case the new package isn't fully available in the predefined SLA, a
+**low severity** CloudWatch alarm will trigger, which will in turn trigger
+the configured action for low severity alarms.
+
+> See [Monitoring & Alarms](./docs/application-overview.md#monitoring--alarming)
+
+The operator runbook contains [instructions](./docs/operator-runbook.md) on how
+to diagnose and mitigate the root cause of the failure.
+
 ### :nail_care: Customizing the frontend
 
 There are a number of customizations available in order to make your private

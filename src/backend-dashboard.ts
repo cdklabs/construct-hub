@@ -352,6 +352,7 @@ export class BackendDashboard extends Construct {
             inventory.metricSupportedPackageVersionCount(language, { label: 'Available', color: '#2ca02c' }),
             inventory.metricUnsupportedPackageVersionCount(language, { label: 'Unsupported', color: '#9467bd' }),
             inventory.metricMissingPackageVersionCount(language, { label: 'Missing', color: '#d62728' }),
+            inventory.metricUnprocessableAssemblyPackageVersionCount(language, { label: 'Unprocessable', color: '#397BC4' }),
           ],
           leftYAxis: { showUnits: false },
           view: GraphWidgetView.PIE,
@@ -369,7 +370,7 @@ export class BackendDashboard extends Construct {
           height: 6,
           width: 12,
         }),
-        new PackageVersionsTableWidget(this, `MissingDocs-${language.name}`, {
+        new PackageVersionsTableWidget(this, `UnprocessableAssembly-${language.name}`, {
           title: 'Package Versions with unprocessable assembly',
           bucket: packageData,
           key: unProcessableAssemblyKey(language),

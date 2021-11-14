@@ -353,6 +353,9 @@ function doRecordPerLanguage(
         // If thr package is "supported", this always "wins"
         map.set(name, status);
         break;
+      case PerLanguageStatus.UNPROCESSABLE:
+        map.set(name, status);
+        break;
       case PerLanguageStatus.UNSUPPORTED:
         // If we already have a status, only override with "UNSUPPORTED" if it was "MISSING".
         if (!map.has(name) || map.get(name) === PerLanguageStatus.MISSING) {
