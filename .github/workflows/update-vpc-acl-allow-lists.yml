@@ -19,7 +19,7 @@ jobs:
           curl -SsL "https://www.cloudflare.com/ips-v4" \
                -o resources/vpc-allow-lists/cloudflare-IPv4.txt
       - name: Setup Node
-        using: actions/setup-node@v2
+        uses: actions/setup-node@v2
       - name: Update GitHub IP lists
         run: node ./update-github-ip-allowlist.js
       - name: Make Pull Request
