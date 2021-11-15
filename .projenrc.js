@@ -184,7 +184,7 @@ function addVpcAllowListManagement() {
         // Allowing GitHub (web and git)
         {
           name: 'Setup Node',
-          using: 'actions/setup-node@v2',
+          uses: 'actions/setup-node@v2',
         },
         {
           name: 'Update GitHub IP lists',
