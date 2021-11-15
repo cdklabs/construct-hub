@@ -61,6 +61,19 @@ export class DevStack extends Stack {
   }
 }
 
+/**
+ * The default isolation is driven by the `ISOLATED_MODE` environment variable
+ * so that developers can easily use the `DevStack` construct to deploy a
+ * personal development stack with the desired isolation level.
+ *
+ * The default isolation mode is set according to the following table:
+ *
+ *  | ${ISOLATED_MODE} | Default `Isolation` setting         |
+ *  |------------------|-------------------------------------|
+ *  | not set          | Isolation.UNLIMITED_INTERNET_ACCESS |
+ *  | `LIMITED`        | Isolation.LIMITED_INTERNET_ACCESS   |
+ *  | any other value  | Isolation.NO_INTERNET_ACCESS        |
+ */
 function defaultIsolateSensitiveTasks() {
   switch (process.env.ISOLATED_MODE?.toUpperCase()) {
     case undefined:

@@ -1,6 +1,3 @@
-import { createHash } from 'crypto';
-import * as fs from 'fs';
-import * as path from 'path';
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as iam from '@aws-cdk/aws-iam';
 import { AnyPrincipal, Effect, PolicyStatement } from '@aws-cdk/aws-iam';
@@ -10,6 +7,7 @@ import { BlockPublicAccess } from '@aws-cdk/aws-s3';
 import * as sqs from '@aws-cdk/aws-sqs';
 import { Construct as CoreConstruct, Duration, Stack, Tags } from '@aws-cdk/core';
 import { Construct } from 'constructs';
+import { createRestrictedSecurityGroups } from './_limited-internet-access';
 import { AlarmActions, Domain } from './api';
 import { DenyList, Ingestion } from './backend';
 import { BackendDashboard } from './backend-dashboard';
@@ -24,7 +22,6 @@ import { Monitoring } from './monitoring';
 import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
 import { PackageTag } from './package-tag';
-import { S3PrefixList } from './s3';
 import { SpdxLicense } from './spdx-license';
 import { WebApp, PackageLinkConfig, FeaturedPackages, FeatureFlags } from './webapp';
 
@@ -363,7 +360,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     Tags.of(vpc.node.defaultChild!).add('Name', vpc.node.path);
 
     const securityGroups = subnetType === ec2.SubnetType.PRIVATE_WITH_NAT
-      ? this.createRestrictedSecurityGroups(vpc)
+      ? createRestrictedSecurityGroups(this, vpc)
       : undefined;
 
     // Creating the CodeArtifact endpoints only if a repository is present.
@@ -439,114 +436,6 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     return { vpc, vpcEndpoints, vpcSubnets, vpcSecurityGroups: securityGroups };
   }
-
-  /**
-   * Creates SecurityGroups where "sensitive" operations should be listed,
-   * which only allows DNS requests to be issued within the VPC (to the local
-   * Route53 resolver), as well as HTTPS (port 443) traffic to:
-   * - allow-listed IP ranges
-   * - endpoints within the same SecurityGroup.
-   *
-   * This returns MULTIPLE security groups in order to avoid hitting the maximum
-   * count of rules per security group, which is relatively low, and prefix
-   * lists count as their expansions.
-   *
-   * There is also a limit of how many security groups can be bound to a network
-   * interface (defaults to 5), so there is only so much we can do here.
-   *
-   * @param vpc the VPC in which a SecurityGroup is to be added.
-   */
-  private createRestrictedSecurityGroups(vpc: ec2.IVpc): ec2.ISecurityGroup[] {
-    const securityGroups = new Array<ec2.ISecurityGroup>();
-
-    securityGroups.push((function (scope: CoreConstruct) {
-      const sg = new ec2.SecurityGroup(scope, 'InternalTraffic', {
-        allowAllOutbound: false,
-        description: `${scope.node.path}/SG`,
-        vpc,
-      });
-
-      // Allow all traffic within the security group on port 443
-      sg.connections.allowInternally(ec2.Port.tcp(443), 'Traffic within this SecurityGroup');
-
-      // Allow access to S3. This is needed for the S3 Gateway endpoint to work.
-      sg.connections.allowTo(
-        NamedPeer.from(ec2.Peer.prefixList(new S3PrefixList(scope, 'S3-PrefixList').prefixListId), 'AWS S3'),
-        ec2.Port.tcp(443),
-        'to AWS S3',
-      );
-
-      // Allow making DNS requests, there should be a Route53 resolver wihtin the VPC.
-      sg.connections.allowTo(ec2.Peer.ipv4(vpc.vpcCidrBlock), ec2.Port.tcp(53), 'to Route53 DNS resolver');
-      sg.connections.allowTo(ec2.Peer.ipv4(vpc.vpcCidrBlock), ec2.Port.udp(53), 'to Route53 DNS resolver');
-
-      return sg;
-    })(this));
-
-    const ALLOW_LIST_DIR = path.resolve(__dirname, '..', 'resources', 'vpc-allow-lists');
-    for (const file of fs.readdirSync(ALLOW_LIST_DIR)) {
-      const matches = /^(.+)-(IPv4|IPv6)\.txt$/.exec(file);
-      if (matches == null) {
-        throw new Error(`Allow-list file ${file} in ${ALLOW_LIST_DIR} is invalid: file name must end in IPv4.txt or IPv6.txt`);
-      }
-      const [, namespace, ipLabel] = matches;
-
-      const entries = fs.readFileSync(path.join(ALLOW_LIST_DIR, file), 'utf8')
-        .split(/\n/)
-        .map((line) => {
-          const match = /^\s*([^\s]+)?\s*(?:#.*)?$/.exec(line);
-          if (!match) {
-            throw new Error(`Invalid line in allow list ${file}: ${line}`);
-          }
-          const [, cidr] = match;
-          return cidr;
-        })
-        .filter((cidr) => !!cidr)
-        .sort()
-        .map((cidr) => ({ cidr }));
-
-      if (entries.length === 0) {
-        continue;
-      }
-
-      // We use a SHA-1 digest of the list of prefixes to be sure we create a
-      // whole new prefix list whenever it changes, so we are never bothered by
-      // the maxEntries being what it is.
-      const hash = entries.reduce(
-        (h, { cidr }) => h.update(cidr).update('\0'),
-        createHash('SHA1'),
-      ).digest('hex');
-
-      // Note - the `prefixListName` is NOT a physical ID, and so updating it
-      // will NOT cause a replacement. Additionally, it needs not be unique in
-      // any way.
-      const pl = new ec2.CfnPrefixList(this, `${namespace}.${ipLabel}#${hash}`, {
-        addressFamily: ipLabel,
-        prefixListName: `${namespace}.${ipLabel}`,
-        entries,
-        maxEntries: entries.length,
-      });
-      const id = `${namespace}-${ipLabel}`;
-      const sg = new ec2.SecurityGroup(this, id, {
-        allowAllOutbound: false,
-        description: `${this.node.path}/${id}`,
-        vpc,
-      });
-
-      // We intentionally ONLY allow HTTPS though there...
-      sg.connections.allowTo(
-        NamedPeer.from(ec2.Peer.prefixList(pl.attrPrefixListId), pl.node.path),
-        ec2.Port.tcp(443),
-        `to ${namespace} (${ipLabel})`,
-      );
-
-      Tags.of(sg).add('Name', `${namespace}.${ipLabel}`);
-
-      securityGroups.push(sg);
-    }
-
-    return securityGroups;
-  }
 }
 
 /**
@@ -588,40 +477,4 @@ export enum Isolation {
    * ConstructHub instances.
    */
   NO_INTERNET_ACCESS,
-}
-
-/**
- * This is to work around an issue where the peer's `uniqueId` is a token for
- * our PrefixList values, and this causes the VPC construct to "de-duplicate"
- * all of them (it considers they are identical).
- *
- * There is a fix in the latest EC2 library, however that fix isn't great
- * either, as it addresses the problem at the wrong location (in the in/egress
- * rule, instead of in the peer).
- *
- * Basically, this ensures the `uniqueId` is some string we control, so we
- * remain faithful to the declaraiton intent.
- */
-class NamedPeer implements ec2.IPeer {
-
-  public static from(peer: ec2.IPeer, name: string) {
-    return new NamedPeer(peer, name);
-  }
-
-  public readonly connections: ec2.Connections = new ec2.Connections({ peer: this });
-
-  private constructor(private readonly peer: ec2.IPeer, public readonly uniqueId: string) { }
-
-  public get canInlineRule() {
-    return this.peer.canInlineRule;
-  }
-
-  public toIngressRuleConfig() {
-    return this.peer.toIngressRuleConfig();
-  }
-
-  public toEgressRuleConfig() {
-    return this.peer.toEgressRuleConfig();
-  }
-
 }
