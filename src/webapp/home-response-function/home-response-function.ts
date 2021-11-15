@@ -21,9 +21,9 @@ function handler(event: CloudFrontResponse) {
     value:
       [
         "default-src 'self' 'unsafe-inline' https://*.awsstatic.com;",
-        "connect-src 'self' https://*.shortbread.aws.dev;",
-        "frame-src 'none';",
-        "img-src 'self' https://* http://*.omtrdc.net;",
+        "connect-src 'self' https://*.shortbread.aws.dev https://a0.awsstatic.com/ https://amazonwebservices.d2.sc.omtrdc.net https://aws.demdex.net https://dpm.demdex.net https://cm.everesttech.net;",
+        'frame-src https://aws.demdex.net https://dpm.demdex.net;',
+        "img-src 'self' https://* https://a0.awsstatic.com/ https://amazonwebservices.d2.sc.omtrdc.net https://aws.demdex.net https://dpm.demdex.net https://cm.everesttech.net;",
         "object-src 'none';",
         "style-src 'self' 'unsafe-inline';",
       ].join(' '),
