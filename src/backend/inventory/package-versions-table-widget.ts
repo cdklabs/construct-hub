@@ -7,7 +7,7 @@ import { PackageVersionsTableWidgetFunction } from './package-versions-table-wid
 export interface PackageVersionsTableWidgetProps {
   readonly bucket: IBucket;
   readonly key: string;
-  readonly description: string;
+  readonly description?: string;
   readonly title?: string;
   readonly width?: number;
   readonly height?: number;
@@ -16,7 +16,7 @@ export interface PackageVersionsTableWidgetProps {
 export class PackageVersionsTableWidget extends ConcreteWidget {
   private readonly handler: PackageVersionsTableWidgetFunction;
   private readonly key: string;
-  private readonly description: string;
+  private readonly description?: string;
   private readonly title?: string;
 
   public constructor(scope: Construct, id: string, props: PackageVersionsTableWidgetProps) {
@@ -52,7 +52,7 @@ export class PackageVersionsTableWidget extends ConcreteWidget {
         endpoint: this.handler.functionArn,
         params: {
           key: this.key,
-          description: this.description,
+          description: `${this.description ?? ''}\n`,
         },
         title: this.title,
         updateOn: {

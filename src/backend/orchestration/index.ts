@@ -15,7 +15,7 @@ import { RUNBOOK_URL } from '../../runbook-url';
 import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 import { CatalogBuilder } from '../catalog-builder';
 import { DenyList } from '../deny-list';
-import { ASSEMBLY_KEY_SUFFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX, STORAGE_KEY_PREFIX, CATALOG_KEY, UNPROCESSABLE_ASSEMBLY_ERROR_NAME } from '../shared/constants';
+import { ASSEMBLY_KEY_SUFFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX, STORAGE_KEY_PREFIX, CATALOG_KEY, UNPROCESSABLE_PACKAGE_ERROR_NAME } from '../shared/constants';
 import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
 import { NeedsCatalogUpdate } from './needs-catalog-update';
 import { RedriveStateMachine } from './redrive-state-machine';
@@ -165,7 +165,7 @@ export class Orchestration extends Construct {
       resultPath: JsonPath.DISCARD,
     }).next(new Succeed(this, 'Sent to DLQ'));
 
-    const ignoreUnprocessablePackage = new Pass(this, 'Ignore unprocessable package');
+    const ignore = new Pass(this, 'Ignore');
 
     this.catalogBuilder = new CatalogBuilder(this, 'CatalogBuilder', props);
 
@@ -259,7 +259,7 @@ export class Orchestration extends Construct {
             maxAttempts: 3,
           })
           .addRetry({ maxAttempts: 3 })
-          .addCatch(ignoreUnprocessablePackage, { errors: [UNPROCESSABLE_ASSEMBLY_ERROR_NAME] })
+          .addCatch(ignore, { errors: [UNPROCESSABLE_PACKAGE_ERROR_NAME] })
           .addCatch(sendToDeadLetterQueue, { errors: ['States.Timeout'], resultPath: '$.error' } )
           .addCatch(sendToDeadLetterQueue, { errors: ['ECS.AmazonECSException', 'ECS.InvalidParameterException'], resultPath: '$.error' })
           .addCatch(sendToDeadLetterQueue, { errors: ['States.TaskFailed'], resultPath: '$.error' })

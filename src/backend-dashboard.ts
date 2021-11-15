@@ -7,7 +7,7 @@ import { Inventory } from './backend/inventory';
 import { PackageVersionsTableWidget } from './backend/inventory/package-versions-table-widget';
 import { Orchestration } from './backend/orchestration';
 import { PackageStats } from './backend/package-stats';
-import { missingDocumentationKey, unProcessableAssemblyKey } from './backend/shared/constants';
+import { missingDocumentationReport, UNINSTALLABLE_PACKAGES_REPORT, corruptAssemblyReport } from './backend/shared/constants';
 import { DocumentationLanguage } from './backend/shared/language';
 import { ecsClusterUrl, lambdaFunctionUrl, lambdaSearchLogGroupUrl, logGroupUrl, s3ObjectUrl, sqsQueueUrl, stateMachineUrl } from './deep-link';
 import { fillMetric } from './metric-utils';
@@ -335,6 +335,15 @@ export class BackendDashboard extends Construct {
       }),
     ];
 
+    yield [
+      new PackageVersionsTableWidget(this, 'UninstallablePackages', {
+        title: 'Package Versions Report | Uninstallable',
+        bucket: packageData,
+        key: UNINSTALLABLE_PACKAGES_REPORT,
+        height: 6,
+        width: 24,
+      }),
+    ];
     for (const language of DocumentationLanguage.ALL) {
       yield [
         new TextWidget({
@@ -346,54 +355,43 @@ export class BackendDashboard extends Construct {
       yield [
         new GraphWidget({
           height: 6,
-          width: 6,
+          width: 12,
           title: 'Package Versions',
           left: [
             inventory.metricSupportedPackageVersionCount(language, { label: 'Available', color: '#2ca02c' }),
+            inventory.metricCorruptAssemblyPackageVersionCount(language, { label: 'Corrupt Assembly', color: '#3542D7' }),
             inventory.metricUnsupportedPackageVersionCount(language, { label: 'Unsupported', color: '#9467bd' }),
             inventory.metricMissingPackageVersionCount(language, { label: 'Missing', color: '#d62728' }),
-            inventory.metricUnprocessableAssemblyPackageVersionCount(language, { label: 'Unprocessable', color: '#397BC4' }),
           ],
           leftYAxis: { showUnits: false },
           view: GraphWidgetView.PIE,
         }),
-        new PackageVersionsTableWidget(this, `MissingDocs-${language.name}`, {
-          title: 'Package Versions missing documentation',
-          bucket: packageData,
-          key: missingDocumentationKey(language),
-          description: [
-            'This widget shows the name and version(s) of all packages tracked by',
-            'this ConstructHub instance, and for which at least one documentation',
-            `object is missing for _${language.name}_.`,
-            '',
-          ].join('\n'),
-          height: 6,
-          width: 12,
-        }),
-        new PackageVersionsTableWidget(this, `UnprocessableAssembly-${language.name}`, {
-          title: 'Package Versions with unprocessable assembly',
-          bucket: packageData,
-          key: unProcessableAssemblyKey(language),
-          description: [
-            'This widget shows the name and version(s) of all packages tracked by',
-            'this ConstructHub instance, and for which at least one documentation',
-            `object cannot be created due to an unprocessable assembly for _${language.name}_.`,
-            '',
-          ].join('\n'),
-          height: 6,
-          width: 12,
-        }),
         new GraphWidget({
           height: 6,
-          width: 6,
+          width: 12,
           title: 'Package Version Submodules',
           left: [
             inventory.metricSupportedSubmoduleCount(language, { label: 'Available', color: '#2ca02c' }),
+            inventory.metricCorruptAssemblySubmoduleCount(language, { label: 'Corrupt Assembly', color: '#3542D7' }),
             inventory.metricUnsupportedSubmoduleCount(language, { label: 'Unsupported', color: '#9467bd' }),
             inventory.metricMissingSubmoduleCount(language, { label: 'Missing', color: '#d62728' }),
           ],
           leftYAxis: { showUnits: false },
           view: GraphWidgetView.PIE,
+        }),
+        new PackageVersionsTableWidget(this, `MissingDocs-${language.name}`, {
+          title: 'Package Versions Report | Missing Documentation',
+          bucket: packageData,
+          key: missingDocumentationReport(language),
+          height: 6,
+          width: 24,
+        }),
+        new PackageVersionsTableWidget(this, `UnprocessableDocs-${language.name}`, {
+          title: 'Package Versions Report | Corrupt Assembly',
+          bucket: packageData,
+          key: corruptAssemblyReport(language),
+          height: 6,
+          width: 24,
         }),
       ];
     }

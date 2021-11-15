@@ -5,6 +5,7 @@ import type { PromiseResult } from 'aws-sdk/lib/request';
 import * as fs from 'fs-extra';
 import * as docgen from 'jsii-docgen';
 
+import { UnInstallablePackageError, CorruptedAssemblyError, LanguageNotSupportedError } from 'jsii-docgen';
 import type { TransliteratorInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
 import { logInWithCodeArtifact } from '../shared/code-artifact.lambda-shared';
@@ -12,7 +13,7 @@ import { compressContent } from '../shared/compress-content.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DocumentationLanguage } from '../shared/language';
-import { shellOut, shellOutWithOutput } from '../shared/shell-out.lambda-shared';
+import { shellOut } from '../shared/shell-out.lambda-shared';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { writeFile } from './util';
 
@@ -88,125 +89,91 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
     const tarball = path.join(tmpdir, 'package.tgz');
     await writeFile(tarball, readStream);
 
-    const cwd = process.cwd();
-    try {
-      process.chdir(tmpdir);
-      console.log(`Preparing package install at ${tmpdir}`);
-      const installResult = await shellOutWithOutput(
-        'npm',
-        'install',
-        tarball,
-        '--ignore-scripts',
-        '--no-bin-links',
-        '--no-save',
-        '--include=dev',
-        '--no-package-lock',
-        '--json',
-      );
-      if (installResult.exitCode !== 0) {
-        if (installResult.signal) {
-          throw new Error(`"npm install" was killed by signal ${installResult.signal}`);
-        }
-        const toThrow = new Error(`"npm install" failed with exit code ${installResult.exitCode}`);
-        toThrow.name = 'jsii-docgen.NpmError';
-        try {
-          const json = JSON.parse(installResult.stdout.toString('utf-8'));
-          console.error(`Installation result: ${JSON.stringify(json, null, 2)}`);
-          if (json.error.code) {
-            toThrow.name += `.${json.error.code}`;
-          }
-        } catch (error) {
-          console.error(`Installation result: ${installResult.stdout.toString('utf-8')}`);
-        }
-        throw toThrow;
-      }
-    } finally {
-      process.chdir(cwd);
+    const uploads = new Map<string, Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>>();
+
+    let unprocessable: boolean = false;
+
+    function markPackage(e: Error, marker: string) {
+      // these errors are treated differently since they don't belong in the DLQ.
+      // we simply mark those for inventory sake and keep going.
+      const key = event.assembly.key.replace(/\/[^/]+$/, marker);
+      const upload = uploadFile(event.bucket, key, event.assembly.versionId, Buffer.from(e.message));
+      uploads.set(key, upload);
     }
 
-    const packageDir = path.join(tmpdir, 'node_modules', packageName);
-    console.log(`Generating documentation from ${packageDir}...`);
-
-    let unProcessable = false;
-
-    for (const language of DocumentationLanguage.ALL) {
-      if (event.languages && !event.languages[language.toString()]) {
-        console.log(`Skipping language ${language} as it was not requested!`);
-        continue;
-      }
-
-      const isSupported = language === DocumentationLanguage.TYPESCRIPT || assembly.targets[language.targetName];
-      if (!isSupported) {
-        console.error(`Package ${packageName}@${packageVersion} does not support ${language}, skipping!`);
-        console.log(`Assembly targets: ${JSON.stringify(assembly.targets, null, 2)}`);
-        for (const submodule of [undefined, ...submodules]) {
-          const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(language, submodule)) + constants.NOT_SUPPORTED_SUFFIX;
-          const response = await uploadFile(event.bucket, key, event.assembly.versionId);
-          created.push({ bucket: event.bucket, key, versionId: response.VersionId });
+    console.log(`Generating documentation for ${packageFqn}...`);
+    try {
+      const docs = await docgen.Documentation.forPackage(tarball, { name: assembly.name });
+      for (const language of DocumentationLanguage.ALL) {
+        if (event.languages && !event.languages[language.toString()]) {
+          console.log(`Skipping language ${language} as it was not requested!`);
+          continue;
         }
-        continue;
-      }
 
-      const generateDocs = metricScope((metrics) => async (lang: DocumentationLanguage) => {
-        metrics.setDimensions();
-        metrics.setNamespace(METRICS_NAMESPACE);
+        const generateDocs = metricScope((metrics) => async (lang: DocumentationLanguage) => {
+          metrics.setDimensions();
+          metrics.setNamespace(METRICS_NAMESPACE);
 
-        const uploads = new Map<string, Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>>();
-        const docs = await docgen.Documentation.forProject(packageDir, {
-          assembliesDir: tmpdir,
-          language: docgen.Language.fromString(lang.name),
-        });
+          async function renderAndDispatch(submodule?: string) {
 
-        function renderAndDispatch(submodule?: string) {
+            try {
 
-          try {
+              console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
+              const markdown = await docs.render({
+                submodule,
+                linkFormatter: linkFormatter(packageName),
+                language: docgen.Language.fromString(lang.name),
+              });
+              const page = Buffer.from(markdown.render());
+              metrics.putMetric(MetricName.DOCUMENT_SIZE, page.length, Unit.Bytes);
 
-            console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
-            const page = Buffer.from(docs.render({ submodule, linkFormatter: linkFormatter(docs) }).render());
-            metrics.putMetric(MetricName.DOCUMENT_SIZE, page.length, Unit.Bytes);
+              const { buffer: body, contentEncoding } = compressContent(page);
+              metrics.putMetric(MetricName.COMPRESSED_DOCUMENT_SIZE, body.length, Unit.Bytes);
 
-            const { buffer: body, contentEncoding } = compressContent(page);
-            metrics.putMetric(MetricName.COMPRESSED_DOCUMENT_SIZE, body.length, Unit.Bytes);
-
-            const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(lang, submodule));
-            console.log(`Uploading ${key}`);
-            const upload = uploadFile(event.bucket, key, event.assembly.versionId, body, contentEncoding);
-            uploads.set(key, upload);
-
-          } catch (e) {
-            if (e instanceof Error && e.message.includes('not found in assembly')) {
-              // mark this for inventory sake
-              const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(lang, submodule) + constants.UNPROCESSABLE_ASSEMBLY_SUFFIX);
+              const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(lang, submodule));
               console.log(`Uploading ${key}`);
-              const upload = uploadFile(event.bucket, key, event.assembly.versionId, Buffer.from(e.message));
+              const upload = uploadFile(event.bucket, key, event.assembly.versionId, body, contentEncoding);
               uploads.set(key, upload);
-              unProcessable = true;
-            } else {
-              throw e;
+
+            } catch (e) {
+              if (e instanceof LanguageNotSupportedError) {
+                markPackage(e, constants.docsKeySuffix(language, submodule) + constants.NOT_SUPPORTED_SUFFIX);
+              } else if (e instanceof CorruptedAssemblyError) {
+                markPackage(e, constants.docsKeySuffix(language, submodule) + constants.CORRUPT_ASSEMBLY_SUFFIX);
+                unprocessable = true;
+              } else {
+                throw e;
+              }
             }
           }
-        }
 
-        renderAndDispatch();
-        for (const submodule of submodules) {
-          renderAndDispatch(submodule);
-        }
-
-        for (const [key, upload] of uploads.entries()) {
-          const response = await upload;
-          created.push({ bucket: event.bucket, key, versionId: response.VersionId });
-          console.log(`Finished uploading ${key} (Version ID: ${response.VersionId})`);
-        }
-      });
-      await generateDocs(language);
+          await renderAndDispatch();
+          for (const submodule of submodules) {
+            await renderAndDispatch(submodule);
+          }
+        });
+        await generateDocs(language);
+      }
+    } catch (error) {
+      if (error instanceof UnInstallablePackageError) {
+        markPackage(error, constants.UNINSTALLABLE_PACKAGE_SUFFIX);
+        unprocessable = true;
+      } else {
+        throw error;
+      }
     }
 
-    if (unProcessable) {
-      // throw a custom error so that we can divert this package
-      // away from the DLQ.
-      const error = new Error('Package is unprocessable');
-      error.name = constants.UNPROCESSABLE_ASSEMBLY_ERROR_NAME;
-      throw error;
+    for (const [key, upload] of uploads.entries()) {
+      const response = await upload;
+      created.push({ bucket: event.bucket, key, versionId: response.VersionId });
+      console.log(`Finished uploading ${key} (Version ID: ${response.VersionId})`);
+    }
+
+    if (unprocessable) {
+      // the message here doesn't matter, we only use the error name
+      // to divert this message away from the DLQ.
+      const error = new Error();
+      error.name = constants.UNPROCESSABLE_PACKAGE_ERROR_NAME;
     }
 
     return created;
@@ -246,7 +213,7 @@ function uploadFile(bucket: string, key: string, sourceVersionId?: string, body?
  * A link formatter to make sure type links redirect to the appropriate package
  * page in the webapp.
  */
-function linkFormatter(docs: docgen.Documentation): (type: docgen.TranspiledType) => string {
+function linkFormatter(assemblyName: string): (type: docgen.TranspiledType) => string {
 
   function _formatter(type: docgen.TranspiledType): string {
 
@@ -257,7 +224,7 @@ function linkFormatter(docs: docgen.Documentation): (type: docgen.TranspiledType
     // linking to them.
     const hash = sanitize(type.fqn);
 
-    if (docs.assembly.name === packageName) {
+    if (assemblyName === packageName) {
       // link to the same package - just add the hash
       return `#${hash}`;
     }

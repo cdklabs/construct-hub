@@ -8,7 +8,7 @@ import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { RUNBOOK_URL } from '../../runbook-url';
-import { MISSING_DOCUMENTATION_KEY_PATTERN, UNPROCESSABLE_ASSEMBLY_KEY_PATTERN } from '../shared/constants';
+import { MISSING_DOCUMENTATION_REPORT_PATTERN, UNINSTALLABLE_PACKAGES_REPORT, CORRUPT_ASSEMBLY_REPORT_PATTERN } from '../shared/constants';
 import { DocumentationLanguage } from '../shared/language';
 import { Canary } from './canary';
 import { METRICS_NAMESPACE, MetricName, LANGUAGE_DIMENSION } from './constants';
@@ -60,8 +60,9 @@ export class Inventory extends Construct {
       timeout: rate,
     });
     const grantRead = props.bucket.grantRead(this.canary);
-    const grantWriteMissing = props.bucket.grantWrite(this.canary, MISSING_DOCUMENTATION_KEY_PATTERN);
-    const grantWriteUnprocessable = props.bucket.grantWrite(this.canary, UNPROCESSABLE_ASSEMBLY_KEY_PATTERN);
+    const grantWriteMissing = props.bucket.grantWrite(this.canary, MISSING_DOCUMENTATION_REPORT_PATTERN);
+    const grantWriteCorruptAssembly = props.bucket.grantWrite(this.canary, CORRUPT_ASSEMBLY_REPORT_PATTERN);
+    const grantWriteUnInstallable = props.bucket.grantWrite(this.canary, UNINSTALLABLE_PACKAGES_REPORT);
 
     const rule = new Rule(this, 'ScheduleRule', {
       schedule: Schedule.rate(rate),
@@ -69,7 +70,8 @@ export class Inventory extends Construct {
     });
 
     rule.node.addDependency(grantRead, grantWriteMissing);
-    rule.node.addDependency(grantRead, grantWriteUnprocessable);
+    rule.node.addDependency(grantRead, grantWriteCorruptAssembly);
+    rule.node.addDependency(grantRead, grantWriteUnInstallable);
 
     props.monitoring.addHighSeverityAlarm(
       'Inventory Canary is not Running',
@@ -397,10 +399,9 @@ export class Inventory extends Construct {
   }
 
   /**
-   * The count of package versions that failed documentation generation for the provided
-   * `DocumentationLanguage` due to an unprocessable assembly.
+   * The count of packages that have a language specific corrupt assembly.
    */
-  public metricUnprocessableAssemblyPackageVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+  public metricCorruptAssemblyPackageCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
     return new Metric({
       period: Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
@@ -408,7 +409,55 @@ export class Inventory extends Construct {
       dimensions: {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
-      metricName: MetricName.PER_LANGUAGE_UNPROCESSABLE_VERSIONS,
+      metricName: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_PACKAGES,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of package major versions that have a language specific corrupt assembly.
+   */
+  public metricCorruptAssemblyMajorVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_MAJORS,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of package versions that have a language specific corrupt assembly.
+   */
+  public metricCorruptAssemblyPackageVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_VERSIONS,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of package version submodules that have a language specific corrupt assembly.
+   */
+  public metricCorruptAssemblySubmoduleCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_SUBMODULES,
       namespace: METRICS_NAMESPACE,
     });
   }

@@ -1,5 +1,6 @@
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { Context, ScheduledEvent } from 'aws-lambda';
+import { PromiseResult } from 'aws-sdk/lib/request';
 import { SemVer } from 'semver';
 import * as aws from '../shared/aws.lambda-shared';
 import { compressContent } from '../shared/compress-content.lambda-shared';
@@ -74,6 +75,8 @@ export async function handler(event: ScheduledEvent, context: Context) {
       status.tarballPresent = true;
     } else if (key.endsWith(constants.ASSEMBLY_KEY_SUFFIX)) {
       status.assemblyPresent = true;
+    } else if (key.endsWith(constants.UNINSTALLABLE_PACKAGE_SUFFIX)) {
+      status.uninstallable = true;
     } else {
       let identified = false;
       for (const language of DocumentationLanguage.ALL) {
@@ -99,8 +102,8 @@ export async function handler(event: ScheduledEvent, context: Context) {
         } else if (key.endsWith(constants.docsKeySuffix(language) + constants.NOT_SUPPORTED_SUFFIX)) {
           recordPerLanguage(language, PerLanguageStatus.UNSUPPORTED, name, majorVersion, fullName);
           identified = true;
-        } else if (key.endsWith(constants.docsKeySuffix(language) + constants.UNPROCESSABLE_ASSEMBLY_SUFFIX)) {
-          recordPerLanguage(language, PerLanguageStatus.UNPROCESSABLE, name, majorVersion, fullName);
+        } else if (key.endsWith(constants.docsKeySuffix(language) + constants.CORRUPT_ASSEMBLY_SUFFIX)) {
+          recordPerLanguage(language, PerLanguageStatus.CORRUPT_ASSEMBLY, name, majorVersion, fullName);
           identified = true;
         }
       }
@@ -111,6 +114,28 @@ export async function handler(event: ScheduledEvent, context: Context) {
     }
   }
 
+  const reports: Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>[] = [];
+
+  function createReport(reportKey: string, packageVersions: string[]) {
+
+    const { buffer, contentEncoding } = compressContent(Buffer.from(JSON.stringify(packageVersions, null, 2)));
+    console.log(`Uploading list to s3://${bucket}/${reportKey}`);
+    reports.push(aws.s3().putObject({
+      Body: buffer,
+      Bucket: bucket,
+      ContentEncoding: contentEncoding,
+      ContentType: 'application/json',
+      Expires: new Date(Date.now() + 300_000), // 5 minutes from now
+      Key: reportKey,
+      Metadata: {
+        'Lambda-Run-Id': context.awsRequestId,
+        'Lambda-Log-Group-Name': context.logGroupName,
+        'Lambda-Log-Stream-Name': context.logStreamName,
+      },
+    }).promise());
+
+  }
+
   await metricScope((metrics) => () => {
     // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
     metrics.setDimensions();
@@ -118,6 +143,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
     const missingMetadata = new Array<string>();
     const missingAssembly = new Array<string>();
     const missingTarball = new Array<string>();
+    const uninstallable = new Array<string>();
     const unknownObjects = new Array<string>();
     const submodules = new Array<string>();
     for (const [name, status] of indexedPackages.entries()) {
@@ -130,6 +156,9 @@ export async function handler(event: ScheduledEvent, context: Context) {
       if (!status.tarballPresent) {
         missingTarball.push(name);
       }
+      if (status.uninstallable) {
+        uninstallable.push(name);
+      }
       if (status.unknownObjects?.length ?? 0 > 0) {
         unknownObjects.push(...status.unknownObjects!);
       }
@@ -141,6 +170,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
     metrics.setProperty('detail', { missingMetadata, missingAssembly, missingTarball, unknownObjects });
 
+    metrics.putMetric(MetricName.UNINSTALLABLE_PACKAGE_COUNT, uninstallable.length, Unit.Count);
     metrics.putMetric(MetricName.MISSING_METADATA_COUNT, missingMetadata.length, Unit.Count);
     metrics.putMetric(MetricName.MISSING_ASSEMBLY_COUNT, missingAssembly.length, Unit.Count);
     metrics.putMetric(MetricName.MISSING_TARBALL_COUNT, missingTarball.length, Unit.Count);
@@ -149,6 +179,9 @@ export async function handler(event: ScheduledEvent, context: Context) {
     metrics.putMetric(MetricName.PACKAGE_VERSION_COUNT, indexedPackages.size, Unit.Count);
     metrics.putMetric(MetricName.SUBMODULE_COUNT, submodules.length, Unit.Count);
     metrics.putMetric(MetricName.UNKNOWN_OBJECT_COUNT, unknownObjects.length, Unit.Count);
+
+    createReport(constants.UNINSTALLABLE_PACKAGES_REPORT, uninstallable);
+
   })();
 
   for (const entry of Array.from(perLanguage.entries())) {
@@ -163,40 +196,19 @@ export async function handler(event: ScheduledEvent, context: Context) {
         PerLanguageStatus.SUPPORTED,
         PerLanguageStatus.UNSUPPORTED,
         PerLanguageStatus.MISSING,
-        PerLanguageStatus.UNPROCESSABLE,
+        PerLanguageStatus.CORRUPT_ASSEMBLY,
       ]) {
         for (const [key, statuses] of Object.entries(data)) {
           let filtered = Array.from(statuses.entries()).filter(([, status]) => forStatus === status);
           let metricName = METRIC_NAME_BY_STATUS_AND_GRAIN[forStatus as PerLanguageStatus][key as keyof PerLanguageData];
 
-          if (forStatus === PerLanguageStatus.MISSING || forStatus === PerLanguageStatus.UNPROCESSABLE) {
+          if (forStatus === PerLanguageStatus.MISSING || forStatus === PerLanguageStatus.CORRUPT_ASSEMBLY) {
             // Creates an object in S3 with the outcome of the scan for this language.
-            const { buffer, contentEncoding } = compressContent(
-              Buffer.from(
-                JSON.stringify(
-                  filtered.map(([name]) => name).sort(),
-                  null,
-                  2,
-                ),
-              ),
-            );
-            const missingDocsKey = forStatus === PerLanguageStatus.MISSING ?
-              constants.missingDocumentationKey(language) :
-              constants.unProcessableAssemblyKey(language);
-            console.log(`Uploading list to s3://${bucket}/${missingDocsKey}`);
-            await aws.s3().putObject({
-              Body: buffer,
-              Bucket: bucket,
-              ContentEncoding: contentEncoding,
-              ContentType: 'application/json',
-              Expires: new Date(Date.now() + 300_000), // 5 minutes from now
-              Key: missingDocsKey,
-              Metadata: {
-                'Lambda-Run-Id': context.awsRequestId,
-                'Lambda-Log-Group-Name': context.logGroupName,
-                'Lambda-Log-Stream-Name': context.logStreamName,
-              },
-            }).promise();
+            const reportKey = forStatus === PerLanguageStatus.MISSING ?
+              constants.missingDocumentationReport(language) :
+              constants.corruptAssemblyReport(language);
+            console.log(`Uploading list to s3://${bucket}/${reportKey}`);
+            createReport(reportKey, filtered.map(([name]) => name).sort());
           }
 
           console.log(`${forStatus} ${key} for ${language}: ${filtered.length} entries`);
@@ -208,6 +220,10 @@ export async function handler(event: ScheduledEvent, context: Context) {
       console.log('##################################################');
       console.log('');
     })(...entry);
+  }
+
+  for (const report of reports) {
+    await report;
   }
 }
 
@@ -254,6 +270,7 @@ function submoduleKeyRegexp(language: DocumentationLanguage): RegExp {
 interface IndexedPackageStatus {
   metadataPresent?: boolean;
   assemblyPresent?: boolean;
+  uninstallable?: boolean;
   submodules?: Set<string>;
   tarballPresent?: boolean;
   unknownObjects?: string[];
@@ -271,7 +288,7 @@ type PerLanguageData = { readonly [grain in Grain]: Map<string, PerLanguageStatu
 const enum PerLanguageStatus {
   MISSING = 'Missing',
   UNSUPPORTED = 'Unsupported',
-  UNPROCESSABLE = 'Unprocessable',
+  CORRUPT_ASSEMBLY = 'CorruptAssembly',
   SUPPORTED = 'Supported',
 }
 
@@ -294,11 +311,11 @@ const METRIC_NAME_BY_STATUS_AND_GRAIN: { readonly [status in PerLanguageStatus]:
     [Grain.PACKAGE_VERSIONS]: MetricName.PER_LANGUAGE_SUPPORTED_VERSIONS,
     [Grain.PACKAGE_VERSION_SUBMODULES]: MetricName.PER_LANGUAGE_SUPPORTED_SUBMODULES,
   },
-  [PerLanguageStatus.UNPROCESSABLE]: {
-    [Grain.PACKAGES]: MetricName.PER_LANGUAGE_UNPROCESSABLE_PACKAGES,
-    [Grain.PACKAGE_MAJOR_VERSIONS]: MetricName.PER_LANGUAGE_UNPROCESSABLE_MAJORS,
-    [Grain.PACKAGE_VERSIONS]: MetricName.PER_LANGUAGE_UNPROCESSABLE_VERSIONS,
-    [Grain.PACKAGE_VERSION_SUBMODULES]: MetricName.PER_LANGUAGE_UNPROCESSABLE_SUBMODULES,
+  [PerLanguageStatus.CORRUPT_ASSEMBLY]: {
+    [Grain.PACKAGES]: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_PACKAGES,
+    [Grain.PACKAGE_MAJOR_VERSIONS]: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_MAJORS,
+    [Grain.PACKAGE_VERSIONS]: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_VERSIONS,
+    [Grain.PACKAGE_VERSION_SUBMODULES]: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_SUBMODULES,
   },
 };
 
@@ -353,11 +370,9 @@ function doRecordPerLanguage(
         // If thr package is "supported", this always "wins"
         map.set(name, status);
         break;
-      case PerLanguageStatus.UNPROCESSABLE:
-        map.set(name, status);
-        break;
       case PerLanguageStatus.UNSUPPORTED:
-        // If we already have a status, only override with "UNSUPPORTED" if it was "MISSING".
+      case PerLanguageStatus.CORRUPT_ASSEMBLY:
+        // If we already have a status, only override with if it was "MISSING".
         if (!map.has(name) || map.get(name) === PerLanguageStatus.MISSING) {
           map.set(name, status);
         }

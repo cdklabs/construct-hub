@@ -245,6 +245,13 @@ export class WebApp extends Construct {
     });
 
     new s3deploy.BucketDeployment(this, 'DeployWebsiteConfig', {
+      cacheControl: [
+        CacheControl.setPublic(),
+        CacheControl.maxAge(Duration.hours(1)),
+        CacheControl.mustRevalidate(),
+        CacheControl.sMaxAge(Duration.minutes(5)),
+        CacheControl.proxyRevalidate(),
+      ],
       sources: [s3deploy.Source.asset(config.file.dir)],
       destinationBucket: this.bucket,
       distribution: this.distribution,

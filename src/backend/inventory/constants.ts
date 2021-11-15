@@ -7,6 +7,7 @@ export const METRICS_NAMESPACE = 'ConstructHub/Inventory';
  * Names of available metrics from the Inventory canary function.
  */
 export const enum MetricName {
+  UNINSTALLABLE_PACKAGE_COUNT = 'UninstallablePackageCount',
   MISSING_METADATA_COUNT = 'MissingPackageMetadataCount',
   MISSING_ASSEMBLY_COUNT = 'MissingAssemblyCount',
   MISSING_TARBALL_COUNT = 'MissingPackageTarballCount',
@@ -32,10 +33,10 @@ export const enum MetricName {
   PER_LANGUAGE_UNSUPPORTED_VERSIONS = 'UnsupportedPackageVersionCount',
   PER_LANGUAGE_UNSUPPORTED_SUBMODULES = 'UnsupportedSubmoduleCount',
 
-  PER_LANGUAGE_UNPROCESSABLE_PACKAGES = 'UnprocessablePackageCount',
-  PER_LANGUAGE_UNPROCESSABLE_MAJORS = 'UnprocessableMajorVersionCount',
-  PER_LANGUAGE_UNPROCESSABLE_VERSIONS = 'UnprocessablePackageVersionCount',
-  PER_LANGUAGE_UNPROCESSABLE_SUBMODULES = 'UnprocessableSubmoduleCount',
+  PER_LANGUAGE_CORRUPT_ASSEMBLY_PACKAGES = 'CorruptAssemblyPackageCount',
+  PER_LANGUAGE_CORRUPT_ASSEMBLY_MAJORS = 'CorruptAssemblyMajorVersionCount',
+  PER_LANGUAGE_CORRUPT_ASSEMBLY_VERSIONS = 'CorruptAssemblyPackageVersionCount',
+  PER_LANGUAGE_CORRUPT_ASSEMBLY_SUBMODULES = 'CorruptAssemblySubmoduleCount',
 
 }
 
