@@ -4942,7 +4942,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters40dc54f32b7c1533a54f3fe1f5678eec5f4169a63a780184895a8744a6cb46acS3Bucket2674B809
+          Ref: AssetParameters1ce2513b0d1c3a87a77ba8c0b884afd715f29c90bc7a54cd3fac65db7edbcaedS3BucketBD3E9BD7
         S3Key:
           Fn::Join:
             - ""
@@ -4950,12 +4950,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters40dc54f32b7c1533a54f3fe1f5678eec5f4169a63a780184895a8744a6cb46acS3VersionKeyD2C3153D
+                      - Ref: AssetParameters1ce2513b0d1c3a87a77ba8c0b884afd715f29c90bc7a54cd3fac65db7edbcaedS3VersionKey87A963BD
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters40dc54f32b7c1533a54f3fe1f5678eec5f4169a63a780184895a8744a6cb46acS3VersionKeyD2C3153D
+                      - Ref: AssetParameters1ce2513b0d1c3a87a77ba8c0b884afd715f29c90bc7a54cd3fac65db7edbcaedS3VersionKey87A963BD
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2
@@ -4964,6 +4964,7 @@ Resources:
         construct-hub-probe versions availability"
       Environment:
         Variables:
+          AWS_EMF_ENVIRONMENT: Local
           CONSTRUCT_HUB_BASE_URL:
             Fn::Join:
               - ""
@@ -6670,18 +6671,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "84199d8e6584a01a6a7bf1887a95373133eb9154bbc07f2e5ec0fc4268f1f2fb"
-  AssetParameters40dc54f32b7c1533a54f3fe1f5678eec5f4169a63a780184895a8744a6cb46acS3Bucket2674B809:
+  AssetParameters1ce2513b0d1c3a87a77ba8c0b884afd715f29c90bc7a54cd3fac65db7edbcaedS3BucketBD3E9BD7:
     Type: String
     Description: S3 bucket for asset
-      "40dc54f32b7c1533a54f3fe1f5678eec5f4169a63a780184895a8744a6cb46ac"
-  AssetParameters40dc54f32b7c1533a54f3fe1f5678eec5f4169a63a780184895a8744a6cb46acS3VersionKeyD2C3153D:
+      "1ce2513b0d1c3a87a77ba8c0b884afd715f29c90bc7a54cd3fac65db7edbcaed"
+  AssetParameters1ce2513b0d1c3a87a77ba8c0b884afd715f29c90bc7a54cd3fac65db7edbcaedS3VersionKey87A963BD:
     Type: String
     Description: S3 key for asset version
-      "40dc54f32b7c1533a54f3fe1f5678eec5f4169a63a780184895a8744a6cb46ac"
-  AssetParameters40dc54f32b7c1533a54f3fe1f5678eec5f4169a63a780184895a8744a6cb46acArtifactHash1AFACE75:
+      "1ce2513b0d1c3a87a77ba8c0b884afd715f29c90bc7a54cd3fac65db7edbcaed"
+  AssetParameters1ce2513b0d1c3a87a77ba8c0b884afd715f29c90bc7a54cd3fac65db7edbcaedArtifactHash933B5E30:
     Type: String
     Description: Artifact hash for asset
-      "40dc54f32b7c1533a54f3fe1f5678eec5f4169a63a780184895a8744a6cb46ac"
+      "1ce2513b0d1c3a87a77ba8c0b884afd715f29c90bc7a54cd3fac65db7edbcaed"
   AssetParameters2014f4c1d30de902409ad3965bb488173ce030f76ee67fdcd0fae846487499cbS3BucketBDAE1430:
     Type: String
     Description: S3 bucket for asset
