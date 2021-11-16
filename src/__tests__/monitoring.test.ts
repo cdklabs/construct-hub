@@ -1,9 +1,10 @@
+import '@aws-cdk/assert/jest';
+import { IAlarmAction, Alarm, Metric } from '@aws-cdk/aws-cloudwatch';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as sns from '@aws-cdk/aws-sns';
 import { Stack } from '@aws-cdk/core';
 import { Monitoring } from '../monitoring';
 import { handler as webCanaryHandler } from '../monitoring/http-get-function.lambda';
-import '@aws-cdk/assert/jest';
 
 const actions = {
   highSeverity: 'arn:aws:sns:us-east-1:123456789012:high',
@@ -146,5 +147,29 @@ describe('web canary handler', () => {
   test('web ping throws for a non-200 response', async () => {
     process.env.URL = 'https://amazon.com/not-found-please12345';
     await expect(webCanaryHandler({})).rejects.toThrow(/Response code 404 \(Not Found\)/);
+  });
+});
+
+test('low-severity alarm actions are registered', () => {
+  // GIVEN
+  const stack = new Stack(undefined, 'TestStack');
+  const alarm = new Alarm(stack, 'Alarm', {
+    evaluationPeriods: 1,
+    metric: new Metric({ metricName: 'FakeMetricName', namespace: 'FakeNamespace' }),
+    threshold: 0,
+  });
+
+  const normalSeverity = 'fake::arn::of::an::action';
+  const normalSeverityActionArn = 'fake::arn::of::bound:alarm::action';
+  const normalSeverityAction: IAlarmAction = { bind: () => ({ alarmActionArn: normalSeverityActionArn }) };
+
+  // WHEN
+  new Monitoring(stack, 'Monitoring', {
+    alarmActions: { normalSeverity, normalSeverityAction },
+  }).addLowSeverityAlarm('Alarm', alarm);
+
+  // THEN
+  expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
+    AlarmActions: [normalSeverity, normalSeverityActionArn],
   });
 });
