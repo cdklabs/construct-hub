@@ -5,8 +5,9 @@ import { RetentionDays } from '@aws-cdk/aws-logs';
 import * as s3 from '@aws-cdk/aws-s3';
 import { BlockPublicAccess } from '@aws-cdk/aws-s3';
 import * as sqs from '@aws-cdk/aws-sqs';
-import { Construct as CoreConstruct, Duration, Stack } from '@aws-cdk/core';
+import { Construct as CoreConstruct, Duration, Stack, Tags } from '@aws-cdk/core';
 import { Construct } from 'constructs';
+import { createRestrictedSecurityGroups } from './_limited-internet-access';
 import { AlarmActions, Domain } from './api';
 import { DenyList, Ingestion } from './backend';
 import { BackendDashboard } from './backend-dashboard';
@@ -48,9 +49,23 @@ export interface ConstructHubProps {
    * - VPC Endpoints (CloudWatch Logs, CodeArtifact, CodeArtifact API, S3, ...)
    * - A CodeArtifact Repository with an external connection to npmjs.com
    *
-   * @default true
+   * @deprecated use sensitiveTaskIsolation instead.
    */
   readonly isolateSensitiveTasks?: boolean;
+
+  /**
+   * Whether compute environments for sensitive tasks (which operate on
+   * un-trusted complex data, such as the transliterator, which operates with
+   * externally-sourced npm package tarballs) should run in network-isolated
+   * environments. This implies the creation of additonal resources, including:
+   *
+   * - A VPC with only isolated subnets.
+   * - VPC Endpoints (CloudWatch Logs, CodeArtifact, CodeArtifact API, S3, ...)
+   * - A CodeArtifact Repository with an external connection to npmjs.com
+   *
+   * @default Isolation.NO_INTERNET_ACCESS
+   */
+  readonly sensitiveTaskIsolation?: Isolation;
 
   /**
    * How long to retain CloudWatch logs for.
@@ -158,6 +173,10 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
   ) {
     super(scope, id);
 
+    if (props.isolateSensitiveTasks != null && props.sensitiveTaskIsolation != null) {
+      throw new Error('Supplying both isolateSensitiveTasks and sensitiveTaskIsolation is not supported. Remove usage of isolateSensitiveTasks.');
+    }
+
     const monitoring = new Monitoring(this, 'Monitoring', {
       alarmActions: props.alarmActions,
     });
@@ -189,14 +208,19 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       versioned: true,
     });
 
-    const codeArtifact = new Repository(this, 'CodeArtifact', {
-      description: 'Proxy to npmjs.com for ConstructHub',
-      domainName: props.codeArtifactDomain?.name,
-      domainExists: props.codeArtifactDomain != null,
-      upstreams: props.codeArtifactDomain?.upstreams,
-    });
+    const isolation = props.sensitiveTaskIsolation
+      ?? (props.isolateSensitiveTasks ? Isolation.NO_INTERNET_ACCESS : Isolation.UNLIMITED_INTERNET_ACCESS);
 
-    const { vpc, vpcEndpoints, vpcSubnets } = this.createVpc(props, codeArtifact);
+    // Create an internal CodeArtifact repository if we run in network-controlled mode, or if a domain is provided.
+    const codeArtifact = isolation === Isolation.NO_INTERNET_ACCESS || props.codeArtifactDomain != null
+      ? new Repository(this, 'CodeArtifact', {
+        description: 'Proxy to npmjs.com for ConstructHub',
+        domainName: props.codeArtifactDomain?.name,
+        domainExists: props.codeArtifactDomain != null,
+        upstreams: props.codeArtifactDomain?.upstreams,
+      })
+      : undefined;
+    const { vpc, vpcEndpoints, vpcSubnets, vpcSecurityGroups } = this.createVpc(isolation, codeArtifact);
 
     const denyList = new DenyList(this, 'DenyList', {
       rules: props.denyList ?? [],
@@ -231,6 +255,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       vpc,
       vpcEndpoints,
       vpcSubnets,
+      vpcSecurityGroups,
     });
 
     // rebuild the catalog when the deny list changes.
@@ -308,53 +333,74 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     return this.ingestion.queue;
   }
 
-  private createVpc(props: ConstructHubProps, codeArtifact: Repository) {
-    if (props.isolateSensitiveTasks === false) {
+  private createVpc(isolation: Isolation, codeArtifact: Repository | undefined) {
+    if (isolation === Isolation.UNLIMITED_INTERNET_ACCESS) {
       return { vpc: undefined, vpcEndpoints: undefined, vpcSubnets: undefined };
     }
 
-    const vpc = new ec2.Vpc(this, 'Lambda-VPC', {
+    const subnetType = isolation === Isolation.NO_INTERNET_ACCESS
+      ? ec2.SubnetType.ISOLATED
+      : ec2.SubnetType.PRIVATE_WITH_NAT;
+    const vpcSubnets = { subnetType };
+
+    const vpc = new ec2.Vpc(this, 'VPC', {
       enableDnsHostnames: true,
       enableDnsSupport: true,
-      natGateways: 0,
+      // Provision no NAT gateways if we are running ISOLATED (we wouldn't have a public subnet)
+      natGateways: subnetType === ec2.SubnetType.ISOLATED ? 0 : undefined,
       // Pre-allocating PUBLIC / PRIVATE / INTERNAL subnets, regardless of use, so we don't create
       // a whole new VPC if we ever need to introduce subnets of these types.
       subnetConfiguration: [
         // If there is a PRIVATE subnet, there must also have a PUBLIC subnet (for NAT gateways).
-        { name: 'Public', subnetType: ec2.SubnetType.PUBLIC, reserved: true },
-        { name: 'Private', subnetType: ec2.SubnetType.PRIVATE, reserved: true },
-        { name: 'Isolated', subnetType: ec2.SubnetType.ISOLATED },
+        { name: 'Public', subnetType: ec2.SubnetType.PUBLIC, reserved: subnetType === ec2.SubnetType.ISOLATED },
+        { name: 'Private', subnetType: ec2.SubnetType.PRIVATE_WITH_NAT, reserved: subnetType === ec2.SubnetType.ISOLATED },
+        { name: 'Isolated', subnetType: ec2.SubnetType.ISOLATED, reserved: subnetType !== ec2.SubnetType.ISOLATED },
       ],
     });
-    const vpcSubnets = { subnetType: ec2.SubnetType.ISOLATED };
-    // We'll only use VPC endpoints if we are configured to run in an ISOLATED subnet.
-    const vpcEndpoints = {
+    Tags.of(vpc.node.defaultChild!).add('Name', vpc.node.path);
+
+    const securityGroups = subnetType === ec2.SubnetType.PRIVATE_WITH_NAT
+      ? createRestrictedSecurityGroups(this, vpc)
+      : undefined;
+
+    // Creating the CodeArtifact endpoints only if a repository is present.
+    const codeArtifactEndpoints = codeArtifact && {
       codeArtifactApi: vpc.addInterfaceEndpoint('CodeArtifact.API', {
         privateDnsEnabled: false,
         service: new ec2.InterfaceVpcEndpointAwsService('codeartifact.api'),
         subnets: vpcSubnets,
+        securityGroups,
       }),
       codeArtifact: vpc.addInterfaceEndpoint('CodeArtifact', {
         privateDnsEnabled: true,
         service: new ec2.InterfaceVpcEndpointAwsService('codeartifact.repositories'),
         subnets: vpcSubnets,
+        securityGroups,
       }),
+    };
+
+    // We'll only use VPC endpoints if we are configured to run in an ISOLATED subnet.
+    const vpcEndpoints = {
+      ...codeArtifactEndpoints,
       // This is needed so that ECS workloads can use the awslogs driver
       cloudWatchLogs: vpc.addInterfaceEndpoint('CloudWatch.Logs', {
         privateDnsEnabled: true,
         service: ec2.InterfaceVpcEndpointAwsService.CLOUDWATCH_LOGS,
         subnets: vpcSubnets,
+        securityGroups,
       }),
       // These are needed for ECS workloads to be able to pull images
       ecrApi: vpc.addInterfaceEndpoint('ECR.API', {
         privateDnsEnabled: true,
         service: ec2.InterfaceVpcEndpointAwsService.ECR,
         subnets: vpcSubnets,
+        securityGroups,
       }),
       ecr: vpc.addInterfaceEndpoint('ECR.Docker', {
         privateDnsEnabled: true,
         service: ec2.InterfaceVpcEndpointAwsService.ECR_DOCKER,
         subnets: vpcSubnets,
+        securityGroups,
       }),
       // This is needed (among others) for CodeArtifact registry usage
       s3: vpc.addGatewayEndpoint('S3', {
@@ -366,6 +412,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
         privateDnsEnabled: true,
         service: ec2.InterfaceVpcEndpointAwsService.STEP_FUNCTIONS,
         subnets: vpcSubnets,
+        securityGroups,
       }),
     };
 
@@ -376,7 +423,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       actions: ['s3:GetObject'],
       resources: [
         // The in-region CodeArtifact S3 Bucket
-        `${codeArtifact.s3BucketArn}/*`,
+        ...codeArtifact ? [`${codeArtifact.s3BucketArn}/*`] : [],
         // The in-region ECR layer bucket
         `arn:aws:s3:::prod-${Stack.of(this).region}-starport-layer-bucket/*`,
       ],
@@ -387,6 +434,47 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       sid: 'Allow-CodeArtifact-and-ECR',
     }));
 
-    return { vpc, vpcEndpoints, vpcSubnets };
+    return { vpc, vpcEndpoints, vpcSubnets, vpcSecurityGroups: securityGroups };
   }
+}
+
+/**
+ * How possibly risky operations (such as doc-generation, which requires
+ * installing the indexed packages in order to trans-literate sample code) are
+ * isolated to mitigate possible arbitrary code execution vulnerabilities in and
+ * around `npm install` or the transliterator's use of the TypeScript compiler.
+ */
+export enum Isolation {
+  /**
+   * No isolation is done whatsoever. The doc-generation process still is
+   * provisioned with least-privilege permissions, but retains complete access
+   * to internet.
+   *
+   * While this maximizes the chances of successfully installing packages (and
+   * hence successfully generating documentation for those), it is also the
+   * least secure mode of operation.
+   *
+   * We advise you only consider using this isolation mode if you are hosting a
+   * ConstructHub instance that only indexes trusted packages (including
+   * transitive dependencies).
+   */
+  UNLIMITED_INTERNET_ACCESS,
+
+  /**
+   * The same protections as `UNLIMITED_INTERNET_ACCESS`, except outbound
+   * internet connections are limited to IP address ranges corresponding to
+   * hosting endpoints for npmjs.com.
+   */
+  LIMITED_INTERNET_ACCESS,
+
+  /**
+   * The same protections as `LIMITED_INTERNET_ACCESS`, except all remaining
+   * internet access is removed. All traffic to AWS service endpoints is routed
+   * through VPC Endpoints, as the compute nodes are jailed in a completely
+   * isolated VPC.
+   *
+   * This is the most secure (and recommended) mode of operation for
+   * ConstructHub instances.
+   */
+  NO_INTERNET_ACCESS,
 }

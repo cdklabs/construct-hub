@@ -2,7 +2,7 @@ import { SynthUtils } from '@aws-cdk/assert';
 import { DnsValidatedCertificate } from '@aws-cdk/aws-certificatemanager';
 import { PublicHostedZone } from '@aws-cdk/aws-route53';
 import { App, Stack } from '@aws-cdk/core';
-import { ConstructHub } from '../construct-hub';
+import { ConstructHub, Isolation } from '../construct-hub';
 
 const dummyAlarmAction = {
   highSeverity: 'arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE',
@@ -30,12 +30,22 @@ test('piggy-backing on an existing CodeArtifact domain', () => {
   expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });
 
-test('with non-isolated execution', () => {
+test('with all internet access', () => {
   const app = new App();
   const stack = new Stack(app, 'Test');
   new ConstructHub(stack, 'ConstructHub', {
     alarmActions: dummyAlarmAction,
-    isolateSensitiveTasks: false,
+    sensitiveTaskIsolation: Isolation.UNLIMITED_INTERNET_ACCESS,
+  });
+  expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+});
+
+test('with limited internet access', () => {
+  const app = new App();
+  const stack = new Stack(app, 'Test');
+  new ConstructHub(stack, 'ConstructHub', {
+    alarmActions: dummyAlarmAction,
+    sensitiveTaskIsolation: Isolation.LIMITED_INTERNET_ACCESS,
   });
   expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
 });

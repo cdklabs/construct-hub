@@ -55,6 +55,8 @@ export async function handler(event: unknown): Promise<void> {
       pending: {},
     };
 
+  console.log(`Initial state: ${JSON.stringify(state, null, 2)}`);
+
   // If the current "latest" isn't the one from state, it needs updating.
   updateLatestIfNeeded(state, latest);
 
@@ -66,6 +68,8 @@ export async function handler(event: unknown): Promise<void> {
     })();
 
     for (const versionState of [state.latest, ...Object.values(state.pending ?? {})]) {
+      console.log(`Checking state of ${versionState.version}, current: ${JSON.stringify(versionState, null, 2)}`);
+
       await metricScope((metrics) => async () => {
         // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
         metrics.setDimensions();
@@ -96,7 +100,7 @@ export async function handler(event: unknown): Promise<void> {
           );
 
           // Stop tracking that version, as it's now available.
-          if (state.pending) {
+          if (versionState.version in state.pending) {
             delete state.pending[versionState.version];
           }
         } else {
@@ -166,7 +170,7 @@ class ConstructHub {
           Error.captureStackTrace(err);
           ko(err);
         },
-      );
+      ).end();
     });
   }
 
@@ -189,7 +193,7 @@ class CanaryStateService {
 
     const url = this.url(packageName);
 
-    console.log(`Saving: ${url}`);
+    console.log(`Saving to ${url}: ${JSON.stringify(state, null, 2)}`);
     await aws.s3().putObject({
       Bucket: this.bucketName,
       Key: this.key(packageName),
