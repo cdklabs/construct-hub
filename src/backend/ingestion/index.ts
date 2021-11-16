@@ -118,6 +118,7 @@ export class Ingestion extends Construct implements IGrantable {
     const configBucket = new Bucket(this, 'ConfigBucket', {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
+      versioned: true,
     });
 
     new BucketDeployment(this, 'DeployIngestionConfiguration', {
