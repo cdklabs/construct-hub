@@ -21,6 +21,7 @@ export class NpmJsPackageCanary extends Construct {
       architecture: gravitonLambdaIfAvailable(this),
       description: `[${scope.node.path}/PackageCanary] Monitors ${props.packageName} versions availability`,
       environment: {
+        AWS_EMF_ENVIRONMENT: 'Local',
         [Environment.CONSTRUCT_HUB_BASE_URL]: props.constructHubBaseUrl,
         [Environment.PACKAGE_CANARY_BUCKET_NAME]: props.bucket.bucketName,
         [Environment.PACKAGE_NAME]: props.packageName,
