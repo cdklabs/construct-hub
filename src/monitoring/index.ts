@@ -78,9 +78,9 @@ export class Monitoring extends Construct implements IMonitoring {
     if (normalSeverityActionArn) {
       alarm.addAlarmAction({ bind: () => ({ alarmActionArn: normalSeverityActionArn }) });
     }
-    const highSeverityAction = this.alarmActions?.normalSeverityAction;
-    if (highSeverityAction) {
-      alarm.addAlarmAction(highSeverityAction);
+    const normalSeverityAction = this.alarmActions?.normalSeverityAction;
+    if (normalSeverityAction) {
+      alarm.addAlarmAction(normalSeverityAction);
     }
   }
 
