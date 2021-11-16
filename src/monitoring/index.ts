@@ -75,7 +75,10 @@ export class Monitoring extends Construct implements IMonitoring {
 
   public addLowSeverityAlarm(_title: string, alarm: cw.Alarm) {
     if (this.alarmActions?.normalSeverityAction) {
-      alarm.addAlarmAction(this.alarmActions!.normalSeverityAction);
+      alarm.addAlarmAction(this.alarmActions.normalSeverityAction);
+    }
+    if (this.alarmActions?.normalSeverityAction) {
+      alarm.addAlarmAction(this.alarmActions.normalSeverityAction);
     }
   }
 
