@@ -60,7 +60,7 @@ export async function handler({ key, description, widgetContext }: Event): Promi
         '--:|--------------|-------|---------',
         ...list.slice(0, maxCount).map(([name, versions], index) => {
           versions = semverSort(versions).reverse();
-          return `${index + 1} | \`${name}\` | ${versions.length} | ${versions.map((v) => `\`${v}\``).join(', ')}`;
+          return `${index + 1} | \`${name}\` | ${versions.length} | ${versions.map((v) => `[\`${v}\`](${s3ConsoleUrl(bucketName, name, v)})`).join(', ')}`;
         }),
         '',
         `Last updated: \`${LastModified?.toISOString() ?? 'N/A'}\``,
@@ -116,4 +116,9 @@ export interface WidgetContext {
   readonly params: { readonly [key: string]: string };
   readonly width: number;
   readonly height: number;
+}
+
+function s3ConsoleUrl(bucket: string, packageName: string, packageVersion: string) {
+  const encodedPrefix = encodeURIComponent(`data/${packageName}/v${packageVersion}/`);
+  return `https://s3.console.aws.amazon.com/s3/buckets/${bucket}?prefix=${encodedPrefix}&showversions=false`;
 }

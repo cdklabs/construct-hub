@@ -28,8 +28,37 @@ export class BackendDashboard extends Construct {
   public constructor(scope: Construct, id: string, props: BackendDashboardProps) {
     super(scope, id);
 
-    new Dashboard(this, 'Resource', {
-      dashboardName: props.dashboardName,
+    const reports: IWidget[][] = [[
+      new PackageVersionsTableWidget(this, 'UninstallablePackages', {
+        title: 'Package Versions Report | Uninstallable',
+        description: [
+          "These packages could not be installed. Note that currently they will also appear in the 'missing' documentation reports.",
+          '',
+          "The specific error can be found in the package directory inside a file named 'uninstallable'",
+        ].join('\n'),
+        bucket: props.packageData,
+        key: UNINSTALLABLE_PACKAGES_REPORT,
+        height: 6,
+        width: 24,
+      }),
+    ]];
+
+    for (const language of DocumentationLanguage.ALL) {
+      for (const report of this.perLanguageReports(language, props.packageData)) {
+        // put every report in a new line
+        reports.push([report]);
+      }
+    }
+
+    new Dashboard(this, 'Reports', {
+      dashboardName: `${props.dashboardName}-reports`,
+      periodOverride: PeriodOverride.AUTO,
+      start: '-P1W', // Show 1 week by default
+      widgets: reports,
+    });
+
+    new Dashboard(this, 'Graphs', {
+      dashboardName: `${props.dashboardName}-graphs`,
       periodOverride: PeriodOverride.AUTO,
       start: '-P1W', // Show 1 week by default
       widgets: [
@@ -274,7 +303,39 @@ export class BackendDashboard extends Construct {
     });
   }
 
-  private *catalogOverviewLanguageSections({ inventory, orchestration, packageData }: BackendDashboardProps): Generator<IWidget[]> {
+  private perLanguageReports(language: DocumentationLanguage, packageData: IBucket): IWidget[] {
+
+    return [
+      new PackageVersionsTableWidget(this, `MissingDocs-${language.name}`, {
+        title: `Package Versions Report | Missing Documentation | _${language.name}_`,
+        description: [
+          `These packages are missing ${language.name} documentation.`,
+          'Apart from the uninstallable packages, this report should stay empty',
+          '',
+          'To investigate inspect the orchestration DLQ.',
+        ].join('\n'),
+        bucket: packageData,
+        key: missingDocumentationReport(language),
+        height: 6,
+        width: 24,
+      }),
+      new PackageVersionsTableWidget(this, `CorruptAssemblyDocs-${language.name}`, {
+        title: `Package Versions Report | Corrupt Assembly | _${language.name}_`,
+        description: [
+          `These packages are missing ${language.name} documentation because of a corrupted assembly.`,
+          '',
+          "The specific error can be found in the package directory inside files suffixed with '.corruptassembly'",
+        ].join('\n'),
+        bucket: packageData,
+        key: corruptAssemblyReport(language),
+        height: 6,
+        width: 24,
+      }),
+    ];
+
+  }
+
+  private *catalogOverviewLanguageSections({ inventory, orchestration }: BackendDashboardProps): Generator<IWidget[]> {
     yield [
       new TextWidget({
         height: 2,
@@ -335,15 +396,6 @@ export class BackendDashboard extends Construct {
       }),
     ];
 
-    yield [
-      new PackageVersionsTableWidget(this, 'UninstallablePackages', {
-        title: 'Package Versions Report | Uninstallable',
-        bucket: packageData,
-        key: UNINSTALLABLE_PACKAGES_REPORT,
-        height: 6,
-        width: 24,
-      }),
-    ];
     for (const language of DocumentationLanguage.ALL) {
       yield [
         new TextWidget({
@@ -378,20 +430,6 @@ export class BackendDashboard extends Construct {
           ],
           leftYAxis: { showUnits: false },
           view: GraphWidgetView.PIE,
-        }),
-        new PackageVersionsTableWidget(this, `MissingDocs-${language.name}`, {
-          title: 'Package Versions Report | Missing Documentation',
-          bucket: packageData,
-          key: missingDocumentationReport(language),
-          height: 6,
-          width: 24,
-        }),
-        new PackageVersionsTableWidget(this, `UnprocessableDocs-${language.name}`, {
-          title: 'Package Versions Report | Corrupt Assembly',
-          bucket: packageData,
-          key: corruptAssemblyReport(language),
-          height: 6,
-          width: 24,
         }),
       ];
     }

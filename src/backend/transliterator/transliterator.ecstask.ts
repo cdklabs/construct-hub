@@ -248,3 +248,17 @@ interface S3Object {
   readonly key: string;
   readonly versionId?: string;
 }
+
+// const input: TransliteratorInput = {
+//   bucket: 'construct-hub-dev-constructhubpackagedatadc5ef35e-u3vx0dcdq8y5',
+//   assembly: {
+//     key: 'data/cdk-codepipeline-bitbucket-build-result-reporter/v0.0.7/assembly.json',
+//     versionId: 'PK5cQPTQwz5seahlHp9JcqN9ViVzDTBi',
+//   },
+//   package: {
+//     key: 'data/cdk-codepipeline-bitbucket-build-result-reporter/v0.0.7/package.tgz',
+//     versionId: 'FXNn.GA6MboV3iBu_hMD.SvUrpapcngx',
+//   },
+// };
+
+// void handler(input);

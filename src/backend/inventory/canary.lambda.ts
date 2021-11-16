@@ -53,6 +53,8 @@ export async function handler(event: ScheduledEvent, context: Context) {
   for await (const key of relevantObjectKeys(bucket)) {
     const [, name, version] = constants.STORAGE_KEY_FORMAT_REGEX.exec(key)!;
 
+    console.log(key);
+
     packageNames.add(name);
     const majorVersion = `${name}@${new SemVer(version).major}`;
     packageMajorVersions.add(majorVersion);
@@ -118,7 +120,8 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
   function createReport(reportKey: string, packageVersions: string[]) {
 
-    const { buffer, contentEncoding } = compressContent(Buffer.from(JSON.stringify(packageVersions, null, 2)));
+    const report = JSON.stringify(packageVersions, null, 2);
+    const { buffer, contentEncoding } = compressContent(Buffer.from(report));
     console.log(`Uploading list to s3://${bucket}/${reportKey}`);
     reports.push(aws.s3().putObject({
       Body: buffer,
@@ -202,12 +205,12 @@ export async function handler(event: ScheduledEvent, context: Context) {
           let filtered = Array.from(statuses.entries()).filter(([, status]) => forStatus === status);
           let metricName = METRIC_NAME_BY_STATUS_AND_GRAIN[forStatus as PerLanguageStatus][key as keyof PerLanguageData];
 
-          if (forStatus === PerLanguageStatus.MISSING || forStatus === PerLanguageStatus.CORRUPT_ASSEMBLY) {
-            // Creates an object in S3 with the outcome of the scan for this language.
+          if ((forStatus === PerLanguageStatus.MISSING && metricName === MetricName.PER_LANGUAGE_MISSING_VERSIONS)
+           || (forStatus === PerLanguageStatus.CORRUPT_ASSEMBLY && metricName === MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_VERSIONS)) {
+            // generate reports for missing/corrupt only for package versions granularity
             const reportKey = forStatus === PerLanguageStatus.MISSING ?
               constants.missingDocumentationReport(language) :
               constants.corruptAssemblyReport(language);
-            console.log(`Uploading list to s3://${bucket}/${reportKey}`);
             createReport(reportKey, filtered.map(([name]) => name).sort());
           }
 
