@@ -150,7 +150,7 @@ describe('web canary handler', () => {
   });
 });
 
-test('low-severity alarm actions are registered', () => {
+test('normal-severity alarm actions are registered', () => {
   // GIVEN
   const stack = new Stack(undefined, 'TestStack');
   const alarm = new Alarm(stack, 'Alarm', {
@@ -171,5 +171,29 @@ test('low-severity alarm actions are registered', () => {
   // THEN
   expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
     AlarmActions: [normalSeverity, normalSeverityActionArn],
+  });
+});
+
+test('high-severity alarm actions are registered', () => {
+  // GIVEN
+  const stack = new Stack(undefined, 'TestStack');
+  const alarm = new Alarm(stack, 'Alarm', {
+    evaluationPeriods: 1,
+    metric: new Metric({ metricName: 'FakeMetricName', namespace: 'FakeNamespace' }),
+    threshold: 0,
+  });
+
+  const highSeverity = 'fake::arn::of::an::action';
+  const highSeverityActionArn = 'fake::arn::of::bound:alarm::action';
+  const highSeverityAction: IAlarmAction = { bind: () => ({ alarmActionArn: highSeverityActionArn }) };
+
+  // WHEN
+  new Monitoring(stack, 'Monitoring', {
+    alarmActions: { normalSeverity, normalSeverityAction },
+  }).addLowSeverityAlarm('Alarm', alarm);
+
+  // THEN
+  expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
+    AlarmActions: [highSeverity, highSeverityActionArn],
   });
 });
