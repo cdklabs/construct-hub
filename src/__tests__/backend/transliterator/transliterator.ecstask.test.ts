@@ -115,14 +115,14 @@ describe('VPC Endpoints', () => {
     // mock the file uploads
     mockPutDocs(...DocumentationLanguage.ALL.map(
       (lang) =>
-        `/docs-${lang}.md${lang === DocumentationLanguage.PYTHON || lang === DocumentationLanguage.TYPESCRIPT ? '' : constants.CORRUPT_ASSEMBLY_SUFFIX}`,
+        `/docs-${lang}.md${lang === DocumentationLanguage.PYTHON || lang === DocumentationLanguage.TYPESCRIPT ? '' : constants.NOT_SUPPORTED_SUFFIX}`,
     ));
 
     const created = await handler(event);
     for (const lang of DocumentationLanguage.ALL) {
       const suffix = lang === DocumentationLanguage.PYTHON || lang === DocumentationLanguage.TYPESCRIPT
         ? ''
-        : constants.CORRUPT_ASSEMBLY_SUFFIX;
+        : constants.NOT_SUPPORTED_SUFFIX;
       expect(created.map((c) => c.key))
         .toContain(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-${lang}.md${suffix}`);
     }
@@ -273,17 +273,17 @@ describe('markers for un-supported languages', () => {
 
     // mock the file uploads
     mockPutDocs(
-      `/docs-python.md${constants.CORRUPT_ASSEMBLY_SUFFIX}`,
-      `/docs-sub1-python.md${constants.CORRUPT_ASSEMBLY_SUFFIX}`,
-      `/docs-sub2-python.md${constants.CORRUPT_ASSEMBLY_SUFFIX}`,
+      `/docs-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
+      `/docs-sub1-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
+      `/docs-sub2-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
     );
 
     const created = await handler(event);
 
     expect(created.map(({ key }) => key)).toEqual([
-      `data/${packageName}/v${packageVersion}/docs-python.md${constants.CORRUPT_ASSEMBLY_SUFFIX}`,
-      `data/${packageName}/v${packageVersion}/docs-sub1-python.md${constants.CORRUPT_ASSEMBLY_SUFFIX}`,
-      `data/${packageName}/v${packageVersion}/docs-sub2-python.md${constants.CORRUPT_ASSEMBLY_SUFFIX}`,
+      `data/${packageName}/v${packageVersion}/docs-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
+      `data/${packageName}/v${packageVersion}/docs-sub1-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
+      `data/${packageName}/v${packageVersion}/docs-sub2-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
     ]);
 
   });
