@@ -3,7 +3,8 @@ import * as spec from '@jsii/spec';
 import * as AWS from 'aws-sdk';
 import type { AWSError } from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
-import { Documentation } from 'jsii-docgen';
+import { LanguageNotSupportedError, Language } from 'jsii-docgen';
+import { Documentation } from 'jsii-docgen/lib/docgen/view/documentation';
 
 import type { TransliteratorInput } from '../../../backend/payload-schema';
 import { reset } from '../../../backend/shared/aws.lambda-shared';
@@ -13,7 +14,7 @@ import type { shellOutWithOutput } from '../../../backend/shared/shell-out.lambd
 import { handler } from '../../../backend/transliterator/transliterator.ecstask';
 import { writeFile } from '../../../backend/transliterator/util';
 
-jest.mock('jsii-docgen');
+jest.mock('jsii-docgen/lib/docgen/view/documentation');
 jest.mock('../../../backend/shared/code-artifact.lambda-shared');
 jest.mock('../../../backend/shared/shell-out.lambda-shared');
 jest.mock('../../../backend/transliterator/util');
@@ -81,9 +82,27 @@ describe('VPC Endpoints', () => {
 
   test('happy path', async () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const forPackage = require('jsii-docgen').Documentation.forProject as jest.MockedFunction<typeof Documentation.forProject>;
-    forPackage.mockImplementation(async (target: string) => {
-      return new MockDocumentation(target) as unknown as Documentation;
+    const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
+
+    // // eslint-disable-next-line @typescript-eslint/no-require-imports
+    // const languageFromString = require('jsii-docgen').Language.fromString as jest.MockedFunction<typeof Language.fromString>;
+
+    // languageFromString;
+
+    class MockDocumentation {
+      public async render(options: any) {
+        if (![Language.PYTHON, Language.TYPESCRIPT].includes(options.language)) {
+          throw new LanguageNotSupportedError();
+        } else {
+          return {
+            render: () => 'docs',
+          };
+        }
+      }
+    }
+
+    forPackage.mockImplementation(async (_: string) => {
+      return new MockDocumentation() as unknown as Documentation;
     });
 
     // GIVEN
@@ -140,7 +159,7 @@ describe('VPC Endpoints', () => {
 test('uploads a file per language (scoped package)', async () => {
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const forPackage = require('jsii-docgen').Documentation.forProject as jest.MockedFunction<typeof Documentation.forProject>;
+  const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
   forPackage.mockImplementation(async (target: string) => {
     return new MockDocumentation(target) as unknown as Documentation;
   });
@@ -184,7 +203,7 @@ test('uploads a file per language (scoped package)', async () => {
 test('uploads a file per submodule (unscoped package)', async () => {
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const forPackage = require('jsii-docgen').Documentation.forProject as jest.MockedFunction<typeof Documentation.forProject>;
+  const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
   forPackage.mockImplementation(async (target: string) => {
     return new MockDocumentation(target) as unknown as Documentation;
   });
@@ -237,9 +256,16 @@ describe('markers for un-supported languages', () => {
   test('uploads ".not-supported" markers as relevant', async () => {
 
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const forPackage = require('jsii-docgen').Documentation.forProject as jest.MockedFunction<typeof Documentation.forProject>;
-    forPackage.mockImplementation(async (target: string) => {
-      return new MockDocumentation(target) as unknown as Documentation;
+    const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
+
+    class MockDocumentation {
+      public async render() {
+        throw new LanguageNotSupportedError();
+      }
+    }
+
+    forPackage.mockImplementation(async (_: string) => {
+      return new MockDocumentation() as unknown as Documentation;
     });
 
     // GIVEN
@@ -291,7 +317,7 @@ describe('markers for un-supported languages', () => {
 
 class MockDocumentation {
   public constructor(private readonly target: string) {}
-  public render() {
+  public async render() {
     return {
       render: () => `docs for ${this.target}`,
     };

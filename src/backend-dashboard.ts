@@ -98,6 +98,7 @@ export class BackendDashboard extends Construct {
               props.inventory.metricMissingAssemblyCount({ label: 'Missing Assembly' }),
               props.inventory.metricMissingPackageMetadataCount({ label: 'Missing Metadata' }),
               props.inventory.metricMissingPackageTarballCount({ label: 'Missing Tarball' }),
+              props.inventory.metricUninstallablePackageCount({ label: 'Uninstallable Package' }),
             ],
             leftYAxis: { min: 0 },
             right: [

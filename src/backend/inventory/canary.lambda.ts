@@ -53,8 +53,6 @@ export async function handler(event: ScheduledEvent, context: Context) {
   for await (const key of relevantObjectKeys(bucket)) {
     const [, name, version] = constants.STORAGE_KEY_FORMAT_REGEX.exec(key)!;
 
-    console.log(key);
-
     packageNames.add(name);
     const majorVersion = `${name}@${new SemVer(version).major}`;
     packageMajorVersions.add(majorVersion);

@@ -5,7 +5,6 @@ import type { PromiseResult } from 'aws-sdk/lib/request';
 import * as fs from 'fs-extra';
 import * as docgen from 'jsii-docgen';
 
-import { UnInstallablePackageError, CorruptedAssemblyError, LanguageNotSupportedError } from 'jsii-docgen';
 import type { TransliteratorInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
 import { logInWithCodeArtifact } from '../shared/code-artifact.lambda-shared';
@@ -126,7 +125,6 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
               });
               const page = Buffer.from(markdown.render());
               metrics.putMetric(MetricName.DOCUMENT_SIZE, page.length, Unit.Bytes);
-
               const { buffer: body, contentEncoding } = compressContent(page);
               metrics.putMetric(MetricName.COMPRESSED_DOCUMENT_SIZE, body.length, Unit.Bytes);
 
@@ -136,9 +134,9 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
               uploads.set(key, upload);
 
             } catch (e) {
-              if (e instanceof LanguageNotSupportedError) {
+              if (e instanceof docgen.LanguageNotSupportedError) {
                 markPackage(e, constants.docsKeySuffix(language, submodule) + constants.NOT_SUPPORTED_SUFFIX);
-              } else if (e instanceof CorruptedAssemblyError) {
+              } else if (e instanceof docgen.CorruptedAssemblyError) {
                 markPackage(e, constants.docsKeySuffix(language, submodule) + constants.CORRUPT_ASSEMBLY_SUFFIX);
                 unprocessable = true;
               } else {
@@ -146,7 +144,6 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
               }
             }
           }
-
           await renderAndDispatch();
           for (const submodule of submodules) {
             await renderAndDispatch(submodule);
@@ -155,14 +152,13 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
         await generateDocs(language);
       }
     } catch (error) {
-      if (error instanceof UnInstallablePackageError) {
+      if (error instanceof docgen.UnInstallablePackageError) {
         markPackage(error, constants.UNINSTALLABLE_PACKAGE_SUFFIX);
         unprocessable = true;
       } else {
         throw error;
       }
     }
-
     for (const [key, upload] of uploads.entries()) {
       const response = await upload;
       created.push({ bucket: event.bucket, key, versionId: response.VersionId });

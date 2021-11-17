@@ -171,6 +171,16 @@ export class Inventory extends Construct {
     });
   }
 
+  public metricUninstallablePackageCount(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      metricName: MetricName.UNINSTALLABLE_PACKAGE_COUNT,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
   public metricSubmoduleCount(opts?: MetricOptions): Metric {
     return new Metric({
       period: Duration.minutes(5),
