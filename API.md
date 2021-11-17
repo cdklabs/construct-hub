@@ -208,7 +208,7 @@ public readonly allowedLicenses: SpdxLicense[];
 ```
 
 - *Type:* [`construct-hub.SpdxLicense`](#construct-hub.SpdxLicense)[]
-- *Default:* [...SpdxLicense.apache(),...SpdxLicense.bsd(),...SpdxLicense.cddl(),...SpdxLicense.epl(),SpdxLicense.ISC,...SpdxLicense.mit(),...SpdxLicense.mpl()]
+- *Default:* [...SpdxLicense.apache(),...SpdxLicense.bsd(),...SpdxLicense.cddl(),...SpdxLicense.epl(),SpdxLicense.ISC,...SpdxLicense.mit(),SpdxLicense.MPL_2_0]
 
 The allowed licenses for packages indexed by this instance of ConstructHub.
 
