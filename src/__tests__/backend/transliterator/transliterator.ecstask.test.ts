@@ -3,9 +3,10 @@ import * as spec from '@jsii/spec';
 import * as AWS from 'aws-sdk';
 import type { AWSError } from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
-import { LanguageNotSupportedError, Language } from 'jsii-docgen';
+import { LanguageNotSupportedError, UnInstallablePackageError, CorruptedAssemblyError, Language } from 'jsii-docgen';
 
 // this import is separate from the normal because we want jest to mock it.
+import { Markdown } from 'jsii-docgen/lib/docgen/render/markdown';
 import { Documentation } from 'jsii-docgen/lib/docgen/view/documentation';
 
 import type { TransliteratorInput } from '../../../backend/payload-schema';
@@ -112,12 +113,12 @@ describe('VPC Endpoints', () => {
     mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
 
     // mock the file uploads
-    mockPutDocs(...DocumentationLanguage.ALL.map(
+    mockPutRequest(...DocumentationLanguage.ALL.map(
       (lang) =>
         `/docs-${lang}.md${lang === DocumentationLanguage.PYTHON || lang === DocumentationLanguage.TYPESCRIPT ? '' : constants.NOT_SUPPORTED_SUFFIX}`,
     ));
 
-    const created = await handler(event);
+    const { created } = await handler(event);
     for (const lang of DocumentationLanguage.ALL) {
       const suffix = lang === DocumentationLanguage.PYTHON || lang === DocumentationLanguage.TYPESCRIPT
         ? ''
@@ -134,6 +135,146 @@ describe('VPC Endpoints', () => {
       apiEndpoint,
     });
   });
+});
+
+test('uninstallable package marker is uploaded', async () => {
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
+  forPackage.mockImplementation(async (_: string) => {
+    throw new UnInstallablePackageError();
+  });
+
+  const packageName = 'package-name';
+  const packageVersion = '1.2.3-dev.4';
+
+  const event: TransliteratorInput = {
+    bucket: 'dummy-bucket',
+    assembly: {
+      key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
+      versionId: 'VersionId',
+    },
+    package: {
+      key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`,
+      versionId: 'VersionId',
+    },
+  };
+
+  const assembly: spec.Assembly = {
+    targets: { python: {} },
+  } as any;
+
+  // mock the s3ObjectExists call
+  mockHeadRequest('package.tgz');
+
+  // mock the assembly and tarball requests
+  mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
+
+  mockPutRequest('/uninstallable');
+
+  const { created } = await handler(event);
+  expect(created.length).toEqual(1);
+  expect(created[0].key).toEqual(`data/${packageName}/v${packageVersion}/uninstallable`);
+
+});
+
+test('corrupt assembly marker is uploaded for the necessary languages', async () => {
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
+
+  class MockDocumentation {
+    public async render() {
+      throw new CorruptedAssemblyError();
+    }
+  }
+
+  forPackage.mockImplementation(async (_: string) => {
+    return new MockDocumentation() as unknown as Documentation;
+  });
+
+  const packageName = 'package-name';
+  const packageVersion = '1.2.3-dev.4';
+
+  const event: TransliteratorInput = {
+    bucket: 'dummy-bucket',
+    assembly: {
+      key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
+      versionId: 'VersionId',
+    },
+    package: {
+      key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`,
+      versionId: 'VersionId',
+    },
+    languages: { typescript: true, python: true },
+  };
+
+  const assembly: spec.Assembly = {} as any;
+
+  // mock the s3ObjectExists call
+  mockHeadRequest('package.tgz');
+
+  // mock the assembly and tarball requests
+  mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
+
+  mockPutRequest(constants.CORRUPT_ASSEMBLY_SUFFIX);
+
+  const { created } = await handler(event);
+  expect(created.length).toEqual(2);
+  expect(created[0].key).toEqual(`data/${packageName}/v${packageVersion}/docs-typescript.md${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
+  expect(created[1].key).toEqual(`data/${packageName}/v${packageVersion}/docs-python.md${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
+
+});
+
+test('corrupt assembly and uninstallable markers are deleted', async () => {
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
+
+  class MockDocumentation {
+    public async render() {
+      return new Markdown();
+    }
+  }
+
+  forPackage.mockImplementation(async (_: string) => {
+    return new MockDocumentation() as unknown as Documentation;
+  });
+
+  const packageName = 'package-name';
+  const packageVersion = '1.2.3-dev.4';
+
+  const event: TransliteratorInput = {
+    bucket: 'dummy-bucket',
+    assembly: {
+      key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
+      versionId: 'VersionId',
+    },
+    package: {
+      key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`,
+      versionId: 'VersionId',
+    },
+    languages: { typescript: true },
+  };
+
+  const assembly: spec.Assembly = {} as any;
+
+  // mock the s3ObjectExists call
+  mockHeadRequest('package.tgz', constants.CORRUPT_ASSEMBLY_SUFFIX, constants.UNINSTALLABLE_PACKAGE_SUFFIX);
+
+  // mock the assembly and tarball requests
+  mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
+
+  mockPutRequest('/docs-typescript.md');
+  mockDeleteRequest(constants.CORRUPT_ASSEMBLY_SUFFIX, constants.UNINSTALLABLE_PACKAGE_SUFFIX);
+
+  const { created, deleted } = await handler(event);
+  expect(created.length).toEqual(1);
+  expect(deleted.length).toEqual(2);
+  expect(created[0].key).toEqual(`data/${packageName}/v${packageVersion}/docs-typescript.md`);
+  expect(deleted[0].key).toEqual(`data/${packageName}/v${packageVersion}${constants.UNINSTALLABLE_PACKAGE_SUFFIX}`);
+  expect(deleted[1].key).toEqual(`data/${packageName}/v${packageVersion}/docs-typescript.md${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
+
 });
 
 test('uploads a file per language (scoped package)', async () => {
@@ -172,9 +313,9 @@ test('uploads a file per language (scoped package)', async () => {
   mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
 
   // mock the file uploads
-  mockPutDocs('/docs-typescript.md');
+  mockPutRequest('/docs-typescript.md');
 
-  const created = await handler(event);
+  const { created } = await handler(event);
   expect(created.length).toEqual(1);
   expect(created[0].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-typescript.md`);
 
@@ -216,13 +357,13 @@ test('uploads a file per submodule (unscoped package)', async () => {
   mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
 
   // mock the file uploads
-  mockPutDocs(
+  mockPutRequest(
     '/docs-typescript.md',
     '/docs-sub1-typescript.md',
     '/docs-sub2-typescript.md',
   );
 
-  const created = await handler(event);
+  const { created } = await handler(event);
 
   expect(created.map(({ key }) => key)).toEqual([
     `data/${packageName}/v${packageVersion}/docs-typescript.md`,
@@ -278,13 +419,13 @@ describe('markers for un-supported languages', () => {
     mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
 
     // mock the file uploads
-    mockPutDocs(
+    mockPutRequest(
       `/docs-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
       `/docs-sub1-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
       `/docs-sub2-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
     );
 
-    const created = await handler(event);
+    const { created } = await handler(event);
 
     expect(created.map(({ key }) => key)).toEqual([
       `data/${packageName}/v${packageVersion}/docs-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
@@ -320,9 +461,9 @@ function mockFetchRequests(assembly: spec.Assembly, tarball: Buffer) {
   });
 }
 
-function mockHeadRequest(key: string) {
-  AWSMock.mock('S3', 'headObject', (req: AWS.S3.HeadObjectRequest, cb: Response<AWS.S3.HeadObjectOutput>) => {
-    if (req.Key.endsWith(key)) {
+function mockHeadRequest(...suffixes: string[]) {
+  AWSMock.mock('S3', 'headObject', (request: AWS.S3.HeadObjectRequest, cb: Response<AWS.S3.HeadObjectOutput>) => {
+    if (suffixes.filter(s => request.Key.endsWith(s)).length > 0) {
       return cb(null, {});
     }
     class NotFound extends Error implements AWSError {
@@ -334,9 +475,21 @@ function mockHeadRequest(key: string) {
   });
 }
 
-function mockPutDocs(...suffixes: string[]) {
+function mockPutRequest(...suffixes: string[]) {
 
   AWSMock.mock('S3', 'putObject', (request: AWS.S3.PutObjectRequest, callback: Response<AWS.S3.PutObjectOutput>) => {
+    if (suffixes.filter(s => request.Key.endsWith(s)).length > 0) {
+      callback(null, { VersionId: `versionId-${request.Key}` });
+    } else {
+      throw new Error(`Unexpected PUT request: ${request.Key}`);
+    }
+  });
+
+}
+
+function mockDeleteRequest(...suffixes: string[]) {
+
+  AWSMock.mock('S3', 'deleteObject', (request: AWS.S3.DeleteObjectRequest, callback: Response<AWS.S3.DeleteObjectOutput>) => {
     if (suffixes.filter(s => request.Key.endsWith(s)).length > 0) {
       callback(null, { VersionId: `versionId-${request.Key}` });
     } else {

@@ -30,7 +30,7 @@ const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]
  *
  * @returns nothing
  */
-export function handler(event: TransliteratorInput): Promise<S3Object[]> {
+export function handler(event: TransliteratorInput): Promise<{ created: S3Object[]; deleted: S3Object[] }> {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
   // We'll need a writable $HOME directory, or this won't work well, because
   // npm will try to write stuff like the `.npmrc` or package caches in there
@@ -57,6 +57,7 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
     }
 
     const created = new Array<S3Object>();
+    const deleted = new Array<S3Object>();
 
     const [, packageName, packageVersion] = event.assembly.key.match(ASSEMBLY_KEY_REGEX) ?? [];
     if (packageName == null) {
@@ -89,20 +90,31 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
     await writeFile(tarball, readStream);
 
     const uploads = new Map<string, Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>>();
+    const deletions = new Map<string, Promise<PromiseResult<AWS.S3.DeleteObjectOutput, AWS.AWSError>>>();
 
     let unprocessable: boolean = false;
 
     function markPackage(e: Error, marker: string) {
-      // these errors are treated differently since they don't belong in the DLQ.
-      // we simply mark those for inventory sake and keep going.
       const key = event.assembly.key.replace(/\/[^/]+$/, marker);
       const upload = uploadFile(event.bucket, key, event.assembly.versionId, Buffer.from(e.message));
       uploads.set(key, upload);
     }
 
+    async function unmarkPackage(marker: string) {
+      const key = event.assembly.key.replace(/\/[^/]+$/, marker);
+      const marked = await aws.s3ObjectExists(event.bucket, key);
+      if (!marked) {
+        return;
+      }
+      const deletion = deleteFile(event.bucket, key);
+      deletions.set(key, deletion);
+    }
+
     console.log(`Generating documentation for ${packageFqn}...`);
     try {
       const docs = await docgen.Documentation.forPackage(tarball, { name: assembly.name });
+      // if the package used to not be installabe, remove the marker for it.
+      await unmarkPackage(constants.UNINSTALLABLE_PACKAGE_SUFFIX);
       for (const language of DocumentationLanguage.ALL) {
         if (event.languages && !event.languages[language.toString()]) {
           console.log(`Skipping language ${language} as it was not requested!`);
@@ -123,6 +135,8 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
                 linkFormatter: linkFormatter(packageName),
                 language: docgen.Language.fromString(lang.name),
               });
+              // if the package used to have a corrupt assembly, remove the marker for it.
+              await unmarkPackage(constants.corruptAssemblyKeySuffix(language, submodule));
               const page = Buffer.from(markdown.render());
               metrics.putMetric(MetricName.DOCUMENT_SIZE, page.length, Unit.Bytes);
               const { buffer: body, contentEncoding } = compressContent(page);
@@ -135,9 +149,9 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
 
             } catch (e) {
               if (e instanceof docgen.LanguageNotSupportedError) {
-                markPackage(e, constants.docsKeySuffix(language, submodule) + constants.NOT_SUPPORTED_SUFFIX);
+                markPackage(e, constants.notSupportedKeySuffix(language, submodule));
               } else if (e instanceof docgen.CorruptedAssemblyError) {
-                markPackage(e, constants.docsKeySuffix(language, submodule) + constants.CORRUPT_ASSEMBLY_SUFFIX);
+                markPackage(e, constants.corruptAssemblyKeySuffix(language, submodule));
                 unprocessable = true;
               } else {
                 throw e;
@@ -159,10 +173,17 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
         throw error;
       }
     }
+
     for (const [key, upload] of uploads.entries()) {
       const response = await upload;
       created.push({ bucket: event.bucket, key, versionId: response.VersionId });
       console.log(`Finished uploading ${key} (Version ID: ${response.VersionId})`);
+    }
+
+    for (const [key, deletion] of deletions.entries()) {
+      const response = await deletion;
+      deleted.push({ bucket: event.bucket, key, versionId: response.VersionId });
+      console.log(`Finished deleting ${key} (Version ID: ${response.VersionId})`);
     }
 
     if (unprocessable) {
@@ -172,7 +193,7 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
       error.name = constants.UNPROCESSABLE_PACKAGE_ERROR_NAME;
     }
 
-    return created;
+    return { created, deleted };
   });
 }
 
@@ -202,6 +223,13 @@ function uploadFile(bucket: string, key: string, sourceVersionId?: string, body?
     Metadata: {
       'Origin-Version-Id': sourceVersionId ?? 'N/A',
     },
+  }).promise();
+}
+
+function deleteFile(bucket: string, key: string) {
+  return aws.s3().deleteObject({
+    Bucket: bucket,
+    Key: key,
   }).promise();
 }
 

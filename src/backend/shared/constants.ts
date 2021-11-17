@@ -85,6 +85,20 @@ export function docsKeySuffix(lang?: DocumentationLanguage | '*', submodule?: st
 }
 
 /**
+ * The key suffix for a corrupted assembly marker by language and submodule.
+ */
+export function corruptAssemblyKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string) {
+  return `${docsKeySuffix(lang, submodule)}${CORRUPT_ASSEMBLY_SUFFIX}`;
+}
+
+/**
+ * The key suffix for a not supported marker by language and submodule.
+ */
+export function notSupportedKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string) {
+  return `${docsKeySuffix(lang, submodule)}${NOT_SUPPORTED_SUFFIX}`;
+}
+
+/**
  * Key suffix for beacon files when a particular feature is not supported for
  * the particular package (i.e: Python docs for a package that does not have a
  * Python target configured).

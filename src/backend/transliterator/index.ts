@@ -140,6 +140,7 @@ export class Transliterator extends Construct {
     bucket.grantRead(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.ASSEMBLY_KEY_SUFFIX}`);
     bucket.grantRead(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.PACKAGE_KEY_SUFFIX}`);
     bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.UNINSTALLABLE_PACKAGE_SUFFIX}`);
+    bucket.grantDelete(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.UNINSTALLABLE_PACKAGE_SUFFIX}`);
     for (const language of DocumentationLanguage.ALL) {
       bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}`);
       bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language, '*')}`);
@@ -147,6 +148,8 @@ export class Transliterator extends Construct {
       bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language, '*')}${constants.NOT_SUPPORTED_SUFFIX}`);
       bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
       bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language, '*')}${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
+      bucket.grantDelete(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
+      bucket.grantDelete(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language, '*')}${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
     }
 
     const executionRole = this.taskDefinition.obtainExecutionRole();
