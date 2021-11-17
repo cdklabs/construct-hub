@@ -99,6 +99,26 @@ export interface FeatureFlags {
   [key: string]: any;
 }
 
+/**
+ * A category of packages.
+ */
+export interface Category {
+  /**
+   * The title on the category button as it appears in the Construct Hub home page.
+   */
+  readonly title: string;
+
+  /**
+   * The URL that this category links to. This is the full path to the link that
+   * this category button will have. You can use any query options such as
+   * `?keywords=`, `?q=`, or a combination thereof.
+   *
+   * @example "/search?keywords=monitoring"
+   */
+  readonly url: string;
+}
+
+
 export interface WebAppProps extends WebappConfigProps {
   /**
    * Connect to a domain.
@@ -242,6 +262,7 @@ export class WebApp extends Construct {
       featuredPackages: props.featuredPackages,
       showPackageStats: props.showPackageStats ?? props.packageStats !== undefined,
       featureFlags: props.featureFlags,
+      categories: props.categories,
     });
 
     new s3deploy.BucketDeployment(this, 'DeployWebsiteConfig', {

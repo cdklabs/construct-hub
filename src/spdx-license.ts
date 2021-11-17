@@ -3594,6 +3594,22 @@ export class SpdxLicense {
     ];
   }
 
+  /** The CDDL family of licenses */
+  public static cddl(): SpdxLicense[] {
+    return [
+      SpdxLicense.CDDL_1_0,
+      SpdxLicense.CDDL_1_1,
+    ];
+  }
+
+  /** The EPL family of licenses */
+  public static epl(): SpdxLicense[] {
+    return [
+      SpdxLicense.EPL_1_0,
+      SpdxLicense.EPL_2_0,
+    ];
+  }
+
   /** The MIT family of licenses */
   public static mit(): SpdxLicense[] {
     return [
@@ -3606,6 +3622,16 @@ export class SpdxLicense {
       SpdxLicense.MIT_FEH,
       SpdxLicense.MIT_OPEN_GROUP,
       SpdxLicense.MITNFA,
+    ];
+  }
+
+  /** The MPL family of licenses */
+  public static mpl(): SpdxLicense[] {
+    return [
+      SpdxLicense.MPL_1_0,
+      SpdxLicense.MPL_1_1,
+      SpdxLicense.MPL_2_0,
+      SpdxLicense.MPL_2_0_NO_COPYLEFT_EXCEPTION,
     ];
   }
   //#endregion

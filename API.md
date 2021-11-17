@@ -141,6 +141,46 @@ This must be an ARN that can be used with CloudWatch alarms.
 
 ---
 
+### Category <a name="construct-hub.Category"></a>
+
+A category of packages.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { Category } from 'construct-hub'
+
+const category: Category = { ... }
+```
+
+##### `title`<sup>Required</sup> <a name="construct-hub.Category.property.title"></a>
+
+```typescript
+public readonly title: string;
+```
+
+- *Type:* `string`
+
+The title on the category button as it appears in the Construct Hub home page.
+
+---
+
+##### `url`<sup>Required</sup> <a name="construct-hub.Category.property.url"></a>
+
+```typescript
+public readonly url: string;
+```
+
+- *Type:* `string`
+
+The URL that this category links to.
+
+This is the full path to the link that
+this category button will have. You can use any query options such as
+`?keywords=`, `?q=`, or a combination thereof.
+
+---
+
 ### CodeArtifactDomainProps <a name="construct-hub.CodeArtifactDomainProps"></a>
 
 Information pertaining to an existing CodeArtifact Domain.
@@ -208,7 +248,7 @@ public readonly allowedLicenses: SpdxLicense[];
 ```
 
 - *Type:* [`construct-hub.SpdxLicense`](#construct-hub.SpdxLicense)[]
-- *Default:* [...SpdxLicense.apache(),...SpdxLicense.bsd(),...SpdxLicense.mit()]
+- *Default:* [...SpdxLicense.apache(),...SpdxLicense.bsd(),...SpdxLicense.cddl(),...SpdxLicense.epl(),SpdxLicense.ISC,...SpdxLicense.mit(),SpdxLicense.MPL_2_0]
 
 The allowed licenses for packages indexed by this instance of ConstructHub.
 
@@ -223,6 +263,21 @@ public readonly backendDashboardName: string;
 - *Type:* `string`
 
 The name of the CloudWatch dashboard that represents the health of backend systems.
+
+---
+
+##### `categories`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.categories"></a>
+
+```typescript
+public readonly categories: Category[];
+```
+
+- *Type:* [`construct-hub.Category`](#construct-hub.Category)[]
+
+Browse categories.
+
+Each category will appear in the home page as a button
+with a link to the relevant search query.
 
 ---
 
@@ -1345,12 +1400,36 @@ import { SpdxLicense } from 'construct-hub'
 SpdxLicense.bsd()
 ```
 
+##### `cddl` <a name="construct-hub.SpdxLicense.cddl"></a>
+
+```typescript
+import { SpdxLicense } from 'construct-hub'
+
+SpdxLicense.cddl()
+```
+
+##### `epl` <a name="construct-hub.SpdxLicense.epl"></a>
+
+```typescript
+import { SpdxLicense } from 'construct-hub'
+
+SpdxLicense.epl()
+```
+
 ##### `mit` <a name="construct-hub.SpdxLicense.mit"></a>
 
 ```typescript
 import { SpdxLicense } from 'construct-hub'
 
 SpdxLicense.mit()
+```
+
+##### `mpl` <a name="construct-hub.SpdxLicense.mpl"></a>
+
+```typescript
+import { SpdxLicense } from 'construct-hub'
+
+SpdxLicense.mpl()
 ```
 
 ##### `osiApproved` <a name="construct-hub.SpdxLicense.osiApproved"></a>

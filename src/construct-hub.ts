@@ -23,7 +23,7 @@ import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
 import { PackageTag } from './package-tag';
 import { SpdxLicense } from './spdx-license';
-import { WebApp, PackageLinkConfig, FeaturedPackages, FeatureFlags } from './webapp';
+import { WebApp, PackageLinkConfig, FeaturedPackages, FeatureFlags, Category } from './webapp';
 
 /**
  * Props for `ConstructHub`.
@@ -97,7 +97,7 @@ export interface ConstructHubProps {
   /**
    * The allowed licenses for packages indexed by this instance of ConstructHub.
    *
-   * @default [...SpdxLicense.apache(),...SpdxLicense.bsd(),...SpdxLicense.mit()]
+   * @default [...SpdxLicense.apache(),...SpdxLicense.bsd(),...SpdxLicense.cddl(),...SpdxLicense.epl(),SpdxLicense.ISC,...SpdxLicense.mit(),SpdxLicense.MPL_2_0]
    */
   readonly allowedLicenses?: SpdxLicense[];
 
@@ -142,6 +142,12 @@ export interface ConstructHubProps {
    * used), false otherwise
    */
   readonly fetchPackageStats?: boolean;
+
+  /**
+   * Browse categories. Each category will appear in the home page as a button
+   * with a link to the relevant search query.
+   */
+  readonly categories?: Category[];
 }
 
 /**
@@ -282,7 +288,11 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       licenses: props.allowedLicenses ?? [
         ...SpdxLicense.apache(),
         ...SpdxLicense.bsd(),
+        ...SpdxLicense.cddl(),
+        ...SpdxLicense.epl(),
+        SpdxLicense.ISC,
         ...SpdxLicense.mit(),
+        SpdxLicense.MPL_2_0,
       ],
     });
 
@@ -295,6 +305,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       featuredPackages: props.featuredPackages,
       packageStats,
       featureFlags: props.featureFlags,
+      categories: props.categories,
     });
 
     const sources = new CoreConstruct(this, 'Sources');
