@@ -208,7 +208,7 @@ public readonly allowedLicenses: SpdxLicense[];
 ```
 
 - *Type:* [`construct-hub.SpdxLicense`](#construct-hub.SpdxLicense)[]
-- *Default:* [...SpdxLicense.apache(),...SpdxLicense.bsd(),...SpdxLicense.mit()]
+- *Default:* [...SpdxLicense.apache(),...SpdxLicense.bsd(),...SpdxLicense.cddl(),...SpdxLicense.epl(),SpdxLicense.ISC,...SpdxLicense.mit(),SpdxLicense.MPL_2_0]
 
 The allowed licenses for packages indexed by this instance of ConstructHub.
 
@@ -1345,12 +1345,36 @@ import { SpdxLicense } from 'construct-hub'
 SpdxLicense.bsd()
 ```
 
+##### `cddl` <a name="construct-hub.SpdxLicense.cddl"></a>
+
+```typescript
+import { SpdxLicense } from 'construct-hub'
+
+SpdxLicense.cddl()
+```
+
+##### `epl` <a name="construct-hub.SpdxLicense.epl"></a>
+
+```typescript
+import { SpdxLicense } from 'construct-hub'
+
+SpdxLicense.epl()
+```
+
 ##### `mit` <a name="construct-hub.SpdxLicense.mit"></a>
 
 ```typescript
 import { SpdxLicense } from 'construct-hub'
 
 SpdxLicense.mit()
+```
+
+##### `mpl` <a name="construct-hub.SpdxLicense.mpl"></a>
+
+```typescript
+import { SpdxLicense } from 'construct-hub'
+
+SpdxLicense.mpl()
 ```
 
 ##### `osiApproved` <a name="construct-hub.SpdxLicense.osiApproved"></a>
