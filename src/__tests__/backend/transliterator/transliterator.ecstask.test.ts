@@ -4,16 +4,21 @@ import * as AWS from 'aws-sdk';
 import type { AWSError } from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import { LanguageNotSupportedError, Language } from 'jsii-docgen';
+
+// this import is separate from the normal because we want jest to mock it.
 import { Documentation } from 'jsii-docgen/lib/docgen/view/documentation';
 
 import type { TransliteratorInput } from '../../../backend/payload-schema';
 import { reset } from '../../../backend/shared/aws.lambda-shared';
 import * as constants from '../../../backend/shared/constants';
 import { DocumentationLanguage } from '../../../backend/shared/language';
-import type { shellOutWithOutput } from '../../../backend/shared/shell-out.lambda-shared';
 import { handler } from '../../../backend/transliterator/transliterator.ecstask';
 import { writeFile } from '../../../backend/transliterator/util';
 
+// looks like we are just over the default limit now
+jest.setTimeout(6000);
+
+// we only need to mock the `Documentation` class.
 jest.mock('jsii-docgen/lib/docgen/view/documentation');
 jest.mock('../../../backend/shared/code-artifact.lambda-shared');
 jest.mock('../../../backend/shared/shell-out.lambda-shared');
@@ -24,26 +29,6 @@ const mockWriteFile = require('../../../backend/transliterator/util').writeFile 
 mockWriteFile.mockImplementation(async (filePath: string) => {
   expect(filePath.endsWith('package.tgz')).toEqual(true);
   return Promise.resolve();
-});
-
-// eslint-disable-next-line @typescript-eslint/no-require-imports
-const mockShellOutWithOutput = require('../../../backend/shared/shell-out.lambda-shared').shellOutWithOutput as jest.MockedFunction<typeof shellOutWithOutput>;
-mockShellOutWithOutput.mockImplementation((cmd, ...args): ReturnType<typeof shellOutWithOutput> => {
-  expect(cmd).toBe('npm');
-  expect(args).toContain('install');
-  expect(args).toContain('--ignore-scripts');
-  expect(args).toContain('--no-bin-links');
-  expect(args).toContain('--no-save');
-  expect(args).toContain('--include=dev');
-  expect(args).toContain('--no-package-lock');
-  expect(args).toContain('--json');
-
-  return Promise.resolve({
-    exitCode: 0,
-    signal: null,
-    // Make-do response (this is not what an actual response looks like)!
-    stdout: Buffer.from(JSON.stringify({ success: true }, null, 2)),
-  });
 });
 
 type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
@@ -83,11 +68,6 @@ describe('VPC Endpoints', () => {
   test('happy path', async () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
-
-    // // eslint-disable-next-line @typescript-eslint/no-require-imports
-    // const languageFromString = require('jsii-docgen').Language.fromString as jest.MockedFunction<typeof Language.fromString>;
-
-    // languageFromString;
 
     class MockDocumentation {
       public async render(options: any) {
