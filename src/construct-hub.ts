@@ -97,7 +97,7 @@ export interface ConstructHubProps {
   /**
    * The allowed licenses for packages indexed by this instance of ConstructHub.
    *
-   * @default [...SpdxLicense.apache(),...SpdxLicense.bsd(),...SpdxLicense.mit()]
+   * @default [...SpdxLicense.apache(),...SpdxLicense.bsd(),...SpdxLicense.cddl(),...SpdxLicense.epl(),SpdxLicense.ISC,...SpdxLicense.mit(),SpdxLicense.MPL_2_0]
    */
   readonly allowedLicenses?: SpdxLicense[];
 
@@ -282,7 +282,11 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       licenses: props.allowedLicenses ?? [
         ...SpdxLicense.apache(),
         ...SpdxLicense.bsd(),
+        ...SpdxLicense.cddl(),
+        ...SpdxLicense.epl(),
+        SpdxLicense.ISC,
         ...SpdxLicense.mit(),
+        SpdxLicense.MPL_2_0,
       ],
     });
 
