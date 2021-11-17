@@ -770,11 +770,47 @@ function generateSpdxLicenseEnum() {
   ts.close('}');
 
   ts.line();
+  ts.line('/** The CDDL family of licenses */');
+  ts.open('public static cddl(): SpdxLicense[] {');
+  ts.open('return [');
+  for (const id of Object.keys(spdx)) {
+    if (id.startsWith('CDDL-')) {
+      ts.line(`SpdxLicense.${slugify(id)},`);
+    }
+  }
+  ts.close('];');
+  ts.close('}');
+
+  ts.line();
+  ts.line('/** The EPL family of licenses */');
+  ts.open('public static epl(): SpdxLicense[] {');
+  ts.open('return [');
+  for (const id of Object.keys(spdx)) {
+    if (id.startsWith('EPL-')) {
+      ts.line(`SpdxLicense.${slugify(id)},`);
+    }
+  }
+  ts.close('];');
+  ts.close('}');
+
+  ts.line();
   ts.line('/** The MIT family of licenses */');
   ts.open('public static mit(): SpdxLicense[] {');
   ts.open('return [');
   for (const id of Object.keys(spdx)) {
     if (id === 'AML' || id === 'MIT' || id === 'MITNFA' || id.startsWith('MIT-')) {
+      ts.line(`SpdxLicense.${slugify(id)},`);
+    }
+  }
+  ts.close('];');
+  ts.close('}');
+
+  ts.line();
+  ts.line('/** The MPL family of licenses */');
+  ts.open('public static mpl(): SpdxLicense[] {');
+  ts.open('return [');
+  for (const id of Object.keys(spdx)) {
+    if (id.startsWith('MPL-')) {
       ts.line(`SpdxLicense.${slugify(id)},`);
     }
   }
