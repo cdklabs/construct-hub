@@ -57,6 +57,10 @@ export class DevStack extends Stack {
           display: 'AWS',
         },
       }],
+      categories: [
+        { title: 'Category1', url: '/search?q=cat1' },
+        { title: 'Category2', url: '/search?keywords=boom' },
+      ],
     });
   }
 }

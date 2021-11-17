@@ -23,7 +23,7 @@ import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
 import { PackageTag } from './package-tag';
 import { SpdxLicense } from './spdx-license';
-import { WebApp, PackageLinkConfig, FeaturedPackages, FeatureFlags } from './webapp';
+import { WebApp, PackageLinkConfig, FeaturedPackages, FeatureFlags, Category } from './webapp';
 
 /**
  * Props for `ConstructHub`.
@@ -142,6 +142,12 @@ export interface ConstructHubProps {
    * used), false otherwise
    */
   readonly fetchPackageStats?: boolean;
+
+  /**
+   * Browse categories. Each category will appear in the home page as a button
+   * with a link to the relevant search query.
+   */
+  readonly categories?: Category[];
 }
 
 /**
@@ -299,6 +305,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       featuredPackages: props.featuredPackages,
       packageStats,
       featureFlags: props.featureFlags,
+      categories: props.categories,
     });
 
     const sources = new CoreConstruct(this, 'Sources');
