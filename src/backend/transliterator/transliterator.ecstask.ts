@@ -12,7 +12,7 @@ import { compressContent } from '../shared/compress-content.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DocumentationLanguage } from '../shared/language';
-import { shellOut, shellOutWithOutput } from '../shared/shell-out.lambda-shared';
+import { shellOut } from '../shared/shell-out.lambda-shared';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { writeFile } from './util';
 
@@ -30,7 +30,7 @@ const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]
  *
  * @returns nothing
  */
-export function handler(event: TransliteratorInput): Promise<S3Object[]> {
+export function handler(event: TransliteratorInput): Promise<{ created: S3Object[]; deleted: S3Object[] }> {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
   // We'll need a writable $HOME directory, or this won't work well, because
   // npm will try to write stuff like the `.npmrc` or package caches in there
@@ -57,6 +57,7 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
     }
 
     const created = new Array<S3Object>();
+    const deleted = new Array<S3Object>();
 
     const [, packageName, packageVersion] = event.assembly.key.match(ASSEMBLY_KEY_REGEX) ?? [];
     if (packageName == null) {
@@ -88,101 +89,111 @@ export function handler(event: TransliteratorInput): Promise<S3Object[]> {
     const tarball = path.join(tmpdir, 'package.tgz');
     await writeFile(tarball, readStream);
 
-    const cwd = process.cwd();
+    const uploads = new Map<string, Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>>();
+    const deletions = new Map<string, Promise<PromiseResult<AWS.S3.DeleteObjectOutput, AWS.AWSError>>>();
+
+    let unprocessable: boolean = false;
+
+    function markPackage(e: Error, marker: string) {
+      const key = event.assembly.key.replace(/\/[^/]+$/, marker);
+      const upload = uploadFile(event.bucket, key, event.assembly.versionId, Buffer.from(e.message));
+      uploads.set(key, upload);
+    }
+
+    async function unmarkPackage(marker: string) {
+      const key = event.assembly.key.replace(/\/[^/]+$/, marker);
+      const marked = await aws.s3ObjectExists(event.bucket, key);
+      if (!marked) {
+        return;
+      }
+      const deletion = deleteFile(event.bucket, key);
+      deletions.set(key, deletion);
+    }
+
+    console.log(`Generating documentation for ${packageFqn}...`);
     try {
-      process.chdir(tmpdir);
-      console.log(`Preparing package install at ${tmpdir}`);
-      const installResult = await shellOutWithOutput(
-        'npm',
-        'install',
-        tarball,
-        '--ignore-scripts',
-        '--no-bin-links',
-        '--no-save',
-        '--include=dev',
-        '--no-package-lock',
-        '--json',
-      );
-      if (installResult.exitCode !== 0) {
-        if (installResult.signal) {
-          throw new Error(`"npm install" was killed by signal ${installResult.signal}`);
+      const docs = await docgen.Documentation.forPackage(tarball, { name: assembly.name });
+      // if the package used to not be installabe, remove the marker for it.
+      await unmarkPackage(constants.UNINSTALLABLE_PACKAGE_SUFFIX);
+      for (const language of DocumentationLanguage.ALL) {
+        if (event.languages && !event.languages[language.toString()]) {
+          console.log(`Skipping language ${language} as it was not requested!`);
+          continue;
         }
-        const toThrow = new Error(`"npm install" failed with exit code ${installResult.exitCode}`);
-        toThrow.name = 'jsii-docgen.NpmError';
-        try {
-          const json = JSON.parse(installResult.stdout.toString('utf-8'));
-          console.error(`Installation result: ${JSON.stringify(json, null, 2)}`);
-          if (json.error.code) {
-            toThrow.name += `.${json.error.code}`;
+
+        const generateDocs = metricScope((metrics) => async (lang: DocumentationLanguage) => {
+          metrics.setDimensions();
+          metrics.setNamespace(METRICS_NAMESPACE);
+
+          async function renderAndDispatch(submodule?: string) {
+
+            try {
+
+              console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
+              const markdown = await docs.render({
+                submodule,
+                linkFormatter: linkFormatter,
+                language: docgen.Language.fromString(lang.name),
+              });
+              // if the package used to have a corrupt assembly, remove the marker for it.
+              await unmarkPackage(constants.corruptAssemblyKeySuffix(language, submodule));
+              const page = Buffer.from(markdown.render());
+              metrics.putMetric(MetricName.DOCUMENT_SIZE, page.length, Unit.Bytes);
+              const { buffer: body, contentEncoding } = compressContent(page);
+              metrics.putMetric(MetricName.COMPRESSED_DOCUMENT_SIZE, body.length, Unit.Bytes);
+
+              const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(lang, submodule));
+              console.log(`Uploading ${key}`);
+              const upload = uploadFile(event.bucket, key, event.assembly.versionId, body, contentEncoding);
+              uploads.set(key, upload);
+
+            } catch (e) {
+              if (e instanceof docgen.LanguageNotSupportedError) {
+                markPackage(e, constants.notSupportedKeySuffix(language, submodule));
+              } else if (e instanceof docgen.CorruptedAssemblyError) {
+                markPackage(e, constants.corruptAssemblyKeySuffix(language, submodule));
+                unprocessable = true;
+              } else {
+                throw e;
+              }
+            }
           }
-        } catch (error) {
-          console.error(`Installation result: ${installResult.stdout.toString('utf-8')}`);
-        }
-        throw toThrow;
-      }
-    } finally {
-      process.chdir(cwd);
-    }
-
-    const packageDir = path.join(tmpdir, 'node_modules', packageName);
-    console.log(`Generating documentation from ${packageDir}...`);
-    for (const language of DocumentationLanguage.ALL) {
-      if (event.languages && !event.languages[language.toString()]) {
-        console.log(`Skipping language ${language} as it was not requested!`);
-        continue;
-      }
-
-      const isSupported = language === DocumentationLanguage.TYPESCRIPT || assembly.targets[language.targetName];
-      if (!isSupported) {
-        console.error(`Package ${packageName}@${packageVersion} does not support ${language}, skipping!`);
-        console.log(`Assembly targets: ${JSON.stringify(assembly.targets, null, 2)}`);
-        for (const submodule of [undefined, ...submodules]) {
-          const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(language, submodule)) + constants.NOT_SUPPORTED_SUFFIX;
-          const response = await uploadFile(event.bucket, key, event.assembly.versionId);
-          created.push({ bucket: event.bucket, key, versionId: response.VersionId });
-        }
-        continue;
-      }
-
-      const generateDocs = metricScope((metrics) => async (lang: DocumentationLanguage) => {
-        metrics.setDimensions();
-        metrics.setNamespace(METRICS_NAMESPACE);
-
-        const uploads = new Map<string, Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>>();
-        const docs = await docgen.Documentation.forProject(packageDir, {
-          assembliesDir: tmpdir,
-          language: docgen.Language.fromString(lang.name),
+          await renderAndDispatch();
+          for (const submodule of submodules) {
+            await renderAndDispatch(submodule);
+          }
         });
-
-        function renderAndDispatch(submodule?: string) {
-          console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
-          const page = Buffer.from(docs.render({ submodule, linkFormatter: linkFormatter(docs) }).render());
-          metrics.putMetric(MetricName.DOCUMENT_SIZE, page.length, Unit.Bytes);
-
-          const { buffer: body, contentEncoding } = compressContent(page);
-          metrics.putMetric(MetricName.COMPRESSED_DOCUMENT_SIZE, body.length, Unit.Bytes);
-
-          const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(lang, submodule));
-          console.log(`Uploading ${key}`);
-          const upload = uploadFile(event.bucket, key, event.assembly.versionId, body, contentEncoding);
-          uploads.set(key, upload);
-        }
-
-        renderAndDispatch();
-        for (const submodule of submodules) {
-          renderAndDispatch(submodule);
-        }
-
-        for (const [key, upload] of uploads.entries()) {
-          const response = await upload;
-          created.push({ bucket: event.bucket, key, versionId: response.VersionId });
-          console.log(`Finished uploading ${key} (Version ID: ${response.VersionId})`);
-        }
-      });
-      await generateDocs(language);
+        await generateDocs(language);
+      }
+    } catch (error) {
+      if (error instanceof docgen.UnInstallablePackageError) {
+        markPackage(error, constants.UNINSTALLABLE_PACKAGE_SUFFIX);
+        unprocessable = true;
+      } else {
+        throw error;
+      }
     }
 
-    return created;
+    for (const [key, upload] of uploads.entries()) {
+      const response = await upload;
+      created.push({ bucket: event.bucket, key, versionId: response.VersionId });
+      console.log(`Finished uploading ${key} (Version ID: ${response.VersionId})`);
+    }
+
+    for (const [key, deletion] of deletions.entries()) {
+      const response = await deletion;
+      deleted.push({ bucket: event.bucket, key, versionId: response.VersionId });
+      console.log(`Finished deleting ${key} (Version ID: ${response.VersionId})`);
+    }
+
+    if (unprocessable) {
+      // the message here doesn't matter, we only use the error name
+      // to divert this message away from the DLQ.
+      const error = new Error();
+      error.name = constants.UNPROCESSABLE_PACKAGE_ERROR_NAME;
+    }
+
+    return { created, deleted };
   });
 }
 
@@ -215,31 +226,28 @@ function uploadFile(bucket: string, key: string, sourceVersionId?: string, body?
   }).promise();
 }
 
+function deleteFile(bucket: string, key: string) {
+  return aws.s3().deleteObject({
+    Bucket: bucket,
+    Key: key,
+  }).promise();
+}
+
 /**
  * A link formatter to make sure type links redirect to the appropriate package
  * page in the webapp.
  */
-function linkFormatter(docs: docgen.Documentation): (type: docgen.TranspiledType) => string {
+function linkFormatter(type: docgen.TranspiledType): string {
 
-  function _formatter(type: docgen.TranspiledType): string {
+  const packageName = type.source.assembly.name;
+  const packageVersion = type.source.assembly.version;
 
-    const packageName = type.source.assembly.name;
-    const packageVersion = type.source.assembly.version;
+  // the webapp sanitizes anchors - so we need to as well when
+  // linking to them.
+  const hash = sanitize(type.fqn);
+  const query = `?lang=${type.language.toString()}${type.submodule ? `&submodule=${type.submodule}` : ''}`;
+  return `/packages/${packageName}/v/${packageVersion}/api/${hash}${query}}`;
 
-    // the webapp sanitizes anchors - so we need to as well when
-    // linking to them.
-    const hash = sanitize(type.fqn);
-
-    if (docs.assembly.name === packageName) {
-      // link to the same package - just add the hash
-      return `#${hash}`;
-    }
-
-    // cross link to another package
-    return `/packages/${packageName}/v/${packageVersion}?lang=${type.language.toString()}${type.submodule ? `&submodule=${type.submodule}` : ''}#${hash}`;
-  }
-
-  return _formatter;
 }
 
 function sanitize(input: string): string {
