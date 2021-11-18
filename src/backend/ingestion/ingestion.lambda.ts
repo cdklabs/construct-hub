@@ -92,16 +92,21 @@ export const handler = metricScope(
         return;
       }
 
+
+      let parsedAssembly: Assembly;
       let constructFramework: ConstructFramework | undefined;
       let packageLicense: string;
       let packageName: string;
       let packageVersion: string;
       try {
-        const assembly = validateAssembly(
-          JSON.parse(dotJsii.toString('utf-8')),
-        );
-        constructFramework = detectConstructFramework(assembly);
-        const { license, name, version } = assembly;
+        parsedAssembly = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
+
+        // "types" is huge and not needed downstream because doc generation happens in the backend,
+        // so we drop it. See https://github.com/cdklabs/construct-hub-webapp/issues/691
+        delete parsedAssembly.types;
+
+        constructFramework = detectConstructFramework(parsedAssembly);
+        const { license, name, version } = parsedAssembly;
         packageLicense = license;
         packageName = name;
         packageVersion = version;
@@ -252,7 +257,7 @@ export const handler = metricScope(
         .putObject({
           Bucket: BUCKET_NAME,
           Key: assemblyKey,
-          Body: dotJsii,
+          Body: Buffer.from(JSON.stringify(parsedAssembly), 'utf-8'),
           CacheControl: 'public, max-age: 86400, must-revalidate, s-maxage=300, proxy-revalidate',
           ContentType: 'application/json',
           Metadata: {

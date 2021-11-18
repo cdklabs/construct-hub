@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import type { createGunzip } from 'zlib';
-import { Assembly, SchemaVersion } from '@jsii/spec';
+import { Assembly, CollectionKind, PrimitiveType, SchemaVersion, Stability, TypeKind } from '@jsii/spec';
 import type { metricScope, MetricsLogger } from 'aws-embedded-metrics';
 import { Context, SQSEvent } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
@@ -132,7 +132,11 @@ test('basic happy case', async () => {
       switch (req.Key) {
         case assemblyKey:
           expect(req.ContentType).toBe('application/json');
-          expect(req.Body).toEqual(Buffer.from(fakeDotJsii));
+
+          // our service removes the "types" field from the assembly since it is not needed
+          // and takes up a lot of space.
+          assertAssembly(fakeDotJsii, req.Body?.toString());
+
           // Must be created strictly after the tarball and metadata files have been uploaded.
           expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
           break;
@@ -290,7 +294,7 @@ test('basic happy case with license file', async () => {
       switch (req.Key) {
         case assemblyKey:
           expect(req.ContentType).toBe('application/json');
-          expect(req.Body).toEqual(Buffer.from(fakeDotJsii));
+          assertAssembly(fakeDotJsii, req.Body?.toString());
           // Must be created strictly after the tarball and metadata files have been uploaded.
           expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
           break;
@@ -479,7 +483,7 @@ test('basic happy case with custom package links', async () => {
       switch (req.Key) {
         case assemblyKey:
           expect(req.ContentType).toBe('application/json');
-          expect(req.Body).toEqual(Buffer.from(fakeDotJsii));
+          assertAssembly(fakeDotJsii, req.Body?.toString());
           // Must be created strictly after the tarball and metadata files have been uploaded.
           expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
           break;
@@ -686,7 +690,7 @@ test('basic happy case with custom tags', async () => {
       switch (req.Key) {
         case assemblyKey:
           expect(req.ContentType).toBe('application/json');
-          expect(req.Body).toEqual(Buffer.from(fakeDotJsii));
+          assertAssembly(fakeDotJsii, req.Body?.toString());
           // Must be created strictly after the tarball and metadata files have been uploaded.
           expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
           break;
@@ -852,7 +856,7 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
         switch (req.Key) {
           case assemblyKey:
             expect(req.ContentType).toBe('application/json');
-            expect(req.Body).toEqual(Buffer.from(fakeDotJsii));
+            assertAssembly(fakeDotJsii, req.Body?.toString());
             // Must be created strictly after the tarball and metadata files have been uploaded.
             expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
             break;
@@ -1012,7 +1016,7 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
         switch (req.Key) {
           case assemblyKey:
             expect(req.ContentType).toBe('application/json');
-            expect(req.Body).toEqual(Buffer.from(fakeDotJsii));
+            assertAssembly(fakeDotJsii, req.Body?.toString());
             // Must be created strictly after the tarball and metadata files have been uploaded.
             expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
             break;
@@ -1178,7 +1182,7 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
         switch (req.Key) {
           case assemblyKey:
             expect(req.ContentType).toBe('application/json');
-            expect(req.Body).toEqual(Buffer.from(fakeDotJsii));
+            assertAssembly(fakeDotJsii, req.Body?.toString());
             // Must be created strictly after the tarball and metadata files have been uploaded.
             expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
             break;
@@ -1860,6 +1864,19 @@ class FakeStream extends EventEmitter {
   }
 }
 
+function assertAssembly(expected: string, actual: string | undefined) {
+  const expectedAssembly = JSON.parse(expected);
+  const actualAssembly = JSON.parse(actual ?? '{}');
+
+  // sanity: we have 2 types in the fake assembly
+  expect(Object.keys(expectedAssembly.types).length).toBe(2);
+
+  // service deletes "types" from the assembly to reduce size
+  delete expectedAssembly.types;
+
+  expect(actualAssembly).toStrictEqual(expectedAssembly);
+}
+
 function fakeAssembly(name: string, version: string, license: string): Assembly {
   return {
     schema: SchemaVersion.LATEST,
@@ -1872,5 +1889,375 @@ function fakeAssembly(name: string, version: string, license: string): Assembly 
     description: 'This is a fake package assembly',
     jsiiVersion: '0.0.0+head',
     fingerprint: 'NOPE',
+    types: {
+      'datadog-cdk-constructs.Datadog': {
+        assembly: 'datadog-cdk-constructs',
+        base: '@aws-cdk/core.Construct',
+        docs: {
+          stability: Stability.Stable,
+        },
+        fqn: 'datadog-cdk-constructs.Datadog',
+        initializer: {
+          docs: {
+            stability: Stability.Stable,
+          },
+          locationInModule: {
+            filename: 'src/datadog.ts',
+            line: 50,
+          },
+          parameters: [
+            {
+              name: 'scope',
+              type: {
+                fqn: '@aws-cdk/core.Construct',
+              },
+            },
+            {
+              name: 'id',
+              type: {
+                primitive: PrimitiveType.String,
+              },
+            },
+            {
+              name: 'props',
+              type: {
+                fqn: 'datadog-cdk-constructs.DatadogProps',
+              },
+            },
+          ],
+        },
+        kind: TypeKind.Class,
+        locationInModule: {
+          filename: 'src/datadog.ts',
+          line: 46,
+        },
+        methods: [
+          {
+            docs: {
+              stability: Stability.Stable,
+            },
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 125,
+            },
+            name: 'addForwarderToNonLambdaLogGroups',
+            parameters: [
+              {
+                name: 'logGroups',
+                type: {
+                  collection: {
+                    elementtype: {
+                      fqn: '@aws-cdk/aws-logs.ILogGroup',
+                    },
+                    kind: CollectionKind.Array,
+                  },
+                },
+              },
+            ],
+          },
+          {
+            docs: {
+              stability: Stability.Stable,
+            },
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 65,
+            },
+            name: 'addLambdaFunctions',
+            parameters: [
+              {
+                name: 'lambdaFunctions',
+                type: {
+                  collection: {
+                    elementtype: {
+                      union: {
+                        types: [
+                          {
+                            fqn: '@aws-cdk/aws-lambda.Function',
+                          },
+                          {
+                            fqn: '@aws-cdk/aws-lambda-nodejs.NodejsFunction',
+                          },
+                          {
+                            fqn: '@aws-cdk/aws-lambda-python.PythonFunction',
+                          },
+                        ],
+                      },
+                    },
+                    kind: CollectionKind.Array,
+                  },
+                },
+              },
+            ],
+          },
+        ],
+        name: 'Datadog',
+        properties: [
+          {
+            docs: {
+              stability: Stability.Stable,
+            },
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 48,
+            },
+            name: 'props',
+            type: {
+              fqn: 'datadog-cdk-constructs.DatadogProps',
+            },
+          },
+          {
+            docs: {
+              stability: Stability.Stable,
+            },
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 47,
+            },
+            name: 'scope',
+            type: {
+              fqn: '@aws-cdk/core.Construct',
+            },
+          },
+          {
+            docs: {
+              stability: Stability.Stable,
+            },
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 49,
+            },
+            name: 'transport',
+            type: {
+              fqn: 'datadog-cdk-constructs.Transport',
+            },
+          },
+        ],
+      },
+      'datadog-cdk-constructs.DatadogProps': {
+        assembly: 'datadog-cdk-constructs',
+        datatype: true,
+        docs: {
+          stability: Stability.Stable,
+        },
+        fqn: 'datadog-cdk-constructs.DatadogProps',
+        kind: TypeKind.Interface,
+        locationInModule: {
+          filename: 'src/datadog.ts',
+          line: 19,
+        },
+        name: 'DatadogProps',
+        properties: [
+          {
+            abstract: true,
+            docs: {
+              stability: Stability.Stable,
+            },
+            immutable: true,
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 23,
+            },
+            name: 'addLayers',
+            optional: true,
+            type: {
+              primitive: PrimitiveType.Boolean,
+            },
+          },
+          {
+            abstract: true,
+            docs: {
+              stability: Stability.Stable,
+            },
+            immutable: true,
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 27,
+            },
+            name: 'apiKey',
+            optional: true,
+            type: {
+              primitive: PrimitiveType.String,
+            },
+          },
+          {
+            abstract: true,
+            docs: {
+              stability: Stability.Stable,
+            },
+            immutable: true,
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 28,
+            },
+            name: 'apiKmsKey',
+            optional: true,
+            type: {
+              primitive: PrimitiveType.String,
+            },
+          },
+          {
+            abstract: true,
+            docs: {
+              stability: Stability.Stable,
+            },
+            immutable: true,
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 32,
+            },
+            name: 'enableDatadogLogs',
+            optional: true,
+            type: {
+              primitive: PrimitiveType.Boolean,
+            },
+          },
+          {
+            abstract: true,
+            docs: {
+              stability: Stability.Stable,
+            },
+            immutable: true,
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 29,
+            },
+            name: 'enableDatadogTracing',
+            optional: true,
+            type: {
+              primitive: PrimitiveType.Boolean,
+            },
+          },
+          {
+            abstract: true,
+            docs: {
+              stability: Stability.Stable,
+            },
+            immutable: true,
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 22,
+            },
+            name: 'extensionLayerVersion',
+            optional: true,
+            type: {
+              primitive: PrimitiveType.Number,
+            },
+          },
+          {
+            abstract: true,
+            docs: {
+              stability: Stability.Stable,
+            },
+            immutable: true,
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 25,
+            },
+            name: 'flushMetricsToLogs',
+            optional: true,
+            type: {
+              primitive: PrimitiveType.Boolean,
+            },
+          },
+          {
+            abstract: true,
+            docs: {
+              stability: Stability.Stable,
+            },
+            immutable: true,
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 24,
+            },
+            name: 'forwarderArn',
+            optional: true,
+            type: {
+              primitive: PrimitiveType.String,
+            },
+          },
+          {
+            abstract: true,
+            docs: {
+              stability: Stability.Stable,
+            },
+            immutable: true,
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 30,
+            },
+            name: 'injectLogContext',
+            optional: true,
+            type: {
+              primitive: PrimitiveType.Boolean,
+            },
+          },
+          {
+            abstract: true,
+            docs: {
+              stability: Stability.Stable,
+            },
+            immutable: true,
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 31,
+            },
+            name: 'logLevel',
+            optional: true,
+            type: {
+              primitive: PrimitiveType.String,
+            },
+          },
+          {
+            abstract: true,
+            docs: {
+              stability: Stability.Stable,
+            },
+            immutable: true,
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 21,
+            },
+            name: 'nodeLayerVersion',
+            optional: true,
+            type: {
+              primitive: PrimitiveType.Number,
+            },
+          },
+          {
+            abstract: true,
+            docs: {
+              stability: Stability.Stable,
+            },
+            immutable: true,
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 20,
+            },
+            name: 'pythonLayerVersion',
+            optional: true,
+            type: {
+              primitive: PrimitiveType.Number,
+            },
+          },
+          {
+            abstract: true,
+            docs: {
+              stability: Stability.Stable,
+            },
+            immutable: true,
+            locationInModule: {
+              filename: 'src/datadog.ts',
+              line: 26,
+            },
+            name: 'site',
+            optional: true,
+            type: {
+              primitive: PrimitiveType.String,
+            },
+          },
+        ],
+      },
+    },
   };
 }
