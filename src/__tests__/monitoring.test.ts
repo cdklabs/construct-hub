@@ -189,8 +189,8 @@ test('high-severity alarm actions are registered', () => {
 
   // WHEN
   new Monitoring(stack, 'Monitoring', {
-    alarmActions: { normalSeverity, normalSeverityAction },
-  }).addLowSeverityAlarm('Alarm', alarm);
+    alarmActions: { highSeverity, highSeverityAction },
+  }).addHighSeverityAlarm('Alarm', alarm);
 
   // THEN
   expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
