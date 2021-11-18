@@ -1,4 +1,4 @@
-import { FeaturedPackages, FeatureFlags, PackageLinkConfig } from '.';
+import { Category, FeaturedPackages, FeatureFlags, PackageLinkConfig } from '.';
 import { ConfigFile } from '../config-file';
 import { PackageTagConfig } from '../package-tag';
 
@@ -37,6 +37,7 @@ interface FrontendConfig {
   featuredPackages?: FrontendFeaturedPackagesConfig;
   packageStats?: boolean;
   featureFlags?: FeatureFlags;
+  categories?: Category[];
 }
 
 export interface WebappConfigProps {
@@ -67,6 +68,12 @@ export interface WebappConfigProps {
    * @default true
    */
   readonly showPackageStats?: boolean;
+
+  /**
+   * Browse categories. Each category will appear in the home page as a button
+   * with a link to the relevant search query.
+   */
+  readonly categories?: Category[];
 }
 
 export class WebappConfig {
@@ -82,6 +89,7 @@ export class WebappConfig {
       featuredPackages: this.featuredPackages,
       packageStats: this.props.showPackageStats ?? true,
       featureFlags: this.props.featureFlags,
+      categories: this.props.categories,
     };
   }
 

@@ -141,6 +141,46 @@ This must be an ARN that can be used with CloudWatch alarms.
 
 ---
 
+### Category <a name="construct-hub.Category"></a>
+
+A category of packages.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { Category } from 'construct-hub'
+
+const category: Category = { ... }
+```
+
+##### `title`<sup>Required</sup> <a name="construct-hub.Category.property.title"></a>
+
+```typescript
+public readonly title: string;
+```
+
+- *Type:* `string`
+
+The title on the category button as it appears in the Construct Hub home page.
+
+---
+
+##### `url`<sup>Required</sup> <a name="construct-hub.Category.property.url"></a>
+
+```typescript
+public readonly url: string;
+```
+
+- *Type:* `string`
+
+The URL that this category links to.
+
+This is the full path to the link that
+this category button will have. You can use any query options such as
+`?keywords=`, `?q=`, or a combination thereof.
+
+---
+
 ### CodeArtifactDomainProps <a name="construct-hub.CodeArtifactDomainProps"></a>
 
 Information pertaining to an existing CodeArtifact Domain.
@@ -223,6 +263,21 @@ public readonly backendDashboardName: string;
 - *Type:* `string`
 
 The name of the CloudWatch dashboard that represents the health of backend systems.
+
+---
+
+##### `categories`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.categories"></a>
+
+```typescript
+public readonly categories: Category[];
+```
+
+- *Type:* [`construct-hub.Category`](#construct-hub.Category)[]
+
+Browse categories.
+
+Each category will appear in the home page as a button
+with a link to the relevant search query.
 
 ---
 

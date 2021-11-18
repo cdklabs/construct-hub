@@ -9,7 +9,6 @@ instance with personalized configuration.
 
 [aws-cdk]: https://github.com/aws/aws-cdk
 
-
 ## :question: Getting Started
 
 > :warning: Disclaimer
@@ -152,7 +151,6 @@ ConstructHub instance only indexes *trusted* packages (as could be the case for
 an instance that does not list packages from the public `npmjs.com` registry),
 you may set the `isolateLambdas` setting to `false`.
 
-
 ## :gear: Operating a self-hosted instance
 
 1. [Application Overview](./docs/application-overview.md) provides a high-level
@@ -239,6 +237,7 @@ trusted organizations, or any other arbitrary conditions, and can be referenced
 while searching.
 
 For example:
+
 ```ts
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
@@ -292,6 +291,7 @@ with a checkbox for each `AWS` and `Community` packages, allowing users to
 filter results by the presence of these tags.
 
 Combinations of conditions are also supported:
+
 ```ts
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
@@ -313,6 +313,7 @@ condition: TagCondition.or(
 ```
 
 You can assert against any value within package json including nested ones.
+
 ```ts
 TagCondition.field('constructHub', 'nested', 'key').eq('value');
 
@@ -326,6 +327,7 @@ Configuring package links allows you to replace the `Repository`, `License`,
 and `Registry` links on the package details page with whatever you choose.
 
 For example:
+
 ```ts
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
@@ -362,6 +364,7 @@ Currently, for a given section you can display either the most recently updated
 packages, or a curated list of packages.
 
 For example:
+
 ```ts
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
@@ -395,24 +398,43 @@ new ConstructHub(this, "ConstructHub", {
 });
 ```
 
+#### Browse Categories
+
+The Construct Hub home page includes a section that displays a set of buttons
+that represent browsing categories (e.g. "Databases", "Monitoring",
+"Serverless", etc).
+
+You can use the `categories` option to configure these categories. Each category
+is defined by a `title` and a `url`, which will be the link associated with the
+button.
+
+```ts
+new ConstructHub(this, "ConstructHub", {
+  ...myProps,
+  categories: [
+    { title: 'Databases', url: '?keywords=databases' },
+    { title: 'Monitoring', url: '?q=monitoring' },
+    { title: 'Partners', url: '?tags=aws-partner' }
+  ]
+});
+```
+
 #### Feature Flags
 
 Feature flags for the web app can be used to enable or disable experimental
 features. These can be customized through the `featureFlags` property - for
 more information about the available flags, check the documentation for
-https://github.com/cdklabs/construct-hub-webapp/.
+<https://github.com/cdklabs/construct-hub-webapp/>.
 
 ## :raised_hand: Contributing
 
 If you are looking to contribute to this project, but don't know where to start,
 have a look at our [contributing guide](CONTRIBUTING.md)!
 
-
 ## :cop: Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more
 information.
-
 
 ## :balance_scale: License
 
