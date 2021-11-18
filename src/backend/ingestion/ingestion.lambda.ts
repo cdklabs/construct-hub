@@ -101,15 +101,19 @@ export const handler = metricScope(
       try {
         parsedAssembly = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
 
-        // "types" is huge and not needed downstream because doc generation happens in the backend,
-        // so we drop it. See https://github.com/cdklabs/construct-hub-webapp/issues/691
-        delete parsedAssembly.types;
-
+        // needs `dependencyClosure`
         constructFramework = detectConstructFramework(parsedAssembly);
         const { license, name, version } = parsedAssembly;
         packageLicense = license;
         packageName = name;
         packageVersion = version;
+
+        // Delete some fields not used by the client to reduce the size of the assembly.
+        // See https://github.com/cdklabs/construct-hub-webapp/issues/691
+        delete parsedAssembly.types;
+        delete parsedAssembly.readme;
+        delete parsedAssembly.dependencyClosure;
+
         metrics.putMetric(MetricName.INVALID_ASSEMBLY, 0, Unit.Count);
       } catch (ex) {
         console.error(
