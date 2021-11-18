@@ -132,7 +132,7 @@ export function handler(event: TransliteratorInput): Promise<{ created: S3Object
               console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
               const markdown = await docs.render({
                 submodule,
-                linkFormatter: linkFormatter(packageName),
+                linkFormatter: linkFormatter,
                 language: docgen.Language.fromString(lang.name),
               });
               // if the package used to have a corrupt assembly, remove the marker for it.
@@ -237,27 +237,17 @@ function deleteFile(bucket: string, key: string) {
  * A link formatter to make sure type links redirect to the appropriate package
  * page in the webapp.
  */
-function linkFormatter(assemblyName: string): (type: docgen.TranspiledType) => string {
+function linkFormatter(type: docgen.TranspiledType): string {
 
-  function _formatter(type: docgen.TranspiledType): string {
+  const packageName = type.source.assembly.name;
+  const packageVersion = type.source.assembly.version;
 
-    const packageName = type.source.assembly.name;
-    const packageVersion = type.source.assembly.version;
+  // the webapp sanitizes anchors - so we need to as well when
+  // linking to them.
+  const hash = sanitize(type.fqn);
+  const query = `?lang=${type.language.toString()}${type.submodule ? `&submodule=${type.submodule}` : ''}`;
+  return `/packages/${packageName}/v/${packageVersion}/api/${hash}${query}}`;
 
-    // the webapp sanitizes anchors - so we need to as well when
-    // linking to them.
-    const hash = sanitize(type.fqn);
-
-    if (assemblyName === packageName) {
-      // link to the same package - just add the hash
-      return `#${hash}`;
-    }
-
-    // cross link to another package
-    return `/packages/${packageName}/v/${packageVersion}?lang=${type.language.toString()}${type.submodule ? `&submodule=${type.submodule}` : ''}#${hash}`;
-  }
-
-  return _formatter;
 }
 
 function sanitize(input: string): string {
