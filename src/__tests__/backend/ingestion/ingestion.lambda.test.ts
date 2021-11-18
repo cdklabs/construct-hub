@@ -1865,14 +1865,18 @@ class FakeStream extends EventEmitter {
 }
 
 function assertAssembly(expected: string, actual: string | undefined) {
-  const expectedAssembly = JSON.parse(expected);
-  const actualAssembly = JSON.parse(actual ?? '{}');
+  const expectedAssembly: Assembly = JSON.parse(expected);
+  const actualAssembly: Assembly = JSON.parse(actual ?? '{}');
 
   // sanity: we have 2 types in the fake assembly
-  expect(Object.keys(expectedAssembly.types).length).toBe(2);
+  expect(expectedAssembly.types).toBeDefined();
+  expect(expectedAssembly.readme).toBeDefined();
+  expect(expectedAssembly.dependencyClosure).toBeDefined();
 
-  // service deletes "types" from the assembly to reduce size
+  // handler deletes these fields from the assembly to reduce size
   delete expectedAssembly.types;
+  delete expectedAssembly.readme;
+  delete expectedAssembly.dependencyClosure;
 
   expect(actualAssembly).toStrictEqual(expectedAssembly);
 }
@@ -1887,6 +1891,12 @@ function fakeAssembly(name: string, version: string, license: string): Assembly 
     repository: { url: 'ssh://localhost.fake/repository.git', type: 'git' },
     author: { name: 'ACME', email: 'test@acme', organization: true, roles: ['author'] },
     description: 'This is a fake package assembly',
+    readme: { markdown: 'Foo Bar ReadMe' },
+    dependencyClosure: {
+      'foo-boo': {
+        readme: { markdown: 'hey' },
+      },
+    },
     jsiiVersion: '0.0.0+head',
     fingerprint: 'NOPE',
     types: {
