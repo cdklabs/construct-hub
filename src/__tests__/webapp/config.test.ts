@@ -15,6 +15,10 @@ const DEFAULT_CONFIG = {
   packageLinks: [],
   packageStats: true,
   packageTags: [],
+  debugInfo: {
+    constructHubVersion: expect.any(String),
+    constructHubWebappVersion: expect.any(String),
+  },
 };
 
 test('minimal', () => {

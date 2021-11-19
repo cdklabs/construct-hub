@@ -1,3 +1,4 @@
+import { join } from 'path';
 import { Category, FeaturedPackages, FeatureFlags, PackageLinkConfig } from '.';
 import { ConfigFile } from '../config-file';
 import { PackageTagConfig } from '../package-tag';
@@ -31,6 +32,11 @@ interface FrontendPackageTagConfig {
 
 type FrontendFeaturedPackagesConfig = FeaturedPackages;
 
+interface FrontendDebugInfo {
+  constructHubVersion: string;
+  constructHubWebappVersion: string;
+}
+
 interface FrontendConfig {
   packageLinks?: FrontendPackageLinkConfig[];
   packageTags?: FrontendPackageTagConfig[];
@@ -38,6 +44,7 @@ interface FrontendConfig {
   packageStats?: boolean;
   featureFlags?: FeatureFlags;
   categories?: Category[];
+  debugInfo?: FrontendDebugInfo;
 }
 
 export interface WebappConfigProps {
@@ -90,6 +97,7 @@ export class WebappConfig {
       packageStats: this.props.showPackageStats ?? true,
       featureFlags: this.props.featureFlags,
       categories: this.props.categories,
+      debugInfo: this.debugInfo,
     };
   }
 
@@ -121,5 +129,14 @@ export class WebappConfig {
       }
     }
     return config;
+  }
+
+  private get debugInfo(): FrontendDebugInfo {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const packageJson = require(join('..', '..', 'package.json'));
+    return {
+      constructHubVersion: packageJson.version,
+      constructHubWebappVersion: packageJson.devDependencies['construct-hub-webapp'],
+    };
   }
 }
