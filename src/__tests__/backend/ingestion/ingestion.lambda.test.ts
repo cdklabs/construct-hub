@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import type { createGunzip } from 'zlib';
-import { Assembly, CollectionKind, PrimitiveType, SchemaVersion, Stability, TypeKind } from '@jsii/spec';
+import { Assembly, CollectionKind, DependencyConfiguration, PrimitiveType, SchemaVersion, Stability, TypeKind } from '@jsii/spec';
 import type { metricScope, MetricsLogger } from 'aws-embedded-metrics';
 import { Context, SQSEvent } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
@@ -1881,7 +1881,17 @@ function assertAssembly(expected: string, actual: string | undefined) {
   expect(actualAssembly).toStrictEqual(expectedAssembly);
 }
 
-function fakeAssembly(name: string, version: string, license: string): Assembly {
+interface FakeDependencyConfiguration extends DependencyConfiguration {
+  readme?: any;
+}
+
+interface FakeAssembly extends Assembly {
+  dependencyClosure: {
+    [assembly: string]: FakeDependencyConfiguration;
+  };
+}
+
+function fakeAssembly(name: string, version: string, license: string): FakeAssembly {
   return {
     schema: SchemaVersion.LATEST,
     name,
