@@ -242,20 +242,13 @@ function linkFormatter(type: docgen.TranspiledType): string {
   const packageName = type.source.assembly.name;
   const packageVersion = type.source.assembly.version;
 
-  // the webapp sanitizes anchors - so we need to as well when
-  // linking to them.
-  const hash = sanitize(type.fqn);
+  // We keep the assembly-relative type name (arn) by slicing off the assembly
+  // name + one ".". The assembly/package name is already in the URL anyway.
+  const arn = type.fqn.substr(type.source.name.length + 1);
   const query = `?lang=${type.language.toString()}${type.submodule ? `&submodule=${type.submodule}` : ''}`;
-  return `/packages/${packageName}/v/${packageVersion}/api/${hash}${query}}`;
+  return `/packages/${packageName}/v/${packageVersion}/api/${arn}${query}}`;
 
 }
-
-function sanitize(input: string): string {
-  return input
-    .toLowerCase()
-    .replace(/[^a-zA-Z0-9 ]/g, '')
-    .replace(/ /g, '-');
-};
 
 interface S3Object {
   readonly bucket: string;
