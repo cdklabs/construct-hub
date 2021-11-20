@@ -145,6 +145,9 @@ const project = new JsiiProject({
     jestConfig: {
       // Ensure we don't try to parallelize too much, this causes timeouts.
       maxConcurrency: 2,
+      moduleNameMapper: {
+        '../package.json': '<rootDir>/__mocks__/package.json',
+      },
     },
   },
 });
