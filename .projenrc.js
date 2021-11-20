@@ -146,7 +146,7 @@ const project = new JsiiProject({
       // Ensure we don't try to parallelize too much, this causes timeouts.
       maxConcurrency: 2,
       moduleNameMapper: {
-        '../package.json': '<rootDir>/__mocks__/package.json'
+        '../package.json': '<rootDir>/__mocks__/package.json',
       },
     },
   },
