@@ -3,18 +3,20 @@ import { App, Stack } from '@aws-cdk/core';
 import { DomainRedirect } from '../domain-redirect';
 
 const app = new App();
-const stack = new Stack(app, 'DomainRedirectTest', {
+
+const stack = new Stack(app, 'DomainRedirectIntegrationTest', {
   env: {
     account: process.env.CDK_DEFAULT_ACCOUNT,
     region: process.env.CDK_DEFAULT_REGION,
   },
 });
 
-const sourceZone = new route53.PublicHostedZone(stack, 'SourceZone', {
-  zoneName: 'my.domain.com',
+const sourceZone = route53.HostedZone.fromHostedZoneAttributes(stack, 'SourceZone', {
+  hostedZoneId: process.env.SOURCE_ZONE_ID ?? 'AZ1234',
+  zoneName: process.env.SOURCE_ZONE_NAME ?? 'from.com',
 });
 
-new DomainRedirect(stack, 'DomainRedirect', {
+new DomainRedirect(stack, 'MyDomainRedirect', {
   source: { hostedZone: sourceZone },
   targetDomainName: 'constructs.dev',
 });

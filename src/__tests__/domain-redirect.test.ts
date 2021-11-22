@@ -2,7 +2,7 @@ import '@aws-cdk/assert/jest';
 import { SynthUtils } from '@aws-cdk/assert';
 import { Certificate } from '@aws-cdk/aws-certificatemanager';
 import { HostedZone } from '@aws-cdk/aws-route53';
-import { Stack } from '@aws-cdk/core';
+import { Stack, Construct } from '@aws-cdk/core';
 import { DomainRedirect } from '../domain-redirect';
 
 test('minimal usage', () => {
@@ -54,4 +54,39 @@ test('certificate is passed by user', () => {
 
   // DNS-validate certificate is automatically created
   expect(stack).not.toHaveResource('AWS::CloudFormation::CustomResource');
+});
+
+test('a bucket is created for each redirect target', () => {
+  // GIVEN
+  const stack = new Stack();
+  const target1 = 'to.bar1.com';
+  const target2 = 'to.bar2.com';
+  const source1 = HostedZone.fromHostedZoneAttributes(stack, 'HostedZone1', { hostedZoneId: 'AZ1234', zoneName: 'from1.com' });
+  const source2 = HostedZone.fromHostedZoneAttributes(stack, 'HostedZone2', { hostedZoneId: 'AZ1234', zoneName: 'from2.com' });
+  const source3 = HostedZone.fromHostedZoneAttributes(stack, 'HostedZone3', { hostedZoneId: 'AZ1234', zoneName: 'from3.com' });
+
+  // WHEN
+  new DomainRedirect(stack, 'DomainRedirect1to1', {
+    source: { hostedZone: source1 },
+    targetDomainName: target1,
+  });
+
+  new DomainRedirect(stack, 'DomainRedirect3to2', {
+    source: { hostedZone: source3 },
+    targetDomainName: target2,
+  });
+
+  // put another redirect to target1 inside a subtree and make sure it reuses the same bucket
+  const subtree = new Construct(stack, 'Subtree');
+  new DomainRedirect(subtree, 'DomainRedirect2to1', {
+    source: { hostedZone: source2 },
+    targetDomainName: target1,
+  });
+
+
+  // THEN
+
+  // we only have two buckets (one for each target).
+  expect(SynthUtils.synthesize(stack).template).toMatchSnapshot();
+  expect(stack).toCountResources('AWS::S3::Bucket', 2);
 });
