@@ -9,13 +9,13 @@ const stack = new Stack(app, 'DomainRedirectTest', {
     region: process.env.CDK_DEFAULT_REGION,
   },
 });
+
+const sourceZone = new route53.PublicHostedZone(stack, 'SourceZone', {
+  zoneName: 'my.domain.com',
+});
+
 new DomainRedirect(stack, 'DomainRedirect', {
-  source: {
-    hostedZone: route53.HostedZone.fromHostedZoneAttributes(stack, 'HostedZone', {
-      hostedZoneId: 'Z0167129V25WO6SUQE3H',
-      zoneName: 'benisrae.people.aws.dev',
-    }),
-  },
+  source: { hostedZone: sourceZone },
   targetDomainName: 'constructs.dev',
 });
 

@@ -101,9 +101,6 @@ describe('additionalDomains', () => {
         },
       },
     });
-
-    expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
-
   });
 
   it('cannot be used if there is no primary domain', () => {
