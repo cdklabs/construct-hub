@@ -135,6 +135,27 @@ new ConstructHub(stack, 'ConstructHub', {
 });
 ```
 
+#### Redirecting from additional domains
+
+You can add additional domains that will be redirected to your primary Construct
+Hub domain:
+
+```ts
+import * as r53 from '@aws-cdk/aws-route53';
+
+const myDomainZone = r53.HostedZone.fromHostedZoneAttributes(this, 'MyDomainZone', {
+  hostedZoneId: 'AZ1234',
+  zoneName: 'my.domain.com',
+});
+
+new ConstructHub(this, 'ConstructHub', {
+  additionalDomains: [ { hostedZone: myDomainZone } ]
+});
+```
+
+This will set up full domain redirect using Amazon S3 and Amazon CloudFront. All
+requests will be redirected to your primary Construct Hub domain.
+
 #### Decrease deployment footprint
 
 By default, ConstructHub executes the documentation rendering process in the
