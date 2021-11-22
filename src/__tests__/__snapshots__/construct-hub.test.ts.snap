@@ -43,6 +43,18 @@ Object {
     },
   },
   "Parameters": Object {
+    "AssetParameters0835ca0278ff334bb4aa4ebda06444cc4e8ea18266b53572a5e1e04eb3ab46f4ArtifactHashC96F0C12": Object {
+      "Description": "Artifact hash for asset \\"0835ca0278ff334bb4aa4ebda06444cc4e8ea18266b53572a5e1e04eb3ab46f4\\"",
+      "Type": "String",
+    },
+    "AssetParameters0835ca0278ff334bb4aa4ebda06444cc4e8ea18266b53572a5e1e04eb3ab46f4S3Bucket29527B73": Object {
+      "Description": "S3 bucket for asset \\"0835ca0278ff334bb4aa4ebda06444cc4e8ea18266b53572a5e1e04eb3ab46f4\\"",
+      "Type": "String",
+    },
+    "AssetParameters0835ca0278ff334bb4aa4ebda06444cc4e8ea18266b53572a5e1e04eb3ab46f4S3VersionKeyF1F66CA3": Object {
+      "Description": "S3 key for asset version \\"0835ca0278ff334bb4aa4ebda06444cc4e8ea18266b53572a5e1e04eb3ab46f4\\"",
+      "Type": "String",
+    },
     "AssetParameters0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9ArtifactHashB9E3BF29": Object {
       "Description": "Artifact hash for asset \\"0f7c0428d7c72a325aadf3427ca47c80d2aa2eb282b5a5328965ab9e40c1dfd9\\"",
       "Type": "String",
@@ -101,18 +113,6 @@ Object {
     },
     "AssetParameters3416b6d1c6347fa47603d8898795de205b2bd6b5dc24a30b7839eea2cb5f8903S3VersionKey065264C0": Object {
       "Description": "S3 key for asset version \\"3416b6d1c6347fa47603d8898795de205b2bd6b5dc24a30b7839eea2cb5f8903\\"",
-      "Type": "String",
-    },
-    "AssetParameters36fdff7194ab7151b2c9746ada7c14f23c6458aae01f87fd1ed875481b7d337fArtifactHash1B9B2A76": Object {
-      "Description": "Artifact hash for asset \\"36fdff7194ab7151b2c9746ada7c14f23c6458aae01f87fd1ed875481b7d337f\\"",
-      "Type": "String",
-    },
-    "AssetParameters36fdff7194ab7151b2c9746ada7c14f23c6458aae01f87fd1ed875481b7d337fS3BucketC24BE0E2": Object {
-      "Description": "S3 bucket for asset \\"36fdff7194ab7151b2c9746ada7c14f23c6458aae01f87fd1ed875481b7d337f\\"",
-      "Type": "String",
-    },
-    "AssetParameters36fdff7194ab7151b2c9746ada7c14f23c6458aae01f87fd1ed875481b7d337fS3VersionKey6F60C4B3": Object {
-      "Description": "S3 key for asset version \\"36fdff7194ab7151b2c9746ada7c14f23c6458aae01f87fd1ed875481b7d337f\\"",
       "Type": "String",
     },
     "AssetParameters4eca4d1b52b162aade7fdea6c9ba1f3b01eb5bd746b76ee41b9994d2b16d84a1ArtifactHash61E29678": Object {
@@ -1732,7 +1732,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters36fdff7194ab7151b2c9746ada7c14f23c6458aae01f87fd1ed875481b7d337fS3BucketC24BE0E2",
+            "Ref": "AssetParameters0835ca0278ff334bb4aa4ebda06444cc4e8ea18266b53572a5e1e04eb3ab46f4S3Bucket29527B73",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -1745,7 +1745,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters36fdff7194ab7151b2c9746ada7c14f23c6458aae01f87fd1ed875481b7d337fS3VersionKey6F60C4B3",
+                          "Ref": "AssetParameters0835ca0278ff334bb4aa4ebda06444cc4e8ea18266b53572a5e1e04eb3ab46f4S3VersionKeyF1F66CA3",
                         },
                       ],
                     },
@@ -1758,7 +1758,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters36fdff7194ab7151b2c9746ada7c14f23c6458aae01f87fd1ed875481b7d337fS3VersionKey6F60C4B3",
+                          "Ref": "AssetParameters0835ca0278ff334bb4aa4ebda06444cc4e8ea18266b53572a5e1e04eb3ab46f4S3VersionKeyF1F66CA3",
                         },
                       ],
                     },
@@ -5891,7 +5891,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:192b013e85b3d7d4f3490cc772a917ed977386888b8cf6a31ece06bb6e766cd4",
+                  "/aws-cdk/assets:a37aaa6f29e9c2f42cc2e0f69e1797c0b2f5208d3647630575fcee5ffa0b5fc5",
                 ],
               ],
             },
