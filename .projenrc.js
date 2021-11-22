@@ -281,6 +281,7 @@ function discoverIntegrationTests() {
     const options = [
       `--app ${app}`,
       '--no-version-reporting',
+      '--context @aws-cdk/core:newStyleStackSynthesis=true',
     ].join(' ');
 
     const deploy = project.addTask(`integ:${name}:deploy`, {

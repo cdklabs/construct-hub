@@ -229,6 +229,19 @@ import { ConstructHubProps } from 'construct-hub'
 const constructHubProps: ConstructHubProps = { ... }
 ```
 
+##### `additionalDomains`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.additionalDomains"></a>
+
+```typescript
+public readonly additionalDomains: DomainRedirectSource[];
+```
+
+- *Type:* [`construct-hub.DomainRedirectSource`](#construct-hub.DomainRedirectSource)[]
+- *Default:* []
+
+Additional domains which will be set up to redirect to the primary construct hub domain.
+
+---
+
 ##### `alarmActions`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.alarmActions"></a>
 
 ```typescript
@@ -561,6 +574,43 @@ public readonly monitorCertificateExpiration: boolean;
 - *Default:* true
 
 Whether the certificate should be monitored for expiration, meaning high severity alarms will be raised if it is due to expire in less than 45 days.
+
+---
+
+### DomainRedirectSource <a name="construct-hub.DomainRedirectSource"></a>
+
+Source domain of the redirect.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { DomainRedirectSource } from 'construct-hub'
+
+const domainRedirectSource: DomainRedirectSource = { ... }
+```
+
+##### `hostedZone`<sup>Required</sup> <a name="construct-hub.DomainRedirectSource.property.hostedZone"></a>
+
+```typescript
+public readonly hostedZone: IHostedZone;
+```
+
+- *Type:* [`@aws-cdk/aws-route53.IHostedZone`](#@aws-cdk/aws-route53.IHostedZone)
+
+The route53 zone which hosts the source domain.
+
+---
+
+##### `certificate`<sup>Optional</sup> <a name="construct-hub.DomainRedirectSource.property.certificate"></a>
+
+```typescript
+public readonly certificate: ICertificate;
+```
+
+- *Type:* [`@aws-cdk/aws-certificatemanager.ICertificate`](#@aws-cdk/aws-certificatemanager.ICertificate)
+- *Default:* a certificate is created for this domain.
+
+The ACM certificate to use for the CloudFront distribution.
 
 ---
 

@@ -692,7 +692,7 @@
       "description": "synthesize integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
       "steps": [
         {
-          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting -o src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.actual > /dev/null"
+          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true -o src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.actual > /dev/null"
         },
         {
           "exec": "diff -r -x asset.* -x cdk.out -x manifest.json -x tree.json src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout/ src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.actual/"
@@ -707,7 +707,7 @@
           "exec": "rm -fr src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.deploy"
         },
         {
-          "exec": "cdk deploy --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting --require-approval=never -o src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.deploy"
+          "exec": "cdk deploy --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true --require-approval=never -o src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.deploy"
         },
         {
           "exec": "rm -fr src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout"
@@ -734,7 +734,58 @@
       "description": "update snapshot for integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
       "steps": [
         {
-          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting -o src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout > /dev/null"
+          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true -o src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout > /dev/null"
+        }
+      ]
+    },
+    "integ:domain-redirect:assert": {
+      "name": "integ:domain-redirect:assert",
+      "description": "synthesize integration test __tests__/domain-redirect.integ.ts",
+      "steps": [
+        {
+          "exec": "cdk synth --app \"node lib/__tests__/domain-redirect.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true -o src/__tests__/.tmp.domain-redirect.integ.cdkout.actual > /dev/null"
+        },
+        {
+          "exec": "diff -r -x asset.* -x cdk.out -x manifest.json -x tree.json src/__tests__/domain-redirect.integ.cdkout/ src/__tests__/.tmp.domain-redirect.integ.cdkout.actual/"
+        }
+      ]
+    },
+    "integ:domain-redirect:deploy": {
+      "name": "integ:domain-redirect:deploy",
+      "description": "deploy integration test __tests__/domain-redirect.integ.ts",
+      "steps": [
+        {
+          "exec": "rm -fr src/__tests__/.tmp.domain-redirect.integ.cdkout.deploy"
+        },
+        {
+          "exec": "cdk deploy --app \"node lib/__tests__/domain-redirect.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true --require-approval=never -o src/__tests__/.tmp.domain-redirect.integ.cdkout.deploy"
+        },
+        {
+          "exec": "rm -fr src/__tests__/domain-redirect.integ.cdkout"
+        },
+        {
+          "exec": "mv src/__tests__/.tmp.domain-redirect.integ.cdkout.deploy src/__tests__/domain-redirect.integ.cdkout"
+        },
+        {
+          "spawn": "integ:domain-redirect:destroy"
+        }
+      ]
+    },
+    "integ:domain-redirect:destroy": {
+      "name": "integ:domain-redirect:destroy",
+      "description": "destroy integration test __tests__/domain-redirect.integ.ts",
+      "steps": [
+        {
+          "exec": "cdk destroy --app src/__tests__/domain-redirect.integ.cdkout --no-version-reporting"
+        }
+      ]
+    },
+    "integ:domain-redirect:snapshot": {
+      "name": "integ:domain-redirect:snapshot",
+      "description": "update snapshot for integration test __tests__/domain-redirect.integ.ts",
+      "steps": [
+        {
+          "exec": "cdk synth --app \"node lib/__tests__/domain-redirect.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true -o src/__tests__/domain-redirect.integ.cdkout > /dev/null"
         }
       ]
     },
@@ -839,6 +890,9 @@
         },
         {
           "spawn": "integ:deny-list:assert"
+        },
+        {
+          "spawn": "integ:domain-redirect:assert"
         }
       ]
     },
