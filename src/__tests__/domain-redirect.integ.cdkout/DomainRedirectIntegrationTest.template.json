@@ -65,7 +65,7 @@
                     {
                       "Ref": "AWS::Partition"
                     },
-                    ":route53:::hostedzone/Z0167129V25WO6SUQE3H"
+                    ":route53:::hostedzone/AZ1234"
                   ]
                 ]
               }
@@ -88,7 +88,9 @@
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
-          "S3Bucket": "cdk-hnb659fds-assets-585695036304-us-east-1",
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
+          },
           "S3Key": "7af6295e521fd55af94332393ceffb3e866aac4dc4956321f7918f21e72199e4.zip"
         },
         "Role": {
@@ -120,8 +122,8 @@
             "Arn"
           ]
         },
-        "DomainName": "benisrae.people.aws.dev",
-        "HostedZoneId": "Z0167129V25WO6SUQE3H"
+        "DomainName": "from.com",
+        "HostedZoneId": "AZ1234"
       },
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete",
@@ -134,7 +136,7 @@
       "Properties": {
         "DistributionConfig": {
           "Aliases": [
-            "benisrae.people.aws.dev"
+            "from.com"
           ],
           "DefaultCacheBehavior": {
             "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
@@ -191,7 +193,7 @@
     "MyDomainRedirectARecordB42CD602": {
       "Type": "AWS::Route53::RecordSet",
       "Properties": {
-        "Name": "benisrae.people.aws.dev.",
+        "Name": "from.com.",
         "Type": "A",
         "AliasTarget": {
           "DNSName": {
@@ -211,7 +213,7 @@
           }
         },
         "Comment": "Created by the AWS CDK",
-        "HostedZoneId": "Z0167129V25WO6SUQE3H"
+        "HostedZoneId": "AZ1234"
       },
       "Metadata": {
         "aws:cdk:path": "DomainRedirectIntegrationTest/MyDomainRedirect/ARecord/Resource"
@@ -220,7 +222,7 @@
     "MyDomainRedirectAaaaRecord9897C577": {
       "Type": "AWS::Route53::RecordSet",
       "Properties": {
-        "Name": "benisrae.people.aws.dev.",
+        "Name": "from.com.",
         "Type": "AAAA",
         "AliasTarget": {
           "DNSName": {
@@ -240,7 +242,7 @@
           }
         },
         "Comment": "Created by the AWS CDK",
-        "HostedZoneId": "Z0167129V25WO6SUQE3H"
+        "HostedZoneId": "AZ1234"
       },
       "Metadata": {
         "aws:cdk:path": "DomainRedirectIntegrationTest/MyDomainRedirect/AaaaRecord/Resource"
