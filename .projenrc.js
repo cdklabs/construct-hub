@@ -133,6 +133,7 @@ const project = new JsiiProject({
     exclude: [...peerDeps, cdkAssert, cdkCli],
     ignoreProjen: false,
     workflowOptions: {
+      branches: ['dev'],
       labels: ['auto-approve'],
       secret: 'PROJEN_GITHUB_TOKEN',
       container: {
