@@ -131,9 +131,10 @@ const project = new JsiiProject({
 
   depsUpgradeOptions: {
     exclude: [...peerDeps, cdkAssert, cdkCli],
+    include: ['construct-hub-webapp'],
     ignoreProjen: false,
     workflowOptions: {
-      branches: ['dev'],
+      branches: ['dev', 'main'],
       labels: ['auto-approve'],
       secret: 'PROJEN_GITHUB_TOKEN',
       container: {
