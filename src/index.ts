@@ -5,3 +5,4 @@ export * as sources from './package-sources';
 export * from './spdx-license';
 export * from './package-tag';
 export { PackageLinkConfig, FeaturedPackages, FeaturedPackagesSection, FeaturedPackagesDetail, FeatureFlags, Category } from './webapp';
+export { DomainRedirectSource } from './domain-redirect';

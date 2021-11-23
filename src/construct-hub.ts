@@ -18,6 +18,7 @@ import { Orchestration } from './backend/orchestration';
 import { PackageStats } from './backend/package-stats';
 import { CATALOG_KEY, STORAGE_KEY_PREFIX } from './backend/shared/constants';
 import { Repository } from './codeartifact/repository';
+import { DomainRedirect, DomainRedirectSource } from './domain-redirect';
 import { Monitoring } from './monitoring';
 import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
@@ -148,6 +149,14 @@ export interface ConstructHubProps {
    * with a link to the relevant search query.
    */
   readonly categories?: Category[];
+
+  /**
+   * Additional domains which will be set up to redirect to the primary
+   * construct hub domain.
+   *
+   * @default []
+   */
+  readonly additionalDomains?: DomainRedirectSource[];
 }
 
 /**
@@ -334,6 +343,20 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       denyList,
       packageStats,
     });
+
+    // add domain redirects
+    if (props.domain) {
+      for (const redirctSource of props.additionalDomains ?? []) {
+        new DomainRedirect(this, `Redirect-${redirctSource.hostedZone.zoneName}`, {
+          source: redirctSource,
+          targetDomainName: props.domain?.zone.zoneName,
+        });
+      }
+    } else {
+      if (props.additionalDomains && props.additionalDomains.length > 0) {
+        throw new Error('Cannot specify "domainRedirects" if a domain is not specified');
+      }
+    }
   }
 
   public get grantPrincipal(): iam.IPrincipal {
@@ -489,3 +512,4 @@ export enum Isolation {
    */
   NO_INTERNET_ACCESS,
 }
+
