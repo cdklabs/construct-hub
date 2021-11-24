@@ -64,7 +64,7 @@ export function throughVpcEndpoint(bucket: IBucket, vpcEndpoint: GatewayVpcEndpo
   });
 
   function decoratedGrantDelete(this: IBucket, identity: IGrantable, objectsKeyPattern: any = '*'): Grant {
-    const mainGrant = this.grantRead(identity, objectsKeyPattern);
+    const mainGrant = this.grantDelete(identity, objectsKeyPattern);
     if (mainGrant.success) {
       vpcEndpoint.addToPolicy(new PolicyStatement({
         effect: Effect.ALLOW,
