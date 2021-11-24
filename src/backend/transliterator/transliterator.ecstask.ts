@@ -94,10 +94,11 @@ export function handler(event: TransliteratorInput): Promise<{ created: S3Object
 
     let unprocessable: boolean = false;
 
-    function markPackage(e: Error, marker: string) {
+    function markPackage(e: Error, marker: string): Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>> {
       const key = event.assembly.key.replace(/\/[^/]+$/, marker);
       const upload = uploadFile(event.bucket, key, event.assembly.versionId, Buffer.from(e.message));
       uploads.set(key, upload);
+      return upload;
     }
 
     async function unmarkPackage(marker: string) {
@@ -149,9 +150,9 @@ export function handler(event: TransliteratorInput): Promise<{ created: S3Object
 
             } catch (e) {
               if (e instanceof docgen.LanguageNotSupportedError) {
-                markPackage(e, constants.notSupportedKeySuffix(language, submodule));
+                void markPackage(e, constants.notSupportedKeySuffix(language, submodule));
               } else if (e instanceof docgen.CorruptedAssemblyError) {
-                markPackage(e, constants.corruptAssemblyKeySuffix(language, submodule));
+                void markPackage(e, constants.corruptAssemblyKeySuffix(language, submodule));
                 unprocessable = true;
               } else {
                 throw e;
@@ -174,7 +175,11 @@ export function handler(event: TransliteratorInput): Promise<{ created: S3Object
 
     } catch (error) {
       if (error instanceof docgen.UnInstallablePackageError) {
-        markPackage(error, constants.UNINSTALLABLE_PACKAGE_SUFFIX);
+        const response = await markPackage(error, constants.UNINSTALLABLE_PACKAGE_SUFFIX);
+        const key = event.assembly.key.replace(/\/[^/]+$/, constants.UNINSTALLABLE_PACKAGE_SUFFIX);
+        created.push({ bucket: event.bucket, key, versionId: response.VersionId });
+        console.log(`Finished uploading ${response} (Version ID: ${response.VersionId})`);
+
         unprocessable = true;
       } else {
         throw error;
