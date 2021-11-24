@@ -165,6 +165,13 @@ export function handler(event: TransliteratorInput): Promise<{ created: S3Object
         });
         await generateDocs(language);
       }
+
+      for (const [key, upload] of uploads.entries()) {
+        const response = await upload;
+        created.push({ bucket: event.bucket, key, versionId: response.VersionId });
+        console.log(`Finished uploading ${key} (Version ID: ${response.VersionId})`);
+      }
+
     } catch (error) {
       if (error instanceof docgen.UnInstallablePackageError) {
         markPackage(error, constants.UNINSTALLABLE_PACKAGE_SUFFIX);
@@ -172,12 +179,6 @@ export function handler(event: TransliteratorInput): Promise<{ created: S3Object
       } else {
         throw error;
       }
-    }
-
-    for (const [key, upload] of uploads.entries()) {
-      const response = await upload;
-      created.push({ bucket: event.bucket, key, versionId: response.VersionId });
-      console.log(`Finished uploading ${key} (Version ID: ${response.VersionId})`);
     }
 
     for (const [key, deletion] of deletions.entries()) {
