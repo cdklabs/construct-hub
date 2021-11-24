@@ -2711,21 +2711,15 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/uninstallable
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
+          - Action: s3:DeleteObject*
             Effect: Allow
             Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/uninstallable
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/uninstallable
           - Action:
               - s3:DeleteObject*
               - s3:PutObject*
@@ -2816,36 +2810,24 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/docs-*-typescript.md.corruptassembly
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
+          - Action: s3:DeleteObject*
             Effect: Allow
             Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-typescript.md.corruptassembly
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/docs-typescript.md.corruptassembly
+          - Action: s3:DeleteObject*
             Effect: Allow
             Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-*-typescript.md.corruptassembly
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/docs-*-typescript.md.corruptassembly
           - Action:
               - s3:DeleteObject*
               - s3:PutObject*
@@ -2936,36 +2918,24 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/docs-*-python.md.corruptassembly
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
+          - Action: s3:DeleteObject*
             Effect: Allow
             Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-python.md.corruptassembly
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/docs-python.md.corruptassembly
+          - Action: s3:DeleteObject*
             Effect: Allow
             Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-*-python.md.corruptassembly
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/docs-*-python.md.corruptassembly
           - Action:
               - s3:DeleteObject*
               - s3:PutObject*
@@ -3056,36 +3026,24 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/docs-*-java.md.corruptassembly
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
+          - Action: s3:DeleteObject*
             Effect: Allow
             Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-java.md.corruptassembly
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/docs-java.md.corruptassembly
+          - Action: s3:DeleteObject*
             Effect: Allow
             Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-*-java.md.corruptassembly
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/docs-*-java.md.corruptassembly
           - Action:
               - s3:DeleteObject*
               - s3:PutObject*
@@ -3176,36 +3134,24 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/docs-*-csharp.md.corruptassembly
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
+          - Action: s3:DeleteObject*
             Effect: Allow
             Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-csharp.md.corruptassembly
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/docs-csharp.md.corruptassembly
+          - Action: s3:DeleteObject*
             Effect: Allow
             Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-*-csharp.md.corruptassembly
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/docs-*-csharp.md.corruptassembly
         Version: 2012-10-17
       PolicyName: ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleDefaultPolicyE0EED0F8
       Roles:
