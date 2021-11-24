@@ -1191,6 +1191,17 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/uninstallable
+          - Action: s3:DeleteObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/uninstallable
           - Action:
               - s3:Abort*
               - s3:DeleteObject*
@@ -1293,6 +1304,28 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/docs-*-typescript.md.corruptassembly
+          - Action: s3:DeleteObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/docs-typescript.md.corruptassembly
+          - Action: s3:DeleteObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/docs-*-typescript.md.corruptassembly
           - Action:
               - s3:Abort*
               - s3:DeleteObject*
@@ -1395,6 +1428,28 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/docs-*-python.md.corruptassembly
+          - Action: s3:DeleteObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/docs-python.md.corruptassembly
+          - Action: s3:DeleteObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/docs-*-python.md.corruptassembly
           - Action:
               - s3:Abort*
               - s3:DeleteObject*
@@ -1497,6 +1552,28 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/docs-*-java.md.corruptassembly
+          - Action: s3:DeleteObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/docs-java.md.corruptassembly
+          - Action: s3:DeleteObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/docs-*-java.md.corruptassembly
           - Action:
               - s3:Abort*
               - s3:DeleteObject*
@@ -1599,6 +1676,28 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/docs-*-csharp.md.corruptassembly
+          - Action: s3:DeleteObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/docs-csharp.md.corruptassembly
+          - Action: s3:DeleteObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/docs-*-csharp.md.corruptassembly
         Version: 2012-10-17
       RouteTableIds:
         - Ref: ConstructHubVPCIsolatedSubnet1RouteTable750E6F36
