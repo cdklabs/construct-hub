@@ -47102,22 +47102,34 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
             },
             Object {
-              "Action": "s3:DeleteObject*",
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubPackageDataDC5EF35E",
-                        "Arn",
-                      ],
-                    },
-                    "/data/*/uninstallable",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
                   ],
-                ],
-              },
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/uninstallable",
+                    ],
+                  ],
+                },
+              ],
             },
             Object {
               "Action": Array [
@@ -47300,40 +47312,64 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
             },
             Object {
-              "Action": "s3:DeleteObject*",
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubPackageDataDC5EF35E",
-                        "Arn",
-                      ],
-                    },
-                    "/data/*/docs-typescript.md.corruptassembly",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
                   ],
-                ],
-              },
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-typescript.md.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
             },
             Object {
-              "Action": "s3:DeleteObject*",
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubPackageDataDC5EF35E",
-                        "Arn",
-                      ],
-                    },
-                    "/data/*/docs-*-typescript.md.corruptassembly",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
                   ],
-                ],
-              },
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-typescript.md.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
             },
             Object {
               "Action": Array [
@@ -47516,40 +47552,64 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
             },
             Object {
-              "Action": "s3:DeleteObject*",
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubPackageDataDC5EF35E",
-                        "Arn",
-                      ],
-                    },
-                    "/data/*/docs-python.md.corruptassembly",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
                   ],
-                ],
-              },
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-python.md.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
             },
             Object {
-              "Action": "s3:DeleteObject*",
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubPackageDataDC5EF35E",
-                        "Arn",
-                      ],
-                    },
-                    "/data/*/docs-*-python.md.corruptassembly",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
                   ],
-                ],
-              },
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-python.md.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
             },
             Object {
               "Action": Array [
@@ -47732,40 +47792,64 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
             },
             Object {
-              "Action": "s3:DeleteObject*",
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubPackageDataDC5EF35E",
-                        "Arn",
-                      ],
-                    },
-                    "/data/*/docs-java.md.corruptassembly",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
                   ],
-                ],
-              },
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-java.md.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
             },
             Object {
-              "Action": "s3:DeleteObject*",
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubPackageDataDC5EF35E",
-                        "Arn",
-                      ],
-                    },
-                    "/data/*/docs-*-java.md.corruptassembly",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
                   ],
-                ],
-              },
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-java.md.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
             },
             Object {
               "Action": Array [
@@ -47948,40 +48032,64 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
             },
             Object {
-              "Action": "s3:DeleteObject*",
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubPackageDataDC5EF35E",
-                        "Arn",
-                      ],
-                    },
-                    "/data/*/docs-csharp.md.corruptassembly",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
                   ],
-                ],
-              },
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-csharp.md.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
             },
             Object {
-              "Action": "s3:DeleteObject*",
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubPackageDataDC5EF35E",
-                        "Arn",
-                      ],
-                    },
-                    "/data/*/docs-*-csharp.md.corruptassembly",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
                   ],
-                ],
-              },
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-csharp.md.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
             },
           ],
           "Version": "2012-10-17",
@@ -50358,6 +50466,27 @@ Direct link to Lambda function: /lambda/home#/functions/",
               ],
             },
             Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/uninstallable",
+                  ],
+                ],
+              },
+            },
+            Object {
               "Action": Array [
                 "s3:Abort*",
                 "s3:DeleteObject*",
@@ -50554,6 +50683,48 @@ Direct link to Lambda function: /lambda/home#/functions/",
                   ],
                 },
               ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-typescript.md.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-typescript.md.corruptassembly",
+                  ],
+                ],
+              },
             },
             Object {
               "Action": Array [
@@ -50754,6 +50925,48 @@ Direct link to Lambda function: /lambda/home#/functions/",
               ],
             },
             Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-python.md.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-python.md.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
               "Action": Array [
                 "s3:Abort*",
                 "s3:DeleteObject*",
@@ -50952,6 +51165,48 @@ Direct link to Lambda function: /lambda/home#/functions/",
               ],
             },
             Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-java.md.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-java.md.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
               "Action": Array [
                 "s3:Abort*",
                 "s3:DeleteObject*",
@@ -51148,6 +51403,48 @@ Direct link to Lambda function: /lambda/home#/functions/",
                   ],
                 },
               ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-csharp.md.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-csharp.md.corruptassembly",
+                  ],
+                ],
+              },
             },
           ],
           "Version": "2012-10-17",
