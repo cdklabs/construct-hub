@@ -22,6 +22,7 @@ import { Monitoring } from './monitoring';
 import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
 import { PackageTag } from './package-tag';
+import { S3StorageFactory } from './s3/storage';
 import { SpdxLicense } from './spdx-license';
 import { WebApp, PackageLinkConfig, FeaturedPackages, FeatureFlags, Category } from './webapp';
 
@@ -148,6 +149,11 @@ export interface ConstructHubProps {
    * with a link to the relevant search query.
    */
   readonly categories?: Category[];
+
+  readonly s3FailoverEnabled?: boolean;
+
+  readonly s3FailoverActive?: boolean;
+
 }
 
 /**
@@ -183,11 +189,16 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       throw new Error('Supplying both isolateSensitiveTasks and sensitiveTaskIsolation is not supported. Remove usage of isolateSensitiveTasks.');
     }
 
+    const storageFactory = new S3StorageFactory({
+      failoverEnabled: props.s3FailoverEnabled,
+      failoverActive: props.s3FailoverActive,
+    });
+
     const monitoring = new Monitoring(this, 'Monitoring', {
       alarmActions: props.alarmActions,
     });
 
-    const packageData = new s3.Bucket(this, 'PackageData', {
+    const packageData = storageFactory.newBucket(this, 'PackageData', {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
       encryption: s3.BucketEncryption.S3_MANAGED,
@@ -229,6 +240,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     const { vpc, vpcEndpoints, vpcSubnets, vpcSecurityGroups } = this.createVpc(isolation, codeArtifact);
 
     const denyList = new DenyList(this, 'DenyList', {
+      storageFactory: storageFactory,
       rules: props.denyList ?? [],
       packageDataBucket: packageData,
       packageDataKeyPrefix: STORAGE_KEY_PREFIX,
@@ -275,6 +287,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     }) ?? [];
 
     this.ingestion = new Ingestion(this, 'Ingestion', {
+      storageFactory: storageFactory,
       bucket: packageData,
       codeArtifact,
       orchestration,
@@ -285,6 +298,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     });
 
     const licenseList = new LicenseList(this, 'LicenseList', {
+      storageFactory: storageFactory,
       licenses: props.allowedLicenses ?? [
         ...SpdxLicense.apache(),
         ...SpdxLicense.bsd(),
@@ -297,6 +311,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     });
 
     const webApp = new WebApp(this, 'WebApp', {
+      storageFactory,
       domain: props.domain,
       monitoring,
       packageData,
@@ -309,7 +324,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     });
 
     const sources = new CoreConstruct(this, 'Sources');
-    const packageSources = (props.packageSources ?? [new NpmJs()]).map(
+    const packageSources = (props.packageSources ?? [new NpmJs({ storageFactory })]).map(
       (source) =>
         source.bind(sources, {
           baseUrl: webApp.baseUrl,

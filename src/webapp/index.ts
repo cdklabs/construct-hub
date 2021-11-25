@@ -12,6 +12,7 @@ import { PackageStats } from '../backend/package-stats';
 import { CATALOG_KEY } from '../backend/shared/constants';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
+import { S3StorageFactory } from '../s3/storage';
 import { WebappConfig, WebappConfigProps } from './config';
 import { HomeResponseFunction } from './home-response-function';
 import { ResponseFunction } from './response-function';
@@ -132,6 +133,13 @@ export interface WebAppProps extends WebappConfigProps {
   readonly monitoring: Monitoring;
 
   /**
+   * Factory for creating storage on S3.
+   *
+   * @default - The default storage factory (plain s3 bucket).
+   */
+  readonly storageFactory?: S3StorageFactory;
+
+  /**
    * The bucket containing package data.
    */
   readonly packageData: s3.Bucket;
@@ -150,7 +158,8 @@ export class WebApp extends Construct {
   public constructor(scope: Construct, id: string, props: WebAppProps) {
     super(scope, id);
 
-    this.bucket = new s3.Bucket(this, 'WebsiteBucket', {
+    const storageFactory = props.storageFactory ?? new S3StorageFactory();
+    this.bucket = storageFactory.newBucket(this, 'WebsiteBucket', {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
     });

@@ -10,6 +10,7 @@ import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
 import { Construct, Duration, IConstruct, RemovalPolicy } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
+import { S3StorageFactory } from '../../s3/storage';
 import { DenyListRule, IDenyList } from './api';
 import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY, MetricName, METRICS_NAMESPACE } from './constants';
 import { createDenyListMap } from './create-map';
@@ -57,6 +58,13 @@ export interface DenyListProps {
    * The monitoring system.
    */
   readonly monitoring: Monitoring;
+
+  /**
+   * Factory for creating storage on S3.
+   *
+   * @default - The default storage factory (plain s3 bucket).
+   */
+  readonly storageFactory?: S3StorageFactory;
 }
 
 /**
@@ -87,7 +95,9 @@ export class DenyList extends Construct implements IDenyList {
   constructor(scope: Construct, id: string, props: DenyListProps) {
     super(scope, id);
 
-    this.bucket = new s3.Bucket(this, 'Bucket', {
+    const storageFactory = props.storageFactory ?? new S3StorageFactory();
+
+    this.bucket = storageFactory.newBucket(this, 'Bucket', {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       encryption: s3.BucketEncryption.S3_MANAGED,
       enforceSSL: true,

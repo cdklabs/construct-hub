@@ -421,6 +421,26 @@ Configuration for custom package tags.
 
 ---
 
+##### `s3FailoverActive`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.s3FailoverActive"></a>
+
+```typescript
+public readonly s3FailoverActive: boolean;
+```
+
+- *Type:* `boolean`
+
+---
+
+##### `s3FailoverEnabled`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.s3FailoverEnabled"></a>
+
+```typescript
+public readonly s3FailoverEnabled: boolean;
+```
+
+- *Type:* `boolean`
+
+---
+
 ##### `sensitiveTaskIsolation`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.sensitiveTaskIsolation"></a>
 
 ```typescript
@@ -1254,6 +1274,36 @@ public readonly condition: TagConditionConfig;
 
 ---
 
+### S3StorageFactoryProps <a name="construct-hub.S3StorageFactoryProps"></a>
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { S3StorageFactoryProps } from 'construct-hub'
+
+const s3StorageFactoryProps: S3StorageFactoryProps = { ... }
+```
+
+##### `failoverActive`<sup>Optional</sup> <a name="construct-hub.S3StorageFactoryProps.property.failoverActive"></a>
+
+```typescript
+public readonly failoverActive: boolean;
+```
+
+- *Type:* `boolean`
+
+---
+
+##### `failoverEnabled`<sup>Optional</sup> <a name="construct-hub.S3StorageFactoryProps.property.failoverEnabled"></a>
+
+```typescript
+public readonly failoverEnabled: boolean;
+```
+
+- *Type:* `boolean`
+
+---
+
 ### SearchFilter <a name="construct-hub.SearchFilter"></a>
 
 #### Initializer <a name="[object Object].Initializer"></a>
@@ -1341,6 +1391,51 @@ public readonly value: string;
 ---
 
 ## Classes <a name="Classes"></a>
+
+### S3StorageFactory <a name="construct-hub.S3StorageFactory"></a>
+
+#### Initializers <a name="construct-hub.S3StorageFactory.Initializer"></a>
+
+```typescript
+import { S3StorageFactory } from 'construct-hub'
+
+new S3StorageFactory(props?: S3StorageFactoryProps)
+```
+
+##### `props`<sup>Optional</sup> <a name="construct-hub.S3StorageFactory.parameter.props"></a>
+
+- *Type:* [`construct-hub.S3StorageFactoryProps`](#construct-hub.S3StorageFactoryProps)
+
+---
+
+#### Methods <a name="Methods"></a>
+
+##### `newBucket` <a name="construct-hub.S3StorageFactory.newBucket"></a>
+
+```typescript
+public newBucket(scope: Construct, id: string, props?: BucketProps)
+```
+
+###### `scope`<sup>Required</sup> <a name="construct-hub.S3StorageFactory.parameter.scope"></a>
+
+- *Type:* [`@aws-cdk/core.Construct`](#@aws-cdk/core.Construct)
+
+---
+
+###### `id`<sup>Required</sup> <a name="construct-hub.S3StorageFactory.parameter.id"></a>
+
+- *Type:* `string`
+
+---
+
+###### `props`<sup>Optional</sup> <a name="construct-hub.S3StorageFactory.parameter.props"></a>
+
+- *Type:* [`@aws-cdk/aws-s3.BucketProps`](#@aws-cdk/aws-s3.BucketProps)
+
+---
+
+
+
 
 ### SpdxLicense <a name="construct-hub.SpdxLicense"></a>
 
