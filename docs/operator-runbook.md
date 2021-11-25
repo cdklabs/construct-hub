@@ -34,6 +34,8 @@ aws s3 sync s3://construct-hub-dev-constructhubsourcesnpmjsstaging-14eppmcw5vsr3
 aws s3 sync s3://construct-hub-dev-constructhubwebappwebsitebucket-49110nn5q2ro s3://construct-hub-dev-constructhubwebappfailoverwebsi-1o2u8fix6ujdi
 ```
 
+> Its recommended you run these commands from within the AWS network, preferably in the same region as the deployment.
+
 Once these commands finish, all your data will be backed up into the failover buckets, and you should be ready.
 When storage related disaster strikes, simply activate the failover buckets:
 

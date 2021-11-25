@@ -204,7 +204,7 @@ async function loadLastTransactionMarker(
     const dbUpdateSeq = (await registry.info()).update_seq;
     if (dbUpdateSeq < data.marker) {
       console.warn(`Current DB update_seq (${dbUpdateSeq}) is lower than marker (CouchDB instance was likely replaced), resetting to 0!`);
-      return { marker: '6121592', knownVersions: data.knownVersion };
+      return { marker: '0', knownVersions: data.knownVersion };
     }
 
     return data;
@@ -213,7 +213,7 @@ async function loadLastTransactionMarker(
       throw error;
     }
     console.warn(`Marker object (s3://${stagingBucket}/${MARKER_FILE_NAME}) does not exist, starting from scratch`);
-    return { marker: '6121592', knownVersions: new Map() };
+    return { marker: '0', knownVersions: new Map() };
   }
 }
 
