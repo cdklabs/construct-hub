@@ -318,6 +318,23 @@ Connect the hub to a domain (requires a hosted zone and a certificate).
 
 ---
 
+##### `failoverStorageActive`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.failoverStorageActive"></a>
+
+```typescript
+public readonly failoverStorageActive: boolean;
+```
+
+- *Type:* `boolean`
+- *Default:* false
+
+Wire construct hub to use the failover storage buckets.
+
+Do not activate this property until you've populated your failover buckets with the necessary data.
+
+> https://github.com/cdklabs/construct-hub#activate-storage-failover
+
+---
+
 ##### `featuredPackages`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.featuredPackages"></a>
 
 ```typescript
@@ -418,26 +435,6 @@ public readonly packageTags: PackageTag[];
 - *Type:* [`construct-hub.PackageTag`](#construct-hub.PackageTag)[]
 
 Configuration for custom package tags.
-
----
-
-##### `s3FailoverActive`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.s3FailoverActive"></a>
-
-```typescript
-public readonly s3FailoverActive: boolean;
-```
-
-- *Type:* `boolean`
-
----
-
-##### `s3FailoverEnabled`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.s3FailoverEnabled"></a>
-
-```typescript
-public readonly s3FailoverEnabled: boolean;
-```
-
-- *Type:* `boolean`
 
 ---
 
@@ -1276,6 +1273,8 @@ public readonly condition: TagConditionConfig;
 
 ### S3StorageFactoryProps <a name="construct-hub.S3StorageFactoryProps"></a>
 
+Properties for `S3StorageFactory`.
+
 #### Initializer <a name="[object Object].Initializer"></a>
 
 ```typescript
@@ -1288,16 +1287,6 @@ const s3StorageFactoryProps: S3StorageFactoryProps = { ... }
 
 ```typescript
 public readonly failoverActive: boolean;
-```
-
-- *Type:* `boolean`
-
----
-
-##### `failoverEnabled`<sup>Optional</sup> <a name="construct-hub.S3StorageFactoryProps.property.failoverEnabled"></a>
-
-```typescript
-public readonly failoverEnabled: boolean;
 ```
 
 - *Type:* `boolean`
@@ -1393,6 +1382,8 @@ public readonly value: string;
 ## Classes <a name="Classes"></a>
 
 ### S3StorageFactory <a name="construct-hub.S3StorageFactory"></a>
+
+Create s3 storage resources.
 
 #### Initializers <a name="construct-hub.S3StorageFactory.Initializer"></a>
 

@@ -150,9 +150,16 @@ export interface ConstructHubProps {
    */
   readonly categories?: Category[];
 
-  readonly s3FailoverEnabled?: boolean;
-
-  readonly s3FailoverActive?: boolean;
+  /**
+   * Wire construct hub to use the failover storage buckets.
+   *
+   * Do not activate this property until you've populated your failover buckets
+   * with the necessary data.
+   *
+   * @see https://github.com/cdklabs/construct-hub/blob/dev/docs/operator-runbook.md#storage-disaster
+   * @default false
+   */
+  readonly failoverStorageActive?: boolean;
 
 }
 
@@ -190,8 +197,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     }
 
     const storageFactory = new S3StorageFactory({
-      failoverEnabled: props.s3FailoverEnabled,
-      failoverActive: props.s3FailoverActive,
+      failoverActive: props.failoverStorageActive,
     });
 
     const monitoring = new Monitoring(this, 'Monitoring', {

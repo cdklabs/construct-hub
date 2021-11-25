@@ -3,6 +3,24 @@
 exports[`defaults - empty deny list 1`] = `
 Object {
   "Outputs": Object {
+    "DenyListSnapshotCommand31529C83": Object {
+      "Description": "Snapshot Default/DenyList/Bucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "DenyListBucketC1C9D3D9",
+            },
+            " s3://",
+            Object {
+              "Ref": "DenyListFailoverBucketC0405145",
+            },
+          ],
+        ],
+      },
+    },
     "MonitoringWatchfulWatchfulDashboard1D7DDB1C": Object {
       "Value": Object {
         "Fn::Join": Array [
@@ -770,6 +788,84 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       Object {
                         "Fn::GetAtt": Array [
                           "DenyListBucketC1C9D3D9",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "DenyListFailoverBucketC0405145": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "DenyListFailoverBucketPolicy7EF208CC": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "DenyListFailoverBucketC0405145",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "DenyListFailoverBucketC0405145",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "DenyListFailoverBucketC0405145",
                           "Arn",
                         ],
                       },

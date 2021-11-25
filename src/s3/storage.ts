@@ -1,44 +1,45 @@
-import { Bucket, BucketProps } from '@aws-cdk/aws-s3';
-import { Construct } from '@aws-cdk/core';
+import * as s3 from '@aws-cdk/aws-s3';
+import { CfnOutput, Construct, Tags } from '@aws-cdk/core';
 
+/**
+ * Properties for `S3StorageFactory`
+ */
 export interface S3StorageFactoryProps {
-
-  readonly failoverEnabled?: boolean;
-
   readonly failoverActive?: boolean;
 }
 
+/**
+ * Create s3 storage resources.
+ */
 export class S3StorageFactory {
 
-  private failoverEnabled: boolean;
   private failoverActive: boolean;
 
   constructor(props: S3StorageFactoryProps = {}) {
-
-    this.failoverEnabled = props.failoverEnabled ?? false;
     this.failoverActive = props.failoverActive ?? false;
-
-    if (this.failoverActive && !this.failoverEnabled) {
-      throw new Error('Unable to activate failover buckets since failover is not enabled');
-    }
-
   };
 
-  public newBucket(scope: Construct, id: string, props?: BucketProps): Bucket {
+  public newBucket(scope: Construct, id: string, props?: s3.BucketProps): s3.Bucket {
 
-    const primary = new Bucket(scope, id, props);
-    const failover = this.failoverEnabled ? new Bucket(scope, `${id}Failover`, props) : undefined;
+    function failoverFor(bucket: s3.Bucket): s3.Bucket {
+      const _failover = new s3.Bucket(scope, `Failover${id}`, props);
+      Tags.of(_failover).add('failover', 'true');
 
-    if (!this.failoverActive) {
-      return primary;
+      new CfnOutput(scope, 'SnapshotCommand', {
+        description: `Snapshot ${bucket.node.path}`,
+        value: `aws s3 sync s3://${bucket.bucketName} s3://${_failover.bucketName}`,
+      });
+      return _failover;
     }
 
-    // shouldn't happen, constructor validation prevents it
-    if (!failover) {
-      throw new Error(`Unable to activate failover bucket for primary ${primary.node.path} since failover is not enabled`);
-    }
+    const primary = new s3.Bucket(scope, id, props);
 
-    return failover;
+    // note that we create the failover bucket even if we don't currently use it.
+    // this is because conditioning bucket creation will eventually fail since buckets
+    // are normally retained.
+    const failover = failoverFor(primary);
+
+    return this.failoverActive ? failover : primary;
   }
 
 }

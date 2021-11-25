@@ -2,6 +2,26 @@
 
 exports[`default configuration 1`] = `
 Object {
+  "Outputs": Object {
+    "SnapshotCommand": Object {
+      "Description": "Snapshot Test/fake--path--to--repository--StagingBucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "fakepathtorepositoryStagingBucketF571B2BA",
+            },
+            " s3://",
+            Object {
+              "Ref": "FailoverfakepathtorepositoryStagingBucket6DEF61AC",
+            },
+          ],
+        ],
+      },
+    },
+  },
   "Parameters": Object {
     "AssetParametersbd02975c01dfc0707eba4f47e621cd3535a267fe3b45c2763fd80ae63df16e07ArtifactHash0A337E6A": Object {
       "Description": "Artifact hash for asset \\"bd02975c01dfc0707eba4f47e621cd3535a267fe3b45c2763fd80ae63df16e07\\"",
@@ -17,6 +37,80 @@ Object {
     },
   },
   "Resources": Object {
+    "FailoverfakepathtorepositoryStagingBucket6DEF61AC": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "ExpirationInDays": 30,
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "FailoverfakepathtorepositoryStagingBucketPolicyAE020014": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "FailoverfakepathtorepositoryStagingBucket6DEF61AC",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "FailoverfakepathtorepositoryStagingBucket6DEF61AC",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "FailoverfakepathtorepositoryStagingBucket6DEF61AC",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "MockIngestionRole7B5CD59F": Object {
       "Type": "AWS::IAM::User",
     },
