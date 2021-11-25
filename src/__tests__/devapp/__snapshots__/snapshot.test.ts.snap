@@ -4704,20 +4704,6 @@ Resources:
                       - ConstructHubWebAppWebsiteBucket4B2B9DB2
                       - Arn
                   - /*
-          - Action: s3:GetObject
-            Effect: Allow
-            Principal:
-              CanonicalUser:
-                Fn::GetAtt:
-                  - ConstructHubWebAppDistributionOrigin3S3Origin978233F9
-                  - S3CanonicalUserId
-            Resource:
-              Fn::Join:
-                - ""
-                - - Fn::GetAtt:
-                      - ConstructHubWebAppWebsiteBucket4B2B9DB2
-                      - Arn
-                  - /*
         Version: 2012-10-17
   ConstructHubWebAppAddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7E9FDB69:
     Type: AWS::CloudFront::Function
@@ -4794,17 +4780,6 @@ Resources:
             PathPattern: /stats.json
             TargetOriginId: devConstructHubWebAppDistributionOrigin2A726FD66
             ViewerProtocolPolicy: allow-all
-          - CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad
-            Compress: true
-            FunctionAssociations:
-              - EventType: viewer-response
-                FunctionARN:
-                  Fn::GetAtt:
-                    - ConstructHubWebAppAddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7E9FDB69
-                    - FunctionARN
-            PathPattern: /*
-            TargetOriginId: devConstructHubWebAppDistributionOrigin37A24F07B
-            ViewerProtocolPolicy: allow-all
         CustomErrorResponses:
           - ErrorCode: 404
             ResponseCode: 200
@@ -4850,27 +4825,11 @@ Resources:
                   - ""
                   - - origin-access-identity/cloudfront/
                     - Ref: ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4
-          - DomainName:
-              Fn::GetAtt:
-                - ConstructHubWebAppWebsiteBucket4B2B9DB2
-                - RegionalDomainName
-            Id: devConstructHubWebAppDistributionOrigin37A24F07B
-            S3OriginConfig:
-              OriginAccessIdentity:
-                Fn::Join:
-                  - ""
-                  - - origin-access-identity/cloudfront/
-                    - Ref: ConstructHubWebAppDistributionOrigin3S3Origin978233F9
   ConstructHubWebAppDistributionOrigin2S3OriginDA7E7FF4:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
       CloudFrontOriginAccessIdentityConfig:
         Comment: Identity for devConstructHubWebAppDistributionOrigin2A726FD66
-  ConstructHubWebAppDistributionOrigin3S3Origin978233F9:
-    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
-    Properties:
-      CloudFrontOriginAccessIdentityConfig:
-        Comment: Identity for devConstructHubWebAppDistributionOrigin37A24F07B
   ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1:
     Type: AWS::Lambda::LayerVersion
     Properties:

@@ -8790,24 +8790,6 @@ function handler(event) {
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
-            Object {
-              "CachePolicyId": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
-              "Compress": true,
-              "FunctionAssociations": Array [
-                Object {
-                  "EventType": "viewer-response",
-                  "FunctionARN": Object {
-                    "Fn::GetAtt": Array [
-                      "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B",
-                      "FunctionARN",
-                    ],
-                  },
-                },
-              ],
-              "PathPattern": "/*",
-              "TargetOriginId": "TestConstructHubWebAppDistributionOrigin3043C2C45",
-              "ViewerProtocolPolicy": "allow-all",
-            },
           ],
           "CustomErrorResponses": Array [
             Object {
@@ -8887,28 +8869,6 @@ function handler(event) {
                 },
               },
             },
-            Object {
-              "DomainName": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubWebAppWebsiteBucket4B2B9DB2",
-                  "RegionalDomainName",
-                ],
-              },
-              "Id": "TestConstructHubWebAppDistributionOrigin3043C2C45",
-              "S3OriginConfig": Object {
-                "OriginAccessIdentity": Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      "origin-access-identity/cloudfront/",
-                      Object {
-                        "Ref": "ConstructHubWebAppDistributionOrigin3S3Origin978233F9",
-                      },
-                    ],
-                  ],
-                },
-              },
-            },
           ],
         },
       },
@@ -8926,14 +8886,6 @@ function handler(event) {
       "Properties": Object {
         "CloudFrontOriginAccessIdentityConfig": Object {
           "Comment": "Identity for TestConstructHubWebAppDistributionOrigin276090F90",
-        },
-      },
-      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
-    },
-    "ConstructHubWebAppDistributionOrigin3S3Origin978233F9": Object {
-      "Properties": Object {
-        "CloudFrontOriginAccessIdentityConfig": Object {
-          "Comment": "Identity for TestConstructHubWebAppDistributionOrigin3043C2C45",
         },
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
@@ -8999,32 +8951,6 @@ function handler(event) {
                 "CanonicalUser": Object {
                   "Fn::GetAtt": Array [
                     "ConstructHubWebAppDistributionOrigin1S3Origin694AF937",
-                    "S3CanonicalUserId",
-                  ],
-                },
-              },
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubWebAppWebsiteBucket4B2B9DB2",
-                        "Arn",
-                      ],
-                    },
-                    "/*",
-                  ],
-                ],
-              },
-            },
-            Object {
-              "Action": "s3:GetObject",
-              "Effect": "Allow",
-              "Principal": Object {
-                "CanonicalUser": Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubWebAppDistributionOrigin3S3Origin978233F9",
                     "S3CanonicalUserId",
                   ],
                 },
@@ -19274,24 +19200,6 @@ function handler(event) {
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
-            Object {
-              "CachePolicyId": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
-              "Compress": true,
-              "FunctionAssociations": Array [
-                Object {
-                  "EventType": "viewer-response",
-                  "FunctionARN": Object {
-                    "Fn::GetAtt": Array [
-                      "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B",
-                      "FunctionARN",
-                    ],
-                  },
-                },
-              ],
-              "PathPattern": "/*",
-              "TargetOriginId": "TestConstructHubWebAppDistributionOrigin3043C2C45",
-              "ViewerProtocolPolicy": "allow-all",
-            },
           ],
           "CustomErrorResponses": Array [
             Object {
@@ -19371,28 +19279,6 @@ function handler(event) {
                 },
               },
             },
-            Object {
-              "DomainName": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubWebAppWebsiteBucket4B2B9DB2",
-                  "RegionalDomainName",
-                ],
-              },
-              "Id": "TestConstructHubWebAppDistributionOrigin3043C2C45",
-              "S3OriginConfig": Object {
-                "OriginAccessIdentity": Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      "origin-access-identity/cloudfront/",
-                      Object {
-                        "Ref": "ConstructHubWebAppDistributionOrigin3S3Origin978233F9",
-                      },
-                    ],
-                  ],
-                },
-              },
-            },
           ],
         },
       },
@@ -19410,14 +19296,6 @@ function handler(event) {
       "Properties": Object {
         "CloudFrontOriginAccessIdentityConfig": Object {
           "Comment": "Identity for TestConstructHubWebAppDistributionOrigin276090F90",
-        },
-      },
-      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
-    },
-    "ConstructHubWebAppDistributionOrigin3S3Origin978233F9": Object {
-      "Properties": Object {
-        "CloudFrontOriginAccessIdentityConfig": Object {
-          "Comment": "Identity for TestConstructHubWebAppDistributionOrigin3043C2C45",
         },
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
@@ -19483,32 +19361,6 @@ function handler(event) {
                 "CanonicalUser": Object {
                   "Fn::GetAtt": Array [
                     "ConstructHubWebAppDistributionOrigin1S3Origin694AF937",
-                    "S3CanonicalUserId",
-                  ],
-                },
-              },
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubWebAppWebsiteBucket4B2B9DB2",
-                        "Arn",
-                      ],
-                    },
-                    "/*",
-                  ],
-                ],
-              },
-            },
-            Object {
-              "Action": "s3:GetObject",
-              "Effect": "Allow",
-              "Principal": Object {
-                "CanonicalUser": Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubWebAppDistributionOrigin3S3Origin978233F9",
                     "S3CanonicalUserId",
                   ],
                 },
@@ -29286,24 +29138,6 @@ function handler(event) {
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
-            Object {
-              "CachePolicyId": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
-              "Compress": true,
-              "FunctionAssociations": Array [
-                Object {
-                  "EventType": "viewer-response",
-                  "FunctionARN": Object {
-                    "Fn::GetAtt": Array [
-                      "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B",
-                      "FunctionARN",
-                    ],
-                  },
-                },
-              ],
-              "PathPattern": "/*",
-              "TargetOriginId": "TestConstructHubWebAppDistributionOrigin3043C2C45",
-              "ViewerProtocolPolicy": "allow-all",
-            },
           ],
           "CustomErrorResponses": Array [
             Object {
@@ -29383,28 +29217,6 @@ function handler(event) {
                 },
               },
             },
-            Object {
-              "DomainName": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubWebAppWebsiteBucket4B2B9DB2",
-                  "RegionalDomainName",
-                ],
-              },
-              "Id": "TestConstructHubWebAppDistributionOrigin3043C2C45",
-              "S3OriginConfig": Object {
-                "OriginAccessIdentity": Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      "origin-access-identity/cloudfront/",
-                      Object {
-                        "Ref": "ConstructHubWebAppDistributionOrigin3S3Origin978233F9",
-                      },
-                    ],
-                  ],
-                },
-              },
-            },
           ],
         },
       },
@@ -29422,14 +29234,6 @@ function handler(event) {
       "Properties": Object {
         "CloudFrontOriginAccessIdentityConfig": Object {
           "Comment": "Identity for TestConstructHubWebAppDistributionOrigin276090F90",
-        },
-      },
-      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
-    },
-    "ConstructHubWebAppDistributionOrigin3S3Origin978233F9": Object {
-      "Properties": Object {
-        "CloudFrontOriginAccessIdentityConfig": Object {
-          "Comment": "Identity for TestConstructHubWebAppDistributionOrigin3043C2C45",
         },
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
@@ -29495,32 +29299,6 @@ function handler(event) {
                 "CanonicalUser": Object {
                   "Fn::GetAtt": Array [
                     "ConstructHubWebAppDistributionOrigin1S3Origin694AF937",
-                    "S3CanonicalUserId",
-                  ],
-                },
-              },
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubWebAppWebsiteBucket4B2B9DB2",
-                        "Arn",
-                      ],
-                    },
-                    "/*",
-                  ],
-                ],
-              },
-            },
-            Object {
-              "Action": "s3:GetObject",
-              "Effect": "Allow",
-              "Principal": Object {
-                "CanonicalUser": Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubWebAppDistributionOrigin3S3Origin978233F9",
                     "S3CanonicalUserId",
                   ],
                 },
@@ -39545,24 +39323,6 @@ function handler(event) {
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
-            Object {
-              "CachePolicyId": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
-              "Compress": true,
-              "FunctionAssociations": Array [
-                Object {
-                  "EventType": "viewer-response",
-                  "FunctionARN": Object {
-                    "Fn::GetAtt": Array [
-                      "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B",
-                      "FunctionARN",
-                    ],
-                  },
-                },
-              ],
-              "PathPattern": "/*",
-              "TargetOriginId": "TestConstructHubWebAppDistributionOrigin3043C2C45",
-              "ViewerProtocolPolicy": "allow-all",
-            },
           ],
           "CustomErrorResponses": Array [
             Object {
@@ -39642,28 +39402,6 @@ function handler(event) {
                 },
               },
             },
-            Object {
-              "DomainName": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubWebAppWebsiteBucket4B2B9DB2",
-                  "RegionalDomainName",
-                ],
-              },
-              "Id": "TestConstructHubWebAppDistributionOrigin3043C2C45",
-              "S3OriginConfig": Object {
-                "OriginAccessIdentity": Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      "origin-access-identity/cloudfront/",
-                      Object {
-                        "Ref": "ConstructHubWebAppDistributionOrigin3S3Origin978233F9",
-                      },
-                    ],
-                  ],
-                },
-              },
-            },
           ],
           "ViewerCertificate": Object {
             "AcmCertificateArn": Object {
@@ -39691,14 +39429,6 @@ function handler(event) {
       "Properties": Object {
         "CloudFrontOriginAccessIdentityConfig": Object {
           "Comment": "Identity for TestConstructHubWebAppDistributionOrigin276090F90",
-        },
-      },
-      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
-    },
-    "ConstructHubWebAppDistributionOrigin3S3Origin978233F9": Object {
-      "Properties": Object {
-        "CloudFrontOriginAccessIdentityConfig": Object {
-          "Comment": "Identity for TestConstructHubWebAppDistributionOrigin3043C2C45",
         },
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
@@ -39978,32 +39708,6 @@ function handler(event) {
                 "CanonicalUser": Object {
                   "Fn::GetAtt": Array [
                     "ConstructHubWebAppDistributionOrigin1S3Origin694AF937",
-                    "S3CanonicalUserId",
-                  ],
-                },
-              },
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubWebAppWebsiteBucket4B2B9DB2",
-                        "Arn",
-                      ],
-                    },
-                    "/*",
-                  ],
-                ],
-              },
-            },
-            Object {
-              "Action": "s3:GetObject",
-              "Effect": "Allow",
-              "Principal": Object {
-                "CanonicalUser": Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubWebAppDistributionOrigin3S3Origin978233F9",
                     "S3CanonicalUserId",
                   ],
                 },
@@ -51614,24 +51318,6 @@ function handler(event) {
               "TargetOriginId": "TestConstructHubWebAppDistributionOrigin276090F90",
               "ViewerProtocolPolicy": "allow-all",
             },
-            Object {
-              "CachePolicyId": "4135ea2d-6df8-44a3-9df3-4b5a84be39ad",
-              "Compress": true,
-              "FunctionAssociations": Array [
-                Object {
-                  "EventType": "viewer-response",
-                  "FunctionARN": Object {
-                    "Fn::GetAtt": Array [
-                      "ConstructHubWebAppAddHeadersFunctionc857063c4ca4479335a883023351cba0df589f79c9AB4E325B",
-                      "FunctionARN",
-                    ],
-                  },
-                },
-              ],
-              "PathPattern": "/*",
-              "TargetOriginId": "TestConstructHubWebAppDistributionOrigin3043C2C45",
-              "ViewerProtocolPolicy": "allow-all",
-            },
           ],
           "CustomErrorResponses": Array [
             Object {
@@ -51711,28 +51397,6 @@ function handler(event) {
                 },
               },
             },
-            Object {
-              "DomainName": Object {
-                "Fn::GetAtt": Array [
-                  "ConstructHubWebAppWebsiteBucket4B2B9DB2",
-                  "RegionalDomainName",
-                ],
-              },
-              "Id": "TestConstructHubWebAppDistributionOrigin3043C2C45",
-              "S3OriginConfig": Object {
-                "OriginAccessIdentity": Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      "origin-access-identity/cloudfront/",
-                      Object {
-                        "Ref": "ConstructHubWebAppDistributionOrigin3S3Origin978233F9",
-                      },
-                    ],
-                  ],
-                },
-              },
-            },
           ],
         },
       },
@@ -51750,14 +51414,6 @@ function handler(event) {
       "Properties": Object {
         "CloudFrontOriginAccessIdentityConfig": Object {
           "Comment": "Identity for TestConstructHubWebAppDistributionOrigin276090F90",
-        },
-      },
-      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
-    },
-    "ConstructHubWebAppDistributionOrigin3S3Origin978233F9": Object {
-      "Properties": Object {
-        "CloudFrontOriginAccessIdentityConfig": Object {
-          "Comment": "Identity for TestConstructHubWebAppDistributionOrigin3043C2C45",
         },
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
@@ -51823,32 +51479,6 @@ function handler(event) {
                 "CanonicalUser": Object {
                   "Fn::GetAtt": Array [
                     "ConstructHubWebAppDistributionOrigin1S3Origin694AF937",
-                    "S3CanonicalUserId",
-                  ],
-                },
-              },
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubWebAppWebsiteBucket4B2B9DB2",
-                        "Arn",
-                      ],
-                    },
-                    "/*",
-                  ],
-                ],
-              },
-            },
-            Object {
-              "Action": "s3:GetObject",
-              "Effect": "Allow",
-              "Principal": Object {
-                "CanonicalUser": Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubWebAppDistributionOrigin3S3Origin978233F9",
                     "S3CanonicalUserId",
                   ],
                 },
