@@ -3,6 +3,60 @@
 exports[`minimal usage 1`] = `
 Object {
   "Outputs": Object {
+    "ConstructHubDenyListSnapshotCommand3E133B03": Object {
+      "Description": "Snapshot Test/ConstructHub/DenyList/Bucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubDenyListBucket1B3C2C2E",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubDenyListFailoverBucketBF1E05AD",
+            },
+          ],
+        ],
+      },
+    },
+    "ConstructHubIngestionSnapshotCommand746AF5B0": Object {
+      "Description": "Snapshot Test/ConstructHub/Ingestion/ConfigBucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubIngestionConfigBucket0F0ED0B6",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubIngestionFailoverConfigBucket079F82C3",
+            },
+          ],
+        ],
+      },
+    },
+    "ConstructHubLicenseListSnapshotCommandB9EA2EF4": Object {
+      "Description": "Snapshot Test/ConstructHub/LicenseList/Bucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubLicenseListBucket9334047F",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubLicenseListFailoverBucketA96D2AAF",
+            },
+          ],
+        ],
+      },
+    },
     "ConstructHubMonitoringWatchfulWatchfulDashboard75D318D0": Object {
       "Value": Object {
         "Fn::Join": Array [
@@ -20,6 +74,42 @@ Object {
         ],
       },
     },
+    "ConstructHubSnapshotCommandDD3886DA": Object {
+      "Description": "Snapshot Test/ConstructHub/PackageData",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubFailoverPackageDataBA7D3B85",
+            },
+          ],
+        ],
+      },
+    },
+    "ConstructHubSourcesSnapshotCommandB1EF760F": Object {
+      "Description": "Snapshot Test/ConstructHub/Sources/NpmJs--StagingBucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+            },
+          ],
+        ],
+      },
+    },
     "ConstructHubWebAppDomainNameDC10F8DD": Object {
       "Export": Object {
         "Name": "ConstructHubDomainName",
@@ -28,6 +118,24 @@ Object {
         "Fn::GetAtt": Array [
           "ConstructHubWebAppDistribution1F181DC9",
           "DomainName",
+        ],
+      },
+    },
+    "ConstructHubWebAppSnapshotCommandC5AF418E": Object {
+      "Description": "Snapshot Test/ConstructHub/WebApp/WebsiteBucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubWebAppWebsiteBucket4B2B9DB2",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+            },
+          ],
         ],
       },
     },
@@ -1019,7 +1127,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::CloudWatch::Dashboard",
     },
     "ConstructHubDenyListBucket1B3C2C2E": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -1041,7 +1149,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "ConstructHubDenyListBucketAllowBucketNotificationsToTestConstructHubDenyListPrunePruneHandler03826FC4A79351A0": Object {
       "Properties": Object {
@@ -1119,7 +1227,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "Ref": "ConstructHubDenyListBucket1B3C2C2E",
         },
         "Prune": true,
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -1249,6 +1357,84 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       Object {
                         "Fn::GetAtt": Array [
                           "ConstructHubDenyListBucket1B3C2C2E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "ConstructHubDenyListFailoverBucketBF1E05AD": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubDenyListFailoverBucketPolicy3B552017": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubDenyListFailoverBucketBF1E05AD",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubDenyListFailoverBucketBF1E05AD",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubDenyListFailoverBucketBF1E05AD",
                           "Arn",
                         ],
                       },
@@ -1677,6 +1863,113 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::EventSourceMapping",
     },
+    "ConstructHubFailoverPackageDataBA7D3B85": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "AbortIncompleteMultipartUpload": Object {
+                "DaysAfterInitiation": 1,
+              },
+              "Status": "Enabled",
+            },
+            Object {
+              "NoncurrentVersionTransitions": Array [
+                Object {
+                  "StorageClass": "STANDARD_IA",
+                  "TransitionInDays": 31,
+                },
+              ],
+              "Status": "Enabled",
+            },
+            Object {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpirationInDays": 90,
+              "Status": "Enabled",
+            },
+            Object {
+              "NoncurrentVersionExpirationInDays": 7,
+              "Prefix": "catalog.json",
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubFailoverPackageDataPolicy89BCDF76": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubFailoverPackageDataBA7D3B85",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubFailoverPackageDataBA7D3B85",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubFailoverPackageDataBA7D3B85",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "ConstructHubIngestion407909CE": Object {
       "DependsOn": Array [
         "ConstructHubIngestionServiceRoleDefaultPolicyC0D2B6F2",
@@ -2022,6 +2315,75 @@ Direct link to the function: /lambda/home#/functions/",
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubIngestionFailoverConfigBucket079F82C3": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubIngestionFailoverConfigBucketPolicyD45F3F6D": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubIngestionFailoverConfigBucket079F82C3",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubIngestionFailoverConfigBucket079F82C3",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubIngestionFailoverConfigBucket079F82C3",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "ConstructHubIngestionFailureAlarm9D0028DD": Object {
       "Properties": Object {
@@ -3198,7 +3560,7 @@ Direct link to function: /lambda/home#/functions/",
       "Type": "AWS::Lambda::LayerVersion",
     },
     "ConstructHubLicenseListBucket9334047F": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -3220,7 +3582,7 @@ Direct link to function: /lambda/home#/functions/",
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "ConstructHubLicenseListBucketPolicy817F92CD": Object {
       "Properties": Object {
@@ -3276,7 +3638,7 @@ Direct link to function: /lambda/home#/functions/",
           "Ref": "ConstructHubLicenseListBucket9334047F",
         },
         "Prune": true,
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -3326,6 +3688,84 @@ Direct link to function: /lambda/home#/functions/",
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubLicenseListFailoverBucketA96D2AAF": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubLicenseListFailoverBucketPolicy7F222A76": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubLicenseListFailoverBucketA96D2AAF",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubLicenseListFailoverBucketA96D2AAF",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubLicenseListFailoverBucketA96D2AAF",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "ConstructHubMonitoringHighSeverityDashboard8761DBAC": Object {
       "Properties": Object {
@@ -7155,6 +7595,81 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
+    "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "ExpirationInDays": 30,
+              "Prefix": "staged/",
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubSourcesFailoverNpmJsStagingBucketPolicy00182F29": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "ConstructHubSourcesNpmJs15A77D2D": Object {
       "DependsOn": Array [
         "ConstructHubLicenseListAwsCliLayer59592811",
@@ -8904,6 +9419,72 @@ function handler(event) {
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
     },
+    "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubWebAppFailoverWebsiteBucketPolicy7303D09F": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "ConstructHubWebAppWebsiteBucket4B2B9DB2": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
@@ -9955,6 +10536,60 @@ function handler(event) {
 exports[`piggy-backing on an existing CodeArtifact domain 1`] = `
 Object {
   "Outputs": Object {
+    "ConstructHubDenyListSnapshotCommand3E133B03": Object {
+      "Description": "Snapshot Test/ConstructHub/DenyList/Bucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubDenyListBucket1B3C2C2E",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubDenyListFailoverBucketBF1E05AD",
+            },
+          ],
+        ],
+      },
+    },
+    "ConstructHubIngestionSnapshotCommand746AF5B0": Object {
+      "Description": "Snapshot Test/ConstructHub/Ingestion/ConfigBucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubIngestionConfigBucket0F0ED0B6",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubIngestionFailoverConfigBucket079F82C3",
+            },
+          ],
+        ],
+      },
+    },
+    "ConstructHubLicenseListSnapshotCommandB9EA2EF4": Object {
+      "Description": "Snapshot Test/ConstructHub/LicenseList/Bucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubLicenseListBucket9334047F",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubLicenseListFailoverBucketA96D2AAF",
+            },
+          ],
+        ],
+      },
+    },
     "ConstructHubMonitoringWatchfulWatchfulDashboard75D318D0": Object {
       "Value": Object {
         "Fn::Join": Array [
@@ -9972,6 +10607,42 @@ Object {
         ],
       },
     },
+    "ConstructHubSnapshotCommandDD3886DA": Object {
+      "Description": "Snapshot Test/ConstructHub/PackageData",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubFailoverPackageDataBA7D3B85",
+            },
+          ],
+        ],
+      },
+    },
+    "ConstructHubSourcesSnapshotCommandB1EF760F": Object {
+      "Description": "Snapshot Test/ConstructHub/Sources/NpmJs--StagingBucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+            },
+          ],
+        ],
+      },
+    },
     "ConstructHubWebAppDomainNameDC10F8DD": Object {
       "Export": Object {
         "Name": "ConstructHubDomainName",
@@ -9980,6 +10651,24 @@ Object {
         "Fn::GetAtt": Array [
           "ConstructHubWebAppDistribution1F181DC9",
           "DomainName",
+        ],
+      },
+    },
+    "ConstructHubWebAppSnapshotCommandC5AF418E": Object {
+      "Description": "Snapshot Test/ConstructHub/WebApp/WebsiteBucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubWebAppWebsiteBucket4B2B9DB2",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+            },
+          ],
         ],
       },
     },
@@ -11272,7 +11961,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::IAM::Policy",
     },
     "ConstructHubDenyListBucket1B3C2C2E": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -11294,7 +11983,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "ConstructHubDenyListBucketAllowBucketNotificationsToTestConstructHubDenyListPrunePruneHandler03826FC4A79351A0": Object {
       "Properties": Object {
@@ -11372,7 +12061,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "Ref": "ConstructHubDenyListBucket1B3C2C2E",
         },
         "Prune": true,
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -11502,6 +12191,84 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       Object {
                         "Fn::GetAtt": Array [
                           "ConstructHubDenyListBucket1B3C2C2E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "ConstructHubDenyListFailoverBucketBF1E05AD": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubDenyListFailoverBucketPolicy3B552017": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubDenyListFailoverBucketBF1E05AD",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubDenyListFailoverBucketBF1E05AD",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubDenyListFailoverBucketBF1E05AD",
                           "Arn",
                         ],
                       },
@@ -11930,6 +12697,113 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::EventSourceMapping",
     },
+    "ConstructHubFailoverPackageDataBA7D3B85": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "AbortIncompleteMultipartUpload": Object {
+                "DaysAfterInitiation": 1,
+              },
+              "Status": "Enabled",
+            },
+            Object {
+              "NoncurrentVersionTransitions": Array [
+                Object {
+                  "StorageClass": "STANDARD_IA",
+                  "TransitionInDays": 31,
+                },
+              ],
+              "Status": "Enabled",
+            },
+            Object {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpirationInDays": 90,
+              "Status": "Enabled",
+            },
+            Object {
+              "NoncurrentVersionExpirationInDays": 7,
+              "Prefix": "catalog.json",
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubFailoverPackageDataPolicy89BCDF76": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubFailoverPackageDataBA7D3B85",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubFailoverPackageDataBA7D3B85",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubFailoverPackageDataBA7D3B85",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "ConstructHubIngestion407909CE": Object {
       "DependsOn": Array [
         "ConstructHubIngestionServiceRoleDefaultPolicyC0D2B6F2",
@@ -12293,6 +13167,75 @@ Direct link to the function: /lambda/home#/functions/",
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubIngestionFailoverConfigBucket079F82C3": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubIngestionFailoverConfigBucketPolicyD45F3F6D": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubIngestionFailoverConfigBucket079F82C3",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubIngestionFailoverConfigBucket079F82C3",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubIngestionFailoverConfigBucket079F82C3",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "ConstructHubIngestionFailureAlarm9D0028DD": Object {
       "Properties": Object {
@@ -13549,7 +14492,7 @@ Direct link to function: /lambda/home#/functions/",
       "Type": "AWS::Lambda::LayerVersion",
     },
     "ConstructHubLicenseListBucket9334047F": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -13571,7 +14514,7 @@ Direct link to function: /lambda/home#/functions/",
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "ConstructHubLicenseListBucketPolicy817F92CD": Object {
       "Properties": Object {
@@ -13627,7 +14570,7 @@ Direct link to function: /lambda/home#/functions/",
           "Ref": "ConstructHubLicenseListBucket9334047F",
         },
         "Prune": true,
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -13677,6 +14620,84 @@ Direct link to function: /lambda/home#/functions/",
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubLicenseListFailoverBucketA96D2AAF": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubLicenseListFailoverBucketPolicy7F222A76": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubLicenseListFailoverBucketA96D2AAF",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubLicenseListFailoverBucketA96D2AAF",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubLicenseListFailoverBucketA96D2AAF",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "ConstructHubMonitoringHighSeverityDashboard8761DBAC": Object {
       "Properties": Object {
@@ -17579,6 +18600,81 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
+    "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "ExpirationInDays": 30,
+              "Prefix": "staged/",
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubSourcesFailoverNpmJsStagingBucketPolicy00182F29": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "ConstructHubSourcesNpmJs15A77D2D": Object {
       "DependsOn": Array [
         "ConstructHubLicenseListAwsCliLayer59592811",
@@ -19328,6 +20424,72 @@ function handler(event) {
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
     },
+    "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubWebAppFailoverWebsiteBucketPolicy7303D09F": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "ConstructHubWebAppWebsiteBucket4B2B9DB2": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
@@ -20379,6 +21541,60 @@ function handler(event) {
 exports[`with all internet access 1`] = `
 Object {
   "Outputs": Object {
+    "ConstructHubDenyListSnapshotCommand3E133B03": Object {
+      "Description": "Snapshot Test/ConstructHub/DenyList/Bucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubDenyListBucket1B3C2C2E",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubDenyListFailoverBucketBF1E05AD",
+            },
+          ],
+        ],
+      },
+    },
+    "ConstructHubIngestionSnapshotCommand746AF5B0": Object {
+      "Description": "Snapshot Test/ConstructHub/Ingestion/ConfigBucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubIngestionConfigBucket0F0ED0B6",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubIngestionFailoverConfigBucket079F82C3",
+            },
+          ],
+        ],
+      },
+    },
+    "ConstructHubLicenseListSnapshotCommandB9EA2EF4": Object {
+      "Description": "Snapshot Test/ConstructHub/LicenseList/Bucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubLicenseListBucket9334047F",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubLicenseListFailoverBucketA96D2AAF",
+            },
+          ],
+        ],
+      },
+    },
     "ConstructHubMonitoringWatchfulWatchfulDashboard75D318D0": Object {
       "Value": Object {
         "Fn::Join": Array [
@@ -20396,6 +21612,42 @@ Object {
         ],
       },
     },
+    "ConstructHubSnapshotCommandDD3886DA": Object {
+      "Description": "Snapshot Test/ConstructHub/PackageData",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubFailoverPackageDataBA7D3B85",
+            },
+          ],
+        ],
+      },
+    },
+    "ConstructHubSourcesSnapshotCommandB1EF760F": Object {
+      "Description": "Snapshot Test/ConstructHub/Sources/NpmJs--StagingBucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+            },
+          ],
+        ],
+      },
+    },
     "ConstructHubWebAppDomainNameDC10F8DD": Object {
       "Export": Object {
         "Name": "ConstructHubDomainName",
@@ -20404,6 +21656,24 @@ Object {
         "Fn::GetAtt": Array [
           "ConstructHubWebAppDistribution1F181DC9",
           "DomainName",
+        ],
+      },
+    },
+    "ConstructHubWebAppSnapshotCommandC5AF418E": Object {
+      "Description": "Snapshot Test/ConstructHub/WebApp/WebsiteBucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubWebAppWebsiteBucket4B2B9DB2",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+            },
+          ],
         ],
       },
     },
@@ -21395,7 +22665,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::CloudWatch::Dashboard",
     },
     "ConstructHubDenyListBucket1B3C2C2E": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -21417,7 +22687,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "ConstructHubDenyListBucketAllowBucketNotificationsToTestConstructHubDenyListPrunePruneHandler03826FC4A79351A0": Object {
       "Properties": Object {
@@ -21495,7 +22765,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "Ref": "ConstructHubDenyListBucket1B3C2C2E",
         },
         "Prune": true,
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -21625,6 +22895,84 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       Object {
                         "Fn::GetAtt": Array [
                           "ConstructHubDenyListBucket1B3C2C2E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "ConstructHubDenyListFailoverBucketBF1E05AD": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubDenyListFailoverBucketPolicy3B552017": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubDenyListFailoverBucketBF1E05AD",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubDenyListFailoverBucketBF1E05AD",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubDenyListFailoverBucketBF1E05AD",
                           "Arn",
                         ],
                       },
@@ -22053,6 +23401,113 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::EventSourceMapping",
     },
+    "ConstructHubFailoverPackageDataBA7D3B85": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "AbortIncompleteMultipartUpload": Object {
+                "DaysAfterInitiation": 1,
+              },
+              "Status": "Enabled",
+            },
+            Object {
+              "NoncurrentVersionTransitions": Array [
+                Object {
+                  "StorageClass": "STANDARD_IA",
+                  "TransitionInDays": 31,
+                },
+              ],
+              "Status": "Enabled",
+            },
+            Object {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpirationInDays": 90,
+              "Status": "Enabled",
+            },
+            Object {
+              "NoncurrentVersionExpirationInDays": 7,
+              "Prefix": "catalog.json",
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubFailoverPackageDataPolicy89BCDF76": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubFailoverPackageDataBA7D3B85",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubFailoverPackageDataBA7D3B85",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubFailoverPackageDataBA7D3B85",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "ConstructHubIngestion407909CE": Object {
       "DependsOn": Array [
         "ConstructHubIngestionServiceRoleDefaultPolicyC0D2B6F2",
@@ -22398,6 +23853,75 @@ Direct link to the function: /lambda/home#/functions/",
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubIngestionFailoverConfigBucket079F82C3": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubIngestionFailoverConfigBucketPolicyD45F3F6D": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubIngestionFailoverConfigBucket079F82C3",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubIngestionFailoverConfigBucket079F82C3",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubIngestionFailoverConfigBucket079F82C3",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "ConstructHubIngestionFailureAlarm9D0028DD": Object {
       "Properties": Object {
@@ -23574,7 +25098,7 @@ Direct link to function: /lambda/home#/functions/",
       "Type": "AWS::Lambda::LayerVersion",
     },
     "ConstructHubLicenseListBucket9334047F": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -23596,7 +25120,7 @@ Direct link to function: /lambda/home#/functions/",
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "ConstructHubLicenseListBucketPolicy817F92CD": Object {
       "Properties": Object {
@@ -23652,7 +25176,7 @@ Direct link to function: /lambda/home#/functions/",
           "Ref": "ConstructHubLicenseListBucket9334047F",
         },
         "Prune": true,
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -23702,6 +25226,84 @@ Direct link to function: /lambda/home#/functions/",
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubLicenseListFailoverBucketA96D2AAF": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubLicenseListFailoverBucketPolicy7F222A76": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubLicenseListFailoverBucketA96D2AAF",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubLicenseListFailoverBucketA96D2AAF",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubLicenseListFailoverBucketA96D2AAF",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "ConstructHubMonitoringHighSeverityDashboard8761DBAC": Object {
       "Properties": Object {
@@ -27531,6 +29133,81 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
+    "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "ExpirationInDays": 30,
+              "Prefix": "staged/",
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubSourcesFailoverNpmJsStagingBucketPolicy00182F29": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "ConstructHubSourcesNpmJs15A77D2D": Object {
       "DependsOn": Array [
         "ConstructHubLicenseListAwsCliLayer59592811",
@@ -29280,6 +30957,72 @@ function handler(event) {
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
     },
+    "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubWebAppFailoverWebsiteBucketPolicy7303D09F": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "ConstructHubWebAppWebsiteBucket4B2B9DB2": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
@@ -30341,6 +32084,60 @@ Object {
     },
   },
   "Outputs": Object {
+    "ConstructHubDenyListSnapshotCommand3E133B03": Object {
+      "Description": "Snapshot Test/ConstructHub/DenyList/Bucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubDenyListBucket1B3C2C2E",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubDenyListFailoverBucketBF1E05AD",
+            },
+          ],
+        ],
+      },
+    },
+    "ConstructHubIngestionSnapshotCommand746AF5B0": Object {
+      "Description": "Snapshot Test/ConstructHub/Ingestion/ConfigBucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubIngestionConfigBucket0F0ED0B6",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubIngestionFailoverConfigBucket079F82C3",
+            },
+          ],
+        ],
+      },
+    },
+    "ConstructHubLicenseListSnapshotCommandB9EA2EF4": Object {
+      "Description": "Snapshot Test/ConstructHub/LicenseList/Bucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubLicenseListBucket9334047F",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubLicenseListFailoverBucketA96D2AAF",
+            },
+          ],
+        ],
+      },
+    },
     "ConstructHubMonitoringWatchfulWatchfulDashboard75D318D0": Object {
       "Value": Object {
         "Fn::Join": Array [
@@ -30358,6 +32155,42 @@ Object {
         ],
       },
     },
+    "ConstructHubSnapshotCommandDD3886DA": Object {
+      "Description": "Snapshot Test/ConstructHub/PackageData",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubFailoverPackageDataBA7D3B85",
+            },
+          ],
+        ],
+      },
+    },
+    "ConstructHubSourcesSnapshotCommandB1EF760F": Object {
+      "Description": "Snapshot Test/ConstructHub/Sources/NpmJs--StagingBucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+            },
+          ],
+        ],
+      },
+    },
     "ConstructHubWebAppDomainNameDC10F8DD": Object {
       "Export": Object {
         "Name": "ConstructHubDomainName",
@@ -30366,6 +32199,24 @@ Object {
         "Fn::GetAtt": Array [
           "ConstructHubWebAppDistribution1F181DC9",
           "DomainName",
+        ],
+      },
+    },
+    "ConstructHubWebAppSnapshotCommandC5AF418E": Object {
+      "Description": "Snapshot Test/ConstructHub/WebApp/WebsiteBucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubWebAppWebsiteBucket4B2B9DB2",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+            },
+          ],
         ],
       },
     },
@@ -31530,7 +33381,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::CloudWatch::Dashboard",
     },
     "ConstructHubDenyListBucket1B3C2C2E": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -31552,7 +33403,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "ConstructHubDenyListBucketAllowBucketNotificationsToTestConstructHubDenyListPrunePruneHandler03826FC4A79351A0": Object {
       "Properties": Object {
@@ -31630,7 +33481,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "Ref": "ConstructHubDenyListBucket1B3C2C2E",
         },
         "Prune": true,
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -31760,6 +33611,84 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       Object {
                         "Fn::GetAtt": Array [
                           "ConstructHubDenyListBucket1B3C2C2E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "ConstructHubDenyListFailoverBucketBF1E05AD": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubDenyListFailoverBucketPolicy3B552017": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubDenyListFailoverBucketBF1E05AD",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubDenyListFailoverBucketBF1E05AD",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubDenyListFailoverBucketBF1E05AD",
                           "Arn",
                         ],
                       },
@@ -32188,6 +34117,113 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::EventSourceMapping",
     },
+    "ConstructHubFailoverPackageDataBA7D3B85": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "AbortIncompleteMultipartUpload": Object {
+                "DaysAfterInitiation": 1,
+              },
+              "Status": "Enabled",
+            },
+            Object {
+              "NoncurrentVersionTransitions": Array [
+                Object {
+                  "StorageClass": "STANDARD_IA",
+                  "TransitionInDays": 31,
+                },
+              ],
+              "Status": "Enabled",
+            },
+            Object {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpirationInDays": 90,
+              "Status": "Enabled",
+            },
+            Object {
+              "NoncurrentVersionExpirationInDays": 7,
+              "Prefix": "catalog.json",
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubFailoverPackageDataPolicy89BCDF76": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubFailoverPackageDataBA7D3B85",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubFailoverPackageDataBA7D3B85",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubFailoverPackageDataBA7D3B85",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "ConstructHubIngestion407909CE": Object {
       "DependsOn": Array [
         "ConstructHubIngestionServiceRoleDefaultPolicyC0D2B6F2",
@@ -32533,6 +34569,75 @@ Direct link to the function: /lambda/home#/functions/",
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubIngestionFailoverConfigBucket079F82C3": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubIngestionFailoverConfigBucketPolicyD45F3F6D": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubIngestionFailoverConfigBucket079F82C3",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubIngestionFailoverConfigBucket079F82C3",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubIngestionFailoverConfigBucket079F82C3",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "ConstructHubIngestionFailureAlarm9D0028DD": Object {
       "Properties": Object {
@@ -33709,7 +35814,7 @@ Direct link to function: /lambda/home#/functions/",
       "Type": "AWS::Lambda::LayerVersion",
     },
     "ConstructHubLicenseListBucket9334047F": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -33731,7 +35836,7 @@ Direct link to function: /lambda/home#/functions/",
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "ConstructHubLicenseListBucketPolicy817F92CD": Object {
       "Properties": Object {
@@ -33787,7 +35892,7 @@ Direct link to function: /lambda/home#/functions/",
           "Ref": "ConstructHubLicenseListBucket9334047F",
         },
         "Prune": true,
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -33837,6 +35942,84 @@ Direct link to function: /lambda/home#/functions/",
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubLicenseListFailoverBucketA96D2AAF": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubLicenseListFailoverBucketPolicy7F222A76": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubLicenseListFailoverBucketA96D2AAF",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubLicenseListFailoverBucketA96D2AAF",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubLicenseListFailoverBucketA96D2AAF",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "ConstructHubMonitoringHighSeverityDashboard8761DBAC": Object {
       "Properties": Object {
@@ -37688,6 +39871,81 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
+    "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "ExpirationInDays": 30,
+              "Prefix": "staged/",
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubSourcesFailoverNpmJsStagingBucketPolicy00182F29": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "ConstructHubSourcesNpmJs15A77D2D": Object {
       "DependsOn": Array [
         "ConstructHubLicenseListAwsCliLayer59592811",
@@ -39703,6 +41961,72 @@ function handler(event) {
       },
       "Type": "AWS::IAM::Role",
     },
+    "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubWebAppFailoverWebsiteBucketPolicy7303D09F": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "ConstructHubWebAppWebsiteBucket4B2B9DB2": Object {
       "DeletionPolicy": "Retain",
       "Properties": Object {
@@ -40754,6 +43078,60 @@ function handler(event) {
 exports[`with limited internet access 1`] = `
 Object {
   "Outputs": Object {
+    "ConstructHubDenyListSnapshotCommand3E133B03": Object {
+      "Description": "Snapshot Test/ConstructHub/DenyList/Bucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubDenyListBucket1B3C2C2E",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubDenyListFailoverBucketBF1E05AD",
+            },
+          ],
+        ],
+      },
+    },
+    "ConstructHubIngestionSnapshotCommand746AF5B0": Object {
+      "Description": "Snapshot Test/ConstructHub/Ingestion/ConfigBucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubIngestionConfigBucket0F0ED0B6",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubIngestionFailoverConfigBucket079F82C3",
+            },
+          ],
+        ],
+      },
+    },
+    "ConstructHubLicenseListSnapshotCommandB9EA2EF4": Object {
+      "Description": "Snapshot Test/ConstructHub/LicenseList/Bucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubLicenseListBucket9334047F",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubLicenseListFailoverBucketA96D2AAF",
+            },
+          ],
+        ],
+      },
+    },
     "ConstructHubMonitoringWatchfulWatchfulDashboard75D318D0": Object {
       "Value": Object {
         "Fn::Join": Array [
@@ -40771,6 +43149,42 @@ Object {
         ],
       },
     },
+    "ConstructHubSnapshotCommandDD3886DA": Object {
+      "Description": "Snapshot Test/ConstructHub/PackageData",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubPackageDataDC5EF35E",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubFailoverPackageDataBA7D3B85",
+            },
+          ],
+        ],
+      },
+    },
+    "ConstructHubSourcesSnapshotCommandB1EF760F": Object {
+      "Description": "Snapshot Test/ConstructHub/Sources/NpmJs--StagingBucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubSourcesNpmJsStagingBucketB286F0E6",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+            },
+          ],
+        ],
+      },
+    },
     "ConstructHubWebAppDomainNameDC10F8DD": Object {
       "Export": Object {
         "Name": "ConstructHubDomainName",
@@ -40779,6 +43193,24 @@ Object {
         "Fn::GetAtt": Array [
           "ConstructHubWebAppDistribution1F181DC9",
           "DomainName",
+        ],
+      },
+    },
+    "ConstructHubWebAppSnapshotCommandC5AF418E": Object {
+      "Description": "Snapshot Test/ConstructHub/WebApp/WebsiteBucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "ConstructHubWebAppWebsiteBucket4B2B9DB2",
+            },
+            " s3://",
+            Object {
+              "Ref": "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+            },
+          ],
         ],
       },
     },
@@ -41891,7 +44323,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::CloudWatch::Dashboard",
     },
     "ConstructHubDenyListBucket1B3C2C2E": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -41913,7 +44345,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "ConstructHubDenyListBucketAllowBucketNotificationsToTestConstructHubDenyListPrunePruneHandler03826FC4A79351A0": Object {
       "Properties": Object {
@@ -41991,7 +44423,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "Ref": "ConstructHubDenyListBucket1B3C2C2E",
         },
         "Prune": true,
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -42121,6 +44553,84 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                       Object {
                         "Fn::GetAtt": Array [
                           "ConstructHubDenyListBucket1B3C2C2E",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "ConstructHubDenyListFailoverBucketBF1E05AD": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubDenyListFailoverBucketPolicy3B552017": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubDenyListFailoverBucketBF1E05AD",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubDenyListFailoverBucketBF1E05AD",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubDenyListFailoverBucketBF1E05AD",
                           "Arn",
                         ],
                       },
@@ -42549,6 +45059,113 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::EventSourceMapping",
     },
+    "ConstructHubFailoverPackageDataBA7D3B85": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "AbortIncompleteMultipartUpload": Object {
+                "DaysAfterInitiation": 1,
+              },
+              "Status": "Enabled",
+            },
+            Object {
+              "NoncurrentVersionTransitions": Array [
+                Object {
+                  "StorageClass": "STANDARD_IA",
+                  "TransitionInDays": 31,
+                },
+              ],
+              "Status": "Enabled",
+            },
+            Object {
+              "ExpiredObjectDeleteMarker": true,
+              "NoncurrentVersionExpirationInDays": 90,
+              "Status": "Enabled",
+            },
+            Object {
+              "NoncurrentVersionExpirationInDays": 7,
+              "Prefix": "catalog.json",
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubFailoverPackageDataPolicy89BCDF76": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubFailoverPackageDataBA7D3B85",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubFailoverPackageDataBA7D3B85",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubFailoverPackageDataBA7D3B85",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "ConstructHubIngestion407909CE": Object {
       "DependsOn": Array [
         "ConstructHubIngestionServiceRoleDefaultPolicyC0D2B6F2",
@@ -42894,6 +45511,75 @@ Direct link to the function: /lambda/home#/functions/",
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubIngestionFailoverConfigBucket079F82C3": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubIngestionFailoverConfigBucketPolicyD45F3F6D": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubIngestionFailoverConfigBucket079F82C3",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubIngestionFailoverConfigBucket079F82C3",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubIngestionFailoverConfigBucket079F82C3",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "ConstructHubIngestionFailureAlarm9D0028DD": Object {
       "Properties": Object {
@@ -44196,7 +46882,7 @@ Direct link to function: /lambda/home#/functions/",
       "Type": "AWS::Lambda::LayerVersion",
     },
     "ConstructHubLicenseListBucket9334047F": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -44218,7 +46904,7 @@ Direct link to function: /lambda/home#/functions/",
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "ConstructHubLicenseListBucketPolicy817F92CD": Object {
       "Properties": Object {
@@ -44274,7 +46960,7 @@ Direct link to function: /lambda/home#/functions/",
           "Ref": "ConstructHubLicenseListBucket9334047F",
         },
         "Prune": true,
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -44324,6 +47010,84 @@ Direct link to function: /lambda/home#/functions/",
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubLicenseListFailoverBucketA96D2AAF": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubLicenseListFailoverBucketPolicy7F222A76": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubLicenseListFailoverBucketA96D2AAF",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubLicenseListFailoverBucketA96D2AAF",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubLicenseListFailoverBucketA96D2AAF",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "ConstructHubMonitoringHighSeverityDashboard8761DBAC": Object {
       "Properties": Object {
@@ -47843,6 +50607,81 @@ Direct link to Lambda function: /lambda/home#/functions/",
       },
       "Type": "Custom::S3-PrefixList",
       "UpdateReplacePolicy": "Delete",
+    },
+    "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "ExpirationInDays": 30,
+              "Prefix": "staged/",
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubSourcesFailoverNpmJsStagingBucketPolicy00182F29": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "ConstructHubSourcesNpmJs15A77D2D": Object {
       "DependsOn": Array [
@@ -51487,6 +54326,72 @@ function handler(event) {
         },
       },
       "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+    },
+    "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "ConstructHubWebAppFailoverWebsiteBucketPolicy7303D09F": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubWebAppFailoverWebsiteBucketE69CC2C7",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
     "ConstructHubWebAppWebsiteBucket4B2B9DB2": Object {
       "DeletionPolicy": "Retain",

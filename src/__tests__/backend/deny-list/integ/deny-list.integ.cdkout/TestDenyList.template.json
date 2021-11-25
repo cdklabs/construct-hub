@@ -929,8 +929,8 @@
           "Status": "Enabled"
         }
       },
-      "UpdateReplacePolicy": "Delete",
-      "DeletionPolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/Bucket/Resource"
       }
@@ -1008,6 +1008,90 @@
       },
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/Bucket/AllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7"
+      }
+    },
+    "DenyListFailoverBucketC0405145": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "Tags": [
+          {
+            "Key": "failover",
+            "Value": "true"
+          }
+        ],
+        "VersioningConfiguration": {
+          "Status": "Enabled"
+        }
+      },
+      "UpdateReplacePolicy": "Retain",
+      "DeletionPolicy": "Retain",
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/FailoverBucket/Resource"
+      }
+    },
+    "DenyListFailoverBucketPolicy7EF208CC": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "DenyListFailoverBucketC0405145"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "DenyListFailoverBucketC0405145",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "DenyListFailoverBucketC0405145",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/FailoverBucket/Policy/Resource"
       }
     },
     "DenyListBucketDeploymentAwsCliLayer4F94CAE9": {
@@ -1111,7 +1195,7 @@
         "DestinationBucketName": {
           "Ref": "DenyListBucketC1C9D3D9"
         },
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "Prune": true
       },
       "DependsOn": [
@@ -1923,6 +2007,8 @@
         "DenyListBucketC1C9D3D9",
         "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
         "DenyListBucketDeploymentCustomResource68E58740",
+        "DenyListFailoverBucketPolicy7EF208CC",
+        "DenyListFailoverBucketC0405145",
         "DenyListPeriodicPruneAllowEventRuleTestDenyListPrunePruneHandlerDB8102B7EA785278",
         "DenyListPeriodicPruneC53BF9DB",
         "DenyListPruneDeleteQueueF9D9EBE3",
@@ -2228,6 +2314,8 @@
         "DenyListBucketC1C9D3D9",
         "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
         "DenyListBucketDeploymentCustomResource68E58740",
+        "DenyListFailoverBucketPolicy7EF208CC",
+        "DenyListFailoverBucketC0405145",
         "DenyListPeriodicPruneAllowEventRuleTestDenyListPrunePruneHandlerDB8102B7EA785278",
         "DenyListPeriodicPruneC53BF9DB",
         "DenyListPruneDeleteQueueF9D9EBE3",
@@ -2404,6 +2492,24 @@
             "#dashboards:name=",
             {
               "Ref": "MonitoringWatchfulDashboard9EB9FD4D"
+            }
+          ]
+        ]
+      }
+    },
+    "DenyListSnapshotCommand31529C83": {
+      "Description": "Snapshot TestDenyList/DenyList/Bucket",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "aws s3 sync s3://",
+            {
+              "Ref": "DenyListBucketC1C9D3D9"
+            },
+            " s3://",
+            {
+              "Ref": "DenyListFailoverBucketC0405145"
             }
           ]
         ]

@@ -12,6 +12,7 @@ import { PackageStats } from '../backend/package-stats';
 import { CATALOG_KEY } from '../backend/shared/constants';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
+import { S3StorageFactory } from '../s3/storage';
 import { WebappConfig, WebappConfigProps } from './config';
 import { ResponseFunction } from './response-function';
 
@@ -149,7 +150,8 @@ export class WebApp extends Construct {
   public constructor(scope: Construct, id: string, props: WebAppProps) {
     super(scope, id);
 
-    this.bucket = new s3.Bucket(this, 'WebsiteBucket', {
+    const storageFactory = S3StorageFactory.getOrCreate(this);
+    this.bucket = storageFactory.newBucket(this, 'WebsiteBucket', {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
     });
