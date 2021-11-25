@@ -26,12 +26,12 @@ create those snapshots, and backup your data into the failover buckets.
 After construct hub deployment finishes, at the time of your choosing, locate those outputs in the CloudFormation console, under the "Outputs" tab, and run the commands:
 
 ```console
-aws s3 sync s3://construct-hub-dev-constructhubdenylistbucket1b3c2-1n2loz0z3u2x4 s3://construct-hub-dev-constructhubdenylistfailoverbuc-hnxtur2i9smy
-aws s3 sync s3://construct-hub-dev-constructhubingestionconfigbuck-lrjjt5rdbfnr s3://construct-hub-dev-constructhubingestionfailoverco-flcmkc25ra5e
-aws s3 sync s3://construct-hub-dev-constructhublicenselistbucket93-1bdf207eys9et s3://construct-hub-dev-constructhublicenselistfailover-1jqfoba4mxfny
-aws s3 sync s3://construct-hub-dev-constructhubpackagedatadc5ef35e-4lgmx5xe9nv2 s3://construct-hub-dev-constructhubfailoverpackagedata-qr2qge4kodvv
-aws s3 sync s3://construct-hub-dev-constructhubsourcesnpmjsstaging-14eppmcw5vsr3 s3://construct-hub-dev-constructhubsourcesfailovernpmj-zc2sciapis06
-aws s3 sync s3://construct-hub-dev-constructhubwebappwebsitebucket-49110nn5q2ro s3://construct-hub-dev-constructhubwebappfailoverwebsi-1o2u8fix6ujdi
+aws s3 sync s3://<deny-list-bucket> s3://<failover-deny-list-bucket>
+aws s3 sync s3://<ingestion-config-bucket> s3://<failover-ingestion-config-bucket>
+aws s3 sync s3://<license-list-bucket> s3://<failover-license-list-bucket>
+aws s3 sync s3://<package-data-bucket> s3://<failover-package-data-bucket>
+aws s3 sync s3://<staging-bucket> s3://<failover-staging-bucket>
+aws s3 sync s3://<website-bucket> s3://<failover-website-bucket>
 ```
 
 > Its recommended you run these commands from within the AWS network, preferably in the same region as the deployment.
