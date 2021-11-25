@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
-import { Construct } from '@aws-cdk/core';
+import { Construct, RemovalPolicy } from '@aws-cdk/core';
 import { S3StorageFactory } from '../../s3/storage';
 import { SpdxLicense } from '../../spdx-license';
 import { ILicenseList } from './api';
@@ -42,6 +42,7 @@ export class LicenseList extends Construct implements ILicenseList {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       encryption: s3.BucketEncryption.S3_MANAGED,
       enforceSSL: true,
+      removalPolicy: RemovalPolicy.RETAIN,
       versioned: true,
     });
 
