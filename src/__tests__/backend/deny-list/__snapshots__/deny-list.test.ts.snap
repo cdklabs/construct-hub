@@ -580,7 +580,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::Lambda::Permission",
     },
     "DenyListBucketC1C9D3D9": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -602,7 +602,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "DenyListBucketDeploymentAwsCliLayer4F94CAE9": Object {
       "Properties": Object {
@@ -658,7 +658,6 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "Ref": "DenyListBucketC1C9D3D9",
         },
         "Prune": true,
-        "RetainOnDelete": false,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -804,7 +803,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "AWS::S3::BucketPolicy",
     },
     "DenyListFailoverBucketC0405145": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -832,7 +831,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "DenyListFailoverBucketPolicy7EF208CC": Object {
       "Properties": Object {

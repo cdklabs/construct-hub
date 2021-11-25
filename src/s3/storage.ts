@@ -1,24 +1,51 @@
 import * as s3 from '@aws-cdk/aws-s3';
-import { CfnOutput, Construct, Tags } from '@aws-cdk/core';
+import { CfnOutput, Construct, Stack, Tags } from '@aws-cdk/core';
 
 /**
  * Properties for `S3StorageFactory`
  */
 export interface S3StorageFactoryProps {
-  readonly failoverActive?: boolean;
+  /**
+   * When enabled, the factory will return the failover buckets instead of the primary.
+   *
+   * @default false
+   */
+  readonly failover?: boolean;
 }
 
 /**
  * Create s3 storage resources.
  */
-export class S3StorageFactory {
+export class S3StorageFactory extends Construct {
+
+  /**
+   * Retrieve or create the storage factory for the current scope.
+   *
+   * This is stack singleton.
+   */
+  public static getOrCreate(scope: Construct, props: S3StorageFactoryProps = {}): S3StorageFactory {
+    const stack = Stack.of(scope);
+    const factory = stack.node.tryFindChild(S3StorageFactory.UID);
+    if (!factory) {
+      return new S3StorageFactory(stack, S3StorageFactory.UID, props);
+    }
+    return stack.node.findChild(S3StorageFactory.UID) as S3StorageFactory;
+  }
+
+  private static readonly UID = 'S3StorageFactory';
 
   private failoverActive: boolean;
 
-  constructor(props: S3StorageFactoryProps = {}) {
-    this.failoverActive = props.failoverActive ?? false;
+  private constructor(scope: Construct, id: string, props: S3StorageFactoryProps = {}) {
+    super(scope, id);
+    this.failoverActive = props.failover ?? false;
   };
 
+  /**
+   * Create a new bucket in a storage config aware manner.
+   *
+   * @returns s3.Bucket
+   */
   public newBucket(scope: Construct, id: string, props?: s3.BucketProps): s3.Bucket {
 
     function failoverFor(bucket: s3.Bucket): s3.Bucket {

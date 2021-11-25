@@ -31,7 +31,6 @@ export class DevStack extends Stack {
     const sensitiveTaskIsolation = props.sensitiveTaskIsolation ?? defaultIsolateSensitiveTasks();
 
     new ConstructHub(this, 'ConstructHub', {
-      failoverStorageActive: true,
       featureFlags: {
         homeRedesign: true,
         searchRedesign: true,

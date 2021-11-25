@@ -50,20 +50,13 @@ export interface NpmJsProps {
    * @default Duration.minutes(5)
    */
   readonly canarySla?: Duration;
-
-  /**
-   * Factory for creating storage on S3.
-   *
-   * @default - The default storage factory (plain s3 bucket).
-   */
-  readonly storageFactory?: S3StorageFactory;
 }
 
 /**
  * A package source that gets package data from the npmjs.com package registry.
  */
 export class NpmJs implements IPackageSource {
-  public constructor(private readonly props: NpmJsProps) {}
+  public constructor(private readonly props: NpmJsProps = {}) {}
 
   public bind(
     scope: Construct,
@@ -71,7 +64,7 @@ export class NpmJs implements IPackageSource {
   ): PackageSourceBindResult {
     repository?.addExternalConnection('public:npmjs');
 
-    const storageFactory = this.props.storageFactory ?? new S3StorageFactory();
+    const storageFactory = S3StorageFactory.getOrCreate(scope);
     const bucket = this.props.stagingBucket || storageFactory.newBucket(scope, 'NpmJs/StagingBucket', {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,

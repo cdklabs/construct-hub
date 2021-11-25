@@ -25,14 +25,6 @@ import { Ingestion as Handler } from './ingestion';
 import { ReIngest } from './re-ingest';
 
 export interface IngestionProps {
-
-  /**
-   * Factory for creating storage on S3.
-   *
-   * @default - The default storage factory (plain s3 bucket).
-   */
-  readonly storageFactory?: S3StorageFactory;
-
   /**
    * The bucket in which ingested objects are due to be inserted.
    */
@@ -124,7 +116,7 @@ export class Ingestion extends Construct implements IGrantable {
       packageTags: props.packageTags ?? [],
     }));
 
-    const storageFactory = props.storageFactory ?? new S3StorageFactory();
+    const storageFactory = S3StorageFactory.getOrCreate(this);
     const configBucket = storageFactory.newBucket(this, 'ConfigBucket', {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,

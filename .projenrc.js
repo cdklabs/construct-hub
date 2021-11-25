@@ -870,6 +870,8 @@ project.compileTask.prependExec('rm -rf ./website');
 project.npmignore.addPatterns('!/website'); // <-- include in tarball
 project.gitignore.addPatterns('/website'); // <-- don't commit
 
+project.gitignore.exclude('.vscode/');
+
 addVpcAllowListManagement();
 addDevApp();
 

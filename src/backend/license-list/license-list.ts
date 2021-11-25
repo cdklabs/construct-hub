@@ -4,21 +4,13 @@ import * as path from 'path';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
-import { Construct, RemovalPolicy } from '@aws-cdk/core';
+import { Construct } from '@aws-cdk/core';
 import { S3StorageFactory } from '../../s3/storage';
 import { SpdxLicense } from '../../spdx-license';
 import { ILicenseList } from './api';
 import { EnvironmentVariables } from './constants';
 
 export interface LicenseListProps {
-
-  /**
-   * Factory for creating storage on S3.
-   *
-   * @default - The default storage factory (plain s3 bucket).
-   */
-  readonly storageFactory?: S3StorageFactory;
-
   /**
    * All SPDX licenses to be included in the list.
    */
@@ -45,19 +37,17 @@ export class LicenseList extends Construct implements ILicenseList {
   public constructor(scope: Construct, id: string, props: LicenseListProps) {
     super(scope, id);
 
-    const storageFactory = props.storageFactory ?? new S3StorageFactory();
+    const storageFactory = S3StorageFactory.getOrCreate(this);
     this.bucket = storageFactory.newBucket(this, 'Bucket', {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       encryption: s3.BucketEncryption.S3_MANAGED,
       enforceSSL: true,
-      removalPolicy: RemovalPolicy.DESTROY,
       versioned: true,
     });
 
     this.upload = new s3deploy.BucketDeployment(this, 'Resource', {
       destinationBucket: this.bucket,
       prune: true,
-      retainOnDelete: false,
       sources: [this.createAsset(props.licenses)],
     });
   }

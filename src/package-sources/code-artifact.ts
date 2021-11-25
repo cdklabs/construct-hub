@@ -15,14 +15,6 @@ import { CodeArtifactForwarder } from './codeartifact/code-artifact-forwarder';
 import { METRICS_NAMESPACE, MetricName, DOMAIN_NAME_DIMENSION, DOMAIN_OWNER_DIMENSION, REPOSITORY_NAME_DIMENSION } from './codeartifact/constants.lambda-shared';
 
 export interface CodeArtifactProps {
-
-  /**
-   * Factory for creating storage on S3.
-   *
-   * @default - The default storage factory (plain s3 bucket).
-   */
-  readonly storageFactory?: S3StorageFactory;
-
   /**
    * The CodeArtifact repository where packages are obtained from.
    */
@@ -46,7 +38,7 @@ export class CodeArtifact implements IPackageSource {
     const idPrefix = this.props.repository.node.path;
     const repositoryId = `${this.props.repository.attrDomainOwner}:${this.props.repository.attrDomainName}/${this.props.repository.attrName}`;
 
-    const storageFactory = this.props.storageFactory ?? new S3StorageFactory();
+    const storageFactory = S3StorageFactory.getOrCreate(scope);
     const bucket = this.props.bucket || storageFactory.newBucket(scope, `${idPrefix}/StagingBucket`, {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,

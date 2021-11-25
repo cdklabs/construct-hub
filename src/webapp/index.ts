@@ -133,13 +133,6 @@ export interface WebAppProps extends WebappConfigProps {
   readonly monitoring: Monitoring;
 
   /**
-   * Factory for creating storage on S3.
-   *
-   * @default - The default storage factory (plain s3 bucket).
-   */
-  readonly storageFactory?: S3StorageFactory;
-
-  /**
    * The bucket containing package data.
    */
   readonly packageData: s3.Bucket;
@@ -158,7 +151,7 @@ export class WebApp extends Construct {
   public constructor(scope: Construct, id: string, props: WebAppProps) {
     super(scope, id);
 
-    const storageFactory = props.storageFactory ?? new S3StorageFactory();
+    const storageFactory = S3StorageFactory.getOrCreate(this);
     this.bucket = storageFactory.newBucket(this, 'WebsiteBucket', {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
