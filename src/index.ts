@@ -6,3 +6,4 @@ export * from './spdx-license';
 export * from './package-tag';
 export * from './s3/storage';
 export { PackageLinkConfig, FeaturedPackages, FeaturedPackagesSection, FeaturedPackagesDetail, FeatureFlags, Category } from './webapp';
+export { DomainRedirectSource } from './domain-redirect';

@@ -252,21 +252,14 @@ Resources:
             - Fn::GetAtt:
                 - ConstructHubSourcesdevConstructHubSourcesNpmJsStagerDLQNotEmpty3777A4EA
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":54,"properties":{"view":"timeSeries","title":"New
-              version visibility SLA breached","region":"'
-            - Ref: AWS::Region
-            - '","annotations":{"alarms":["'
-            - Fn::GetAtt:
-                - ConstructHubSourcesNpmJsCanaryAlarmBE2B479E
-                - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":60,"properties":{"view":"timeSeries","title":"Inventory
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":54,"properties":{"view":"timeSeries","title":"Inventory
               Canary is not Running","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubInventoryCanaryNotRunningAF44D71C
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":66,"properties":{"view":"timeSeries","title":"Inventory
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":60,"properties":{"view":"timeSeries","title":"Inventory
               Canary is failing","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
@@ -463,65 +456,6 @@ Resources:
                       - ConstructHubPackageDataDC5EF35E
                       - Arn
                   - /*
-        Version: 2012-10-17
-  ConstructHubFailoverPackageDataBA7D3B85:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
-      LifecycleConfiguration:
-        Rules:
-          - AbortIncompleteMultipartUpload:
-              DaysAfterInitiation: 1
-            Status: Enabled
-          - NoncurrentVersionTransitions:
-              - StorageClass: STANDARD_IA
-                TransitionInDays: 31
-            Status: Enabled
-          - ExpiredObjectDeleteMarker: true
-            NoncurrentVersionExpirationInDays: 90
-            Status: Enabled
-          - NoncurrentVersionExpirationInDays: 7
-            Prefix: catalog.json
-            Status: Enabled
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        BlockPublicPolicy: true
-        IgnorePublicAcls: true
-        RestrictPublicBuckets: true
-      Tags:
-        - Key: failover
-          Value: "true"
-      VersioningConfiguration:
-        Status: Enabled
-    UpdateReplacePolicy: Retain
-    DeletionPolicy: Retain
-  ConstructHubFailoverPackageDataPolicy89BCDF76:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket:
-        Ref: ConstructHubFailoverPackageDataBA7D3B85
-      PolicyDocument:
-        Statement:
-          - Action: s3:*
-            Condition:
-              Bool:
-                aws:SecureTransport: "false"
-            Effect: Deny
-            Principal:
-              AWS: "*"
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubFailoverPackageDataBA7D3B85
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubFailoverPackageDataBA7D3B85
-                        - Arn
-                    - /*
         Version: 2012-10-17
   ConstructHubCodeArtifactDomainFC30B796:
     Type: AWS::CodeArtifact::Domain
@@ -1909,50 +1843,6 @@ Resources:
         Fn::GetAtt:
           - ConstructHubDenyListBucket1B3C2C2E
           - Arn
-  ConstructHubDenyListFailoverBucketBF1E05AD:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        BlockPublicPolicy: true
-        IgnorePublicAcls: true
-        RestrictPublicBuckets: true
-      Tags:
-        - Key: failover
-          Value: "true"
-      VersioningConfiguration:
-        Status: Enabled
-    UpdateReplacePolicy: Delete
-    DeletionPolicy: Delete
-  ConstructHubDenyListFailoverBucketPolicy3B552017:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket:
-        Ref: ConstructHubDenyListFailoverBucketBF1E05AD
-      PolicyDocument:
-        Statement:
-          - Action: s3:*
-            Condition:
-              Bool:
-                aws:SecureTransport: "false"
-            Effect: Deny
-            Principal:
-              AWS: "*"
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubDenyListFailoverBucketBF1E05AD
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubDenyListFailoverBucketBF1E05AD
-                        - Arn
-                    - /*
-        Version: 2012-10-17
   ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA:
     Type: AWS::Lambda::LayerVersion
     Properties:
@@ -3310,7 +3200,7 @@ Resources:
                 - Ref: AWS::Region
                 - .
                 - Ref: AWS::URLSuffix
-                - /aws-cdk/assets:19336e7c93a802ad00d204b6950d15ec4621c44fe1d22bc107d1d61388e8537a
+                - /aws-cdk/assets:a0c15e51cb2d93ff77eae51d8bdfb26a1b222c7f5e59cc04429ae2687e2b43c5
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -4024,46 +3914,6 @@ Resources:
                         - Arn
                     - /*
         Version: 2012-10-17
-  ConstructHubIngestionFailoverConfigBucket079F82C3:
-    Type: AWS::S3::Bucket
-    Properties:
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        BlockPublicPolicy: true
-        IgnorePublicAcls: true
-        RestrictPublicBuckets: true
-      Tags:
-        - Key: failover
-          Value: "true"
-      VersioningConfiguration:
-        Status: Enabled
-    UpdateReplacePolicy: Retain
-    DeletionPolicy: Retain
-  ConstructHubIngestionFailoverConfigBucketPolicyD45F3F6D:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket:
-        Ref: ConstructHubIngestionFailoverConfigBucket079F82C3
-      PolicyDocument:
-        Statement:
-          - Action: s3:*
-            Condition:
-              Bool:
-                aws:SecureTransport: "false"
-            Effect: Deny
-            Principal:
-              AWS: "*"
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubIngestionFailoverConfigBucket079F82C3
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubIngestionFailoverConfigBucket079F82C3
-                        - Arn
-                    - /*
-        Version: 2012-10-17
   ConstructHubIngestionDeployIngestionConfigurationAwsCliLayerF77955C2:
     Type: AWS::Lambda::LayerVersion
     Properties:
@@ -4758,50 +4608,6 @@ Resources:
                         - Arn
                     - /*
         Version: 2012-10-17
-  ConstructHubLicenseListFailoverBucketA96D2AAF:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        BlockPublicPolicy: true
-        IgnorePublicAcls: true
-        RestrictPublicBuckets: true
-      Tags:
-        - Key: failover
-          Value: "true"
-      VersioningConfiguration:
-        Status: Enabled
-    UpdateReplacePolicy: Delete
-    DeletionPolicy: Delete
-  ConstructHubLicenseListFailoverBucketPolicy7F222A76:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket:
-        Ref: ConstructHubLicenseListFailoverBucketA96D2AAF
-      PolicyDocument:
-        Statement:
-          - Action: s3:*
-            Condition:
-              Bool:
-                aws:SecureTransport: "false"
-            Effect: Deny
-            Principal:
-              AWS: "*"
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubLicenseListFailoverBucketA96D2AAF
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubLicenseListFailoverBucketA96D2AAF
-                        - Arn
-                    - /*
-        Version: 2012-10-17
   ConstructHubLicenseListAwsCliLayer59592811:
     Type: AWS::Lambda::LayerVersion
     Properties:
@@ -4912,44 +4718,6 @@ Resources:
                       - ConstructHubWebAppWebsiteBucket4B2B9DB2
                       - Arn
                   - /*
-        Version: 2012-10-17
-  ConstructHubWebAppFailoverWebsiteBucketE69CC2C7:
-    Type: AWS::S3::Bucket
-    Properties:
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        BlockPublicPolicy: true
-        IgnorePublicAcls: true
-        RestrictPublicBuckets: true
-      Tags:
-        - Key: failover
-          Value: "true"
-    UpdateReplacePolicy: Retain
-    DeletionPolicy: Retain
-  ConstructHubWebAppFailoverWebsiteBucketPolicy7303D09F:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket:
-        Ref: ConstructHubWebAppFailoverWebsiteBucketE69CC2C7
-      PolicyDocument:
-        Statement:
-          - Action: s3:*
-            Condition:
-              Bool:
-                aws:SecureTransport: "false"
-            Effect: Deny
-            Principal:
-              AWS: "*"
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubWebAppFailoverWebsiteBucketE69CC2C7
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubWebAppFailoverWebsiteBucketE69CC2C7
-                        - Arn
-                    - /*
         Version: 2012-10-17
   ConstructHubWebAppAddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7E9FDB69:
     Type: AWS::CloudFront::Function
@@ -5172,7 +4940,7 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParameters21532e9e6faeab6a80108b2fb56d492df35d9bc87994d957c132cc1fbe32bb6dS3Bucket9A528B67
+        - Ref: AssetParameters606297aef2b06af29383edb2a78fca2da5bb2c792ca545b91d5d035612226f65S3Bucket81530C20
       SourceObjectKeys:
         - Fn::Join:
             - ""
@@ -5180,12 +4948,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters21532e9e6faeab6a80108b2fb56d492df35d9bc87994d957c132cc1fbe32bb6dS3VersionKey623218D8
+                      - Ref: AssetParameters606297aef2b06af29383edb2a78fca2da5bb2c792ca545b91d5d035612226f65S3VersionKey3C62B787
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters21532e9e6faeab6a80108b2fb56d492df35d9bc87994d957c132cc1fbe32bb6dS3VersionKey623218D8
+                      - Ref: AssetParameters606297aef2b06af29383edb2a78fca2da5bb2c792ca545b91d5d035612226f65S3VersionKey3C62B787
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: false
@@ -5283,49 +5051,6 @@ Resources:
                   - ""
                   - - Fn::GetAtt:
                         - ConstructHubSourcesNpmJsStagingBucketB286F0E6
-                        - Arn
-                    - /*
-        Version: 2012-10-17
-  ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42:
-    Type: AWS::S3::Bucket
-    Properties:
-      LifecycleConfiguration:
-        Rules:
-          - ExpirationInDays: 30
-            Prefix: staged/
-            Status: Enabled
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        BlockPublicPolicy: true
-        IgnorePublicAcls: true
-        RestrictPublicBuckets: true
-      Tags:
-        - Key: failover
-          Value: "true"
-    UpdateReplacePolicy: Retain
-    DeletionPolicy: Retain
-  ConstructHubSourcesFailoverNpmJsStagingBucketPolicy00182F29:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket:
-        Ref: ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42
-      PolicyDocument:
-        Statement:
-          - Action: s3:*
-            Condition:
-              Bool:
-                aws:SecureTransport: "false"
-            Effect: Deny
-            Principal:
-              AWS: "*"
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42
                         - Arn
                     - /*
         Version: 2012-10-17
@@ -5431,7 +5156,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters961bee70cfe6b94081397ce80d7d31fc403e9bf809f0b10a4f663bb741331770S3BucketEFF8CFF1
+          Ref: AssetParameters82fce0de1fd66c14056b03c8334213b6fd351f618d3db139501b43c1e27d9239S3Bucket55FF4968
         S3Key:
           Fn::Join:
             - ""
@@ -5439,12 +5164,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters961bee70cfe6b94081397ce80d7d31fc403e9bf809f0b10a4f663bb741331770S3VersionKey1E66743C
+                      - Ref: AssetParameters82fce0de1fd66c14056b03c8334213b6fd351f618d3db139501b43c1e27d9239S3VersionKey2D740AE6
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters961bee70cfe6b94081397ce80d7d31fc403e9bf809f0b10a4f663bb741331770S3VersionKey1E66743C
+                      - Ref: AssetParameters82fce0de1fd66c14056b03c8334213b6fd351f618d3db139501b43c1e27d9239S3VersionKey2D740AE6
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50
@@ -5539,7 +5264,7 @@ Resources:
                   - - Fn::GetAtt:
                         - ConstructHubSourcesNpmJsStagingBucketB286F0E6
                         - Arn
-                    - /couchdb-last-transaction-id.3
+                    - /couchdb-last-transaction-id.2
           - Action:
               - s3:GetObject*
               - s3:GetBucket*
@@ -5588,7 +5313,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersef99e0ae5f2e45b1ce70912a7fd8f971c66949a38500d62a467006201fcb5cbbS3Bucket27192E65
+          Ref: AssetParametersd1ca83197945a1fb9b02b6f1e740fcfef3a63f1f991d131d5b168ff629d15210S3Bucket30187E5D
         S3Key:
           Fn::Join:
             - ""
@@ -5596,12 +5321,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersef99e0ae5f2e45b1ce70912a7fd8f971c66949a38500d62a467006201fcb5cbbS3VersionKeyA61A6B63
+                      - Ref: AssetParametersd1ca83197945a1fb9b02b6f1e740fcfef3a63f1f991d131d5b168ff629d15210S3VersionKey0B5BBFCC
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersef99e0ae5f2e45b1ce70912a7fd8f971c66949a38500d62a467006201fcb5cbbS3VersionKeyA61A6B63
+                      - Ref: AssetParametersd1ca83197945a1fb9b02b6f1e740fcfef3a63f1f991d131d5b168ff629d15210S3VersionKey0B5BBFCC
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsServiceRoleAC3F7AA6
@@ -6415,7 +6140,7 @@ Resources:
             - Ref: ConstructHubSourcesNpmJs15A77D2D
             - )\\n[button:Marker Object](/s3/object/
             - Ref: ConstructHubSourcesNpmJsStagingBucketB286F0E6
-            - ?prefix=couchdb-last-transaction-id.3)\\n[button:Stager](/lambda/home#/functions/
+            - ?prefix=couchdb-last-transaction-id.2)\\n[button:Stager](/lambda/home#/functions/
             - Ref: ConstructHubSourcesNpmJsStageAndNotify591C0CFA
             - )\\n[button:Stager DLQ](/sqs/v2/home#/queues/https%3A%2F%2Fsqs.
             - Ref: AWS::Region
@@ -6901,13 +6626,13 @@ Resources:
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters21532e9e6faeab6a80108b2fb56d492df35d9bc87994d957c132cc1fbe32bb6dS3Bucket9A528B67
+                    - Ref: AssetParameters606297aef2b06af29383edb2a78fca2da5bb2c792ca545b91d5d035612226f65S3Bucket81530C20
               - Fn::Join:
                   - ""
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters21532e9e6faeab6a80108b2fb56d492df35d9bc87994d957c132cc1fbe32bb6dS3Bucket9A528B67
+                    - Ref: AssetParameters606297aef2b06af29383edb2a78fca2da5bb2c792ca545b91d5d035612226f65S3Bucket81530C20
                     - /*
           - Action:
               - s3:GetObject*
@@ -7408,51 +7133,6 @@ Outputs:
           - Ref: AWS::Region
           - "#dashboards:name="
           - Ref: ConstructHubMonitoringWatchfulDashboardB8493D55
-  ConstructHubSnapshotCommandDD3886DA:
-    Description: Snapshot dev/ConstructHub/PackageData
-    Value:
-      Fn::Join:
-        - ""
-        - - aws s3 sync s3://
-          - Ref: ConstructHubPackageDataDC5EF35E
-          - " s3://"
-          - Ref: ConstructHubFailoverPackageDataBA7D3B85
-  ConstructHubDenyListSnapshotCommand3E133B03:
-    Description: Snapshot dev/ConstructHub/DenyList/Bucket
-    Value:
-      Fn::Join:
-        - ""
-        - - aws s3 sync s3://
-          - Ref: ConstructHubDenyListBucket1B3C2C2E
-          - " s3://"
-          - Ref: ConstructHubDenyListFailoverBucketBF1E05AD
-  ConstructHubIngestionSnapshotCommand746AF5B0:
-    Description: Snapshot dev/ConstructHub/Ingestion/ConfigBucket
-    Value:
-      Fn::Join:
-        - ""
-        - - aws s3 sync s3://
-          - Ref: ConstructHubIngestionConfigBucket0F0ED0B6
-          - " s3://"
-          - Ref: ConstructHubIngestionFailoverConfigBucket079F82C3
-  ConstructHubLicenseListSnapshotCommandB9EA2EF4:
-    Description: Snapshot dev/ConstructHub/LicenseList/Bucket
-    Value:
-      Fn::Join:
-        - ""
-        - - aws s3 sync s3://
-          - Ref: ConstructHubLicenseListBucket9334047F
-          - " s3://"
-          - Ref: ConstructHubLicenseListFailoverBucketA96D2AAF
-  ConstructHubWebAppSnapshotCommandC5AF418E:
-    Description: Snapshot dev/ConstructHub/WebApp/WebsiteBucket
-    Value:
-      Fn::Join:
-        - ""
-        - - aws s3 sync s3://
-          - Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
-          - " s3://"
-          - Ref: ConstructHubWebAppFailoverWebsiteBucketE69CC2C7
   ConstructHubWebAppDomainNameDC10F8DD:
     Value:
       Fn::GetAtt:
@@ -7460,15 +7140,6 @@ Outputs:
         - DomainName
     Export:
       Name: ConstructHubDomainName
-  ConstructHubSourcesSnapshotCommandB1EF760F:
-    Description: Snapshot dev/ConstructHub/Sources/NpmJs--StagingBucket
-    Value:
-      Fn::Join:
-        - ""
-        - - aws s3 sync s3://
-          - Ref: ConstructHubSourcesNpmJsStagingBucketB286F0E6
-          - " s3://"
-          - Ref: ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42
 Parameters:
   AssetParameters4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbcS3Bucket02FC0B28:
     Type: String
@@ -7650,18 +7321,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "8d968e7576898e39de27ff4cf5f336e8f112a4de9757412123e2dd725f451900"
-  AssetParameters21532e9e6faeab6a80108b2fb56d492df35d9bc87994d957c132cc1fbe32bb6dS3Bucket9A528B67:
+  AssetParameters606297aef2b06af29383edb2a78fca2da5bb2c792ca545b91d5d035612226f65S3Bucket81530C20:
     Type: String
     Description: S3 bucket for asset
-      "21532e9e6faeab6a80108b2fb56d492df35d9bc87994d957c132cc1fbe32bb6d"
-  AssetParameters21532e9e6faeab6a80108b2fb56d492df35d9bc87994d957c132cc1fbe32bb6dS3VersionKey623218D8:
+      "606297aef2b06af29383edb2a78fca2da5bb2c792ca545b91d5d035612226f65"
+  AssetParameters606297aef2b06af29383edb2a78fca2da5bb2c792ca545b91d5d035612226f65S3VersionKey3C62B787:
     Type: String
     Description: S3 key for asset version
-      "21532e9e6faeab6a80108b2fb56d492df35d9bc87994d957c132cc1fbe32bb6d"
-  AssetParameters21532e9e6faeab6a80108b2fb56d492df35d9bc87994d957c132cc1fbe32bb6dArtifactHash6B627DA6:
+      "606297aef2b06af29383edb2a78fca2da5bb2c792ca545b91d5d035612226f65"
+  AssetParameters606297aef2b06af29383edb2a78fca2da5bb2c792ca545b91d5d035612226f65ArtifactHash2747DD1A:
     Type: String
     Description: Artifact hash for asset
-      "21532e9e6faeab6a80108b2fb56d492df35d9bc87994d957c132cc1fbe32bb6d"
+      "606297aef2b06af29383edb2a78fca2da5bb2c792ca545b91d5d035612226f65"
   AssetParameters219b0e6bde7859b1caead1a417b318db5db660d51d0e582d6a303062ee4eae16S3BucketA2579CB9:
     Type: String
     Description: S3 bucket for asset
@@ -7686,30 +7357,30 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "300dcdaa422d39271d96186f681f304c36ea7eb0e3b18ce1d39466ca30b514b0"
-  AssetParameters961bee70cfe6b94081397ce80d7d31fc403e9bf809f0b10a4f663bb741331770S3BucketEFF8CFF1:
+  AssetParameters82fce0de1fd66c14056b03c8334213b6fd351f618d3db139501b43c1e27d9239S3Bucket55FF4968:
     Type: String
     Description: S3 bucket for asset
-      "961bee70cfe6b94081397ce80d7d31fc403e9bf809f0b10a4f663bb741331770"
-  AssetParameters961bee70cfe6b94081397ce80d7d31fc403e9bf809f0b10a4f663bb741331770S3VersionKey1E66743C:
+      "82fce0de1fd66c14056b03c8334213b6fd351f618d3db139501b43c1e27d9239"
+  AssetParameters82fce0de1fd66c14056b03c8334213b6fd351f618d3db139501b43c1e27d9239S3VersionKey2D740AE6:
     Type: String
     Description: S3 key for asset version
-      "961bee70cfe6b94081397ce80d7d31fc403e9bf809f0b10a4f663bb741331770"
-  AssetParameters961bee70cfe6b94081397ce80d7d31fc403e9bf809f0b10a4f663bb741331770ArtifactHash1D4414A1:
+      "82fce0de1fd66c14056b03c8334213b6fd351f618d3db139501b43c1e27d9239"
+  AssetParameters82fce0de1fd66c14056b03c8334213b6fd351f618d3db139501b43c1e27d9239ArtifactHash2A5CE393:
     Type: String
     Description: Artifact hash for asset
-      "961bee70cfe6b94081397ce80d7d31fc403e9bf809f0b10a4f663bb741331770"
-  AssetParametersef99e0ae5f2e45b1ce70912a7fd8f971c66949a38500d62a467006201fcb5cbbS3Bucket27192E65:
+      "82fce0de1fd66c14056b03c8334213b6fd351f618d3db139501b43c1e27d9239"
+  AssetParametersd1ca83197945a1fb9b02b6f1e740fcfef3a63f1f991d131d5b168ff629d15210S3Bucket30187E5D:
     Type: String
     Description: S3 bucket for asset
-      "ef99e0ae5f2e45b1ce70912a7fd8f971c66949a38500d62a467006201fcb5cbb"
-  AssetParametersef99e0ae5f2e45b1ce70912a7fd8f971c66949a38500d62a467006201fcb5cbbS3VersionKeyA61A6B63:
+      "d1ca83197945a1fb9b02b6f1e740fcfef3a63f1f991d131d5b168ff629d15210"
+  AssetParametersd1ca83197945a1fb9b02b6f1e740fcfef3a63f1f991d131d5b168ff629d15210S3VersionKey0B5BBFCC:
     Type: String
     Description: S3 key for asset version
-      "ef99e0ae5f2e45b1ce70912a7fd8f971c66949a38500d62a467006201fcb5cbb"
-  AssetParametersef99e0ae5f2e45b1ce70912a7fd8f971c66949a38500d62a467006201fcb5cbbArtifactHash41F6AFFB:
+      "d1ca83197945a1fb9b02b6f1e740fcfef3a63f1f991d131d5b168ff629d15210"
+  AssetParametersd1ca83197945a1fb9b02b6f1e740fcfef3a63f1f991d131d5b168ff629d15210ArtifactHash79BDC2B9:
     Type: String
     Description: Artifact hash for asset
-      "ef99e0ae5f2e45b1ce70912a7fd8f971c66949a38500d62a467006201fcb5cbb"
+      "d1ca83197945a1fb9b02b6f1e740fcfef3a63f1f991d131d5b168ff629d15210"
   AssetParameters4eca4d1b52b162aade7fdea6c9ba1f3b01eb5bd746b76ee41b9994d2b16d84a1S3BucketFBC8C78E:
     Type: String
     Description: S3 bucket for asset

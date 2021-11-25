@@ -131,10 +131,9 @@ const project = new JsiiProject({
 
   depsUpgradeOptions: {
     exclude: [...peerDeps, cdkAssert, cdkCli],
-    include: ['construct-hub-webapp'],
     ignoreProjen: false,
     workflowOptions: {
-      branches: ['dev', 'main'],
+      branches: ['dev'],
       labels: ['auto-approve'],
       secret: 'PROJEN_GITHUB_TOKEN',
       container: {
@@ -283,6 +282,7 @@ function discoverIntegrationTests() {
     const options = [
       `--app ${app}`,
       '--no-version-reporting',
+      '--context @aws-cdk/core:newStyleStackSynthesis=true',
     ].join(' ');
 
     const deploy = project.addTask(`integ:${name}:deploy`, {
