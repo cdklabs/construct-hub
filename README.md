@@ -237,7 +237,7 @@ new ConstructHub(stack, 'ConstructHub', {
 ```
 
 In case the new package isn't fully available in the predefined SLA, a
-**high severity** CloudWatch alarm will trigger, which will in turn trigger
+**low severity** CloudWatch alarm will trigger, which will in turn trigger
 the configured action for low severity alarms.
 
 > See [Monitoring & Alarms](./docs/application-overview.md#monitoring--alarming)
