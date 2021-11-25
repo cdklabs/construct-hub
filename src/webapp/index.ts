@@ -195,9 +195,6 @@ export class WebApp extends Construct {
       this.distribution.addBehavior(`/${props.packageStats.statsKey}`, jsiiObjOrigin, behaviorOptions);
     }
 
-    const websiteOrigin = new origins.S3Origin(this.bucket);
-    this.distribution.addBehavior('/*', websiteOrigin, behaviorOptions);
-
     // if we use a domain, and A records with a CloudFront alias
     if (props.domain) {
       // IPv4
