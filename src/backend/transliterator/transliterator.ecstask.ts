@@ -94,14 +94,24 @@ export function handler(event: TransliteratorInput): Promise<{ created: S3Object
 
     let unprocessable: boolean = false;
 
-    function markPackage(e: Error, marker: string): Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>> {
-      const key = event.assembly.key.replace(/\/[^/]+$/, marker);
-      const upload = uploadFile(event.bucket, key, event.assembly.versionId, Buffer.from(e.message));
+    function dispatchUpload(body: Buffer, filename: string, contentEncoding?: 'gzip'): string {
+      const key = event.assembly.key.replace(/\/[^/]+$/, filename);
+      const upload = uploadFile(event.bucket, key, event.assembly.versionId, body, contentEncoding);
       uploads.set(key, upload);
-      return upload;
+      return key;
     }
 
-    async function unmarkPackage(marker: string) {
+    async function awaitUpload(key: string) {
+      const request = uploads.get(key);
+      if (!request) {
+        throw new Error(`Unable to find upload request for key ${key}`);
+      }
+      const response = await request;
+      created.push({ bucket: event.bucket, key, versionId: response.VersionId });
+      console.log(`Finished uploading ${key} (Version ID: ${response.VersionId})`);
+    }
+
+    async function dispatchDelete(marker: string) {
       const key = event.assembly.key.replace(/\/[^/]+$/, marker);
       const marked = await aws.s3ObjectExists(event.bucket, key);
       if (!marked) {
@@ -115,7 +125,7 @@ export function handler(event: TransliteratorInput): Promise<{ created: S3Object
     try {
       const docs = await docgen.Documentation.forPackage(tarball, { name: assembly.name });
       // if the package used to not be installabe, remove the marker for it.
-      await unmarkPackage(constants.UNINSTALLABLE_PACKAGE_SUFFIX);
+      await dispatchDelete(constants.UNINSTALLABLE_PACKAGE_SUFFIX);
       for (const language of DocumentationLanguage.ALL) {
         if (event.languages && !event.languages[language.toString()]) {
           console.log(`Skipping language ${language} as it was not requested!`);
@@ -137,22 +147,19 @@ export function handler(event: TransliteratorInput): Promise<{ created: S3Object
                 language: docgen.Language.fromString(lang.name),
               });
               // if the package used to have a corrupt assembly, remove the marker for it.
-              await unmarkPackage(constants.corruptAssemblyKeySuffix(language, submodule));
+              await dispatchDelete(constants.corruptAssemblyKeySuffix(language, submodule));
               const page = Buffer.from(markdown.render());
               metrics.putMetric(MetricName.DOCUMENT_SIZE, page.length, Unit.Bytes);
               const { buffer: body, contentEncoding } = compressContent(page);
               metrics.putMetric(MetricName.COMPRESSED_DOCUMENT_SIZE, body.length, Unit.Bytes);
 
-              const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(lang, submodule));
-              console.log(`Uploading ${key}`);
-              const upload = uploadFile(event.bucket, key, event.assembly.versionId, body, contentEncoding);
-              uploads.set(key, upload);
+              dispatchUpload(body, constants.docsKeySuffix(lang, submodule), contentEncoding);
 
             } catch (e) {
               if (e instanceof docgen.LanguageNotSupportedError) {
-                void markPackage(e, constants.notSupportedKeySuffix(language, submodule));
+                dispatchUpload(Buffer.from(e.message), constants.notSupportedKeySuffix(language, submodule));
               } else if (e instanceof docgen.CorruptedAssemblyError) {
-                void markPackage(e, constants.corruptAssemblyKeySuffix(language, submodule));
+                dispatchUpload(Buffer.from(e.message), constants.corruptAssemblyKeySuffix(language, submodule));
                 unprocessable = true;
               } else {
                 throw e;
@@ -167,19 +174,14 @@ export function handler(event: TransliteratorInput): Promise<{ created: S3Object
         await generateDocs(language);
       }
 
-      for (const [key, upload] of uploads.entries()) {
-        const response = await upload;
-        created.push({ bucket: event.bucket, key, versionId: response.VersionId });
-        console.log(`Finished uploading ${key} (Version ID: ${response.VersionId})`);
+      for (const key of uploads.keys()) {
+        await awaitUpload(key);
       }
 
     } catch (error) {
       if (error instanceof docgen.UnInstallablePackageError) {
-        const response = await markPackage(error, constants.UNINSTALLABLE_PACKAGE_SUFFIX);
-        const key = event.assembly.key.replace(/\/[^/]+$/, constants.UNINSTALLABLE_PACKAGE_SUFFIX);
-        created.push({ bucket: event.bucket, key, versionId: response.VersionId });
-        console.log(`Finished uploading ${response} (Version ID: ${response.VersionId})`);
-
+        const key = dispatchUpload(Buffer.from(error.message), constants.UNINSTALLABLE_PACKAGE_SUFFIX);
+        await awaitUpload(key);
         unprocessable = true;
       } else {
         throw error;
