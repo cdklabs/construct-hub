@@ -13,7 +13,6 @@ import { CATALOG_KEY } from '../backend/shared/constants';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
 import { WebappConfig, WebappConfigProps } from './config';
-import { HomeResponseFunction } from './home-response-function';
 import { ResponseFunction } from './response-function';
 
 export interface PackageLinkConfig {
@@ -160,7 +159,6 @@ export class WebApp extends Construct {
     // it is changed the function will be recreated.
     // see https://github.com/aws/aws-cdk/issues/15523
     const functionId = `AddHeadersFunction${this.node.addr}`;
-    const indexFunctionId = `IndexHeadersFunction${this.node.addr}`;
 
     const behaviorOptions: cloudfront.AddBehaviorOptions = {
       compress: true,
@@ -168,17 +166,6 @@ export class WebApp extends Construct {
       functionAssociations: [{
         function: new ResponseFunction(this, functionId, {
           functionName: functionId,
-        }),
-        eventType: cloudfront.FunctionEventType.VIEWER_RESPONSE,
-      }],
-    };
-
-    const indexBehaviorOptions: cloudfront.AddBehaviorOptions = {
-      compress: true,
-      cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
-      functionAssociations: [{
-        function: new HomeResponseFunction(this, indexFunctionId, {
-          functionName: indexFunctionId,
         }),
         eventType: cloudfront.FunctionEventType.VIEWER_RESPONSE,
       }],
@@ -207,9 +194,6 @@ export class WebApp extends Construct {
     if (props.packageStats) {
       this.distribution.addBehavior(`/${props.packageStats.statsKey}`, jsiiObjOrigin, behaviorOptions);
     }
-
-    const websiteOrigin = new origins.S3Origin(this.bucket);
-    this.distribution.addBehavior('/index.html', websiteOrigin, indexBehaviorOptions);
 
     // if we use a domain, and A records with a CloudFront alias
     if (props.domain) {
