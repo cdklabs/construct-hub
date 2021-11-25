@@ -153,7 +153,12 @@ export function handler(event: TransliteratorInput): Promise<{ created: S3Object
               const { buffer: body, contentEncoding } = compressContent(page);
               metrics.putMetric(MetricName.COMPRESSED_DOCUMENT_SIZE, body.length, Unit.Bytes);
 
-              dispatchUpload(body, constants.docsKeySuffix(lang, submodule), contentEncoding);
+              const key = dispatchUpload(body, constants.docsKeySuffix(lang, submodule), contentEncoding);
+
+              // we intentionally await every single file since we observed too many async promises at the
+              // same time might cause the heartbeat task to be delayed.
+              console.log(`Waiting for upload of ${key} to finish`);
+              await awaitUpload(key);
 
             } catch (e) {
               if (e instanceof docgen.LanguageNotSupportedError) {
@@ -172,10 +177,6 @@ export function handler(event: TransliteratorInput): Promise<{ created: S3Object
           }
         });
         await generateDocs(language);
-      }
-
-      for (const key of uploads.keys()) {
-        await awaitUpload(key);
       }
 
     } catch (error) {
