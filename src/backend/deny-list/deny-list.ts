@@ -103,6 +103,7 @@ export class DenyList extends Construct implements IDenyList {
     const upload = new s3deploy.BucketDeployment(this, 'BucketDeployment', {
       destinationBucket: this.bucket,
       prune: true,
+      retainOnDelete: true,
       sources: [s3deploy.Source.asset(directory)],
     });
     this.uploadReady = upload.node.findChild('CustomResource');
