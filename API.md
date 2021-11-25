@@ -61,6 +61,60 @@ public readonly ingestionQueue: IQueue;
 ---
 
 
+### S3StorageFactory <a name="construct-hub.S3StorageFactory"></a>
+
+Create s3 storage resources.
+
+#### Methods <a name="Methods"></a>
+
+##### `newBucket` <a name="construct-hub.S3StorageFactory.newBucket"></a>
+
+```typescript
+public newBucket(scope: Construct, id: string, props?: BucketProps)
+```
+
+###### `scope`<sup>Required</sup> <a name="construct-hub.S3StorageFactory.parameter.scope"></a>
+
+- *Type:* [`@aws-cdk/core.Construct`](#@aws-cdk/core.Construct)
+
+---
+
+###### `id`<sup>Required</sup> <a name="construct-hub.S3StorageFactory.parameter.id"></a>
+
+- *Type:* `string`
+
+---
+
+###### `props`<sup>Optional</sup> <a name="construct-hub.S3StorageFactory.parameter.props"></a>
+
+- *Type:* [`@aws-cdk/aws-s3.BucketProps`](#@aws-cdk/aws-s3.BucketProps)
+
+---
+
+#### Static Functions <a name="Static Functions"></a>
+
+##### `getOrCreate` <a name="construct-hub.S3StorageFactory.getOrCreate"></a>
+
+```typescript
+import { S3StorageFactory } from 'construct-hub'
+
+S3StorageFactory.getOrCreate(scope: Construct, props?: S3StorageFactoryProps)
+```
+
+###### `scope`<sup>Required</sup> <a name="construct-hub.S3StorageFactory.parameter.scope"></a>
+
+- *Type:* [`@aws-cdk/core.Construct`](#@aws-cdk/core.Construct)
+
+---
+
+###### `props`<sup>Optional</sup> <a name="construct-hub.S3StorageFactory.parameter.props"></a>
+
+- *Type:* [`construct-hub.S3StorageFactoryProps`](#construct-hub.S3StorageFactoryProps)
+
+---
+
+
+
 ## Structs <a name="Structs"></a>
 
 ### AlarmActions <a name="construct-hub.AlarmActions"></a>
@@ -328,6 +382,23 @@ public readonly domain: Domain;
 - *Type:* [`construct-hub.Domain`](#construct-hub.Domain)
 
 Connect the hub to a domain (requires a hosted zone and a certificate).
+
+---
+
+##### `failoverStorage`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.failoverStorage"></a>
+
+```typescript
+public readonly failoverStorage: boolean;
+```
+
+- *Type:* `boolean`
+- *Default:* false
+
+Wire construct hub to use the failover storage buckets.
+
+Do not activate this property until you've populated your failover buckets with the necessary data.
+
+> https://github.com/cdklabs/construct-hub/blob/dev/docs/operator-runbook.md#storage-disaster
 
 ---
 
@@ -1301,6 +1372,31 @@ public readonly condition: TagConditionConfig;
 ```
 
 - *Type:* [`construct-hub.TagConditionConfig`](#construct-hub.TagConditionConfig)
+
+---
+
+### S3StorageFactoryProps <a name="construct-hub.S3StorageFactoryProps"></a>
+
+Properties for `S3StorageFactory`.
+
+#### Initializer <a name="[object Object].Initializer"></a>
+
+```typescript
+import { S3StorageFactoryProps } from 'construct-hub'
+
+const s3StorageFactoryProps: S3StorageFactoryProps = { ... }
+```
+
+##### `failover`<sup>Optional</sup> <a name="construct-hub.S3StorageFactoryProps.property.failover"></a>
+
+```typescript
+public readonly failover: boolean;
+```
+
+- *Type:* `boolean`
+- *Default:* false
+
+When enabled, the factory will return the failover buckets instead of the primary.
 
 ---
 

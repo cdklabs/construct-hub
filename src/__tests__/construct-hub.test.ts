@@ -115,3 +115,44 @@ describe('additionalDomains', () => {
   });
 });
 
+test('uses failover buckets when requested', () => {
+
+  const app = new App();
+  const stack = new Stack(app, 'Test');
+
+  new ConstructHub(stack, 'ConstructHub', {
+    failoverStorage: true,
+  });
+
+  // filter out bucket policies since they can still refer to the primary buckets.
+  const cfn: any = { Resources: {} };
+  for (const [id, resource] of Object.entries(SynthUtils.toCloudFormation(stack).Resources) as Array<any>) {
+    if (resource.Type !== 'AWS::S3::BucketPolicy') {
+      cfn.Resources[id] = resource;
+    }
+  }
+
+  // make sure all other references point to the failover buckets.
+  recursiveValidate(cfn, 'Ref', (value: string) => {
+
+    const resource = cfn.Resources[value];
+    if (resource && resource.Type === 'AWS::S3::Bucket') {
+      const failoverTag = resource.Properties.Tags.filter((t: any) => t.Key === 'failover')[0];
+      expect(failoverTag).toBeDefined();
+      expect(failoverTag.Value).toEqual('true');
+    }
+
+  });
+
+});
+
+function recursiveValidate(heystack: any, needle: string, validation: (value: any) => void) {
+  Object.keys(heystack).forEach(key => {
+    const value = heystack[key];
+    if (key === needle && typeof value !== 'object') {
+      validation(value);
+    } else if (typeof value === 'object') {
+      recursiveValidate(value, needle, validation);
+    }
+  });
+};

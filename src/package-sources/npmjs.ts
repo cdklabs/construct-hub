@@ -3,7 +3,7 @@ import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { Tracing } from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
-import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
+import { BlockPublicAccess, IBucket } from '@aws-cdk/aws-s3';
 import { Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl, s3ObjectUrl, sqsQueueUrl } from '../deep-link';
@@ -11,6 +11,7 @@ import { fillMetric } from '../metric-utils';
 import { IMonitoring } from '../monitoring/api';
 import type { IPackageSource, PackageSourceBindOptions, PackageSourceBindResult } from '../package-source';
 import { RUNBOOK_URL } from '../runbook-url';
+import { S3StorageFactory } from '../s3/storage';
 import { NpmJsPackageCanary } from './npmjs/canary';
 import { MARKER_FILE_NAME, METRICS_NAMESPACE, MetricName, S3KeyPrefix } from './npmjs/constants.lambda-shared';
 
@@ -70,7 +71,8 @@ export class NpmJs implements IPackageSource {
   ): PackageSourceBindResult {
     repository?.addExternalConnection('public:npmjs');
 
-    const bucket = this.props.stagingBucket || new Bucket(scope, 'NpmJs/StagingBucket', {
+    const storageFactory = S3StorageFactory.getOrCreate(scope);
+    const bucket = this.props.stagingBucket || storageFactory.newBucket(scope, 'NpmJs/StagingBucket', {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
       lifecycleRules: [{ prefix: S3KeyPrefix.STAGED_KEY_PREFIX, expiration: Duration.days(30) }],

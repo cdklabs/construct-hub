@@ -457,6 +457,65 @@ Resources:
                       - Arn
                   - /*
         Version: 2012-10-17
+  ConstructHubFailoverPackageDataBA7D3B85:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 1
+            Status: Enabled
+          - NoncurrentVersionTransitions:
+              - StorageClass: STANDARD_IA
+                TransitionInDays: 31
+            Status: Enabled
+          - ExpiredObjectDeleteMarker: true
+            NoncurrentVersionExpirationInDays: 90
+            Status: Enabled
+          - NoncurrentVersionExpirationInDays: 7
+            Prefix: catalog.json
+            Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: failover
+          Value: "true"
+      VersioningConfiguration:
+        Status: Enabled
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+  ConstructHubFailoverPackageDataPolicy89BCDF76:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: ConstructHubFailoverPackageDataBA7D3B85
+      PolicyDocument:
+        Statement:
+          - Action: s3:*
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"
+            Effect: Deny
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubFailoverPackageDataBA7D3B85
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubFailoverPackageDataBA7D3B85
+                        - Arn
+                    - /*
+        Version: 2012-10-17
   ConstructHubCodeArtifactDomainFC30B796:
     Type: AWS::CodeArtifact::Domain
     Properties:
@@ -1801,8 +1860,8 @@ Resources:
         RestrictPublicBuckets: true
       VersioningConfiguration:
         Status: Enabled
-    UpdateReplacePolicy: Delete
-    DeletionPolicy: Delete
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
   ConstructHubDenyListBucketPolicyA1878E10:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -1843,6 +1902,50 @@ Resources:
         Fn::GetAtt:
           - ConstructHubDenyListBucket1B3C2C2E
           - Arn
+  ConstructHubDenyListFailoverBucketBF1E05AD:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: failover
+          Value: "true"
+      VersioningConfiguration:
+        Status: Enabled
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+  ConstructHubDenyListFailoverBucketPolicy3B552017:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: ConstructHubDenyListFailoverBucketBF1E05AD
+      PolicyDocument:
+        Statement:
+          - Action: s3:*
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"
+            Effect: Deny
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubDenyListFailoverBucketBF1E05AD
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubDenyListFailoverBucketBF1E05AD
+                        - Arn
+                    - /*
+        Version: 2012-10-17
   ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA:
     Type: AWS::Lambda::LayerVersion
     Properties:
@@ -1887,7 +1990,7 @@ Resources:
                       - Ref: AssetParameters6f1f07e70de63d5afdbcab762f8f867a2aedb494b30cd360d5deb518d3914263S3VersionKey1CB8DF17
       DestinationBucketName:
         Ref: ConstructHubDenyListBucket1B3C2C2E
-      RetainOnDelete: false
+      RetainOnDelete: true
       Prune: true
     DependsOn:
       - ConstructHubDenyListBucketNotifications2269EB2A
@@ -3914,6 +4017,46 @@ Resources:
                         - Arn
                     - /*
         Version: 2012-10-17
+  ConstructHubIngestionFailoverConfigBucket079F82C3:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: failover
+          Value: "true"
+      VersioningConfiguration:
+        Status: Enabled
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+  ConstructHubIngestionFailoverConfigBucketPolicyD45F3F6D:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: ConstructHubIngestionFailoverConfigBucket079F82C3
+      PolicyDocument:
+        Statement:
+          - Action: s3:*
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"
+            Effect: Deny
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubIngestionFailoverConfigBucket079F82C3
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubIngestionFailoverConfigBucket079F82C3
+                        - Arn
+                    - /*
+        Version: 2012-10-17
   ConstructHubIngestionDeployIngestionConfigurationAwsCliLayerF77955C2:
     Type: AWS::Lambda::LayerVersion
     Properties:
@@ -4581,8 +4724,8 @@ Resources:
         RestrictPublicBuckets: true
       VersioningConfiguration:
         Status: Enabled
-    UpdateReplacePolicy: Delete
-    DeletionPolicy: Delete
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
   ConstructHubLicenseListBucketPolicy817F92CD:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -4605,6 +4748,50 @@ Resources:
                   - ""
                   - - Fn::GetAtt:
                         - ConstructHubLicenseListBucket9334047F
+                        - Arn
+                    - /*
+        Version: 2012-10-17
+  ConstructHubLicenseListFailoverBucketA96D2AAF:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: failover
+          Value: "true"
+      VersioningConfiguration:
+        Status: Enabled
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+  ConstructHubLicenseListFailoverBucketPolicy7F222A76:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: ConstructHubLicenseListFailoverBucketA96D2AAF
+      PolicyDocument:
+        Statement:
+          - Action: s3:*
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"
+            Effect: Deny
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubLicenseListFailoverBucketA96D2AAF
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubLicenseListFailoverBucketA96D2AAF
                         - Arn
                     - /*
         Version: 2012-10-17
@@ -4652,7 +4839,7 @@ Resources:
                       - Ref: AssetParameters8d968e7576898e39de27ff4cf5f336e8f112a4de9757412123e2dd725f451900S3VersionKeyD40FAA20
       DestinationBucketName:
         Ref: ConstructHubLicenseListBucket9334047F
-      RetainOnDelete: false
+      RetainOnDelete: true
       Prune: true
     UpdateReplacePolicy: Delete
     DeletionPolicy: Delete
@@ -4704,6 +4891,44 @@ Resources:
                       - ConstructHubWebAppWebsiteBucket4B2B9DB2
                       - Arn
                   - /*
+        Version: 2012-10-17
+  ConstructHubWebAppFailoverWebsiteBucketE69CC2C7:
+    Type: AWS::S3::Bucket
+    Properties:
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: failover
+          Value: "true"
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+  ConstructHubWebAppFailoverWebsiteBucketPolicy7303D09F:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: ConstructHubWebAppFailoverWebsiteBucketE69CC2C7
+      PolicyDocument:
+        Statement:
+          - Action: s3:*
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"
+            Effect: Deny
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubWebAppFailoverWebsiteBucketE69CC2C7
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubWebAppFailoverWebsiteBucketE69CC2C7
+                        - Arn
+                    - /*
         Version: 2012-10-17
   ConstructHubWebAppAddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7E9FDB69:
     Type: AWS::CloudFront::Function
@@ -4969,6 +5194,49 @@ Resources:
                   - ""
                   - - Fn::GetAtt:
                         - ConstructHubSourcesNpmJsStagingBucketB286F0E6
+                        - Arn
+                    - /*
+        Version: 2012-10-17
+  ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42:
+    Type: AWS::S3::Bucket
+    Properties:
+      LifecycleConfiguration:
+        Rules:
+          - ExpirationInDays: 30
+            Prefix: staged/
+            Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: failover
+          Value: "true"
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+  ConstructHubSourcesFailoverNpmJsStagingBucketPolicy00182F29:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42
+      PolicyDocument:
+        Statement:
+          - Action: s3:*
+            Condition:
+              Bool:
+                aws:SecureTransport: "false"
+            Effect: Deny
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42
                         - Arn
                     - /*
         Version: 2012-10-17
@@ -7051,6 +7319,51 @@ Outputs:
           - Ref: AWS::Region
           - "#dashboards:name="
           - Ref: ConstructHubMonitoringWatchfulDashboardB8493D55
+  ConstructHubSnapshotCommandDD3886DA:
+    Description: Snapshot dev/ConstructHub/PackageData
+    Value:
+      Fn::Join:
+        - ""
+        - - aws s3 sync s3://
+          - Ref: ConstructHubPackageDataDC5EF35E
+          - " s3://"
+          - Ref: ConstructHubFailoverPackageDataBA7D3B85
+  ConstructHubDenyListSnapshotCommand3E133B03:
+    Description: Snapshot dev/ConstructHub/DenyList/Bucket
+    Value:
+      Fn::Join:
+        - ""
+        - - aws s3 sync s3://
+          - Ref: ConstructHubDenyListBucket1B3C2C2E
+          - " s3://"
+          - Ref: ConstructHubDenyListFailoverBucketBF1E05AD
+  ConstructHubIngestionSnapshotCommand746AF5B0:
+    Description: Snapshot dev/ConstructHub/Ingestion/ConfigBucket
+    Value:
+      Fn::Join:
+        - ""
+        - - aws s3 sync s3://
+          - Ref: ConstructHubIngestionConfigBucket0F0ED0B6
+          - " s3://"
+          - Ref: ConstructHubIngestionFailoverConfigBucket079F82C3
+  ConstructHubLicenseListSnapshotCommandB9EA2EF4:
+    Description: Snapshot dev/ConstructHub/LicenseList/Bucket
+    Value:
+      Fn::Join:
+        - ""
+        - - aws s3 sync s3://
+          - Ref: ConstructHubLicenseListBucket9334047F
+          - " s3://"
+          - Ref: ConstructHubLicenseListFailoverBucketA96D2AAF
+  ConstructHubWebAppSnapshotCommandC5AF418E:
+    Description: Snapshot dev/ConstructHub/WebApp/WebsiteBucket
+    Value:
+      Fn::Join:
+        - ""
+        - - aws s3 sync s3://
+          - Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
+          - " s3://"
+          - Ref: ConstructHubWebAppFailoverWebsiteBucketE69CC2C7
   ConstructHubWebAppDomainNameDC10F8DD:
     Value:
       Fn::GetAtt:
@@ -7058,6 +7371,15 @@ Outputs:
         - DomainName
     Export:
       Name: ConstructHubDomainName
+  ConstructHubSourcesSnapshotCommandB1EF760F:
+    Description: Snapshot dev/ConstructHub/Sources/NpmJs--StagingBucket
+    Value:
+      Fn::Join:
+        - ""
+        - - aws s3 sync s3://
+          - Ref: ConstructHubSourcesNpmJsStagingBucketB286F0E6
+          - " s3://"
+          - Ref: ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42
 Parameters:
   AssetParameters4074092ab8b435c90a773e082601fa36def54c91cadfae59451bd0beda547cbcS3Bucket02FC0B28:
     Type: String

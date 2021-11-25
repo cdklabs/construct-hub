@@ -12,6 +12,56 @@ readily available.
 
 --------------------------------------------------------------------------------
 
+## :fire: Disaster Recovery
+
+### Storage Disaster
+
+Every deployment of Construct Hub automatically allocates a failover bucket for every bucket it creates and uses.
+The failover buckets are created with the exact same properites as the original buckets, but are not activated by default.
+They exist in order for operators to perform scheduled snapshots of the original data, in preparation for a disater.
+
+Construct Hub deployments provide CloudFormation outputs that list out the necessary commands you need to run in order to
+create those snapshots, and backup your data into the failover buckets.
+
+After construct hub deployment finishes, at the time of your choosing, locate those outputs in the CloudFormation console, under the "Outputs" tab, and run the commands:
+
+```console
+aws s3 sync s3://<deny-list-bucket> s3://<failover-deny-list-bucket>
+aws s3 sync s3://<ingestion-config-bucket> s3://<failover-ingestion-config-bucket>
+aws s3 sync s3://<license-list-bucket> s3://<failover-license-list-bucket>
+aws s3 sync s3://<package-data-bucket> s3://<failover-package-data-bucket>
+aws s3 sync s3://<staging-bucket> s3://<failover-staging-bucket>
+aws s3 sync s3://<website-bucket> s3://<failover-website-bucket>
+```
+
+> Its recommended you run these commands from within the AWS network, preferably in the same region as the deployment.
+
+Once these commands finish, all your data will be backed up into the failover buckets, and you should be ready.
+When storage related disaster strikes, simply activate the failover buckets:
+
+```ts
+new ConstructHub(this, 'ConstructHub', {
+  failoverStorageActive: true,
+  ...
+}
+```
+
+And deploy this to your environment. This will swap out all the original buckets with the pre-populated failover buckets.
+Note that any data that was indexed in construct hub post the creation of the snapshot, will not be available immediately once you perform the failover.
+Construct hub will pick up discovery from the marker that was included in the last snapshot.
+
+When you restore the original data and are ready to go back to the original buckets, simply remove this property and deploy again.
+
+#### When NOT to use this procedure
+
+If the data loss/corruption is self-inflicted and continuous, i.e construct hub misbehaves and mutates its own data in a faulty manner.
+In this case switching to the failover won't help because the bad behavior will be applied on the failover buckets.
+
+#### When to use this procedure.
+
+This procedure is designed to be used as a reaction to a single and isolated corruption/loss event, either by human error or by the system.
+**Its imperative you validate the corruption is not continuous!**
+
 ## :rotating_light: ConstructHub Alarms
 
 ### `ConstructHub/Ingestion/DLQNotEmpty`
