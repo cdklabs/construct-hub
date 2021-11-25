@@ -48,6 +48,7 @@ export class LicenseList extends Construct implements ILicenseList {
     this.upload = new s3deploy.BucketDeployment(this, 'Resource', {
       destinationBucket: this.bucket,
       prune: true,
+      retainOnDelete: true,
       sources: [this.createAsset(props.licenses)],
     });
   }
