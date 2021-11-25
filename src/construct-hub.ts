@@ -152,7 +152,6 @@ export interface ConstructHubProps {
   readonly categories?: Category[];
 
   /**
-<<<<<<< HEAD
    * Wire construct hub to use the failover storage buckets.
    *
    * Do not activate this property until you've populated your failover buckets
@@ -163,14 +162,13 @@ export interface ConstructHubProps {
    */
   readonly failoverStorageActive?: boolean;
 
-=======
+  /**
    * Additional domains which will be set up to redirect to the primary
    * construct hub domain.
    *
    * @default []
    */
   readonly additionalDomains?: DomainRedirectSource[];
->>>>>>> dev
 }
 
 /**
