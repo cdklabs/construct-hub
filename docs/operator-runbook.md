@@ -50,6 +50,16 @@ Construct hub will pick up discovery from the marker that was included in the la
 
 When you restore the original data and are ready to go back to the original buckets, simply remove this property and deploy again.
 
+#### When NOT to use this procedure
+
+If the data loss/corruption is self-inflicted and continuous, i.e construct hub misbehaves and mutates its own data in a faulty manner.
+In this case switching to the failover won't help because the bad behavior will be applied on the failover buckets.
+
+#### When to use this procedure.
+
+This procedure is designed to be used as a reaction to a single and isolated corruption/loss event, either by human error or by the system.
+**Its imperative you validate the corruption is not continuous!**
+
 ## :rotating_light: ConstructHub Alarms
 
 ### `ConstructHub/Ingestion/DLQNotEmpty`
