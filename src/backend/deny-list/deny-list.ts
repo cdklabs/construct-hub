@@ -8,7 +8,7 @@ import * as lambda from '@aws-cdk/aws-lambda';
 import { S3EventSource } from '@aws-cdk/aws-lambda-event-sources';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
-import { Construct, Duration, IConstruct } from '@aws-cdk/core';
+import { Construct, Duration, IConstruct, RemovalPolicy } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
 import { S3StorageFactory } from '../../s3/storage';
 import { DenyListRule, IDenyList } from './api';
@@ -94,6 +94,7 @@ export class DenyList extends Construct implements IDenyList {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       encryption: s3.BucketEncryption.S3_MANAGED,
       enforceSSL: true,
+      removalPolicy: RemovalPolicy.RETAIN,
       versioned: true,
     });
 
