@@ -252,14 +252,21 @@ Resources:
             - Fn::GetAtt:
                 - ConstructHubSourcesdevConstructHubSourcesNpmJsStagerDLQNotEmpty3777A4EA
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":54,"properties":{"view":"timeSeries","title":"Inventory
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":54,"properties":{"view":"timeSeries","title":"New
+              version visibility SLA breached","region":"'
+            - Ref: AWS::Region
+            - '","annotations":{"alarms":["'
+            - Fn::GetAtt:
+                - ConstructHubSourcesNpmJsCanaryAlarmBE2B479E
+                - Arn
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":60,"properties":{"view":"timeSeries","title":"Inventory
               Canary is not Running","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubInventoryCanaryNotRunningAF44D71C
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":60,"properties":{"view":"timeSeries","title":"Inventory
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":66,"properties":{"view":"timeSeries","title":"Inventory
               Canary is failing","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
@@ -3200,7 +3207,7 @@ Resources:
                 - Ref: AWS::Region
                 - .
                 - Ref: AWS::URLSuffix
-                - /aws-cdk/assets:e8a65f68db69f3fdd378815407a51f5e2c8a6f4407778985dbd2d77ae19d6e8a
+                - /aws-cdk/assets:b15865a716221fe6f3794674c622a2b276a687fba57560714bee91e09d1c1d71
           LogConfiguration:
             LogDriver: awslogs
             Options:

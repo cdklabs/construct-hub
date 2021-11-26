@@ -457,7 +457,7 @@ export class NpmJs implements IPackageSource {
       treatMissingData: TreatMissingData.BREACHING,
       threshold: visibilitySla.toSeconds(),
     });
-    monitoring.addLowSeverityAlarm('New version visibility SLA breached', alarm);
+    monitoring.addHighSeverityAlarm('New version visibility SLA breached', alarm);
 
     return [
       new GraphWidget({
