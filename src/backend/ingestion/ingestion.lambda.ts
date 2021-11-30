@@ -17,7 +17,7 @@ import { integrity } from '../shared/integrity.lambda-shared';
 import { isTagApplicable } from '../shared/tags';
 import { extractObjects } from '../shared/tarball.lambda-shared';
 import { MetricName, METRICS_NAMESPACE } from './constants';
-import { ConstructFramework, detectConstructFramework } from './framework-detection';
+import { ConstructFramework, detectConstructFramework } from './framework-detection.lambda-shared';
 
 Configuration.namespace = METRICS_NAMESPACE;
 

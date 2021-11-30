@@ -10,7 +10,7 @@ import { lambdaFunctionUrl, s3ObjectUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { RUNBOOK_URL } from '../../runbook-url';
 import { DenyList } from '../deny-list';
-import type { ConstructFramework } from '../ingestion/framework-detection';
+import type { ConstructFramework } from '../ingestion/framework-detection.lambda-shared';
 import { CatalogBuilder as Handler } from './catalog-builder';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 

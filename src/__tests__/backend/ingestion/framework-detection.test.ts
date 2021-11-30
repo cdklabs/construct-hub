@@ -1,5 +1,5 @@
 import { Assembly } from '@jsii/spec';
-import { ConstructFramework, ConstructFrameworkName, detectConstructFramework } from '../../../backend/ingestion/framework-detection';
+import { ConstructFramework, ConstructFrameworkName, detectConstructFramework } from '../../../backend/ingestion/framework-detection.lambda-shared';
 
 describe('AWS CDK frameworks', () => {
   expect(frameworkForDeps(['@aws-cdk/aws-s3@1.134.0'])).toEqual({ name: ConstructFrameworkName.AWS_CDK, majorVersion: 1 });
