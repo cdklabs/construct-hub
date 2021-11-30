@@ -341,6 +341,17 @@ function detectConstructFramework(assembly: Assembly): ConstructFramework | unde
   let nameAmbiguous = false;
   let majorVersion: number | undefined;
   let majorVersionAmbiguous = false;
+
+  // exception: we assume all @cdktf/ libraries are cdktf, even if they
+  // also take other CDK types as dependencies
+  if (assembly.name.startsWith('@cdktf/')) {
+    name = ConstructFrameworkName.CDKTF;
+    if ('cdktf' in (assembly.dependencyClosure ?? {})) {
+      detectConstructFrameworkPackage('cdktf');
+    }
+    return { name, majorVersion };
+  }
+
   detectConstructFrameworkPackage(assembly.name, assembly.version);
   for (const depName of Object.keys(assembly.dependencyClosure ?? {})) {
     detectConstructFrameworkPackage(depName);
@@ -358,7 +369,7 @@ function detectConstructFramework(assembly: Assembly): ConstructFramework | unde
         return;
       }
       name = ConstructFrameworkName.AWS_CDK;
-    } else if (packageName === 'cdktf' || packageName.startsWith('@cdktf/')) {
+    } else if (packageName === 'cdktf') {
       if (name && name !== ConstructFrameworkName.CDKTF) {
         // Identified multiple candidates, so returning ambiguous...
         nameAmbiguous = true;
