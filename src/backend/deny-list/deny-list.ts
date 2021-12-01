@@ -55,6 +55,12 @@ export interface DenyListProps {
   readonly prunePeriod?: Duration;
 
   /**
+   * Override the default properties for the S3 bucket created by
+   * this construct.
+   */
+  readonly internalBucketProps?: s3.BucketProps;
+
+  /**
    * The monitoring system.
    */
   readonly monitoring: Monitoring;
@@ -96,6 +102,7 @@ export class DenyList extends Construct implements IDenyList {
       enforceSSL: true,
       removalPolicy: RemovalPolicy.RETAIN,
       versioned: true,
+      ...(props.internalBucketProps ?? {}),
     });
 
     const directory = this.writeToFile(props.rules, this.objectKey);
