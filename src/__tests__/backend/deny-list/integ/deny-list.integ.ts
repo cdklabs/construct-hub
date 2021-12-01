@@ -37,6 +37,11 @@ const denylist = new DenyList(stack, 'DenyList', {
   ],
 });
 
+// allow integ test to self-clean-up
+denylist.bucket.applyRemovalPolicy(RemovalPolicy.DESTROY);
+// @ts-ignore // private method
+denylist.bucket.enableAutoDeleteObjects();
+
 const catalogBuilderMock = new CatalogBuilderMock(stack, 'CatalogBuilderMock');
 denylist.prune.onChangeInvoke(catalogBuilderMock);
 
