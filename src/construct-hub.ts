@@ -17,6 +17,7 @@ import { LicenseList } from './backend/license-list';
 import { Orchestration } from './backend/orchestration';
 import { PackageStats } from './backend/package-stats';
 import { CATALOG_KEY, STORAGE_KEY_PREFIX } from './backend/shared/constants';
+import { VersionTracker } from './backend/version-tracker';
 import { Repository } from './codeartifact/repository';
 import { DomainRedirect, DomainRedirectSource } from './domain-redirect';
 import { Monitoring } from './monitoring';
@@ -276,6 +277,12 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
         objectKey: statsKey,
       });
     }
+
+    new VersionTracker(this, 'VersionTracker', {
+      bucket: packageData,
+      monitoring,
+      logRetention: props.logRetention,
+    });
 
     const orchestration = new Orchestration(this, 'Orchestration', {
       bucket: packageData,

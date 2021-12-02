@@ -9,7 +9,7 @@ import { CacheControl } from '@aws-cdk/aws-s3-deployment';
 import { CfnOutput, Construct, Duration } from '@aws-cdk/core';
 import { Domain } from '../api';
 import { PackageStats } from '../backend/package-stats';
-import { CATALOG_KEY } from '../backend/shared/constants';
+import { CATALOG_KEY, VERSION_TRACKER_KEY } from '../backend/shared/constants';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
 import { S3StorageFactory } from '../s3/storage';
@@ -193,6 +193,7 @@ export class WebApp extends Construct {
     const jsiiObjOrigin = new origins.S3Origin(props.packageData);
     this.distribution.addBehavior('/data/*', jsiiObjOrigin, behaviorOptions);
     this.distribution.addBehavior(`/${CATALOG_KEY}`, jsiiObjOrigin, behaviorOptions);
+    this.distribution.addBehavior(`/${VERSION_TRACKER_KEY}`, jsiiObjOrigin, behaviorOptions);
     if (props.packageStats) {
       this.distribution.addBehavior(`/${props.packageStats.statsKey}`, jsiiObjOrigin, behaviorOptions);
     }
