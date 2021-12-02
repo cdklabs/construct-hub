@@ -35,11 +35,6 @@ const denylist = new DenyList(stack, 'DenyList', {
     { packageName: 'mypackage', reason: '"mypackage" is deprecated' },
     { packageName: 'your', version: '1.2.3', reason: 'v1.2.3 of "your" has a security issue' },
   ],
-  // allow integ test to self-clean-up
-  internalBucketProps: {
-    removalPolicy: RemovalPolicy.DESTROY,
-    autoDeleteObjects: true,
-  },
 });
 
 const catalogBuilderMock = new CatalogBuilderMock(stack, 'CatalogBuilderMock');
