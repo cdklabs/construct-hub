@@ -124,10 +124,11 @@ test('uses failover buckets when requested', () => {
     failoverStorage: true,
   });
 
-  // filter out bucket policies since they can still refer to the primary buckets.
+  // filter out bucket policies and autoDeleteObjects custom resources since
+  // they can still refer to the primary buckets.
   const cfn: any = { Resources: {} };
   for (const [id, resource] of Object.entries(SynthUtils.toCloudFormation(stack).Resources) as Array<any>) {
-    if (resource.Type !== 'AWS::S3::BucketPolicy') {
+    if (resource.Type !== 'AWS::S3::BucketPolicy' && !id.includes('AutoDeleteObjects')) {
       cfn.Resources[id] = resource;
     }
   }
@@ -137,7 +138,7 @@ test('uses failover buckets when requested', () => {
 
     const resource = cfn.Resources[value];
     if (resource && resource.Type === 'AWS::S3::Bucket') {
-      const failoverTag = resource.Properties.Tags.filter((t: any) => t.Key === 'failover')[0];
+      const failoverTag = resource.Properties.Tags.find((t: any) => t.Key === 'failover');
       expect(failoverTag).toBeDefined();
       expect(failoverTag.Value).toEqual('true');
     }

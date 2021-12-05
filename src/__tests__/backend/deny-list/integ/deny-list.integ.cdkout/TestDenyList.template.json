@@ -756,12 +756,18 @@
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true
         },
+        "Tags": [
+          {
+            "Key": "aws-cdk:auto-delete-objects",
+            "Value": "true"
+          }
+        ],
         "VersioningConfiguration": {
           "Status": "Enabled"
         }
       },
-      "UpdateReplacePolicy": "Retain",
-      "DeletionPolicy": "Retain",
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/Bucket/Resource"
       }
@@ -807,6 +813,44 @@
                   ]
                 }
               ]
+            },
+            {
+              "Action": [
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "DenyListBucketC1C9D3D9",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "DenyListBucketC1C9D3D9",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
             }
           ],
           "Version": "2012-10-17"
@@ -814,6 +858,28 @@
       },
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/Bucket/Policy/Resource"
+      }
+    },
+    "DenyListBucketAutoDeleteObjectsCustomResource8261EE69": {
+      "Type": "Custom::S3AutoDeleteObjects",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+            "Arn"
+          ]
+        },
+        "BucketName": {
+          "Ref": "DenyListBucketC1C9D3D9"
+        }
+      },
+      "DependsOn": [
+        "DenyListBucketPolicyFE28C82A"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/Bucket/AutoDeleteObjectsCustomResource/Default"
       }
     },
     "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7": {
@@ -861,6 +927,10 @@
         },
         "Tags": [
           {
+            "Key": "aws-cdk:auto-delete-objects",
+            "Value": "true"
+          },
+          {
             "Key": "failover",
             "Value": "true"
           }
@@ -869,8 +939,8 @@
           "Status": "Enabled"
         }
       },
-      "UpdateReplacePolicy": "Retain",
-      "DeletionPolicy": "Retain",
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/FailoverBucket/Resource"
       }
@@ -916,6 +986,44 @@
                   ]
                 }
               ]
+            },
+            {
+              "Action": [
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "DenyListFailoverBucketC0405145",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "DenyListFailoverBucketC0405145",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
             }
           ],
           "Version": "2012-10-17"
@@ -923,6 +1031,28 @@
       },
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/FailoverBucket/Policy/Resource"
+      }
+    },
+    "DenyListFailoverBucketAutoDeleteObjectsCustomResource7D8B8ADF": {
+      "Type": "Custom::S3AutoDeleteObjects",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+            "Arn"
+          ]
+        },
+        "BucketName": {
+          "Ref": "DenyListFailoverBucketC0405145"
+        }
+      },
+      "DependsOn": [
+        "DenyListFailoverBucketPolicy7EF208CC"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/FailoverBucket/AutoDeleteObjectsCustomResource/Default"
       }
     },
     "DenyListBucketDeploymentAwsCliLayer4F94CAE9": {
@@ -1641,11 +1771,13 @@
       },
       "DependsOn": [
         "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7",
+        "DenyListBucketAutoDeleteObjectsCustomResource8261EE69",
         "DenyListBucketNotificationsEF0449EB",
         "DenyListBucketPolicyFE28C82A",
         "DenyListBucketC1C9D3D9",
         "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
         "DenyListBucketDeploymentCustomResource68E58740",
+        "DenyListFailoverBucketAutoDeleteObjectsCustomResource7D8B8ADF",
         "DenyListFailoverBucketPolicy7EF208CC",
         "DenyListFailoverBucketC0405145",
         "DenyListPeriodicPruneAllowEventRuleTestDenyListPrunePruneHandlerDB8102B7EA785278",
@@ -1884,11 +2016,13 @@
       },
       "DependsOn": [
         "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7",
+        "DenyListBucketAutoDeleteObjectsCustomResource8261EE69",
         "DenyListBucketNotificationsEF0449EB",
         "DenyListBucketPolicyFE28C82A",
         "DenyListBucketC1C9D3D9",
         "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
         "DenyListBucketDeploymentCustomResource68E58740",
+        "DenyListFailoverBucketAutoDeleteObjectsCustomResource7D8B8ADF",
         "DenyListFailoverBucketPolicy7EF208CC",
         "DenyListFailoverBucketC0405145",
         "DenyListPeriodicPruneAllowEventRuleTestDenyListPrunePruneHandlerDB8102B7EA785278",
