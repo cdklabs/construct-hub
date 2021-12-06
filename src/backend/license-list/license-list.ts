@@ -5,6 +5,7 @@ import * as lambda from '@aws-cdk/aws-lambda';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
 import { Construct, RemovalPolicy } from '@aws-cdk/core';
+import { S3StorageFactory } from '../../s3/storage';
 import { SpdxLicense } from '../../spdx-license';
 import { ILicenseList } from './api';
 import { EnvironmentVariables } from './constants';
@@ -36,18 +37,19 @@ export class LicenseList extends Construct implements ILicenseList {
   public constructor(scope: Construct, id: string, props: LicenseListProps) {
     super(scope, id);
 
-    this.bucket = new s3.Bucket(this, 'Bucket', {
+    const storageFactory = S3StorageFactory.getOrCreate(this);
+    this.bucket = storageFactory.newBucket(this, 'Bucket', {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       encryption: s3.BucketEncryption.S3_MANAGED,
       enforceSSL: true,
-      removalPolicy: RemovalPolicy.DESTROY,
+      removalPolicy: RemovalPolicy.RETAIN,
       versioned: true,
     });
 
     this.upload = new s3deploy.BucketDeployment(this, 'Resource', {
       destinationBucket: this.bucket,
       prune: true,
-      retainOnDelete: false,
+      retainOnDelete: true,
       sources: [this.createAsset(props.licenses)],
     });
   }

@@ -246,7 +246,7 @@ function linkFormatter(type: docgen.TranspiledType): string {
   // linking to them.
   const hash = sanitize(type.fqn);
   const query = `?lang=${type.language.toString()}${type.submodule ? `&submodule=${type.submodule}` : ''}`;
-  return `/packages/${packageName}/v/${packageVersion}/api/${hash}${query}}`;
+  return `/packages/${packageName}/v/${packageVersion}/api/${hash}${query}`;
 
 }
 
