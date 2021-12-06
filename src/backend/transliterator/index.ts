@@ -84,7 +84,7 @@ export interface TransliteratorVpcEndpoints {
  */
 export class Transliterator extends Construct {
   public readonly containerDefinition: ContainerDefinition;
-  public readonly logGroup: ILogGroup
+  public readonly logGroup: ILogGroup;
 
   public get taskDefinition() {
     return this.containerDefinition.taskDefinition;
