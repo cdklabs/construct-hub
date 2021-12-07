@@ -118,9 +118,9 @@ test('full build', () => {
             },
           },
         },
-        updatedAt: expect.anything(),
+        updated: expect.anything(),
       });
-      expect(Date.parse(body.updatedAt)).toBeDefined();
+      expect(Date.parse(body.updated)).toBeDefined();
     } catch (e) {
       return cb(e as AWSError);
     }
