@@ -1,7 +1,6 @@
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
 import * as _AWS from 'aws-sdk';
-// import * as AWSXRay from 'aws-xray-sdk-core';
 import * as aws from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { ENV_PACKAGE_DATA_BUCKET_NAME, ENV_PACKAGE_DATA_KEY_PREFIX, ENV_VERSION_TRACKER_BUCKET_NAME, ENV_VERSION_TRACKER_OBJECT_KEY, MetricName, METRICS_NAMESPACE } from './constants';

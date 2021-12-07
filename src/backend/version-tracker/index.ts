@@ -119,7 +119,7 @@ export class VersionTracker extends Construct {
         threshold: 1,
         treatMissingData: TreatMissingData.BREACHING,
       });
-    props.monitoring.addHighSeverityAlarm('VersionTracker/Follower Not Running', notRunningAlarm);
+    props.monitoring.addLowSeverityAlarm('VersionTracker Not Running', notRunningAlarm);
   }
 
   public metricTrackedPackagesCount(opts?: MetricOptions): Metric {
