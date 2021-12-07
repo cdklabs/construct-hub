@@ -278,7 +278,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       });
     }
 
-    new VersionTracker(this, 'VersionTracker', {
+    const versionTracker = new VersionTracker(this, 'VersionTracker', {
       bucket: packageData,
       monitoring,
       logRetention: props.logRetention,
@@ -365,6 +365,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       orchestration,
       denyList,
       packageStats,
+      versionTracker,
     });
 
     // add domain redirects

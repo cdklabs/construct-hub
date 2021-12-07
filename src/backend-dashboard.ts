@@ -7,8 +7,9 @@ import { Inventory } from './backend/inventory';
 import { PackageVersionsTableWidget } from './backend/inventory/package-versions-table-widget';
 import { Orchestration } from './backend/orchestration';
 import { PackageStats } from './backend/package-stats';
-import { missingDocumentationReport, UNINSTALLABLE_PACKAGES_REPORT, corruptAssemblyReport } from './backend/shared/constants';
+import { missingDocumentationReport, UNINSTALLABLE_PACKAGES_REPORT, corruptAssemblyReport, VERSION_TRACKER_KEY } from './backend/shared/constants';
 import { DocumentationLanguage } from './backend/shared/language';
+import { VersionTracker } from './backend/version-tracker';
 import { ecsClusterUrl, lambdaFunctionUrl, lambdaSearchLogGroupUrl, logGroupUrl, s3ObjectUrl, sqsQueueUrl, stateMachineUrl } from './deep-link';
 import { fillMetric } from './metric-utils';
 import { PackageSourceBindResult } from './package-source';
@@ -22,6 +23,7 @@ export interface BackendDashboardProps {
   readonly denyList: DenyList;
   readonly packageData: IBucket;
   readonly packageStats?: PackageStats;
+  readonly versionTracker: VersionTracker;
 }
 
 export class BackendDashboard extends Construct {
@@ -300,6 +302,7 @@ export class BackendDashboard extends Construct {
         ],
 
         ...(props.packageStats ? renderPackageStatsWidgets(props.packageStats) : []),
+        ...renderVersionTrackerWidgets(props.versionTracker),
       ],
     });
   }
@@ -494,6 +497,50 @@ function renderPackageStatsWidgets(packageStats: PackageStats): IWidget[][] {
           color: '#ffa500',
           label: '15 minutes (Lambda timeout)',
           value: Duration.minutes(15).toSeconds(),
+        }],
+      }),
+    ],
+  ];
+}
+
+function renderVersionTrackerWidgets(versionTracker: VersionTracker): IWidget[][] {
+  return [
+    [
+      new TextWidget({
+        height: 2,
+        width: 24,
+        markdown:
+          [
+            '# Version Tracker',
+            '',
+            `[button:primary:Versions Object](${s3ObjectUrl(versionTracker.bucket, VERSION_TRACKER_KEY)})`,
+            `[button:Version Tracker Function](${lambdaFunctionUrl(versionTracker.handler)})`,
+            `[button:Version Tracker Logs](${lambdaSearchLogGroupUrl(versionTracker.handler)})`,
+          ].join('\n'),
+      }),
+    ],
+    [
+      new GraphWidget({
+        height: 6,
+        width: 12,
+        title: 'Number of Package Versions Recorded',
+        left: [
+          fillMetric(versionTracker.metricTrackedVersionsCount({ label: 'Package versions recorded' }), 'REPEAT'),
+        ],
+        leftYAxis: { min: 0 },
+      }),
+      new GraphWidget({
+        height: 6,
+        width: 12,
+        title: 'Invocation Duration',
+        left: [
+          versionTracker.handler.metricDuration({ label: 'Duration' }),
+        ],
+        leftYAxis: { min: 0 },
+        rightAnnotations: [{
+          color: '#ffa500',
+          label: '1 minutes (Lambda timeout)',
+          value: Duration.minutes(1).toSeconds(),
         }],
       }),
     ],
