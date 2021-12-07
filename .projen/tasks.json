@@ -72,7 +72,7 @@
           "spawn": "bundle:canary"
         },
         {
-          "spawn": "bundle:missing-documentation-widget-function"
+          "spawn": "bundle:package-versions-table-widget-function"
         },
         {
           "spawn": "bundle:needs-catalog-update"
@@ -246,25 +246,7 @@
       "description": "Continuously bundle all AWS Lambda functions",
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/inventory/missing-documentation-widget-function.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/package-stats/package-stats.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/monitoring/http-get-function.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch"
-        }
-      ]
-    },
-    "bundle:missing-documentation-widget-function": {
-      "name": "bundle:missing-documentation-widget-function",
-      "description": "Create an AWS Lambda bundle from src/backend/inventory/missing-documentation-widget-function.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/backend/inventory/missing-documentation-widget-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/missing-documentation-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
-        }
-      ]
-    },
-    "bundle:missing-documentation-widget-function:watch": {
-      "name": "bundle:missing-documentation-widget-function:watch",
-      "description": "Continuously update an AWS Lambda bundle from src/backend/inventory/missing-documentation-widget-function.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/backend/inventory/missing-documentation-widget-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/missing-documentation-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/inventory/package-versions-table-widget-function.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/package-stats/package-stats.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/monitoring/http-get-function.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -337,6 +319,24 @@
       "steps": [
         {
           "exec": "esbuild --bundle src/backend/package-stats/package-stats.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:package-versions-table-widget-function": {
+      "name": "bundle:package-versions-table-widget-function",
+      "description": "Create an AWS Lambda bundle from src/backend/inventory/package-versions-table-widget-function.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/inventory/package-versions-table-widget-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/package-versions-table-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:package-versions-table-widget-function:watch": {
+      "name": "bundle:package-versions-table-widget-function:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/inventory/package-versions-table-widget-function.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/inventory/package-versions-table-widget-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/package-versions-table-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -566,7 +566,7 @@
           "spawn": "bundle:canary"
         },
         {
-          "spawn": "bundle:missing-documentation-widget-function"
+          "spawn": "bundle:package-versions-table-widget-function"
         },
         {
           "spawn": "bundle:needs-catalog-update"
@@ -692,7 +692,7 @@
       "description": "synthesize integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
       "steps": [
         {
-          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting -o src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.actual > /dev/null"
+          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true -o src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.actual > /dev/null"
         },
         {
           "exec": "diff -r -x asset.* -x cdk.out -x manifest.json -x tree.json src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout/ src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.actual/"
@@ -707,7 +707,7 @@
           "exec": "rm -fr src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.deploy"
         },
         {
-          "exec": "cdk deploy --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting --require-approval=never -o src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.deploy"
+          "exec": "cdk deploy --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true --require-approval=never -o src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.deploy"
         },
         {
           "exec": "rm -fr src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout"
@@ -734,7 +734,58 @@
       "description": "update snapshot for integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
       "steps": [
         {
-          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting -o src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout > /dev/null"
+          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true -o src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout > /dev/null"
+        }
+      ]
+    },
+    "integ:domain-redirect:assert": {
+      "name": "integ:domain-redirect:assert",
+      "description": "synthesize integration test __tests__/domain-redirect.integ.ts",
+      "steps": [
+        {
+          "exec": "cdk synth --app \"node lib/__tests__/domain-redirect.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true -o src/__tests__/.tmp.domain-redirect.integ.cdkout.actual > /dev/null"
+        },
+        {
+          "exec": "diff -r -x asset.* -x cdk.out -x manifest.json -x tree.json src/__tests__/domain-redirect.integ.cdkout/ src/__tests__/.tmp.domain-redirect.integ.cdkout.actual/"
+        }
+      ]
+    },
+    "integ:domain-redirect:deploy": {
+      "name": "integ:domain-redirect:deploy",
+      "description": "deploy integration test __tests__/domain-redirect.integ.ts",
+      "steps": [
+        {
+          "exec": "rm -fr src/__tests__/.tmp.domain-redirect.integ.cdkout.deploy"
+        },
+        {
+          "exec": "cdk deploy --app \"node lib/__tests__/domain-redirect.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true --require-approval=never -o src/__tests__/.tmp.domain-redirect.integ.cdkout.deploy"
+        },
+        {
+          "exec": "rm -fr src/__tests__/domain-redirect.integ.cdkout"
+        },
+        {
+          "exec": "mv src/__tests__/.tmp.domain-redirect.integ.cdkout.deploy src/__tests__/domain-redirect.integ.cdkout"
+        },
+        {
+          "spawn": "integ:domain-redirect:destroy"
+        }
+      ]
+    },
+    "integ:domain-redirect:destroy": {
+      "name": "integ:domain-redirect:destroy",
+      "description": "destroy integration test __tests__/domain-redirect.integ.ts",
+      "steps": [
+        {
+          "exec": "cdk destroy --app src/__tests__/domain-redirect.integ.cdkout --no-version-reporting"
+        }
+      ]
+    },
+    "integ:domain-redirect:snapshot": {
+      "name": "integ:domain-redirect:snapshot",
+      "description": "update snapshot for integration test __tests__/domain-redirect.integ.ts",
+      "steps": [
+        {
+          "exec": "cdk synth --app \"node lib/__tests__/domain-redirect.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true -o src/__tests__/domain-redirect.integ.cdkout > /dev/null"
         }
       ]
     },
@@ -839,6 +890,9 @@
         },
         {
           "spawn": "integ:deny-list:assert"
+        },
+        {
+          "spawn": "integ:domain-redirect:assert"
         }
       ]
     },
@@ -901,7 +955,7 @@
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @aws-sdk/client-sfn @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case cdk-triggers construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak json-schema JSONStream normalize-registry-metadata npm-check-updates projen semver spdx-license-list standard-version tar-stream typescript uuid yaml"
+          "exec": "yarn upgrade @aws-sdk/client-sfn @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case cdk-triggers construct-hub-webapp esbuild eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak json-schema JSONStream normalize-registry-metadata npm-check-updates projen semver spdx-license-list standard-version tar-stream typescript uuid yaml"
         },
         {
           "exec": "npx projen"

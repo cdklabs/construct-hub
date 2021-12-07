@@ -1,4 +1,5 @@
-import { FeaturedPackages, FeatureFlags, PackageLinkConfig } from '.';
+import { join } from 'path';
+import { Category, FeaturedPackages, FeatureFlags, PackageLinkConfig } from '.';
 import { ConfigFile } from '../config-file';
 import { PackageTagConfig } from '../package-tag';
 
@@ -31,12 +32,19 @@ interface FrontendPackageTagConfig {
 
 type FrontendFeaturedPackagesConfig = FeaturedPackages;
 
+interface FrontendDebugInfo {
+  constructHubVersion: string;
+  constructHubWebappVersion: string;
+}
+
 interface FrontendConfig {
   packageLinks?: FrontendPackageLinkConfig[];
   packageTags?: FrontendPackageTagConfig[];
   featuredPackages?: FrontendFeaturedPackagesConfig;
   packageStats?: boolean;
   featureFlags?: FeatureFlags;
+  categories?: Category[];
+  debugInfo?: FrontendDebugInfo;
 }
 
 export interface WebappConfigProps {
@@ -67,6 +75,12 @@ export interface WebappConfigProps {
    * @default true
    */
   readonly showPackageStats?: boolean;
+
+  /**
+   * Browse categories. Each category will appear in the home page as a button
+   * with a link to the relevant search query.
+   */
+  readonly categories?: Category[];
 }
 
 export class WebappConfig {
@@ -82,6 +96,8 @@ export class WebappConfig {
       featuredPackages: this.featuredPackages,
       packageStats: this.props.showPackageStats ?? true,
       featureFlags: this.props.featureFlags,
+      categories: this.props.categories,
+      debugInfo: this.debugInfo,
     };
   }
 
@@ -113,5 +129,14 @@ export class WebappConfig {
       }
     }
     return config;
+  }
+
+  private get debugInfo(): FrontendDebugInfo {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const packageJson = require(join('..', '..', 'package.json'));
+    return {
+      constructHubVersion: packageJson.version,
+      constructHubWebappVersion: packageJson.devDependencies['construct-hub-webapp'],
+    };
   }
 }

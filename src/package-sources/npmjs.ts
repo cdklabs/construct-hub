@@ -3,7 +3,7 @@ import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { Tracing } from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
-import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
+import { BlockPublicAccess, IBucket } from '@aws-cdk/aws-s3';
 import { Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl, s3ObjectUrl, sqsQueueUrl } from '../deep-link';
@@ -11,11 +11,19 @@ import { fillMetric } from '../metric-utils';
 import { IMonitoring } from '../monitoring/api';
 import type { IPackageSource, PackageSourceBindOptions, PackageSourceBindResult } from '../package-source';
 import { RUNBOOK_URL } from '../runbook-url';
+import { S3StorageFactory } from '../s3/storage';
 import { NpmJsPackageCanary } from './npmjs/canary';
 import { MARKER_FILE_NAME, METRICS_NAMESPACE, MetricName, S3KeyPrefix } from './npmjs/constants.lambda-shared';
 
 import { NpmJsFollower } from './npmjs/npm-js-follower';
 import { StageAndNotify } from './npmjs/stage-and-notify';
+
+/**
+ * The periodicity at which the NpmJs follower will run. This MUST be a valid
+ * CloudWatch Metric grain, as this will also be the period of the CloudWatch
+ * alarm that montiors the health of the follower.
+ */
+const FOLLOWER_RUN_RATE = Duration.minutes(5);
 
 export interface NpmJsProps {
   /**
@@ -63,7 +71,8 @@ export class NpmJs implements IPackageSource {
   ): PackageSourceBindResult {
     repository?.addExternalConnection('public:npmjs');
 
-    const bucket = this.props.stagingBucket || new Bucket(scope, 'NpmJs/StagingBucket', {
+    const storageFactory = S3StorageFactory.getOrCreate(scope);
+    const bucket = this.props.stagingBucket || storageFactory.newBucket(scope, 'NpmJs/StagingBucket', {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
       lifecycleRules: [{ prefix: S3KeyPrefix.STAGED_KEY_PREFIX, expiration: Duration.days(30) }],
@@ -104,7 +113,7 @@ export class NpmJs implements IPackageSource {
       },
       memorySize: 10_024, // 10 GiB
       reservedConcurrentExecutions: 1, // Only one execution at a time, to avoid race conditions on the S3 marker object
-      timeout: Duration.minutes(5),
+      timeout: FOLLOWER_RUN_RATE,
       tracing: Tracing.ACTIVE,
     });
 
@@ -115,7 +124,7 @@ export class NpmJs implements IPackageSource {
 
     const rule = new Rule(scope, 'NpmJs/Schedule', {
       description: `${scope.node.path}/NpmJs/Schedule`,
-      schedule: Schedule.rate(Duration.minutes(5)),
+      schedule: Schedule.rate(FOLLOWER_RUN_RATE),
       targets: [new LambdaFunction(follower)],
     });
 
@@ -352,37 +361,42 @@ export class NpmJs implements IPackageSource {
     });
     monitoring.addHighSeverityAlarm('NpmJs/Follower Failures', failureAlarm);
 
-    const notRunningAlarm = follower.metricInvocations().createAlarm(scope, 'NpmJs/Follower/NotRunning', {
-      alarmName: `${scope.node.path}/NpmJs/Follower/NotRunning`,
-      alarmDescription: [
-        'The NpmJs follower function is not running!',
-        '',
-        `RunBook: ${RUNBOOK_URL}`,
-        '',
-        `Direct link to Lambda function: ${lambdaFunctionUrl(follower)}`,
-      ].join('\n'),
-      comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
-      evaluationPeriods: 2,
-      threshold: 1,
-      treatMissingData: TreatMissingData.BREACHING,
-    });
+    const notRunningAlarm = follower.metricInvocations({ period: FOLLOWER_RUN_RATE })
+      .createAlarm(scope, 'NpmJs/Follower/NotRunning', {
+        alarmName: `${scope.node.path}/NpmJs/Follower/NotRunning`,
+        alarmDescription: [
+          'The NpmJs follower function is not running!',
+          '',
+          `RunBook: ${RUNBOOK_URL}`,
+          '',
+          `Direct link to Lambda function: ${lambdaFunctionUrl(follower)}`,
+        ].join('\n'),
+        comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+        evaluationPeriods: 2,
+        threshold: 1,
+        treatMissingData: TreatMissingData.BREACHING,
+      });
     monitoring.addHighSeverityAlarm('NpmJs/Follower Not Running', notRunningAlarm);
 
-    const noChangeAlarm = this.metricChangeCount().createAlarm(scope, 'NpmJs/Follower/NoChanges', {
-      alarmName: `${scope.node.path}/NpmJs/Follower/NoChanges`,
-      alarmDescription: [
-        'The NpmJs follower function is no discovering any changes from CouchDB!',
-        '',
-        `RunBook: ${RUNBOOK_URL}`,
-        '',
-        `Direct link to Lambda function: ${lambdaFunctionUrl(follower)}`,
-      ].join('\n'),
-      comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
-      evaluationPeriods: 2,
-      threshold: 1,
-      // If the metric is not emitted, it can be assumed to be zero.
-      treatMissingData: TreatMissingData.BREACHING,
-    });
+    // The period for this alarm needs to match the scheduling interval of the
+    // follower, otherwise the metric will be too sparse to properly detect
+    // problems.
+    const noChangeAlarm = this.metricChangeCount({ period: FOLLOWER_RUN_RATE })
+      .createAlarm(scope, 'NpmJs/Follower/NoChanges', {
+        alarmName: `${scope.node.path}/NpmJs/Follower/NoChanges`,
+        alarmDescription: [
+          'The NpmJs follower function is no discovering any changes from CouchDB!',
+          '',
+          `RunBook: ${RUNBOOK_URL}`,
+          '',
+          `Direct link to Lambda function: ${lambdaFunctionUrl(follower)}`,
+        ].join('\n'),
+        comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+        evaluationPeriods: 2,
+        threshold: 1,
+        // If the metric is not emitted, it can be assumed to be zero.
+        treatMissingData: TreatMissingData.BREACHING,
+      });
     monitoring.addLowSeverityAlarm('Np npmjs.com changes discovered', noChangeAlarm);
 
     const dlqNotEmptyAlarm = new MathExpression({
@@ -445,7 +459,7 @@ export class NpmJs implements IPackageSource {
       treatMissingData: TreatMissingData.BREACHING,
       threshold: visibilitySla.toSeconds(),
     });
-    monitoring.addLowSeverityAlarm('New version visibility SLA breached', alarm);
+    monitoring.addHighSeverityAlarm('New version visibility SLA breached', alarm);
 
     return [
       new GraphWidget({

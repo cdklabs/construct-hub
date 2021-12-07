@@ -12,7 +12,9 @@ import { CATALOG_KEY } from '../backend/shared/constants';
 import { CacheStrategy } from '../caching';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
+import { S3StorageFactory } from '../s3/storage';
 import { WebappConfig, WebappConfigProps } from './config';
+import { ResponseFunction } from './response-function';
 
 export interface PackageLinkConfig {
   /**
@@ -97,6 +99,26 @@ export interface FeatureFlags {
   [key: string]: any;
 }
 
+/**
+ * A category of packages.
+ */
+export interface Category {
+  /**
+   * The title on the category button as it appears in the Construct Hub home page.
+   */
+  readonly title: string;
+
+  /**
+   * The URL that this category links to. This is the full path to the link that
+   * this category button will have. You can use any query options such as
+   * `?keywords=`, `?q=`, or a combination thereof.
+   *
+   * @example "/search?keywords=monitoring"
+   */
+  readonly url: string;
+}
+
+
 export interface WebAppProps extends WebappConfigProps {
   /**
    * Connect to a domain.
@@ -128,57 +150,31 @@ export class WebApp extends Construct {
   public constructor(scope: Construct, id: string, props: WebAppProps) {
     super(scope, id);
 
-    this.bucket = new s3.Bucket(this, 'WebsiteBucket', {
+    const storageFactory = S3StorageFactory.getOrCreate(this);
+    this.bucket = storageFactory.newBucket(this, 'WebsiteBucket', {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
     });
 
-    const defaultResponseHeaders = {
-      'x-frame-options': 'deny',
-      'x-xss-protection': '1; mode=block',
-      'x-content-type-options': 'nosniff',
-      'strict-transport-security': 'max-age=47304000; includeSubDomains',
-      'content-security-policy': [
-        "default-src 'self' 'unsafe-inline' https://*.awsstatic.com;",
-        "connect-src 'self' https://*.shortbread.aws.dev;",
-        "frame-src 'none';",
-        "img-src 'self' https://* http://*.omtrdc.net;",
-        "object-src 'none';",
-        "style-src 'self' 'unsafe-inline';",
-      ].join(' '),
+    // generate a stable unique id for the cloudfront function and use it
+    // both for the function name and the logical id of the function so if
+    // it is changed the function will be recreated.
+    // see https://github.com/aws/aws-cdk/issues/15523
+    const functionId = `AddHeadersFunction${this.node.addr}`;
+
+    const behaviorOptions: cloudfront.AddBehaviorOptions = {
+      compress: true,
+      cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+      functionAssociations: [{
+        function: new ResponseFunction(this, functionId, {
+          functionName: functionId,
+        }),
+        eventType: cloudfront.FunctionEventType.VIEWER_RESPONSE,
+      }],
     };
 
-    // (default) cache policy for mutable data that frequently changes
-    const mutableFrequentResourceOptions: cloudfront.AddBehaviorOptions =
-      CacheStrategy.mutableFrequent().toCloudfrontBehavior(this, 'MutableFrequent', {
-        responseHeaders: defaultResponseHeaders,
-      });
-
-    // cache policy for mutable but infrequently changing data
-    const mutableInfrequentResourceOptions: cloudfront.AddBehaviorOptions =
-      CacheStrategy.mutableInfrequent().toCloudfrontBehavior(this, 'MutableInfrequent', {
-        responseHeaders: defaultResponseHeaders,
-      });
-
-    // cache policy for static data
-    const staticResourceOptions: cloudfront.AddBehaviorOptions =
-      CacheStrategy.static().toCloudfrontBehavior(this, 'Static', {
-        responseHeaders: defaultResponseHeaders,
-      });
-
-    // cache policy for index.html. same as mutableFrequent, but includes
-    // extra Clear-Site-Data HTTP header to evict service workers
-    // TODO(2022): remove
-    const indexHtmlOptions: cloudfront.AddBehaviorOptions =
-      CacheStrategy.mutableFrequent().toCloudfrontBehavior(this, 'IndexHtml', {
-        responseHeaders: {
-          ...defaultResponseHeaders,
-          'clear-site-data': '\\"cache\\", \\"storage\\"',
-        },
-      });
-
     this.distribution = new cloudfront.Distribution(this, 'Distribution', {
-      defaultBehavior: { origin: new origins.S3Origin(this.bucket), ...mutableFrequentResourceOptions },
+      defaultBehavior: { origin: new origins.S3Origin(this.bucket), ...behaviorOptions },
       domainNames: props.domain ? [props.domain.zone.zoneName] : undefined,
       certificate: props.domain ? props.domain.cert : undefined,
       defaultRootObject: 'index.html',
@@ -194,30 +190,12 @@ export class WebApp extends Construct {
     // This needs changing in case, for example, we add support for a custom URL prefix.
     this.baseUrl = `https://${props.domain ? props.domain.zone.zoneName : this.distribution.distributionDomainName}`;
 
-    /* eslint-disable no-multi-spaces */
     const jsiiObjOrigin = new origins.S3Origin(props.packageData);
-    const websiteOrigin = new origins.S3Origin(this.bucket);
-
-    // note: there is a limit of 25 behaviors per distribution
-    this.distribution.addBehavior(`/${CATALOG_KEY}`,   jsiiObjOrigin, mutableFrequentResourceOptions);
-    this.distribution.addBehavior('*.md',              jsiiObjOrigin, mutableInfrequentResourceOptions);
-    this.distribution.addBehavior('*/metadata.json',   jsiiObjOrigin, mutableInfrequentResourceOptions);
-    this.distribution.addBehavior('*/assembly.json',   jsiiObjOrigin, staticResourceOptions);
+    this.distribution.addBehavior('/data/*', jsiiObjOrigin, behaviorOptions);
+    this.distribution.addBehavior(`/${CATALOG_KEY}`, jsiiObjOrigin, behaviorOptions);
     if (props.packageStats) {
-      this.distribution.addBehavior(`/${props.packageStats.statsKey}`, jsiiObjOrigin, mutableInfrequentResourceOptions);
+      this.distribution.addBehavior(`/${props.packageStats.statsKey}`, jsiiObjOrigin, behaviorOptions);
     }
-
-    this.distribution.addBehavior('/index.html',        websiteOrigin, indexHtmlOptions);
-    this.distribution.addBehavior('/config.json',       websiteOrigin, mutableFrequentResourceOptions);
-    this.distribution.addBehavior('/manifest.json',     websiteOrigin, mutableFrequentResourceOptions);
-    this.distribution.addBehavior('/robots.txt',        websiteOrigin, mutableFrequentResourceOptions);
-    this.distribution.addBehavior('/service-worker.js', websiteOrigin, mutableFrequentResourceOptions);
-    this.distribution.addBehavior('/assets/*',          websiteOrigin, staticResourceOptions);
-    this.distribution.addBehavior('/static/*',          websiteOrigin, staticResourceOptions);
-    this.distribution.addBehavior('/logo192.png',       websiteOrigin, staticResourceOptions);
-    this.distribution.addBehavior('/logo512.png',       websiteOrigin, staticResourceOptions);
-    this.distribution.addBehavior('/favicon.ico',       websiteOrigin, staticResourceOptions);
-    /* eslint-enable no-multi-spaces */
 
     // if we use a domain, and A records with a CloudFront alias
     if (props.domain) {
@@ -254,6 +232,7 @@ export class WebApp extends Construct {
       distribution: this.distribution,
       prune: false,
       sources: [s3deploy.Source.asset(webappDir)],
+      cacheControl: CacheStrategy.default().toArray(),
     });
 
     // Generate config.json to customize frontend behavior
@@ -263,6 +242,7 @@ export class WebApp extends Construct {
       featuredPackages: props.featuredPackages,
       showPackageStats: props.showPackageStats ?? props.packageStats !== undefined,
       featureFlags: props.featureFlags,
+      categories: props.categories,
     });
 
     new s3deploy.BucketDeployment(this, 'DeployWebsiteConfig', {
@@ -270,6 +250,7 @@ export class WebApp extends Construct {
       destinationBucket: this.bucket,
       distribution: this.distribution,
       prune: false,
+      cacheControl: CacheStrategy.default().toArray(),
     });
 
     new CfnOutput(this, 'DomainName', {

@@ -1,5 +1,5 @@
 import { ComparisonOperator, MathExpression, MathExpressionOptions, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
-import { SubnetSelection, Vpc } from '@aws-cdk/aws-ec2';
+import { SubnetSelection, Vpc, ISecurityGroup } from '@aws-cdk/aws-ec2';
 import { Cluster, ICluster } from '@aws-cdk/aws-ecs';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
@@ -15,7 +15,7 @@ import { RUNBOOK_URL } from '../../runbook-url';
 import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 import { CatalogBuilder } from '../catalog-builder';
 import { DenyList } from '../deny-list';
-import { ASSEMBLY_KEY_SUFFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX, STORAGE_KEY_PREFIX, CATALOG_KEY } from '../shared/constants';
+import { ASSEMBLY_KEY_SUFFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX, STORAGE_KEY_PREFIX, CATALOG_KEY, UNPROCESSABLE_PACKAGE_ERROR_NAME } from '../shared/constants';
 import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
 import { NeedsCatalogUpdate } from './needs-catalog-update';
 import { RedriveStateMachine } from './redrive-state-machine';
@@ -68,6 +68,11 @@ export interface OrchestrationProps {
    * VPC endpoints to use for interacting with CodeArtifact and S3.
    */
   readonly vpcEndpoints?: TransliteratorVpcEndpoints;
+
+  /**
+   * VPC Security groups to associate with the ECS tasks.
+   */
+  readonly vpcSecurityGroups?: ISecurityGroup[];
 
   /**
    * How long should execution logs be retained?
@@ -165,6 +170,8 @@ export class Orchestration extends Construct {
       resultPath: JsonPath.DISCARD,
     }).next(new Succeed(this, 'Sent to DLQ'));
 
+    const ignore = new Pass(this, 'Ignore');
+
     this.catalogBuilder = new CatalogBuilder(this, 'CatalogBuilder', props);
 
     const addToCatalog = new tasks.LambdaInvoke(this, 'Add to catalog.json', {
@@ -213,6 +220,7 @@ export class Orchestration extends Construct {
 
     this.transliterator = new Transliterator(this, 'Transliterator', props);
 
+
     const definition = new Pass(this, 'Track Execution Infos', {
       inputPath: '$$.Execution',
       parameters: {
@@ -237,6 +245,7 @@ export class Orchestration extends Construct {
           // Expect this to complete within one hour
           timeout: Duration.hours(1),
           vpcSubnets: props.vpcSubnets,
+          securityGroups: props.vpcSecurityGroups,
         })
           // Do not retry NoSpaceLeftOnDevice errors, these are typically not transient.
           .addRetry({ errors: ['jsii-docgen.NoSpaceLeftOnDevice'], maxAttempts: 0 })
@@ -257,7 +266,8 @@ export class Orchestration extends Construct {
             maxAttempts: 3,
           })
           .addRetry({ maxAttempts: 3 })
-          .addCatch( sendToDeadLetterQueue, { errors: ['States.Timeout'], resultPath: '$.error' } )
+          .addCatch(ignore, { errors: [UNPROCESSABLE_PACKAGE_ERROR_NAME] })
+          .addCatch(sendToDeadLetterQueue, { errors: ['States.Timeout'], resultPath: '$.error' } )
           .addCatch(sendToDeadLetterQueue, { errors: ['ECS.AmazonECSException', 'ECS.InvalidParameterException'], resultPath: '$.error' })
           .addCatch(sendToDeadLetterQueue, { errors: ['States.TaskFailed'], resultPath: '$.error' })
           .addCatch(sendToDeadLetterQueue, { errors: ['States.ALL'], resultPath: '$.error' })

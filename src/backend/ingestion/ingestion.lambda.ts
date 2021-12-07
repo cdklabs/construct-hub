@@ -5,7 +5,6 @@ import { URL } from 'url';
 import { Assembly, validateAssembly } from '@jsii/spec';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { Context, SQSEvent } from 'aws-lambda';
-import { minVersion } from 'semver';
 import { CacheStrategy } from '../../caching';
 import type { PackageTagConfig } from '../../package-tag';
 import type { PackageLinkConfig } from '../../webapp';
@@ -19,6 +18,7 @@ import { integrity } from '../shared/integrity.lambda-shared';
 import { isTagApplicable } from '../shared/tags';
 import { extractObjects } from '../shared/tarball.lambda-shared';
 import { MetricName, METRICS_NAMESPACE } from './constants';
+import { ConstructFramework, detectConstructFramework } from './framework-detection.lambda-shared';
 
 Configuration.namespace = METRICS_NAMESPACE;
 
@@ -93,19 +93,28 @@ export const handler = metricScope(
         return;
       }
 
+
+      let parsedAssembly: Assembly;
       let constructFramework: ConstructFramework | undefined;
       let packageLicense: string;
       let packageName: string;
       let packageVersion: string;
       try {
-        const assembly = validateAssembly(
-          JSON.parse(dotJsii.toString('utf-8')),
-        );
-        constructFramework = detectConstructFramework(assembly);
-        const { license, name, version } = assembly;
+        parsedAssembly = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
+
+        // needs `dependencyClosure`
+        constructFramework = detectConstructFramework(parsedAssembly);
+        const { license, name, version } = parsedAssembly;
         packageLicense = license;
         packageName = name;
         packageVersion = version;
+
+        // Delete some fields not used by the client to reduce the size of the assembly.
+        // See https://github.com/cdklabs/construct-hub-webapp/issues/691
+        delete parsedAssembly.types;
+        delete parsedAssembly.readme;
+        delete parsedAssembly.dependencyClosure;
+
         metrics.putMetric(MetricName.INVALID_ASSEMBLY, 0, Unit.Count);
       } catch (ex) {
         console.error(
@@ -220,7 +229,7 @@ export const handler = metricScope(
             Bucket: BUCKET_NAME,
             Key: packageKey,
             Body: tarball.Body,
-            CacheControl: CacheStrategy.static().toString(),
+            CacheControl: CacheStrategy.default().toString(),
             ContentType: 'application/octet-stream',
             Metadata: {
               'Lambda-Log-Group': context.logGroupName,
@@ -235,7 +244,7 @@ export const handler = metricScope(
             Bucket: BUCKET_NAME,
             Key: metadataKey,
             Body: JSON.stringify(metadata),
-            CacheControl: CacheStrategy.mutableInfrequent().toString(),
+            CacheControl: CacheStrategy.default().toString(),
             ContentType: 'application/json',
             Metadata: {
               'Lambda-Log-Group': context.logGroupName,
@@ -253,8 +262,8 @@ export const handler = metricScope(
         .putObject({
           Bucket: BUCKET_NAME,
           Key: assemblyKey,
-          Body: dotJsii,
-          CacheControl: CacheStrategy.static().toString(),
+          Body: Buffer.from(JSON.stringify(parsedAssembly), 'utf-8'),
+          CacheControl: CacheStrategy.default().toString(),
           ContentType: 'application/json',
           Metadata: {
             'Lambda-Log-Group': context.logGroupName,
@@ -300,84 +309,6 @@ export const handler = metricScope(
     return result;
   },
 );
-
-const enum ConstructFrameworkName {
-  AWS_CDK = 'aws-cdk',
-  CDK8S = 'cdk8s',
-  CDKTF = 'cdktf',
-}
-
-export interface ConstructFramework {
-  /**
-   * The name of the construct framework.
-   */
-  readonly name: ConstructFrameworkName;
-
-  /**
-   * The major version of the construct framework that is used, if it could be
-   * identified.
-   */
-  readonly majorVersion?: number;
-}
-
-/**
- * Determines the Construct framework used by the provided assembly.
- *
- * @param assembly the assembly for which a construct framework should be
- *                 identified.
- *
- * @returns a construct framework if one could be identified.
- */
-function detectConstructFramework(assembly: Assembly): ConstructFramework | undefined {
-  let name: ConstructFramework['name'] | undefined;
-  let nameAmbiguous = false;
-  let majorVersion: number | undefined;
-  let majorVersionAmbiguous = false;
-  detectConstructFrameworkPackage(assembly.name, assembly.version);
-  for (const depName of Object.keys(assembly.dependencyClosure ?? {})) {
-    detectConstructFrameworkPackage(depName);
-    if (nameAmbiguous) {
-      return undefined;
-    }
-  }
-  return name && { name, majorVersion: majorVersionAmbiguous ? undefined : majorVersion };
-
-  function detectConstructFrameworkPackage(packageName: string, versionRange = assembly.dependencies?.[packageName]): void {
-    if (packageName.startsWith('@aws-cdk/') || packageName === 'aws-cdk-lib' || packageName === 'monocdk') {
-      if (name && name !== ConstructFrameworkName.AWS_CDK) {
-        // Identified multiple candidates, so returning ambiguous...
-        nameAmbiguous = true;
-        return;
-      }
-      name = ConstructFrameworkName.AWS_CDK;
-    } else if (packageName === 'cdktf' || packageName.startsWith('@cdktf/')) {
-      if (name && name !== ConstructFrameworkName.CDKTF) {
-        // Identified multiple candidates, so returning ambiguous...
-        nameAmbiguous = true;
-        return;
-      }
-      name = ConstructFrameworkName.CDKTF;
-    } else if (packageName === 'cdk8s' || /^cdk8s-plus(?:-(?:17|20|21|22))?$/.test(packageName)) {
-      if (name && name !== ConstructFrameworkName.CDK8S) {
-        // Identified multiple candidates, so returning ambiguous...
-        nameAmbiguous = true;
-        return;
-      }
-      name = ConstructFrameworkName.CDK8S;
-    } else {
-      return;
-    }
-    if (versionRange) {
-      const major = minVersion(versionRange)?.major;
-      if (majorVersion != null && majorVersion !== major) {
-        // Identified multiple candidates, so this is ambiguous...
-        majorVersionAmbiguous = true;
-      }
-      majorVersion = major;
-    }
-    return;
-  }
-}
 
 /**
  * Checks whether the provided file name corresponds to a license file or not.

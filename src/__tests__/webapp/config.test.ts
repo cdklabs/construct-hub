@@ -1,5 +1,6 @@
 import { readJsonSync } from 'fs-extra';
 import { TagCondition } from '../../package-tag';
+import { Category } from '../../webapp';
 import { WebappConfig } from '../../webapp/config';
 
 const DEFAULT_CONFIG = {
@@ -14,6 +15,10 @@ const DEFAULT_CONFIG = {
   packageLinks: [],
   packageStats: true,
   packageTags: [],
+  debugInfo: {
+    constructHubVersion: expect.any(String),
+    constructHubWebappVersion: expect.any(String),
+  },
 };
 
 test('minimal', () => {
@@ -218,5 +223,23 @@ test('feature flags', () => {
   expect(file).toEqual({
     ...DEFAULT_CONFIG,
     featureFlags,
+  });
+});
+
+test('categories', () => {
+  // GIVEN
+  const categories: Category[] = [
+    { title: 'Monitoring', url: '/search?q=monitoring' },
+    { title: 'Kubernetes', url: '/search?keywords=k8s' },
+  ];
+
+  // WHEN
+  const config = new WebappConfig({ categories });
+
+  // THEN
+  const file = readJsonSync(config.file.path);
+  expect(file).toEqual({
+    ...DEFAULT_CONFIG,
+    categories,
   });
 });

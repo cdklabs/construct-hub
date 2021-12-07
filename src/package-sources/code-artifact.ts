@@ -4,12 +4,13 @@ import { Rule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { Effect, PolicyStatement } from '@aws-cdk/aws-iam';
 import { Tracing } from '@aws-cdk/aws-lambda';
-import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
+import { BlockPublicAccess, IBucket } from '@aws-cdk/aws-s3';
 import { Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { ArnFormat, Aws, Construct, Duration, Stack } from '@aws-cdk/core';
 import { codeArtifactRepositoryUrl, lambdaFunctionUrl, lambdaSearchLogGroupUrl, sqsQueueUrl } from '../deep-link';
 import { fillMetric } from '../metric-utils';
 import type { IPackageSource, PackageSourceBindOptions, PackageSourceBindResult } from '../package-source';
+import { S3StorageFactory } from '../s3/storage';
 import { CodeArtifactForwarder } from './codeartifact/code-artifact-forwarder';
 import { METRICS_NAMESPACE, MetricName, DOMAIN_NAME_DIMENSION, DOMAIN_OWNER_DIMENSION, REPOSITORY_NAME_DIMENSION } from './codeartifact/constants.lambda-shared';
 
@@ -37,7 +38,8 @@ export class CodeArtifact implements IPackageSource {
     const idPrefix = this.props.repository.node.path;
     const repositoryId = `${this.props.repository.attrDomainOwner}:${this.props.repository.attrDomainName}/${this.props.repository.attrName}`;
 
-    const bucket = this.props.bucket || new Bucket(scope, `${idPrefix}/StagingBucket`, {
+    const storageFactory = S3StorageFactory.getOrCreate(scope);
+    const bucket = this.props.bucket || storageFactory.newBucket(scope, `${idPrefix}/StagingBucket`, {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
       lifecycleRules: [{ expiration: Duration.days(30) }],

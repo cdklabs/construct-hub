@@ -3,7 +3,7 @@ import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
 import { FunctionProps, IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { RetentionDays } from '@aws-cdk/aws-logs';
-import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
+import { BlockPublicAccess, IBucket } from '@aws-cdk/aws-s3';
 import { BucketDeployment, Source } from '@aws-cdk/aws-s3-deployment';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
 import { StateMachine, JsonPath, Choice, Succeed, Condition, Map, TaskInput, IntegrationPattern } from '@aws-cdk/aws-stepfunctions';
@@ -15,6 +15,7 @@ import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { PackageTagConfig } from '../../package-tag';
 import { RUNBOOK_URL } from '../../runbook-url';
+import { S3StorageFactory } from '../../s3/storage';
 import type { PackageLinkConfig } from '../../webapp';
 import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 import { Orchestration } from '../orchestration';
@@ -115,9 +116,11 @@ export class Ingestion extends Construct implements IGrantable {
       packageTags: props.packageTags ?? [],
     }));
 
-    const configBucket = new Bucket(this, 'ConfigBucket', {
+    const storageFactory = S3StorageFactory.getOrCreate(this);
+    const configBucket = storageFactory.newBucket(this, 'ConfigBucket', {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
+      versioned: true,
     });
 
     new BucketDeployment(this, 'DeployIngestionConfiguration', {

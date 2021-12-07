@@ -2,7 +2,7 @@ const fs = require('fs');
 const { basename, join, dirname, relative } = require('path');
 const Case = require('case');
 const glob = require('glob');
-const { SourceCode, FileBase, JsonFile, JsiiProject, TextFile } = require('projen');
+const { SourceCode, FileBase, JsonFile, cdk, github } = require('projen');
 const spdx = require('spdx-license-list');
 const uuid = require('uuid');
 
@@ -41,7 +41,7 @@ const peerDeps = [
 const cdkAssert = '@aws-cdk/assert';
 const cdkCli = 'aws-cdk';
 
-const project = new JsiiProject({
+const project = new cdk.JsiiProject({
   name: 'construct-hub',
   description: 'A construct library that models Construct Hub instances.',
   keywords: ['aws', 'aws-cdk', 'constructs', 'construct-hub'],
@@ -84,6 +84,7 @@ const project = new JsiiProject({
   peerDeps: peerDeps,
 
   minNodeVersion: '12.20.0',
+  workflowNodeVersion: '12.22.0',
 
   pullRequestTemplateContents: [
     '',
@@ -145,9 +146,76 @@ const project = new JsiiProject({
     jestConfig: {
       // Ensure we don't try to parallelize too much, this causes timeouts.
       maxConcurrency: 2,
+      moduleNameMapper: {
+        '../package.json': '<rootDir>/__mocks__/package.json',
+      },
     },
   },
 });
+
+function addVpcAllowListManagement() {
+  const workflow = project.github.addWorkflow('update-vpc-acl-allow-lists');
+
+  const prTitle = 'chore: upgrade network ACL allow-lists';
+  const prBody = 'Updated the network ACL allow-lists from authoritative sources.';
+
+  workflow.addJobs({
+    update: {
+      permissions: {
+        actions: github.workflows.JobPermission.WRITE,
+        contents: github.workflows.JobPermission.WRITE,
+        pullRequests: github.workflows.JobPermission.WRITE,
+      },
+      runsOn: 'ubuntu-latest',
+      steps: [
+        {
+          name: 'Check Out',
+          uses: 'actions/checkout@v2',
+        },
+        // Update the NPM IP ranges (they are fronted by CloudFlare)
+        // See: https://npm.community/t/registry-npmjs-org-ip-address-range/5853.html
+        {
+          name: 'Update CloudFlare IP lists',
+          // See: https://www.cloudflare.com/ips
+          run: [
+            'curl -SsL "https://www.cloudflare.com/ips-v4" \\',
+            '     -o resources/vpc-allow-lists/cloudflare-IPv4.txt',
+            //// We do not emit IPv6 allow-lists as our VPC does not have IPv6 support
+            // 'curl -SsL "https://www.cloudflare.com/ips-v6" \\',
+            // '     -o resources/vpc-allow-lists/cloudflare-IPv6.txt',
+          ].join('\n'),
+        },
+        // Allowing GitHub (web and git)
+        {
+          name: 'Setup Node',
+          uses: 'actions/setup-node@v2',
+        },
+        {
+          name: 'Update GitHub IP lists',
+          // See: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-githubs-ip-addresses
+          run: 'node ./update-github-ip-allowlist.js',
+        },
+        // And now make a PR if necessary
+        {
+          name: 'Make Pull Request',
+          uses: 'peter-evans/create-pull-request@v3',
+          with: {
+            'branch': `automation/${workflow.name}`,
+            'commit-message': `${prTitle}\n\n${prBody}`,
+            'title': prTitle,
+            'body': prBody,
+            'team-reviewers': 'construct-ecosystem-team',
+          },
+        },
+      ],
+    },
+  });
+
+  // This workflow runs every day at 13:37.
+  workflow.on({ schedule: [{ cron: '37 13 * * *' }] });
+
+  project.npmignore.addPatterns('/update-github-ip-allowlist.js');
+}
 
 function addDevApp() {
   // add "dev:xxx" tasks for interacting with the dev stack
@@ -214,6 +282,7 @@ function discoverIntegrationTests() {
     const options = [
       `--app ${app}`,
       '--no-version-reporting',
+      '--context @aws-cdk/core:newStyleStackSynthesis=true',
     ].join(' ');
 
     const deploy = project.addTask(`integ:${name}:deploy`, {
@@ -706,11 +775,47 @@ function generateSpdxLicenseEnum() {
   ts.close('}');
 
   ts.line();
+  ts.line('/** The CDDL family of licenses */');
+  ts.open('public static cddl(): SpdxLicense[] {');
+  ts.open('return [');
+  for (const id of Object.keys(spdx)) {
+    if (id.startsWith('CDDL-')) {
+      ts.line(`SpdxLicense.${slugify(id)},`);
+    }
+  }
+  ts.close('];');
+  ts.close('}');
+
+  ts.line();
+  ts.line('/** The EPL family of licenses */');
+  ts.open('public static epl(): SpdxLicense[] {');
+  ts.open('return [');
+  for (const id of Object.keys(spdx)) {
+    if (id.startsWith('EPL-')) {
+      ts.line(`SpdxLicense.${slugify(id)},`);
+    }
+  }
+  ts.close('];');
+  ts.close('}');
+
+  ts.line();
   ts.line('/** The MIT family of licenses */');
   ts.open('public static mit(): SpdxLicense[] {');
   ts.open('return [');
   for (const id of Object.keys(spdx)) {
     if (id === 'AML' || id === 'MIT' || id === 'MITNFA' || id.startsWith('MIT-')) {
+      ts.line(`SpdxLicense.${slugify(id)},`);
+    }
+  }
+  ts.close('];');
+  ts.close('}');
+
+  ts.line();
+  ts.line('/** The MPL family of licenses */');
+  ts.open('public static mpl(): SpdxLicense[] {');
+  ts.open('return [');
+  for (const id of Object.keys(spdx)) {
+    if (id.startsWith('MPL-')) {
       ts.line(`SpdxLicense.${slugify(id)},`);
     }
   }
@@ -765,6 +870,9 @@ project.compileTask.prependExec('rm -rf ./website');
 project.npmignore.addPatterns('!/website'); // <-- include in tarball
 project.gitignore.addPatterns('/website'); // <-- don't commit
 
+project.gitignore.exclude('.vscode/');
+
+addVpcAllowListManagement();
 addDevApp();
 
 project.addDevDeps('glob');

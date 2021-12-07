@@ -65,7 +65,7 @@ export async function handler(event: any, context: Context) {
     Key: STATS_OBJECT_KEY,
     Body: JSON.stringify(stats, null, 2),
     ContentType: 'application/json',
-    CacheControl: CacheStrategy.mutableFrequent().toString(),
+    CacheControl: CacheStrategy.default().toString(),
     Metadata: {
       'Lambda-Log-Group': context.logGroupName,
       'Lambda-Log-Stream': context.logStreamName,

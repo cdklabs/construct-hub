@@ -146,7 +146,7 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     Key: constants.CATALOG_KEY,
     Body: JSON.stringify(catalog, null, 2),
     ContentType: 'application/json',
-    CacheControl: CacheStrategy.mutableFrequent().toString(),
+    CacheControl: CacheStrategy.default().toString(),
     Metadata: {
       'Lambda-Log-Group': context.logGroupName,
       'Lambda-Log-Stream': context.logStreamName,
