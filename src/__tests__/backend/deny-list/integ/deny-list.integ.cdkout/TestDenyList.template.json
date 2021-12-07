@@ -122,41 +122,9 @@
       "Properties": {
         "Code": {
           "S3Bucket": {
-            "Ref": "AssetParameters1f7e277bd526ebce1983fa1e7a84a5281ec533d9187caaebb773681bbf7bf4c1S3Bucket4842F32D"
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": {
-            "Fn::Join": [
-              "",
-              [
-                {
-                  "Fn::Select": [
-                    0,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameters1f7e277bd526ebce1983fa1e7a84a5281ec533d9187caaebb773681bbf7bf4c1S3VersionKeyD0A0B57A"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "Fn::Select": [
-                    1,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameters1f7e277bd526ebce1983fa1e7a84a5281ec533d9187caaebb773681bbf7bf4c1S3VersionKeyD0A0B57A"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            ]
-          }
+          "S3Key": "1f7e277bd526ebce1983fa1e7a84a5281ec533d9187caaebb773681bbf7bf4c1.zip"
         },
         "Timeout": 900,
         "MemorySize": 128,
@@ -193,41 +161,9 @@
       "Properties": {
         "Content": {
           "S3Bucket": {
-            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7"
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": {
-            "Fn::Join": [
-              "",
-              [
-                {
-                  "Fn::Select": [
-                    0,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "Fn::Select": [
-                    1,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            ]
-          }
+          "S3Key": "e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68.zip"
         },
         "Description": "/opt/awscli/aws"
       },
@@ -248,43 +184,11 @@
         },
         "SourceBucketNames": [
           {
-            "Ref": "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3BucketA5253790"
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           }
         ],
         "SourceObjectKeys": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                {
-                  "Fn::Select": [
-                    0,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3VersionKeyDB67886F"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "Fn::Select": [
-                    1,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3VersionKeyDB67886F"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            ]
-          }
+          "9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffd.zip"
         ],
         "DestinationBucketName": {
           "Ref": "MockDataBucket4719A0C1"
@@ -354,7 +258,7 @@
                       },
                       ":s3:::",
                       {
-                        "Ref": "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3BucketA5253790"
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       }
                     ]
                   ]
@@ -369,7 +273,7 @@
                       },
                       ":s3:::",
                       {
-                        "Ref": "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3BucketA5253790"
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
                       "/*"
                     ]
@@ -403,47 +307,6 @@
                           "MockDataBucket4719A0C1",
                           "Arn"
                         ]
-                      },
-                      "/*"
-                    ]
-                  ]
-                }
-              ]
-            },
-            {
-              "Action": [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*"
-              ],
-              "Effect": "Allow",
-              "Resource": [
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":s3:::",
-                      {
-                        "Ref": "AssetParameters7b06823bbcc72a4d3141d044a898d5e4c5daf481a313ff067160af1e936d04e8S3Bucket88752BFB"
-                      }
-                    ]
-                  ]
-                },
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":s3:::",
-                      {
-                        "Ref": "AssetParameters7b06823bbcc72a4d3141d044a898d5e4c5daf481a313ff067160af1e936d04e8S3Bucket88752BFB"
                       },
                       "/*"
                     ]
@@ -503,41 +366,9 @@
       "Properties": {
         "Code": {
           "S3Bucket": {
-            "Ref": "AssetParametersa3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8S3BucketD1AD544E"
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": {
-            "Fn::Join": [
-              "",
-              [
-                {
-                  "Fn::Select": [
-                    0,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParametersa3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8S3VersionKey93A19D70"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "Fn::Select": [
-                    1,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParametersa3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8S3VersionKey93A19D70"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            ]
-          }
+          "S3Key": "a3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8.zip"
         },
         "Role": {
           "Fn::GetAtt": [
@@ -925,6 +756,12 @@
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true
         },
+        "Tags": [
+          {
+            "Key": "aws-cdk:auto-delete-objects",
+            "Value": "true"
+          }
+        ],
         "VersioningConfiguration": {
           "Status": "Enabled"
         }
@@ -976,6 +813,44 @@
                   ]
                 }
               ]
+            },
+            {
+              "Action": [
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "DenyListBucketC1C9D3D9",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "DenyListBucketC1C9D3D9",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
             }
           ],
           "Version": "2012-10-17"
@@ -983,6 +858,28 @@
       },
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/Bucket/Policy/Resource"
+      }
+    },
+    "DenyListBucketAutoDeleteObjectsCustomResource8261EE69": {
+      "Type": "Custom::S3AutoDeleteObjects",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+            "Arn"
+          ]
+        },
+        "BucketName": {
+          "Ref": "DenyListBucketC1C9D3D9"
+        }
+      },
+      "DependsOn": [
+        "DenyListBucketPolicyFE28C82A"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/Bucket/AutoDeleteObjectsCustomResource/Default"
       }
     },
     "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7": {
@@ -1010,46 +907,162 @@
         "aws:cdk:path": "TestDenyList/DenyList/Bucket/AllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7"
       }
     },
+    "DenyListFailoverBucketC0405145": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        },
+        "PublicAccessBlockConfiguration": {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true
+        },
+        "Tags": [
+          {
+            "Key": "aws-cdk:auto-delete-objects",
+            "Value": "true"
+          },
+          {
+            "Key": "failover",
+            "Value": "true"
+          }
+        ],
+        "VersioningConfiguration": {
+          "Status": "Enabled"
+        }
+      },
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/FailoverBucket/Resource"
+      }
+    },
+    "DenyListFailoverBucketPolicy7EF208CC": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {
+          "Ref": "DenyListFailoverBucketC0405145"
+        },
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "s3:*",
+              "Condition": {
+                "Bool": {
+                  "aws:SecureTransport": "false"
+                }
+              },
+              "Effect": "Deny",
+              "Principal": {
+                "AWS": "*"
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "DenyListFailoverBucketC0405145",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "DenyListFailoverBucketC0405145",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            },
+            {
+              "Action": [
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*"
+              ],
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
+                    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
+                    "Arn"
+                  ]
+                }
+              },
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "DenyListFailoverBucketC0405145",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "DenyListFailoverBucketC0405145",
+                          "Arn"
+                        ]
+                      },
+                      "/*"
+                    ]
+                  ]
+                }
+              ]
+            }
+          ],
+          "Version": "2012-10-17"
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/FailoverBucket/Policy/Resource"
+      }
+    },
+    "DenyListFailoverBucketAutoDeleteObjectsCustomResource7D8B8ADF": {
+      "Type": "Custom::S3AutoDeleteObjects",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
+            "Arn"
+          ]
+        },
+        "BucketName": {
+          "Ref": "DenyListFailoverBucketC0405145"
+        }
+      },
+      "DependsOn": [
+        "DenyListFailoverBucketPolicy7EF208CC"
+      ],
+      "UpdateReplacePolicy": "Delete",
+      "DeletionPolicy": "Delete",
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/FailoverBucket/AutoDeleteObjectsCustomResource/Default"
+      }
+    },
     "DenyListBucketDeploymentAwsCliLayer4F94CAE9": {
       "Type": "AWS::Lambda::LayerVersion",
       "Properties": {
         "Content": {
           "S3Bucket": {
-            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7"
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": {
-            "Fn::Join": [
-              "",
-              [
-                {
-                  "Fn::Select": [
-                    0,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "Fn::Select": [
-                    1,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            ]
-          }
+          "S3Key": "e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68.zip"
         },
         "Description": "/opt/awscli/aws"
       },
@@ -1070,48 +1083,16 @@
         },
         "SourceBucketNames": [
           {
-            "Ref": "AssetParameters7b06823bbcc72a4d3141d044a898d5e4c5daf481a313ff067160af1e936d04e8S3Bucket88752BFB"
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           }
         ],
         "SourceObjectKeys": [
-          {
-            "Fn::Join": [
-              "",
-              [
-                {
-                  "Fn::Select": [
-                    0,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameters7b06823bbcc72a4d3141d044a898d5e4c5daf481a313ff067160af1e936d04e8S3VersionKey9E48D785"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "Fn::Select": [
-                    1,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameters7b06823bbcc72a4d3141d044a898d5e4c5daf481a313ff067160af1e936d04e8S3VersionKey9E48D785"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            ]
-          }
+          "7b06823bbcc72a4d3141d044a898d5e4c5daf481a313ff067160af1e936d04e8.zip"
         ],
         "DestinationBucketName": {
           "Ref": "DenyListBucketC1C9D3D9"
         },
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "Prune": true
       },
       "DependsOn": [
@@ -1276,41 +1257,9 @@
       "Properties": {
         "Code": {
           "S3Bucket": {
-            "Ref": "AssetParameters3416b6d1c6347fa47603d8898795de205b2bd6b5dc24a30b7839eea2cb5f8903S3Bucket10E53ACF"
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": {
-            "Fn::Join": [
-              "",
-              [
-                {
-                  "Fn::Select": [
-                    0,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameters3416b6d1c6347fa47603d8898795de205b2bd6b5dc24a30b7839eea2cb5f8903S3VersionKey065264C0"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "Fn::Select": [
-                    1,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameters3416b6d1c6347fa47603d8898795de205b2bd6b5dc24a30b7839eea2cb5f8903S3VersionKey065264C0"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            ]
-          }
+          "S3Key": "db2ea3f516756923eb56c8019df0dca24edffaa81c4b8dab3eb6275309b6eb38.zip"
         },
         "Role": {
           "Fn::GetAtt": [
@@ -1350,7 +1299,7 @@
       ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneHandler/Resource",
-        "aws:asset:path": "asset.3416b6d1c6347fa47603d8898795de205b2bd6b5dc24a30b7839eea2cb5f8903.bundle",
+        "aws:asset:path": "asset.db2ea3f516756923eb56c8019df0dca24edffaa81c4b8dab3eb6275309b6eb38.bundle",
         "aws:asset:property": "Code"
       }
     },
@@ -1446,41 +1395,9 @@
       "Properties": {
         "Code": {
           "S3Bucket": {
-            "Ref": "AssetParametersc9433e23f9457653f88da348f4e3b6e25762f5a7a93dbb89fff04c19158084c2S3Bucket4F82A740"
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": {
-            "Fn::Join": [
-              "",
-              [
-                {
-                  "Fn::Select": [
-                    0,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParametersc9433e23f9457653f88da348f4e3b6e25762f5a7a93dbb89fff04c19158084c2S3VersionKey1C48C47C"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "Fn::Select": [
-                    1,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParametersc9433e23f9457653f88da348f4e3b6e25762f5a7a93dbb89fff04c19158084c2S3VersionKey1C48C47C"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            ]
-          }
+          "S3Key": "205e30eaf1c762d7fd9e6e51bf4958ae592956b46f87d0d1005c762d9303612c.zip"
         },
         "Role": {
           "Fn::GetAtt": [
@@ -1506,7 +1423,7 @@
       ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneQueueHandler/Resource",
-        "aws:asset:path": "asset.c9433e23f9457653f88da348f4e3b6e25762f5a7a93dbb89fff04c19158084c2.bundle",
+        "aws:asset:path": "asset.205e30eaf1c762d7fd9e6e51bf4958ae592956b46f87d0d1005c762d9303612c.bundle",
         "aws:asset:property": "Code"
       }
     },
@@ -1692,41 +1609,9 @@
       "Properties": {
         "Code": {
           "S3Bucket": {
-            "Ref": "AssetParametersf45abf50b8dccc65f1a48e4cf44ac0c98edf836b3e089ab23381d9a00d71ac5eS3Bucket47D63A41"
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": {
-            "Fn::Join": [
-              "",
-              [
-                {
-                  "Fn::Select": [
-                    0,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParametersf45abf50b8dccc65f1a48e4cf44ac0c98edf836b3e089ab23381d9a00d71ac5eS3VersionKey04504664"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "Fn::Select": [
-                    1,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParametersf45abf50b8dccc65f1a48e4cf44ac0c98edf836b3e089ab23381d9a00d71ac5eS3VersionKey04504664"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            ]
-          }
+          "S3Key": "f45abf50b8dccc65f1a48e4cf44ac0c98edf836b3e089ab23381d9a00d71ac5e.zip"
         },
         "Role": {
           "Fn::GetAtt": [
@@ -1835,41 +1720,9 @@
       "Properties": {
         "Code": {
           "S3Bucket": {
-            "Ref": "AssetParameters213ca05d7ba25630c15424727c5b4001dec1b09e45c8c1c07ce554affeed656cS3BucketA1227969"
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": {
-            "Fn::Join": [
-              "",
-              [
-                {
-                  "Fn::Select": [
-                    0,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameters213ca05d7ba25630c15424727c5b4001dec1b09e45c8c1c07ce554affeed656cS3VersionKey7F963A18"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "Fn::Select": [
-                    1,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameters213ca05d7ba25630c15424727c5b4001dec1b09e45c8c1c07ce554affeed656cS3VersionKey7F963A18"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            ]
-          }
+          "S3Key": "2b627bbca79e8f94ff40e5c1b0b89d3203de7722f2bc2144431969b65cb63596.zip"
         },
         "Role": {
           "Fn::GetAtt": [
@@ -1899,7 +1752,7 @@
       ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/ClientTest/Resource",
-        "aws:asset:path": "asset.213ca05d7ba25630c15424727c5b4001dec1b09e45c8c1c07ce554affeed656c.bundle",
+        "aws:asset:path": "asset.2b627bbca79e8f94ff40e5c1b0b89d3203de7722f2bc2144431969b65cb63596.bundle",
         "aws:asset:property": "Code"
       }
     },
@@ -1913,16 +1766,20 @@
           ]
         },
         "HandlerArn": {
-          "Ref": "ClientTestCurrentVersionAB7E7F65513e9ae2bc7d8aa50890cc86ae9b751c"
+          "Ref": "ClientTestCurrentVersionAB7E7F65042a8ff62cfe9813dd454fcf8aacfd05"
         }
       },
       "DependsOn": [
         "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7",
+        "DenyListBucketAutoDeleteObjectsCustomResource8261EE69",
         "DenyListBucketNotificationsEF0449EB",
         "DenyListBucketPolicyFE28C82A",
         "DenyListBucketC1C9D3D9",
         "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
         "DenyListBucketDeploymentCustomResource68E58740",
+        "DenyListFailoverBucketAutoDeleteObjectsCustomResource7D8B8ADF",
+        "DenyListFailoverBucketPolicy7EF208CC",
+        "DenyListFailoverBucketC0405145",
         "DenyListPeriodicPruneAllowEventRuleTestDenyListPrunePruneHandlerDB8102B7EA785278",
         "DenyListPeriodicPruneC53BF9DB",
         "DenyListPruneDeleteQueueF9D9EBE3",
@@ -1940,7 +1797,7 @@
         "aws:cdk:path": "TestDenyList/ClientTest/Trigger/Resource/Default"
       }
     },
-    "ClientTestCurrentVersionAB7E7F65513e9ae2bc7d8aa50890cc86ae9b751c": {
+    "ClientTestCurrentVersionAB7E7F65042a8ff62cfe9813dd454fcf8aacfd05": {
       "Type": "AWS::Lambda::Version",
       "Properties": {
         "FunctionName": {
@@ -2000,41 +1857,9 @@
       "Properties": {
         "Code": {
           "S3Bucket": {
-            "Ref": "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34S3BucketD10E50CE"
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": {
-            "Fn::Join": [
-              "",
-              [
-                {
-                  "Fn::Select": [
-                    0,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34S3VersionKeyFF4DB90C"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "Fn::Select": [
-                    1,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34S3VersionKeyFF4DB90C"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            ]
-          }
+          "S3Key": "a442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34.zip"
         },
         "Timeout": 900,
         "MemorySize": 128,
@@ -2142,41 +1967,9 @@
       "Properties": {
         "Code": {
           "S3Bucket": {
-            "Ref": "AssetParameterscc3d2e78b662a893118a1949623aea0f8844ceb81bdf122c7b20b79c7f169839S3BucketC210160A"
+            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": {
-            "Fn::Join": [
-              "",
-              [
-                {
-                  "Fn::Select": [
-                    0,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameterscc3d2e78b662a893118a1949623aea0f8844ceb81bdf122c7b20b79c7f169839S3VersionKey4EB5707F"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "Fn::Select": [
-                    1,
-                    {
-                      "Fn::Split": [
-                        "||",
-                        {
-                          "Ref": "AssetParameterscc3d2e78b662a893118a1949623aea0f8844ceb81bdf122c7b20b79c7f169839S3VersionKey4EB5707F"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            ]
-          }
+          "S3Key": "cc3d2e78b662a893118a1949623aea0f8844ceb81bdf122c7b20b79c7f169839.zip"
         },
         "Role": {
           "Fn::GetAtt": [
@@ -2218,16 +2011,20 @@
           ]
         },
         "HandlerArn": {
-          "Ref": "PruneTestCurrentVersion332993F8f804369e33593dd0514d73052d9eb36b"
+          "Ref": "PruneTestCurrentVersion332993F8034b9d404a4c0c3474f1ffa673949f96"
         }
       },
       "DependsOn": [
         "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7",
+        "DenyListBucketAutoDeleteObjectsCustomResource8261EE69",
         "DenyListBucketNotificationsEF0449EB",
         "DenyListBucketPolicyFE28C82A",
         "DenyListBucketC1C9D3D9",
         "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
         "DenyListBucketDeploymentCustomResource68E58740",
+        "DenyListFailoverBucketAutoDeleteObjectsCustomResource7D8B8ADF",
+        "DenyListFailoverBucketPolicy7EF208CC",
+        "DenyListFailoverBucketC0405145",
         "DenyListPeriodicPruneAllowEventRuleTestDenyListPrunePruneHandlerDB8102B7EA785278",
         "DenyListPeriodicPruneC53BF9DB",
         "DenyListPruneDeleteQueueF9D9EBE3",
@@ -2245,7 +2042,7 @@
         "aws:cdk:path": "TestDenyList/PruneTest/Trigger/Resource/Default"
       }
     },
-    "PruneTestCurrentVersion332993F8f804369e33593dd0514d73052d9eb36b": {
+    "PruneTestCurrentVersion332993F8034b9d404a4c0c3474f1ffa673949f96": {
       "Type": "AWS::Lambda::Version",
       "Properties": {
         "FunctionName": {
@@ -2255,140 +2052,6 @@
       "Metadata": {
         "aws:cdk:path": "TestDenyList/PruneTest/CurrentVersion/Resource"
       }
-    }
-  },
-  "Parameters": {
-    "AssetParameters1f7e277bd526ebce1983fa1e7a84a5281ec533d9187caaebb773681bbf7bf4c1S3Bucket4842F32D": {
-      "Type": "String",
-      "Description": "S3 bucket for asset \"1f7e277bd526ebce1983fa1e7a84a5281ec533d9187caaebb773681bbf7bf4c1\""
-    },
-    "AssetParameters1f7e277bd526ebce1983fa1e7a84a5281ec533d9187caaebb773681bbf7bf4c1S3VersionKeyD0A0B57A": {
-      "Type": "String",
-      "Description": "S3 key for asset version \"1f7e277bd526ebce1983fa1e7a84a5281ec533d9187caaebb773681bbf7bf4c1\""
-    },
-    "AssetParameters1f7e277bd526ebce1983fa1e7a84a5281ec533d9187caaebb773681bbf7bf4c1ArtifactHash0128B949": {
-      "Type": "String",
-      "Description": "Artifact hash for asset \"1f7e277bd526ebce1983fa1e7a84a5281ec533d9187caaebb773681bbf7bf4c1\""
-    },
-    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7": {
-      "Type": "String",
-      "Description": "S3 bucket for asset \"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\""
-    },
-    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F": {
-      "Type": "String",
-      "Description": "S3 key for asset version \"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\""
-    },
-    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": {
-      "Type": "String",
-      "Description": "Artifact hash for asset \"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\""
-    },
-    "AssetParametersa3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8S3BucketD1AD544E": {
-      "Type": "String",
-      "Description": "S3 bucket for asset \"a3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8\""
-    },
-    "AssetParametersa3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8S3VersionKey93A19D70": {
-      "Type": "String",
-      "Description": "S3 key for asset version \"a3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8\""
-    },
-    "AssetParametersa3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8ArtifactHash238275D6": {
-      "Type": "String",
-      "Description": "Artifact hash for asset \"a3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8\""
-    },
-    "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3BucketA5253790": {
-      "Type": "String",
-      "Description": "S3 bucket for asset \"9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffd\""
-    },
-    "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdS3VersionKeyDB67886F": {
-      "Type": "String",
-      "Description": "S3 key for asset version \"9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffd\""
-    },
-    "AssetParameters9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffdArtifactHash704B15D5": {
-      "Type": "String",
-      "Description": "Artifact hash for asset \"9631bac2371ca47d56451aee83ea0dbbfa75235f246f9be94323debca5ae5ffd\""
-    },
-    "AssetParameters7b06823bbcc72a4d3141d044a898d5e4c5daf481a313ff067160af1e936d04e8S3Bucket88752BFB": {
-      "Type": "String",
-      "Description": "S3 bucket for asset \"7b06823bbcc72a4d3141d044a898d5e4c5daf481a313ff067160af1e936d04e8\""
-    },
-    "AssetParameters7b06823bbcc72a4d3141d044a898d5e4c5daf481a313ff067160af1e936d04e8S3VersionKey9E48D785": {
-      "Type": "String",
-      "Description": "S3 key for asset version \"7b06823bbcc72a4d3141d044a898d5e4c5daf481a313ff067160af1e936d04e8\""
-    },
-    "AssetParameters7b06823bbcc72a4d3141d044a898d5e4c5daf481a313ff067160af1e936d04e8ArtifactHashFA323905": {
-      "Type": "String",
-      "Description": "Artifact hash for asset \"7b06823bbcc72a4d3141d044a898d5e4c5daf481a313ff067160af1e936d04e8\""
-    },
-    "AssetParameters3416b6d1c6347fa47603d8898795de205b2bd6b5dc24a30b7839eea2cb5f8903S3Bucket10E53ACF": {
-      "Type": "String",
-      "Description": "S3 bucket for asset \"3416b6d1c6347fa47603d8898795de205b2bd6b5dc24a30b7839eea2cb5f8903\""
-    },
-    "AssetParameters3416b6d1c6347fa47603d8898795de205b2bd6b5dc24a30b7839eea2cb5f8903S3VersionKey065264C0": {
-      "Type": "String",
-      "Description": "S3 key for asset version \"3416b6d1c6347fa47603d8898795de205b2bd6b5dc24a30b7839eea2cb5f8903\""
-    },
-    "AssetParameters3416b6d1c6347fa47603d8898795de205b2bd6b5dc24a30b7839eea2cb5f8903ArtifactHashBB01DAC0": {
-      "Type": "String",
-      "Description": "Artifact hash for asset \"3416b6d1c6347fa47603d8898795de205b2bd6b5dc24a30b7839eea2cb5f8903\""
-    },
-    "AssetParametersc9433e23f9457653f88da348f4e3b6e25762f5a7a93dbb89fff04c19158084c2S3Bucket4F82A740": {
-      "Type": "String",
-      "Description": "S3 bucket for asset \"c9433e23f9457653f88da348f4e3b6e25762f5a7a93dbb89fff04c19158084c2\""
-    },
-    "AssetParametersc9433e23f9457653f88da348f4e3b6e25762f5a7a93dbb89fff04c19158084c2S3VersionKey1C48C47C": {
-      "Type": "String",
-      "Description": "S3 key for asset version \"c9433e23f9457653f88da348f4e3b6e25762f5a7a93dbb89fff04c19158084c2\""
-    },
-    "AssetParametersc9433e23f9457653f88da348f4e3b6e25762f5a7a93dbb89fff04c19158084c2ArtifactHashE99FB0DF": {
-      "Type": "String",
-      "Description": "Artifact hash for asset \"c9433e23f9457653f88da348f4e3b6e25762f5a7a93dbb89fff04c19158084c2\""
-    },
-    "AssetParametersf45abf50b8dccc65f1a48e4cf44ac0c98edf836b3e089ab23381d9a00d71ac5eS3Bucket47D63A41": {
-      "Type": "String",
-      "Description": "S3 bucket for asset \"f45abf50b8dccc65f1a48e4cf44ac0c98edf836b3e089ab23381d9a00d71ac5e\""
-    },
-    "AssetParametersf45abf50b8dccc65f1a48e4cf44ac0c98edf836b3e089ab23381d9a00d71ac5eS3VersionKey04504664": {
-      "Type": "String",
-      "Description": "S3 key for asset version \"f45abf50b8dccc65f1a48e4cf44ac0c98edf836b3e089ab23381d9a00d71ac5e\""
-    },
-    "AssetParametersf45abf50b8dccc65f1a48e4cf44ac0c98edf836b3e089ab23381d9a00d71ac5eArtifactHashAC9E5385": {
-      "Type": "String",
-      "Description": "Artifact hash for asset \"f45abf50b8dccc65f1a48e4cf44ac0c98edf836b3e089ab23381d9a00d71ac5e\""
-    },
-    "AssetParameters213ca05d7ba25630c15424727c5b4001dec1b09e45c8c1c07ce554affeed656cS3BucketA1227969": {
-      "Type": "String",
-      "Description": "S3 bucket for asset \"213ca05d7ba25630c15424727c5b4001dec1b09e45c8c1c07ce554affeed656c\""
-    },
-    "AssetParameters213ca05d7ba25630c15424727c5b4001dec1b09e45c8c1c07ce554affeed656cS3VersionKey7F963A18": {
-      "Type": "String",
-      "Description": "S3 key for asset version \"213ca05d7ba25630c15424727c5b4001dec1b09e45c8c1c07ce554affeed656c\""
-    },
-    "AssetParameters213ca05d7ba25630c15424727c5b4001dec1b09e45c8c1c07ce554affeed656cArtifactHash682B50E5": {
-      "Type": "String",
-      "Description": "Artifact hash for asset \"213ca05d7ba25630c15424727c5b4001dec1b09e45c8c1c07ce554affeed656c\""
-    },
-    "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34S3BucketD10E50CE": {
-      "Type": "String",
-      "Description": "S3 bucket for asset \"a442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34\""
-    },
-    "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34S3VersionKeyFF4DB90C": {
-      "Type": "String",
-      "Description": "S3 key for asset version \"a442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34\""
-    },
-    "AssetParametersa442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34ArtifactHash21CD70B6": {
-      "Type": "String",
-      "Description": "Artifact hash for asset \"a442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34\""
-    },
-    "AssetParameterscc3d2e78b662a893118a1949623aea0f8844ceb81bdf122c7b20b79c7f169839S3BucketC210160A": {
-      "Type": "String",
-      "Description": "S3 bucket for asset \"cc3d2e78b662a893118a1949623aea0f8844ceb81bdf122c7b20b79c7f169839\""
-    },
-    "AssetParameterscc3d2e78b662a893118a1949623aea0f8844ceb81bdf122c7b20b79c7f169839S3VersionKey4EB5707F": {
-      "Type": "String",
-      "Description": "S3 key for asset version \"cc3d2e78b662a893118a1949623aea0f8844ceb81bdf122c7b20b79c7f169839\""
-    },
-    "AssetParameterscc3d2e78b662a893118a1949623aea0f8844ceb81bdf122c7b20b79c7f169839ArtifactHash3B90DF42": {
-      "Type": "String",
-      "Description": "Artifact hash for asset \"cc3d2e78b662a893118a1949623aea0f8844ceb81bdf122c7b20b79c7f169839\""
     }
   },
   "Outputs": {
@@ -2408,6 +2071,58 @@
           ]
         ]
       }
+    },
+    "DenyListSnapshotCommand31529C83": {
+      "Description": "Snapshot TestDenyList/DenyList/Bucket",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "aws s3 sync s3://",
+            {
+              "Ref": "DenyListBucketC1C9D3D9"
+            },
+            " s3://",
+            {
+              "Ref": "DenyListFailoverBucketC0405145"
+            }
+          ]
+        ]
+      }
+    }
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Type": "AWS::SSM::Parameter::Value<String>",
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store."
+    }
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5"
+                  ],
+                  {
+                    "Ref": "BootstrapVersion"
+                  }
+                ]
+              }
+            ]
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+        }
+      ]
     }
   }
 }

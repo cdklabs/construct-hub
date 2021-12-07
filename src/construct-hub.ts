@@ -18,10 +18,12 @@ import { Orchestration } from './backend/orchestration';
 import { PackageStats } from './backend/package-stats';
 import { CATALOG_KEY, STORAGE_KEY_PREFIX } from './backend/shared/constants';
 import { Repository } from './codeartifact/repository';
+import { DomainRedirect, DomainRedirectSource } from './domain-redirect';
 import { Monitoring } from './monitoring';
 import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
 import { PackageTag } from './package-tag';
+import { S3StorageFactory } from './s3/storage';
 import { SpdxLicense } from './spdx-license';
 import { WebApp, PackageLinkConfig, FeaturedPackages, FeatureFlags, Category } from './webapp';
 
@@ -148,6 +150,25 @@ export interface ConstructHubProps {
    * with a link to the relevant search query.
    */
   readonly categories?: Category[];
+
+  /**
+   * Wire construct hub to use the failover storage buckets.
+   *
+   * Do not activate this property until you've populated your failover buckets
+   * with the necessary data.
+   *
+   * @see https://github.com/cdklabs/construct-hub/blob/dev/docs/operator-runbook.md#storage-disaster
+   * @default false
+   */
+  readonly failoverStorage?: boolean;
+
+  /**
+   * Additional domains which will be set up to redirect to the primary
+   * construct hub domain.
+   *
+   * @default []
+   */
+  readonly additionalDomains?: DomainRedirectSource[];
 }
 
 /**
@@ -183,11 +204,15 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       throw new Error('Supplying both isolateSensitiveTasks and sensitiveTaskIsolation is not supported. Remove usage of isolateSensitiveTasks.');
     }
 
+    const storageFactory = S3StorageFactory.getOrCreate(this, {
+      failover: props.failoverStorage,
+    });
+
     const monitoring = new Monitoring(this, 'Monitoring', {
       alarmActions: props.alarmActions,
     });
 
-    const packageData = new s3.Bucket(this, 'PackageData', {
+    const packageData = storageFactory.newBucket(this, 'PackageData', {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
       encryption: s3.BucketEncryption.S3_MANAGED,
@@ -334,6 +359,20 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       denyList,
       packageStats,
     });
+
+    // add domain redirects
+    if (props.domain) {
+      for (const redirctSource of props.additionalDomains ?? []) {
+        new DomainRedirect(this, `Redirect-${redirctSource.hostedZone.zoneName}`, {
+          source: redirctSource,
+          targetDomainName: props.domain?.zone.zoneName,
+        });
+      }
+    } else {
+      if (props.additionalDomains && props.additionalDomains.length > 0) {
+        throw new Error('Cannot specify "domainRedirects" if a domain is not specified');
+      }
+    }
   }
 
   public get grantPrincipal(): iam.IPrincipal {
@@ -489,3 +528,4 @@ export enum Isolation {
    */
   NO_INTERNET_ACCESS,
 }
+

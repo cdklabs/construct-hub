@@ -2,7 +2,7 @@ const fs = require('fs');
 const { basename, join, dirname, relative } = require('path');
 const Case = require('case');
 const glob = require('glob');
-const { SourceCode, FileBase, JsonFile, JsiiProject, github } = require('projen');
+const { SourceCode, FileBase, JsonFile, cdk, github } = require('projen');
 const spdx = require('spdx-license-list');
 const uuid = require('uuid');
 
@@ -41,7 +41,7 @@ const peerDeps = [
 const cdkAssert = '@aws-cdk/assert';
 const cdkCli = 'aws-cdk';
 
-const project = new JsiiProject({
+const project = new cdk.JsiiProject({
   name: 'construct-hub',
   description: 'A construct library that models Construct Hub instances.',
   keywords: ['aws', 'aws-cdk', 'constructs', 'construct-hub'],
@@ -84,6 +84,7 @@ const project = new JsiiProject({
   peerDeps: peerDeps,
 
   minNodeVersion: '12.20.0',
+  workflowNodeVersion: '12.22.0',
 
   pullRequestTemplateContents: [
     '',
@@ -131,10 +132,8 @@ const project = new JsiiProject({
 
   depsUpgradeOptions: {
     exclude: [...peerDeps, cdkAssert, cdkCli],
-    include: ['construct-hub-webapp'],
     ignoreProjen: false,
     workflowOptions: {
-      branches: ['dev', 'main'],
       labels: ['auto-approve'],
       secret: 'PROJEN_GITHUB_TOKEN',
       container: {
@@ -283,6 +282,7 @@ function discoverIntegrationTests() {
     const options = [
       `--app ${app}`,
       '--no-version-reporting',
+      '--context @aws-cdk/core:newStyleStackSynthesis=true',
     ].join(' ');
 
     const deploy = project.addTask(`integ:${name}:deploy`, {
@@ -869,6 +869,8 @@ project.compileTask.prependExec('cp -r ./node_modules/construct-hub-webapp/build
 project.compileTask.prependExec('rm -rf ./website');
 project.npmignore.addPatterns('!/website'); // <-- include in tarball
 project.gitignore.addPatterns('/website'); // <-- don't commit
+
+project.gitignore.exclude('.vscode/');
 
 addVpcAllowListManagement();
 addDevApp();
