@@ -118,7 +118,7 @@ test('full build', () => {
             },
           },
         },
-        updated: expect.anything(),
+        updatedAt: expect.anything(),
       });
       expect(Date.parse(body.updatedAt)).toBeDefined();
     } catch (e) {

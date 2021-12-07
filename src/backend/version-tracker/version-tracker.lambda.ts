@@ -6,9 +6,6 @@ import * as aws from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { ENV_PACKAGE_DATA_BUCKET_NAME, ENV_PACKAGE_DATA_KEY_PREFIX, ENV_VERSION_TRACKER_BUCKET_NAME, ENV_VERSION_TRACKER_OBJECT_KEY, MetricName, METRICS_NAMESPACE } from './constants';
 
-
-const PACKAGE_PREFIX_REGEX = /^data\/((?:@[^/]+\/)?[^/]+)\/v([^/]+)\/$/;
-
 // Batch size that limits how many outgoing S3 calls are made at a time.
 // This can be tweaked as needed (increased if we want to squeeze out more
 // performance, or decreased if we are getting too throttled).
@@ -22,6 +19,8 @@ export async function handler(event: any, context: Context) {
 
   const PACKAGE_DATA_BUCKET_NAME = requireEnv(ENV_PACKAGE_DATA_BUCKET_NAME);
   const PACKAGE_DATA_KEY_PREFIX = requireEnv(ENV_PACKAGE_DATA_KEY_PREFIX);
+
+  const PACKAGE_PREFIX_REGEX = new RegExp('^' + PACKAGE_DATA_KEY_PREFIX + '((?:@[^/]+\/)?[^/]+)\/v([^/]+)\/$');
 
   // Gather a list of all package prefixes.
   const packagePrefixes: string[] = await listPackagePrefixes(PACKAGE_DATA_BUCKET_NAME, PACKAGE_DATA_KEY_PREFIX);
@@ -50,7 +49,7 @@ export async function handler(event: any, context: Context) {
 
   const versionJson = {
     packages: Object.fromEntries(versionMap),
-    lastUpdated: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
   };
 
   let totalVersions = 0;
