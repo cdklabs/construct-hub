@@ -106,9 +106,9 @@ export class VersionTracker extends Construct {
 
     const notRunningAlarm = this.handler.metricInvocations({ period: updatePeriod })
       .createAlarm(scope, 'VersionTracker/NotRunning', {
-        alarmName: `${scope.node.path}/NpmJs/Follower/NotRunning`,
+        alarmName: `${scope.node.path}/VersionTracker/NotRunning`,
         alarmDescription: [
-          'The NpmJs follower function is not running!',
+          'The version tracker function is not running!',
           '',
           `RunBook: ${RUNBOOK_URL}`,
           '',
