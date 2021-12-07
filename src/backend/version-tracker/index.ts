@@ -42,8 +42,8 @@ export interface VersionTrackerProps {
 }
 
 /**
- * Periodically `versions.json` object in the designated bucket with the
- * list of versions available for all packages.
+ * Periodically updates the `all-versions.json` object in the designated bucket
+ * with the list of all ingested package versions.
  */
 export class VersionTracker extends Construct {
   /**
@@ -59,11 +59,11 @@ export class VersionTracker extends Construct {
   public constructor(scope: Construct, id: string, props: VersionTrackerProps) {
     super(scope, id);
 
-    // the package data bucket is also used to store versions.json
+    // the package data bucket is also used to store all-versions.json
     this.bucket = props.bucket;
 
     this.handler = new Handler(this, 'Default', {
-      description: `Creates the versions.json in ${props.bucket.bucketName}`,
+      description: `[${this.node.path}] Creates the all-versions.json in ${props.bucket.bucketName}`,
       environment: {
         [ENV_PACKAGE_DATA_BUCKET_NAME]: this.bucket.bucketName,
         [ENV_PACKAGE_DATA_KEY_PREFIX]: STORAGE_KEY_PREFIX,
@@ -74,16 +74,19 @@ export class VersionTracker extends Construct {
       memorySize: 10_240, // Currently the maximum possible setting
       reservedConcurrentExecutions: 1,
       timeout: Duration.minutes(1),
-      tracing: Tracing.PASS_THROUGH,
+      tracing: Tracing.ACTIVE,
     });
+
+    const grant = this.bucket.grantReadWrite(this.handler);
 
     const updatePeriod = props.updatePeriod ?? Duration.minutes(1);
-    const rule = new events.Rule(this, 'Rule', {
+    const event = new events.Rule(this, 'Rule', {
       schedule: events.Schedule.rate(updatePeriod),
+      targets: [new targets.LambdaFunction(this.handler)],
     });
-    rule.addTarget(new targets.LambdaFunction(this.handler));
 
-    this.bucket.grantReadWrite(this.handler);
+    // ensure event does not trigger until Lambda permissions are set up
+    event.node.addDependency(grant);
 
     const failureAlarm = this.handler.metricErrors().createAlarm(scope, 'VersionTracker/Failures', {
       alarmName: `${scope.node.path}/VersionTracker/Failures`,
@@ -100,6 +103,23 @@ export class VersionTracker extends Construct {
       treatMissingData: TreatMissingData.MISSING,
     });
     props.monitoring.addLowSeverityAlarm('VersionTracker Failures', failureAlarm);
+
+    const notRunningAlarm = this.handler.metricInvocations({ period: updatePeriod })
+      .createAlarm(scope, 'VersionTracker/NotRunning', {
+        alarmName: `${scope.node.path}/NpmJs/Follower/NotRunning`,
+        alarmDescription: [
+          'The NpmJs follower function is not running!',
+          '',
+          `RunBook: ${RUNBOOK_URL}`,
+          '',
+          `Direct link to Lambda function: ${lambdaFunctionUrl(this.handler)}`,
+        ].join('\n'),
+        comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+        evaluationPeriods: 2,
+        threshold: 1,
+        treatMissingData: TreatMissingData.BREACHING,
+      });
+    props.monitoring.addHighSeverityAlarm('VersionTracker/Follower Not Running', notRunningAlarm);
   }
 
   public metricTrackedPackagesCount(opts?: MetricOptions): Metric {

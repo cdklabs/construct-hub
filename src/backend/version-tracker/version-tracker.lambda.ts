@@ -15,8 +15,7 @@ const PACKAGE_PREFIX_REGEX = /^data\/((?:@[^/]+\/)?[^/]+)\/v([^/]+)\/$/;
 const BATCH_SIZE = 200;
 
 export async function handler(event: any, context: Context) {
-  console.log(JSON.stringify(event, null, 2));
-  console.log(JSON.stringify(context, null, 2));
+  console.log(`Event: ${JSON.stringify(event, null, 2)}`);
 
   const VERSION_TRACKER_BUCKET_NAME = requireEnv(ENV_VERSION_TRACKER_BUCKET_NAME);
   const VERSION_TRACKER_OBJECT_KEY = requireEnv(ENV_VERSION_TRACKER_OBJECT_KEY);
@@ -127,7 +126,12 @@ async function listPrefixes(bucket: string, prefix: string): Promise<string[]> {
  *
  * For example, if given "data/" it will return
  * [
- *   "data/"
+ *   "data/@aws-amplify/cdk-exported-backend",
+ *   "data/@aws-c2a/cdk-pipelines-step",
+ *   "data/@aws-cdk/alexa-ask",
+ *   "data/@aws-cdk/app-delivery",
+ *   "data/@aws-cdk/assertions",
+ *   ...
  * ]
  */
 async function listPackagePrefixes(bucket: string, prefix: string): Promise<string[]> {
@@ -135,8 +139,8 @@ async function listPackagePrefixes(bucket: string, prefix: string): Promise<stri
 
   // gather a list of all package scopes and unscoped packages
   const initialPrefixes = await listPrefixes(bucket, prefix);
-  const scopedPrefixes = initialPrefixes.filter((p) => (p?.startsWith('data/@') && prefix === 'data/'));
-  const unscopedPrefixes = initialPrefixes.filter((p) => !(p?.startsWith('data/@') && prefix === 'data/'));
+  const scopedPrefixes = initialPrefixes.filter((p) => p?.startsWith(`${prefix}@`));
+  const unscopedPrefixes = initialPrefixes.filter((p) => !p?.startsWith(`${prefix}@`));
 
   // scoped packages need to be collected separately, so we
   // group the requests into batches, run them in parallel, and
@@ -148,9 +152,7 @@ async function listPackagePrefixes(bucket: string, prefix: string): Promise<stri
     packagePrefixes.push(...results.flat());
   }
 
-  for (const packagePrefix of unscopedPrefixes) {
-    packagePrefixes.push(packagePrefix);
-  }
+  packagePrefixes.push(...unscopedPrefixes);
 
   return packagePrefixes;
 }
@@ -158,7 +160,7 @@ async function listPackagePrefixes(bucket: string, prefix: string): Promise<stri
 /**
  * Partition an array into contiguous subsequences.
  */
-function groupIntoBatches<T>(arr: T[], batchSize: number): T[][] {
+function groupIntoBatches<T>(arr: readonly T[], batchSize: number): T[][] {
   const batches = [];
   for (let i = 0; i < arr.length; i += batchSize) {
     batches.push(arr.slice(i, i + batchSize));
