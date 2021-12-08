@@ -1,0 +1,41 @@
+name: Request package removal
+title: "Package removal request for (package name)"
+labels: [package-removal, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        If you have found a package on Construct Hub that violates the [Site Terms](https://constructs.dev/terms), please report it to abuse@amazonaws.com instead. Thank you!
+
+  - type: input
+    id: package-name
+    attributes:
+      label: What is the name of the package that you would like to have removed?
+    validations:
+      required: true
+
+  - type: input
+    id: package-versions
+    attributes:
+      label: Which versions of the package would you like to remove?
+      description: |
+        Individual package versions can be removed, as well as all versions.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: is-author
+    attributes:
+      label: Are you the owner of this package?
+      description: |
+        Only the package owners can request to have their packages removed from Construct Hub.
+      options:
+        - label: I am the owner of this package.
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+
+        This is :package: Package Removal Request
