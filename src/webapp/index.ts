@@ -5,11 +5,11 @@ import * as r53 from '@aws-cdk/aws-route53';
 import * as r53targets from '@aws-cdk/aws-route53-targets';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
-import { CacheControl } from '@aws-cdk/aws-s3-deployment';
-import { CfnOutput, Construct, Duration } from '@aws-cdk/core';
+import { CfnOutput, Construct } from '@aws-cdk/core';
 import { Domain } from '../api';
 import { PackageStats } from '../backend/package-stats';
 import { CATALOG_KEY, VERSION_TRACKER_KEY } from '../backend/shared/constants';
+import { CacheStrategy } from '../caching';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
 import { S3StorageFactory } from '../s3/storage';
@@ -164,7 +164,7 @@ export class WebApp extends Construct {
 
     const behaviorOptions: cloudfront.AddBehaviorOptions = {
       compress: true,
-      cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+      cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
       functionAssociations: [{
         function: new ResponseFunction(this, functionId, {
           functionName: functionId,
@@ -229,17 +229,11 @@ export class WebApp extends Construct {
     const webappDir = path.join(__dirname, '..', '..', 'website');
 
     new s3deploy.BucketDeployment(this, 'DeployWebsite', {
-      cacheControl: [
-        CacheControl.setPublic(),
-        CacheControl.maxAge(Duration.hours(1)),
-        CacheControl.mustRevalidate(),
-        CacheControl.sMaxAge(Duration.minutes(5)),
-        CacheControl.proxyRevalidate(),
-      ],
       destinationBucket: this.bucket,
       distribution: this.distribution,
       prune: false,
       sources: [s3deploy.Source.asset(webappDir)],
+      cacheControl: CacheStrategy.default().toArray(),
     });
 
     // Generate config.json to customize frontend behavior
@@ -253,17 +247,11 @@ export class WebApp extends Construct {
     });
 
     new s3deploy.BucketDeployment(this, 'DeployWebsiteConfig', {
-      cacheControl: [
-        CacheControl.setPublic(),
-        CacheControl.maxAge(Duration.hours(1)),
-        CacheControl.mustRevalidate(),
-        CacheControl.sMaxAge(Duration.minutes(5)),
-        CacheControl.proxyRevalidate(),
-      ],
       sources: [s3deploy.Source.asset(config.file.dir)],
       destinationBucket: this.bucket,
       distribution: this.distribution,
       prune: false,
+      cacheControl: CacheStrategy.default().toArray(),
     });
 
     new CfnOutput(this, 'DomainName', {

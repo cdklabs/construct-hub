@@ -58,10 +58,16 @@ export function createRestrictedSecurityGroups(scope: Construct, vpc: IVpc): ISe
       entries,
       maxEntries: entries.length,
     });
-    const id = `${namespace}-${ipLabel}`;
-    const sg = new SecurityGroup(scope, id, {
+    // Note: the CfnPrefixList above uses a `.` separator bewteen namespace and
+    // ipLabel, since we use a `-` here, we are not colliding. The has is used
+    // here to replace the SG when the PL is updated. Failure to do so may
+    // result in the SG having both the old & updated PLs in its rule set until
+    // the CloudFormation clean-up phase completes, which might exceed the
+    // maximum amount of rules allowed on a SG.
+    const descr = `${namespace}-${ipLabel}`;
+    const sg = new SecurityGroup(scope, `${descr}#${hash}`, {
       allowAllOutbound: false,
-      description: `${scope.node.path}/${id}`,
+      description: `${scope.node.path}/${descr}`,
       vpc,
     });
 

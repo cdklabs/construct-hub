@@ -1,6 +1,7 @@
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
 import * as _AWS from 'aws-sdk';
+import { CacheStrategy } from '../../caching';
 import * as aws from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { ENV_PACKAGE_DATA_BUCKET_NAME, ENV_PACKAGE_DATA_KEY_PREFIX, ENV_VERSION_TRACKER_BUCKET_NAME, ENV_VERSION_TRACKER_OBJECT_KEY, MetricName, METRICS_NAMESPACE } from './constants';
@@ -71,7 +72,7 @@ export async function handler(event: any, context: Context) {
     Key: VERSION_TRACKER_OBJECT_KEY,
     Body: JSON.stringify(versionJson),
     ContentType: 'application/json',
-    CacheControl: 'public, max-age=60, must-revalidate, proxy-revalidate', // Expire from cache after 1 minute
+    CacheControl: CacheStrategy.default().toString(),
     Metadata: {
       'Lambda-Log-Group': context.logGroupName,
       'Lambda-Log-Stream': context.logStreamName,
