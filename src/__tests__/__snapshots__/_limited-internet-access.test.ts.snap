@@ -791,21 +791,6 @@ Object {
       },
       "Type": "AWS::EC2::VPCGatewayAttachment",
     },
-    "cloudflareIPv408A0FEE4": Object {
-      "Properties": Object {
-        "GroupDescription": "TestStack/cloudflare-IPv4",
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "cloudflare.IPv4",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "VPCB9E5F0B4",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
-    },
     "cloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec16388": Object {
       "Properties": Object {
         "AddressFamily": "IPv4",
@@ -861,7 +846,22 @@ Object {
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "cloudflareIPv4toTestStackcloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec163884434980EDAB": Object {
+    "cloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec16388D0AFA17A": Object {
+      "Properties": Object {
+        "GroupDescription": "TestStack/cloudflare-IPv4",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "cloudflare.IPv4",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "VPCB9E5F0B4",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "cloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec16388toTestStackcloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec163884432973C5B9": Object {
       "Properties": Object {
         "Description": "to cloudflare (IPv4)",
         "DestinationPrefixListId": Object {
@@ -873,7 +873,7 @@ Object {
         "FromPort": 443,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "cloudflareIPv408A0FEE4",
+            "cloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec16388D0AFA17A",
             "GroupId",
           ],
         },
@@ -881,21 +881,6 @@ Object {
         "ToPort": 443,
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
-    },
-    "githubgitIPv454D2EFF8": Object {
-      "Properties": Object {
-        "GroupDescription": "TestStack/github.git-IPv4",
-        "Tags": Array [
-          Object {
-            "Key": "Name",
-            "Value": "github.git.IPv4",
-          },
-        ],
-        "VpcId": Object {
-          "Ref": "VPCB9E5F0B4",
-        },
-      },
-      "Type": "AWS::EC2::SecurityGroup",
     },
     "githubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6d": Object {
       "Properties": Object {
@@ -997,7 +982,22 @@ Object {
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "githubgitIPv4toTestStackgithubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6d443CC366A5A": Object {
+    "githubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6dA1E32585": Object {
+      "Properties": Object {
+        "GroupDescription": "TestStack/github.git-IPv4",
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "github.git.IPv4",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "VPCB9E5F0B4",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "githubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6dtoTestStackgithubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6d4435A75B4DA": Object {
       "Properties": Object {
         "Description": "to github.git (IPv4)",
         "DestinationPrefixListId": Object {
@@ -1009,7 +1009,7 @@ Object {
         "FromPort": 443,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "githubgitIPv454D2EFF8",
+            "githubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6dA1E32585",
             "GroupId",
           ],
         },
@@ -1079,7 +1079,7 @@ Object {
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "githubwebIPv4BCE4F6B8": Object {
+    "githubwebIPv49b292faed277d68adffe79e317cbcff49762581aED35DB49": Object {
       "Properties": Object {
         "GroupDescription": "TestStack/github.web-IPv4",
         "Tags": Array [
@@ -1094,7 +1094,7 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "githubwebIPv4toTestStackgithubwebIPv49b292faed277d68adffe79e317cbcff49762581a443A1798199": Object {
+    "githubwebIPv49b292faed277d68adffe79e317cbcff49762581atoTestStackgithubwebIPv49b292faed277d68adffe79e317cbcff49762581a44397D88D6F": Object {
       "Properties": Object {
         "Description": "to github.web (IPv4)",
         "DestinationPrefixListId": Object {
@@ -1106,7 +1106,7 @@ Object {
         "FromPort": 443,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "githubwebIPv4BCE4F6B8",
+            "githubwebIPv49b292faed277d68adffe79e317cbcff49762581aED35DB49",
             "GroupId",
           ],
         },
