@@ -120,7 +120,7 @@ test('full build', () => {
         },
         updated: expect.anything(),
       });
-      expect(Date.parse(body.updatedAt)).toBeDefined();
+      expect(Date.parse(body.updated)).toBeDefined();
     } catch (e) {
       return cb(e as AWSError);
     }

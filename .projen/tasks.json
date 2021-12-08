@@ -84,6 +84,9 @@
           "spawn": "bundle:package-stats"
         },
         {
+          "spawn": "bundle:version-tracker"
+        },
+        {
           "spawn": "bundle:certificate-monitor"
         },
         {
@@ -246,7 +249,7 @@
       "description": "Continuously bundle all AWS Lambda functions",
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/inventory/package-versions-table-widget-function.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/package-stats/package-stats.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/monitoring/http-get-function.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch"
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/inventory/package-versions-table-widget-function.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/package-stats/package-stats.lambda.ts src/backend/version-tracker/version-tracker.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/monitoring/http-get-function.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch"
         }
       ]
     },
@@ -484,6 +487,24 @@
         }
       ]
     },
+    "bundle:version-tracker": {
+      "name": "bundle:version-tracker",
+      "description": "Create an AWS Lambda bundle from src/backend/version-tracker/version-tracker.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/version-tracker/version-tracker.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/version-tracker/version-tracker.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:version-tracker:watch": {
+      "name": "bundle:version-tracker:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/version-tracker/version-tracker.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/version-tracker/version-tracker.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/version-tracker/version-tracker.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
     "clobber": {
       "name": "clobber",
       "description": "hard resets to HEAD of origin and cleans the local repo",
@@ -576,6 +597,9 @@
         },
         {
           "spawn": "bundle:package-stats"
+        },
+        {
+          "spawn": "bundle:version-tracker"
         },
         {
           "spawn": "bundle:certificate-monitor"

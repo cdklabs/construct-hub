@@ -127,6 +127,11 @@ export const UNPROCESSABLE_PACKAGE_ERROR_NAME = 'UnprocessablePackageError';
 export const CATALOG_KEY = 'catalog.json';
 
 /**
+ * The key for the version tracking document.
+ */
+export const VERSION_TRACKER_KEY = 'all-versions.json';
+
+/**
  * The key for missing documentation report.
  *
  * @param language the language for which missing documentation is requested.
