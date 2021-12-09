@@ -282,6 +282,7 @@ function discoverIntegrationTests() {
     const options = [
       `--app ${app}`,
       '--no-version-reporting',
+      '--no-asset-metadata',
       '--context @aws-cdk/core:newStyleStackSynthesis=true',
     ].join(' ');
 
