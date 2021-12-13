@@ -52,15 +52,17 @@ export class BackendDashboard extends Construct {
       }
     }
 
+    const dashboardName = props.dashboardName ?? 'ConstructHubBackend';
+
     new Dashboard(this, 'Reports', {
-      dashboardName: `${props.dashboardName}-reports`,
+      dashboardName: `${dashboardName}-reports`,
       periodOverride: PeriodOverride.AUTO,
       start: '-P1W', // Show 1 week by default
       widgets: reports,
     });
 
     new Dashboard(this, 'Graphs', {
-      dashboardName: `${props.dashboardName}-graphs`,
+      dashboardName: `${dashboardName}-graphs`,
       periodOverride: PeriodOverride.AUTO,
       start: '-P1W', // Show 1 week by default
       widgets: [
