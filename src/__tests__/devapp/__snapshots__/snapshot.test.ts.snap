@@ -4891,6 +4891,44 @@ Resources:
     DependsOn:
       - ConstructHubIngestionReprocessWorkflowStateMachineRoleDefaultPolicy3A21E747
       - ConstructHubIngestionReprocessWorkflowStateMachineRoleA07E1479
+  ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+        Version: 2012-10-17
+  ConstructHubIngestionReprocessWorkflowStateMachineEventsRoleDefaultPolicy257DC291:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: states:StartExecution
+            Effect: Allow
+            Resource:
+              Ref: ConstructHubIngestionReprocessWorkflowStateMachine3708141C
+        Version: 2012-10-17
+      PolicyName: ConstructHubIngestionReprocessWorkflowStateMachineEventsRoleDefaultPolicy257DC291
+      Roles:
+        - Ref: ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B
+  ConstructHubIngestionReprocessCronJob7ED7E328:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Periodically reprocess all packages
+      ScheduleExpression: rate(1 day)
+      State: ENABLED
+      Targets:
+        - Arn:
+            Ref: ConstructHubIngestionReprocessWorkflowStateMachine3708141C
+          Id: Target0
+          Input: '{"comment":"Scheduled reprocessing event from cron job."}'
+          RoleArn:
+            Fn::GetAtt:
+              - ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B
+              - Arn
   ConstructHubIngestionDLQAlarm83BD1903:
     Type: AWS::CloudWatch::Alarm
     Properties:

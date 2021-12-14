@@ -2639,6 +2639,29 @@ Direct link to the function: /lambda/home#/functions/",
       "Type": "AWS::SQS::Queue",
       "UpdateReplacePolicy": "Delete",
     },
+    "ConstructHubIngestionReprocessCronJob7ED7E328": Object {
+      "Properties": Object {
+        "Description": "Periodically reprocess all packages",
+        "ScheduleExpression": "rate(1 day)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Ref": "ConstructHubIngestionReprocessWorkflowStateMachine3708141C",
+            },
+            "Id": "Target0",
+            "Input": "{\\"comment\\":\\"Scheduled reprocessing event from cron job.\\"}",
+            "RoleArn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B",
+                "Arn",
+              ],
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
     "ConstructHubIngestionReprocessQueueADCE803E": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
@@ -2924,6 +2947,46 @@ Direct link to the function: /lambda/home#/functions/",
         "StateMachineName": "Test.ConstructHub.Ingestion.ReprocessWorkflow",
       },
       "Type": "AWS::StepFunctions::StateMachine",
+    },
+    "ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "events.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubIngestionReprocessWorkflowStateMachineEventsRoleDefaultPolicy257DC291": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "ConstructHubIngestionReprocessWorkflowStateMachine3708141C",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubIngestionReprocessWorkflowStateMachineEventsRoleDefaultPolicy257DC291",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubIngestionReprocessWorkflowStateMachineRoleA07E1479": Object {
       "Properties": Object {
@@ -14083,6 +14146,29 @@ Direct link to the function: /lambda/home#/functions/",
       "Type": "AWS::SQS::Queue",
       "UpdateReplacePolicy": "Delete",
     },
+    "ConstructHubIngestionReprocessCronJob7ED7E328": Object {
+      "Properties": Object {
+        "Description": "Periodically reprocess all packages",
+        "ScheduleExpression": "rate(1 day)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Ref": "ConstructHubIngestionReprocessWorkflowStateMachine3708141C",
+            },
+            "Id": "Target0",
+            "Input": "{\\"comment\\":\\"Scheduled reprocessing event from cron job.\\"}",
+            "RoleArn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B",
+                "Arn",
+              ],
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
     "ConstructHubIngestionReprocessQueueADCE803E": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
@@ -14368,6 +14454,46 @@ Direct link to the function: /lambda/home#/functions/",
         "StateMachineName": "Test.ConstructHub.Ingestion.ReprocessWorkflow",
       },
       "Type": "AWS::StepFunctions::StateMachine",
+    },
+    "ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "events.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubIngestionReprocessWorkflowStateMachineEventsRoleDefaultPolicy257DC291": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "ConstructHubIngestionReprocessWorkflowStateMachine3708141C",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubIngestionReprocessWorkflowStateMachineEventsRoleDefaultPolicy257DC291",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubIngestionReprocessWorkflowStateMachineRoleA07E1479": Object {
       "Properties": Object {
@@ -25361,6 +25487,29 @@ Direct link to the function: /lambda/home#/functions/",
       "Type": "AWS::SQS::Queue",
       "UpdateReplacePolicy": "Delete",
     },
+    "ConstructHubIngestionReprocessCronJob7ED7E328": Object {
+      "Properties": Object {
+        "Description": "Periodically reprocess all packages",
+        "ScheduleExpression": "rate(1 day)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Ref": "ConstructHubIngestionReprocessWorkflowStateMachine3708141C",
+            },
+            "Id": "Target0",
+            "Input": "{\\"comment\\":\\"Scheduled reprocessing event from cron job.\\"}",
+            "RoleArn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B",
+                "Arn",
+              ],
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
     "ConstructHubIngestionReprocessQueueADCE803E": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
@@ -25646,6 +25795,46 @@ Direct link to the function: /lambda/home#/functions/",
         "StateMachineName": "Test.ConstructHub.Ingestion.ReprocessWorkflow",
       },
       "Type": "AWS::StepFunctions::StateMachine",
+    },
+    "ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "events.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubIngestionReprocessWorkflowStateMachineEventsRoleDefaultPolicy257DC291": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "ConstructHubIngestionReprocessWorkflowStateMachine3708141C",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubIngestionReprocessWorkflowStateMachineEventsRoleDefaultPolicy257DC291",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubIngestionReprocessWorkflowStateMachineRoleA07E1479": Object {
       "Properties": Object {
@@ -36669,6 +36858,29 @@ Direct link to the function: /lambda/home#/functions/",
       "Type": "AWS::SQS::Queue",
       "UpdateReplacePolicy": "Delete",
     },
+    "ConstructHubIngestionReprocessCronJob7ED7E328": Object {
+      "Properties": Object {
+        "Description": "Periodically reprocess all packages",
+        "ScheduleExpression": "rate(1 day)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Ref": "ConstructHubIngestionReprocessWorkflowStateMachine3708141C",
+            },
+            "Id": "Target0",
+            "Input": "{\\"comment\\":\\"Scheduled reprocessing event from cron job.\\"}",
+            "RoleArn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B",
+                "Arn",
+              ],
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
     "ConstructHubIngestionReprocessQueueADCE803E": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
@@ -36954,6 +37166,46 @@ Direct link to the function: /lambda/home#/functions/",
         "StateMachineName": "Test.ConstructHub.Ingestion.ReprocessWorkflow",
       },
       "Type": "AWS::StepFunctions::StateMachine",
+    },
+    "ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "events.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubIngestionReprocessWorkflowStateMachineEventsRoleDefaultPolicy257DC291": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "ConstructHubIngestionReprocessWorkflowStateMachine3708141C",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubIngestionReprocessWorkflowStateMachineEventsRoleDefaultPolicy257DC291",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubIngestionReprocessWorkflowStateMachineRoleA07E1479": Object {
       "Properties": Object {
@@ -48203,6 +48455,29 @@ Direct link to the function: /lambda/home#/functions/",
       "Type": "AWS::SQS::Queue",
       "UpdateReplacePolicy": "Delete",
     },
+    "ConstructHubIngestionReprocessCronJob7ED7E328": Object {
+      "Properties": Object {
+        "Description": "Periodically reprocess all packages",
+        "ScheduleExpression": "rate(1 day)",
+        "State": "ENABLED",
+        "Targets": Array [
+          Object {
+            "Arn": Object {
+              "Ref": "ConstructHubIngestionReprocessWorkflowStateMachine3708141C",
+            },
+            "Id": "Target0",
+            "Input": "{\\"comment\\":\\"Scheduled reprocessing event from cron job.\\"}",
+            "RoleArn": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B",
+                "Arn",
+              ],
+            },
+          },
+        ],
+      },
+      "Type": "AWS::Events::Rule",
+    },
     "ConstructHubIngestionReprocessQueueADCE803E": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
@@ -48488,6 +48763,46 @@ Direct link to the function: /lambda/home#/functions/",
         "StateMachineName": "Test.ConstructHub.Ingestion.ReprocessWorkflow",
       },
       "Type": "AWS::StepFunctions::StateMachine",
+    },
+    "ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "events.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "ConstructHubIngestionReprocessWorkflowStateMachineEventsRoleDefaultPolicy257DC291": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "states:StartExecution",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Ref": "ConstructHubIngestionReprocessWorkflowStateMachine3708141C",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubIngestionReprocessWorkflowStateMachineEventsRoleDefaultPolicy257DC291",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubIngestionReprocessWorkflowStateMachineEventsRole4509643B",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
     },
     "ConstructHubIngestionReprocessWorkflowStateMachineRoleA07E1479": Object {
       "Properties": Object {

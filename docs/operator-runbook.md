@@ -585,7 +585,23 @@ Two workflows are available for bulk-reprocessing:
    significantly changed, as it will guarantee all packages are on the latest
    version of it.
 
-### Usage
+By default, Construct Hub is configured to automatically run the "re-ingest
+everything" workflow once a day, so that documentation pages are up to date
+with the latest changes in our documentation-generation tooling, and to ensure
+packages are up to date with the latest `packageTags` and `packageLinks`
+configuration.
+
+However, re-processing all packages can be very compute expensive, so it may be
+desirable to lower this frequency or disable the cron job altogether. This
+can be achieved through the `ConstructHub` props:
+
+```ts
+new ConstructHub(stack, 'MyConstructHub', {
+  reprocessFrequency: cdk.Duration.days(7) // set to 0 to disable
+});
+```
+
+### Manual usage
 
 In the AWS Console, navigate to the StepFunctions console, and identify the
 ConstructHub workflows. Simply initiate a new execution of the workflow of your
