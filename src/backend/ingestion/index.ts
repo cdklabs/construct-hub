@@ -67,13 +67,12 @@ export interface IngestionProps {
   readonly packageTags?: PackageTagConfig[];
 
   /**
-   * How frequently all packages should get fully reprocessed. Set to
-   * 0 to disable automatic re-processing.
+   * How frequently all packages should get fully reprocessed.
    *
    * See the operator runbook for more information about reprocessing.
    * @see https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
    *
-   * @default - 1 day
+   * @default - never
    */
   readonly reprocessFrequency?: Duration;
 }
@@ -191,8 +190,8 @@ export class Ingestion extends Construct implements IGrantable {
     const reprocessWorkflow = new ReprocessIngestionWorkflow(this, 'ReprocessWorkflow', { bucket: props.bucket, queue: reprocessQueue });
 
     // Run reprocess workflow on a daily basis
-    const updatePeriod = props.reprocessFrequency ?? Duration.days(1);
-    if (updatePeriod.toSeconds() !== 0) {
+    const updatePeriod = props.reprocessFrequency;
+    if (updatePeriod) {
       const rule = new Rule(this, 'ReprocessCronJob', {
         schedule: Schedule.rate(updatePeriod),
         description: 'Periodically reprocess all packages',

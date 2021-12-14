@@ -164,13 +164,12 @@ export interface ConstructHubProps {
   readonly failoverStorage?: boolean;
 
   /**
-   * How frequently all packages should get fully reprocessed. Set to
-   * 0 to disable automatic re-processing.
+   * How frequently all packages should get fully reprocessed.
    *
    * See the operator runbook for more information about reprocessing.
    * @see https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
    *
-   * @default - 1 day
+   * @default - never
    */
   readonly reprocessFrequency?: Duration;
 
