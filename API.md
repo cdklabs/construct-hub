@@ -358,6 +358,7 @@ const constructHubProps: ConstructHubProps = { ... }
 | [`packageLinks`](#constructhubconstructhubpropspropertypackagelinks) | [`construct-hub.PackageLinkConfig`](#construct-hub.PackageLinkConfig)[] | Configuration for custom package page links. |
 | [`packageSources`](#constructhubconstructhubpropspropertypackagesources) | [`construct-hub.IPackageSource`](#construct-hub.IPackageSource)[] | The package sources to register with this ConstructHub instance. |
 | [`packageTags`](#constructhubconstructhubpropspropertypackagetags) | [`construct-hub.PackageTag`](#construct-hub.PackageTag)[] | Configuration for custom package tags. |
+| [`reprocessFrequency`](#constructhubconstructhubpropspropertyreprocessfrequency) | [`@aws-cdk/core.Duration`](#@aws-cdk/core.Duration) | How frequently all packages should get fully reprocessed. |
 | [`sensitiveTaskIsolation`](#constructhubconstructhubpropspropertysensitivetaskisolation) | [`construct-hub.Isolation`](#construct-hub.Isolation) | Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments. |
 
 ---
@@ -583,6 +584,23 @@ public readonly packageTags: PackageTag[];
 - *Type:* [`construct-hub.PackageTag`](#construct-hub.PackageTag)[]
 
 Configuration for custom package tags.
+
+---
+
+##### `reprocessFrequency`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.reprocessFrequency" id="constructhubconstructhubpropspropertyreprocessfrequency"></a>
+
+```typescript
+public readonly reprocessFrequency: Duration;
+```
+
+- *Type:* [`@aws-cdk/core.Duration`](#@aws-cdk/core.Duration)
+- *Default:* never
+
+How frequently all packages should get fully reprocessed.
+
+See the operator runbook for more information about reprocessing.
+
+> https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
 
 ---
 

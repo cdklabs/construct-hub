@@ -164,6 +164,16 @@ export interface ConstructHubProps {
   readonly failoverStorage?: boolean;
 
   /**
+   * How frequently all packages should get fully reprocessed.
+   *
+   * See the operator runbook for more information about reprocessing.
+   * @see https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+   *
+   * @default - never
+   */
+  readonly reprocessFrequency?: Duration;
+
+  /**
    * Additional domains which will be set up to redirect to the primary
    * construct hub domain.
    *
@@ -314,6 +324,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       monitoring,
       packageLinks: props.packageLinks,
       packageTags: packageTagsSerialized,
+      reprocessFrequency: props.reprocessFrequency,
     });
 
     const licenseList = new LicenseList(this, 'LicenseList', {

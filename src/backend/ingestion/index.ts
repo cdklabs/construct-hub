@@ -1,4 +1,6 @@
 import { ComparisonOperator, MathExpression, Metric, MetricOptions, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
+import { Rule, RuleTargetInput, Schedule } from '@aws-cdk/aws-events';
+import { SfnStateMachine } from '@aws-cdk/aws-events-targets';
 import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
 import { FunctionProps, IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
@@ -63,6 +65,16 @@ export interface IngestionProps {
    * Serialized configuration for custom package tags.
    */
   readonly packageTags?: PackageTagConfig[];
+
+  /**
+   * How frequently all packages should get fully reprocessed.
+   *
+   * See the operator runbook for more information about reprocessing.
+   * @see https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+   *
+   * @default - never
+   */
+  readonly reprocessFrequency?: Duration;
 }
 
 /**
@@ -175,7 +187,21 @@ export class Ingestion extends Construct implements IGrantable {
     });
     props.bucket.grantRead(this.function, `${STORAGE_KEY_PREFIX}*${PACKAGE_KEY_SUFFIX}`);
     this.function.addEventSource(new SqsEventSource(reprocessQueue, { batchSize: 1 }));
-    new ReprocessIngestionWorkflow(this, 'ReprocessWorkflow', { bucket: props.bucket, queue: reprocessQueue });
+    const reprocessWorkflow = new ReprocessIngestionWorkflow(this, 'ReprocessWorkflow', { bucket: props.bucket, queue: reprocessQueue });
+
+    // Run reprocess workflow on a daily basis
+    const updatePeriod = props.reprocessFrequency;
+    if (updatePeriod) {
+      const rule = new Rule(this, 'ReprocessCronJob', {
+        schedule: Schedule.rate(updatePeriod),
+        description: 'Periodically reprocess all packages',
+      });
+      rule.addTarget(new SfnStateMachine(reprocessWorkflow.stateMachine, {
+        input: RuleTargetInput.fromObject({
+          comment: 'Scheduled reprocessing event from cron job.',
+        }),
+      }));
+    }
 
     this.grantPrincipal = this.function.grantPrincipal;
 
@@ -294,6 +320,8 @@ interface ReprocessIngestionWorkflowProps {
  * https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
  */
 class ReprocessIngestionWorkflow extends Construct {
+  public readonly stateMachine: StateMachine;
+
   public constructor(scope: Construct, id: string, props: ReprocessIngestionWorkflowProps) {
     super(scope, id);
 
@@ -374,14 +402,14 @@ class ReprocessIngestionWorkflow extends Construct {
         .next(process),
     );
 
-    const stateMachine = new StateMachine(this, 'StateMachine', {
+    this.stateMachine = new StateMachine(this, 'StateMachine', {
       definition: listBucket,
       stateMachineName,
       timeout: Duration.hours(1),
     });
 
-    props.bucket.grantRead(stateMachine);
-    props.queue.grantSendMessages(stateMachine);
+    props.bucket.grantRead(this.stateMachine);
+    props.queue.grantSendMessages(this.stateMachine);
   }
 }
 
