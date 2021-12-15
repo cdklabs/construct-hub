@@ -420,7 +420,7 @@ export class NpmJs implements IPackageSource {
       threshold: 1,
       treatMissingData: TreatMissingData.NOT_BREACHING,
     });
-    monitoring.addHighSeverityAlarm('NpmJs/Stager DLQ Not Empty', dlqNotEmptyAlarm);
+    monitoring.addLowSeverityAlarm('NpmJs/Stager DLQ Not Empty', dlqNotEmptyAlarm);
 
     // Finally - the "not running" alarm depends on the schedule (it won't run until the schedule
     // exists!), and the schedule depends on the failure alarm existing (we don't want it to run

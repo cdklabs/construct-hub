@@ -211,62 +211,48 @@ Resources:
                 - ConstructHubOrchestrationOrchestrationFailed5AF50838
                 - Arn
             - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Ingestion
-              Dead-Letter Queue not empty","region":"'
-            - Ref: AWS::Region
-            - '","annotations":{"alarms":["'
-            - Fn::GetAtt:
-                - ConstructHubIngestionDLQAlarm83BD1903
-                - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"Ingestion
               failures","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubIngestionFailureAlarm9D0028DD
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"Home
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"Home
               Page Canary","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubMonitoringWebCanaryHomePageErrorsE7BB4002
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"NpmJs/Follower
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"NpmJs/Follower
               Failures","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubSourcesNpmJsFollowerFailures86BCBA0D
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"NpmJs/Follower
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"NpmJs/Follower
               Not Running","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubSourcesNpmJsFollowerNotRunningCEAF0E1E
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":48,"properties":{"view":"timeSeries","title":"NpmJs/Stager
-              DLQ Not Empty","region":"'
-            - Ref: AWS::Region
-            - '","annotations":{"alarms":["'
-            - Fn::GetAtt:
-                - ConstructHubSourcesdevConstructHubSourcesNpmJsStagerDLQNotEmpty3777A4EA
-                - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":54,"properties":{"view":"timeSeries","title":"New
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"New
               version visibility SLA breached","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubSourcesNpmJsCanaryAlarmBE2B479E
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":60,"properties":{"view":"timeSeries","title":"Inventory
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":48,"properties":{"view":"timeSeries","title":"Inventory
               Canary is not Running","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
             - Fn::GetAtt:
                 - ConstructHubInventoryCanaryNotRunningAF44D71C
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":66,"properties":{"view":"timeSeries","title":"Inventory
+            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":54,"properties":{"view":"timeSeries","title":"Inventory
               Canary is failing","region":"'
             - Ref: AWS::Region
             - '","annotations":{"alarms":["'
@@ -3573,7 +3559,7 @@ Resources:
                 - Ref: AWS::Region
                 - .
                 - Ref: AWS::URLSuffix
-                - /aws-cdk/assets:9f78dfe254d62a41d50287e93753ab7c9f3f60c4b9f26fca0812bfd5bc837ae4
+                - /aws-cdk/assets:5fa39a328f34360df81ad2f478b29e7f72b6625d60d6ca775401e69a3b2c0faf
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -4549,7 +4535,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersd231e3af808f003363f47231ef528569a9de6139dda24a9af8cdf5d89b9618e7S3BucketBD34FAEF
+          Ref: AssetParameters25c4344215ab24b90f188cfc95424ef45109c8d698919fcb28cfa9bb898c1534S3Bucket8AFE0D2F
         S3Key:
           Fn::Join:
             - ""
@@ -4557,12 +4543,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersd231e3af808f003363f47231ef528569a9de6139dda24a9af8cdf5d89b9618e7S3VersionKeyCC604EC6
+                      - Ref: AssetParameters25c4344215ab24b90f188cfc95424ef45109c8d698919fcb28cfa9bb898c1534S3VersionKey39383E8E
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersd231e3af808f003363f47231ef528569a9de6139dda24a9af8cdf5d89b9618e7S3VersionKeyCC604EC6
+                      - Ref: AssetParameters25c4344215ab24b90f188cfc95424ef45109c8d698919fcb28cfa9bb898c1534S3VersionKey39383E8E
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
@@ -7900,18 +7886,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "b69f8e77829ba765ee3a37c088671f56d5982ab8e2a57c2f3103bea15181e67b"
-  AssetParametersd231e3af808f003363f47231ef528569a9de6139dda24a9af8cdf5d89b9618e7S3BucketBD34FAEF:
+  AssetParameters25c4344215ab24b90f188cfc95424ef45109c8d698919fcb28cfa9bb898c1534S3Bucket8AFE0D2F:
     Type: String
     Description: S3 bucket for asset
-      "d231e3af808f003363f47231ef528569a9de6139dda24a9af8cdf5d89b9618e7"
-  AssetParametersd231e3af808f003363f47231ef528569a9de6139dda24a9af8cdf5d89b9618e7S3VersionKeyCC604EC6:
+      "25c4344215ab24b90f188cfc95424ef45109c8d698919fcb28cfa9bb898c1534"
+  AssetParameters25c4344215ab24b90f188cfc95424ef45109c8d698919fcb28cfa9bb898c1534S3VersionKey39383E8E:
     Type: String
     Description: S3 key for asset version
-      "d231e3af808f003363f47231ef528569a9de6139dda24a9af8cdf5d89b9618e7"
-  AssetParametersd231e3af808f003363f47231ef528569a9de6139dda24a9af8cdf5d89b9618e7ArtifactHash8109260C:
+      "25c4344215ab24b90f188cfc95424ef45109c8d698919fcb28cfa9bb898c1534"
+  AssetParameters25c4344215ab24b90f188cfc95424ef45109c8d698919fcb28cfa9bb898c1534ArtifactHash89381734:
     Type: String
     Description: Artifact hash for asset
-      "d231e3af808f003363f47231ef528569a9de6139dda24a9af8cdf5d89b9618e7"
+      "25c4344215ab24b90f188cfc95424ef45109c8d698919fcb28cfa9bb898c1534"
   AssetParameters7ebd173e1f2198061b1be73640fca7e1864bfdea054e5a53c88e32e619871965S3Bucket0A90D6D3:
     Type: String
     Description: S3 bucket for asset

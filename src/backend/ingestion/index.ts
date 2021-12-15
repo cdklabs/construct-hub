@@ -205,7 +205,7 @@ export class Ingestion extends Construct implements IGrantable {
 
     this.grantPrincipal = this.function.grantPrincipal;
 
-    props.monitoring.addHighSeverityAlarm(
+    props.monitoring.addLowSeverityAlarm(
       'Ingestion Dead-Letter Queue not empty',
       new MathExpression({
         expression: 'm1 + m2',

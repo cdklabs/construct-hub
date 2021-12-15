@@ -134,7 +134,7 @@ export class CodeArtifact implements IPackageSource {
       threshold: 1,
       treatMissingData: TreatMissingData.NOT_BREACHING,
     });
-    monitoring.addHighSeverityAlarm(`CodeArtifact/${repositoryId} DLQ Not Empty`, dlqNotEmptyAlarm);
+    monitoring.addLowSeverityAlarm(`CodeArtifact/${repositoryId} DLQ Not Empty`, dlqNotEmptyAlarm);
 
     rule.node.addDependency(failureAlarm, dlqNotEmptyAlarm);
 
