@@ -180,6 +180,11 @@ export interface ConstructHubProps {
    * @default []
    */
   readonly additionalDomains?: DomainRedirectSource[];
+
+  /**
+   * Defines source code for a preload.js script inserted at the top of the <head /> of the webapp
+   */
+  readonly preloadScript?: string;
 }
 
 /**
@@ -349,6 +354,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       packageStats,
       featureFlags: props.featureFlags,
       categories: props.categories,
+      preloadScript: props.preloadScript,
     });
 
     const sources = new CoreConstruct(this, 'Sources');

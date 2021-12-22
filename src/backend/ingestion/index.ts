@@ -12,12 +12,12 @@ import { StateMachine, JsonPath, Choice, Succeed, Condition, Map, TaskInput, Int
 import { CallAwsService, LambdaInvoke, StepFunctionsStartExecution } from '@aws-cdk/aws-stepfunctions-tasks';
 import { Construct, Duration, Stack, ArnFormat } from '@aws-cdk/core';
 import { Repository } from '../../codeartifact/repository';
-import { ConfigFile } from '../../config-file';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { PackageTagConfig } from '../../package-tag';
 import { RUNBOOK_URL } from '../../runbook-url';
 import { S3StorageFactory } from '../../s3/storage';
+import { TempFile } from '../../temp-file';
 import type { PackageLinkConfig } from '../../webapp';
 import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 import { Orchestration } from '../orchestration';
@@ -123,7 +123,7 @@ export class Ingestion extends Construct implements IGrantable {
     });
 
     const configFilename = 'config.json';
-    const config = new ConfigFile(configFilename, JSON.stringify({
+    const config = new TempFile(configFilename, JSON.stringify({
       packageLinks: props.packageLinks ?? [],
       packageTags: props.packageTags ?? [],
     }));
