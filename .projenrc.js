@@ -152,10 +152,14 @@ const project = new cdk.JsiiProject({
   },
 });
 
-// this is coming from construct-hub-webapp, and has no affect on us what s oever
-// since we consume the already built static assets.
-// see https://github.com/cdklabs/construct-hub-webapp/blob/main/.projenrc.js#L91
-project.package.addField('resolutions', { 'nth-check': '2.0.1' });
+project.package.addField('resolutions', {
+  // this is coming from construct-hub-webapp, and has no affect on us what s oever
+  // since we consume the already built static assets.
+  // see https://github.com/cdklabs/construct-hub-webapp/blob/main/.projenrc.js#L91
+  'nth-check': '2.0.1',
+
+  '@types/eslint': '8.2.1',
+});
 
 function addVpcAllowListManagement() {
   const workflow = project.github.addWorkflow('update-vpc-acl-allow-lists');
