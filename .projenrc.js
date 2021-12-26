@@ -158,6 +158,8 @@ project.package.addField('resolutions', {
   // see https://github.com/cdklabs/construct-hub-webapp/blob/main/.projenrc.js#L91
   'nth-check': '2.0.1',
 
+  // otherwise, two major versions of this exist, which fails typescript compilation
+  // due to duplicate declarations.
   '@types/eslint': '8.2.1',
 });
 
