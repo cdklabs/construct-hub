@@ -83,8 +83,7 @@ const project = new cdk.JsiiProject({
 
   peerDeps: peerDeps,
 
-  minNodeVersion: '12.20.0',
-  workflowNodeVersion: '12.22.0',
+  minNodeVersion: '16.0.0',
 
   pullRequestTemplateContents: [
     '',
@@ -152,6 +151,11 @@ const project = new cdk.JsiiProject({
     },
   },
 });
+
+// this is coming from construct-hub-webapp, and has no affect on us what s oever
+// since we consume the already built static assets.
+// see https://github.com/cdklabs/construct-hub-webapp/blob/main/.projenrc.js#L91
+project.package.addField('resolutions', { 'nth-check': '2.0.1' });
 
 function addVpcAllowListManagement() {
   const workflow = project.github.addWorkflow('update-vpc-acl-allow-lists');
