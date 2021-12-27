@@ -47,7 +47,8 @@ jobs:
           name: build-artifact
           path: |-
             .
-            !./.git
+            !.git
+            !node_modules
   update-status:
     needs:
       - build
