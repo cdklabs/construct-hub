@@ -842,6 +842,15 @@
       "description": "Create js language bindings",
       "steps": [
         {
+          "exec": "echo listing directory before calling pacmak"
+        },
+        {
+          "exec": "ls -l"
+        },
+        {
+          "exec": "ls -l -r dist"
+        },
+        {
           "exec": "jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
         },
         {
@@ -853,6 +862,15 @@
       "name": "package:python",
       "description": "Create python language bindings",
       "steps": [
+        {
+          "exec": "echo listing directory before calling pacmak"
+        },
+        {
+          "exec": "ls -l"
+        },
+        {
+          "exec": "ls -l -r dist"
+        },
         {
           "exec": "jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
         },

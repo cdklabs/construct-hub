@@ -85,14 +85,15 @@ jobs:
         with:
           name: dist
           path: dist
-      - name: Extract npm tarball
-        run: |-
-          tar -xzf dist/js/*.tgz --strip-components=1
-          rm -fr dist/js
       - name: Create js artifact
         run: >-
-          jsii_version=$(node -p
-          "JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]")
+          echo listing directory before calling pacmak
+
+          ls -l
+
+          ls -l -r dist
+
+          jsii_version=$(node -p "JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]")
 
           npx jsii-pacmak@$jsii_version -v --outdir $PWD/dist --target js
       - name: Release
@@ -120,14 +121,15 @@ jobs:
         with:
           name: dist
           path: dist
-      - name: Extract npm tarball
-        run: |-
-          tar -xzf dist/js/*.tgz --strip-components=1
-          rm -fr dist/js
       - name: Create python artifact
         run: >-
-          jsii_version=$(node -p
-          "JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]")
+          echo listing directory before calling pacmak
+
+          ls -l
+
+          ls -l -r dist
+
+          jsii_version=$(node -p "JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]")
 
           npx jsii-pacmak@$jsii_version -v --outdir $PWD/dist --target python
       - name: Release
