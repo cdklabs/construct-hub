@@ -45,7 +45,9 @@ jobs:
         if: always()
         with:
           name: build-artifact
-          path: .
+          path: |-
+            .
+            !./.git
   update-status:
     needs:
       - build
