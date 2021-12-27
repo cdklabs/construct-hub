@@ -38,8 +38,6 @@ jobs:
           if ! git diff --exit-code; then
             echo Detected diff, skipping
           fi
-      - name: List
-        run: ls -la
       - name: Upload artifact
         uses: actions/upload-artifact@v2.1.1
         if: always()
@@ -84,7 +82,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build-artifact
-          path: .
       - name: Install Dependencies
         run: yarn install --check-files --frozen-lockfile
       - name: Create js artifact
@@ -104,7 +101,6 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build-artifact
-          path: .
       - name: Install Dependencies
         run: yarn install --check-files --frozen-lockfile
       - name: Create python artifact
