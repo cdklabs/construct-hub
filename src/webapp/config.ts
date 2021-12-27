@@ -1,7 +1,9 @@
 import { join } from 'path';
 import { Category, FeaturedPackages, FeatureFlags, PackageLinkConfig } from '.';
 import { ConfigFile } from '../config-file';
-import { PackageTagConfig } from '../package-tag';
+import { PackageTagConfig, TagGroupConfig } from '../package-tag';
+
+type FrontendTagGroupConfig = TagGroupConfig;
 
 interface FrontendPackageLinkConfig {
   linkLabel: string;
@@ -40,6 +42,7 @@ interface FrontendDebugInfo {
 interface FrontendConfig {
   packageLinks?: FrontendPackageLinkConfig[];
   packageTags?: FrontendPackageTagConfig[];
+  packageTagGroups?: FrontendTagGroupConfig[];
   featuredPackages?: FrontendFeaturedPackagesConfig;
   packageStats?: boolean;
   featureFlags?: FeatureFlags;
@@ -57,6 +60,11 @@ export interface WebappConfigProps {
    * Configuration for custom computed tags.
    */
   readonly packageTags?: PackageTagConfig[];
+
+  /**
+   * Configuration for grouping custom tags
+   */
+  readonly packageTagGroups?: FrontendTagGroupConfig[];
 
   /**
    * Configuration for packages to feature on the home page.
@@ -93,6 +101,7 @@ export class WebappConfig {
     return {
       packageLinks: this.packageLinks,
       packageTags: this.packageTags,
+      packageTagGroups: this.props.packageTagGroups ?? [],
       featuredPackages: this.featuredPackages,
       packageStats: this.props.showPackageStats ?? true,
       featureFlags: this.props.featureFlags,
@@ -100,6 +109,7 @@ export class WebappConfig {
       debugInfo: this.debugInfo,
     };
   }
+
 
   private get packageLinks(): FrontendPackageLinkConfig[] {
     const packageLinks = this.props.packageLinks ?? [];

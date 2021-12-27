@@ -240,6 +240,7 @@ export class WebApp extends Construct {
     const config = new WebappConfig({
       packageLinks: props.packageLinks,
       packageTags: props.packageTags,
+      packageTagGroups: props.packageTagGroups,
       featuredPackages: props.featuredPackages,
       showPackageStats: props.showPackageStats ?? props.packageStats !== undefined,
       featureFlags: props.featureFlags,

@@ -1,3 +1,20 @@
+export interface TagGroupConfig {
+  /**
+   * Identifies a package tag group. Tags which specify a searchFilter.groupBy will be
+   * grouped by the corresponding tag group id
+   */
+  id: string;
+  /**
+   * Group label to display. Falls back to id if not provided
+   */
+  label?: string;
+  /**
+      * Optional message to show within a tooltip next to the filter label
+      */
+  tooltip?: string;
+}
+
+
 interface PackageTagPresentationBase {
   /**
    * The label for the tag being applied
