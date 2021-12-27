@@ -3,17 +3,20 @@ export interface TagGroupConfig {
    * Identifies a package tag group. Tags which specify a searchFilter.groupBy will be
    * grouped by the corresponding tag group id
    */
-  id: string;
+  readonly id: string;
   /**
    * Group label to display. Falls back to id if not provided
    */
-  label?: string;
+  readonly label?: string;
   /**
-      * Optional message to show within a tooltip next to the filter label
-      */
-  tooltip?: string;
+   * Optional message to show within a tooltip next to the filter label
+   */
+  readonly tooltip?: string;
+  /**
+   * Allows to specify the group filter type. Defaults to checkbox if not specified
+   */
+  readonly filterType?: 'checkbox' | 'radio';
 }
-
 
 interface PackageTagPresentationBase {
   /**
@@ -29,7 +32,7 @@ interface PackageTagPresentationBase {
 
 export interface Keyword extends PackageTagPresentationBase {}
 
-export interface Highlight extends PackageTagPresentationBase{
+export interface Highlight extends PackageTagPresentationBase {
   /**
    * Icon displayed next to highlight on package card
    */
@@ -167,7 +170,7 @@ class TagConditionLogic extends TagCondition {
   public bind(): TagConditionConfig {
     return {
       type: this.type,
-      children: this.children.map(cond => cond.bind()),
+      children: this.children.map((cond) => cond.bind()),
     };
   }
 }

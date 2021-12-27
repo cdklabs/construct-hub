@@ -15,6 +15,7 @@ const DEFAULT_CONFIG = {
   packageLinks: [],
   packageStats: true,
   packageTags: [],
+  packageTagGroups: [],
   debugInfo: {
     constructHubVersion: expect.any(String),
     constructHubWebappVersion: expect.any(String),
@@ -96,6 +97,19 @@ describe('package tags', () => {
           keyword,
         },
       ],
+    });
+  });
+
+  test('tag groups', () => {
+    // GIVEN
+    const groups = [{ id: 'foo', label: 'Foo', tooltip: 'Lorem ipsum' }, { id: 'bar' }];
+    const config = new WebappConfig({ packageTagGroups: groups });
+
+    // THEN
+    const file = readJsonSync(config.file.path);
+    expect(file).toEqual({
+      ...DEFAULT_CONFIG,
+      packageTagGroups: groups,
     });
   });
 
