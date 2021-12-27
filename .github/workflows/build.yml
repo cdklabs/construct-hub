@@ -88,14 +88,7 @@ jobs:
       - name: Install Dependencies
         run: yarn install --check-files --frozen-lockfile
       - name: Create js artifact
-        run: >-
-          echo listing directory before calling pacmak
-
-          ls -la
-
-          jsii_version=$(node -p "JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]")
-
-          npx jsii-pacmak@$jsii_version -v --outdir $PWD/dist --target js
+        run: npx projen package:js
   package-python:
     needs: build
     runs-on: ubuntu-latest
@@ -115,11 +108,4 @@ jobs:
       - name: Install Dependencies
         run: yarn install --check-files --frozen-lockfile
       - name: Create python artifact
-        run: >-
-          echo listing directory before calling pacmak
-
-          ls -la
-
-          jsii_version=$(node -p "JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]")
-
-          npx jsii-pacmak@$jsii_version -v --outdir $PWD/dist --target python
+        run: npx projen package:python
