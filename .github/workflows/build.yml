@@ -48,7 +48,6 @@ jobs:
           path: |-
             .
             !.git
-            !node_modules
   update-status:
     needs:
       - build
@@ -91,8 +90,6 @@ jobs:
 
           ls -l
 
-          ls -l -r dist
-
           jsii_version=$(node -p "JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]")
 
           npx jsii-pacmak@$jsii_version -v --outdir $PWD/dist --target js
@@ -117,8 +114,6 @@ jobs:
           echo listing directory before calling pacmak
 
           ls -l
-
-          ls -l -r dist
 
           jsii_version=$(node -p "JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]")
 
