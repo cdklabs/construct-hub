@@ -48,6 +48,7 @@ jobs:
           path: |-
             .
             !.git
+            !node_modules
   update-status:
     needs:
       - build
@@ -84,11 +85,13 @@ jobs:
         with:
           name: build-artifact
           path: .
+      - name: Install Dependencies
+        run: yarn install --check-files --frozen-lockfile
       - name: Create js artifact
         run: >-
           echo listing directory before calling pacmak
 
-          ls -l
+          ls -la
 
           jsii_version=$(node -p "JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]")
 
@@ -109,11 +112,13 @@ jobs:
         with:
           name: build-artifact
           path: .
+      - name: Install Dependencies
+        run: yarn install --check-files --frozen-lockfile
       - name: Create python artifact
         run: >-
           echo listing directory before calling pacmak
 
-          ls -l
+          ls -la
 
           jsii_version=$(node -p "JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]")
 
