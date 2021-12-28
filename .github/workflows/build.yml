@@ -84,6 +84,7 @@ jobs:
         run: yarn install --check-files --frozen-lockfile
       - name: Create js artifact
         run: npx projen package:js
+        working-directory: dist
   package-python:
     needs: build
     runs-on: ubuntu-latest
@@ -104,3 +105,4 @@ jobs:
         run: yarn install --check-files --frozen-lockfile
       - name: Create python artifact
         run: npx projen package:python
+        working-directory: dist

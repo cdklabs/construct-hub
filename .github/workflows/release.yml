@@ -89,6 +89,7 @@ jobs:
         run: yarn install --check-files --frozen-lockfile
       - name: Create js artifact
         run: npx projen package:js
+        working-directory: dist
       - name: Release
         run: npx -p jsii-release@latest jsii-release-npm
         env:
@@ -119,6 +120,7 @@ jobs:
         run: yarn install --check-files --frozen-lockfile
       - name: Create python artifact
         run: npx projen package:python
+        working-directory: dist
       - name: Release
         run: npx -p jsii-release@latest jsii-release-pypi
         env:
