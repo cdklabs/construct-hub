@@ -36,17 +36,13 @@ jobs:
         id: self_mutation
         run: |-
           if ! git diff --exit-code; then
-            echo Detected diff, skipping
           fi
       - name: Upload artifact
         uses: actions/upload-artifact@v2.1.1
         if: always()
         with:
           name: build-artifact
-          path: |-
-            .
-            !.git
-            !node_modules
+          path: dist
   update-status:
     needs:
       - build

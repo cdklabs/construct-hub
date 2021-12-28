@@ -818,7 +818,13 @@
       "description": "Creates the distribution package",
       "steps": [
         {
-          "exec": "echo Skipping. Use 'npx projen package-all' or 'npx projen package:{target}'"
+          "exec": "tar --exclude='.git' --exclude='node_modules' -zcvf /tmp/construct-hub__repo.tgz ."
+        },
+        {
+          "exec": "mkdir -p dist"
+        },
+        {
+          "exec": "mv /tmp/construct-hub__repo.tgz dist/"
         }
       ]
     },
