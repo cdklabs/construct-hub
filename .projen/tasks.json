@@ -842,10 +842,10 @@
       "description": "Create js language bindings",
       "steps": [
         {
-          "exec": "cd dist && jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
+          "exec": "jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
         },
         {
-          "exec": "cd dist && npx jsii-pacmak@$jsii_version -v --target js"
+          "exec": "npx jsii-pacmak@$jsii_version -v --target js"
         }
       ]
     },
@@ -854,10 +854,10 @@
       "description": "Create python language bindings",
       "steps": [
         {
-          "exec": "cd dist && jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
+          "exec": "jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
         },
         {
-          "exec": "cd dist && npx jsii-pacmak@$jsii_version -v --target python"
+          "exec": "npx jsii-pacmak@$jsii_version -v --target python"
         }
       ]
     },
