@@ -357,6 +357,7 @@ const constructHubProps: ConstructHubProps = { ... }
 | [`logRetention`](#constructhubconstructhubpropspropertylogretention) | [`@aws-cdk/aws-logs.RetentionDays`](#@aws-cdk/aws-logs.RetentionDays) | How long to retain CloudWatch logs for. |
 | [`packageLinks`](#constructhubconstructhubpropspropertypackagelinks) | [`construct-hub.PackageLinkConfig`](#construct-hub.PackageLinkConfig)[] | Configuration for custom package page links. |
 | [`packageSources`](#constructhubconstructhubpropspropertypackagesources) | [`construct-hub.IPackageSource`](#construct-hub.IPackageSource)[] | The package sources to register with this ConstructHub instance. |
+| [`packageTagGroups`](#constructhubconstructhubpropspropertypackagetaggroups) | [`construct-hub.TagGroupConfig`](#construct-hub.TagGroupConfig)[] | Optional configuration for grouping custom package tags. |
 | [`packageTags`](#constructhubconstructhubpropspropertypackagetags) | [`construct-hub.PackageTag`](#construct-hub.PackageTag)[] | Configuration for custom package tags. |
 | [`reprocessFrequency`](#constructhubconstructhubpropspropertyreprocessfrequency) | [`@aws-cdk/core.Duration`](#@aws-cdk/core.Duration) | How frequently all packages should get fully reprocessed. |
 | [`sensitiveTaskIsolation`](#constructhubconstructhubpropspropertysensitivetaskisolation) | [`construct-hub.Isolation`](#construct-hub.Isolation) | Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments. |
@@ -572,6 +573,18 @@ public readonly packageSources: IPackageSource[];
 - *Default:* a standard npmjs.com package source will be configured.
 
 The package sources to register with this ConstructHub instance.
+
+---
+
+##### `packageTagGroups`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.packageTagGroups" id="constructhubconstructhubpropspropertypackagetaggroups"></a>
+
+```typescript
+public readonly packageTagGroups: TagGroupConfig[];
+```
+
+- *Type:* [`construct-hub.TagGroupConfig`](#construct-hub.TagGroupConfig)[]
+
+Optional configuration for grouping custom package tags.
 
 ---
 
@@ -1775,6 +1788,81 @@ public readonly value: string;
 ```
 
 - *Type:* `string`
+
+---
+
+### TagGroupConfig <a name="construct-hub.TagGroupConfig" id="constructhubtaggroupconfig"></a>
+
+#### Initializer <a name="[object Object].Initializer" id="object-objectinitializer"></a>
+
+```typescript
+import { TagGroupConfig } from 'construct-hub'
+
+const tagGroupConfig: TagGroupConfig = { ... }
+```
+
+#### Properties <a name="Properties" id="properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| [`id`](#constructhubtaggroupconfigpropertyid)<span title="Required">*</span> | `string` | Identifies a package tag group. |
+| [`filterType`](#constructhubtaggroupconfigpropertyfiltertype) | `string` | Allows to specify the group filter type. |
+| [`label`](#constructhubtaggroupconfigpropertylabel) | `string` | Group label to display. |
+| [`tooltip`](#constructhubtaggroupconfigpropertytooltip) | `string` | Optional message to show within a tooltip next to the filter label. |
+
+---
+
+##### `id`<sup>Required</sup> <a name="construct-hub.TagGroupConfig.property.id" id="constructhubtaggroupconfigpropertyid"></a>
+
+```typescript
+public readonly id: string;
+```
+
+- *Type:* `string`
+
+Identifies a package tag group.
+
+Tags which specify a searchFilter.groupBy will be grouped by the corresponding tag group id
+
+---
+
+##### `filterType`<sup>Optional</sup> <a name="construct-hub.TagGroupConfig.property.filterType" id="constructhubtaggroupconfigpropertyfiltertype"></a>
+
+```typescript
+public readonly filterType: string;
+```
+
+- *Type:* `string`
+
+Allows to specify the group filter type.
+
+Defaults to checkbox if not specified
+
+---
+
+##### `label`<sup>Optional</sup> <a name="construct-hub.TagGroupConfig.property.label" id="constructhubtaggroupconfigpropertylabel"></a>
+
+```typescript
+public readonly label: string;
+```
+
+- *Type:* `string`
+
+Group label to display.
+
+Falls back to id if not provided
+
+---
+
+##### `tooltip`<sup>Optional</sup> <a name="construct-hub.TagGroupConfig.property.tooltip" id="constructhubtaggroupconfigpropertytooltip"></a>
+
+```typescript
+public readonly tooltip: string;
+```
+
+- *Type:* `string`
+
+Optional message to show within a tooltip next to the filter label.
 
 ---
 
