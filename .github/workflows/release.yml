@@ -87,6 +87,7 @@ jobs:
           path: dist
       - name: Install Dependencies
         run: yarn install --check-files --frozen-lockfile
+        working-directory: dist
       - name: Create js artifact
         run: npx projen package:js
         working-directory: dist
@@ -118,6 +119,7 @@ jobs:
           path: dist
       - name: Install Dependencies
         run: yarn install --check-files --frozen-lockfile
+        working-directory: dist
       - name: Create python artifact
         run: npx projen package:python
         working-directory: dist
