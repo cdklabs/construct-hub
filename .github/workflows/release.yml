@@ -87,17 +87,14 @@ jobs:
           path: dist
       - name: Install Dependencies
         run: yarn install --check-files --frozen-lockfile
-        working-directory: dist
       - name: Create js artifact
         run: npx projen package:js
-        working-directory: dist
       - name: Release
         run: npx -p jsii-release@latest jsii-release-npm
         env:
           NPM_DIST_TAG: latest
           NPM_REGISTRY: registry.npmjs.org
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        working-directory: dist
   release_pypi:
     name: Publish to PyPI
     needs: release
@@ -119,10 +116,8 @@ jobs:
           path: dist
       - name: Install Dependencies
         run: yarn install --check-files --frozen-lockfile
-        working-directory: dist
       - name: Create python artifact
         run: npx projen package:python
-        working-directory: dist
       - name: Release
         run: npx -p jsii-release@latest jsii-release-pypi
         env:
