@@ -117,6 +117,7 @@ export class DevStack extends Stack {
         { title: 'Category1', url: '/search?q=cat1' },
         { title: 'Category2', url: '/search?keywords=boom' },
       ],
+      preloadScript: 'console.log("This is a custom preloadScript")',
     });
   }
 }

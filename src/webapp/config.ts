@@ -1,7 +1,7 @@
 import { join } from 'path';
 import { Category, FeaturedPackages, FeatureFlags, PackageLinkConfig } from '.';
-import { ConfigFile } from '../config-file';
 import { PackageTagConfig, TagGroupConfig } from '../package-tag';
+import { TempFile } from '../temp-file';
 
 type FrontendTagGroupConfig = TagGroupConfig;
 
@@ -92,9 +92,9 @@ export interface WebappConfigProps {
 }
 
 export class WebappConfig {
-  public readonly file: ConfigFile;
+  public readonly file: TempFile;
   public constructor(private readonly props: WebappConfigProps) {
-    this.file = new ConfigFile('config.json', JSON.stringify(this.frontendConfig));
+    this.file = new TempFile('config.json', JSON.stringify(this.frontendConfig));
   }
 
   private get frontendConfig(): FrontendConfig {

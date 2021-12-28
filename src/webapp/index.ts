@@ -13,6 +13,7 @@ import { CacheStrategy } from '../caching';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
 import { S3StorageFactory } from '../s3/storage';
+import { TempFile } from '../temp-file';
 import { WebappConfig, WebappConfigProps } from './config';
 import { ResponseFunction } from './response-function';
 
@@ -140,6 +141,11 @@ export interface WebAppProps extends WebappConfigProps {
    * Manages the `stats.json` file object.
    */
   readonly packageStats?: PackageStats;
+
+  /**
+   * JavaScript source code which will be served at the top of the webapp <head /> tag
+   */
+  readonly preloadScript?: string;
 }
 
 export class WebApp extends Construct {
@@ -247,8 +253,11 @@ export class WebApp extends Construct {
       categories: props.categories,
     });
 
+    // Generate preload.js
+    const preloadScript = new TempFile('preload.js', props.preloadScript ?? '');
+
     new s3deploy.BucketDeployment(this, 'DeployWebsiteConfig', {
-      sources: [s3deploy.Source.asset(config.file.dir)],
+      sources: [s3deploy.Source.asset(config.file.dir), s3deploy.Source.asset(preloadScript.dir)],
       destinationBucket: this.bucket,
       distribution: this.distribution,
       prune: false,
