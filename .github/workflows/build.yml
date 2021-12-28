@@ -36,6 +36,7 @@ jobs:
         id: self_mutation
         run: |-
           if ! git diff --exit-code; then
+            echo Skipping
           fi
       - name: Upload artifact
         uses: actions/upload-artifact@v2.1.1
