@@ -818,13 +818,10 @@
       "description": "Creates the distribution package",
       "steps": [
         {
-          "exec": "tar --exclude='.git' --exclude='node_modules' -zcvf /tmp/construct-hub__repo.tgz ."
-        },
-        {
           "exec": "mkdir -p dist"
         },
         {
-          "exec": "mv /tmp/construct-hub__repo.tgz dist/"
+          "exec": "rsync -av --progress . dist --exclude .git --exclude node_modules"
         }
       ]
     },
@@ -845,10 +842,10 @@
       "description": "Create js language bindings",
       "steps": [
         {
-          "exec": "jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
+          "exec": "cd dist && jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
         },
         {
-          "exec": "npx jsii-pacmak@$jsii_version -v --target js"
+          "exec": "cd dist && npx jsii-pacmak@$jsii_version -v --target js"
         }
       ]
     },
@@ -857,10 +854,10 @@
       "description": "Create python language bindings",
       "steps": [
         {
-          "exec": "jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
+          "exec": "cd dist && jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
         },
         {
-          "exec": "npx jsii-pacmak@$jsii_version -v --target python"
+          "exec": "cd dist && npx jsii-pacmak@$jsii_version -v --target python"
         }
       ]
     },

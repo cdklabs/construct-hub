@@ -58,6 +58,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build-artifact
+          path: dist
       - name: Release
         run: errout=$(mktemp); gh release create $(cat dist/releasetag.txt) -R
           $GITHUB_REPOSITORY -F dist/changelog.md -t $(cat dist/releasetag.txt)
@@ -83,6 +84,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build-artifact
+          path: dist
       - name: Install Dependencies
         run: yarn install --check-files --frozen-lockfile
       - name: Create js artifact
@@ -93,6 +95,7 @@ jobs:
           NPM_DIST_TAG: latest
           NPM_REGISTRY: registry.npmjs.org
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        working-directory: dist
   release_pypi:
     name: Publish to PyPI
     needs: release
@@ -111,6 +114,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: build-artifact
+          path: dist
       - name: Install Dependencies
         run: yarn install --check-files --frozen-lockfile
       - name: Create python artifact
