@@ -358,6 +358,7 @@ const constructHubProps: ConstructHubProps = { ... }
 | [`packageLinks`](#constructhubconstructhubpropspropertypackagelinks) | [`construct-hub.PackageLinkConfig`](#construct-hub.PackageLinkConfig)[] | Configuration for custom package page links. |
 | [`packageSources`](#constructhubconstructhubpropspropertypackagesources) | [`construct-hub.IPackageSource`](#construct-hub.IPackageSource)[] | The package sources to register with this ConstructHub instance. |
 | [`packageTags`](#constructhubconstructhubpropspropertypackagetags) | [`construct-hub.PackageTag`](#construct-hub.PackageTag)[] | Configuration for custom package tags. |
+| [`preloadScript`](#constructhubconstructhubpropspropertypreloadscript) | `string` | Defines source code for a preload.js script inserted at the top of the <head /> of the webapp. |
 | [`reprocessFrequency`](#constructhubconstructhubpropspropertyreprocessfrequency) | [`@aws-cdk/core.Duration`](#@aws-cdk/core.Duration) | How frequently all packages should get fully reprocessed. |
 | [`sensitiveTaskIsolation`](#constructhubconstructhubpropspropertysensitivetaskisolation) | [`construct-hub.Isolation`](#construct-hub.Isolation) | Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments. |
 
@@ -584,6 +585,18 @@ public readonly packageTags: PackageTag[];
 - *Type:* [`construct-hub.PackageTag`](#construct-hub.PackageTag)[]
 
 Configuration for custom package tags.
+
+---
+
+##### `preloadScript`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.preloadScript" id="constructhubconstructhubpropspropertypreloadscript"></a>
+
+```typescript
+public readonly preloadScript: string;
+```
+
+- *Type:* `string`
+
+Defines source code for a preload.js script inserted at the top of the <head /> of the webapp.
 
 ---
 
