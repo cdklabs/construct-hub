@@ -23,7 +23,7 @@ export async function handler({ key, description, widgetContext }: Event): Promi
     }).promise();
     // If it was compressed, de-compress it now...
     if (ContentEncoding === 'gzip') {
-      Body = gunzipSync(Buffer.from(Body!));
+      Body = gunzipSync(Buffer.from(Body! as any));
     }
 
     const list = Array.from((JSON.parse(Body!.toString('utf-8')) as string[])

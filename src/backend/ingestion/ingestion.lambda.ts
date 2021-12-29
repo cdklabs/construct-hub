@@ -68,7 +68,7 @@ export const handler = metricScope(
         })
         .promise();
 
-      const { integrity: integrityCheck } = integrity(payload, Buffer.from(tarball.Body!));
+      const { integrity: integrityCheck } = integrity(payload, Buffer.from(tarball.Body! as any));
       if (payload.integrity !== integrityCheck) {
         throw new Error(
           `Integrity check failed: ${payload.integrity} !== ${integrityCheck}`,
@@ -80,7 +80,7 @@ export const handler = metricScope(
       let licenseText: Buffer | undefined;
       try {
         ({ dotJsii, packageJson, licenseText } = await extractObjects(
-          Buffer.from(tarball.Body!),
+          Buffer.from(tarball.Body! as any),
           {
             dotJsii: { path: 'package/.jsii', required: true },
             packageJson: { path: 'package/package.json', required: true },
@@ -194,7 +194,7 @@ export const handler = metricScope(
           if (publishConfig) {
             console.log('Not publishing to CodeArtifact due to the presence of publishConfig in package.json: ', publishConfig);
           } else {
-            await codeArtifactPublishPackage(Buffer.from(tarball.Body!), codeArtifactProps);
+            await codeArtifactPublishPackage(Buffer.from(tarball.Body! as any), codeArtifactProps);
           }
         } catch (err) {
           console.error('Failed publishing to CodeArtifact: ', err);

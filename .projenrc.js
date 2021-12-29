@@ -83,8 +83,7 @@ const project = new cdk.JsiiProject({
 
   peerDeps: peerDeps,
 
-  minNodeVersion: '12.20.0',
-  workflowNodeVersion: '12.22.0',
+  minNodeVersion: '14.17.0',
 
   pullRequestTemplateContents: [
     '',
@@ -151,6 +150,17 @@ const project = new cdk.JsiiProject({
       },
     },
   },
+});
+
+project.package.addField('resolutions', {
+  // this is coming from construct-hub-webapp, and has no affect on us what s oever
+  // since we consume the already built static assets.
+  // see https://github.com/cdklabs/construct-hub-webapp/blob/main/.projenrc.js#L91
+  'nth-check': '2.0.1',
+
+  // otherwise, two major versions of this exist, which fails typescript compilation
+  // due to duplicate declarations.
+  '@types/eslint': '8.2.1',
 });
 
 function addVpcAllowListManagement() {

@@ -20,12 +20,13 @@ jobs:
           ref: main
       - name: Set git identity
         run: |-
+          git config --global init.defaultBranch main
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
       - name: Setup Node.js
         uses: actions/setup-node@v2.2.0
         with:
-          node-version: 12.22.0
+          node-version: 14.17.0
       - name: Install dependencies
         run: yarn install --check-files --frozen-lockfile
       - name: Upgrade dependencies
@@ -34,6 +35,8 @@ jobs:
         id: build
         run: npx projen build && echo "::set-output name=conclusion::success" || echo
           "::set-output name=conclusion::failure"
+      - name: Verify language bindings
+        run: npx projen package-all
       - name: Create Patch
         run: |-
           git add .
@@ -44,7 +47,7 @@ jobs:
           name: .upgrade.tmp.patch
           path: .upgrade.tmp.patch
     container:
-      image: jsii/superchain
+      image: jsii/superchain:1-buster-slim-node14
   pr:
     name: Create Pull Request
     needs: upgrade
@@ -60,6 +63,7 @@ jobs:
           ref: main
       - name: Set git identity
         run: |-
+          git config --global init.defaultBranch main
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
       - name: Download patch

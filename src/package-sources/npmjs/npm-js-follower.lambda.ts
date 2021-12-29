@@ -177,7 +177,7 @@ async function loadLastTransactionMarker(
       Key: MARKER_FILE_NAME,
     }).promise();
     if (response.ContentEncoding === 'gzip') {
-      response.Body = gunzipSync(Buffer.from(response.Body!));
+      response.Body = gunzipSync(Buffer.from(response.Body! as any));
     }
     let data = JSON.parse(
       response.Body!.toString('utf-8'),

@@ -107,7 +107,7 @@ test('happy path', async () => {
   const mockAssembly = Buffer.from('mock-assembly-content');
   const mockPackageJson = safeMock<any>('package.json', { license: 'Apache-2.0' });
   mockExtractObjects.mockImplementationOnce(async (tgz, selector) => {
-    expect(tgz).toEqual(Buffer.from(mockGetPackageVersionAssetResult.asset!));
+    expect(tgz).toEqual(Buffer.from(mockGetPackageVersionAssetResult.asset! as any));
     expect(selector).toHaveProperty('assemblyJson', { path: 'package/.jsii' });
     expect(selector).toHaveProperty('packageJson', { path: 'package/package.json', required: true });
 
@@ -158,7 +158,7 @@ test('happy path', async () => {
             metadata: { resources: resources.join(', ') },
             time,
           },
-          Buffer.from(mockGetPackageVersionAssetResult.asset!)),
+          Buffer.from(mockGetPackageVersionAssetResult.asset! as any)),
         ),
         MessageDeduplicationId: detail.eventDeduplicationId,
         QueueUrl: mockQueueUrl,
@@ -213,7 +213,7 @@ test('no license (i.e: UNLICENSED)', async () => {
   const mockAssembly = Buffer.from('mock-assembly-content');
   const mockPackageJson = safeMock<any>('package.json', { license: undefined });
   mockExtractObjects.mockImplementationOnce(async (tgz, selector) => {
-    expect(tgz).toEqual(Buffer.from(mockGetPackageVersionAssetResult.asset!));
+    expect(tgz).toEqual(Buffer.from(mockGetPackageVersionAssetResult.asset! as any));
     expect(selector).toHaveProperty('assemblyJson', { path: 'package/.jsii' });
     expect(selector).toHaveProperty('packageJson', { path: 'package/package.json', required: true });
 
@@ -266,7 +266,7 @@ test('ineligible license', async () => {
   const mockAssembly = Buffer.from('mock-assembly-content');
   const mockPackageJson = safeMock<any>('package.json', { license: 'Phony-MOCK' });
   mockExtractObjects.mockImplementationOnce(async (tgz, selector) => {
-    expect(tgz).toEqual(Buffer.from(mockGetPackageVersionAssetResult.asset!));
+    expect(tgz).toEqual(Buffer.from(mockGetPackageVersionAssetResult.asset! as any));
     expect(selector).toHaveProperty('assemblyJson', { path: 'package/.jsii' });
     expect(selector).toHaveProperty('packageJson', { path: 'package/package.json', required: true });
 
@@ -318,7 +318,7 @@ test('not a jsii package', async () => {
 
   const mockPackageJson = safeMock<any>('package.json', { license: 'Apache-2.0' });
   mockExtractObjects.mockImplementationOnce(async (tgz, selector) => {
-    expect(tgz).toEqual(Buffer.from(mockGetPackageVersionAssetResult.asset!));
+    expect(tgz).toEqual(Buffer.from(mockGetPackageVersionAssetResult.asset! as any));
     expect(selector).toHaveProperty('assemblyJson', { path: 'package/.jsii' });
     expect(selector).toHaveProperty('packageJson', { path: 'package/package.json', required: true });
 
