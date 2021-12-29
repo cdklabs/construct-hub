@@ -142,7 +142,7 @@ test('basic happy case', async () => {
           break;
         case metadataKey:
           expect(req.ContentType).toBe('application/json');
-          expect(Buffer.from(req.Body!)).toEqual(Buffer.from(JSON.stringify({ date: time, packageLinks: {}, packageTags: [] })));
+          expect(Buffer.from(req.Body! as any)).toEqual(Buffer.from(JSON.stringify({ date: time, packageLinks: {}, packageTags: [] })));
           mockMetadataCreated = true;
           break;
         case packageKey:
@@ -300,7 +300,7 @@ test('basic happy case with license file', async () => {
           break;
         case metadataKey:
           expect(req.ContentType).toBe('application/json');
-          expect(Buffer.from(req.Body!))
+          expect(Buffer.from(req.Body! as any))
             .toEqual(Buffer.from(JSON.stringify({
               date: time,
               licenseText: fakeLicense,
@@ -489,7 +489,7 @@ test('basic happy case with custom package links', async () => {
           break;
         case metadataKey:
           expect(req.ContentType).toBe('application/json');
-          expect(Buffer.from(req.Body!)).toEqual(Buffer.from(JSON.stringify({
+          expect(Buffer.from(req.Body! as any)).toEqual(Buffer.from(JSON.stringify({
             date: time,
             packageLinks: {
               PackageLinkKey: packageLinkValue,
@@ -696,7 +696,7 @@ test('basic happy case with custom tags', async () => {
           break;
         case metadataKey:
           expect(req.ContentType).toBe('application/json');
-          expect(Buffer.from(req.Body!)).toEqual(Buffer.from(JSON.stringify({
+          expect(Buffer.from(req.Body! as any)).toEqual(Buffer.from(JSON.stringify({
             date: time,
             packageLinks: {},
             // only includes true tags

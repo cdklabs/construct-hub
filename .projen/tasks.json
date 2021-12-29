@@ -818,7 +818,46 @@
       "description": "Creates the distribution package",
       "steps": [
         {
-          "exec": "jsii-pacmak"
+          "exec": "mkdir -p dist"
+        },
+        {
+          "exec": "rsync -a . dist --exclude .git --exclude node_modules"
+        }
+      ]
+    },
+    "package-all": {
+      "name": "package-all",
+      "description": "Packages artifacts for all target languages",
+      "steps": [
+        {
+          "spawn": "package:js"
+        },
+        {
+          "spawn": "package:python"
+        }
+      ]
+    },
+    "package:js": {
+      "name": "package:js",
+      "description": "Create js language bindings",
+      "steps": [
+        {
+          "exec": "jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
+        },
+        {
+          "exec": "npx jsii-pacmak@$jsii_version -v --target js"
+        }
+      ]
+    },
+    "package:python": {
+      "name": "package:python",
+      "description": "Create python language bindings",
+      "steps": [
+        {
+          "exec": "jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
+        },
+        {
+          "exec": "npx jsii-pacmak@$jsii_version -v --target python"
         }
       ]
     },
@@ -855,7 +894,7 @@
           "spawn": "unbump"
         },
         {
-          "exec": "git diff --ignore-space-at-eol --exit-code"
+          "exec": "git diff --staged --ignore-space-at-eol --exit-code"
         }
       ]
     },
@@ -864,7 +903,7 @@
       "description": "Run tests",
       "steps": [
         {
-          "exec": "jest --passWithNoTests --all --updateSnapshot"
+          "exec": "jest --passWithNoTests --all --updateSnapshot --coverageProvider=v8"
         },
         {
           "spawn": "eslint"
@@ -936,7 +975,7 @@
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @aws-sdk/client-sfn @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case cdk-triggers construct-hub-webapp esbuild eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak json-schema JSONStream normalize-registry-metadata npm-check-updates projen semver spdx-license-list standard-version tar-stream typescript uuid yaml"
+          "exec": "yarn upgrade @aws-sdk/client-sfn @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case cdk-triggers construct-hub-webapp esbuild eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen json-schema JSONStream normalize-registry-metadata npm-check-updates projen semver spdx-license-list standard-version tar-stream typescript uuid yaml"
         },
         {
           "exec": "npx projen"
