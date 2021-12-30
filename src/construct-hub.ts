@@ -23,7 +23,8 @@ import { DomainRedirect, DomainRedirectSource } from './domain-redirect';
 import { Monitoring } from './monitoring';
 import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
-import { PackageTag, TagGroupConfig } from './package-tag';
+import { PackageTag } from './package-tag';
+import { PackageTagGroup } from './package-tag-group';
 import { S3StorageFactory } from './s3/storage';
 import { SpdxLicense } from './spdx-license';
 import { WebApp, PackageLinkConfig, FeaturedPackages, FeatureFlags, Category } from './webapp';
@@ -128,7 +129,7 @@ export interface ConstructHubProps {
   /**
    * Optional configuration for grouping custom package tags
    */
-  readonly packageTagGroups?: TagGroupConfig[];
+  readonly packageTagGroups?: PackageTagGroup[];
 
   /**
    * Configuration for packages to feature on the home page.

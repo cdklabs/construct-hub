@@ -1,9 +1,8 @@
 import { join } from 'path';
 import { Category, FeaturedPackages, FeatureFlags, PackageLinkConfig } from '.';
-import { PackageTagConfig, TagGroupConfig } from '../package-tag';
+import { PackageTagConfig } from '../package-tag';
+import { PackageTagGroup, PackageTagGroupConfig } from '../package-tag-group';
 import { TempFile } from '../temp-file';
-
-type FrontendTagGroupConfig = TagGroupConfig;
 
 interface FrontendPackageLinkConfig {
   linkLabel: string;
@@ -42,7 +41,7 @@ interface FrontendDebugInfo {
 interface FrontendConfig {
   packageLinks?: FrontendPackageLinkConfig[];
   packageTags?: FrontendPackageTagConfig[];
-  packageTagGroups?: FrontendTagGroupConfig[];
+  packageTagGroups?: PackageTagGroupConfig[];
   featuredPackages?: FrontendFeaturedPackagesConfig;
   packageStats?: boolean;
   featureFlags?: FeatureFlags;
@@ -64,7 +63,7 @@ export interface WebappConfigProps {
   /**
    * Configuration for grouping custom tags
    */
-  readonly packageTagGroups?: FrontendTagGroupConfig[];
+  readonly packageTagGroups?: PackageTagGroup[];
 
   /**
    * Configuration for packages to feature on the home page.
@@ -101,7 +100,7 @@ export class WebappConfig {
     return {
       packageLinks: this.packageLinks,
       packageTags: this.packageTags,
-      packageTagGroups: this.props.packageTagGroups ?? [],
+      packageTagGroups: this.packageTagGroups,
       featuredPackages: this.featuredPackages,
       packageStats: this.props.showPackageStats ?? true,
       featureFlags: this.props.featureFlags,
@@ -120,7 +119,27 @@ export class WebappConfig {
   private get packageTags(): FrontendPackageTagConfig[] {
     const packageTags = this.props.packageTags ?? [];
     // remove conditional logic from frontend config
-    return packageTags.map(({ condition, ...rest }) => rest);
+    return packageTags.map(({ condition, searchFilter, ...rest }) => {
+      if (!searchFilter) return rest;
+
+      const { group, groupBy } = searchFilter;
+
+      if (!group && !groupBy) {
+        throw new Error(`Expected a searchFilter.group or searchFilter.groupBy to be defined for ${rest.id}`);
+      }
+
+      return {
+        ...rest,
+        searchFilter: {
+          display: searchFilter.display,
+          groupBy: (group?.id ?? groupBy)!,
+        },
+      };
+    });
+  }
+
+  private get packageTagGroups(): PackageTagGroupConfig[] {
+    return this.props.packageTagGroups?.map((group) => group.values) ?? [];
   }
 
   private get featuredPackages(): FrontendFeaturedPackagesConfig {

@@ -14,10 +14,10 @@ instance with personalized configuration.
 > :warning: Disclaimer
 >
 > The [public instance of ConstructHub](https://constructs.dev) is currently in
-> *Developer Preview*.
+> _Developer Preview_.
 >
 > Self-hosted ConstructHub instances are however in active development and
-> should be considered *experimental*. Breaking changes to the public API of
+> should be considered _experimental_. Breaking changes to the public API of
 > this package are expected to be released without prior notice, and the
 > infrastructure and operational posture of ConstructHub instances may also
 > significantly change.
@@ -33,15 +33,17 @@ simplest way to get started is to create an instance of the `ConstructHub`
 construct:
 
 ```ts
-import { App, Stack } from '@aws-cdk/core';
-import { ConstructHub } from 'construct-hub';
+import { App, Stack } from "@aws-cdk/core";
+import { ConstructHub } from "construct-hub";
 
 // The usual... you might have used `cdk init app` instead!
 const app = new App();
-const stack = new Stack(app, 'StackName', { /* ... */ });
+const stack = new Stack(app, "StackName", {
+  /* ... */
+});
 
 // Now to business!
-new ConstructHub(stack, 'ConstructHub');
+new ConstructHub(stack, "ConstructHub");
 ```
 
 ### Personalization
@@ -52,11 +54,11 @@ In order to use a custom domain for your ConstructHub instance instead of the
 default CloudFront domain name, specify the `domain` property with the following
 elements:
 
-Attribute                     | Description
-------------------------------|---------------------------------------------------------------------
-`zone`                        | A Route53 Hosted Zone, where DNS records will be added.
-`cert`                        | An Amazon Certificate Manager certificate, which must be in the `us-east-1` region.
-`monitorCertificateExpiration`| Set to `false` if you do not want an alarm to be created when the certificate is close to expiry.
+| Attribute                      | Description                                                                                       |
+| ------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `zone`                         | A Route53 Hosted Zone, where DNS records will be added.                                           |
+| `cert`                         | An Amazon Certificate Manager certificate, which must be in the `us-east-1` region.               |
+| `monitorCertificateExpiration` | Set to `false` if you do not want an alarm to be created when the certificate is close to expiry. |
 
 Your self-hosted ConstructHub instance will be served from the root of the
 provided `zone`, so the certificate must match this name.
@@ -74,19 +76,21 @@ implementations for the public `npmjs.com` registry as well as for private
 CodeArtifact repositories:
 
 ```ts
-import * as codeartifact from '@aws-cdk/aws-codeartifact';
-import { App, Stack } from '@aws-cdk/core';
-import { sources, ConstructHub } from 'construct-hub';
+import * as codeartifact from "@aws-cdk/aws-codeartifact";
+import { App, Stack } from "@aws-cdk/core";
+import { sources, ConstructHub } from "construct-hub";
 
 // The usual... you might have used `cdk init app` instead!
 const app = new App();
-const stack = new Stack(app, 'StackName', { /* ... */ });
+const stack = new Stack(app, "StackName", {
+  /* ... */
+});
 
 // Now to business!
-const registry = new codeartifact.CfnRegistry(stack, 'Registry', {
+const registry = new codeartifact.CfnRegistry(stack, "Registry", {
   // ....
 });
-new ConstructHub(stack, 'ConstructHub', {
+new ConstructHub(stack, "ConstructHub", {
   packageSources: [
     new sources.NpmJs(), // Remove if you do NOT want npmjs.com packages
     new sources.CodeArtifact({ registry }),
@@ -106,8 +110,8 @@ private package registry, this is automatically disabled if you specify your own
 value for `packageSources`. (But this can be re-enabled through the
 `fetchPackageStats` property if needed).
 
-[sources.NpmJs]: src/package-sources/npmjs.ts
-[sources.CodeArtifact]: src/package-sources/code-artifact.ts
+[sources.npmjs]: src/package-sources/npmjs.ts
+[sources.codeartifact]: src/package-sources/code-artifact.ts
 
 #### Package deny list
 
@@ -117,20 +121,25 @@ the `denyList` property can be configured with a set of `DenyListRule` objects
 that specify which package or package versions should never be lested:
 
 ```ts
-import { App, Stack } from '@aws-cdk/core';
-import { ConstructHub } from 'construct-hub';
+import { App, Stack } from "@aws-cdk/core";
+import { ConstructHub } from "construct-hub";
 
 // The usual... you might have used `cdk init app` instead!
 const app = new App();
-const stack = new Stack(app, 'StackName', { /* ... */ });
+const stack = new Stack(app, "StackName", {
+  /* ... */
+});
 
 // Now to business!
-new ConstructHub(stack, 'ConstructHub', {
+new ConstructHub(stack, "ConstructHub", {
   denyList: [
     // Denying _all_ versions of the "sneaky-hackery" package
-    { packageName: 'sneaky-hackery', reason: 'Mines bitcoins wherever it gets installed' },
+    {
+      packageName: "sneaky-hackery",
+      reason: "Mines bitcoins wherever it gets installed",
+    },
     // Denying _a specific_ version of the "bad-release" package
-    { packageName: 'bad-release', version: '1.2.3', reason: 'CVE-####-#####' },
+    { packageName: "bad-release", version: "1.2.3", reason: "CVE-####-#####" },
   ],
 });
 ```
@@ -141,15 +150,19 @@ You can add additional domains that will be redirected to your primary Construct
 Hub domain:
 
 ```ts
-import * as r53 from '@aws-cdk/aws-route53';
+import * as r53 from "@aws-cdk/aws-route53";
 
-const myDomainZone = r53.HostedZone.fromHostedZoneAttributes(this, 'MyDomainZone', {
-  hostedZoneId: 'AZ1234',
-  zoneName: 'my.domain.com',
-});
+const myDomainZone = r53.HostedZone.fromHostedZoneAttributes(
+  this,
+  "MyDomainZone",
+  {
+    hostedZoneId: "AZ1234",
+    zoneName: "my.domain.com",
+  }
+);
 
-new ConstructHub(this, 'ConstructHub', {
-  additionalDomains: [ { hostedZone: myDomainZone } ]
+new ConstructHub(this, "ConstructHub", {
+  additionalDomains: [{ hostedZone: myDomainZone }],
 });
 ```
 
@@ -160,7 +173,7 @@ requests will be redirected to your primary Construct Hub domain.
 
 By default, ConstructHub executes the documentation rendering process in the
 context of isolated subnets. This is a defense-in-depth mechanism to mitigate
-the risks associated with downloading aribtrary (un-trusted) *npm packages* and
+the risks associated with downloading aribtrary (un-trusted) _npm packages_ and
 their dependency closures.
 
 This layer of security implies the creation of a number of resources that can
@@ -168,7 +181,7 @@ increase the operating cost of your self-hosted instance: several VPC endpoints
 are created, an internal CodeArtifact repository needs to be provisioned, etc...
 
 While we generally recommend leaving these features enabled, if your self-hosted
-ConstructHub instance only indexes *trusted* packages (as could be the case for
+ConstructHub instance only indexes _trusted_ packages (as could be the case for
 an instance that does not list packages from the public `npmjs.com` registry),
 you may set the `isolateLambdas` setting to `false`.
 
@@ -214,20 +227,22 @@ If a different package or SLA should be used, you can configure the `NpmJs`
 package source manually like so:
 
 ```ts
-import * as codeartifact from '@aws-cdk/aws-codeartifact';
-import { App, Stack } from '@aws-cdk/core';
-import { sources, ConstructHub } from 'construct-hub';
+import * as codeartifact from "@aws-cdk/aws-codeartifact";
+import { App, Stack } from "@aws-cdk/core";
+import { sources, ConstructHub } from "construct-hub";
 
 const app = new App();
-const stack = new Stack(app, 'StackName', { /* ... */ });
+const stack = new Stack(app, "StackName", {
+  /* ... */
+});
 
-new ConstructHub(stack, 'ConstructHub', {
+new ConstructHub(stack, "ConstructHub", {
   // ...
   packageSources: [
     // ...
     new sources.NpmJs({
       enableCanary: true, // This is the default
-      canaryPackage: '@acme/my-constructhub-probe',
+      canaryPackage: "@acme/my-constructhub-probe",
       canarySla: Duration.minutes(30),
     }),
     // ...
@@ -262,18 +277,20 @@ For example:
 ```ts
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
-  packageTags: [{
-    id: 'official',
-    condition: TagCondition.field('name').eq('construct-hub'),
-    keyword: {
-      label: 'Official',
-      color: '#00FF00',
+  packageTags: [
+    {
+      id: "official",
+      condition: TagCondition.field("name").eq("construct-hub"),
+      keyword: {
+        label: "Official",
+        color: "#00FF00",
+      },
+      highlight: {
+        label: "Vended by AWS",
+        color: "#00FF00",
+      },
     },
-    highlight: {
-      label: 'Vended by AWS',
-      color: '#00FF00',
-    }
-  }]
+  ],
 });
 ```
 
@@ -286,24 +303,34 @@ The `searchFilter` key can also be used to show tags as search filters grouped
 together.
 
 ```ts
-const isAws = TagCondition.field('name').eq('construct-hub');
+const authorsGroup = new PackageTagGroup("authors", {
+  label: "Authors",
+  tooltip: "Information about the authors filter",
+  filterType: FilterType.checkbox(),
+});
+
+const isAws = TagCondition.field("name").eq("construct-hub");
+
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
-  packageTags: [{
-    id: 'AWS',
-    condition: isAws,
-    searchFilter: {
-      groupBy: 'Authors',
-      display: 'AWS',
+  packageTags: [
+    {
+      id: "AWS",
+      condition: isAws,
+      searchFilter: {
+        group: authorsGroup,
+        display: "AWS",
+      },
     },
-  }, {
-    id: 'Community',
-    condition: TagCondition.not(isAws),
-    searchFilter: {
-      groupBy: 'Authors',
-      display: 'AWS',
+    {
+      id: "Community",
+      condition: TagCondition.not(isAws),
+      searchFilter: {
+        group: authorsGroup,
+        display: "AWS",
+      },
     },
-  }]
+  ],
 });
 ```
 
@@ -336,7 +363,7 @@ condition: TagCondition.or(
 You can assert against any value within package json including nested ones.
 
 ```ts
-TagCondition.field('constructHub', 'nested', 'key').eq('value');
+TagCondition.field("constructHub", "nested", "key").eq("value");
 
 // checks
 packageJson?.constructHub?.nested?.key === value;
@@ -352,15 +379,18 @@ For example:
 ```ts
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
-  packageLinks: [{
-    linkLabel: 'Service Level Agreement',
-    configKey: 'SLA',
-  }, {
-    linkLabel: 'Contact',
-    configKey: 'Contact',
-    linkText: 'Email Me!',
-    allowedDomains: ['me.com'],
-  }]
+  packageLinks: [
+    {
+      linkLabel: "Service Level Agreement",
+      configKey: "SLA",
+    },
+    {
+      linkLabel: "Contact",
+      configKey: "Contact",
+      linkText: "Email Me!",
+      allowedDomains: ["me.com"],
+    },
+  ],
 });
 ```
 
@@ -433,10 +463,10 @@ button.
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
   categories: [
-    { title: 'Databases', url: '?keywords=databases' },
-    { title: 'Monitoring', url: '?q=monitoring' },
-    { title: 'Partners', url: '?tags=aws-partner' }
-  ]
+    { title: "Databases", url: "?keywords=databases" },
+    { title: "Monitoring", url: "?q=monitoring" },
+    { title: "Partners", url: "?tags=aws-partner" },
+  ],
 });
 ```
 

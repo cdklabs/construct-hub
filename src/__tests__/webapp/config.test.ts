@@ -1,5 +1,6 @@
 import { readJsonSync } from 'fs-extra';
 import { TagCondition } from '../../package-tag';
+import { PackageTagGroup } from '../../package-tag-group';
 import { Category } from '../../webapp';
 import { WebappConfig } from '../../webapp/config';
 
@@ -102,14 +103,18 @@ describe('package tags', () => {
 
   test('tag groups', () => {
     // GIVEN
-    const groups = [{ id: 'foo', label: 'Foo', tooltip: 'Lorem ipsum' }, { id: 'bar' }];
+    const groups = [
+      new PackageTagGroup('foo', { label: 'Foo', tooltip: 'Lorem ipsum' }),
+      new PackageTagGroup('bar'),
+    ];
+
     const config = new WebappConfig({ packageTagGroups: groups });
 
     // THEN
     const file = readJsonSync(config.file.path);
     expect(file).toEqual({
       ...DEFAULT_CONFIG,
-      packageTagGroups: groups,
+      packageTagGroups: groups.map(group => group.values),
     });
   });
 
@@ -177,6 +182,40 @@ describe('package tags', () => {
           searchFilter,
         },
       ],
+    });
+  });
+
+  test('search filter group', () => {
+    // GIVEN
+    const group = new PackageTagGroup('TAG_GROUP', { label: 'LABEL' });
+    const searchFilter = {
+      group,
+      display: 'DISPLAY',
+    };
+
+    const config = new WebappConfig({
+      packageTags: [
+        {
+          id: 'ID',
+          searchFilter,
+          condition: TagCondition.field('name').eq('construct-hub').bind(),
+        },
+      ],
+      packageTagGroups: [group],
+    });
+
+    // THEN
+    const file = readJsonSync(config.file.path);
+    expect(file).toEqual({
+      ...DEFAULT_CONFIG,
+      packageTagGroups: [{ id: group.id, label: group.label, filterType: group.filterType }],
+      packageTags: [{
+        id: 'ID',
+        searchFilter: {
+          groupBy: group.id,
+          display: 'DISPLAY',
+        },
+      }],
     });
   });
 });
