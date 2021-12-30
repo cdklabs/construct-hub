@@ -139,7 +139,7 @@ export class WebappConfig {
   }
 
   private get packageTagGroups(): PackageTagGroupConfig[] {
-    return this.props.packageTagGroups?.map((group) => group.values) ?? [];
+    return this.props.packageTagGroups?.map((group) => group.bind()) ?? [];
   }
 
   private get featuredPackages(): FrontendFeaturedPackagesConfig {

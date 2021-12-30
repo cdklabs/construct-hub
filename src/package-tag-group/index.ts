@@ -1,26 +1,28 @@
-export class FilterTypeValue {
-  /**
-   * Allows 'checkbox' or 'radio'
-   */
-  public readonly value: string;
-
-  constructor(value: string) {
-    if (['checkbox', 'radio'].includes(value)) {
-      this.value = value;
-    } else {
-      console.warn(`Invalid value received for FilterTypeValue. Expected 'checkbox' or 'radio', received: ${value}`);
-      this.value = 'checkbox';
-    }
-  }
+export interface FilterTypeValue {
+  readonly type: 'checkbox' | 'radio';
 }
 
 export abstract class FilterType {
-  static checkbox(): FilterTypeValue {
-    return new FilterTypeValue('checkbox');
+  static checkbox(): FilterType {
+    return new FilterTypeCheckbox();
   }
 
-  static radio(): FilterTypeValue {
-    return new FilterTypeValue('radio');
+  static radio(): FilterType {
+    return new FilterTypeRadio();
+  }
+
+  public abstract bind(): FilterTypeValue;
+}
+
+class FilterTypeRadio extends FilterType {
+  public bind(): FilterTypeValue {
+    return { type: 'radio' };
+  }
+}
+
+class FilterTypeCheckbox extends FilterType {
+  public bind(): FilterTypeValue {
+    return { type: 'checkbox' };
   }
 }
 
@@ -36,7 +38,7 @@ export interface PackageTagGroupProps {
   /**
    * Allows to specify the group filter type. Defaults to checkbox if not specified
    */
-  readonly filterType?: FilterTypeValue;
+  readonly filterType?: FilterType;
 }
 
 export interface PackageTagGroupConfig {
@@ -57,10 +59,10 @@ export class PackageTagGroup {
   constructor(public readonly id: string, props?: PackageTagGroupProps) {
     this.label = props?.label;
     this.tooltip = props?.tooltip;
-    this.filterType = (props?.filterType ?? FilterType.checkbox()).value;
+    this.filterType = (props?.filterType ?? FilterType.checkbox()).bind().type;
   }
 
-  public get values(): PackageTagGroupConfig {
+  public bind(): PackageTagGroupConfig {
     return {
       id: this.id,
       label: this.label,

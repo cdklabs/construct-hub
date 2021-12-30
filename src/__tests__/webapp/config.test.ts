@@ -114,7 +114,7 @@ describe('package tags', () => {
     const file = readJsonSync(config.file.path);
     expect(file).toEqual({
       ...DEFAULT_CONFIG,
-      packageTagGroups: groups.map(group => group.values),
+      packageTagGroups: groups.map(group => group.bind()),
     });
   });
 
