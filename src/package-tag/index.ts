@@ -1,22 +1,4 @@
-export interface TagGroupConfig {
-  /**
-   * Identifies a package tag group. Tags which specify a searchFilter.groupBy will be
-   * grouped by the corresponding tag group id
-   */
-  readonly id: string;
-  /**
-   * Group label to display. Falls back to id if not provided
-   */
-  readonly label?: string;
-  /**
-   * Optional message to show within a tooltip next to the filter label
-   */
-  readonly tooltip?: string;
-  /**
-   * Allows to specify the group filter type. Defaults to checkbox if not specified
-   */
-  readonly filterType?: 'checkbox' | 'radio';
-}
+import { PackageTagGroup } from '../package-tag-group';
 
 interface PackageTagPresentationBase {
   /**
@@ -47,8 +29,14 @@ export interface SearchFilter {
 
   /**
    * Name of group to include filter in
+   * @deprecated use `group` instead
    */
-  readonly groupBy: string;
+  readonly groupBy?: string;
+
+  /**
+   * PackageTagGroup to include filter in
+   */
+  readonly group?: PackageTagGroup;
 }
 
 export interface PackageTagBase {

@@ -2,19 +2,19 @@ import * as process from 'process';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { Construct, Stack } from '@aws-cdk/core';
 import { ConstructHub, Isolation } from '../..';
-import { TagCondition, TagGroupConfig } from '../../package-tag';
+import { TagCondition } from '../../package-tag';
+import { PackageTagGroup, FilterType } from '../../package-tag-group';
 
 /**
  * Defines a packageTagGroup to group author tags.
  * packageTags which reference this id in the searchFilter.groupBy property
  * will be displayed under this group
  */
-const authorSearchFilter: TagGroupConfig = {
-  id: 'author',
+const authorSearchFilter = new PackageTagGroup('author', {
   label: 'Author',
   tooltip: 'Filter your search results to a specific author',
-  filterType: 'radio',
-};
+  filterType: FilterType.radio(),
+});
 
 const isAwsPublished = TagCondition.field('name').startsWith('@aws-cdk/');
 const isCommunity = TagCondition.not(isAwsPublished);
@@ -23,7 +23,7 @@ const makeAuthorTag = (display: string, condition: TagCondition) => ({
   id: `${display.toLowerCase()}-published`,
   condition,
   searchFilter: {
-    groupBy: authorSearchFilter.id,
+    group: authorSearchFilter,
     display,
   },
   highlight: {
@@ -37,11 +37,10 @@ const makeAuthorTag = (display: string, condition: TagCondition) => ({
  * Defines a packageTagGroup to group use case tags.
  * This group will default to a checkbox filter b/c filterType is not specified
  */
-const useCaseSearchFilter: TagGroupConfig = {
-  id: 'use-case',
+const useCaseSearchFilter = new PackageTagGroup('use-case', {
   label: 'Use Case',
   tooltip: 'Find results for your specific use case',
-};
+});
 
 const serverlessUseCase = TagCondition.field('keywords').includes('serverless');
 const containersUseCase = TagCondition.field('keywords').includes('containers');
@@ -51,7 +50,7 @@ const makeUseCaseTag = (label: string, useCase: TagCondition) => ({
   id: `uc-${label}`,
   condition: useCase,
   searchFilter: {
-    groupBy: useCaseSearchFilter.id,
+    group: useCaseSearchFilter,
     display: label,
   },
 });
