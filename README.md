@@ -13,8 +13,7 @@ instance with personalized configuration.
 
 > :warning: Disclaimer
 >
-> The [public instance of ConstructHub](https://constructs.dev) is currently in
-> *Developer Preview*.
+> The [public instance of ConstructHub](https://constructs.dev) is Generally Available.
 >
 > Self-hosted ConstructHub instances are however in active development and
 > should be considered *experimental*. Breaking changes to the public API of
