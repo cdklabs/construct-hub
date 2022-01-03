@@ -6,6 +6,8 @@ const { SourceCode, FileBase, JsonFile, cdk, github } = require('projen');
 const spdx = require('spdx-license-list');
 const uuid = require('uuid');
 
+const BUNDLE_DIR_ENV = 'BUNDLE_DIR';
+
 const peerDeps = [
   '@aws-cdk/aws-certificatemanager',
   '@aws-cdk/aws-cloudfront-origins',
@@ -480,11 +482,11 @@ function newEcsTask(entrypoint) {
 
   const base = basename(entrypoint, '.ecstask.ts');
   const dir = join(dirname(entrypoint), base);
+  const dockerEntry = 'index.js';
   const entry = `${project.srcdir}/${entrypoint}`;
   const infra = `${project.srcdir}/${dir}.ts`;
   const outdir = `${project.libdir}/${dir}.ecs-entrypoint.bundle`;
   const ecsMain = `${project.srcdir}/${dir}.ecs-entrypoint.ts`;
-  const outfile = `${outdir}/index.js`;
   const dockerfile = `${outdir}/Dockerfile`;
   const className = Case.pascal(basename(dir));
   const propsName = `${className}Props`;
@@ -601,8 +603,7 @@ function newEcsTask(entrypoint) {
   df.line(' && yum clean all \\');
   df.line(' && rm -rf /var/cache/yum');
   df.line();
-  df.line('COPY ./index.js      /bundle/index.js');
-  df.line('COPY ./Dockerfile    /bundle/Dockerfile');
+  df.line('ADD . /bundle');
   df.line();
   // Override the GIT ssh command to work around git's use of
   // StrictHostKeyChecking=accept-new, which is not supported by the version of
@@ -610,7 +611,7 @@ function newEcsTask(entrypoint) {
   // following issue: https://github.com/npm/git/issues/31
   df.line('ENV GIT_SSH_COMMAND=ssh');
   df.line();
-  df.line('ENTRYPOINT ["/usr/bin/env", "node", "/bundle/index.js"]');
+  df.line(`ENTRYPOINT ["/usr/bin/env", "node", "/bundle/${dockerEntry}"]`);
 
   const bundleCmd = [
     'esbuild',
@@ -618,17 +619,19 @@ function newEcsTask(entrypoint) {
     ecsMain,
     '--target="node16"',
     '--platform="node"',
-    `--outfile="${outfile}"`,
+    `--outfile="$${BUNDLE_DIR_ENV}/${dockerEntry}"`,
     '--sourcemap',
   ];
   const bundle = project.addTask(`bundle:${base}`, {
     description: `Create an AWS Fargate bundle from ${entry}`,
     exec: bundleCmd.join(' '),
   });
+  bundle.env(BUNDLE_DIR_ENV, outdir);
   const bundleWatch = project.addTask(`bundle:${base}:watch`, {
     description: `Continuously update an AWS Fargate bundle from ${entry}`,
     exec: [...bundleCmd, '--watch'].join(' '),
   });
+  bundle.env(BUNDLE_DIR_ENV, outdir);
 
   project.compileTask.spawn(bundle);
   bundleTask.spawn(bundle);
@@ -889,6 +892,11 @@ project.addDevDeps('glob');
 discoverLambdas();
 discoverEcsTasks();
 discoverIntegrationTests();
+
+// see https://github.com/aws/jsii/issues/3311
+const bundleWorkerPool = `esbuild --bundle node_modules/jsii-rosetta/lib/translate_all_worker.js --target="node16" --platform="node" --outfile="$${BUNDLE_DIR_ENV}/translate_all_worker.js" --sourcemap`;
+project.tasks.tryFind('bundle:transliterator').exec(bundleWorkerPool);
+project.tasks.tryFind('bundle:transliterator:watch').prependExec(bundleWorkerPool);
 
 generateSpdxLicenseEnum();
 
