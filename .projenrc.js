@@ -603,7 +603,7 @@ function newEcsTask(entrypoint) {
   df.line(' && yum clean all \\');
   df.line(' && rm -rf /var/cache/yum');
   df.line();
-  df.line('ADD . /bundle');
+  df.line('COPY . /bundle');
   df.line();
   // Override the GIT ssh command to work around git's use of
   // StrictHostKeyChecking=accept-new, which is not supported by the version of
