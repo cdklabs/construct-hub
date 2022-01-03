@@ -24,6 +24,7 @@ import { Monitoring } from './monitoring';
 import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
 import { PackageTag } from './package-tag';
+import { PackageTagGroup } from './package-tag-group';
 import { S3StorageFactory } from './s3/storage';
 import { SpdxLicense } from './spdx-license';
 import { WebApp, PackageLinkConfig, FeaturedPackages, FeatureFlags, Category } from './webapp';
@@ -124,6 +125,11 @@ export interface ConstructHubProps {
    * Configuration for custom package tags
    */
   readonly packageTags?: PackageTag[];
+
+  /**
+   * Optional configuration for grouping custom package tags
+   */
+  readonly packageTagGroups?: PackageTagGroup[];
 
   /**
    * Configuration for packages to feature on the home page.
@@ -350,6 +356,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       packageData,
       packageLinks: props.packageLinks,
       packageTags: packageTagsSerialized,
+      packageTagGroups: props.packageTagGroups,
       featuredPackages: props.featuredPackages,
       packageStats,
       featureFlags: props.featureFlags,

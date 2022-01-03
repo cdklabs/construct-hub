@@ -357,6 +357,7 @@ const constructHubProps: ConstructHubProps = { ... }
 | [`logRetention`](#constructhubconstructhubpropspropertylogretention) | [`@aws-cdk/aws-logs.RetentionDays`](#@aws-cdk/aws-logs.RetentionDays) | How long to retain CloudWatch logs for. |
 | [`packageLinks`](#constructhubconstructhubpropspropertypackagelinks) | [`construct-hub.PackageLinkConfig`](#construct-hub.PackageLinkConfig)[] | Configuration for custom package page links. |
 | [`packageSources`](#constructhubconstructhubpropspropertypackagesources) | [`construct-hub.IPackageSource`](#construct-hub.IPackageSource)[] | The package sources to register with this ConstructHub instance. |
+| [`packageTagGroups`](#constructhubconstructhubpropspropertypackagetaggroups) | [`construct-hub.PackageTagGroup`](#construct-hub.PackageTagGroup)[] | Optional configuration for grouping custom package tags. |
 | [`packageTags`](#constructhubconstructhubpropspropertypackagetags) | [`construct-hub.PackageTag`](#construct-hub.PackageTag)[] | Configuration for custom package tags. |
 | [`preloadScript`](#constructhubconstructhubpropspropertypreloadscript) | `string` | Defines source code for a preload.js script inserted at the top of the <head /> of the webapp. |
 | [`reprocessFrequency`](#constructhubconstructhubpropspropertyreprocessfrequency) | [`@aws-cdk/core.Duration`](#@aws-cdk/core.Duration) | How frequently all packages should get fully reprocessed. |
@@ -573,6 +574,18 @@ public readonly packageSources: IPackageSource[];
 - *Default:* a standard npmjs.com package source will be configured.
 
 The package sources to register with this ConstructHub instance.
+
+---
+
+##### `packageTagGroups`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.packageTagGroups" id="constructhubconstructhubpropspropertypackagetaggroups"></a>
+
+```typescript
+public readonly packageTagGroups: PackageTagGroup[];
+```
+
+- *Type:* [`construct-hub.PackageTagGroup`](#construct-hub.PackageTagGroup)[]
+
+Optional configuration for grouping custom package tags.
 
 ---
 
@@ -989,6 +1002,34 @@ public readonly searchRedesign: boolean;
 ```
 
 - *Type:* `boolean`
+
+---
+
+### FilterTypeValue <a name="construct-hub.FilterTypeValue" id="constructhubfiltertypevalue"></a>
+
+#### Initializer <a name="[object Object].Initializer" id="object-objectinitializer"></a>
+
+```typescript
+import { FilterTypeValue } from 'construct-hub'
+
+const filterTypeValue: FilterTypeValue = { ... }
+```
+
+#### Properties <a name="Properties" id="properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| [`type`](#constructhubfiltertypevaluepropertytype)<span title="Required">*</span> | `string` | *No description.* |
+
+---
+
+##### `type`<sup>Required</sup> <a name="construct-hub.FilterTypeValue.property.type" id="constructhubfiltertypevaluepropertytype"></a>
+
+```typescript
+public readonly type: string;
+```
+
+- *Type:* `string`
 
 ---
 
@@ -1652,6 +1693,127 @@ public readonly condition: TagConditionConfig;
 
 ---
 
+### PackageTagGroupConfig <a name="construct-hub.PackageTagGroupConfig" id="constructhubpackagetaggroupconfig"></a>
+
+#### Initializer <a name="[object Object].Initializer" id="object-objectinitializer"></a>
+
+```typescript
+import { PackageTagGroupConfig } from 'construct-hub'
+
+const packageTagGroupConfig: PackageTagGroupConfig = { ... }
+```
+
+#### Properties <a name="Properties" id="properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| [`id`](#constructhubpackagetaggroupconfigpropertyid)<span title="Required">*</span> | `string` | *No description.* |
+| [`filterType`](#constructhubpackagetaggroupconfigpropertyfiltertype) | `string` | *No description.* |
+| [`label`](#constructhubpackagetaggroupconfigpropertylabel) | `string` | *No description.* |
+| [`tooltip`](#constructhubpackagetaggroupconfigpropertytooltip) | `string` | *No description.* |
+
+---
+
+##### `id`<sup>Required</sup> <a name="construct-hub.PackageTagGroupConfig.property.id" id="constructhubpackagetaggroupconfigpropertyid"></a>
+
+```typescript
+public readonly id: string;
+```
+
+- *Type:* `string`
+
+---
+
+##### `filterType`<sup>Optional</sup> <a name="construct-hub.PackageTagGroupConfig.property.filterType" id="constructhubpackagetaggroupconfigpropertyfiltertype"></a>
+
+```typescript
+public readonly filterType: string;
+```
+
+- *Type:* `string`
+
+---
+
+##### `label`<sup>Optional</sup> <a name="construct-hub.PackageTagGroupConfig.property.label" id="constructhubpackagetaggroupconfigpropertylabel"></a>
+
+```typescript
+public readonly label: string;
+```
+
+- *Type:* `string`
+
+---
+
+##### `tooltip`<sup>Optional</sup> <a name="construct-hub.PackageTagGroupConfig.property.tooltip" id="constructhubpackagetaggroupconfigpropertytooltip"></a>
+
+```typescript
+public readonly tooltip: string;
+```
+
+- *Type:* `string`
+
+---
+
+### PackageTagGroupProps <a name="construct-hub.PackageTagGroupProps" id="constructhubpackagetaggroupprops"></a>
+
+#### Initializer <a name="[object Object].Initializer" id="object-objectinitializer"></a>
+
+```typescript
+import { PackageTagGroupProps } from 'construct-hub'
+
+const packageTagGroupProps: PackageTagGroupProps = { ... }
+```
+
+#### Properties <a name="Properties" id="properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| [`filterType`](#constructhubpackagetaggrouppropspropertyfiltertype) | [`construct-hub.FilterType`](#construct-hub.FilterType) | Allows to specify the group filter type. |
+| [`label`](#constructhubpackagetaggrouppropspropertylabel) | `string` | Group label to display. |
+| [`tooltip`](#constructhubpackagetaggrouppropspropertytooltip) | `string` | Optional message to show within a tooltip next to the filter label. |
+
+---
+
+##### `filterType`<sup>Optional</sup> <a name="construct-hub.PackageTagGroupProps.property.filterType" id="constructhubpackagetaggrouppropspropertyfiltertype"></a>
+
+```typescript
+public readonly filterType: FilterType;
+```
+
+- *Type:* [`construct-hub.FilterType`](#construct-hub.FilterType)
+
+Allows to specify the group filter type.
+
+Defaults to checkbox if not specified
+
+---
+
+##### `label`<sup>Optional</sup> <a name="construct-hub.PackageTagGroupProps.property.label" id="constructhubpackagetaggrouppropspropertylabel"></a>
+
+```typescript
+public readonly label: string;
+```
+
+- *Type:* `string`
+
+Group label to display.
+
+Falls back to id if not provided
+
+---
+
+##### `tooltip`<sup>Optional</sup> <a name="construct-hub.PackageTagGroupProps.property.tooltip" id="constructhubpackagetaggrouppropspropertytooltip"></a>
+
+```typescript
+public readonly tooltip: string;
+```
+
+- *Type:* `string`
+
+Optional message to show within a tooltip next to the filter label.
+
+---
+
 ### S3StorageFactoryProps <a name="construct-hub.S3StorageFactoryProps" id="constructhubs3storagefactoryprops"></a>
 
 Properties for `S3StorageFactory`.
@@ -1700,7 +1862,8 @@ const searchFilter: SearchFilter = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | [`display`](#constructhubsearchfilterpropertydisplay)<span title="Required">*</span> | `string` | Display name for filter. |
-| [`groupBy`](#constructhubsearchfilterpropertygroupby)<span title="Required">*</span> | `string` | Name of group to include filter in. |
+| [`group`](#constructhubsearchfilterpropertygroup) | [`construct-hub.PackageTagGroup`](#construct-hub.PackageTagGroup) | PackageTagGroup to include filter in. |
+| [`groupBy`](#constructhubsearchfilterpropertygroupby) | `string` | Name of group to include filter in. |
 
 ---
 
@@ -1716,7 +1879,21 @@ Display name for filter.
 
 ---
 
-##### `groupBy`<sup>Required</sup> <a name="construct-hub.SearchFilter.property.groupBy" id="constructhubsearchfilterpropertygroupby"></a>
+##### `group`<sup>Optional</sup> <a name="construct-hub.SearchFilter.property.group" id="constructhubsearchfilterpropertygroup"></a>
+
+```typescript
+public readonly group: PackageTagGroup;
+```
+
+- *Type:* [`construct-hub.PackageTagGroup`](#construct-hub.PackageTagGroup)
+
+PackageTagGroup to include filter in.
+
+---
+
+##### ~~`groupBy`~~<sup>Optional</sup> <a name="construct-hub.SearchFilter.property.groupBy" id="constructhubsearchfilterpropertygroupby"></a>
+
+- *Deprecated:* use `group` instead
 
 ```typescript
 public readonly groupBy: string;
@@ -1792,6 +1969,160 @@ public readonly value: string;
 ---
 
 ## Classes <a name="Classes" id="classes"></a>
+
+### FilterType <a name="construct-hub.FilterType" id="constructhubfiltertype"></a>
+
+#### Initializers <a name="construct-hub.FilterType.Initializer" id="constructhubfiltertypeinitializer"></a>
+
+```typescript
+import { FilterType } from 'construct-hub'
+
+new FilterType()
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+
+---
+
+#### Methods <a name="Methods" id="methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| [`bind`](#constructhubfiltertypebind) | *No description.* |
+
+---
+
+##### `bind` <a name="construct-hub.FilterType.bind" id="constructhubfiltertypebind"></a>
+
+```typescript
+public bind()
+```
+
+#### Static Functions <a name="Static Functions" id="static-functions"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| [`checkbox`](#constructhubfiltertypecheckbox) | *No description.* |
+| [`radio`](#constructhubfiltertyperadio) | *No description.* |
+
+---
+
+##### `checkbox` <a name="construct-hub.FilterType.checkbox" id="constructhubfiltertypecheckbox"></a>
+
+```typescript
+import { FilterType } from 'construct-hub'
+
+FilterType.checkbox()
+```
+
+##### `radio` <a name="construct-hub.FilterType.radio" id="constructhubfiltertyperadio"></a>
+
+```typescript
+import { FilterType } from 'construct-hub'
+
+FilterType.radio()
+```
+
+
+
+### PackageTagGroup <a name="construct-hub.PackageTagGroup" id="constructhubpackagetaggroup"></a>
+
+Defines a custom package tag group.
+
+#### Initializers <a name="construct-hub.PackageTagGroup.Initializer" id="constructhubpackagetaggroupinitializer"></a>
+
+```typescript
+import { PackageTagGroup } from 'construct-hub'
+
+new PackageTagGroup(id: string, props?: PackageTagGroupProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| [`id`](#constructhubpackagetaggroupparameterid)<span title="Required">*</span> | `string` | *No description.* |
+| [`props`](#constructhubpackagetaggroupparameterprops) | [`construct-hub.PackageTagGroupProps`](#construct-hub.PackageTagGroupProps) | *No description.* |
+
+---
+
+##### `id`<sup>Required</sup> <a name="construct-hub.PackageTagGroup.parameter.id" id="constructhubpackagetaggroupparameterid"></a>
+
+- *Type:* `string`
+
+---
+
+##### `props`<sup>Optional</sup> <a name="construct-hub.PackageTagGroup.parameter.props" id="constructhubpackagetaggroupparameterprops"></a>
+
+- *Type:* [`construct-hub.PackageTagGroupProps`](#construct-hub.PackageTagGroupProps)
+
+---
+
+#### Methods <a name="Methods" id="methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| [`bind`](#constructhubpackagetaggroupbind) | *No description.* |
+
+---
+
+##### `bind` <a name="construct-hub.PackageTagGroup.bind" id="constructhubpackagetaggroupbind"></a>
+
+```typescript
+public bind()
+```
+
+
+#### Properties <a name="Properties" id="properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| [`id`](#constructhubpackagetaggrouppropertyid)<span title="Required">*</span> | `string` | *No description.* |
+| [`filterType`](#constructhubpackagetaggrouppropertyfiltertype) | `string` | *No description.* |
+| [`label`](#constructhubpackagetaggrouppropertylabel) | `string` | *No description.* |
+| [`tooltip`](#constructhubpackagetaggrouppropertytooltip) | `string` | *No description.* |
+
+---
+
+##### `id`<sup>Required</sup> <a name="construct-hub.PackageTagGroup.property.id" id="constructhubpackagetaggrouppropertyid"></a>
+
+```typescript
+public readonly id: string;
+```
+
+- *Type:* `string`
+
+---
+
+##### `filterType`<sup>Optional</sup> <a name="construct-hub.PackageTagGroup.property.filterType" id="constructhubpackagetaggrouppropertyfiltertype"></a>
+
+```typescript
+public readonly filterType: string;
+```
+
+- *Type:* `string`
+
+---
+
+##### `label`<sup>Optional</sup> <a name="construct-hub.PackageTagGroup.property.label" id="constructhubpackagetaggrouppropertylabel"></a>
+
+```typescript
+public readonly label: string;
+```
+
+- *Type:* `string`
+
+---
+
+##### `tooltip`<sup>Optional</sup> <a name="construct-hub.PackageTagGroup.property.tooltip" id="constructhubpackagetaggrouppropertytooltip"></a>
+
+```typescript
+public readonly tooltip: string;
+```
+
+- *Type:* `string`
+
+---
+
 
 ### SpdxLicense <a name="construct-hub.SpdxLicense" id="constructhubspdxlicense"></a>
 

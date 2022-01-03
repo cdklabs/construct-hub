@@ -285,6 +285,12 @@ The `searchFilter` key can also be used to show tags as search filters grouped
 together.
 
 ```ts
+const authorsGroup = new PackageTagGroup("authors", {
+  label: "Authors",
+  tooltip: "Information about the authors filter",
+  filterType: FilterType.checkbox(),
+});
+
 const isAws = TagCondition.field('name').eq('construct-hub');
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
@@ -292,14 +298,14 @@ new ConstructHub(this, "ConstructHub", {
     id: 'AWS',
     condition: isAws,
     searchFilter: {
-      groupBy: 'Authors',
+      group: authorsGroup,
       display: 'AWS',
     },
   }, {
     id: 'Community',
     condition: TagCondition.not(isAws),
     searchFilter: {
-      groupBy: 'Authors',
+      group: authorsGroup,
       display: 'AWS',
     },
   }]

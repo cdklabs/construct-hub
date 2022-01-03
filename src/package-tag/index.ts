@@ -1,3 +1,5 @@
+import { PackageTagGroup } from '../package-tag-group';
+
 interface PackageTagPresentationBase {
   /**
    * The label for the tag being applied
@@ -12,7 +14,7 @@ interface PackageTagPresentationBase {
 
 export interface Keyword extends PackageTagPresentationBase {}
 
-export interface Highlight extends PackageTagPresentationBase{
+export interface Highlight extends PackageTagPresentationBase {
   /**
    * Icon displayed next to highlight on package card
    */
@@ -27,8 +29,14 @@ export interface SearchFilter {
 
   /**
    * Name of group to include filter in
+   * @deprecated use `group` instead
    */
-  readonly groupBy: string;
+  readonly groupBy?: string;
+
+  /**
+   * PackageTagGroup to include filter in
+   */
+  readonly group?: PackageTagGroup;
 }
 
 export interface PackageTagBase {
@@ -150,7 +158,7 @@ class TagConditionLogic extends TagCondition {
   public bind(): TagConditionConfig {
     return {
       type: this.type,
-      children: this.children.map(cond => cond.bind()),
+      children: this.children.map((cond) => cond.bind()),
     };
   }
 }
