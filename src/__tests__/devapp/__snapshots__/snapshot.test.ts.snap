@@ -3777,7 +3777,7 @@ Resources:
               to Dead Letter
               Queue"},{"ErrorEquals":["States.ALL"],"ResultPath":"$.error","Next":"Send
               to Dead Letter
-              Queue"}],"Type":"Task","TimeoutSeconds":3600,"HeartbeatSeconds":300,"InputPath":"$.docGen.command","ResultPath":"$.docGenOutput","Resource":"arn:'
+              Queue"}],"Type":"Task","TimeoutSeconds":7200,"HeartbeatSeconds":300,"InputPath":"$.docGen.command","ResultPath":"$.docGenOutput","Resource":"arn:'
             - Ref: AWS::Partition
             - :states:::ecs:runTask.waitForTaskToken","Parameters":{"Cluster":"
             - Fn::GetAtt:
