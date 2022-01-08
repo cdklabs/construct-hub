@@ -2126,6 +2126,10 @@ public readonly tooltip: string;
 
 ### PreloadFile <a name="construct-hub.PreloadFile" id="constructhubpreloadfile"></a>
 
+Represents a javascript file to load before the webapp.
+
+This can allow operators to add their own client monitors or analytics if they wish
+
 #### Initializers <a name="construct-hub.PreloadFile.Initializer" id="constructhubpreloadfileinitializer"></a>
 
 ```typescript
@@ -2164,8 +2168,8 @@ public bind()
 
 | **Name** | **Description** |
 | --- | --- |
-| [`fromCode`](#constructhubpreloadfilefromcode) | *No description.* |
-| [`fromFile`](#constructhubpreloadfilefromfile) | *No description.* |
+| [`fromCode`](#constructhubpreloadfilefromcode) | Creates a PreloadFile instance directly from source code. |
+| [`fromFile`](#constructhubpreloadfilefromfile) | Creates a PreloadFile instance from a filepath to load. |
 
 ---
 
