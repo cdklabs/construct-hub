@@ -15,3 +15,4 @@ export {
   Category,
 } from './webapp';
 export { DomainRedirectSource } from './domain-redirect';
+export { PreloadFile } from './preload-file';

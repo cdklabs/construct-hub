@@ -12,6 +12,7 @@ import { CATALOG_KEY, VERSION_TRACKER_KEY } from '../backend/shared/constants';
 import { CacheStrategy } from '../caching';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
+import { PreloadFile } from '../preload-file';
 import { S3StorageFactory } from '../s3/storage';
 import { TempFile } from '../temp-file';
 import { WebappConfig, WebappConfigProps } from './config';
@@ -143,9 +144,9 @@ export interface WebAppProps extends WebappConfigProps {
   readonly packageStats?: PackageStats;
 
   /**
-   * JavaScript source code which will be served at the top of the webapp <head /> tag
+   * JavaScript file which will be loaded before the webapp
    */
-  readonly preloadScript?: string;
+  readonly preloadScript?: PreloadFile;
 }
 
 export class WebApp extends Construct {
@@ -254,7 +255,7 @@ export class WebApp extends Construct {
     });
 
     // Generate preload.js
-    const preloadScript = new TempFile('preload.js', props.preloadScript ?? '');
+    const preloadScript = new TempFile('preload.js', props.preloadScript?.bind() ?? '');
 
     new s3deploy.BucketDeployment(this, 'DeployWebsiteConfig', {
       sources: [s3deploy.Source.asset(config.file.dir), s3deploy.Source.asset(preloadScript.dir)],
