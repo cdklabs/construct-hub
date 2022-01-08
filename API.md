@@ -359,7 +359,7 @@ const constructHubProps: ConstructHubProps = { ... }
 | [`packageSources`](#constructhubconstructhubpropspropertypackagesources) | [`construct-hub.IPackageSource`](#construct-hub.IPackageSource)[] | The package sources to register with this ConstructHub instance. |
 | [`packageTagGroups`](#constructhubconstructhubpropspropertypackagetaggroups) | [`construct-hub.PackageTagGroup`](#construct-hub.PackageTagGroup)[] | Optional configuration for grouping custom package tags. |
 | [`packageTags`](#constructhubconstructhubpropspropertypackagetags) | [`construct-hub.PackageTag`](#construct-hub.PackageTag)[] | Configuration for custom package tags. |
-| [`preloadScript`](#constructhubconstructhubpropspropertypreloadscript) | `string` | Defines source code for a preload.js script inserted at the top of the <head /> of the webapp. |
+| [`preloadScript`](#constructhubconstructhubpropspropertypreloadscript) | [`construct-hub.PreloadFile`](#construct-hub.PreloadFile) | Javascript to run on webapp before app loads. |
 | [`reprocessFrequency`](#constructhubconstructhubpropspropertyreprocessfrequency) | [`@aws-cdk/core.Duration`](#@aws-cdk/core.Duration) | How frequently all packages should get fully reprocessed. |
 | [`sensitiveTaskIsolation`](#constructhubconstructhubpropspropertysensitivetaskisolation) | [`construct-hub.Isolation`](#construct-hub.Isolation) | Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments. |
 
@@ -604,12 +604,12 @@ Configuration for custom package tags.
 ##### `preloadScript`<sup>Optional</sup> <a name="construct-hub.ConstructHubProps.property.preloadScript" id="constructhubconstructhubpropspropertypreloadscript"></a>
 
 ```typescript
-public readonly preloadScript: string;
+public readonly preloadScript: PreloadFile;
 ```
 
-- *Type:* `string`
+- *Type:* [`construct-hub.PreloadFile`](#construct-hub.PreloadFile)
 
-Defines source code for a preload.js script inserted at the top of the <head /> of the webapp.
+Javascript to run on webapp before app loads.
 
 ---
 
@@ -2122,6 +2122,81 @@ public readonly tooltip: string;
 - *Type:* `string`
 
 ---
+
+
+### PreloadFile <a name="construct-hub.PreloadFile" id="constructhubpreloadfile"></a>
+
+#### Initializers <a name="construct-hub.PreloadFile.Initializer" id="constructhubpreloadfileinitializer"></a>
+
+```typescript
+import { PreloadFile } from 'construct-hub'
+
+new PreloadFile(data: string)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| [`data`](#constructhubpreloadfileparameterdata)<span title="Required">*</span> | `string` | *No description.* |
+
+---
+
+##### `data`<sup>Required</sup> <a name="construct-hub.PreloadFile.parameter.data" id="constructhubpreloadfileparameterdata"></a>
+
+- *Type:* `string`
+
+---
+
+#### Methods <a name="Methods" id="methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| [`bind`](#constructhubpreloadfilebind) | *No description.* |
+
+---
+
+##### `bind` <a name="construct-hub.PreloadFile.bind" id="constructhubpreloadfilebind"></a>
+
+```typescript
+public bind()
+```
+
+#### Static Functions <a name="Static Functions" id="static-functions"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| [`fromCode`](#constructhubpreloadfilefromcode) | *No description.* |
+| [`fromFile`](#constructhubpreloadfilefromfile) | *No description.* |
+
+---
+
+##### `fromCode` <a name="construct-hub.PreloadFile.fromCode" id="constructhubpreloadfilefromcode"></a>
+
+```typescript
+import { PreloadFile } from 'construct-hub'
+
+PreloadFile.fromCode(code: string)
+```
+
+###### `code`<sup>Required</sup> <a name="construct-hub.PreloadFile.parameter.code" id="constructhubpreloadfileparametercode"></a>
+
+- *Type:* `string`
+
+---
+
+##### `fromFile` <a name="construct-hub.PreloadFile.fromFile" id="constructhubpreloadfilefromfile"></a>
+
+```typescript
+import { PreloadFile } from 'construct-hub'
+
+PreloadFile.fromFile(path: string)
+```
+
+###### `path`<sup>Required</sup> <a name="construct-hub.PreloadFile.parameter.path" id="constructhubpreloadfileparameterpath"></a>
+
+- *Type:* `string`
+
+---
+
 
 
 ### SpdxLicense <a name="construct-hub.SpdxLicense" id="constructhubspdxlicense"></a>
