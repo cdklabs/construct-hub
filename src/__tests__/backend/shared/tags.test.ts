@@ -9,10 +9,11 @@ describe('Tag conditional logic', () => {
     const packageJson = {
       [key]: value,
     };
+    const readme = '';
 
     // THEN
     const condition = TagCondition.field(key).eq(value).bind();
-    expect(isTagApplicable(condition, packageJson)).toBe(true);
+    expect(isTagApplicable(condition, packageJson, readme)).toBe(true);
   });
 
   test('Nested field access', () => {
@@ -24,10 +25,11 @@ describe('Tag conditional logic', () => {
         [keys[1]]: value,
       },
     };
+    const readme = '';
 
     // THEN
     const condition = TagCondition.field(...keys).eq(value).bind();
-    expect(isTagApplicable(condition, packageJson)).toBe(true);
+    expect(isTagApplicable(condition, packageJson, readme)).toBe(true);
   });
 
   test('Array item access', () => {
@@ -37,10 +39,11 @@ describe('Tag conditional logic', () => {
     const packageJson = {
       [key]: [value],
     };
+    const readme = '';
 
     // THEN
     const condition = TagCondition.field(key, '0').eq(value).bind();
-    expect(isTagApplicable(condition, packageJson)).toBe(true);
+    expect(isTagApplicable(condition, packageJson, readme)).toBe(true);
   });
 
   test('False equality', () => {
@@ -49,10 +52,11 @@ describe('Tag conditional logic', () => {
     const packageJson = {
       [key]: 'STRING_VALUE',
     };
+    const readme = '';
 
     // THEN
     const condition = TagCondition.field(key).eq('SOMETHING_ELSE').bind();
-    expect(isTagApplicable(condition, packageJson)).toBe(false);
+    expect(isTagApplicable(condition, packageJson, readme)).toBe(false);
   });
 
   describe('String includes', () => {
@@ -64,10 +68,11 @@ describe('Tag conditional logic', () => {
       const packageJson = {
         [key]: value,
       };
+      const readme = '';
 
       // THEN
       const condition = TagCondition.field(key).includes(substring).bind();
-      expect(isTagApplicable(condition, packageJson)).toBe(true);
+      expect(isTagApplicable(condition, packageJson, readme)).toBe(true);
     });
 
     test('negative', () => {
@@ -77,10 +82,83 @@ describe('Tag conditional logic', () => {
       const packageJson = {
         [key]: value,
       };
+      const readme = '';
 
       // THEN
       const condition = TagCondition.field(key).includes('SOME_SUBSTRING').bind();
-      expect(isTagApplicable(condition, packageJson)).toBe(false);
+      expect(isTagApplicable(condition, packageJson, readme)).toBe(false);
+    });
+  });
+
+  describe('Readme includes', () => {
+    test('positive', () => {
+      // GIVEN
+      const value = 'SOME_THING';
+      const readme = `BEGINNING_${value}_MORE`;
+      const packageJson = {};
+
+      // THEN
+      const condition = TagCondition.readme().includes(value).bind();
+      expect(isTagApplicable(condition, packageJson, readme)).toBe(true);
+    });
+
+    test('negative', () => {
+      // GIVEN
+      const value = 'SOME_THING';
+      const readme = 'UNRELATED_STRING';
+      const packageJson = {};
+
+      // THEN
+      const condition = TagCondition.readme().includes(value).bind();
+      expect(isTagApplicable(condition, packageJson, readme)).toBe(false);
+    });
+
+    test('at least - positive', () => {
+      // GIVEN
+      const value = 'VERY';
+      const readme = `THE_${value}_${value}_${value}_LONG_STRING`;
+      const options = { atLeast: 3 };
+      const packageJson = {};
+
+      // THEN
+      const condition = TagCondition.readme().includes(value, options).bind();
+      expect(isTagApplicable(condition, packageJson, readme)).toBe(true);
+    });
+
+    test('at least - negative', () => {
+      // GIVEN
+      const value = 'VERY';
+      const readme = `THE_${value}_LONG_STRING`;
+      const options = { atLeast: 3 };
+      const packageJson = {};
+
+      // THEN
+      const condition = TagCondition.readme().includes(value, options).bind();
+      expect(isTagApplicable(condition, packageJson, readme)).toBe(false);
+    });
+
+    test('case sensitive - positive', () => {
+      // GIVEN
+      const value = 'VERY';
+      const readme = `THE_${value}_LONG_STRING`;
+      const options = { caseSensitive: true };
+      const packageJson = {};
+
+      // THEN
+      const condition = TagCondition.readme().includes(value, options).bind();
+      expect(isTagApplicable(condition, packageJson, readme)).toBe(true);
+    });
+
+    test('case sensitive - negative', () => {
+      // GIVEN
+      const value = 'VERY';
+      const readme = `THE_${value.toLowerCase()}_LONG_STRING`;
+      const options = { caseSensitive: true };
+      const packageJson = {};
+
+      // THEN
+      const condition = TagCondition.readme().includes(value, options).bind();
+      expect(isTagApplicable(condition, packageJson, readme)).toBe(false);
     });
   });
 
@@ -93,10 +171,11 @@ describe('Tag conditional logic', () => {
       const packageJson = {
         [key]: value,
       };
+      const readme = '';
 
       // THEN
       const condition = TagCondition.field(key).includes(item).bind();
-      expect(isTagApplicable(condition, packageJson)).toBe(true);
+      expect(isTagApplicable(condition, packageJson, readme)).toBe(true);
     });
 
     test('negative', () => {
@@ -106,10 +185,11 @@ describe('Tag conditional logic', () => {
       const packageJson = {
         [key]: value,
       };
+      const readme = '';
 
       // THEN
       const condition = TagCondition.field(key).includes('NOT_IN_THE_ARRAY').bind();
-      expect(isTagApplicable(condition, packageJson)).toBe(false);
+      expect(isTagApplicable(condition, packageJson, readme)).toBe(false);
     });
   });
 
@@ -121,10 +201,11 @@ describe('Tag conditional logic', () => {
     const packageJson = {
       [key]: value,
     };
+    const readme = '';
 
     // THEN
     const condition = TagCondition.field(key).startsWith(prefix).bind();
-    expect(isTagApplicable(condition, packageJson)).toBe(true);
+    expect(isTagApplicable(condition, packageJson, readme)).toBe(true);
   });
 
 
@@ -135,6 +216,7 @@ describe('Tag conditional logic', () => {
     const packageJson = {
       [key]: value,
     };
+    const readme = '';
     const t = TagCondition.field(key).eq(value);
     const f = TagCondition.field(key).eq('SOMETHING_ELSE');
 
@@ -142,8 +224,8 @@ describe('Tag conditional logic', () => {
       // THEN
       const fcondition = TagCondition.not(t).bind();
       const tcondition = TagCondition.not(f).bind();
-      expect(isTagApplicable(fcondition, packageJson)).toBe(false);
-      expect(isTagApplicable(tcondition, packageJson)).toBe(true);
+      expect(isTagApplicable(fcondition, packageJson, readme)).toBe(false);
+      expect(isTagApplicable(tcondition, packageJson, readme)).toBe(true);
     });
 
     test('Or ||', () => {
@@ -151,9 +233,9 @@ describe('Tag conditional logic', () => {
       const tconditions = [TagCondition.or(t, f).bind(), TagCondition.or(t, t).bind()];
       const fcondition = TagCondition.or(f, f).bind();
       tconditions.forEach(c => {
-        expect(isTagApplicable(c, packageJson)).toBe(true);
+        expect(isTagApplicable(c, packageJson, readme)).toBe(true);
       });
-      expect(isTagApplicable(fcondition, packageJson)).toBe(false);
+      expect(isTagApplicable(fcondition, packageJson, readme)).toBe(false);
     });
 
     test('And &&', () => {
@@ -161,9 +243,9 @@ describe('Tag conditional logic', () => {
       const tcondition = TagCondition.and(t, t).bind();
       const fconditions = [TagCondition.and(t, f).bind(), TagCondition.and(f, f).bind()];
       fconditions.forEach(c => {
-        expect(isTagApplicable(c, packageJson)).toBe(false);
+        expect(isTagApplicable(c, packageJson, readme)).toBe(false);
       });
-      expect(isTagApplicable(tcondition, packageJson)).toBe(true);
+      expect(isTagApplicable(tcondition, packageJson, readme)).toBe(true);
     });
   });
 });

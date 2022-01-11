@@ -42,9 +42,18 @@ const useCaseSearchFilter = new PackageTagGroup('use-case', {
   tooltip: 'Find results for your specific use case',
 });
 
-const serverlessUseCase = TagCondition.field('keywords').includes('serverless');
-const containersUseCase = TagCondition.field('keywords').includes('containers');
-const k8sUseCase = TagCondition.field('keywords').includes('k8s');
+const serverlessUseCase = TagCondition.or(
+  TagCondition.field('keywords').includes('serverless'),
+  TagCondition.readme().includes('serverless'),
+);
+const containersUseCase = TagCondition.or(
+  TagCondition.field('keywords').includes('containers'),
+  TagCondition.readme().includes('containers'),
+);
+const k8sUseCase = TagCondition.or(
+  TagCondition.field('keywords').includes('k8s'),
+  TagCondition.readme().includes('k8s'),
+);
 
 const makeUseCaseTag = (label: string, useCase: TagCondition) => ({
   id: `uc-${label}`,

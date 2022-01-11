@@ -99,15 +99,17 @@ export const handler = metricScope(
       let packageLicense: string;
       let packageName: string;
       let packageVersion: string;
+      let packageReadme: string;
       try {
         parsedAssembly = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
 
         // needs `dependencyClosure`
         constructFramework = detectConstructFramework(parsedAssembly);
-        const { license, name, version } = parsedAssembly;
+        const { license, name, version, readme } = parsedAssembly;
         packageLicense = license;
         packageName = name;
         packageVersion = version;
+        packageReadme = readme?.markdown ?? '';
 
         // Delete some fields not used by the client to reduce the size of the assembly.
         // See https://github.com/cdklabs/construct-hub-webapp/issues/691
@@ -179,7 +181,7 @@ export const handler = metricScope(
 
       const packageTags = packageTagsConfig.reduce((accum: Array<Omit<PackageTagConfig, 'condition'>>, tagConfig) => {
         const { condition, ...tagData } = tagConfig;
-        if (isTagApplicable(condition, packageJsonObj)) {
+        if (isTagApplicable(condition, packageJsonObj, packageReadme)) {
           return [...accum, tagData];
         }
 
