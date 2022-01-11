@@ -4,6 +4,7 @@ import { Construct, Stack } from '@aws-cdk/core';
 import { ConstructHub, Isolation } from '../..';
 import { TagCondition } from '../../package-tag';
 import { PackageTagGroup, FilterType } from '../../package-tag-group';
+import { PreloadFile } from '../../preload-file';
 
 /**
  * Defines a packageTagGroup to group author tags.
@@ -125,7 +126,7 @@ export class DevStack extends Stack {
         { title: 'Category1', url: '/search?q=cat1' },
         { title: 'Category2', url: '/search?keywords=boom' },
       ],
-      preloadScript: 'console.log("This is a custom preloadScript")',
+      preloadScript: PreloadFile.fromCode('console.log("This is a custom preloadScript")'),
     });
   }
 }

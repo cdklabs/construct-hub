@@ -163,6 +163,9 @@ project.package.addField('resolutions', {
   // otherwise, two major versions of this exist, which fails typescript compilation
   // due to duplicate declarations.
   '@types/eslint': '8.2.1',
+
+  // https://github.com/aws/aws-cdk/issues/18322
+  'colors': '1.4.0',
 });
 
 function addVpcAllowListManagement() {

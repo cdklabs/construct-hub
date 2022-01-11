@@ -25,6 +25,7 @@ import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
 import { PackageTag } from './package-tag';
 import { PackageTagGroup } from './package-tag-group';
+import { PreloadFile } from './preload-file';
 import { S3StorageFactory } from './s3/storage';
 import { SpdxLicense } from './spdx-license';
 import { WebApp, PackageLinkConfig, FeaturedPackages, FeatureFlags, Category } from './webapp';
@@ -188,9 +189,9 @@ export interface ConstructHubProps {
   readonly additionalDomains?: DomainRedirectSource[];
 
   /**
-   * Defines source code for a preload.js script inserted at the top of the <head /> of the webapp
+   * Javascript to run on webapp before app loads
    */
-  readonly preloadScript?: string;
+  readonly preloadScript?: PreloadFile;
 }
 
 /**
