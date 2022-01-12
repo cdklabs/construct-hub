@@ -181,7 +181,7 @@ export const handler = metricScope(
 
       const packageTags = packageTagsConfig.reduce((accum: Array<Omit<PackageTagConfig, 'condition'>>, tagConfig) => {
         const { condition, ...tagData } = tagConfig;
-        if (isTagApplicable(condition, packageJsonObj, packageReadme)) {
+        if (isTagApplicable(condition, { pkg: packageJsonObj, readme: packageReadme })) {
           return [...accum, tagData];
         }
 

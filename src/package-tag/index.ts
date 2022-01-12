@@ -76,11 +76,17 @@ export interface PackageTag extends PackageTagBase {
   readonly condition: TagCondition;
 }
 
+export enum TagConditionSource {
+  PACKAGE_JSON = 'PACKAGE_JSON',
+  README = 'README',
+}
+
 /**
  * Serialized config for a tag condition
  */
 export interface TagConditionConfig {
   readonly type: TagConditionLogicType;
+  readonly source?: TagConditionSource;
   readonly key?: string[];
   readonly value?: string;
   readonly options?: { readonly [key: string]: any };
@@ -152,7 +158,6 @@ export enum TagConditionLogicType {
   EQUALS = 'EQUALS',
   INCLUDES = 'INCLUDES',
   STARTS_WITH = 'STARTS_WITH',
-  README_INCLUDES = 'README_CONTAINS',
 }
 
 class TagConditionLogic extends TagCondition {
@@ -172,12 +177,14 @@ class TagConditionLogic extends TagCondition {
   }
 }
 
-class TagConditionFieldPredicate extends TagCondition {
+class TagConditionPredicate extends TagCondition {
   public readonly isPredicate = true;
   public constructor(
     private readonly type: TagConditionLogicType,
-    private readonly key: string[],
-    private readonly value: string,
+    private readonly source?: TagConditionSource,
+    private readonly key?: string[],
+    private readonly value?: string,
+    private readonly options?: TagConditionIncludesOptions,
   ) {
     super();
   }
@@ -185,25 +192,8 @@ class TagConditionFieldPredicate extends TagCondition {
   public bind(): TagConditionConfig {
     return {
       type: this.type,
+      source: this.source,
       key: this.key,
-      value: this.value,
-    };
-  }
-}
-
-class TagConditionReadmePredicate extends TagCondition {
-  public readonly isPredicate = true;
-  public constructor(
-    private readonly type: TagConditionLogicType,
-    private readonly value: string,
-    private readonly options: TagConditionReadmeIncludesOptions,
-  ) {
-    super();
-  }
-
-  public bind(): TagConditionConfig {
-    return {
-      type: this.type,
       value: this.value,
       options: this.options,
     };
@@ -221,8 +211,9 @@ export class TagConditionField {
    * package's package.json is equal to the passed value.
    */
   public eq(value: any): TagCondition {
-    return new TagConditionFieldPredicate(
+    return new TagConditionPredicate(
       TagConditionLogicType.EQUALS,
+      TagConditionSource.PACKAGE_JSON,
       this.field,
       value,
     );
@@ -233,11 +224,13 @@ export class TagConditionField {
    * field within the package's package.json includes the value. This works for
    * arrays or strings.
    */
-  public includes(value: any): TagCondition {
-    return new TagConditionFieldPredicate(
+  public includes(value: any, options: TagConditionIncludesOptions = {}): TagCondition {
+    return new TagConditionPredicate(
       TagConditionLogicType.INCLUDES,
+      TagConditionSource.PACKAGE_JSON,
       this.field,
       value,
+      options,
     );
   }
 
@@ -247,8 +240,9 @@ export class TagConditionField {
    * only for string values.
    */
   public startsWith(value: string): TagCondition {
-    return new TagConditionFieldPredicate(
+    return new TagConditionPredicate(
       TagConditionLogicType.STARTS_WITH,
+      TagConditionSource.PACKAGE_JSON,
       this.field,
       value,
     );
@@ -262,13 +256,14 @@ export class TagConditionReadme {
   public constructor() {}
 
   /**
-   * Create a `field.includes(value)` condition which applies if the specified
-   * field within the package's package.json includes the value. This works for
-   * arrays or strings.
+   * Create a `readme.includes(value)` condition which applies if the README
+   * includes the specified string.
    */
-  public includes(value: any, options: TagConditionReadmeIncludesOptions = {}): TagCondition {
-    return new TagConditionReadmePredicate(
-      TagConditionLogicType.README_INCLUDES,
+  public includes(value: string, options: TagConditionIncludesOptions = {}): TagCondition {
+    return new TagConditionPredicate(
+      TagConditionLogicType.INCLUDES,
+      TagConditionSource.README,
+      undefined, // no key
       value,
       options,
     );
@@ -276,17 +271,18 @@ export class TagConditionReadme {
 }
 
 /**
- * Options for `TagConditionReadme.includes`
+ * Options for `includes` operator.
  */
-export interface TagConditionReadmeIncludesOptions {
+export interface TagConditionIncludesOptions {
   /**
-   * The string must appear at least this many times.
+   * The value must appear at least this many times.
    * @default 1
    */
   readonly atLeast?: number;
 
   /**
-   * String matches in the README must match the casing of the original string.
+   * String matches must match the casing of the original string. This option
+   * is ignored if the value we are checking is an array.
    * @default false
    */
   readonly caseSensitive?: boolean;
