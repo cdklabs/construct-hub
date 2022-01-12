@@ -38,6 +38,27 @@ import { RedriveStateMachine } from './redrive-state-machine';
  */
 const THROTTLE_RETRY_POLICY = { backoffRate: 1.1, interval: Duration.minutes(1), maxAttempts: 30 };
 
+/**
+ * This retry policy is used for transliteration tasks and allows ample
+ * retry attempts in order to avoid having to implement a custom backpressure
+ * handling mehanism.
+ *
+ * This is meant as a stop-gap until we can implement a more resilient system,
+ * which likely will involve more SQS queues, but will probably need to be
+ * throughoutly vetted before it is rolled out everywhere.
+ *
+ * The interval is determined by the execution duration we currently expect from jsii-docgen.
+ * See https://github.com/cdklabs/jsii-docgen/blob/main/test/docgen/view/documentation.test.ts#L13.
+ *
+ * We don't apply backoff because this inevitably causes longer wait times than desired, and unfortunately
+ * there is no way to configure max interval. In addition, since a task duration is fairly stable,
+ * we can assume capacity will free up after roughly 2 minutes.
+ *
+ * Combined with a two minute interval, and a backoff factor of 1, 150 attempts gives us just under 5 hours to complete
+ * a full reprocessing workflow, which should be sufficient.
+ */
+const DOCGEN_THROTTLE_RETRY_POLICY = { backoffRate: 1, interval: Duration.minutes(2), maxAttempts: 150 };
+
 export interface OrchestrationProps {
   /**
    * The bucket in which to source assemblies to transliterate.
@@ -257,7 +278,7 @@ export class Orchestration extends Construct {
               'jsii-docgen.NpmError.E429', // HTTP 429 ("Too Many Requests") from CodeArtifact's S3 bucket
               'jsii-codgen.NpmError.EPROTO', // Sporadic TLS negotiation failures we see in logs, transient
             ],
-            ...THROTTLE_RETRY_POLICY,
+            ...DOCGEN_THROTTLE_RETRY_POLICY,
           })
           .addRetry({
             errors: ['jsii-docgen.NpmError.ETARGET'], // Seen when dependencies aren't available yet

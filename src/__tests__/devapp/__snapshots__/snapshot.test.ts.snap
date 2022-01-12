@@ -3769,7 +3769,7 @@ Resources:
               doc-gen ECS Command"},"Prepare doc-gen ECS
               Command":{"Type":"Pass","ResultPath":"$.docGen","Parameters":{"command.$":"States.Array(States.JsonToString($))"},"Next":"Generate
               docs"},"Generate docs":{"Next":"Check whether catalog needs
-              udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["UnprocessablePackageError"],"Next":"Ignore"},{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send
+              udpating","Retry":[{"ErrorEquals":["jsii-docgen.NoSpaceLeftOnDevice"],"MaxAttempts":0},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException","jsii-docgen.NpmError.E429","jsii-codgen.NpmError.EPROTO"],"IntervalSeconds":120,"MaxAttempts":150,"BackoffRate":1},{"ErrorEquals":["jsii-docgen.NpmError.ETARGET"],"IntervalSeconds":300,"MaxAttempts":3,"BackoffRate":2},{"ErrorEquals":["States.ALL"],"MaxAttempts":3}],"Catch":[{"ErrorEquals":["UnprocessablePackageError"],"Next":"Ignore"},{"ErrorEquals":["States.Timeout"],"ResultPath":"$.error","Next":"Send
               to Dead Letter
               Queue"},{"ErrorEquals":["ECS.AmazonECSException","ECS.InvalidParameterException"],"ResultPath":"$.error","Next":"Send
               to Dead Letter
