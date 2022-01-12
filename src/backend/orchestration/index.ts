@@ -54,10 +54,10 @@ const THROTTLE_RETRY_POLICY = { backoffRate: 1.1, interval: Duration.minutes(1),
  * there is no way to configure max interval. In addition, since a task duration is fairly stable,
  * we can assume capacity will free up after roughly 2 minutes.
  *
- * Combined with a two minute interval, and a backoff factor of 1, 150 attempts gives us just under 5 hours to complete
+ * Combined with a two minute interval, and a backoff factor of 1, 200 attempts gives us just under 7 hours to complete
  * a full reprocessing workflow, which should be sufficient.
  */
-const DOCGEN_THROTTLE_RETRY_POLICY = { backoffRate: 1, interval: Duration.minutes(2), maxAttempts: 150 };
+const DOCGEN_THROTTLE_RETRY_POLICY = { backoffRate: 1, interval: Duration.minutes(2), maxAttempts: 200 };
 
 export interface OrchestrationProps {
   /**
