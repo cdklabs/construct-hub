@@ -1925,6 +1925,7 @@ const tagConditionConfig: TagConditionConfig = { ... }
 | [`children`](#constructhubtagconditionconfigpropertychildren) | [`construct-hub.TagConditionConfig`](#construct-hub.TagConditionConfig)[] | *No description.* |
 | [`key`](#constructhubtagconditionconfigpropertykey) | `string`[] | *No description.* |
 | [`options`](#constructhubtagconditionconfigpropertyoptions) | {[ key: string ]: `any`} | *No description.* |
+| [`source`](#constructhubtagconditionconfigpropertysource) | [`construct-hub.TagConditionSource`](#construct-hub.TagConditionSource) | *No description.* |
 | [`value`](#constructhubtagconditionconfigpropertyvalue) | `string` | *No description.* |
 
 ---
@@ -1969,6 +1970,16 @@ public readonly options: {[ key: string ]: any};
 
 ---
 
+##### `source`<sup>Optional</sup> <a name="construct-hub.TagConditionConfig.property.source" id="constructhubtagconditionconfigpropertysource"></a>
+
+```typescript
+public readonly source: TagConditionSource;
+```
+
+- *Type:* [`construct-hub.TagConditionSource`](#construct-hub.TagConditionSource)
+
+---
+
 ##### `value`<sup>Optional</sup> <a name="construct-hub.TagConditionConfig.property.value" id="constructhubtagconditionconfigpropertyvalue"></a>
 
 ```typescript
@@ -1979,28 +1990,28 @@ public readonly value: string;
 
 ---
 
-### TagConditionReadmeIncludesOptions <a name="construct-hub.TagConditionReadmeIncludesOptions" id="constructhubtagconditionreadmeincludesoptions"></a>
+### TagConditionIncludesOptions <a name="construct-hub.TagConditionIncludesOptions" id="constructhubtagconditionincludesoptions"></a>
 
-Options for `TagConditionReadme.includes`.
+Options for `includes` operator.
 
 #### Initializer <a name="[object Object].Initializer" id="object-objectinitializer"></a>
 
 ```typescript
-import { TagConditionReadmeIncludesOptions } from 'construct-hub'
+import { TagConditionIncludesOptions } from 'construct-hub'
 
-const tagConditionReadmeIncludesOptions: TagConditionReadmeIncludesOptions = { ... }
+const tagConditionIncludesOptions: TagConditionIncludesOptions = { ... }
 ```
 
 #### Properties <a name="Properties" id="properties"></a>
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| [`atLeast`](#constructhubtagconditionreadmeincludesoptionspropertyatleast) | `number` | The string must appear at least this many times. |
-| [`caseSensitive`](#constructhubtagconditionreadmeincludesoptionspropertycasesensitive) | `boolean` | String matches in the README must match the casing of the original string. |
+| [`atLeast`](#constructhubtagconditionincludesoptionspropertyatleast) | `number` | The value must appear at least this many times. |
+| [`caseSensitive`](#constructhubtagconditionincludesoptionspropertycasesensitive) | `boolean` | String matches must match the casing of the original string. |
 
 ---
 
-##### `atLeast`<sup>Optional</sup> <a name="construct-hub.TagConditionReadmeIncludesOptions.property.atLeast" id="constructhubtagconditionreadmeincludesoptionspropertyatleast"></a>
+##### `atLeast`<sup>Optional</sup> <a name="construct-hub.TagConditionIncludesOptions.property.atLeast" id="constructhubtagconditionincludesoptionspropertyatleast"></a>
 
 ```typescript
 public readonly atLeast: number;
@@ -2009,11 +2020,11 @@ public readonly atLeast: number;
 - *Type:* `number`
 - *Default:* 1
 
-The string must appear at least this many times.
+The value must appear at least this many times.
 
 ---
 
-##### `caseSensitive`<sup>Optional</sup> <a name="construct-hub.TagConditionReadmeIncludesOptions.property.caseSensitive" id="constructhubtagconditionreadmeincludesoptionspropertycasesensitive"></a>
+##### `caseSensitive`<sup>Optional</sup> <a name="construct-hub.TagConditionIncludesOptions.property.caseSensitive" id="constructhubtagconditionincludesoptionspropertycasesensitive"></a>
 
 ```typescript
 public readonly caseSensitive: boolean;
@@ -2022,7 +2033,9 @@ public readonly caseSensitive: boolean;
 - *Type:* `boolean`
 - *Default:* false
 
-String matches in the README must match the casing of the original string.
+String matches must match the casing of the original string.
+
+This option is ignored if the value we are checking is an array.
 
 ---
 
@@ -7469,12 +7482,18 @@ public eq(value: any)
 ##### `includes` <a name="construct-hub.TagConditionField.includes" id="constructhubtagconditionfieldincludes"></a>
 
 ```typescript
-public includes(value: any)
+public includes(value: any, options?: TagConditionIncludesOptions)
 ```
 
 ###### `value`<sup>Required</sup> <a name="construct-hub.TagConditionField.parameter.value" id="constructhubtagconditionfieldparametervalue"></a>
 
 - *Type:* `any`
+
+---
+
+###### `options`<sup>Optional</sup> <a name="construct-hub.TagConditionField.parameter.options" id="constructhubtagconditionfieldparameteroptions"></a>
+
+- *Type:* [`construct-hub.TagConditionIncludesOptions`](#construct-hub.TagConditionIncludesOptions)
 
 ---
 
@@ -7514,25 +7533,25 @@ new TagConditionReadme()
 
 | **Name** | **Description** |
 | --- | --- |
-| [`includes`](#constructhubtagconditionreadmeincludes) | Create a `field.includes(value)` condition which applies if the specified field within the package's package.json includes the value. This works for arrays or strings. |
+| [`includes`](#constructhubtagconditionreadmeincludes) | Create a `readme.includes(value)` condition which applies if the README includes the specified string. |
 
 ---
 
 ##### `includes` <a name="construct-hub.TagConditionReadme.includes" id="constructhubtagconditionreadmeincludes"></a>
 
 ```typescript
-public includes(value: any, options?: TagConditionReadmeIncludesOptions)
+public includes(value: string, options?: TagConditionIncludesOptions)
 ```
 
 ###### `value`<sup>Required</sup> <a name="construct-hub.TagConditionReadme.parameter.value" id="constructhubtagconditionreadmeparametervalue"></a>
 
-- *Type:* `any`
+- *Type:* `string`
 
 ---
 
 ###### `options`<sup>Optional</sup> <a name="construct-hub.TagConditionReadme.parameter.options" id="constructhubtagconditionreadmeparameteroptions"></a>
 
-- *Type:* [`construct-hub.TagConditionReadmeIncludesOptions`](#construct-hub.TagConditionReadmeIncludesOptions)
+- *Type:* [`construct-hub.TagConditionIncludesOptions`](#construct-hub.TagConditionIncludesOptions)
 
 ---
 
@@ -7768,7 +7787,6 @@ All traffic to AWS service endpoints is routed through VPC Endpoints, as the com
 | [`EQUALS`](#constructhubtagconditionlogictypeequals) | *No description.* |
 | [`INCLUDES`](#constructhubtagconditionlogictypeincludes) | *No description.* |
 | [`STARTS_WITH`](#constructhubtagconditionlogictypestartswith) | *No description.* |
-| [`README_INCLUDES`](#constructhubtagconditionlogictypereadmeincludes) | *No description.* |
 
 ---
 
@@ -7804,7 +7822,21 @@ Logic operators for performing specific conditional logic.
 ---
 
 
-#### `README_INCLUDES` <a name="construct-hub.TagConditionLogicType.README_INCLUDES" id="constructhubtagconditionlogictypereadmeincludes"></a>
+### TagConditionSource <a name="TagConditionSource" id="tagconditionsource"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| [`PACKAGE_JSON`](#constructhubtagconditionsourcepackagejson) | *No description.* |
+| [`README`](#constructhubtagconditionsourcereadme) | *No description.* |
+
+---
+
+#### `PACKAGE_JSON` <a name="construct-hub.TagConditionSource.PACKAGE_JSON" id="constructhubtagconditionsourcepackagejson"></a>
+
+---
+
+
+#### `README` <a name="construct-hub.TagConditionSource.README" id="constructhubtagconditionsourcereadme"></a>
 
 ---
 
