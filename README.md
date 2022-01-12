@@ -347,6 +347,14 @@ TagCondition.field('constructHub', 'nested', 'key').eq('value');
 packageJson?.constructHub?.nested?.key === value;
 ```
 
+You can also assert that a string occurs at least a certain number of times
+within the package's README.
+
+```ts
+TagCondition.readme().includes('ECS');
+TagCondition.readme().includes('fargate', { atLeast: 3, caseSensitive: false });
+```
+
 #### Package Links
 
 Configuring package links allows you to replace the `Repository`, `License`,

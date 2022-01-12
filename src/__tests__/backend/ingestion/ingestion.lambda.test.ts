@@ -603,6 +603,7 @@ test('basic happy case with custom tags', async () => {
     or: TagCondition.or(mockTrueCondition, mockFalseCondition),
     and: TagCondition.and(mockTrueCondition, mockTrueCondition),
     not: TagCondition.not(mockFalseCondition),
+    readme: TagCondition.readme().includes('Foo'),
   };
 
   // Combinations of conditions that resolve to false, tags should not be
@@ -612,6 +613,7 @@ test('basic happy case with custom tags', async () => {
     or: TagCondition.or(mockFalseCondition, mockFalseCondition),
     and: TagCondition.and(mockTrueCondition, mockFalseCondition),
     not: TagCondition.not(mockTrueCondition),
+    readme: TagCondition.readme().includes('foo', { caseSensitive: true }),
   };
 
   // Useful for later since we need this ordered array to assert against

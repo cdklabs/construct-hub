@@ -1924,6 +1924,8 @@ const tagConditionConfig: TagConditionConfig = { ... }
 | [`type`](#constructhubtagconditionconfigpropertytype)<span title="Required">*</span> | [`construct-hub.TagConditionLogicType`](#construct-hub.TagConditionLogicType) | *No description.* |
 | [`children`](#constructhubtagconditionconfigpropertychildren) | [`construct-hub.TagConditionConfig`](#construct-hub.TagConditionConfig)[] | *No description.* |
 | [`key`](#constructhubtagconditionconfigpropertykey) | `string`[] | *No description.* |
+| [`options`](#constructhubtagconditionconfigpropertyoptions) | {[ key: string ]: `any`} | *No description.* |
+| [`source`](#constructhubtagconditionconfigpropertysource) | [`construct-hub.TagConditionSource`](#construct-hub.TagConditionSource) | *No description.* |
 | [`value`](#constructhubtagconditionconfigpropertyvalue) | `string` | *No description.* |
 
 ---
@@ -1958,6 +1960,26 @@ public readonly key: string[];
 
 ---
 
+##### `options`<sup>Optional</sup> <a name="construct-hub.TagConditionConfig.property.options" id="constructhubtagconditionconfigpropertyoptions"></a>
+
+```typescript
+public readonly options: {[ key: string ]: any};
+```
+
+- *Type:* {[ key: string ]: `any`}
+
+---
+
+##### `source`<sup>Optional</sup> <a name="construct-hub.TagConditionConfig.property.source" id="constructhubtagconditionconfigpropertysource"></a>
+
+```typescript
+public readonly source: TagConditionSource;
+```
+
+- *Type:* [`construct-hub.TagConditionSource`](#construct-hub.TagConditionSource)
+
+---
+
 ##### `value`<sup>Optional</sup> <a name="construct-hub.TagConditionConfig.property.value" id="constructhubtagconditionconfigpropertyvalue"></a>
 
 ```typescript
@@ -1965,6 +1987,55 @@ public readonly value: string;
 ```
 
 - *Type:* `string`
+
+---
+
+### TagConditionIncludesOptions <a name="construct-hub.TagConditionIncludesOptions" id="constructhubtagconditionincludesoptions"></a>
+
+Options for `includes` operator.
+
+#### Initializer <a name="[object Object].Initializer" id="object-objectinitializer"></a>
+
+```typescript
+import { TagConditionIncludesOptions } from 'construct-hub'
+
+const tagConditionIncludesOptions: TagConditionIncludesOptions = { ... }
+```
+
+#### Properties <a name="Properties" id="properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| [`atLeast`](#constructhubtagconditionincludesoptionspropertyatleast) | `number` | The value must appear at least this many times. |
+| [`caseSensitive`](#constructhubtagconditionincludesoptionspropertycasesensitive) | `boolean` | String matches must match the casing of the original string. |
+
+---
+
+##### `atLeast`<sup>Optional</sup> <a name="construct-hub.TagConditionIncludesOptions.property.atLeast" id="constructhubtagconditionincludesoptionspropertyatleast"></a>
+
+```typescript
+public readonly atLeast: number;
+```
+
+- *Type:* `number`
+- *Default:* 1
+
+The value must appear at least this many times.
+
+---
+
+##### `caseSensitive`<sup>Optional</sup> <a name="construct-hub.TagConditionIncludesOptions.property.caseSensitive" id="constructhubtagconditionincludesoptionspropertycasesensitive"></a>
+
+```typescript
+public readonly caseSensitive: boolean;
+```
+
+- *Type:* `boolean`
+- *Default:* false
+
+String matches must match the casing of the original string.
+
+This option is ignored if the value we are checking is an array.
 
 ---
 
@@ -7292,6 +7363,7 @@ public bind()
 | [`field`](#constructhubtagconditionfield) | Target a field within the `package.json` to assert against. Nested fields can be accessed by passing multiple keys. `TagCondition.field('key1', 'key2')` will access `packageJson?.key1?.key2`. |
 | [`not`](#constructhubtagconditionnot) | Create a ! |
 | [`or`](#constructhubtagconditionor) | Create an \|\| condition which applies if any of the condition arguments are true. |
+| [`readme`](#constructhubtagconditionreadme) | Create a condition with logic targeting the README of the package. |
 
 ---
 
@@ -7351,6 +7423,14 @@ TagCondition.or(conds: TagCondition)
 
 ---
 
+##### `readme` <a name="construct-hub.TagCondition.readme" id="constructhubtagconditionreadme"></a>
+
+```typescript
+import { TagCondition } from 'construct-hub'
+
+TagCondition.readme()
+```
+
 
 
 ### TagConditionField <a name="construct-hub.TagConditionField" id="constructhubtagconditionfield"></a>
@@ -7402,12 +7482,18 @@ public eq(value: any)
 ##### `includes` <a name="construct-hub.TagConditionField.includes" id="constructhubtagconditionfieldincludes"></a>
 
 ```typescript
-public includes(value: any)
+public includes(value: any, options?: TagConditionIncludesOptions)
 ```
 
 ###### `value`<sup>Required</sup> <a name="construct-hub.TagConditionField.parameter.value" id="constructhubtagconditionfieldparametervalue"></a>
 
 - *Type:* `any`
+
+---
+
+###### `options`<sup>Optional</sup> <a name="construct-hub.TagConditionField.parameter.options" id="constructhubtagconditionfieldparameteroptions"></a>
+
+- *Type:* [`construct-hub.TagConditionIncludesOptions`](#construct-hub.TagConditionIncludesOptions)
 
 ---
 
@@ -7420,6 +7506,52 @@ public startsWith(value: string)
 ###### `value`<sup>Required</sup> <a name="construct-hub.TagConditionField.parameter.value" id="constructhubtagconditionfieldparametervalue"></a>
 
 - *Type:* `string`
+
+---
+
+
+
+
+### TagConditionReadme <a name="construct-hub.TagConditionReadme" id="constructhubtagconditionreadme"></a>
+
+Target the README of the package to dictate whether a tag is relevant.
+
+#### Initializers <a name="construct-hub.TagConditionReadme.Initializer" id="constructhubtagconditionreadmeinitializer"></a>
+
+```typescript
+import { TagConditionReadme } from 'construct-hub'
+
+new TagConditionReadme()
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+
+---
+
+#### Methods <a name="Methods" id="methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| [`includes`](#constructhubtagconditionreadmeincludes) | Create a `readme.includes(value)` condition which applies if the README includes the specified string. |
+
+---
+
+##### `includes` <a name="construct-hub.TagConditionReadme.includes" id="constructhubtagconditionreadmeincludes"></a>
+
+```typescript
+public includes(value: string, options?: TagConditionIncludesOptions)
+```
+
+###### `value`<sup>Required</sup> <a name="construct-hub.TagConditionReadme.parameter.value" id="constructhubtagconditionreadmeparametervalue"></a>
+
+- *Type:* `string`
+
+---
+
+###### `options`<sup>Optional</sup> <a name="construct-hub.TagConditionReadme.parameter.options" id="constructhubtagconditionreadmeparameteroptions"></a>
+
+- *Type:* [`construct-hub.TagConditionIncludesOptions`](#construct-hub.TagConditionIncludesOptions)
 
 ---
 
@@ -7686,6 +7818,25 @@ Logic operators for performing specific conditional logic.
 
 
 #### `STARTS_WITH` <a name="construct-hub.TagConditionLogicType.STARTS_WITH" id="constructhubtagconditionlogictypestartswith"></a>
+
+---
+
+
+### TagConditionSource <a name="TagConditionSource" id="tagconditionsource"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| [`PACKAGE_JSON`](#constructhubtagconditionsourcepackagejson) | *No description.* |
+| [`README`](#constructhubtagconditionsourcereadme) | *No description.* |
+
+---
+
+#### `PACKAGE_JSON` <a name="construct-hub.TagConditionSource.PACKAGE_JSON" id="constructhubtagconditionsourcepackagejson"></a>
+
+---
+
+
+#### `README` <a name="construct-hub.TagConditionSource.README" id="constructhubtagconditionsourcereadme"></a>
 
 ---
 
