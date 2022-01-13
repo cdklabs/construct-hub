@@ -213,18 +213,6 @@ Object {
       "Description": "S3 key for asset version \\"2461c88f80fec4f5a6092d3e491e8a5fb9ad123987b7b873dc4b988e1f8986e5\\"",
       "Type": "String",
     },
-    "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933ArtifactHash02150BCF": Object {
-      "Description": "Artifact hash for asset \\"295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933\\"",
-      "Type": "String",
-    },
-    "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22": Object {
-      "Description": "S3 bucket for asset \\"295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933\\"",
-      "Type": "String",
-    },
-    "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3VersionKey27EBE7C5": Object {
-      "Description": "S3 key for asset version \\"295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933\\"",
-      "Type": "String",
-    },
     "AssetParameters3870b20307cc608daccb2fee12cb05779bef5f63a673e46f3b1fce6ecfcb73e5ArtifactHash499F6DFF": Object {
       "Description": "Artifact hash for asset \\"3870b20307cc608daccb2fee12cb05779bef5f63a673e46f3b1fce6ecfcb73e5\\"",
       "Type": "String",
@@ -331,6 +319,18 @@ Object {
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064S3VersionKey5B081B37": Object {
       "Description": "S3 key for asset version \\"8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064\\"",
+      "Type": "String",
+    },
+    "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfArtifactHash03C91F04": Object {
+      "Description": "Artifact hash for asset \\"9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bf\\"",
+      "Type": "String",
+    },
+    "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3": Object {
+      "Description": "S3 bucket for asset \\"9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bf\\"",
+      "Type": "String",
+    },
+    "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3VersionKey6EB077BC": Object {
+      "Description": "S3 key for asset version \\"9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bf\\"",
       "Type": "String",
     },
     "AssetParameters9bcdd14b7dced32346349eed6af59c816aac0366064d91ca09f4fe83bf3ee5cbArtifactHash148068C7": Object {
@@ -4589,7 +4589,7 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"Check whether catalog needs udpating\\":{\\"Next\\":\\"Is catalog update needed?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogNeedsUpdating\\",\\"Resource\\":\\"",
+              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"Check whether catalog needs udpating\\":{\\"Next\\":\\"Is catalog update needed?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\",\\"Lambda.Unknown\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\",\\"Lambda.Unknown\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogNeedsUpdating\\",\\"Resource\\":\\"",
               Object {
                 "Fn::GetAtt": Array [
                   "ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC",
@@ -6456,7 +6456,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:746e9a2fdb438ae0b97044aafc9caba4776d0e5ad6a97b1685292bd2038b2b75",
+                  "/aws-cdk/assets:b00fe843e455a6730d0cf72814cb48c10d3464ab8fd22e1117f168fa2b92d368",
                 ],
               ],
             },
@@ -9720,7 +9720,7 @@ function handler(event) {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22",
+            "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3",
           },
         ],
         "SourceObjectKeys": Array [
@@ -9735,7 +9735,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3VersionKey27EBE7C5",
+                          "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3VersionKey6EB077BC",
                         },
                       ],
                     },
@@ -9748,7 +9748,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3VersionKey27EBE7C5",
+                          "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3VersionKey6EB077BC",
                         },
                       ],
                     },
@@ -10429,7 +10429,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22",
+                        "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3",
                       },
                     ],
                   ],
@@ -10444,7 +10444,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22",
+                        "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3",
                       },
                       "/*",
                     ],
@@ -11399,18 +11399,6 @@ Object {
       "Description": "S3 key for asset version \\"2461c88f80fec4f5a6092d3e491e8a5fb9ad123987b7b873dc4b988e1f8986e5\\"",
       "Type": "String",
     },
-    "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933ArtifactHash02150BCF": Object {
-      "Description": "Artifact hash for asset \\"295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933\\"",
-      "Type": "String",
-    },
-    "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22": Object {
-      "Description": "S3 bucket for asset \\"295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933\\"",
-      "Type": "String",
-    },
-    "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3VersionKey27EBE7C5": Object {
-      "Description": "S3 key for asset version \\"295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933\\"",
-      "Type": "String",
-    },
     "AssetParameters3870b20307cc608daccb2fee12cb05779bef5f63a673e46f3b1fce6ecfcb73e5ArtifactHash499F6DFF": Object {
       "Description": "Artifact hash for asset \\"3870b20307cc608daccb2fee12cb05779bef5f63a673e46f3b1fce6ecfcb73e5\\"",
       "Type": "String",
@@ -11529,6 +11517,18 @@ Object {
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064S3VersionKey5B081B37": Object {
       "Description": "S3 key for asset version \\"8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064\\"",
+      "Type": "String",
+    },
+    "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfArtifactHash03C91F04": Object {
+      "Description": "Artifact hash for asset \\"9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bf\\"",
+      "Type": "String",
+    },
+    "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3": Object {
+      "Description": "S3 bucket for asset \\"9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bf\\"",
+      "Type": "String",
+    },
+    "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3VersionKey6EB077BC": Object {
+      "Description": "S3 key for asset version \\"9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bf\\"",
       "Type": "String",
     },
     "AssetParameters9bcdd14b7dced32346349eed6af59c816aac0366064d91ca09f4fe83bf3ee5cbArtifactHash148068C7": Object {
@@ -16174,7 +16174,7 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"Check whether catalog needs udpating\\":{\\"Next\\":\\"Is catalog update needed?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogNeedsUpdating\\",\\"Resource\\":\\"",
+              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"Check whether catalog needs udpating\\":{\\"Next\\":\\"Is catalog update needed?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\",\\"Lambda.Unknown\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\",\\"Lambda.Unknown\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogNeedsUpdating\\",\\"Resource\\":\\"",
               Object {
                 "Fn::GetAtt": Array [
                   "ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC",
@@ -18068,7 +18068,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:746e9a2fdb438ae0b97044aafc9caba4776d0e5ad6a97b1685292bd2038b2b75",
+                  "/aws-cdk/assets:b00fe843e455a6730d0cf72814cb48c10d3464ab8fd22e1117f168fa2b92d368",
                 ],
               ],
             },
@@ -21378,7 +21378,7 @@ function handler(event) {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22",
+            "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3",
           },
         ],
         "SourceObjectKeys": Array [
@@ -21393,7 +21393,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3VersionKey27EBE7C5",
+                          "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3VersionKey6EB077BC",
                         },
                       ],
                     },
@@ -21406,7 +21406,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3VersionKey27EBE7C5",
+                          "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3VersionKey6EB077BC",
                         },
                       ],
                     },
@@ -22087,7 +22087,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22",
+                        "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3",
                       },
                     ],
                   ],
@@ -22102,7 +22102,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22",
+                        "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3",
                       },
                       "/*",
                     ],
@@ -23057,18 +23057,6 @@ Object {
       "Description": "S3 key for asset version \\"2461c88f80fec4f5a6092d3e491e8a5fb9ad123987b7b873dc4b988e1f8986e5\\"",
       "Type": "String",
     },
-    "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933ArtifactHash02150BCF": Object {
-      "Description": "Artifact hash for asset \\"295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933\\"",
-      "Type": "String",
-    },
-    "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22": Object {
-      "Description": "S3 bucket for asset \\"295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933\\"",
-      "Type": "String",
-    },
-    "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3VersionKey27EBE7C5": Object {
-      "Description": "S3 key for asset version \\"295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933\\"",
-      "Type": "String",
-    },
     "AssetParameters3870b20307cc608daccb2fee12cb05779bef5f63a673e46f3b1fce6ecfcb73e5ArtifactHash499F6DFF": Object {
       "Description": "Artifact hash for asset \\"3870b20307cc608daccb2fee12cb05779bef5f63a673e46f3b1fce6ecfcb73e5\\"",
       "Type": "String",
@@ -23175,6 +23163,18 @@ Object {
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064S3VersionKey5B081B37": Object {
       "Description": "S3 key for asset version \\"8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064\\"",
+      "Type": "String",
+    },
+    "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfArtifactHash03C91F04": Object {
+      "Description": "Artifact hash for asset \\"9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bf\\"",
+      "Type": "String",
+    },
+    "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3": Object {
+      "Description": "S3 bucket for asset \\"9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bf\\"",
+      "Type": "String",
+    },
+    "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3VersionKey6EB077BC": Object {
+      "Description": "S3 key for asset version \\"9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bf\\"",
       "Type": "String",
     },
     "AssetParameters9bcdd14b7dced32346349eed6af59c816aac0366064d91ca09f4fe83bf3ee5cbArtifactHash148068C7": Object {
@@ -27433,7 +27433,7 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"Check whether catalog needs udpating\\":{\\"Next\\":\\"Is catalog update needed?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogNeedsUpdating\\",\\"Resource\\":\\"",
+              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"Check whether catalog needs udpating\\":{\\"Next\\":\\"Is catalog update needed?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\",\\"Lambda.Unknown\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\",\\"Lambda.Unknown\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogNeedsUpdating\\",\\"Resource\\":\\"",
               Object {
                 "Fn::GetAtt": Array [
                   "ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC",
@@ -29300,7 +29300,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:746e9a2fdb438ae0b97044aafc9caba4776d0e5ad6a97b1685292bd2038b2b75",
+                  "/aws-cdk/assets:b00fe843e455a6730d0cf72814cb48c10d3464ab8fd22e1117f168fa2b92d368",
                 ],
               ],
             },
@@ -32564,7 +32564,7 @@ function handler(event) {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22",
+            "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3",
           },
         ],
         "SourceObjectKeys": Array [
@@ -32579,7 +32579,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3VersionKey27EBE7C5",
+                          "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3VersionKey6EB077BC",
                         },
                       ],
                     },
@@ -32592,7 +32592,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3VersionKey27EBE7C5",
+                          "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3VersionKey6EB077BC",
                         },
                       ],
                     },
@@ -33273,7 +33273,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22",
+                        "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3",
                       },
                     ],
                   ],
@@ -33288,7 +33288,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22",
+                        "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3",
                       },
                       "/*",
                     ],
@@ -34265,18 +34265,6 @@ Object {
       "Description": "S3 key for asset version \\"2461c88f80fec4f5a6092d3e491e8a5fb9ad123987b7b873dc4b988e1f8986e5\\"",
       "Type": "String",
     },
-    "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933ArtifactHash02150BCF": Object {
-      "Description": "Artifact hash for asset \\"295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933\\"",
-      "Type": "String",
-    },
-    "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22": Object {
-      "Description": "S3 bucket for asset \\"295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933\\"",
-      "Type": "String",
-    },
-    "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3VersionKey27EBE7C5": Object {
-      "Description": "S3 key for asset version \\"295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933\\"",
-      "Type": "String",
-    },
     "AssetParameters3870b20307cc608daccb2fee12cb05779bef5f63a673e46f3b1fce6ecfcb73e5ArtifactHash499F6DFF": Object {
       "Description": "Artifact hash for asset \\"3870b20307cc608daccb2fee12cb05779bef5f63a673e46f3b1fce6ecfcb73e5\\"",
       "Type": "String",
@@ -34395,6 +34383,18 @@ Object {
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064S3VersionKey5B081B37": Object {
       "Description": "S3 key for asset version \\"8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064\\"",
+      "Type": "String",
+    },
+    "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfArtifactHash03C91F04": Object {
+      "Description": "Artifact hash for asset \\"9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bf\\"",
+      "Type": "String",
+    },
+    "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3": Object {
+      "Description": "S3 bucket for asset \\"9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bf\\"",
+      "Type": "String",
+    },
+    "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3VersionKey6EB077BC": Object {
+      "Description": "S3 key for asset version \\"9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bf\\"",
       "Type": "String",
     },
     "AssetParameters9bcdd14b7dced32346349eed6af59c816aac0366064d91ca09f4fe83bf3ee5cbArtifactHash148068C7": Object {
@@ -38824,7 +38824,7 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"Check whether catalog needs udpating\\":{\\"Next\\":\\"Is catalog update needed?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogNeedsUpdating\\",\\"Resource\\":\\"",
+              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"Check whether catalog needs udpating\\":{\\"Next\\":\\"Is catalog update needed?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\",\\"Lambda.Unknown\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\",\\"Lambda.Unknown\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogNeedsUpdating\\",\\"Resource\\":\\"",
               Object {
                 "Fn::GetAtt": Array [
                   "ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC",
@@ -40691,7 +40691,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:746e9a2fdb438ae0b97044aafc9caba4776d0e5ad6a97b1685292bd2038b2b75",
+                  "/aws-cdk/assets:b00fe843e455a6730d0cf72814cb48c10d3464ab8fd22e1117f168fa2b92d368",
                 ],
               ],
             },
@@ -43994,7 +43994,7 @@ function handler(event) {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22",
+            "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3",
           },
         ],
         "SourceObjectKeys": Array [
@@ -44009,7 +44009,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3VersionKey27EBE7C5",
+                          "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3VersionKey6EB077BC",
                         },
                       ],
                     },
@@ -44022,7 +44022,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3VersionKey27EBE7C5",
+                          "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3VersionKey6EB077BC",
                         },
                       ],
                     },
@@ -44930,7 +44930,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22",
+                        "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3",
                       },
                     ],
                   ],
@@ -44945,7 +44945,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22",
+                        "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3",
                       },
                       "/*",
                     ],
@@ -45900,18 +45900,6 @@ Object {
       "Description": "S3 key for asset version \\"2461c88f80fec4f5a6092d3e491e8a5fb9ad123987b7b873dc4b988e1f8986e5\\"",
       "Type": "String",
     },
-    "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933ArtifactHash02150BCF": Object {
-      "Description": "Artifact hash for asset \\"295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933\\"",
-      "Type": "String",
-    },
-    "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22": Object {
-      "Description": "S3 bucket for asset \\"295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933\\"",
-      "Type": "String",
-    },
-    "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3VersionKey27EBE7C5": Object {
-      "Description": "S3 key for asset version \\"295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933\\"",
-      "Type": "String",
-    },
     "AssetParameters3870b20307cc608daccb2fee12cb05779bef5f63a673e46f3b1fce6ecfcb73e5ArtifactHash499F6DFF": Object {
       "Description": "Artifact hash for asset \\"3870b20307cc608daccb2fee12cb05779bef5f63a673e46f3b1fce6ecfcb73e5\\"",
       "Type": "String",
@@ -46030,6 +46018,18 @@ Object {
     },
     "AssetParameters8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064S3VersionKey5B081B37": Object {
       "Description": "S3 key for asset version \\"8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064\\"",
+      "Type": "String",
+    },
+    "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfArtifactHash03C91F04": Object {
+      "Description": "Artifact hash for asset \\"9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bf\\"",
+      "Type": "String",
+    },
+    "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3": Object {
+      "Description": "S3 bucket for asset \\"9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bf\\"",
+      "Type": "String",
+    },
+    "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3VersionKey6EB077BC": Object {
+      "Description": "S3 key for asset version \\"9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bf\\"",
       "Type": "String",
     },
     "AssetParameters9bcdd14b7dced32346349eed6af59c816aac0366064d91ca09f4fe83bf3ee5cbArtifactHash148068C7": Object {
@@ -50545,7 +50545,7 @@ Direct link to function: /lambda/home#/functions/",
                   "GroupId",
                 ],
               },
-              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"Check whether catalog needs udpating\\":{\\"Next\\":\\"Is catalog update needed?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogNeedsUpdating\\",\\"Resource\\":\\"",
+              "\\"]}},\\"Overrides\\":{\\"ContainerOverrides\\":[{\\"Name\\":\\"Resource\\",\\"Command.$\\":\\"$\\",\\"Environment\\":[{\\"Name\\":\\"SFN_TASK_TOKEN\\",\\"Value.$\\":\\"$$.Task.Token\\"}]}]},\\"LaunchType\\":\\"FARGATE\\",\\"PlatformVersion\\":\\"1.4.0\\"}},\\"Check whether catalog needs udpating\\":{\\"Next\\":\\"Is catalog update needed?\\",\\"Retry\\":[{\\"ErrorEquals\\":[\\"Lambda.ServiceException\\",\\"Lambda.AWSLambdaException\\",\\"Lambda.SdkClientException\\"],\\"IntervalSeconds\\":2,\\"MaxAttempts\\":6,\\"BackoffRate\\":2},{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\",\\"Lambda.Unknown\\"],\\"IntervalSeconds\\":60,\\"MaxAttempts\\":30,\\"BackoffRate\\":1.1}],\\"Catch\\":[{\\"ErrorEquals\\":[\\"Lambda.TooManyRequestsException\\",\\"Lambda.Unknown\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.TaskFailed\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"},{\\"ErrorEquals\\":[\\"States.ALL\\"],\\"ResultPath\\":\\"$.error\\",\\"Next\\":\\"Send to Dead Letter Queue\\"}],\\"Type\\":\\"Task\\",\\"ResultPath\\":\\"$.catalogNeedsUpdating\\",\\"Resource\\":\\"",
               Object {
                 "Fn::GetAtt": Array [
                   "ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC",
@@ -52019,7 +52019,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:746e9a2fdb438ae0b97044aafc9caba4776d0e5ad6a97b1685292bd2038b2b75",
+                  "/aws-cdk/assets:b00fe843e455a6730d0cf72814cb48c10d3464ab8fd22e1117f168fa2b92d368",
                 ],
               ],
             },
@@ -57240,7 +57240,7 @@ function handler(event) {
         },
         "SourceBucketNames": Array [
           Object {
-            "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22",
+            "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3",
           },
         ],
         "SourceObjectKeys": Array [
@@ -57255,7 +57255,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3VersionKey27EBE7C5",
+                          "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3VersionKey6EB077BC",
                         },
                       ],
                     },
@@ -57268,7 +57268,7 @@ function handler(event) {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3VersionKey27EBE7C5",
+                          "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3VersionKey6EB077BC",
                         },
                       ],
                     },
@@ -58357,7 +58357,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22",
+                        "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3",
                       },
                     ],
                   ],
@@ -58372,7 +58372,7 @@ function handler(event) {
                       },
                       ":s3:::",
                       Object {
-                        "Ref": "AssetParameters295620c5077ea8e90e527adafed9e1e82d5708da2a67f097fa8eef0c62d49933S3BucketDB2F2A22",
+                        "Ref": "AssetParameters9b8516f4fa02841c9d1b1914dbb1a4cf3730056d9d161ebd46e09afb913357bfS3Bucket741533E3",
                       },
                       "/*",
                     ],

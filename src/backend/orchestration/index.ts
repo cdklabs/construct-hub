@@ -224,8 +224,14 @@ export class Orchestration extends Construct {
       payloadResponseOnly: true,
       resultPath: '$.catalogNeedsUpdating',
     })
-      .addRetry({ errors: ['Lambda.TooManyRequestsException'], ...THROTTLE_RETRY_POLICY })
-      .addCatch(sendToDeadLetterQueue, { errors: ['Lambda.TooManyRequestsException'], resultPath: '$.error' } )
+      .addRetry({
+        errors: [
+          'Lambda.TooManyRequestsException',
+          'Lambda.Unknown', // happens when a lambda times out.
+        ],
+        ...THROTTLE_RETRY_POLICY,
+      })
+      .addCatch(sendToDeadLetterQueue, { errors: ['Lambda.TooManyRequestsException', 'Lambda.Unknown'], resultPath: '$.error' } )
       .addCatch(sendToDeadLetterQueue, { errors: ['States.TaskFailed'], resultPath: '$.error' } )
       .addCatch(sendToDeadLetterQueue, { errors: ['States.ALL'], resultPath: '$.error' })
       .next(new Choice(this, 'Is catalog update needed?')
