@@ -132,7 +132,12 @@ const project = new cdk.JsiiProject({
   autoApproveUpgrades: true,
 
   depsUpgradeOptions: {
-    exclude: [...peerDeps, cdkAssert, cdkCli],
+    exclude: [
+      ...peerDeps,
+      cdkAssert,
+      cdkCli,
+      'cdk-triggers', // can be removed once Construct Hub uses CDK v2
+    ],
     ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve'],
@@ -879,7 +884,7 @@ function generateSpdxLicenseEnum() {
 // and bundle it with this library. this way, we are only taking a
 // dev-dependency on the webapp instead of a normal/bundled dependency.
 project.addDevDeps('construct-hub-webapp');
-project.addDevDeps('cdk-triggers');
+project.addDevDeps('cdk-triggers@0.0.x'); // can be unpinned once Construct Hub uses CDK v2
 
 project.compileTask.prependExec('cp -r ./node_modules/construct-hub-webapp/build ./website');
 project.compileTask.prependExec('rm -rf ./website');
