@@ -6,7 +6,8 @@ import * as AWSMock from 'aws-sdk-mock';
 import { LanguageNotSupportedError, UnInstallablePackageError, CorruptedAssemblyError, Language } from 'jsii-docgen';
 
 // this import is separate from the normal because we want jest to mock it.
-import { Markdown } from 'jsii-docgen/lib/docgen/render/markdown';
+import { MarkdownDocument } from 'jsii-docgen/lib/docgen/render/markdown-doc';
+import { MarkdownRenderer } from 'jsii-docgen/lib/docgen/render/markdown-render';
 import { Documentation } from 'jsii-docgen/lib/docgen/view/documentation';
 
 import type { TransliteratorInput } from '../../../backend/payload-schema';
@@ -19,7 +20,7 @@ import { writeFile } from '../../../backend/transliterator/util';
 // looks like we are just over the default limit now
 jest.setTimeout(6000);
 
-// we only need to mock the `Documentation` class.
+jest.mock('jsii-docgen/lib/docgen/render/markdown-render');
 jest.mock('jsii-docgen/lib/docgen/view/documentation');
 jest.mock('../../../backend/shared/code-artifact.lambda-shared');
 jest.mock('../../../backend/shared/shell-out.lambda-shared');
@@ -69,14 +70,16 @@ describe('VPC Endpoints', () => {
   test('happy path', async () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const fromSchema = require('jsii-docgen').MarkdownRenderer.fromSchema as jest.MockedFunction<typeof MarkdownRenderer.fromSchema>;
 
     class MockDocumentation {
-      public async render(options: any) {
+      public async toJson(options: any) {
         if (![Language.PYTHON, Language.TYPESCRIPT].includes(options.language)) {
           throw new LanguageNotSupportedError();
         } else {
           return {
-            render: () => 'docs',
+            render: () => '{ "contents": "docs" }',
           };
         }
       }
@@ -84,6 +87,9 @@ describe('VPC Endpoints', () => {
 
     forPackage.mockImplementation(async (_: string) => {
       return new MockDocumentation() as unknown as Documentation;
+    });
+    fromSchema.mockImplementation((_schema, _options) => {
+      return new MarkdownDocument();
     });
 
     // GIVEN
@@ -116,6 +122,9 @@ describe('VPC Endpoints', () => {
     mockPutRequest(...DocumentationLanguage.ALL.map(
       (lang) =>
         `/docs-${lang}.md${lang === DocumentationLanguage.PYTHON || lang === DocumentationLanguage.TYPESCRIPT ? '' : constants.NOT_SUPPORTED_SUFFIX}`,
+    ), ...DocumentationLanguage.ALL.map(
+      (lang) =>
+        `/docs-${lang}.json${lang === DocumentationLanguage.PYTHON || lang === DocumentationLanguage.TYPESCRIPT ? '' : constants.NOT_SUPPORTED_SUFFIX}`,
     ));
 
     const { created } = await handler(event);
@@ -125,8 +134,10 @@ describe('VPC Endpoints', () => {
         : constants.NOT_SUPPORTED_SUFFIX;
       expect(created.map((c) => c.key))
         .toContain(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-${lang}.md${suffix}`);
+      expect(created.map((c) => c.key))
+        .toContain(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-${lang}.json${suffix}`);
     }
-    expect(created.length).toEqual(DocumentationLanguage.ALL.length);
+    expect(created.length).toEqual(DocumentationLanguage.ALL.length * 2); // one .md and one .json per language
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     expect(require('../../../backend/shared/code-artifact.lambda-shared').logInWithCodeArtifact).toHaveBeenCalledWith({
       endpoint,
@@ -184,7 +195,7 @@ test('corrupt assembly marker is uploaded for the necessary languages', async ()
   const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
 
   class MockDocumentation {
-    public async render() {
+    public async toJson() {
       throw new CorruptedAssemblyError();
     }
   }
@@ -220,9 +231,11 @@ test('corrupt assembly marker is uploaded for the necessary languages', async ()
   mockPutRequest(constants.CORRUPT_ASSEMBLY_SUFFIX);
 
   const { created } = await handler(event);
-  expect(created.length).toEqual(2);
-  expect(created[0].key).toEqual(`data/${packageName}/v${packageVersion}/docs-typescript.md${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
-  expect(created[1].key).toEqual(`data/${packageName}/v${packageVersion}/docs-python.md${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
+  expect(created.length).toEqual(4);
+  expect(created[0].key).toEqual(`data/${packageName}/v${packageVersion}/docs-typescript.json${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
+  expect(created[1].key).toEqual(`data/${packageName}/v${packageVersion}/docs-typescript.md${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
+  expect(created[2].key).toEqual(`data/${packageName}/v${packageVersion}/docs-python.json${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
+  expect(created[3].key).toEqual(`data/${packageName}/v${packageVersion}/docs-python.md${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
 
 });
 
@@ -232,8 +245,8 @@ test('corrupt assembly and uninstallable markers are deleted', async () => {
   const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
 
   class MockDocumentation {
-    public async render() {
-      return new Markdown();
+    public async toJson() {
+      return new MarkdownDocument();
     }
   }
 
@@ -265,13 +278,14 @@ test('corrupt assembly and uninstallable markers are deleted', async () => {
   // mock the assembly and tarball requests
   mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
 
-  mockPutRequest('/docs-typescript.md');
+  mockPutRequest('/docs-typescript.json', '/docs-typescript.md');
   mockDeleteRequest(constants.CORRUPT_ASSEMBLY_SUFFIX, constants.UNINSTALLABLE_PACKAGE_SUFFIX);
 
   const { created, deleted } = await handler(event);
-  expect(created.length).toEqual(1);
+  expect(created.length).toEqual(2);
   expect(deleted.length).toEqual(2);
-  expect(created[0].key).toEqual(`data/${packageName}/v${packageVersion}/docs-typescript.md`);
+  expect(created[0].key).toEqual(`data/${packageName}/v${packageVersion}/docs-typescript.json`);
+  expect(created[1].key).toEqual(`data/${packageName}/v${packageVersion}/docs-typescript.md`);
   expect(deleted[0].key).toEqual(`data/${packageName}/v${packageVersion}${constants.UNINSTALLABLE_PACKAGE_SUFFIX}`);
   expect(deleted[1].key).toEqual(`data/${packageName}/v${packageVersion}/docs-typescript.md${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
 
@@ -313,11 +327,12 @@ test('uploads a file per language (scoped package)', async () => {
   mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
 
   // mock the file uploads
-  mockPutRequest('/docs-typescript.md');
+  mockPutRequest('/docs-typescript.json', '/docs-typescript.md');
 
   const { created } = await handler(event);
-  expect(created.length).toEqual(1);
-  expect(created[0].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-typescript.md`);
+  expect(created.length).toEqual(2);
+  expect(created[0].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-typescript.json`);
+  expect(created[1].key).toEqual(`data/@${packageScope}/${packageName}/v${packageVersion}/docs-typescript.md`);
 
 });
 
@@ -361,13 +376,19 @@ test('uploads a file per submodule (unscoped package)', async () => {
     '/docs-typescript.md',
     '/docs-sub1-typescript.md',
     '/docs-sub2-typescript.md',
+    '/docs-typescript.json',
+    '/docs-sub1-typescript.json',
+    '/docs-sub2-typescript.json',
   );
 
   const { created } = await handler(event);
 
   expect(created.map(({ key }) => key)).toEqual([
+    `data/${packageName}/v${packageVersion}/docs-typescript.json`,
     `data/${packageName}/v${packageVersion}/docs-typescript.md`,
+    `data/${packageName}/v${packageVersion}/docs-sub1-typescript.json`,
     `data/${packageName}/v${packageVersion}/docs-sub1-typescript.md`,
+    `data/${packageName}/v${packageVersion}/docs-sub2-typescript.json`,
     `data/${packageName}/v${packageVersion}/docs-sub2-typescript.md`,
   ]);
 
@@ -380,7 +401,7 @@ describe('markers for un-supported languages', () => {
     const forPackage = require('jsii-docgen').Documentation.forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
 
     class MockDocumentation {
-      public async render() {
+      public async toJson() {
         throw new LanguageNotSupportedError();
       }
     }
@@ -423,13 +444,19 @@ describe('markers for un-supported languages', () => {
       `/docs-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
       `/docs-sub1-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
       `/docs-sub2-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
+      `/docs-python.json${constants.NOT_SUPPORTED_SUFFIX}`,
+      `/docs-sub1-python.json${constants.NOT_SUPPORTED_SUFFIX}`,
+      `/docs-sub2-python.json${constants.NOT_SUPPORTED_SUFFIX}`,
     );
 
     const { created } = await handler(event);
 
     expect(created.map(({ key }) => key)).toEqual([
+      `data/${packageName}/v${packageVersion}/docs-python.json${constants.NOT_SUPPORTED_SUFFIX}`,
       `data/${packageName}/v${packageVersion}/docs-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
+      `data/${packageName}/v${packageVersion}/docs-sub1-python.json${constants.NOT_SUPPORTED_SUFFIX}`,
       `data/${packageName}/v${packageVersion}/docs-sub1-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
+      `data/${packageName}/v${packageVersion}/docs-sub2-python.json${constants.NOT_SUPPORTED_SUFFIX}`,
       `data/${packageName}/v${packageVersion}/docs-sub2-python.md${constants.NOT_SUPPORTED_SUFFIX}`,
     ]);
 
@@ -438,9 +465,9 @@ describe('markers for un-supported languages', () => {
 
 class MockDocumentation {
   public constructor(private readonly target: string) {}
-  public async render() {
+  public async toJson() {
     return {
-      render: () => `docs for ${this.target}`,
+      render: () => `{ "content": "docs for ${this.target}" }`,
     };
   }
 }

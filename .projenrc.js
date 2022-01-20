@@ -639,7 +639,7 @@ function newEcsTask(entrypoint) {
     description: `Continuously update an AWS Fargate bundle from ${entry}`,
     exec: [...bundleCmd, '--watch'].join(' '),
   });
-  bundle.env(BUNDLE_DIR_ENV, outdir);
+  bundleWatch.env(BUNDLE_DIR_ENV, outdir);
 
   project.compileTask.spawn(bundle);
   bundleTask.spawn(bundle);
