@@ -96,13 +96,13 @@ export async function handler(event: ScheduledEvent, context: Context) {
             submodule,
           );
           identified = true;
-        } else if (key.endsWith(constants.docsKeySuffix(language, 'md'))) {
+        } else if (key.endsWith(constants.docsKeySuffix(language))) {
           recordPerLanguage(language, PerLanguageStatus.SUPPORTED, name, majorVersion, fullName);
           identified = true;
-        } else if (key.endsWith(constants.notSupportedKeySuffix(language, undefined, 'md'))) {
+        } else if (key.endsWith(constants.docsKeySuffix(language) + constants.NOT_SUPPORTED_SUFFIX)) {
           recordPerLanguage(language, PerLanguageStatus.UNSUPPORTED, name, majorVersion, fullName);
           identified = true;
-        } else if (key.endsWith(constants.corruptAssemblyKeySuffix(language, undefined, 'md'))) {
+        } else if (key.endsWith(constants.docsKeySuffix(language) + constants.CORRUPT_ASSEMBLY_SUFFIX)) {
           recordPerLanguage(language, PerLanguageStatus.CORRUPT_ASSEMBLY, name, majorVersion, fullName);
           identified = true;
         }
@@ -254,7 +254,7 @@ function submoduleKeyRegexp(language: DocumentationLanguage): RegExp {
   const placeholder = '<SUBMODULENAME>';
 
   // We obtain the standard key prefix.
-  const keyPrefix = constants.docsKeySuffix(language, placeholder, 'md');
+  const keyPrefix = constants.docsKeySuffix(language, placeholder);
 
   // Finally, assemble the regular expression with the capture group.
   return new RegExp(`.*${reQuote(keyPrefix).replace(placeholder, '(.+)')}(${reQuote(constants.NOT_SUPPORTED_SUFFIX)})?$`);

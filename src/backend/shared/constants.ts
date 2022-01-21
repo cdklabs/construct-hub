@@ -80,22 +80,22 @@ export function getObjectKeys(packageName: string, packageVersion: string) {
 /**
  * The key suffix for documentation artifacts by language and submodule.
  */
-export function docsKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string, fileExt?: string) {
-  return `/docs-${submodule ? `${submodule}-` : ''}${lang}.${fileExt ?? '*'}`;
+export function docsKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string) {
+  return `/docs-${submodule ? `${submodule}-` : ''}${lang}.md`;
 }
 
 /**
  * The key suffix for a corrupted assembly marker by language and submodule.
  */
-export function corruptAssemblyKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string, fileExt?: string) {
-  return `${docsKeySuffix(lang, submodule, fileExt)}${CORRUPT_ASSEMBLY_SUFFIX}`;
+export function corruptAssemblyKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string) {
+  return `${docsKeySuffix(lang, submodule)}${CORRUPT_ASSEMBLY_SUFFIX}`;
 }
 
 /**
  * The key suffix for a not supported marker by language and submodule.
  */
-export function notSupportedKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string, fileExt?: string) {
-  return `${docsKeySuffix(lang, submodule, fileExt)}${NOT_SUPPORTED_SUFFIX}`;
+export function notSupportedKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string) {
+  return `${docsKeySuffix(lang, submodule)}${NOT_SUPPORTED_SUFFIX}`;
 }
 
 /**

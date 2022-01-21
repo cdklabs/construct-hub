@@ -451,9 +451,6 @@
     "bundle:transliterator:watch": {
       "name": "bundle:transliterator:watch",
       "description": "Continuously update an AWS Fargate bundle from src/backend/transliterator/transliterator.ecstask.ts",
-      "env": {
-        "BUNDLE_DIR": "lib/backend/transliterator/transliterator.ecs-entrypoint.bundle"
-      },
       "steps": [
         {
           "exec": "esbuild --bundle node_modules/jsii-rosetta/lib/translate_all_worker.js --target=\"node16\" --platform=\"node\" --outfile=\"$BUNDLE_DIR/translate_all_worker.js\" --sourcemap"
