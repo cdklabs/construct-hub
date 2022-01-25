@@ -3559,7 +3559,7 @@ Resources:
                 - Ref: AWS::Region
                 - .
                 - Ref: AWS::URLSuffix
-                - /aws-cdk/assets:6bf816f7ca47df7f77c20090af6e80e5c8b4a35bb1e92a646028526c8f31ba80
+                - /aws-cdk/assets:c3a1bb77e5e64b4f024e9691bfb4d7baa0dd6836c2a358a7bf9304d04c6579e5
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -5350,7 +5350,7 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParameters3af27fb8f622cfc41091ffb60f7abae39e137cc5d970969ae724ff53849e98f2S3BucketDCA22ABF
+        - Ref: AssetParameters712ba04830c4959c745c48c6f7b3bec7c914f48c14fe4daee8198bb81a849f7bS3Bucket5C28F102
       SourceObjectKeys:
         - Fn::Join:
             - ""
@@ -5358,12 +5358,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters3af27fb8f622cfc41091ffb60f7abae39e137cc5d970969ae724ff53849e98f2S3VersionKey95D1D955
+                      - Ref: AssetParameters712ba04830c4959c745c48c6f7b3bec7c914f48c14fe4daee8198bb81a849f7bS3VersionKeyB4FF800C
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters3af27fb8f622cfc41091ffb60f7abae39e137cc5d970969ae724ff53849e98f2S3VersionKey95D1D955
+                      - Ref: AssetParameters712ba04830c4959c745c48c6f7b3bec7c914f48c14fe4daee8198bb81a849f7bS3VersionKeyB4FF800C
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: false
@@ -7162,13 +7162,13 @@ Resources:
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters3af27fb8f622cfc41091ffb60f7abae39e137cc5d970969ae724ff53849e98f2S3BucketDCA22ABF
+                    - Ref: AssetParameters712ba04830c4959c745c48c6f7b3bec7c914f48c14fe4daee8198bb81a849f7bS3Bucket5C28F102
               - Fn::Join:
                   - ""
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters3af27fb8f622cfc41091ffb60f7abae39e137cc5d970969ae724ff53849e98f2S3BucketDCA22ABF
+                    - Ref: AssetParameters712ba04830c4959c745c48c6f7b3bec7c914f48c14fe4daee8198bb81a849f7bS3Bucket5C28F102
                     - /*
           - Action:
               - s3:GetObject*
@@ -7954,18 +7954,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "8d968e7576898e39de27ff4cf5f336e8f112a4de9757412123e2dd725f451900"
-  AssetParameters3af27fb8f622cfc41091ffb60f7abae39e137cc5d970969ae724ff53849e98f2S3BucketDCA22ABF:
+  AssetParameters712ba04830c4959c745c48c6f7b3bec7c914f48c14fe4daee8198bb81a849f7bS3Bucket5C28F102:
     Type: String
     Description: S3 bucket for asset
-      "3af27fb8f622cfc41091ffb60f7abae39e137cc5d970969ae724ff53849e98f2"
-  AssetParameters3af27fb8f622cfc41091ffb60f7abae39e137cc5d970969ae724ff53849e98f2S3VersionKey95D1D955:
+      "712ba04830c4959c745c48c6f7b3bec7c914f48c14fe4daee8198bb81a849f7b"
+  AssetParameters712ba04830c4959c745c48c6f7b3bec7c914f48c14fe4daee8198bb81a849f7bS3VersionKeyB4FF800C:
     Type: String
     Description: S3 key for asset version
-      "3af27fb8f622cfc41091ffb60f7abae39e137cc5d970969ae724ff53849e98f2"
-  AssetParameters3af27fb8f622cfc41091ffb60f7abae39e137cc5d970969ae724ff53849e98f2ArtifactHash70F31593:
+      "712ba04830c4959c745c48c6f7b3bec7c914f48c14fe4daee8198bb81a849f7b"
+  AssetParameters712ba04830c4959c745c48c6f7b3bec7c914f48c14fe4daee8198bb81a849f7bArtifactHashB4401B5C:
     Type: String
     Description: Artifact hash for asset
-      "3af27fb8f622cfc41091ffb60f7abae39e137cc5d970969ae724ff53849e98f2"
+      "712ba04830c4959c745c48c6f7b3bec7c914f48c14fe4daee8198bb81a849f7b"
   AssetParameterse55830a9b80764bba7a1d95af568e482da15437ad646619e8f6c76dc8c098c91S3Bucket880B69C6:
     Type: String
     Description: S3 bucket for asset

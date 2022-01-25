@@ -50,9 +50,9 @@ test('basic case', () => {
     try {
       expect(request.Bucket).toBe(mockBucketName);
       if (request.Key === event.Key) {
-        cb(null, { Body: JSON.stringify({ date: mockTime }) });
+        cb(undefined, { Body: JSON.stringify({ date: mockTime }) });
       } else if (request.Key === tarballKey) {
-        cb(null, { Body: Buffer.from('this-is-a-tarball-believe-me') });
+        cb(undefined, { Body: Buffer.from('this-is-a-tarball-believe-me') });
       } else {
         fail(`Unexpected object key: ${request.Key}`);
       }
@@ -74,7 +74,7 @@ test('basic case', () => {
         tarballUri: `s3://${mockBucketName}/${STORAGE_KEY_PREFIX}dummy${PACKAGE_KEY_SUFFIX}`,
         time: mockTime,
       });
-      cb(null, {});
+      cb(undefined, {});
     } catch (e) {
       cb(e, undefined);
     }

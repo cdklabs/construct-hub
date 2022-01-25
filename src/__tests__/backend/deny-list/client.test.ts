@@ -1,4 +1,5 @@
 import * as AWS from 'aws-sdk';
+import type { AWSError } from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import { DenyListRule } from '../../../backend/deny-list/api';
 import { DenyListClient } from '../../../backend/deny-list/client.lambda-shared';
@@ -34,7 +35,7 @@ test('s3 object not found error', async () => {
   AWSMock.mock('S3', 'getObject', (_, callback) => {
     const err = new Error('NoSuchKey');
     (err as any).code = 'NoSuchKey';
-    callback(err, null);
+    callback(err as AWSError, undefined);
   });
 
   const client = await DenyListClient.newClient();
@@ -45,7 +46,7 @@ test('s3 bucket not found error', async () => {
   AWSMock.mock('S3', 'getObject', (_, callback) => {
     const err = new Error('NoSuchBucket');
     (err as any).code = 'NoSuchBucket';
-    callback(err, null);
+    callback(err as AWSError, undefined);
   });
 
   const client = await DenyListClient.newClient();
@@ -56,7 +57,7 @@ test('empty file', async () => {
   AWSMock.mock('S3', 'getObject', (params, callback) => {
     expect(params.Bucket).toBe('deny-list-bucket-name');
     expect(params.Key).toBe('deny-list.json');
-    callback(null, { Body: '' });
+    callback(undefined, { Body: '' });
   });
 
   const client = await DenyListClient.newClient();
@@ -67,7 +68,7 @@ test('json parsing error', async () => {
   AWSMock.mock('S3', 'getObject', (params, callback) => {
     expect(params.Bucket).toBe('deny-list-bucket-name');
     expect(params.Key).toBe('deny-list.json');
-    callback(null, { Body: '09x{}' });
+    callback(undefined, { Body: '09x{}' });
   });
 
   const expected = new Error('Unable to parse deny list file deny-list-bucket-name/deny-list.json: SyntaxError: Unexpected number in JSON at position 1');
@@ -81,7 +82,7 @@ describe('lookup', () => {
     AWSMock.mock('S3', 'getObject', (params, callback) => {
       expect(params.Bucket).toBe('deny-list-bucket-name');
       expect(params.Key).toBe('deny-list.json');
-      callback(null, { Body: JSON.stringify(sample) });
+      callback(undefined, { Body: JSON.stringify(sample) });
     });
 
     client = await DenyListClient.newClient();
