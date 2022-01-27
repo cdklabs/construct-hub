@@ -245,20 +245,6 @@ Resources:
             - Fn::GetAtt:
                 - ConstructHubSourcesNpmJsCanaryAlarmBE2B479E
                 - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":48,"properties":{"view":"timeSeries","title":"Inventory
-              Canary is not Running","region":"'
-            - Ref: AWS::Region
-            - '","annotations":{"alarms":["'
-            - Fn::GetAtt:
-                - ConstructHubInventoryCanaryNotRunningAF44D71C
-                - Arn
-            - '"]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":54,"properties":{"view":"timeSeries","title":"Inventory
-              Canary is failing","region":"'
-            - Ref: AWS::Region
-            - '","annotations":{"alarms":["'
-            - Fn::GetAtt:
-                - ConstructHubInventoryCanaryFailures5BDA8051
-                - Arn
             - '"]},"yAxis":{}}}]}'
   ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionServiceRole9AAAD93C:
     Type: AWS::IAM::Role
@@ -6280,7 +6266,7 @@ Resources:
       Handler: index.handler
       MemorySize: 10240
       Runtime: nodejs14.x
-      Timeout: 300
+      Timeout: 900
     DependsOn:
       - ConstructHubInventoryCanaryServiceRoleDefaultPolicy144783F1
       - ConstructHubInventoryCanaryServiceRole7684EDDE
@@ -6300,7 +6286,7 @@ Resources:
   ConstructHubInventoryCanaryScheduleRule79F2F8D8:
     Type: AWS::Events::Rule
     Properties:
-      ScheduleExpression: rate(5 minutes)
+      ScheduleExpression: rate(15 minutes)
       State: ENABLED
       Targets:
         - Arn:
@@ -6501,16 +6487,16 @@ Resources:
             - /log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":2,"properties":{"view":"timeSeries","title":"Catalog
               Size","region":"
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","SubmoduleCount",{"label":"Submodules","stat":"Maximum"}],["ConstructHub/Inventory","PackageVersionCount",{"label":"Package
-              Versions","stat":"Maximum"}],["ConstructHub/Inventory","PackageMajorVersionCount",{"label":"Package
-              Majors","stat":"Maximum"}],["ConstructHub/Inventory","PackageCount",{"label":"Packages","stat":"Maximum"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":2,"properties":{"view":"timeSeries","title":"Catalog
+            - '","metrics":[["ConstructHub/Inventory","SubmoduleCount",{"label":"Submodules","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","PackageVersionCount",{"label":"Package
+              Versions","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","PackageMajorVersionCount",{"label":"Package
+              Majors","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","PackageCount",{"label":"Packages","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":2,"properties":{"view":"timeSeries","title":"Catalog
               Issues","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","UnknownObjectCount",{"label":"Unknown","stat":"Maximum"}],["ConstructHub/Inventory","MissingAssemblyCount",{"label":"Missing
-              Assembly","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageMetadataCount",{"label":"Missing
-              Metadata","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageTarballCount",{"label":"Missing
-              Tarball","stat":"Maximum"}],["ConstructHub/Inventory","UninstallablePackageCount",{"label":"Uninstallable
-              Package","stat":"Maximum"}],["ConstructHub/CatalogBuilder","MissingConstructFrameworkCount",{"label":"No
+            - '","metrics":[["ConstructHub/Inventory","UnknownObjectCount",{"label":"Unknown","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingAssemblyCount",{"label":"Missing
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageMetadataCount",{"label":"Missing
+              Metadata","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageTarballCount",{"label":"Missing
+              Tarball","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UninstallablePackageCount",{"label":"Uninstallable
+              Package","period":900,"stat":"Maximum"}],["ConstructHub/CatalogBuilder","MissingConstructFrameworkCount",{"label":"No
               Construct
               Framework","period":900,"stat":"Maximum","yAxis":"right"}],["ConstructHub/CatalogBuilder","MissingConstructFrameworkVersionCount",{"label":"No
               Construct Framework
@@ -6568,42 +6554,42 @@ Resources:
               typescript"}},{"type":"metric","width":12,"height":6,"x":0,"y":17,"properties":{"view":"pie","title":"Package
               Versions","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","typescript",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblyPackageVersionCount","Language","typescript",{"color":"#3542D7","label":"Corrupt
-              Assembly","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","typescript",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":17,"properties":{"view":"pie","title":"Package
+            - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","typescript",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblyPackageVersionCount","Language","typescript",{"color":"#3542D7","label":"Corrupt
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","typescript",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":17,"properties":{"view":"pie","title":"Package
               Version Submodules","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","typescript",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblySubmoduleCount","Language","typescript",{"color":"#3542D7","label":"Corrupt
-              Assembly","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","typescript",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":23,"properties":{"markdown":"##
+            - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","typescript",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblySubmoduleCount","Language","typescript",{"color":"#3542D7","label":"Corrupt
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","typescript",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":23,"properties":{"markdown":"##
               Language:
               python"}},{"type":"metric","width":12,"height":6,"x":0,"y":24,"properties":{"view":"pie","title":"Package
               Versions","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","python",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblyPackageVersionCount","Language","python",{"color":"#3542D7","label":"Corrupt
-              Assembly","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","python",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","python",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":24,"properties":{"view":"pie","title":"Package
+            - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","python",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblyPackageVersionCount","Language","python",{"color":"#3542D7","label":"Corrupt
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","python",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","python",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":24,"properties":{"view":"pie","title":"Package
               Version Submodules","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","python",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblySubmoduleCount","Language","python",{"color":"#3542D7","label":"Corrupt
-              Assembly","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","python",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","python",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":30,"properties":{"markdown":"##
+            - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","python",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblySubmoduleCount","Language","python",{"color":"#3542D7","label":"Corrupt
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","python",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","python",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":30,"properties":{"markdown":"##
               Language:
               java"}},{"type":"metric","width":12,"height":6,"x":0,"y":31,"properties":{"view":"pie","title":"Package
               Versions","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","java",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblyPackageVersionCount","Language","java",{"color":"#3542D7","label":"Corrupt
-              Assembly","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","java",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","java",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":31,"properties":{"view":"pie","title":"Package
+            - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","java",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblyPackageVersionCount","Language","java",{"color":"#3542D7","label":"Corrupt
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","java",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","java",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":31,"properties":{"view":"pie","title":"Package
               Version Submodules","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","java",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblySubmoduleCount","Language","java",{"color":"#3542D7","label":"Corrupt
-              Assembly","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","java",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","java",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":37,"properties":{"markdown":"##
+            - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","java",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblySubmoduleCount","Language","java",{"color":"#3542D7","label":"Corrupt
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","java",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","java",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":37,"properties":{"markdown":"##
               Language:
               csharp"}},{"type":"metric","width":12,"height":6,"x":0,"y":38,"properties":{"view":"pie","title":"Package
               Versions","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","csharp",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblyPackageVersionCount","Language","csharp",{"color":"#3542D7","label":"Corrupt
-              Assembly","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","csharp",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","csharp",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":38,"properties":{"view":"pie","title":"Package
+            - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","csharp",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblyPackageVersionCount","Language","csharp",{"color":"#3542D7","label":"Corrupt
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","csharp",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","csharp",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":38,"properties":{"view":"pie","title":"Package
               Version Submodules","region":"'
             - Ref: AWS::Region
-            - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","csharp",{"color":"#2ca02c","label":"Available","stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblySubmoduleCount","Language","csharp",{"color":"#3542D7","label":"Corrupt
-              Assembly","stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","csharp",{"color":"#9467bd","label":"Unsupported","stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","csharp",{"color":"#d62728","label":"Missing","stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":2,"x":0,"y":44,"properties":{"markdown":"#
+            - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","csharp",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblySubmoduleCount","Language","csharp",{"color":"#3542D7","label":"Corrupt
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","csharp",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","csharp",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":2,"x":0,"y":44,"properties":{"markdown":"#
               dev/ConstructHub/Sources/NpmJs\\n\\n[button:primary:NpmJs
               Follower](/lambda/home#/functions/'
             - Ref: ConstructHubSourcesNpmJs15A77D2D
