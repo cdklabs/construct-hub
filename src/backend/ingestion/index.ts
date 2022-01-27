@@ -8,7 +8,7 @@ import { RetentionDays } from '@aws-cdk/aws-logs';
 import { BlockPublicAccess, IBucket } from '@aws-cdk/aws-s3';
 import { BucketDeployment, Source } from '@aws-cdk/aws-s3-deployment';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
-import { StateMachine, JsonPath, Choice, Succeed, Condition, Map, TaskInput, IntegrationPattern } from '@aws-cdk/aws-stepfunctions';
+import { StateMachine, JsonPath, Choice, Succeed, Condition, Map, TaskInput, IntegrationPattern, Wait, WaitTime } from '@aws-cdk/aws-stepfunctions';
 import { CallAwsService, LambdaInvoke, StepFunctionsStartExecution } from '@aws-cdk/aws-stepfunctions-tasks';
 import { Construct, Duration, Stack, ArnFormat } from '@aws-cdk/core';
 import { Repository } from '../../codeartifact/repository';
@@ -386,7 +386,13 @@ class ReprocessIngestionWorkflow extends Construct {
       new Choice(this, 'Is there more?')
         .when(
           Condition.isPresent('$.response.NextContinuationToken'),
-          new StepFunctionsStartExecution(this, 'Continue as new', {
+
+          new Wait(this, 'Give room for on-demand work', {
+            // Sleep a little before enqueuing the next batch, so that we leave room in the worker
+            // pool for handling on-demand work. If we don't do this, 60k items will be queued at
+            // once and live updates from NPM will struggle to get in in a reasonable time.
+            time: WaitTime.duration(waitTimeBetweenReprocessBatches()),
+          }).next(new StepFunctionsStartExecution(this, 'Continue as new', {
             associateWithParent: true,
             stateMachine: StateMachine.fromStateMachineArn(this, 'ThisStateMachine', Stack.of(this).formatArn({
               arnFormat: ArnFormat.COLON_RESOURCE_NAME,
@@ -397,7 +403,7 @@ class ReprocessIngestionWorkflow extends Construct {
             input: TaskInput.fromObject({ ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken') }),
             integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
             resultPath: JsonPath.DISCARD,
-          }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] }),
+          }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })),
         ).afterwards({ includeOtherwise: true })
         .next(process),
     );
@@ -421,4 +427,29 @@ class ReprocessIngestionWorkflow extends Construct {
 function stateMachineNameFrom(nodePath: string): string {
   // Poor man's replace all...
   return nodePath.split(/[^a-z0-9+!@.()=_'-]+/i).join('.');
+}
+
+/**
+ * The time we wait between enqueueing different batches of the reprocessing machine
+ */
+function waitTimeBetweenReprocessBatches() {
+  // Average time per ECS task. We don've have statistics on this, but
+  // can be roughly derived from:
+
+  // Every day we process about 60k items with 1000 workers in 4 hours.
+  // 4 hours / (60_000 / 1000) ~= 4 minutes
+  const avgTimePerTask = Duration.minutes(4);
+
+  // How many objects are returned by 'listObjectsV2', per call
+  const batchSize = 1000;
+
+  // How many workers we have at our disposal
+  const workers = 1000;
+
+  // What fraction of capacity [0..1) we want to keep available for on-demand
+  // work, while reprocessing.
+  const marginFrac = 0.2;
+
+  const seconds = (avgTimePerTask.toSeconds() / (1 - marginFrac)) * (batchSize / workers);
+  return Duration.seconds(Math.floor(seconds));
 }
