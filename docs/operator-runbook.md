@@ -631,7 +631,7 @@ The alarm will persist as long as any tracked version of the probe package is
 still missing from the ConstructHub instance past the configured SLA, or if the
 latest version was ingested out-of-SLA.
 
-[package-canary]: ../README.md#discovery-canary)
+[package-canary]:(../README.md#discovery-canary)
 
 #### Investigation
 

@@ -216,9 +216,8 @@ export function handler(event: TransliteratorInput): Promise<{ created: string[]
     }
 
     // output must be compressed to satisfy 262,144 byte limit of SendTaskSuccess command
-    const createdFiles = created.map((s3Obj) => s3Obj.key);
-    const deletedFiles = deleted.map((s3Obj) => s3Obj.key);
-    return { created: createdFiles, deleted: deletedFiles };
+    const s3OKey = (s3Obj: S3Object) => s3Obj.key;
+    return { created: created.map(s3OKey), deleted: deleted.map(s3OKey) };
   });
 }
 

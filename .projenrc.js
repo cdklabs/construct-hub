@@ -400,7 +400,7 @@ function newLambdaHandler(entrypoint, trigger) {
   const propsName = `${className}Props`;
 
   const ts = new SourceCode(project, infra);
-  ts.line(`// ${FileBase.PROJEN_MARKER}`);
+  ts.line(`// ${ts.marker}`);
   ts.line('import * as path from \'path\';');
   ts.line('import * as lambda from \'@aws-cdk/aws-lambda\';');
   ts.line('import { Construct } from \'@aws-cdk/core\';');
@@ -500,7 +500,7 @@ function newEcsTask(entrypoint) {
   const propsName = `${className}Props`;
 
   const ts = new SourceCode(project, infra);
-  ts.line(`// ${FileBase.PROJEN_MARKER}`);
+  ts.line(`// ${ts.marker}`);
   ts.line('import * as path from \'path\';');
   ts.line('import * as ecs from \'@aws-cdk/aws-ecs\';');
   ts.line('import * as iam from \'@aws-cdk/aws-iam\';');
@@ -534,7 +534,7 @@ function newEcsTask(entrypoint) {
   // appropriate down-leveling (e.g: for use of the `??` operator).
   const main = new SourceCode(project, ecsMain);
   main.line('#!/usr/bin/env node');
-  main.line(`// ${FileBase.PROJEN_MARKER}`);
+  main.line(`// ${main.marker}`);
   main.line();
   main.line('import * as os from \'os\';');
   main.line('import { argv, env, exit } from \'process\';');
@@ -599,7 +599,7 @@ function newEcsTask(entrypoint) {
   main.close('});');
 
   const df = new SourceCode(project, dockerfile);
-  df.line(`# ${FileBase.PROJEN_MARKER}`);
+  df.line(`# ${df.marker}`);
   // Based off amazonlinux:2 for... reasons. (Do not change!)
   df.line('FROM public.ecr.aws/amazonlinux/amazonlinux:2');
   df.line();
@@ -722,7 +722,7 @@ function discoverEcsTasks() {
 function generateSpdxLicenseEnum() {
   const ts = new SourceCode(project, 'src/spdx-license.ts');
 
-  ts.line(`// ${FileBase.PROJEN_MARKER}`);
+  ts.line(`// ${ts.marker}`);
   // We *need* the private field to be declared before any public field is...
   ts.line('/* eslint-disable @typescript-eslint/member-ordering */');
   ts.line();
