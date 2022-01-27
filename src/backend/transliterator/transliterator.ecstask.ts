@@ -5,6 +5,8 @@ import type { PromiseResult } from 'aws-sdk/lib/request';
 import * as fs from 'fs-extra';
 import * as docgen from 'jsii-docgen';
 
+import { MarkdownRenderer } from 'jsii-docgen/lib/docgen/render/markdown-render';
+import { JsiiEntity } from 'jsii-docgen/lib/docgen/schema';
 import { CacheStrategy } from '../../caching';
 import type { TransliteratorInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
@@ -31,7 +33,7 @@ const ASSEMBLY_KEY_REGEX = new RegExp(`^${constants.STORAGE_KEY_PREFIX}((?:@[^/]
  *
  * @returns nothing
  */
-export function handler(event: TransliteratorInput): Promise<{ created: S3Object[]; deleted: S3Object[] }> {
+export function handler(event: TransliteratorInput): Promise<{ created: string[]; deleted: string[] }> {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
   // We'll need a writable $HOME directory, or this won't work well, because
   // npm will try to write stuff like the `.npmrc` or package caches in there
@@ -114,7 +116,7 @@ export function handler(event: TransliteratorInput): Promise<{ created: S3Object
     console.log(`Generating documentation for ${packageFqn}...`);
     try {
       const docs = await docgen.Documentation.forPackage(tarball, { name: assembly.name });
-      // if the package used to not be installabe, remove the marker for it.
+      // if the package used to not be installable, remove the marker for it.
       await unmarkPackage(constants.UNINSTALLABLE_PACKAGE_SUFFIX);
       for (const language of DocumentationLanguage.ALL) {
         if (event.languages && !event.languages[language.toString()]) {
@@ -131,28 +133,47 @@ export function handler(event: TransliteratorInput): Promise<{ created: S3Object
             try {
 
               console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
-              const markdown = await docs.render({
+
+              const json = await docs.toJson({
                 submodule,
-                linkFormatter: linkFormatter,
                 language: docgen.Language.fromString(lang.name),
               });
-              // if the package used to have a corrupt assembly, remove the marker for it.
-              await unmarkPackage(constants.corruptAssemblyKeySuffix(language, submodule));
+
+              const jsonPage = Buffer.from(json.render(null, 2));
+              metrics.putMetric(MetricName.DOCUMENT_SIZE, jsonPage.length, Unit.Bytes);
+              const { buffer: jsonBody, contentEncoding: jsonContentEncoding } = compressContent(jsonPage);
+              metrics.putMetric(MetricName.COMPRESSED_DOCUMENT_SIZE, jsonBody.length, Unit.Bytes);
+
+              const jsonKey = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(lang, submodule, 'json'));
+              console.log(`Uploading ${jsonKey}`);
+              const jsonUpload = uploadFile(event.bucket, jsonKey, event.assembly.versionId, jsonBody, jsonContentEncoding);
+              uploads.set(jsonKey, jsonUpload);
+
+              const markdown = MarkdownRenderer.fromSchema(json.content, {
+                anchorFormatter,
+                linkFormatter: linkFormatter(lang),
+              });
+
               const page = Buffer.from(markdown.render());
               metrics.putMetric(MetricName.DOCUMENT_SIZE, page.length, Unit.Bytes);
               const { buffer: body, contentEncoding } = compressContent(page);
               metrics.putMetric(MetricName.COMPRESSED_DOCUMENT_SIZE, body.length, Unit.Bytes);
 
-              const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(lang, submodule));
+              const key = event.assembly.key.replace(/\/[^/]+$/, constants.docsKeySuffix(lang, submodule, 'md'));
               console.log(`Uploading ${key}`);
               const upload = uploadFile(event.bucket, key, event.assembly.versionId, body, contentEncoding);
               uploads.set(key, upload);
 
+              // if the package used to have a corrupt assembly, remove the marker for it.
+              await unmarkPackage(constants.corruptAssemblyKeySuffix(language, submodule, 'md'));
+
             } catch (e) {
               if (e instanceof docgen.LanguageNotSupportedError) {
-                markPackage(e, constants.notSupportedKeySuffix(language, submodule));
+                markPackage(e, constants.notSupportedKeySuffix(language, submodule, 'json'));
+                markPackage(e, constants.notSupportedKeySuffix(language, submodule, 'md'));
               } else if (e instanceof docgen.CorruptedAssemblyError) {
-                markPackage(e, constants.corruptAssemblyKeySuffix(language, submodule));
+                markPackage(e, constants.corruptAssemblyKeySuffix(language, submodule, 'json'));
+                markPackage(e, constants.corruptAssemblyKeySuffix(language, submodule, 'md'));
                 unprocessable = true;
               } else {
                 throw e;
@@ -194,7 +215,9 @@ export function handler(event: TransliteratorInput): Promise<{ created: S3Object
       error.name = constants.UNPROCESSABLE_PACKAGE_ERROR_NAME;
     }
 
-    return { created, deleted };
+    // output must be compressed to satisfy 262,144 byte limit of SendTaskSuccess command
+    const s3OKey = (s3Obj: S3Object) => s3Obj.key;
+    return { created: created.map(s3OKey), deleted: deleted.map(s3OKey) };
   });
 }
 
@@ -234,29 +257,51 @@ function deleteFile(bucket: string, key: string) {
   }).promise();
 }
 
-/**
- * A link formatter to make sure type links redirect to the appropriate package
- * page in the webapp.
- */
-function linkFormatter(type: docgen.TranspiledType): string {
-
-  const packageName = type.source.assembly.name;
-  const packageVersion = type.source.assembly.version;
-
-  // the webapp sanitizes anchors - so we need to as well when
-  // linking to them.
-  const hash = sanitize(type.fqn);
-  const query = `?lang=${type.language.toString()}${type.submodule ? `&submodule=${type.submodule}` : ''}`;
-  return `/packages/${packageName}/v/${packageVersion}/api/${hash}${query}`;
-
+function anchorFormatter(type: JsiiEntity) {
+  const name = getAssemblyRelativeName(type); // BucketProps.Initializer.parameter.accessControl
+  const [base, ...rest] = name.split('.');
+  if (rest.length > 0) {
+    return sanitize(rest.join('.')); // Initializer.parameter.accessControl
+  } else {
+    return sanitize(base);
+  }
 }
 
-function sanitize(input: string): string {
-  return input
-    .toLowerCase()
-    .replace(/[^a-zA-Z0-9 ]/g, '')
-    .replace(/ /g, '-');
+function linkFormatter(lang: docgen.Language) {
+  const formatter = (type: JsiiEntity) => {
+    const name = getAssemblyRelativeName(type); // BucketProps.Initializer.parameter.accessControl
+    const [baseName, ...rest] = name.split('.');
+    const hash = '#' + rest.join('.'); // #Initializer.parameter.accessControl
+    const langParam = `?lang=${lang.toString()}`;
+    const submoduleParam = type.submodule ? `&submodule=${type.submodule}` : '';
+    return `<a href="/packages/${type.packageName}/v/${type.packageVersion}/api/${baseName}${langParam}${submoduleParam}${hash}">${type.displayName}</a>`;
+  };
+  return formatter;
+}
+
+/**
+ * Converts a type's id to an assembly-relative version, e.g.:
+ * `aws-cdk-lib.aws_s3.Bucket.parameter.accessControl` => `Bucket.parameter.accessControl`
+ */
+function getAssemblyRelativeName(type: JsiiEntity): string {
+  let name = type.id;
+  if (!name.startsWith(type.packageName)) {
+    throw new Error(`Expected first part of "${type.id}" to start with "${type.packageName}".`);
+  }
+  name = name.slice(type.packageName.length + 1); // remove "aws-cdk-lib.""
+  if (type.submodule) {
+    if (!name.startsWith(type.submodule)) {
+      throw new Error(`Expected second part of "${type.id}" to start with "${type.submodule}".`);
+    }
+    name = name.slice(type.submodule.length + 1); // remove "aws_s3."
+  }
+  return name;
 };
+
+function sanitize(str: string) {
+  // HTML5 allows any characters in IDs except whitespace
+  return str.replace(/ /g, '-');
+}
 
 interface S3Object {
   readonly bucket: string;
