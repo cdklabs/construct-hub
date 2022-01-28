@@ -446,10 +446,15 @@ function waitTimeBetweenReprocessBatches() {
   // How many workers we have at our disposal
   const workers = 1000;
 
+  // The step functions state machine can't instantaneously start all 1000
+  // tasks, they are staggered over time -- so in practice the average load a
+  // single batch puts on the ECS cluster at any point in time is a lot lower.
+  const sfnStaggerFactor = 0.05;
+
   // What fraction of capacity [0..1) we want to keep available for on-demand
   // work, while reprocessing.
   const marginFrac = 0.2;
 
-  const seconds = (avgTimePerTask.toSeconds() / (1 - marginFrac)) * (batchSize / workers);
+  const seconds = (avgTimePerTask.toSeconds() * sfnStaggerFactor / (1 - marginFrac)) * (batchSize / workers);
   return Duration.seconds(Math.floor(seconds));
 }
