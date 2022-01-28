@@ -67,7 +67,9 @@ const project = new cdk.JsiiProject({
     '@types/tar-stream',
     cdkCli,
     'aws-embedded-metrics',
-    'aws-sdk-mock',
+    // 5.6.1 introduces a type literal signature that is not compatible with
+    // the version of TypeScript currently used by jsii, causing builds to fail
+    'aws-sdk-mock@5.6.0',
     'aws-sdk',
     'aws-xray-sdk-core',
     'case',
