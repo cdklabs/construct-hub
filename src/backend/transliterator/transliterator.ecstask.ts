@@ -237,13 +237,18 @@ async function ensureWritableHome<T>(cb: () => Promise<T>): Promise<T> {
 }
 
 function uploadFile(bucket: string, key: string, sourceVersionId?: string, body?: AWS.S3.Body, contentEncoding?: 'gzip') {
+  const contentType = key.endsWith('.md') ?
+    'text/markdown; charset=UTF-8' :
+    key.endsWith('.json') ?
+      'application/json; charset=UTF-8' :
+      'application/octet-stream';
   return aws.s3().putObject({
     Bucket: bucket,
     Key: key,
     Body: body,
     CacheControl: CacheStrategy.default().toString(),
     ContentEncoding: contentEncoding,
-    ContentType: 'text/markdown; charset=UTF-8',
+    ContentType: contentType,
     Metadata: {
       'Origin-Version-Id': sourceVersionId ?? 'N/A',
     },
