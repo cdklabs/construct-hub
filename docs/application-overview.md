@@ -212,7 +212,7 @@ emits metrics that help understand how much time elapses between the package
 publication to npmjs.com (`construct-hub-probe` gets a new version approximately
 every 3 hours), and when those packages are available to browse in ConstructHub.
 
-A **low-severity** alarm triggers if the canary function is either
+A **high-severity** alarm triggers if the canary function is either
 malfunctioning or detects discovery SLA breaches. Troubleshooting these alarms
 is described in the operator runbook.
 
