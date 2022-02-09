@@ -80,9 +80,10 @@ export async function handler(event: ScheduledEvent, context: Context) {
     } else {
       let identified = false;
       for (const language of DocumentationLanguage.ALL) {
-        const match = submoduleKeyRegexp(language).exec(key);
-        if (match != null) {
-          const [, submodule, isUnsupported] = match;
+        const matchJson = submoduleKeyRegexp(language, 'json').exec(key);
+        const matchMd = submoduleKeyRegexp(language, 'md').exec(key);
+        if (matchJson != null) {
+          const [, submodule, isUnsupported] = matchJson;
           if (status.submodules == null) {
             status.submodules = new Set();
           }
@@ -96,14 +97,26 @@ export async function handler(event: ScheduledEvent, context: Context) {
             submodule,
           );
           identified = true;
-        } else if (key.endsWith(constants.docsKeySuffix(language, 'md'))) {
+        } else if (key.endsWith(constants.docsKeySuffix(language, undefined, 'json'))) {
           recordPerLanguage(language, PerLanguageStatus.SUPPORTED, name, majorVersion, fullName);
           identified = true;
-        } else if (key.endsWith(constants.notSupportedKeySuffix(language, undefined, 'md'))) {
+        } else if (key.endsWith(constants.notSupportedKeySuffix(language, undefined, 'json'))) {
           recordPerLanguage(language, PerLanguageStatus.UNSUPPORTED, name, majorVersion, fullName);
           identified = true;
-        } else if (key.endsWith(constants.corruptAssemblyKeySuffix(language, undefined, 'md'))) {
+        } else if (key.endsWith(constants.corruptAssemblyKeySuffix(language, undefined, 'json'))) {
           recordPerLanguage(language, PerLanguageStatus.CORRUPT_ASSEMBLY, name, majorVersion, fullName);
+          identified = true;
+
+        // Currently we generate both JSON files and markdown files, so for now
+        // we record JSON files as the source of truth, but still identify
+        // markdown files so they are not counted as unknown.
+        } else if (matchMd != null) {
+          identified = true;
+        } else if (key.endsWith(constants.docsKeySuffix(language, undefined, 'md'))) {
+          identified = true;
+        } else if (key.endsWith(constants.notSupportedKeySuffix(language, undefined, 'md'))) {
+          identified = true;
+        } else if (key.endsWith(constants.corruptAssemblyKeySuffix(language, undefined, 'md'))) {
           identified = true;
         }
       }
@@ -248,13 +261,13 @@ async function* relevantObjectKeys(bucket: string): AsyncGenerator<string, void,
  * determining the submodule name from a submodule documentation key, and
  * another to determine whether the object is an "unsupported beacon" or not.
  */
-function submoduleKeyRegexp(language: DocumentationLanguage): RegExp {
+function submoduleKeyRegexp(language: DocumentationLanguage, fileExt: string): RegExp {
   // We use a placeholder to be able to insert the capture group once we have
   // fully quoted the key prefix for Regex safety.
   const placeholder = '<SUBMODULENAME>';
 
-  // We obtain the standard key prefix.
-  const keyPrefix = constants.docsKeySuffix(language, placeholder, 'md');
+  // We obtain the standard key suffix.
+  const keyPrefix = constants.docsKeySuffix(language, placeholder, fileExt);
 
   // Finally, assemble the regular expression with the capture group.
   return new RegExp(`.*${reQuote(keyPrefix).replace(placeholder, '(.+)')}(${reQuote(constants.NOT_SUPPORTED_SUFFIX)})?$`);
