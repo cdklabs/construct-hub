@@ -620,6 +620,9 @@ function newEcsTask(entrypoint) {
   // openssh that ships in amazonlinux:2. For more information, refer to the
   // following issue: https://github.com/npm/git/issues/31
   df.line('ENV GIT_SSH_COMMAND=ssh');
+  // By default, no more than 10 lines of the stack trace are shown. Increase
+  // this to help with debugging errors.
+  df.line('ENV NODE_OPTIONS="--stack-trace-limit=100"');
   df.line();
   df.line(`ENTRYPOINT ["/usr/bin/env", "node", "/bundle/${dockerEntry}"]`);
 
