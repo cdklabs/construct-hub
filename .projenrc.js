@@ -486,7 +486,8 @@ function newEcsTask(entrypoint) {
   }
 
   // This uses the AWS SDK v3 client to achieve a smaller bundle size.
-  project.addDevDeps('@aws-sdk/client-sfn');
+  // NOTE: currently pinned due to https://github.com/aws/aws-sdk-js-v3/issues/3297
+  project.addDevDeps('@aws-sdk/client-sfn@3.49.0');
 
   entrypoint = relative(project.srcdir, entrypoint);
 
