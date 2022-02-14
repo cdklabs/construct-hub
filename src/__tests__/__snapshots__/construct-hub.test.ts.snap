@@ -6640,6 +6640,9 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             },
             Object {
               "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
                 "s3:DeleteObject*",
                 "s3:PutObject*",
                 "s3:Abort*",
@@ -18270,6 +18273,9 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             },
             Object {
               "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
                 "s3:DeleteObject*",
                 "s3:PutObject*",
                 "s3:Abort*",
@@ -29428,6 +29434,9 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             },
             Object {
               "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
                 "s3:DeleteObject*",
                 "s3:PutObject*",
                 "s3:Abort*",
@@ -40791,6 +40800,9 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             },
             Object {
               "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
                 "s3:DeleteObject*",
                 "s3:PutObject*",
                 "s3:Abort*",
@@ -52091,6 +52103,9 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             },
             Object {
               "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
                 "s3:DeleteObject*",
                 "s3:PutObject*",
                 "s3:Abort*",
@@ -55412,39 +55427,6 @@ Direct link to Lambda function: /lambda/home#/functions/",
                         ],
                       },
                       "/data/*/package.tgz",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:Abort*",
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-              ],
-              "Effect": "Allow",
-              "Principal": Object {
-                "AWS": "*",
-              },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/uninstallable",
                     ],
                   ],
                 },

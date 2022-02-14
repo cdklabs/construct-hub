@@ -703,3 +703,16 @@ ECS tasks emit logs into CloudWatch under a log group called
 `ConstructHubOrchestrationTransliteratorLogGroup`
 in its name and the log stream `transliterator/Resource/$TASKID` (e.g.
 `transliterator/Resource/6b5c48f0a7624396899c6a3c8474d5c7`).
+
+## Errors encountered in the past
+
+### `Forbidden: null`
+
+Usually, "Forbidden" with no additional details comes when you attempt to read
+S3 objects that are SSE-encrypted, but you don't have permissions to decrypt
+using the KMS key that encrypted the object; or when you attempt to read an
+object from S3 that does not exist, or when you simply don't have the
+appropriate IAM permissions for.
+
+If you see this error, try checking that IAM permissions are configured
+correctly for the respective backend component.
