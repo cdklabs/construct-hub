@@ -715,4 +715,5 @@ object from S3 that does not exist, or when you simply don't have the
 appropriate IAM permissions for.
 
 If you see this error, try checking that IAM permissions are configured
-correctly for the respective backend component.
+correctly for the respective backend component (including policies on VPC
+resources if Construct Hub is running in a VPC, etc.).
