@@ -6,7 +6,8 @@ import { IBucket } from '@aws-cdk/aws-s3';
  * Decorates an S3 Bucket so that grants are made including a VPC endpoint
  * policy.
  *
- * This currently only supports the `gratRead` and `grantWrite` APIs.
+ * This currently only supports the `grantRead`, `grantWrite`, and `grantDelete`
+ * APIs.
  *
  * @param bucket      the bucket to be wrapped.
  * @param vpcEndpoint the VPC Endpoint for S3 to be used.
@@ -25,7 +26,7 @@ export function throughVpcEndpoint(bucket: IBucket, vpcEndpoint: GatewayVpcEndpo
           return decoratedGrantWrite.bind(target);
         default:
           if (typeof property === 'string' && /^grant([A-Z]|$)/.test(property)) {
-            console.warn(`No VPC Endpoint policy grants will be added for ${property} on ${bucket.node.path}`);
+            throw new Error(`No VPC Endpoint policy grants will be added for ${property} on ${bucket.node.path}`);
           }
           return (target as any)[property];
       }

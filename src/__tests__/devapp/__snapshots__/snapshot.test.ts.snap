@@ -1205,6 +1205,40 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/package.tgz
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/uninstallable
+          - Action:
+              - s3:Abort*
+              - s3:DeleteObject*
+              - s3:PutObject*
+            Effect: Allow
+            Principal:
+              AWS: "*"
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/uninstallable
           - Action: s3:DeleteObject*
             Effect: Allow
             Principal:
@@ -3028,6 +3062,18 @@ Resources:
               - s3:GetObject*
               - s3:GetBucket*
               - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/uninstallable
+          - Action:
               - s3:DeleteObject*
               - s3:PutObject*
               - s3:Abort*
