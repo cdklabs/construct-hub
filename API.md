@@ -42,14 +42,65 @@ new ConstructHub(scope: Construct, id: string, props?: ConstructHubProps)
 
 ---
 
+#### Methods <a name="Methods" id="Methods"></a>
 
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#construct-hub.ConstructHub.toString">toString</a></code> | Returns a string representation of this construct. |
+
+---
+
+##### `toString` <a name="toString" id="construct-hub.ConstructHub.toString"></a>
+
+```typescript
+public toString(): string
+```
+
+Returns a string representation of this construct.
+
+#### Static Functions <a name="Static Functions" id="Static Functions"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#construct-hub.ConstructHub.isConstruct">isConstruct</a></code> | Return whether the given object is a Construct. |
+
+---
+
+##### `isConstruct` <a name="isConstruct" id="construct-hub.ConstructHub.isConstruct"></a>
+
+```typescript
+import { ConstructHub } from 'construct-hub'
+
+ConstructHub.isConstruct(x: any)
+```
+
+Return whether the given object is a Construct.
+
+###### `x`<sup>Required</sup> <a name="x" id="construct-hub.ConstructHub.isConstruct.parameter.x"></a>
+
+- *Type:* any
+
+---
 
 #### Properties <a name="Properties" id="Properties"></a>
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
+| <code><a href="#construct-hub.ConstructHub.property.node">node</a></code> | <code>@aws-cdk/core.ConstructNode</code> | The construct tree node associated with this construct. |
 | <code><a href="#construct-hub.ConstructHub.property.grantPrincipal">grantPrincipal</a></code> | <code>@aws-cdk/aws-iam.IPrincipal</code> | The principal to grant permissions to. |
 | <code><a href="#construct-hub.ConstructHub.property.ingestionQueue">ingestionQueue</a></code> | <code>@aws-cdk/aws-sqs.IQueue</code> | *No description.* |
+
+---
+
+##### `node`<sup>Required</sup> <a name="node" id="construct-hub.ConstructHub.property.node"></a>
+
+```typescript
+public readonly node: ConstructNode;
+```
+
+- *Type:* @aws-cdk/core.ConstructNode
+
+The construct tree node associated with this construct.
 
 ---
 
@@ -84,15 +135,26 @@ Create s3 storage resources.
 
 | **Name** | **Description** |
 | --- | --- |
+| <code><a href="#construct-hub.S3StorageFactory.toString">toString</a></code> | Returns a string representation of this construct. |
 | <code><a href="#construct-hub.S3StorageFactory.newBucket">newBucket</a></code> | Create a new bucket in a storage config aware manner. |
 
 ---
 
+##### `toString` <a name="toString" id="construct-hub.S3StorageFactory.toString"></a>
+
+```typescript
+public toString(): string
+```
+
+Returns a string representation of this construct.
+
 ##### `newBucket` <a name="newBucket" id="construct-hub.S3StorageFactory.newBucket"></a>
 
 ```typescript
-public newBucket(scope: Construct, id: string, props?: BucketProps)
+public newBucket(scope: Construct, id: string, props?: BucketProps): Bucket
 ```
+
+Create a new bucket in a storage config aware manner.
 
 ###### `scope`<sup>Required</sup> <a name="scope" id="construct-hub.S3StorageFactory.newBucket.parameter.scope"></a>
 
@@ -116,7 +178,24 @@ public newBucket(scope: Construct, id: string, props?: BucketProps)
 
 | **Name** | **Description** |
 | --- | --- |
+| <code><a href="#construct-hub.S3StorageFactory.isConstruct">isConstruct</a></code> | Return whether the given object is a Construct. |
 | <code><a href="#construct-hub.S3StorageFactory.getOrCreate">getOrCreate</a></code> | Retrieve or create the storage factory for the current scope. |
+
+---
+
+##### `isConstruct` <a name="isConstruct" id="construct-hub.S3StorageFactory.isConstruct"></a>
+
+```typescript
+import { S3StorageFactory } from 'construct-hub'
+
+S3StorageFactory.isConstruct(x: any)
+```
+
+Return whether the given object is a Construct.
+
+###### `x`<sup>Required</sup> <a name="x" id="construct-hub.S3StorageFactory.isConstruct.parameter.x"></a>
+
+- *Type:* any
 
 ---
 
@@ -127,6 +206,10 @@ import { S3StorageFactory } from 'construct-hub'
 
 S3StorageFactory.getOrCreate(scope: Construct, props?: S3StorageFactoryProps)
 ```
+
+Retrieve or create the storage factory for the current scope.
+
+This is stack singleton.
 
 ###### `scope`<sup>Required</sup> <a name="scope" id="construct-hub.S3StorageFactory.getOrCreate.parameter.scope"></a>
 
@@ -140,6 +223,25 @@ S3StorageFactory.getOrCreate(scope: Construct, props?: S3StorageFactoryProps)
 
 ---
 
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#construct-hub.S3StorageFactory.property.node">node</a></code> | <code>@aws-cdk/core.ConstructNode</code> | The construct tree node associated with this construct. |
+
+---
+
+##### `node`<sup>Required</sup> <a name="node" id="construct-hub.S3StorageFactory.property.node"></a>
+
+```typescript
+public readonly node: ConstructNode;
+```
+
+- *Type:* @aws-cdk/core.ConstructNode
+
+The construct tree node associated with this construct.
+
+---
 
 
 ## Structs <a name="Structs" id="Structs"></a>
@@ -322,6 +424,49 @@ public readonly upstreams: string[];
 - *Type:* string[]
 
 Any upstream repositories in this CodeArtifact domain that should be configured on the internal CodeArtifact repository.
+
+---
+
+### CodeArtifactProps <a name="CodeArtifactProps" id="construct-hub.sources.CodeArtifactProps"></a>
+
+#### Initializer <a name="Initializer" id="construct-hub.sources.CodeArtifactProps.Initializer"></a>
+
+```typescript
+import { sources } from 'construct-hub'
+
+const codeArtifactProps: sources.CodeArtifactProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#construct-hub.sources.CodeArtifactProps.property.repository">repository</a></code> | <code>@aws-cdk/aws-codeartifact.CfnRepository</code> | The CodeArtifact repository where packages are obtained from. |
+| <code><a href="#construct-hub.sources.CodeArtifactProps.property.bucket">bucket</a></code> | <code>@aws-cdk/aws-s3.IBucket</code> | The S3 bucket where packages will be staged. |
+
+---
+
+##### `repository`<sup>Required</sup> <a name="repository" id="construct-hub.sources.CodeArtifactProps.property.repository"></a>
+
+```typescript
+public readonly repository: CfnRepository;
+```
+
+- *Type:* @aws-cdk/aws-codeartifact.CfnRepository
+
+The CodeArtifact repository where packages are obtained from.
+
+---
+
+##### `bucket`<sup>Optional</sup> <a name="bucket" id="construct-hub.sources.CodeArtifactProps.property.bucket"></a>
+
+```typescript
+public readonly bucket: IBucket;
+```
+
+- *Type:* @aws-cdk/aws-s3.IBucket
+
+The S3 bucket where packages will be staged.
 
 ---
 
@@ -1190,6 +1335,81 @@ It is not necessary that there is one, and there could be multiple primary resou
 
 ---
 
+### NpmJsProps <a name="NpmJsProps" id="construct-hub.sources.NpmJsProps"></a>
+
+#### Initializer <a name="Initializer" id="construct-hub.sources.NpmJsProps.Initializer"></a>
+
+```typescript
+import { sources } from 'construct-hub'
+
+const npmJsProps: sources.NpmJsProps = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#construct-hub.sources.NpmJsProps.property.canaryPackage">canaryPackage</a></code> | <code>string</code> | The package that is monitored by the package canary, if enabled by `enableCanary`. |
+| <code><a href="#construct-hub.sources.NpmJsProps.property.canarySla">canarySla</a></code> | <code>@aws-cdk/core.Duration</code> | The maximum amount of time it is supposed to take for packages to become visible in this ConstructHub instance. |
+| <code><a href="#construct-hub.sources.NpmJsProps.property.enableCanary">enableCanary</a></code> | <code>boolean</code> | Registers a package canary, which will track availability of a canary package in ConstructHub, and emit dedicated metrics. |
+| <code><a href="#construct-hub.sources.NpmJsProps.property.stagingBucket">stagingBucket</a></code> | <code>@aws-cdk/aws-s3.IBucket</code> | The bucket to use for staging npm packages. |
+
+---
+
+##### `canaryPackage`<sup>Optional</sup> <a name="canaryPackage" id="construct-hub.sources.NpmJsProps.property.canaryPackage"></a>
+
+```typescript
+public readonly canaryPackage: string;
+```
+
+- *Type:* string
+- *Default:* 'construct-hub-probe'
+
+The package that is monitored by the package canary, if enabled by `enableCanary`.
+
+---
+
+##### `canarySla`<sup>Optional</sup> <a name="canarySla" id="construct-hub.sources.NpmJsProps.property.canarySla"></a>
+
+```typescript
+public readonly canarySla: Duration;
+```
+
+- *Type:* @aws-cdk/core.Duration
+- *Default:* Duration.minutes(5)
+
+The maximum amount of time it is supposed to take for packages to become visible in this ConstructHub instance.
+
+If `enableCanary` is enabled, an alarm will trigger if this SLA is breached by the `canaryPackage`.
+
+---
+
+##### `enableCanary`<sup>Optional</sup> <a name="enableCanary" id="construct-hub.sources.NpmJsProps.property.enableCanary"></a>
+
+```typescript
+public readonly enableCanary: boolean;
+```
+
+- *Type:* boolean
+- *Default:* true
+
+Registers a package canary, which will track availability of a canary package in ConstructHub, and emit dedicated metrics.
+
+---
+
+##### `stagingBucket`<sup>Optional</sup> <a name="stagingBucket" id="construct-hub.sources.NpmJsProps.property.stagingBucket"></a>
+
+```typescript
+public readonly stagingBucket: IBucket;
+```
+
+- *Type:* @aws-cdk/aws-s3.IBucket
+- *Default:* a new bucket will be created.
+
+The bucket to use for staging npm packages.
+
+---
+
 ### PackageLinkConfig <a name="PackageLinkConfig" id="construct-hub.PackageLinkConfig"></a>
 
 #### Initializer <a name="Initializer" id="construct-hub.PackageLinkConfig.Initializer"></a>
@@ -2041,6 +2261,123 @@ This option is ignored if the value we are checking is an array.
 
 ## Classes <a name="Classes" id="Classes"></a>
 
+### CodeArtifact <a name="CodeArtifact" id="construct-hub.sources.CodeArtifact"></a>
+
+- *Implements:* <a href="#construct-hub.IPackageSource">IPackageSource</a>
+
+A package source that obtains package data from an npm CodeArtifact repository.
+
+#### Initializers <a name="Initializers" id="construct-hub.sources.CodeArtifact.Initializer"></a>
+
+```typescript
+import { sources } from 'construct-hub'
+
+new sources.CodeArtifact(props: CodeArtifactProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#construct-hub.sources.CodeArtifact.Initializer.parameter.props">props</a></code> | <code>construct-hub.sources.CodeArtifactProps</code> | *No description.* |
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="construct-hub.sources.CodeArtifact.Initializer.parameter.props"></a>
+
+- *Type:* construct-hub.sources.CodeArtifactProps
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#construct-hub.sources.CodeArtifact.bind">bind</a></code> | Binds the package source to a scope and target queue. |
+| <code><a href="#construct-hub.sources.CodeArtifact.metricDeletedCount">metricDeletedCount</a></code> | The number of package versions that were deleted from CodeArtifact (those events are not handled currently). |
+| <code><a href="#construct-hub.sources.CodeArtifact.metricDenyListedCount">metricDenyListedCount</a></code> | The count of package versions that were ignored due to being in the deny list. |
+| <code><a href="#construct-hub.sources.CodeArtifact.metricIneligibleLicense">metricIneligibleLicense</a></code> | The number of package versions that were ignored due to using an ineloigible license. |
+| <code><a href="#construct-hub.sources.CodeArtifact.metricNotJsiiEnabledCount">metricNotJsiiEnabledCount</a></code> | The number of package versions that do not have a jsii assembly in the package. |
+
+---
+
+##### `bind` <a name="bind" id="construct-hub.sources.CodeArtifact.bind"></a>
+
+```typescript
+public bind(scope: Construct, __1: PackageSourceBindOptions): PackageSourceBindResult
+```
+
+Binds the package source to a scope and target queue.
+
+###### `scope`<sup>Required</sup> <a name="scope" id="construct-hub.sources.CodeArtifact.bind.parameter.scope"></a>
+
+- *Type:* @aws-cdk/core.Construct
+
+---
+
+###### `__1`<sup>Required</sup> <a name="__1" id="construct-hub.sources.CodeArtifact.bind.parameter.__1"></a>
+
+- *Type:* <a href="#construct-hub.PackageSourceBindOptions">PackageSourceBindOptions</a>
+
+---
+
+##### `metricDeletedCount` <a name="metricDeletedCount" id="construct-hub.sources.CodeArtifact.metricDeletedCount"></a>
+
+```typescript
+public metricDeletedCount(opts?: MetricOptions): Metric
+```
+
+The number of package versions that were deleted from CodeArtifact (those events are not handled currently).
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.CodeArtifact.metricDeletedCount.parameter.opts"></a>
+
+- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+
+---
+
+##### `metricDenyListedCount` <a name="metricDenyListedCount" id="construct-hub.sources.CodeArtifact.metricDenyListedCount"></a>
+
+```typescript
+public metricDenyListedCount(opts?: MetricOptions): Metric
+```
+
+The count of package versions that were ignored due to being in the deny list.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.CodeArtifact.metricDenyListedCount.parameter.opts"></a>
+
+- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+
+---
+
+##### `metricIneligibleLicense` <a name="metricIneligibleLicense" id="construct-hub.sources.CodeArtifact.metricIneligibleLicense"></a>
+
+```typescript
+public metricIneligibleLicense(opts?: MetricOptions): Metric
+```
+
+The number of package versions that were ignored due to using an ineloigible license.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.CodeArtifact.metricIneligibleLicense.parameter.opts"></a>
+
+- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+
+---
+
+##### `metricNotJsiiEnabledCount` <a name="metricNotJsiiEnabledCount" id="construct-hub.sources.CodeArtifact.metricNotJsiiEnabledCount"></a>
+
+```typescript
+public metricNotJsiiEnabledCount(opts?: MetricOptions): Metric
+```
+
+The number of package versions that do not have a jsii assembly in the package.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.CodeArtifact.metricNotJsiiEnabledCount.parameter.opts"></a>
+
+- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+
+---
+
+
+
+
 ### FilterType <a name="FilterType" id="construct-hub.FilterType"></a>
 
 #### Initializers <a name="Initializers" id="construct-hub.FilterType.Initializer"></a>
@@ -2067,7 +2404,7 @@ new FilterType()
 ##### `bind` <a name="bind" id="construct-hub.FilterType.bind"></a>
 
 ```typescript
-public bind()
+public bind(): FilterTypeValue
 ```
 
 #### Static Functions <a name="Static Functions" id="Static Functions"></a>
@@ -2094,6 +2431,198 @@ import { FilterType } from 'construct-hub'
 
 FilterType.radio()
 ```
+
+
+
+### NpmJs <a name="NpmJs" id="construct-hub.sources.NpmJs"></a>
+
+- *Implements:* <a href="#construct-hub.IPackageSource">IPackageSource</a>
+
+A package source that gets package data from the npmjs.com package registry.
+
+#### Initializers <a name="Initializers" id="construct-hub.sources.NpmJs.Initializer"></a>
+
+```typescript
+import { sources } from 'construct-hub'
+
+new sources.NpmJs(props?: NpmJsProps)
+```
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#construct-hub.sources.NpmJs.Initializer.parameter.props">props</a></code> | <code>construct-hub.sources.NpmJsProps</code> | *No description.* |
+
+---
+
+##### `props`<sup>Optional</sup> <a name="props" id="construct-hub.sources.NpmJs.Initializer.parameter.props"></a>
+
+- *Type:* construct-hub.sources.NpmJsProps
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#construct-hub.sources.NpmJs.bind">bind</a></code> | Binds the package source to a scope and target queue. |
+| <code><a href="#construct-hub.sources.NpmJs.metricBatchProcessingTime">metricBatchProcessingTime</a></code> | The average time it took to process a changes batch. |
+| <code><a href="#construct-hub.sources.NpmJs.metricChangeCount">metricChangeCount</a></code> | The total count of changes that were processed. |
+| <code><a href="#construct-hub.sources.NpmJs.metricLastSeq">metricLastSeq</a></code> | The last sequence number that was processed. |
+| <code><a href="#construct-hub.sources.NpmJs.metricNpmJsChangeAge">metricNpmJsChangeAge</a></code> | *No description.* |
+| <code><a href="#construct-hub.sources.NpmJs.metricPackageVersionAge">metricPackageVersionAge</a></code> | The age of the oldest package version that was processed. |
+| <code><a href="#construct-hub.sources.NpmJs.metricPackageVersionCount">metricPackageVersionCount</a></code> | The total count of package versions that were inspected. |
+| <code><a href="#construct-hub.sources.NpmJs.metricRelevantPackageVersions">metricRelevantPackageVersions</a></code> | The total count of package versions that were deemed relevant. |
+| <code><a href="#construct-hub.sources.NpmJs.metricRemainingTime">metricRemainingTime</a></code> | The amount of time that was remaining when the lambda returned in order to avoid hitting a timeout. |
+| <code><a href="#construct-hub.sources.NpmJs.metricUnprocessableEntity">metricUnprocessableEntity</a></code> | The amount of changes that were not processed due to having an invalid format. |
+
+---
+
+##### `bind` <a name="bind" id="construct-hub.sources.NpmJs.bind"></a>
+
+```typescript
+public bind(scope: Construct, __1: PackageSourceBindOptions): PackageSourceBindResult
+```
+
+Binds the package source to a scope and target queue.
+
+###### `scope`<sup>Required</sup> <a name="scope" id="construct-hub.sources.NpmJs.bind.parameter.scope"></a>
+
+- *Type:* @aws-cdk/core.Construct
+
+---
+
+###### `__1`<sup>Required</sup> <a name="__1" id="construct-hub.sources.NpmJs.bind.parameter.__1"></a>
+
+- *Type:* <a href="#construct-hub.PackageSourceBindOptions">PackageSourceBindOptions</a>
+
+---
+
+##### `metricBatchProcessingTime` <a name="metricBatchProcessingTime" id="construct-hub.sources.NpmJs.metricBatchProcessingTime"></a>
+
+```typescript
+public metricBatchProcessingTime(opts?: MetricOptions): Metric
+```
+
+The average time it took to process a changes batch.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricBatchProcessingTime.parameter.opts"></a>
+
+- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+
+---
+
+##### `metricChangeCount` <a name="metricChangeCount" id="construct-hub.sources.NpmJs.metricChangeCount"></a>
+
+```typescript
+public metricChangeCount(opts?: MetricOptions): Metric
+```
+
+The total count of changes that were processed.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricChangeCount.parameter.opts"></a>
+
+- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+
+---
+
+##### `metricLastSeq` <a name="metricLastSeq" id="construct-hub.sources.NpmJs.metricLastSeq"></a>
+
+```typescript
+public metricLastSeq(opts?: MetricOptions): Metric
+```
+
+The last sequence number that was processed.
+
+This metric can be used to discover when a sequence reset has happened in the CouchDB instance.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricLastSeq.parameter.opts"></a>
+
+- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+
+---
+
+##### `metricNpmJsChangeAge` <a name="metricNpmJsChangeAge" id="construct-hub.sources.NpmJs.metricNpmJsChangeAge"></a>
+
+```typescript
+public metricNpmJsChangeAge(opts?: MetricOptions): Metric
+```
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricNpmJsChangeAge.parameter.opts"></a>
+
+- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+
+---
+
+##### `metricPackageVersionAge` <a name="metricPackageVersionAge" id="construct-hub.sources.NpmJs.metricPackageVersionAge"></a>
+
+```typescript
+public metricPackageVersionAge(opts?: MetricOptions): Metric
+```
+
+The age of the oldest package version that was processed.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricPackageVersionAge.parameter.opts"></a>
+
+- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+
+---
+
+##### `metricPackageVersionCount` <a name="metricPackageVersionCount" id="construct-hub.sources.NpmJs.metricPackageVersionCount"></a>
+
+```typescript
+public metricPackageVersionCount(opts?: MetricOptions): Metric
+```
+
+The total count of package versions that were inspected.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricPackageVersionCount.parameter.opts"></a>
+
+- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+
+---
+
+##### `metricRelevantPackageVersions` <a name="metricRelevantPackageVersions" id="construct-hub.sources.NpmJs.metricRelevantPackageVersions"></a>
+
+```typescript
+public metricRelevantPackageVersions(opts?: MetricOptions): Metric
+```
+
+The total count of package versions that were deemed relevant.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricRelevantPackageVersions.parameter.opts"></a>
+
+- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+
+---
+
+##### `metricRemainingTime` <a name="metricRemainingTime" id="construct-hub.sources.NpmJs.metricRemainingTime"></a>
+
+```typescript
+public metricRemainingTime(opts?: MetricOptions): Metric
+```
+
+The amount of time that was remaining when the lambda returned in order to avoid hitting a timeout.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricRemainingTime.parameter.opts"></a>
+
+- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+
+---
+
+##### `metricUnprocessableEntity` <a name="metricUnprocessableEntity" id="construct-hub.sources.NpmJs.metricUnprocessableEntity"></a>
+
+```typescript
+public metricUnprocessableEntity(opts?: MetricOptions): Metric
+```
+
+The amount of changes that were not processed due to having an invalid format.
+
+###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricUnprocessableEntity.parameter.opts"></a>
+
+- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+
+---
+
 
 
 
@@ -2139,7 +2668,7 @@ new PackageTagGroup(id: string, props?: PackageTagGroupProps)
 ##### `bind` <a name="bind" id="construct-hub.PackageTagGroup.bind"></a>
 
 ```typescript
-public bind()
+public bind(): PackageTagGroupConfig
 ```
 
 
@@ -2232,7 +2761,7 @@ new PreloadFile(data: string)
 ##### `bind` <a name="bind" id="construct-hub.PreloadFile.bind"></a>
 
 ```typescript
-public bind()
+public bind(): string
 ```
 
 #### Static Functions <a name="Static Functions" id="Static Functions"></a>
@@ -2252,6 +2781,8 @@ import { PreloadFile } from 'construct-hub'
 PreloadFile.fromCode(code: string)
 ```
 
+Creates a PreloadFile instance directly from source code.
+
 ###### `code`<sup>Required</sup> <a name="code" id="construct-hub.PreloadFile.fromCode.parameter.code"></a>
 
 - *Type:* string
@@ -2265,6 +2796,8 @@ import { PreloadFile } from 'construct-hub'
 
 PreloadFile.fromFile(path: string)
 ```
+
+Creates a PreloadFile instance from a filepath to load.
 
 ###### `path`<sup>Required</sup> <a name="path" id="construct-hub.PreloadFile.fromFile.parameter.path"></a>
 
@@ -2302,6 +2835,8 @@ import { SpdxLicense } from 'construct-hub'
 SpdxLicense.all()
 ```
 
+All valid SPDX Licenses.
+
 ##### `apache` <a name="apache" id="construct-hub.SpdxLicense.apache"></a>
 
 ```typescript
@@ -2309,6 +2844,8 @@ import { SpdxLicense } from 'construct-hub'
 
 SpdxLicense.apache()
 ```
+
+The Apache family of licenses.
 
 ##### `bsd` <a name="bsd" id="construct-hub.SpdxLicense.bsd"></a>
 
@@ -2318,6 +2855,8 @@ import { SpdxLicense } from 'construct-hub'
 SpdxLicense.bsd()
 ```
 
+The BSD family of licenses.
+
 ##### `cddl` <a name="cddl" id="construct-hub.SpdxLicense.cddl"></a>
 
 ```typescript
@@ -2325,6 +2864,8 @@ import { SpdxLicense } from 'construct-hub'
 
 SpdxLicense.cddl()
 ```
+
+The CDDL family of licenses.
 
 ##### `epl` <a name="epl" id="construct-hub.SpdxLicense.epl"></a>
 
@@ -2334,6 +2875,8 @@ import { SpdxLicense } from 'construct-hub'
 SpdxLicense.epl()
 ```
 
+The EPL family of licenses.
+
 ##### `mit` <a name="mit" id="construct-hub.SpdxLicense.mit"></a>
 
 ```typescript
@@ -2341,6 +2884,8 @@ import { SpdxLicense } from 'construct-hub'
 
 SpdxLicense.mit()
 ```
+
+The MIT family of licenses.
 
 ##### `mpl` <a name="mpl" id="construct-hub.SpdxLicense.mpl"></a>
 
@@ -2350,6 +2895,8 @@ import { SpdxLicense } from 'construct-hub'
 SpdxLicense.mpl()
 ```
 
+The MPL family of licenses.
+
 ##### `osiApproved` <a name="osiApproved" id="construct-hub.SpdxLicense.osiApproved"></a>
 
 ```typescript
@@ -2357,6 +2904,8 @@ import { SpdxLicense } from 'construct-hub'
 
 SpdxLicense.osiApproved()
 ```
+
+All OSI-Approved SPDX Licenses.
 
 #### Properties <a name="Properties" id="Properties"></a>
 
@@ -9148,7 +9697,7 @@ new TagCondition()
 ##### `bind` <a name="bind" id="construct-hub.TagCondition.bind"></a>
 
 ```typescript
-public bind()
+public bind(): TagConditionConfig
 ```
 
 #### Static Functions <a name="Static Functions" id="Static Functions"></a>
@@ -9171,6 +9720,8 @@ import { TagCondition } from 'construct-hub'
 TagCondition.and(conds: TagCondition)
 ```
 
+Create an && condition which applies only when all condition arguments are true.
+
 ###### `conds`<sup>Required</sup> <a name="conds" id="construct-hub.TagCondition.and.parameter.conds"></a>
 
 - *Type:* <a href="#construct-hub.TagCondition">TagCondition</a>
@@ -9184,6 +9735,8 @@ import { TagCondition } from 'construct-hub'
 
 TagCondition.field(keys: string)
 ```
+
+Target a field within the `package.json` to assert against. Nested fields can be accessed by passing multiple keys. `TagCondition.field('key1', 'key2')` will access `packageJson?.key1?.key2`.
 
 ###### `keys`<sup>Required</sup> <a name="keys" id="construct-hub.TagCondition.field.parameter.keys"></a>
 
@@ -9199,6 +9752,10 @@ import { TagCondition } from 'construct-hub'
 TagCondition.not(conds: TagCondition)
 ```
 
+Create a !
+
+condition which applies if the condition argument is false
+
 ###### `conds`<sup>Required</sup> <a name="conds" id="construct-hub.TagCondition.not.parameter.conds"></a>
 
 - *Type:* <a href="#construct-hub.TagCondition">TagCondition</a>
@@ -9213,6 +9770,8 @@ import { TagCondition } from 'construct-hub'
 TagCondition.or(conds: TagCondition)
 ```
 
+Create an || condition which applies if any of the condition arguments are true.
+
 ###### `conds`<sup>Required</sup> <a name="conds" id="construct-hub.TagCondition.or.parameter.conds"></a>
 
 - *Type:* <a href="#construct-hub.TagCondition">TagCondition</a>
@@ -9226,6 +9785,8 @@ import { TagCondition } from 'construct-hub'
 
 TagCondition.readme()
 ```
+
+Create a condition with logic targeting the README of the package.
 
 
 
@@ -9266,8 +9827,10 @@ new TagConditionField(field: string[])
 ##### `eq` <a name="eq" id="construct-hub.TagConditionField.eq"></a>
 
 ```typescript
-public eq(value: any)
+public eq(value: any): TagCondition
 ```
+
+Create a === condition which applies if the specified field within the package's package.json is equal to the passed value.
 
 ###### `value`<sup>Required</sup> <a name="value" id="construct-hub.TagConditionField.eq.parameter.value"></a>
 
@@ -9278,8 +9841,10 @@ public eq(value: any)
 ##### `includes` <a name="includes" id="construct-hub.TagConditionField.includes"></a>
 
 ```typescript
-public includes(value: any, options?: TagConditionIncludesOptions)
+public includes(value: any, options?: TagConditionIncludesOptions): TagCondition
 ```
+
+Create a `field.includes(value)` condition which applies if the specified field within the package's package.json includes the value. This works for arrays or strings.
 
 ###### `value`<sup>Required</sup> <a name="value" id="construct-hub.TagConditionField.includes.parameter.value"></a>
 
@@ -9296,8 +9861,10 @@ public includes(value: any, options?: TagConditionIncludesOptions)
 ##### `startsWith` <a name="startsWith" id="construct-hub.TagConditionField.startsWith"></a>
 
 ```typescript
-public startsWith(value: string)
+public startsWith(value: string): TagCondition
 ```
+
+Create a `field.startsWith(value)` condition which applies if the specified field within the package's package.json begins with the value. This works only for string values.
 
 ###### `value`<sup>Required</sup> <a name="value" id="construct-hub.TagConditionField.startsWith.parameter.value"></a>
 
@@ -9336,8 +9903,10 @@ new TagConditionReadme()
 ##### `includes` <a name="includes" id="construct-hub.TagConditionReadme.includes"></a>
 
 ```typescript
-public includes(value: string, options?: TagConditionIncludesOptions)
+public includes(value: string, options?: TagConditionIncludesOptions): TagCondition
 ```
+
+Create a `readme.includes(value)` condition which applies if the README includes the specified string.
 
 ###### `value`<sup>Required</sup> <a name="value" id="construct-hub.TagConditionReadme.includes.parameter.value"></a>
 
@@ -9373,8 +9942,10 @@ DenyList features exposed to extension points.
 ##### `grantRead` <a name="grantRead" id="construct-hub.IDenyList.grantRead"></a>
 
 ```typescript
-public grantRead(handler: Function)
+public grantRead(handler: Function): void
 ```
+
+Grants an AWS Lambda function permissions to read the deny list, and adds the relevant environment variables expected by the `DenyListClient`.
 
 ###### `handler`<sup>Required</sup> <a name="handler" id="construct-hub.IDenyList.grantRead.parameter.handler"></a>
 
@@ -9398,8 +9969,10 @@ public grantRead(handler: Function)
 ##### `grantRead` <a name="grantRead" id="construct-hub.ILicenseList.grantRead"></a>
 
 ```typescript
-public grantRead(handler: Function)
+public grantRead(handler: Function): void
 ```
+
+Grants an AWS Lambda function permissions to read the license allow list, and adds the relevant environment variables expected by the `LicenseListClient`.
 
 ###### `handler`<sup>Required</sup> <a name="handler" id="construct-hub.ILicenseList.grantRead.parameter.handler"></a>
 
@@ -9426,8 +9999,12 @@ ConstructHub monitoring features exposed to extension points.
 ##### `addHighSeverityAlarm` <a name="addHighSeverityAlarm" id="construct-hub.IMonitoring.addHighSeverityAlarm"></a>
 
 ```typescript
-public addHighSeverityAlarm(title: string, alarm: Alarm)
+public addHighSeverityAlarm(title: string, alarm: Alarm): void
 ```
+
+Adds a high-severity alarm.
+
+If this alarm goes off, the action specified in `highSeverityAlarmActionArn` is triggered.
 
 ###### `title`<sup>Required</sup> <a name="title" id="construct-hub.IMonitoring.addHighSeverityAlarm.parameter.title"></a>
 
@@ -9448,8 +10025,12 @@ the alarm to be added to the high-severity dashboard.
 ##### `addLowSeverityAlarm` <a name="addLowSeverityAlarm" id="construct-hub.IMonitoring.addLowSeverityAlarm"></a>
 
 ```typescript
-public addLowSeverityAlarm(title: string, alarm: Alarm)
+public addLowSeverityAlarm(title: string, alarm: Alarm): void
 ```
+
+Adds a low-severity alarm.
+
+If this alarm goes off, the action specified in `normalAlarmAction` is triggered.
 
 ###### `title`<sup>Required</sup> <a name="title" id="construct-hub.IMonitoring.addLowSeverityAlarm.parameter.title"></a>
 
@@ -9485,8 +10066,10 @@ A package source for ConstructHub.
 ##### `bind` <a name="bind" id="construct-hub.IPackageSource.bind"></a>
 
 ```typescript
-public bind(scope: Construct, opts: PackageSourceBindOptions)
+public bind(scope: Construct, opts: PackageSourceBindOptions): PackageSourceBindResult
 ```
+
+Binds the package source to a scope and target queue.
 
 ###### `scope`<sup>Required</sup> <a name="scope" id="construct-hub.IPackageSource.bind.parameter.scope"></a>
 
@@ -9522,8 +10105,10 @@ The CodeArtifact repository API exposed to extensions.
 ##### `addExternalConnection` <a name="addExternalConnection" id="construct-hub.IRepository.addExternalConnection"></a>
 
 ```typescript
-public addExternalConnection(id: string)
+public addExternalConnection(id: string): void
 ```
+
+Adds an external connection to this repository.
 
 ###### `id`<sup>Required</sup> <a name="id" id="construct-hub.IRepository.addExternalConnection.parameter.id"></a>
 
