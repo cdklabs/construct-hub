@@ -139,7 +139,7 @@ export function handler(event: TransliteratorInput): Promise<{ created: string[]
                 language: docgen.Language.fromString(lang.name),
               });
 
-              const jsonPage = Buffer.from(json.render(null, 2));
+              const jsonPage = Buffer.from(json.render());
               metrics.putMetric(MetricName.DOCUMENT_SIZE, jsonPage.length, Unit.Bytes);
               const { buffer: jsonBody, contentEncoding: jsonContentEncoding } = compressContent(jsonPage);
               metrics.putMetric(MetricName.COMPRESSED_DOCUMENT_SIZE, jsonBody.length, Unit.Bytes);
