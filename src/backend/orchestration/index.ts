@@ -160,7 +160,7 @@ export class Orchestration extends Construct {
       visibilityTimeout: Duration.minutes(15),
     });
 
-    props.monitoring.addHighSeverityAlarm(
+    props.monitoring.addLowSeverityAlarm(
       'Backend Orchestration Dead-Letter Queue is not empty',
       new MathExpression({
         expression: 'm1 + m2',
@@ -274,6 +274,11 @@ export class Orchestration extends Construct {
           timeout: Duration.hours(2),
           vpcSubnets: props.vpcSubnets,
           securityGroups: props.vpcSecurityGroups,
+          // The task code sends a heartbeat back every minute, but in rare
+          // cases the first heartbeat may take a while to come back due to
+          // the time it takes to provision the task in the cluster, so we
+          // give a more generous buffer here.
+          heartbeat: Duration.minutes(10),
         })
           // Do not retry NoSpaceLeftOnDevice errors, these are typically not transient.
           .addRetry({ errors: ['jsii-docgen.NoSpaceLeftOnDevice'], maxAttempts: 0 })
@@ -292,6 +297,12 @@ export class Orchestration extends Construct {
             backoffRate: 2,
             interval: Duration.minutes(5),
             maxAttempts: 3,
+          })
+          .addRetry({
+            errors: ['States.Timeout'], // The task has stopped responding, or is just taking a long time to provision
+            // To compensate we'll give more retries and pause between them in
+            // case it's just a transient issue.
+            maxAttempts: 5,
           })
           .addRetry({ maxAttempts: 3 })
           .addCatch(ignore, { errors: [UNPROCESSABLE_PACKAGE_ERROR_NAME] })
