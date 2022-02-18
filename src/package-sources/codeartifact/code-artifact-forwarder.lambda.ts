@@ -52,7 +52,7 @@ export const handler = metricScope((metrics) => async (event: EventBridgeEvent<t
     package: event.detail.packageName,
     packageVersion: event.detail.packageVersion,
   }).promise();
-  const tarball = Buffer.from(asset!);
+  const tarball = Buffer.from(asset! as any);
 
   const { assemblyJson, packageJson } = await extractObjects(tarball, {
     assemblyJson: { path: 'package/.jsii' },

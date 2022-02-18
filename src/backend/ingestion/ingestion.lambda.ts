@@ -5,7 +5,7 @@ import { URL } from 'url';
 import { Assembly, validateAssembly } from '@jsii/spec';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { Context, SQSEvent } from 'aws-lambda';
-import { minVersion } from 'semver';
+import { CacheStrategy } from '../../caching';
 import type { PackageTagConfig } from '../../package-tag';
 import type { PackageLinkConfig } from '../../webapp';
 import type { StateMachineInput } from '../payload-schema';
@@ -18,6 +18,7 @@ import { integrity } from '../shared/integrity.lambda-shared';
 import { isTagApplicable } from '../shared/tags';
 import { extractObjects } from '../shared/tarball.lambda-shared';
 import { MetricName, METRICS_NAMESPACE } from './constants';
+import { ConstructFramework, detectConstructFramework } from './framework-detection.lambda-shared';
 
 Configuration.namespace = METRICS_NAMESPACE;
 
@@ -67,7 +68,7 @@ export const handler = metricScope(
         })
         .promise();
 
-      const { integrity: integrityCheck } = integrity(payload, Buffer.from(tarball.Body!));
+      const { integrity: integrityCheck } = integrity(payload, Buffer.from(tarball.Body! as any));
       if (payload.integrity !== integrityCheck) {
         throw new Error(
           `Integrity check failed: ${payload.integrity} !== ${integrityCheck}`,
@@ -79,7 +80,7 @@ export const handler = metricScope(
       let licenseText: Buffer | undefined;
       try {
         ({ dotJsii, packageJson, licenseText } = await extractObjects(
-          Buffer.from(tarball.Body!),
+          Buffer.from(tarball.Body! as any),
           {
             dotJsii: { path: 'package/.jsii', required: true },
             packageJson: { path: 'package/package.json', required: true },
@@ -92,19 +93,30 @@ export const handler = metricScope(
         return;
       }
 
+
+      let parsedAssembly: Assembly;
       let constructFramework: ConstructFramework | undefined;
       let packageLicense: string;
       let packageName: string;
       let packageVersion: string;
+      let packageReadme: string;
       try {
-        const assembly = validateAssembly(
-          JSON.parse(dotJsii.toString('utf-8')),
-        );
-        constructFramework = detectConstructFramework(assembly);
-        const { license, name, version } = assembly;
+        parsedAssembly = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
+
+        // needs `dependencyClosure`
+        constructFramework = detectConstructFramework(parsedAssembly);
+        const { license, name, version, readme } = parsedAssembly;
         packageLicense = license;
         packageName = name;
         packageVersion = version;
+        packageReadme = readme?.markdown ?? '';
+
+        // Delete some fields not used by the client to reduce the size of the assembly.
+        // See https://github.com/cdklabs/construct-hub-webapp/issues/691
+        delete parsedAssembly.types;
+        delete parsedAssembly.readme;
+        delete parsedAssembly.dependencyClosure;
+
         metrics.putMetric(MetricName.INVALID_ASSEMBLY, 0, Unit.Count);
       } catch (ex) {
         console.error(
@@ -169,7 +181,7 @@ export const handler = metricScope(
 
       const packageTags = packageTagsConfig.reduce((accum: Array<Omit<PackageTagConfig, 'condition'>>, tagConfig) => {
         const { condition, ...tagData } = tagConfig;
-        if (isTagApplicable(condition, packageJsonObj)) {
+        if (isTagApplicable(condition, { pkg: packageJsonObj, readme: packageReadme })) {
           return [...accum, tagData];
         }
 
@@ -179,7 +191,16 @@ export const handler = metricScope(
 
       if (codeArtifactProps) {
         console.log('Publishing to the internal CodeArtifact...');
-        await codeArtifactPublishPackage(Buffer.from(tarball.Body!), codeArtifactProps);
+        try {
+          const { publishConfig } = packageJsonObj;
+          if (publishConfig) {
+            console.log('Not publishing to CodeArtifact due to the presence of publishConfig in package.json: ', publishConfig);
+          } else {
+            await codeArtifactPublishPackage(Buffer.from(tarball.Body! as any), codeArtifactProps);
+          }
+        } catch (err) {
+          console.error('Failed publishing to CodeArtifact: ', err);
+        }
       }
 
       const metadata = {
@@ -210,7 +231,7 @@ export const handler = metricScope(
             Bucket: BUCKET_NAME,
             Key: packageKey,
             Body: tarball.Body,
-            CacheControl: 'public, max-age=86400, must-revalidate, s-maxage=300, proxy-revalidate',
+            CacheControl: CacheStrategy.default().toString(),
             ContentType: 'application/octet-stream',
             Metadata: {
               'Lambda-Log-Group': context.logGroupName,
@@ -225,7 +246,7 @@ export const handler = metricScope(
             Bucket: BUCKET_NAME,
             Key: metadataKey,
             Body: JSON.stringify(metadata),
-            CacheControl: 'public, max-age=300, must-revalidate, proxy-revalidate',
+            CacheControl: CacheStrategy.default().toString(),
             ContentType: 'application/json',
             Metadata: {
               'Lambda-Log-Group': context.logGroupName,
@@ -243,8 +264,8 @@ export const handler = metricScope(
         .putObject({
           Bucket: BUCKET_NAME,
           Key: assemblyKey,
-          Body: dotJsii,
-          CacheControl: 'public, max-age: 86400, must-revalidate, s-maxage=300, proxy-revalidate',
+          Body: Buffer.from(JSON.stringify(parsedAssembly), 'utf-8'),
+          CacheControl: CacheStrategy.default().toString(),
           ContentType: 'application/json',
           Metadata: {
             'Lambda-Log-Group': context.logGroupName,
@@ -290,84 +311,6 @@ export const handler = metricScope(
     return result;
   },
 );
-
-const enum ConstructFrameworkName {
-  AWS_CDK = 'aws-cdk',
-  CDK8S = 'cdk8s',
-  CDKTF = 'cdktf',
-}
-
-export interface ConstructFramework {
-  /**
-   * The name of the construct framework.
-   */
-  readonly name: ConstructFrameworkName;
-
-  /**
-   * The major version of the construct framework that is used, if it could be
-   * identified.
-   */
-  readonly majorVersion?: number;
-}
-
-/**
- * Determines the Construct framework used by the provided assembly.
- *
- * @param assembly the assembly for which a construct framework should be
- *                 identified.
- *
- * @returns a construct framework if one could be identified.
- */
-function detectConstructFramework(assembly: Assembly): ConstructFramework | undefined {
-  let name: ConstructFramework['name'] | undefined;
-  let nameAmbiguous = false;
-  let majorVersion: number | undefined;
-  let majorVersionAmbiguous = false;
-  detectConstructFrameworkPackage(assembly.name, assembly.version);
-  for (const depName of Object.keys(assembly.dependencyClosure ?? {})) {
-    detectConstructFrameworkPackage(depName);
-    if (nameAmbiguous) {
-      return undefined;
-    }
-  }
-  return name && { name, majorVersion: majorVersionAmbiguous ? undefined : majorVersion };
-
-  function detectConstructFrameworkPackage(packageName: string, versionRange = assembly.dependencies?.[packageName]): void {
-    if (packageName.startsWith('@aws-cdk/') || packageName === 'aws-cdk-lib' || packageName === 'monocdk') {
-      if (name && name !== ConstructFrameworkName.AWS_CDK) {
-        // Identified multiple candidates, so returning ambiguous...
-        nameAmbiguous = true;
-        return;
-      }
-      name = ConstructFrameworkName.AWS_CDK;
-    } else if (packageName === 'cdktf' || packageName.startsWith('@cdktf/')) {
-      if (name && name !== ConstructFrameworkName.CDKTF) {
-        // Identified multiple candidates, so returning ambiguous...
-        nameAmbiguous = true;
-        return;
-      }
-      name = ConstructFrameworkName.CDKTF;
-    } else if (packageName === 'cdk8s' || /^cdk8s-plus(?:-(?:17|20|21|22))?$/.test(packageName)) {
-      if (name && name !== ConstructFrameworkName.CDK8S) {
-        // Identified multiple candidates, so returning ambiguous...
-        nameAmbiguous = true;
-        return;
-      }
-      name = ConstructFrameworkName.CDK8S;
-    } else {
-      return;
-    }
-    if (versionRange) {
-      const major = minVersion(versionRange)?.major;
-      if (majorVersion != null && majorVersion !== major) {
-        // Identified multiple candidates, so this is ambiguous...
-        majorVersionAmbiguous = true;
-      }
-      majorVersion = major;
-    }
-    return;
-  }
-}
 
 /**
  * Checks whether the provided file name corresponds to a license file or not.

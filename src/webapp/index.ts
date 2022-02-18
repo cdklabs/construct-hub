@@ -5,13 +5,16 @@ import * as r53 from '@aws-cdk/aws-route53';
 import * as r53targets from '@aws-cdk/aws-route53-targets';
 import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
-import { CacheControl } from '@aws-cdk/aws-s3-deployment';
-import { CfnOutput, Construct, Duration } from '@aws-cdk/core';
+import { CfnOutput, Construct } from '@aws-cdk/core';
 import { Domain } from '../api';
 import { PackageStats } from '../backend/package-stats';
-import { CATALOG_KEY } from '../backend/shared/constants';
+import { CATALOG_KEY, VERSION_TRACKER_KEY } from '../backend/shared/constants';
+import { CacheStrategy } from '../caching';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
+import { PreloadFile } from '../preload-file';
+import { S3StorageFactory } from '../s3/storage';
+import { TempFile } from '../temp-file';
 import { WebappConfig, WebappConfigProps } from './config';
 import { ResponseFunction } from './response-function';
 
@@ -98,6 +101,26 @@ export interface FeatureFlags {
   [key: string]: any;
 }
 
+/**
+ * A category of packages.
+ */
+export interface Category {
+  /**
+   * The title on the category button as it appears in the Construct Hub home page.
+   */
+  readonly title: string;
+
+  /**
+   * The URL that this category links to. This is the full path to the link that
+   * this category button will have. You can use any query options such as
+   * `?keywords=`, `?q=`, or a combination thereof.
+   *
+   * @example "/search?keywords=monitoring"
+   */
+  readonly url: string;
+}
+
+
 export interface WebAppProps extends WebappConfigProps {
   /**
    * Connect to a domain.
@@ -119,15 +142,23 @@ export interface WebAppProps extends WebappConfigProps {
    * Manages the `stats.json` file object.
    */
   readonly packageStats?: PackageStats;
+
+  /**
+   * JavaScript file which will be loaded before the webapp
+   */
+  readonly preloadScript?: PreloadFile;
 }
 
 export class WebApp extends Construct {
+  public readonly baseUrl: string;
   public readonly bucket: s3.Bucket;
   public readonly distribution: cloudfront.Distribution;
+
   public constructor(scope: Construct, id: string, props: WebAppProps) {
     super(scope, id);
 
-    this.bucket = new s3.Bucket(this, 'WebsiteBucket', {
+    const storageFactory = S3StorageFactory.getOrCreate(this);
+    this.bucket = storageFactory.newBucket(this, 'WebsiteBucket', {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
     });
@@ -162,9 +193,14 @@ export class WebApp extends Construct {
       minimumProtocolVersion: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2018,
     });
 
+    // The base URL is currently the custom DNS if any was used, or the distribution domain name.
+    // This needs changing in case, for example, we add support for a custom URL prefix.
+    this.baseUrl = `https://${props.domain ? props.domain.zone.zoneName : this.distribution.distributionDomainName}`;
+
     const jsiiObjOrigin = new origins.S3Origin(props.packageData);
     this.distribution.addBehavior('/data/*', jsiiObjOrigin, behaviorOptions);
     this.distribution.addBehavior(`/${CATALOG_KEY}`, jsiiObjOrigin, behaviorOptions);
+    this.distribution.addBehavior(`/${VERSION_TRACKER_KEY}`, jsiiObjOrigin, behaviorOptions);
     if (props.packageStats) {
       this.distribution.addBehavior(`/${props.packageStats.statsKey}`, jsiiObjOrigin, behaviorOptions);
     }
@@ -200,33 +236,33 @@ export class WebApp extends Construct {
     const webappDir = path.join(__dirname, '..', '..', 'website');
 
     new s3deploy.BucketDeployment(this, 'DeployWebsite', {
-      cacheControl: [
-        CacheControl.setPublic(),
-        CacheControl.maxAge(Duration.hours(1)),
-        CacheControl.mustRevalidate(),
-        CacheControl.sMaxAge(Duration.minutes(5)),
-        CacheControl.proxyRevalidate(),
-      ],
       destinationBucket: this.bucket,
       distribution: this.distribution,
       prune: false,
       sources: [s3deploy.Source.asset(webappDir)],
+      cacheControl: CacheStrategy.default().toArray(),
     });
 
     // Generate config.json to customize frontend behavior
     const config = new WebappConfig({
       packageLinks: props.packageLinks,
       packageTags: props.packageTags,
+      packageTagGroups: props.packageTagGroups,
       featuredPackages: props.featuredPackages,
       showPackageStats: props.showPackageStats ?? props.packageStats !== undefined,
       featureFlags: props.featureFlags,
+      categories: props.categories,
     });
 
+    // Generate preload.js
+    const preloadScript = new TempFile('preload.js', props.preloadScript?.bind() ?? '');
+
     new s3deploy.BucketDeployment(this, 'DeployWebsiteConfig', {
-      sources: [s3deploy.Source.asset(config.file.dir)],
+      sources: [s3deploy.Source.asset(config.file.dir), s3deploy.Source.asset(preloadScript.dir)],
       destinationBucket: this.bucket,
       distribution: this.distribution,
       prune: false,
+      cacheControl: CacheStrategy.default().toArray(),
     });
 
     new CfnOutput(this, 'DomainName', {

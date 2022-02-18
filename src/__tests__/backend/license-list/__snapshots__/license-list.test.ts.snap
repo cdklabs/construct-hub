@@ -2,6 +2,26 @@
 
 exports[`All licenses 1`] = `
 Object {
+  "Outputs": Object {
+    "LicenseListSnapshotCommand479BE2D3": Object {
+      "Description": "Snapshot TestStack/LicenseList/Bucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "LicenseListBucket4788F382",
+            },
+            " s3://",
+            Object {
+              "Ref": "LicenseListFailoverBucket1D46B57B",
+            },
+          ],
+        ],
+      },
+    },
+  },
   "Parameters": Object {
     "AssetParametersa3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8ArtifactHash238275D6": Object {
       "Description": "Artifact hash for asset \\"a3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8\\"",
@@ -383,7 +403,7 @@ Object {
       "Type": "AWS::Lambda::LayerVersion",
     },
     "LicenseListBucket4788F382": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -405,7 +425,7 @@ Object {
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "LicenseListBucketPolicy652A4F9E": Object {
       "Properties": Object {
@@ -461,7 +481,7 @@ Object {
           "Ref": "LicenseListBucket4788F382",
         },
         "Prune": true,
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -512,12 +532,110 @@ Object {
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
     },
+    "LicenseListFailoverBucket1D46B57B": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "LicenseListFailoverBucketPolicyB74B7312": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "LicenseListFailoverBucket1D46B57B",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListFailoverBucket1D46B57B",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListFailoverBucket1D46B57B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
   },
 }
 `;
 
 exports[`Apache licenses only 1`] = `
 Object {
+  "Outputs": Object {
+    "LicenseListSnapshotCommand479BE2D3": Object {
+      "Description": "Snapshot TestStack/LicenseList/Bucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "LicenseListBucket4788F382",
+            },
+            " s3://",
+            Object {
+              "Ref": "LicenseListFailoverBucket1D46B57B",
+            },
+          ],
+        ],
+      },
+    },
+  },
   "Parameters": Object {
     "AssetParametersa3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8ArtifactHash238275D6": Object {
       "Description": "Artifact hash for asset \\"a3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8\\"",
@@ -899,7 +1017,7 @@ Object {
       "Type": "AWS::Lambda::LayerVersion",
     },
     "LicenseListBucket4788F382": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -921,7 +1039,7 @@ Object {
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "LicenseListBucketPolicy652A4F9E": Object {
       "Properties": Object {
@@ -977,7 +1095,7 @@ Object {
           "Ref": "LicenseListBucket4788F382",
         },
         "Prune": true,
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -1028,12 +1146,110 @@ Object {
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
     },
+    "LicenseListFailoverBucket1D46B57B": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "LicenseListFailoverBucketPolicyB74B7312": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "LicenseListFailoverBucket1D46B57B",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListFailoverBucket1D46B57B",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListFailoverBucket1D46B57B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
   },
 }
 `;
 
 exports[`BSD licenses only 1`] = `
 Object {
+  "Outputs": Object {
+    "LicenseListSnapshotCommand479BE2D3": Object {
+      "Description": "Snapshot TestStack/LicenseList/Bucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "LicenseListBucket4788F382",
+            },
+            " s3://",
+            Object {
+              "Ref": "LicenseListFailoverBucket1D46B57B",
+            },
+          ],
+        ],
+      },
+    },
+  },
   "Parameters": Object {
     "AssetParameters1b887854b164b638de83784379ed5bcc6799eb443b1373b9108c83867f20f64dArtifactHashD65ECCAD": Object {
       "Description": "Artifact hash for asset \\"1b887854b164b638de83784379ed5bcc6799eb443b1373b9108c83867f20f64d\\"",
@@ -1415,7 +1631,7 @@ Object {
       "Type": "AWS::Lambda::LayerVersion",
     },
     "LicenseListBucket4788F382": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -1437,7 +1653,7 @@ Object {
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "LicenseListBucketPolicy652A4F9E": Object {
       "Properties": Object {
@@ -1493,7 +1709,7 @@ Object {
           "Ref": "LicenseListBucket4788F382",
         },
         "Prune": true,
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -1544,12 +1760,110 @@ Object {
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
     },
+    "LicenseListFailoverBucket1D46B57B": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "LicenseListFailoverBucketPolicyB74B7312": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "LicenseListFailoverBucket1D46B57B",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListFailoverBucket1D46B57B",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListFailoverBucket1D46B57B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
   },
 }
 `;
 
 exports[`MIT licenses only 1`] = `
 Object {
+  "Outputs": Object {
+    "LicenseListSnapshotCommand479BE2D3": Object {
+      "Description": "Snapshot TestStack/LicenseList/Bucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "LicenseListBucket4788F382",
+            },
+            " s3://",
+            Object {
+              "Ref": "LicenseListFailoverBucket1D46B57B",
+            },
+          ],
+        ],
+      },
+    },
+  },
   "Parameters": Object {
     "AssetParameters3b7c057b1e0272f1572a0b6235b110c33bf20dd49b1573d49417a26430189f32ArtifactHash0E917B88": Object {
       "Description": "Artifact hash for asset \\"3b7c057b1e0272f1572a0b6235b110c33bf20dd49b1573d49417a26430189f32\\"",
@@ -1931,7 +2245,7 @@ Object {
       "Type": "AWS::Lambda::LayerVersion",
     },
     "LicenseListBucket4788F382": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -1953,7 +2267,7 @@ Object {
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "LicenseListBucketPolicy652A4F9E": Object {
       "Properties": Object {
@@ -2009,7 +2323,7 @@ Object {
           "Ref": "LicenseListBucket4788F382",
         },
         "Prune": true,
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -2060,12 +2374,110 @@ Object {
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
     },
+    "LicenseListFailoverBucket1D46B57B": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "LicenseListFailoverBucketPolicyB74B7312": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "LicenseListFailoverBucket1D46B57B",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListFailoverBucket1D46B57B",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListFailoverBucket1D46B57B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
   },
 }
 `;
 
 exports[`OSI-Approved licenses only 1`] = `
 Object {
+  "Outputs": Object {
+    "LicenseListSnapshotCommand479BE2D3": Object {
+      "Description": "Snapshot TestStack/LicenseList/Bucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "LicenseListBucket4788F382",
+            },
+            " s3://",
+            Object {
+              "Ref": "LicenseListFailoverBucket1D46B57B",
+            },
+          ],
+        ],
+      },
+    },
+  },
   "Parameters": Object {
     "AssetParametersa3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8ArtifactHash238275D6": Object {
       "Description": "Artifact hash for asset \\"a3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8\\"",
@@ -2447,7 +2859,7 @@ Object {
       "Type": "AWS::Lambda::LayerVersion",
     },
     "LicenseListBucket4788F382": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -2469,7 +2881,7 @@ Object {
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "LicenseListBucketPolicy652A4F9E": Object {
       "Properties": Object {
@@ -2525,7 +2937,7 @@ Object {
           "Ref": "LicenseListBucket4788F382",
         },
         "Prune": true,
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -2576,12 +2988,110 @@ Object {
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
     },
+    "LicenseListFailoverBucket1D46B57B": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "LicenseListFailoverBucketPolicyB74B7312": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "LicenseListFailoverBucket1D46B57B",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListFailoverBucket1D46B57B",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListFailoverBucket1D46B57B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
   },
 }
 `;
 
 exports[`empty set 1`] = `
 Object {
+  "Outputs": Object {
+    "LicenseListSnapshotCommand479BE2D3": Object {
+      "Description": "Snapshot TestStack/LicenseList/Bucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "LicenseListBucket4788F382",
+            },
+            " s3://",
+            Object {
+              "Ref": "LicenseListFailoverBucket1D46B57B",
+            },
+          ],
+        ],
+      },
+    },
+  },
   "Parameters": Object {
     "AssetParametersa3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8ArtifactHash238275D6": Object {
       "Description": "Artifact hash for asset \\"a3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8\\"",
@@ -2963,7 +3473,7 @@ Object {
       "Type": "AWS::Lambda::LayerVersion",
     },
     "LicenseListBucket4788F382": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "BucketEncryption": Object {
           "ServerSideEncryptionConfiguration": Array [
@@ -2985,7 +3495,7 @@ Object {
         },
       },
       "Type": "AWS::S3::Bucket",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "LicenseListBucketPolicy652A4F9E": Object {
       "Properties": Object {
@@ -3041,7 +3551,7 @@ Object {
           "Ref": "LicenseListBucket4788F382",
         },
         "Prune": true,
-        "RetainOnDelete": false,
+        "RetainOnDelete": true,
         "ServiceToken": Object {
           "Fn::GetAtt": Array [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
@@ -3091,6 +3601,84 @@ Object {
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
+    },
+    "LicenseListFailoverBucket1D46B57B": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "AES256",
+              },
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+        "VersioningConfiguration": Object {
+          "Status": "Enabled",
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "LicenseListFailoverBucketPolicyB74B7312": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "LicenseListFailoverBucket1D46B57B",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "LicenseListFailoverBucket1D46B57B",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "LicenseListFailoverBucket1D46B57B",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
     },
   },
 }

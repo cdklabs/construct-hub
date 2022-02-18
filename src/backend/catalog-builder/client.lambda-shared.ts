@@ -3,14 +3,24 @@ import { CatalogModel, PackageInfo } from '.';
 import { s3 } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 
+export interface ICatalogClient {
+  readonly packages: readonly PackageInfo[];
+}
+
+export class CatalogNotFoundError extends Error {
+  constructor(key: string) {
+    super(`No catalog was found at ${key}`);
+  }
+}
+
 /**
  * A client for working with the catalog.
  */
-export class CatalogClient {
+export class CatalogClient implements ICatalogClient {
   /**
    * Creates a new client for accessing the catalog.
    */
-  public static async newClient() {
+  public static async newClient(): Promise<ICatalogClient> {
     const client = new CatalogClient();
     await client.init();
     return client;
@@ -48,7 +58,7 @@ export class CatalogClient {
       const data = await this.s3.getObject(params).promise();
       body = data.Body;
     } catch (e) {
-      throw new Error(`No catalog was found at ${this.bucketName}/${this.objectKey}`);
+      throw new CatalogNotFoundError(`${this.bucketName}/${this.objectKey}`);
     }
 
     if (!body) {

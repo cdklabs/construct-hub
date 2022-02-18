@@ -24,6 +24,7 @@ test('default configuration', () => {
   const mockDenyListGrantRead = jest.fn().mockName('mockDenyList.grantRead');
   const mockLicenseListGrantRead = jest.fn().mockName('mockLicenseList.grantRead');
   const mockQueueGrantSendMessages = jest.fn().mockName('mockQueue.grantSendMessages');
+  const mockMonitoringAddLowSeverityAlarm = jest.fn().mockName('mockMonitoring.addLowSeverityAlarm');
   const mockMonitoringAddHighSeverityAlarm = jest.fn().mockName('mockMonitoring.addHighSeverityAlarm');
 
   const mockDenyList = safeMock<DenyList>('mockDenyList', {
@@ -36,6 +37,7 @@ test('default configuration', () => {
     grantPrincipal: new User(stack, 'MockIngestionRole'),
   });
   const mockMonitoring = safeMock<Monitoring>('mockMonitoring', {
+    addLowSeverityAlarm: mockMonitoringAddLowSeverityAlarm,
     addHighSeverityAlarm: mockMonitoringAddHighSeverityAlarm,
   });
   const mockQueue = safeMock<IQueue>('mockQueue', {
@@ -46,6 +48,7 @@ test('default configuration', () => {
   // WHEN
   const source = new CodeArtifact({ repository: mockRepository });
   const bound = source.bind(stack, {
+    baseUrl: 'https://dummy.cloudfront.net',
     denyList: mockDenyList,
     licenseList: mockLicenseList,
     ingestion: mockIngestion,
@@ -59,7 +62,8 @@ test('default configuration', () => {
   expect(mockDenyListGrantRead).toHaveBeenCalledTimes(1);
   expect(mockLicenseListGrantRead).toHaveBeenCalledTimes(1);
   expect(mockQueueGrantSendMessages).toHaveBeenCalledTimes(1);
-  expect(mockMonitoringAddHighSeverityAlarm).toHaveBeenCalledTimes(2);
+  expect(mockMonitoringAddLowSeverityAlarm).toHaveBeenCalledTimes(1);
+  expect(mockMonitoringAddHighSeverityAlarm).toHaveBeenCalledTimes(1);
   expect(app.synth().getStackByName(stack.stackName).template).toMatchSnapshot();
 });
 
@@ -79,6 +83,7 @@ test('user-provided staging bucket', () => {
   const mockDenyListGrantRead = jest.fn().mockName('mockDenyList.grantRead');
   const mockLicenseListGrantRead = jest.fn().mockName('mockLicenseList.grantRead');
   const mockQueueGrantSendMessages = jest.fn().mockName('mockQueue.grantSendMessages');
+  const mockMonitoringAddLowSeverityAlarm = jest.fn().mockName('mockMonitoring.addLowSeverityAlarm');
   const mockMonitoringAddHighSeverityAlarm = jest.fn().mockName('mockMonitoring.addHighSeverityAlarm');
 
   const mockBucket = safeMock<IBucket>('mockBucket', {
@@ -94,6 +99,7 @@ test('user-provided staging bucket', () => {
   });
   const mockIngestion = safeMock<IGrantable>('mockIngestion', {});
   const mockMonitoring = safeMock<Monitoring>('mockMonitoring', {
+    addLowSeverityAlarm: mockMonitoringAddLowSeverityAlarm,
     addHighSeverityAlarm: mockMonitoringAddHighSeverityAlarm,
   });
   const mockQueue = safeMock<IQueue>('mockQueue', {
@@ -104,6 +110,7 @@ test('user-provided staging bucket', () => {
   // WHEN
   const source = new CodeArtifact({ bucket: mockBucket, repository: mockRepository });
   const bound = source.bind(stack, {
+    baseUrl: 'https://dummy.cloudfront.net',
     denyList: mockDenyList,
     licenseList: mockLicenseList,
     ingestion: mockIngestion,
@@ -119,6 +126,7 @@ test('user-provided staging bucket', () => {
   expect(mockDenyListGrantRead).toHaveBeenCalledWith(expect.any(Function));
   expect(mockLicenseListGrantRead).toHaveBeenCalledWith(expect.any(Function));
   expect(mockQueueGrantSendMessages).toHaveBeenCalledWith(expect.any(Function));
-  expect(mockMonitoringAddHighSeverityAlarm).toHaveBeenCalledTimes(2);
+  expect(mockMonitoringAddLowSeverityAlarm).toHaveBeenCalledTimes(1);
+  expect(mockMonitoringAddHighSeverityAlarm).toHaveBeenCalledTimes(1);
   expect(app.synth().getStackByName(stack.stackName).template).toMatchSnapshot();
 });

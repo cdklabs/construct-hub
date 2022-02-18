@@ -39,7 +39,7 @@ export async function handler(event: Input, context: Context) {
       reprocessLogGroup: context.logGroupName,
       reprocessLogStream: context.logStreamName,
     },
-  }, Buffer.from(tarball));
+  }, Buffer.from(tarball as any));
 
   console.log(`Sending message to reprocess queue: ${JSON.stringify(ingestionInput, null, 2)}`);
   return aws.sqs().sendMessage({

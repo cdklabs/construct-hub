@@ -27,6 +27,7 @@ that performes the following tasks:
 1. The *prune* function enforces the configured deny-list and ensures previously
    indexed packages that are now part of the deny-list are removed from storage
    within an hour.
+1. The *discovery canary*, if configured, is a Lambda function the will periodically validate the hub is able to discover new packages within a predefined SLA.
 
 [cdklabs/construct-hub-webapp]: https://github.com/cdklabs/construct-hub-webapp
 
@@ -198,7 +199,27 @@ The *prune* function emits a `Rules` CloudWatch Metric that indicates how many
 deny-list rules it is currently enforcing. This could match the amount of rules
 that were configured on the ConstructHub instance.
 
-# Monitoring & Alarming
+### 5. Discovery Canary
+
+The [discovery canary](../README.md#discovery-canary) is an optional canary that
+can be configured as part of the hub's deployment NpmJs package source. Its job
+is to continuously validate that the hub is able to discover and process
+packages in a timely manner.
+
+The canary monitors the availability of new versions of a designated package
+in the ConstructHub instance (by default, this is `construct-hub-probe`), and
+emits metrics that help understand how much time elapses between the package
+publication to npmjs.com (`construct-hub-probe` gets a new version approximately
+every 3 hours), and when those packages are available to browse in ConstructHub.
+
+A **high-severity** alarm triggers if the canary function is either
+malfunctioning or detects discovery SLA breaches. Troubleshooting these alarms
+is described in the operator runbook.
+
+- [`ConstructHub/Sources/NpmJs/Canary/SLA-Breached`](./operator-runbook.md#constructhubsourcesnpmjscanarysla-breached)
+
+
+## Monitoring & Alarming
 
 Each ConstructHub instance comes with a set of CloudWatch dashboards that can be
 used to monitor the current state of the instance. The name of the backend

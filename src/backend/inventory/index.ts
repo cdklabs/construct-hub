@@ -8,6 +8,7 @@ import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { RUNBOOK_URL } from '../../runbook-url';
+import { MISSING_DOCUMENTATION_REPORT_PATTERN, UNINSTALLABLE_PACKAGES_REPORT, CORRUPT_ASSEMBLY_REPORT_PATTERN } from '../shared/constants';
 import { DocumentationLanguage } from '../shared/language';
 import { Canary } from './canary';
 import { METRICS_NAMESPACE, MetricName, LANGUAGE_DIMENSION } from './constants';
@@ -31,7 +32,7 @@ export interface InventoryProps {
   /**
    * The rate at which the canary should run.
    *
-   * @default Duration.minutes(5)
+   * @default Duration.minutes(15)
    */
   readonly scheduleRate?: Duration;
 }
@@ -42,11 +43,12 @@ export interface InventoryProps {
  */
 export class Inventory extends Construct {
   private readonly canary: Canary;
+  private readonly rate: Duration;
 
   public constructor(scope: Construct, id: string, props: InventoryProps) {
     super(scope, id);
 
-    const rate = props.scheduleRate ?? Duration.minutes(5);
+    this.rate = props.scheduleRate ?? Duration.minutes(15);
 
     this.canary = new Canary(this, 'Resource', {
       description: '[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages',
@@ -56,18 +58,25 @@ export class Inventory extends Construct {
       },
       logRetention: props.logRetention,
       memorySize: 10_240,
-      timeout: rate,
+      timeout: this.rate,
     });
-    const grant = props.bucket.grantRead(this.canary);
+    const grantRead = props.bucket.grantRead(this.canary);
+    const grantWriteMissing = props.bucket.grantWrite(this.canary, MISSING_DOCUMENTATION_REPORT_PATTERN);
+    const grantWriteCorruptAssembly = props.bucket.grantWrite(this.canary, CORRUPT_ASSEMBLY_REPORT_PATTERN);
+    const grantWriteUnInstallable = props.bucket.grantWrite(this.canary, UNINSTALLABLE_PACKAGES_REPORT);
 
-    new Rule(this, 'ScheduleRule', {
-      schedule: Schedule.rate(rate),
+    const rule = new Rule(this, 'ScheduleRule', {
+      schedule: Schedule.rate(this.rate),
       targets: [new LambdaFunction(this.canary)],
-    }).node.addDependency(grant);
+    });
 
-    props.monitoring.addHighSeverityAlarm(
+    rule.node.addDependency(grantRead, grantWriteMissing);
+    rule.node.addDependency(grantRead, grantWriteCorruptAssembly);
+    rule.node.addDependency(grantRead, grantWriteUnInstallable);
+
+    props.monitoring.addLowSeverityAlarm(
       'Inventory Canary is not Running',
-      this.canary.metricInvocations({ period: Duration.minutes(5) }).createAlarm(this, 'Not Running', {
+      this.canary.metricInvocations({ period: this.rate }).createAlarm(this, 'Not Running', {
         alarmName: `${this.node.path}/NotRunning`,
         alarmDescription: [
           'The inventory canary is not running!',
@@ -81,9 +90,9 @@ export class Inventory extends Construct {
         threshold: 1,
       }),
     );
-    props.monitoring.addHighSeverityAlarm(
+    props.monitoring.addLowSeverityAlarm(
       'Inventory Canary is failing',
-      this.canary.metricErrors({ period: Duration.minutes(5) }).createAlarm(this, 'Failures', {
+      this.canary.metricErrors({ period: this.rate }).createAlarm(this, 'Failures', {
         alarmName: `${this.node.path}/Failures`,
         alarmDescription: [
           'The inventory canary is failing!',
@@ -105,7 +114,7 @@ export class Inventory extends Construct {
 
   public metricMissingPackageMetadataCount(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.MISSING_METADATA_COUNT,
@@ -115,7 +124,7 @@ export class Inventory extends Construct {
 
   public metricMissingAssemblyCount(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.MISSING_ASSEMBLY_COUNT,
@@ -125,7 +134,7 @@ export class Inventory extends Construct {
 
   public metricPackageCount(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.PACKAGE_COUNT,
@@ -135,7 +144,7 @@ export class Inventory extends Construct {
 
   public metricPackageMajorCount(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.PACKAGE_MAJOR_COUNT,
@@ -145,7 +154,7 @@ export class Inventory extends Construct {
 
   public metricPackageVersionCount(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.PACKAGE_VERSION_COUNT,
@@ -155,7 +164,7 @@ export class Inventory extends Construct {
 
   public metricMissingPackageTarballCount(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.MISSING_TARBALL_COUNT,
@@ -163,9 +172,19 @@ export class Inventory extends Construct {
     });
   }
 
+  public metricUninstallablePackageCount(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: this.rate,
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      metricName: MetricName.UNINSTALLABLE_PACKAGE_COUNT,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
   public metricSubmoduleCount(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.SUBMODULE_COUNT,
@@ -175,7 +194,7 @@ export class Inventory extends Construct {
 
   public metricUnknownObjectCount(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.UNKNOWN_OBJECT_COUNT,
@@ -189,7 +208,7 @@ export class Inventory extends Construct {
    */
   public metricMissingPackageCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       dimensions: {
@@ -207,7 +226,7 @@ export class Inventory extends Construct {
    */
   public metricMissingMajorVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       dimensions: {
@@ -224,7 +243,7 @@ export class Inventory extends Construct {
    */
   public metricMissingPackageVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       dimensions: {
@@ -242,7 +261,7 @@ export class Inventory extends Construct {
    */
   public metricMissingSubmoduleCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       dimensions: {
@@ -259,7 +278,7 @@ export class Inventory extends Construct {
    */
   public metricSupportedPackageCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       dimensions: {
@@ -277,7 +296,7 @@ export class Inventory extends Construct {
    */
   public metricSupportedMajorVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       dimensions: {
@@ -294,7 +313,7 @@ export class Inventory extends Construct {
    */
   public metricSupportedPackageVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       dimensions: {
@@ -311,7 +330,7 @@ export class Inventory extends Construct {
    */
   public metricSupportedSubmoduleCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       dimensions: {
@@ -328,7 +347,7 @@ export class Inventory extends Construct {
    */
   public metricUnsupportedPackageCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       dimensions: {
@@ -345,7 +364,7 @@ export class Inventory extends Construct {
    */
   public metricUnsupportedMajorVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       dimensions: {
@@ -362,7 +381,7 @@ export class Inventory extends Construct {
    */
   public metricUnsupportedPackageVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       dimensions: {
@@ -379,7 +398,7 @@ export class Inventory extends Construct {
    */
   public metricUnsupportedSubmoduleCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
       dimensions: {
@@ -389,4 +408,69 @@ export class Inventory extends Construct {
       namespace: METRICS_NAMESPACE,
     });
   }
+
+  /**
+   * The count of packages that have a language specific corrupt assembly.
+   */
+  public metricCorruptAssemblyPackageCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: this.rate,
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_PACKAGES,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of package major versions that have a language specific corrupt assembly.
+   */
+  public metricCorruptAssemblyMajorVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: this.rate,
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_MAJORS,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of package versions that have a language specific corrupt assembly.
+   */
+  public metricCorruptAssemblyPackageVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: this.rate,
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_VERSIONS,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  /**
+   * The count of package version submodules that have a language specific corrupt assembly.
+   */
+  public metricCorruptAssemblySubmoduleCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+    return new Metric({
+      period: this.rate,
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      dimensions: {
+        [LANGUAGE_DIMENSION]: language.toString(),
+      },
+      metricName: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_SUBMODULES,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
 }

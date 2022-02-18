@@ -68,7 +68,8 @@ function tlsValidDaysRemaining(endpoint: string, now: Date): Promise<number> {
         const remainingMillis = new Date(cert.valid_to).getTime() - now.getTime();
         if (remainingMillis < 0) {
           console.error(`The certificate expired ${remainingMillis}ms ago!`);
-          return ok(0);
+          ok(0);
+          return;
         }
         // Converting to days (there are 86,400,000 milliseconds in a day)
         ok(remainingMillis / 86_400_000);

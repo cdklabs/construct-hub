@@ -2,21 +2,115 @@
 
 exports[`default configuration 1`] = `
 Object {
+  "Outputs": Object {
+    "SnapshotCommand": Object {
+      "Description": "Snapshot Test/fake--path--to--repository--StagingBucket",
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "aws s3 sync s3://",
+            Object {
+              "Ref": "fakepathtorepositoryStagingBucketF571B2BA",
+            },
+            " s3://",
+            Object {
+              "Ref": "FailoverfakepathtorepositoryStagingBucket6DEF61AC",
+            },
+          ],
+        ],
+      },
+    },
+  },
   "Parameters": Object {
-    "AssetParametersf4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36ArtifactHash5810B26A": Object {
-      "Description": "Artifact hash for asset \\"f4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36\\"",
+    "AssetParameters5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726ArtifactHash171A6743": Object {
+      "Description": "Artifact hash for asset \\"5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726\\"",
       "Type": "String",
     },
-    "AssetParametersf4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36S3BucketADA61B2F": Object {
-      "Description": "S3 bucket for asset \\"f4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36\\"",
+    "AssetParameters5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726S3Bucket712A406F": Object {
+      "Description": "S3 bucket for asset \\"5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726\\"",
       "Type": "String",
     },
-    "AssetParametersf4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36S3VersionKey0F20568B": Object {
-      "Description": "S3 key for asset version \\"f4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36\\"",
+    "AssetParameters5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726S3VersionKey4B8E3B15": Object {
+      "Description": "S3 key for asset version \\"5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726\\"",
       "Type": "String",
     },
   },
   "Resources": Object {
+    "FailoverfakepathtorepositoryStagingBucket6DEF61AC": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "LifecycleConfiguration": Object {
+          "Rules": Array [
+            Object {
+              "ExpirationInDays": 30,
+              "Status": "Enabled",
+            },
+          ],
+        },
+        "PublicAccessBlockConfiguration": Object {
+          "BlockPublicAcls": true,
+          "BlockPublicPolicy": true,
+          "IgnorePublicAcls": true,
+          "RestrictPublicBuckets": true,
+        },
+        "Tags": Array [
+          Object {
+            "Key": "failover",
+            "Value": "true",
+          },
+        ],
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "FailoverfakepathtorepositoryStagingBucketPolicyAE020014": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "FailoverfakepathtorepositoryStagingBucket6DEF61AC",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:*",
+              "Condition": Object {
+                "Bool": Object {
+                  "aws:SecureTransport": "false",
+                },
+              },
+              "Effect": "Deny",
+              "Principal": Object {
+                "AWS": "*",
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "FailoverfakepathtorepositoryStagingBucket6DEF61AC",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "FailoverfakepathtorepositoryStagingBucket6DEF61AC",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
     "MockIngestionRole7B5CD59F": Object {
       "Type": "AWS::IAM::User",
     },
@@ -143,7 +237,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersf4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36S3BucketADA61B2F",
+            "Ref": "AssetParameters5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726S3Bucket712A406F",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -156,7 +250,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersf4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36S3VersionKey0F20568B",
+                          "Ref": "AssetParameters5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726S3VersionKey4B8E3B15",
                         },
                       ],
                     },
@@ -169,7 +263,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersf4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36S3VersionKey0F20568B",
+                          "Ref": "AssetParameters5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726S3VersionKey4B8E3B15",
                         },
                       ],
                     },
@@ -533,16 +627,16 @@ Link to the lambda function: /lambda/home#/functions/",
 exports[`user-provided staging bucket 1`] = `
 Object {
   "Parameters": Object {
-    "AssetParametersf4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36ArtifactHash5810B26A": Object {
-      "Description": "Artifact hash for asset \\"f4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36\\"",
+    "AssetParameters5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726ArtifactHash171A6743": Object {
+      "Description": "Artifact hash for asset \\"5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726\\"",
       "Type": "String",
     },
-    "AssetParametersf4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36S3BucketADA61B2F": Object {
-      "Description": "S3 bucket for asset \\"f4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36\\"",
+    "AssetParameters5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726S3Bucket712A406F": Object {
+      "Description": "S3 bucket for asset \\"5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726\\"",
       "Type": "String",
     },
-    "AssetParametersf4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36S3VersionKey0F20568B": Object {
-      "Description": "S3 key for asset version \\"f4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36\\"",
+    "AssetParameters5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726S3VersionKey4B8E3B15": Object {
+      "Description": "S3 key for asset version \\"5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726\\"",
       "Type": "String",
     },
   },
@@ -624,7 +718,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersf4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36S3BucketADA61B2F",
+            "Ref": "AssetParameters5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726S3Bucket712A406F",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -637,7 +731,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersf4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36S3VersionKey0F20568B",
+                          "Ref": "AssetParameters5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726S3VersionKey4B8E3B15",
                         },
                       ],
                     },
@@ -650,7 +744,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersf4b1fddd1846ba710b9b6d99d8e8684690fa6f4884d335d6e747da8154ecab36S3VersionKey0F20568B",
+                          "Ref": "AssetParameters5a3fe0a6a2bcb612ba2a9059254b30888c47edc0d2750e00576b2a30f955c726S3VersionKey4B8E3B15",
                         },
                       ],
                     },

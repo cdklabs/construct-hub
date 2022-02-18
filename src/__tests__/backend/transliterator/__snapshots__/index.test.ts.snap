@@ -164,7 +164,7 @@ Object {
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:93e9a2eddcef167572d70c64a4eaee8414f925cbb03ed488ecaea29d83a09b2d",
+                  "/aws-cdk/assets:66d62ce464d5da18d8ae1c7cb28eb0bb8e4464c0cb20068e404dcb22114b0a23",
                 ],
               ],
             },
@@ -414,9 +414,9 @@ Object {
             },
             Object {
               "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
               ],
               "Effect": "Allow",
               "Resource": Array [
@@ -436,7 +436,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-typescript.md",
+                      "/data/*/uninstallable",
                     ],
                   ],
                 },
@@ -466,7 +466,55 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-typescript.md",
+                      "/data/*/uninstallable",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/uninstallable",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-typescript.*",
                     ],
                   ],
                 },
@@ -496,7 +544,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-typescript.md.not-supported",
+                      "/data/*/docs-*-typescript.*",
                     ],
                   ],
                 },
@@ -526,7 +574,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-typescript.md.not-supported",
+                      "/data/*/docs-typescript.*.not-supported",
                     ],
                   ],
                 },
@@ -556,7 +604,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-python.md",
+                      "/data/*/docs-*-typescript.*.not-supported",
                     ],
                   ],
                 },
@@ -586,7 +634,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-python.md",
+                      "/data/*/docs-typescript.*.corruptassembly",
                     ],
                   ],
                 },
@@ -616,7 +664,73 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-python.md.not-supported",
+                      "/data/*/docs-*-typescript.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-typescript.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-typescript.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-python.*",
                     ],
                   ],
                 },
@@ -646,7 +760,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-python.md.not-supported",
+                      "/data/*/docs-*-python.*",
                     ],
                   ],
                 },
@@ -676,7 +790,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-java.md",
+                      "/data/*/docs-python.*.not-supported",
                     ],
                   ],
                 },
@@ -706,7 +820,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-java.md",
+                      "/data/*/docs-*-python.*.not-supported",
                     ],
                   ],
                 },
@@ -736,7 +850,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-java.md.not-supported",
+                      "/data/*/docs-python.*.corruptassembly",
                     ],
                   ],
                 },
@@ -766,7 +880,73 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-java.md.not-supported",
+                      "/data/*/docs-*-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-python.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-python.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-java.*",
                     ],
                   ],
                 },
@@ -796,7 +976,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-csharp.md",
+                      "/data/*/docs-*-java.*",
                     ],
                   ],
                 },
@@ -826,7 +1006,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-csharp.md",
+                      "/data/*/docs-java.*.not-supported",
                     ],
                   ],
                 },
@@ -856,7 +1036,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-csharp.md.not-supported",
+                      "/data/*/docs-*-java.*.not-supported",
                     ],
                   ],
                 },
@@ -886,11 +1066,293 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-csharp.md.not-supported",
+                      "/data/*/docs-java.*.corruptassembly",
                     ],
                   ],
                 },
               ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-java.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-java.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-java.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-csharp.*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-csharp.*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-csharp.*.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-csharp.*.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-csharp.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-csharp.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-csharp.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-csharp.*.corruptassembly",
+                  ],
+                ],
+              },
             },
           ],
           "Version": "2012-10-17",
@@ -977,7 +1439,7 @@ Object {
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:93e9a2eddcef167572d70c64a4eaee8414f925cbb03ed488ecaea29d83a09b2d",
+                  "/aws-cdk/assets:66d62ce464d5da18d8ae1c7cb28eb0bb8e4464c0cb20068e404dcb22114b0a23",
                 ],
               ],
             },
@@ -1189,9 +1651,9 @@ Object {
             },
             Object {
               "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
               ],
               "Effect": "Allow",
               "Resource": Array [
@@ -1211,7 +1673,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-typescript.md",
+                      "/data/*/uninstallable",
                     ],
                   ],
                 },
@@ -1241,7 +1703,55 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-typescript.md",
+                      "/data/*/uninstallable",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/uninstallable",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-typescript.*",
                     ],
                   ],
                 },
@@ -1271,7 +1781,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-typescript.md.not-supported",
+                      "/data/*/docs-*-typescript.*",
                     ],
                   ],
                 },
@@ -1301,7 +1811,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-typescript.md.not-supported",
+                      "/data/*/docs-typescript.*.not-supported",
                     ],
                   ],
                 },
@@ -1331,7 +1841,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-python.md",
+                      "/data/*/docs-*-typescript.*.not-supported",
                     ],
                   ],
                 },
@@ -1361,7 +1871,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-python.md",
+                      "/data/*/docs-typescript.*.corruptassembly",
                     ],
                   ],
                 },
@@ -1391,7 +1901,73 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-python.md.not-supported",
+                      "/data/*/docs-*-typescript.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-typescript.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-typescript.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-python.*",
                     ],
                   ],
                 },
@@ -1421,7 +1997,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-python.md.not-supported",
+                      "/data/*/docs-*-python.*",
                     ],
                   ],
                 },
@@ -1451,7 +2027,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-java.md",
+                      "/data/*/docs-python.*.not-supported",
                     ],
                   ],
                 },
@@ -1481,7 +2057,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-java.md",
+                      "/data/*/docs-*-python.*.not-supported",
                     ],
                   ],
                 },
@@ -1511,7 +2087,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-java.md.not-supported",
+                      "/data/*/docs-python.*.corruptassembly",
                     ],
                   ],
                 },
@@ -1541,7 +2117,73 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-java.md.not-supported",
+                      "/data/*/docs-*-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-python.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-python.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-java.*",
                     ],
                   ],
                 },
@@ -1571,7 +2213,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-csharp.md",
+                      "/data/*/docs-*-java.*",
                     ],
                   ],
                 },
@@ -1601,7 +2243,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-csharp.md",
+                      "/data/*/docs-java.*.not-supported",
                     ],
                   ],
                 },
@@ -1631,7 +2273,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-csharp.md.not-supported",
+                      "/data/*/docs-*-java.*.not-supported",
                     ],
                   ],
                 },
@@ -1661,11 +2303,293 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-csharp.md.not-supported",
+                      "/data/*/docs-java.*.corruptassembly",
                     ],
                   ],
                 },
               ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-java.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-java.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-java.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-csharp.*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-csharp.*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-csharp.*.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-csharp.*.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-csharp.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-csharp.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-csharp.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-csharp.*.corruptassembly",
+                  ],
+                ],
+              },
             },
           ],
           "Version": "2012-10-17",
@@ -1904,7 +2828,7 @@ Object {
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:93e9a2eddcef167572d70c64a4eaee8414f925cbb03ed488ecaea29d83a09b2d",
+                  "/aws-cdk/assets:66d62ce464d5da18d8ae1c7cb28eb0bb8e4464c0cb20068e404dcb22114b0a23",
                 ],
               ],
             },
@@ -2154,9 +3078,9 @@ Object {
             },
             Object {
               "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
               ],
               "Effect": "Allow",
               "Resource": Array [
@@ -2176,7 +3100,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-typescript.md",
+                      "/data/*/uninstallable",
                     ],
                   ],
                 },
@@ -2206,7 +3130,55 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-typescript.md",
+                      "/data/*/uninstallable",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/uninstallable",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-typescript.*",
                     ],
                   ],
                 },
@@ -2236,7 +3208,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-typescript.md.not-supported",
+                      "/data/*/docs-*-typescript.*",
                     ],
                   ],
                 },
@@ -2266,7 +3238,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-typescript.md.not-supported",
+                      "/data/*/docs-typescript.*.not-supported",
                     ],
                   ],
                 },
@@ -2296,7 +3268,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-python.md",
+                      "/data/*/docs-*-typescript.*.not-supported",
                     ],
                   ],
                 },
@@ -2326,7 +3298,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-python.md",
+                      "/data/*/docs-typescript.*.corruptassembly",
                     ],
                   ],
                 },
@@ -2356,7 +3328,73 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-python.md.not-supported",
+                      "/data/*/docs-*-typescript.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-typescript.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-typescript.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-python.*",
                     ],
                   ],
                 },
@@ -2386,7 +3424,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-python.md.not-supported",
+                      "/data/*/docs-*-python.*",
                     ],
                   ],
                 },
@@ -2416,7 +3454,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-java.md",
+                      "/data/*/docs-python.*.not-supported",
                     ],
                   ],
                 },
@@ -2446,7 +3484,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-java.md",
+                      "/data/*/docs-*-python.*.not-supported",
                     ],
                   ],
                 },
@@ -2476,7 +3514,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-java.md.not-supported",
+                      "/data/*/docs-python.*.corruptassembly",
                     ],
                   ],
                 },
@@ -2506,7 +3544,73 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-java.md.not-supported",
+                      "/data/*/docs-*-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-python.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-python.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-java.*",
                     ],
                   ],
                 },
@@ -2536,7 +3640,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-csharp.md",
+                      "/data/*/docs-*-java.*",
                     ],
                   ],
                 },
@@ -2566,7 +3670,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-csharp.md",
+                      "/data/*/docs-java.*.not-supported",
                     ],
                   ],
                 },
@@ -2596,7 +3700,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-csharp.md.not-supported",
+                      "/data/*/docs-*-java.*.not-supported",
                     ],
                   ],
                 },
@@ -2626,11 +3730,293 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-csharp.md.not-supported",
+                      "/data/*/docs-java.*.corruptassembly",
                     ],
                   ],
                 },
               ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-java.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-java.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-java.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-csharp.*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-csharp.*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-csharp.*.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-csharp.*.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-csharp.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-csharp.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-csharp.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-csharp.*.corruptassembly",
+                  ],
+                ],
+              },
             },
           ],
           "Version": "2012-10-17",
@@ -2713,7 +4099,7 @@ Object {
                   Object {
                     "Ref": "AWS::URLSuffix",
                   },
-                  "/aws-cdk/assets:93e9a2eddcef167572d70c64a4eaee8414f925cbb03ed488ecaea29d83a09b2d",
+                  "/aws-cdk/assets:66d62ce464d5da18d8ae1c7cb28eb0bb8e4464c0cb20068e404dcb22114b0a23",
                 ],
               ],
             },
@@ -2925,9 +4311,9 @@ Object {
             },
             Object {
               "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject*",
-                "s3:Abort*",
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
               ],
               "Effect": "Allow",
               "Resource": Array [
@@ -2947,7 +4333,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-typescript.md",
+                      "/data/*/uninstallable",
                     ],
                   ],
                 },
@@ -2977,7 +4363,55 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-typescript.md",
+                      "/data/*/uninstallable",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/uninstallable",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-typescript.*",
                     ],
                   ],
                 },
@@ -3007,7 +4441,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-typescript.md.not-supported",
+                      "/data/*/docs-*-typescript.*",
                     ],
                   ],
                 },
@@ -3037,7 +4471,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-typescript.md.not-supported",
+                      "/data/*/docs-typescript.*.not-supported",
                     ],
                   ],
                 },
@@ -3067,7 +4501,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-python.md",
+                      "/data/*/docs-*-typescript.*.not-supported",
                     ],
                   ],
                 },
@@ -3097,7 +4531,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-python.md",
+                      "/data/*/docs-typescript.*.corruptassembly",
                     ],
                   ],
                 },
@@ -3127,7 +4561,73 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-python.md.not-supported",
+                      "/data/*/docs-*-typescript.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-typescript.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-typescript.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-python.*",
                     ],
                   ],
                 },
@@ -3157,7 +4657,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-python.md.not-supported",
+                      "/data/*/docs-*-python.*",
                     ],
                   ],
                 },
@@ -3187,7 +4687,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-java.md",
+                      "/data/*/docs-python.*.not-supported",
                     ],
                   ],
                 },
@@ -3217,7 +4717,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-java.md",
+                      "/data/*/docs-*-python.*.not-supported",
                     ],
                   ],
                 },
@@ -3247,7 +4747,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-java.md.not-supported",
+                      "/data/*/docs-python.*.corruptassembly",
                     ],
                   ],
                 },
@@ -3277,7 +4777,73 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-java.md.not-supported",
+                      "/data/*/docs-*-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-python.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-python.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-java.*",
                     ],
                   ],
                 },
@@ -3307,7 +4873,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-csharp.md",
+                      "/data/*/docs-*-java.*",
                     ],
                   ],
                 },
@@ -3337,7 +4903,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-csharp.md",
+                      "/data/*/docs-java.*.not-supported",
                     ],
                   ],
                 },
@@ -3367,7 +4933,7 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-csharp.md.not-supported",
+                      "/data/*/docs-*-java.*.not-supported",
                     ],
                   ],
                 },
@@ -3397,11 +4963,293 @@ Object {
                           "Arn",
                         ],
                       },
-                      "/data/*/docs-*-csharp.md.not-supported",
+                      "/data/*/docs-java.*.corruptassembly",
                     ],
                   ],
                 },
               ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-java.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-java.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-java.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-csharp.*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-csharp.*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-csharp.*.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-csharp.*.not-supported",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-csharp.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "Bucket83908E77",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "Bucket83908E77",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-csharp.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-csharp.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "Bucket83908E77",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-*-csharp.*.corruptassembly",
+                  ],
+                ],
+              },
             },
           ],
           "Version": "2012-10-17",

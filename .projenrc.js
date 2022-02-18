@@ -1,8 +1,12 @@
+const fs = require('fs');
 const { basename, join, dirname, relative } = require('path');
 const Case = require('case');
 const glob = require('glob');
-const { SourceCode, FileBase, JsonFile, JsiiProject, DependenciesUpgradeMechanism, TextFile } = require('projen');
+const { SourceCode, FileBase, JsonFile, cdk, github } = require('projen');
 const spdx = require('spdx-license-list');
+const uuid = require('uuid');
+
+const BUNDLE_DIR_ENV = 'BUNDLE_DIR';
 
 const peerDeps = [
   '@aws-cdk/aws-certificatemanager',
@@ -39,7 +43,7 @@ const peerDeps = [
 const cdkAssert = '@aws-cdk/assert';
 const cdkCli = 'aws-cdk';
 
-const project = new JsiiProject({
+const project = new cdk.JsiiProject({
   name: 'construct-hub',
   description: 'A construct library that models Construct Hub instances.',
   keywords: ['aws', 'aws-cdk', 'constructs', 'construct-hub'],
@@ -63,23 +67,27 @@ const project = new JsiiProject({
     '@types/tar-stream',
     cdkCli,
     'aws-embedded-metrics',
-    'aws-sdk-mock',
+    // 5.6.1 introduces a type literal signature that is not compatible with
+    // the version of TypeScript currently used by jsii, causing builds to fail
+    'aws-sdk-mock@5.6.0',
     'aws-sdk',
     'aws-xray-sdk-core',
     'case',
     'esbuild',
     'fs-extra',
     'got',
+    'JSONStream',
     'semver',
     'spdx-license-list',
     'tar-stream',
+    'uuid',
     'yaml',
     'normalize-registry-metadata',
   ],
 
   peerDeps: peerDeps,
 
-  minNodeVersion: '12.20.0',
+  minNodeVersion: '14.17.0',
 
   pullRequestTemplateContents: [
     '',
@@ -126,7 +134,12 @@ const project = new JsiiProject({
   autoApproveUpgrades: true,
 
   depsUpgradeOptions: {
-    exclude: [...peerDeps, cdkAssert, cdkCli],
+    exclude: [
+      ...peerDeps,
+      cdkAssert,
+      cdkCli,
+      'cdk-triggers', // can be removed once Construct Hub uses CDK v2
+    ],
     ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve'],
@@ -141,9 +154,90 @@ const project = new JsiiProject({
     jestConfig: {
       // Ensure we don't try to parallelize too much, this causes timeouts.
       maxConcurrency: 2,
+      moduleNameMapper: {
+        '../package.json': '<rootDir>/__mocks__/package.json',
+      },
     },
   },
 });
+
+project.package.addField('resolutions', {
+  // this is coming from construct-hub-webapp, and has no affect on us what s oever
+  // since we consume the already built static assets.
+  // see https://github.com/cdklabs/construct-hub-webapp/blob/main/.projenrc.js#L91
+  'nth-check': '2.0.1',
+
+  // otherwise, two major versions of this exist, which fails typescript compilation
+  // due to duplicate declarations.
+  '@types/eslint': '8.2.1',
+
+  // https://github.com/aws/aws-cdk/issues/18322
+  'colors': '1.4.0',
+});
+
+function addVpcAllowListManagement() {
+  const workflow = project.github.addWorkflow('update-vpc-acl-allow-lists');
+
+  const prTitle = 'chore: upgrade network ACL allow-lists';
+  const prBody = 'Updated the network ACL allow-lists from authoritative sources.';
+
+  workflow.addJobs({
+    update: {
+      permissions: {
+        actions: github.workflows.JobPermission.WRITE,
+        contents: github.workflows.JobPermission.WRITE,
+        pullRequests: github.workflows.JobPermission.WRITE,
+      },
+      runsOn: 'ubuntu-latest',
+      steps: [
+        {
+          name: 'Check Out',
+          uses: 'actions/checkout@v2',
+        },
+        // Update the NPM IP ranges (they are fronted by CloudFlare)
+        // See: https://npm.community/t/registry-npmjs-org-ip-address-range/5853.html
+        {
+          name: 'Update CloudFlare IP lists',
+          // See: https://www.cloudflare.com/ips
+          run: [
+            'curl -SsL "https://www.cloudflare.com/ips-v4" \\',
+            '     -o resources/vpc-allow-lists/cloudflare-IPv4.txt',
+            //// We do not emit IPv6 allow-lists as our VPC does not have IPv6 support
+            // 'curl -SsL "https://www.cloudflare.com/ips-v6" \\',
+            // '     -o resources/vpc-allow-lists/cloudflare-IPv6.txt',
+          ].join('\n'),
+        },
+        // Allowing GitHub (web and git)
+        {
+          name: 'Setup Node',
+          uses: 'actions/setup-node@v2',
+        },
+        {
+          name: 'Update GitHub IP lists',
+          // See: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/about-githubs-ip-addresses
+          run: 'node ./update-github-ip-allowlist.js',
+        },
+        // And now make a PR if necessary
+        {
+          name: 'Make Pull Request',
+          uses: 'peter-evans/create-pull-request@v3',
+          with: {
+            'branch': `automation/${workflow.name}`,
+            'commit-message': `${prTitle}\n\n${prBody}`,
+            'title': prTitle,
+            'body': prBody,
+            'team-reviewers': 'construct-ecosystem-team',
+          },
+        },
+      ],
+    },
+  });
+
+  // This workflow runs every day at 13:37.
+  workflow.on({ schedule: [{ cron: '37 13 * * *' }] });
+
+  project.npmignore.addPatterns('/update-github-ip-allowlist.js');
+}
 
 function addDevApp() {
   // add "dev:xxx" tasks for interacting with the dev stack
@@ -210,6 +304,7 @@ function discoverIntegrationTests() {
     const options = [
       `--app ${app}`,
       '--no-version-reporting',
+      '--context @aws-cdk/core:newStyleStackSynthesis=true',
     ].join(' ');
 
     const deploy = project.addTask(`integ:${name}:deploy`, {
@@ -265,7 +360,7 @@ function discoverIntegrationTests() {
   }
 }
 
-const bundleTask = project.addTask('bundle', { description: 'Bundle all lambda functions' });
+const bundleTask = project.addTask('bundle', { description: 'Bundle all lambda and ECS functions' });
 
 /**
  * Generates a construct for a pre-bundled AWS Lambda function:
@@ -291,19 +386,23 @@ function newLambdaHandler(entrypoint, trigger) {
     throw new Error(`${entrypoint} must have a .lambda.ts extension`);
   }
 
+  // We identify singleton functions by a "/// @singleton [purpose]" comment in the handler source.
+  const [isSingleton, singletonPurpose] =
+    /^[/]{3}[ \t]*@singleton(?:[ \t]+(.*?))?[ \t]*$/m.exec(fs.readFileSync(entrypoint, 'utf-8')) || [];
+
   entrypoint = relative(project.srcdir, entrypoint);
 
   const base = basename(entrypoint, '.lambda.ts');
   const dir = join(dirname(entrypoint), base);
   const entry = `${project.srcdir}/${entrypoint}`;
   const infra = `${project.srcdir}/${dir}.ts`;
-  const outdir = `${project.libdir}/${dir}.bundle`;
+  const outdir = `${project.libdir}/${dir}.lambda.bundle`;
   const outfile = `${outdir}/index.js`;
   const className = Case.pascal(basename(dir));
   const propsName = `${className}Props`;
 
   const ts = new SourceCode(project, infra);
-  ts.line(`// ${FileBase.PROJEN_MARKER}`);
+  ts.line(`// ${ts.marker}`);
   ts.line('import * as path from \'path\';');
   ts.line('import * as lambda from \'@aws-cdk/aws-lambda\';');
   ts.line('import { Construct } from \'@aws-cdk/core\';');
@@ -322,7 +421,7 @@ function newLambdaHandler(entrypoint, trigger) {
   }
   ts.close('}');
   ts.line();
-  ts.open(`export class ${className} extends lambda.Function {`);
+  ts.open(`export class ${className} extends lambda.${isSingleton ? 'SingletonFunction' : 'Function'} {`);
   // NOTE: unlike the array splat (`[...arr]`), the object splat (`{...obj}`) is
   //       `undefined`-safe. We can hence save an unnecessary object allocation
   //       by not specifying a default value for the `props` argument here.
@@ -330,6 +429,13 @@ function newLambdaHandler(entrypoint, trigger) {
   ts.open('super(scope, id, {');
   ts.line(`description: '${entrypoint}',`);
   ts.line('...props,');
+  if (isSingleton) {
+    const SINGLETON_NAMESPACE = '0E7DE892-DDD6-42B0-9709-07C5B8E0965E';
+    ts.line(`uuid: '${uuid.v5(entrypoint, SINGLETON_NAMESPACE)}',`);
+    if (singletonPurpose) {
+      ts.line(`lambdaPurpose: '${singletonPurpose.replace(/([\\'])/g, '\\$1')}',`);
+    }
+  }
   ts.line('runtime: lambda.Runtime.NODEJS_14_X,');
   ts.line('handler: \'index.handler\',');
   ts.line(`code: lambda.Code.fromAsset(path.join(__dirname, '/${basename(outdir)}')),`);
@@ -344,24 +450,30 @@ function newLambdaHandler(entrypoint, trigger) {
   ts.close('}');
   ts.close('}');
 
+  const bundleCmd = [
+    'esbuild',
+    '--bundle',
+    entry,
+    '--target="node14"',
+    '--platform="node"',
+    `--outfile="${outfile}"`,
+    '--external:aws-sdk',
+    '--sourcemap',
+  ];
   const bundle = project.addTask(`bundle:${base}`, {
     description: `Create an AWS Lambda bundle from ${entry}`,
-    exec: [
-      'esbuild',
-      '--bundle',
-      entry,
-      '--target="node14"',
-      '--platform="node"',
-      `--outfile="${outfile}"`,
-      '--external:aws-sdk',
-      '--sourcemap',
-    ].join(' '),
+    exec: bundleCmd.join(' '),
+  });
+  const bundleWatch = project.addTask(`bundle:${base}:watch`, {
+    description: `Continuously update an AWS Lambda bundle from ${entry}`,
+    exec: [...bundleCmd, '--watch'].join(' '),
   });
 
   project.compileTask.spawn(bundle);
   bundleTask.spawn(bundle);
   console.error(`${base}: construct "${className}" under "${infra}"`);
   console.error(`${base}: bundle task "${bundle.name}"`);
+  console.error(`${base}: bundle watch task "${bundleWatch.name}"`);
 }
 
 function newEcsTask(entrypoint) {
@@ -374,24 +486,24 @@ function newEcsTask(entrypoint) {
   }
 
   // This uses the AWS SDK v3 client to achieve a smaller bundle size.
-  project.addDevDeps('@aws-sdk/client-sfn');
+  // NOTE: currently pinned due to https://github.com/aws/aws-sdk-js-v3/issues/3297
+  project.addDevDeps('@aws-sdk/client-sfn@3.49.0');
 
   entrypoint = relative(project.srcdir, entrypoint);
 
   const base = basename(entrypoint, '.ecstask.ts');
   const dir = join(dirname(entrypoint), base);
+  const dockerEntry = 'index.js';
   const entry = `${project.srcdir}/${entrypoint}`;
   const infra = `${project.srcdir}/${dir}.ts`;
-  const outdir = `${project.libdir}/${dir}.bundle`;
+  const outdir = `${project.libdir}/${dir}.ecs-entrypoint.bundle`;
   const ecsMain = `${project.srcdir}/${dir}.ecs-entrypoint.ts`;
-  const bash = `${outdir}/entrypoint.sh`;
-  const outfile = `${outdir}/index.js`;
   const dockerfile = `${outdir}/Dockerfile`;
   const className = Case.pascal(basename(dir));
   const propsName = `${className}Props`;
 
   const ts = new SourceCode(project, infra);
-  ts.line(`// ${FileBase.PROJEN_MARKER}`);
+  ts.line(`// ${ts.marker}`);
   ts.line('import * as path from \'path\';');
   ts.line('import * as ecs from \'@aws-cdk/aws-ecs\';');
   ts.line('import * as iam from \'@aws-cdk/aws-iam\';');
@@ -425,7 +537,7 @@ function newEcsTask(entrypoint) {
   // appropriate down-leveling (e.g: for use of the `??` operator).
   const main = new SourceCode(project, ecsMain);
   main.line('#!/usr/bin/env node');
-  main.line(`// ${FileBase.PROJEN_MARKER}`);
+  main.line(`// ${main.marker}`);
   main.line();
   main.line('import * as os from \'os\';');
   main.line('import { argv, env, exit } from \'process\';');
@@ -474,7 +586,8 @@ function newEcsTask(entrypoint) {
   main.line('  console.log(\'Task failed:\', err);');
   main.line('  process.exitCode = 1;');
   main.open('  await sfn.send(new SendTaskFailureCommand({');
-  main.line('  cause: JSON.stringify(err),');
+  // Note: JSON.stringify(some Error) returns '{}', which is not super helpful...
+  main.line('  cause: JSON.stringify(err instanceof Error ? { message: err.message, name: err.name, stack: err.stack } : err),');
   main.line('  error: err.name ?? err.constructor.name ?? \'Error\',');
   main.line('  taskToken,');
   main.close('  }));');
@@ -489,7 +602,7 @@ function newEcsTask(entrypoint) {
   main.close('});');
 
   const df = new SourceCode(project, dockerfile);
-  df.line(`# ${FileBase.PROJEN_MARKER}`);
+  df.line(`# ${df.marker}`);
   // Based off amazonlinux:2 for... reasons. (Do not change!)
   df.line('FROM public.ecr.aws/amazonlinux/amazonlinux:2');
   df.line();
@@ -501,40 +614,52 @@ function newEcsTask(entrypoint) {
   df.line(' && yum clean all \\');
   df.line(' && rm -rf /var/cache/yum');
   df.line();
-  df.line('COPY ./index.js      /bundle/index.js');
-  df.line('COPY ./Dockerfile    /bundle/Dockerfile');
+  df.line('COPY . /bundle');
   df.line();
   // Override the GIT ssh command to work around git's use of
   // StrictHostKeyChecking=accept-new, which is not supported by the version of
   // openssh that ships in amazonlinux:2. For more information, refer to the
   // following issue: https://github.com/npm/git/issues/31
   df.line('ENV GIT_SSH_COMMAND=ssh');
+  // By default, no more than 10 lines of the stack trace are shown. Increase
+  // this to help with debugging errors.
+  df.line('ENV NODE_OPTIONS="--stack-trace-limit=100"');
   df.line();
-  df.line('ENTRYPOINT ["/usr/bin/env", "node", "/bundle/index.js"]');
+  df.line(`ENTRYPOINT ["/usr/bin/env", "node", "/bundle/${dockerEntry}"]`);
 
+  const bundleCmd = [
+    'esbuild',
+    '--bundle',
+    ecsMain,
+    '--target="node16"',
+    '--platform="node"',
+    `--outfile="$${BUNDLE_DIR_ENV}/${dockerEntry}"`,
+    '--sourcemap',
+  ];
   const bundle = project.addTask(`bundle:${base}`, {
     description: `Create an AWS Fargate bundle from ${entry}`,
-    exec: [
-      'esbuild',
-      '--bundle',
-      ecsMain,
-      '--target="node16"',
-      '--platform="node"',
-      `--outfile="${outfile}"`,
-      '--sourcemap',
-    ].join(' '),
+    exec: bundleCmd.join(' '),
   });
+  bundle.env(BUNDLE_DIR_ENV, outdir);
+  const bundleWatch = project.addTask(`bundle:${base}:watch`, {
+    description: `Continuously update an AWS Fargate bundle from ${entry}`,
+    exec: [...bundleCmd, '--watch'].join(' '),
+  });
+  bundleWatch.env(BUNDLE_DIR_ENV, outdir);
 
   project.compileTask.spawn(bundle);
   bundleTask.spawn(bundle);
   console.error(`${base}: construct "${className}" under "${infra}"`);
   console.error(`${base}: bundle task "${bundle.name}"`);
+  console.error(`${base}: bundle watch task "${bundleWatch.name}"`);
 }
 
 /**
  * Auto-discovers all lambda functions.
  */
 function discoverLambdas() {
+  const entrypoints = [];
+
   // allow .lambda code to import dev-deps (since they are only needed during bundling)
   project.eslint.allowDevDeps('src/**/*.lambda.ts');
   // Allow .lambda-shared code to import dev-deps (these are not entry points, but are shared by several lambdas)
@@ -542,7 +667,25 @@ function discoverLambdas() {
   for (const entry of glob.sync('src/**/*.lambda.ts')) {
     const trigger = basename(entry).startsWith('trigger.');
     newLambdaHandler(entry, trigger);
+    entrypoints.push(entry);
   }
+
+  project.addTask('bundle:lambda:watch', {
+    description: 'Continuously bundle all AWS Lambda functions',
+    exec: [
+      'esbuild',
+      '--bundle',
+      ...entrypoints,
+      '--target="node14"',
+      '--platform="node"',
+      `--outbase="${project.srcdir}"`,
+      `--outdir="${project.libdir}"`,
+      '--entry-names="[dir]/[name].bundle/index"',
+      '--external:aws-sdk',
+      '--sourcemap',
+      '--watch',
+    ].join(' '),
+  });
 
   // Add the AWS Lambda type definitions, and ignore that it never resolves
   project.addDevDeps('@types/aws-lambda');
@@ -553,19 +696,39 @@ function discoverLambdas() {
 }
 
 function discoverEcsTasks() {
+  const entrypoints = [];
+
   // allow .fargate code to import dev-deps (since they are only needed during bundling)
   project.eslint.allowDevDeps('src/**/*.ecstask.ts');
   project.eslint.allowDevDeps('src/**/*.ecs-entrypoint.ts');
 
   for (const entry of glob.sync('src/**/*.ecstask.ts')) {
     newEcsTask(entry);
+    entrypoints.push(entry);
   }
+
+  project.addTask('bundle:fargate:watch', {
+    description: 'Continuously bundle all AWS Fargate functions',
+    exec: [
+      'esbuild',
+      '--bundle',
+      ...entrypoints.map((file) => file.replace('ecstask.ts', 'ecs-entrypoint.ts')),
+      '--target="node16"',
+      '--platform="node"',
+      `--outbase="${project.srcdir}"`,
+      `--outdir="${project.libdir}"`,
+      '--entry-names="[dir]/[name].bundle/index"',
+      '--external:aws-sdk',
+      '--sourcemap',
+      '--watch',
+    ].join(' '),
+  });
 }
 
 function generateSpdxLicenseEnum() {
   const ts = new SourceCode(project, 'src/spdx-license.ts');
 
-  ts.line(`// ${FileBase.PROJEN_MARKER}`);
+  ts.line(`// ${ts.marker}`);
   // We *need* the private field to be declared before any public field is...
   ts.line('/* eslint-disable @typescript-eslint/member-ordering */');
   ts.line();
@@ -639,11 +802,47 @@ function generateSpdxLicenseEnum() {
   ts.close('}');
 
   ts.line();
+  ts.line('/** The CDDL family of licenses */');
+  ts.open('public static cddl(): SpdxLicense[] {');
+  ts.open('return [');
+  for (const id of Object.keys(spdx)) {
+    if (id.startsWith('CDDL-')) {
+      ts.line(`SpdxLicense.${slugify(id)},`);
+    }
+  }
+  ts.close('];');
+  ts.close('}');
+
+  ts.line();
+  ts.line('/** The EPL family of licenses */');
+  ts.open('public static epl(): SpdxLicense[] {');
+  ts.open('return [');
+  for (const id of Object.keys(spdx)) {
+    if (id.startsWith('EPL-')) {
+      ts.line(`SpdxLicense.${slugify(id)},`);
+    }
+  }
+  ts.close('];');
+  ts.close('}');
+
+  ts.line();
   ts.line('/** The MIT family of licenses */');
   ts.open('public static mit(): SpdxLicense[] {');
   ts.open('return [');
   for (const id of Object.keys(spdx)) {
     if (id === 'AML' || id === 'MIT' || id === 'MITNFA' || id.startsWith('MIT-')) {
+      ts.line(`SpdxLicense.${slugify(id)},`);
+    }
+  }
+  ts.close('];');
+  ts.close('}');
+
+  ts.line();
+  ts.line('/** The MPL family of licenses */');
+  ts.open('public static mpl(): SpdxLicense[] {');
+  ts.open('return [');
+  for (const id of Object.keys(spdx)) {
+    if (id.startsWith('MPL-')) {
       ts.line(`SpdxLicense.${slugify(id)},`);
     }
   }
@@ -691,19 +890,27 @@ function generateSpdxLicenseEnum() {
 // and bundle it with this library. this way, we are only taking a
 // dev-dependency on the webapp instead of a normal/bundled dependency.
 project.addDevDeps('construct-hub-webapp');
-project.addDevDeps('cdk-triggers');
+project.addDevDeps('cdk-triggers@0.0.x'); // can be unpinned once Construct Hub uses CDK v2
 
 project.compileTask.prependExec('cp -r ./node_modules/construct-hub-webapp/build ./website');
 project.compileTask.prependExec('rm -rf ./website');
 project.npmignore.addPatterns('!/website'); // <-- include in tarball
 project.gitignore.addPatterns('/website'); // <-- don't commit
 
+project.gitignore.exclude('.vscode/');
+
+addVpcAllowListManagement();
 addDevApp();
 
 project.addDevDeps('glob');
 discoverLambdas();
 discoverEcsTasks();
 discoverIntegrationTests();
+
+// see https://github.com/aws/jsii/issues/3311
+const bundleWorkerPool = `esbuild --bundle node_modules/jsii-rosetta/lib/translate_all_worker.js --target="node16" --platform="node" --outfile="$${BUNDLE_DIR_ENV}/translate_all_worker.js" --sourcemap`;
+project.tasks.tryFind('bundle:transliterator').exec(bundleWorkerPool);
+project.tasks.tryFind('bundle:transliterator:watch').prependExec(bundleWorkerPool);
 
 generateSpdxLicenseEnum();
 

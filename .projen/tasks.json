@@ -1,5 +1,522 @@
 {
   "tasks": {
+    "build": {
+      "name": "build",
+      "description": "Full release build",
+      "steps": [
+        {
+          "spawn": "default"
+        },
+        {
+          "spawn": "pre-compile"
+        },
+        {
+          "spawn": "compile"
+        },
+        {
+          "spawn": "post-compile"
+        },
+        {
+          "spawn": "test"
+        },
+        {
+          "spawn": "package"
+        }
+      ]
+    },
+    "bump": {
+      "name": "bump",
+      "description": "Bumps version based on latest git tag and generates a changelog entry",
+      "env": {
+        "OUTFILE": "package.json",
+        "CHANGELOG": "dist/changelog.md",
+        "BUMPFILE": "dist/version.txt",
+        "RELEASETAG": "dist/releasetag.txt"
+      },
+      "steps": [
+        {
+          "builtin": "release/bump-version"
+        }
+      ],
+      "condition": "! git log --oneline -1 | grep -q \"chore(release):\""
+    },
+    "bundle": {
+      "name": "bundle",
+      "description": "Bundle all lambda and ECS functions",
+      "steps": [
+        {
+          "spawn": "bundle:catalog-builder-mock"
+        },
+        {
+          "spawn": "bundle:trigger.client-test"
+        },
+        {
+          "spawn": "bundle:trigger.prune-test"
+        },
+        {
+          "spawn": "bundle:catalog-builder"
+        },
+        {
+          "spawn": "bundle:prune-handler"
+        },
+        {
+          "spawn": "bundle:prune-queue-handler"
+        },
+        {
+          "spawn": "bundle:ingestion"
+        },
+        {
+          "spawn": "bundle:re-ingest"
+        },
+        {
+          "spawn": "bundle:canary"
+        },
+        {
+          "spawn": "bundle:package-versions-table-widget-function"
+        },
+        {
+          "spawn": "bundle:needs-catalog-update"
+        },
+        {
+          "spawn": "bundle:redrive-state-machine"
+        },
+        {
+          "spawn": "bundle:package-stats"
+        },
+        {
+          "spawn": "bundle:version-tracker"
+        },
+        {
+          "spawn": "bundle:certificate-monitor"
+        },
+        {
+          "spawn": "bundle:http-get-function"
+        },
+        {
+          "spawn": "bundle:code-artifact-forwarder"
+        },
+        {
+          "spawn": "bundle:npmjs-package-canary"
+        },
+        {
+          "spawn": "bundle:npm-js-follower"
+        },
+        {
+          "spawn": "bundle:stage-and-notify"
+        },
+        {
+          "spawn": "bundle:transliterator"
+        }
+      ]
+    },
+    "bundle:canary": {
+      "name": "bundle:canary",
+      "description": "Create an AWS Lambda bundle from src/backend/inventory/canary.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/inventory/canary.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/canary.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:canary:watch": {
+      "name": "bundle:canary:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/inventory/canary.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/inventory/canary.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/canary.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:catalog-builder": {
+      "name": "bundle:catalog-builder",
+      "description": "Create an AWS Lambda bundle from src/backend/catalog-builder/catalog-builder.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/catalog-builder/catalog-builder.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/catalog-builder/catalog-builder.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:catalog-builder-mock": {
+      "name": "bundle:catalog-builder-mock",
+      "description": "Create an AWS Lambda bundle from src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:catalog-builder-mock:watch": {
+      "name": "bundle:catalog-builder-mock:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:catalog-builder:watch": {
+      "name": "bundle:catalog-builder:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/catalog-builder/catalog-builder.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/catalog-builder/catalog-builder.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/catalog-builder/catalog-builder.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:certificate-monitor": {
+      "name": "bundle:certificate-monitor",
+      "description": "Create an AWS Lambda bundle from src/monitored-certificate/certificate-monitor.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/monitored-certificate/certificate-monitor.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitored-certificate/certificate-monitor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:certificate-monitor:watch": {
+      "name": "bundle:certificate-monitor:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/monitored-certificate/certificate-monitor.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/monitored-certificate/certificate-monitor.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitored-certificate/certificate-monitor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:code-artifact-forwarder": {
+      "name": "bundle:code-artifact-forwarder",
+      "description": "Create an AWS Lambda bundle from src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/codeartifact/code-artifact-forwarder.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:code-artifact-forwarder:watch": {
+      "name": "bundle:code-artifact-forwarder:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/codeartifact/code-artifact-forwarder.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:fargate:watch": {
+      "name": "bundle:fargate:watch",
+      "description": "Continuously bundle all AWS Fargate functions",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/transliterator/transliterator.ecs-entrypoint.ts --target=\"node16\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:http-get-function": {
+      "name": "bundle:http-get-function",
+      "description": "Create an AWS Lambda bundle from src/monitoring/http-get-function.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/monitoring/http-get-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitoring/http-get-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:http-get-function:watch": {
+      "name": "bundle:http-get-function:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/monitoring/http-get-function.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/monitoring/http-get-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitoring/http-get-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:ingestion": {
+      "name": "bundle:ingestion",
+      "description": "Create an AWS Lambda bundle from src/backend/ingestion/ingestion.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/ingestion/ingestion.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/ingestion.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:ingestion:watch": {
+      "name": "bundle:ingestion:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/ingestion/ingestion.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/ingestion/ingestion.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/ingestion.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:lambda:watch": {
+      "name": "bundle:lambda:watch",
+      "description": "Continuously bundle all AWS Lambda functions",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/inventory/package-versions-table-widget-function.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/package-stats/package-stats.lambda.ts src/backend/version-tracker/version-tracker.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/monitoring/http-get-function.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:needs-catalog-update": {
+      "name": "bundle:needs-catalog-update",
+      "description": "Create an AWS Lambda bundle from src/backend/orchestration/needs-catalog-update.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/orchestration/needs-catalog-update.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/orchestration/needs-catalog-update.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:needs-catalog-update:watch": {
+      "name": "bundle:needs-catalog-update:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/orchestration/needs-catalog-update.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/orchestration/needs-catalog-update.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/orchestration/needs-catalog-update.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:npm-js-follower": {
+      "name": "bundle:npm-js-follower",
+      "description": "Create an AWS Lambda bundle from src/package-sources/npmjs/npm-js-follower.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/npmjs/npm-js-follower.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/npm-js-follower.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:npm-js-follower:watch": {
+      "name": "bundle:npm-js-follower:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/package-sources/npmjs/npm-js-follower.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/npmjs/npm-js-follower.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/npm-js-follower.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:npmjs-package-canary": {
+      "name": "bundle:npmjs-package-canary",
+      "description": "Create an AWS Lambda bundle from src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/canary/npmjs-package-canary.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:npmjs-package-canary:watch": {
+      "name": "bundle:npmjs-package-canary:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/canary/npmjs-package-canary.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:package-stats": {
+      "name": "bundle:package-stats",
+      "description": "Create an AWS Lambda bundle from src/backend/package-stats/package-stats.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:package-stats:watch": {
+      "name": "bundle:package-stats:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/package-stats/package-stats.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/package-stats/package-stats.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:package-versions-table-widget-function": {
+      "name": "bundle:package-versions-table-widget-function",
+      "description": "Create an AWS Lambda bundle from src/backend/inventory/package-versions-table-widget-function.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/inventory/package-versions-table-widget-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/package-versions-table-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:package-versions-table-widget-function:watch": {
+      "name": "bundle:package-versions-table-widget-function:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/inventory/package-versions-table-widget-function.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/inventory/package-versions-table-widget-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/package-versions-table-widget-function.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:prune-handler": {
+      "name": "bundle:prune-handler",
+      "description": "Create an AWS Lambda bundle from src/backend/deny-list/prune-handler.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/deny-list/prune-handler.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-handler.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:prune-handler:watch": {
+      "name": "bundle:prune-handler:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/deny-list/prune-handler.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/deny-list/prune-handler.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-handler.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:prune-queue-handler": {
+      "name": "bundle:prune-queue-handler",
+      "description": "Create an AWS Lambda bundle from src/backend/deny-list/prune-queue-handler.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/deny-list/prune-queue-handler.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-queue-handler.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:prune-queue-handler:watch": {
+      "name": "bundle:prune-queue-handler:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/deny-list/prune-queue-handler.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/deny-list/prune-queue-handler.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-queue-handler.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:re-ingest": {
+      "name": "bundle:re-ingest",
+      "description": "Create an AWS Lambda bundle from src/backend/ingestion/re-ingest.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/ingestion/re-ingest.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/re-ingest.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:re-ingest:watch": {
+      "name": "bundle:re-ingest:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/ingestion/re-ingest.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/ingestion/re-ingest.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/re-ingest.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:redrive-state-machine": {
+      "name": "bundle:redrive-state-machine",
+      "description": "Create an AWS Lambda bundle from src/backend/orchestration/redrive-state-machine.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/orchestration/redrive-state-machine.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/orchestration/redrive-state-machine.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:redrive-state-machine:watch": {
+      "name": "bundle:redrive-state-machine:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/orchestration/redrive-state-machine.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/orchestration/redrive-state-machine.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/orchestration/redrive-state-machine.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:stage-and-notify": {
+      "name": "bundle:stage-and-notify",
+      "description": "Create an AWS Lambda bundle from src/package-sources/npmjs/stage-and-notify.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/stage-and-notify.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:stage-and-notify:watch": {
+      "name": "bundle:stage-and-notify:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/package-sources/npmjs/stage-and-notify.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/stage-and-notify.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:transliterator": {
+      "name": "bundle:transliterator",
+      "description": "Create an AWS Fargate bundle from src/backend/transliterator/transliterator.ecstask.ts",
+      "env": {
+        "BUNDLE_DIR": "lib/backend/transliterator/transliterator.ecs-entrypoint.bundle"
+      },
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/transliterator/transliterator.ecs-entrypoint.ts --target=\"node16\" --platform=\"node\" --outfile=\"$BUNDLE_DIR/index.js\" --sourcemap"
+        },
+        {
+          "exec": "esbuild --bundle node_modules/jsii-rosetta/lib/translate_all_worker.js --target=\"node16\" --platform=\"node\" --outfile=\"$BUNDLE_DIR/translate_all_worker.js\" --sourcemap"
+        }
+      ]
+    },
+    "bundle:transliterator:watch": {
+      "name": "bundle:transliterator:watch",
+      "description": "Continuously update an AWS Fargate bundle from src/backend/transliterator/transliterator.ecstask.ts",
+      "env": {
+        "BUNDLE_DIR": "lib/backend/transliterator/transliterator.ecs-entrypoint.bundle"
+      },
+      "steps": [
+        {
+          "exec": "esbuild --bundle node_modules/jsii-rosetta/lib/translate_all_worker.js --target=\"node16\" --platform=\"node\" --outfile=\"$BUNDLE_DIR/translate_all_worker.js\" --sourcemap"
+        },
+        {
+          "exec": "esbuild --bundle src/backend/transliterator/transliterator.ecs-entrypoint.ts --target=\"node16\" --platform=\"node\" --outfile=\"$BUNDLE_DIR/index.js\" --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:trigger.client-test": {
+      "name": "bundle:trigger.client-test",
+      "description": "Create an AWS Lambda bundle from src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/trigger.client-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:trigger.client-test:watch": {
+      "name": "bundle:trigger.client-test:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/trigger.client-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:trigger.prune-test": {
+      "name": "bundle:trigger.prune-test",
+      "description": "Create an AWS Lambda bundle from src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:trigger.prune-test:watch": {
+      "name": "bundle:trigger.prune-test:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
+    "bundle:version-tracker": {
+      "name": "bundle:version-tracker",
+      "description": "Create an AWS Lambda bundle from src/backend/version-tracker/version-tracker.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/version-tracker/version-tracker.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/version-tracker/version-tracker.lambda.bundle/index.js\" --external:aws-sdk --sourcemap"
+        }
+      ]
+    },
+    "bundle:version-tracker:watch": {
+      "name": "bundle:version-tracker:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/version-tracker/version-tracker.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/version-tracker/version-tracker.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/version-tracker/version-tracker.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --watch"
+        }
+      ]
+    },
     "clobber": {
       "name": "clobber",
       "description": "hard resets to HEAD of origin and cleans the local repo",
@@ -31,6 +548,15 @@
         }
       ],
       "condition": "git diff --exit-code > /dev/null"
+    },
+    "compat": {
+      "name": "compat",
+      "description": "Perform API compatibility check against latest version",
+      "steps": [
+        {
+          "exec": "jsii-diff npm:$(node -p \"require('./package.json').name\") -k --ignore-file .compatignore || (echo \"\nUNEXPECTED BREAKING CHANGES: add keys such as 'removed:constructs.Node.of' to .compatignore to skip.\n\" && exit 1)"
+        }
+      ]
     },
     "compile": {
       "name": "compile",
@@ -73,10 +599,19 @@
           "spawn": "bundle:canary"
         },
         {
+          "spawn": "bundle:package-versions-table-widget-function"
+        },
+        {
+          "spawn": "bundle:needs-catalog-update"
+        },
+        {
           "spawn": "bundle:redrive-state-machine"
         },
         {
           "spawn": "bundle:package-stats"
+        },
+        {
+          "spawn": "bundle:version-tracker"
         },
         {
           "spawn": "bundle:certificate-monitor"
@@ -86,6 +621,9 @@
         },
         {
           "spawn": "bundle:code-artifact-forwarder"
+        },
+        {
+          "spawn": "bundle:npmjs-package-canary"
         },
         {
           "spawn": "bundle:npm-js-follower"
@@ -98,260 +636,21 @@
         }
       ]
     },
-    "test": {
-      "name": "test",
-      "description": "Run tests",
-      "steps": [
-        {
-          "exec": "jest --passWithNoTests --all --updateSnapshot"
-        },
-        {
-          "spawn": "eslint"
-        },
-        {
-          "spawn": "integ:deny-list:assert"
-        }
-      ]
-    },
-    "build": {
-      "name": "build",
-      "description": "Full release build (test+compile)",
-      "steps": [
-        {
-          "exec": "npx projen"
-        },
-        {
-          "spawn": "compile"
-        },
-        {
-          "spawn": "test"
-        },
-        {
-          "spawn": "package"
-        },
-        {
-          "spawn": "docgen"
-        }
-      ]
-    },
-    "test:watch": {
-      "name": "test:watch",
-      "description": "Run jest in watch mode",
-      "steps": [
-        {
-          "exec": "jest --watch"
-        }
-      ]
-    },
-    "test:update": {
-      "name": "test:update",
-      "description": "Update jest snapshots",
-      "steps": [
-        {
-          "exec": "jest --updateSnapshot"
-        }
-      ]
-    },
-    "bump": {
-      "name": "bump",
-      "description": "Bumps version based on latest git tag and generates a changelog entry",
-      "env": {
-        "OUTFILE": "package.json",
-        "CHANGELOG": "dist/changelog.md",
-        "BUMPFILE": "dist/version.txt",
-        "RELEASETAG": "dist/releasetag.txt"
-      },
-      "steps": [
-        {
-          "builtin": "release/bump-version"
-        }
-      ],
-      "condition": "! git log --oneline -1 | grep -q \"chore(release):\""
-    },
-    "unbump": {
-      "name": "unbump",
-      "description": "Restores version to 0.0.0",
-      "env": {
-        "OUTFILE": "package.json",
-        "CHANGELOG": "dist/changelog.md",
-        "BUMPFILE": "dist/version.txt",
-        "RELEASETAG": "dist/releasetag.txt"
-      },
-      "steps": [
-        {
-          "builtin": "release/reset-version"
-        }
-      ]
-    },
-    "publish:github": {
-      "name": "publish:github",
-      "description": "Publish this package to GitHub Releases",
-      "requiredEnv": [
-        "GITHUB_TOKEN",
-        "GITHUB_REPOSITORY",
-        "GITHUB_REF"
-      ],
-      "steps": [
-        {
-          "exec": "errout=$(mktemp); gh release create $(cat dist/releasetag.txt) -R $GITHUB_REPOSITORY -F dist/changelog.md -t $(cat dist/releasetag.txt) --target $GITHUB_REF 2> $errout && true; exitcode=$?; if [ $exitcode -ne 0 ] && ! grep -q \"Release.tag_name already exists\" $errout; then cat $errout; exit $exitcode; fi"
-        }
-      ]
-    },
     "default": {
       "name": "default",
+      "description": "Synthesize project files",
       "steps": [
         {
           "exec": "node .projenrc.js"
         }
       ]
     },
-    "watch": {
-      "name": "watch",
-      "description": "Watch & compile in the background",
+    "dev:bootstrap": {
+      "name": "dev:bootstrap",
+      "description": "cdk bootstrap",
       "steps": [
         {
-          "exec": "jsii -w --silence-warnings=reserved-word --no-fix-peer-dependencies"
-        }
-      ]
-    },
-    "package": {
-      "name": "package",
-      "description": "Create an npm tarball",
-      "steps": [
-        {
-          "exec": "jsii-pacmak"
-        }
-      ]
-    },
-    "eslint": {
-      "name": "eslint",
-      "description": "Runs eslint against the codebase",
-      "steps": [
-        {
-          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src src/__tests__ build-tools .projenrc.js"
-        }
-      ]
-    },
-    "compat": {
-      "name": "compat",
-      "description": "Perform API compatibility check against latest version",
-      "steps": [
-        {
-          "exec": "jsii-diff npm:$(node -p \"require('./package.json').name\") -k --ignore-file .compatignore || (echo \"\nUNEXPECTED BREAKING CHANGES: add keys such as 'removed:constructs.Node.of' to .compatignore to skip.\n\" && exit 1)"
-        }
-      ]
-    },
-    "publish:npm": {
-      "name": "publish:npm",
-      "description": "Publish this package to npm",
-      "env": {
-        "NPM_DIST_TAG": "latest",
-        "NPM_REGISTRY": "registry.npmjs.org"
-      },
-      "requiredEnv": [
-        "NPM_TOKEN"
-      ],
-      "steps": [
-        {
-          "exec": "npx -p jsii-release@latest jsii-release-npm"
-        }
-      ]
-    },
-    "publish:pypi": {
-      "name": "publish:pypi",
-      "description": "Publish this package to PyPI",
-      "requiredEnv": [
-        "TWINE_USERNAME",
-        "TWINE_PASSWORD"
-      ],
-      "steps": [
-        {
-          "exec": "npx -p jsii-release@latest jsii-release-pypi"
-        }
-      ]
-    },
-    "docgen": {
-      "name": "docgen",
-      "description": "Generate API.md from .jsii manifest",
-      "steps": [
-        {
-          "exec": "jsii-docgen"
-        }
-      ]
-    },
-    "bundle": {
-      "name": "bundle",
-      "description": "Bundle all lambda functions",
-      "steps": [
-        {
-          "spawn": "bundle:catalog-builder-mock"
-        },
-        {
-          "spawn": "bundle:trigger.client-test"
-        },
-        {
-          "spawn": "bundle:trigger.prune-test"
-        },
-        {
-          "spawn": "bundle:catalog-builder"
-        },
-        {
-          "spawn": "bundle:prune-handler"
-        },
-        {
-          "spawn": "bundle:prune-queue-handler"
-        },
-        {
-          "spawn": "bundle:ingestion"
-        },
-        {
-          "spawn": "bundle:re-ingest"
-        },
-        {
-          "spawn": "bundle:canary"
-        },
-        {
-          "spawn": "bundle:redrive-state-machine"
-        },
-        {
-          "spawn": "bundle:package-stats"
-        },
-        {
-          "spawn": "bundle:certificate-monitor"
-        },
-        {
-          "spawn": "bundle:http-get-function"
-        },
-        {
-          "spawn": "bundle:code-artifact-forwarder"
-        },
-        {
-          "spawn": "bundle:npm-js-follower"
-        },
-        {
-          "spawn": "bundle:stage-and-notify"
-        },
-        {
-          "spawn": "bundle:transliterator"
-        }
-      ]
-    },
-    "dev:synth": {
-      "name": "dev:synth",
-      "description": "cdk synth",
-      "steps": [
-        {
-          "exec": "npx cdk synth"
-        }
-      ],
-      "cwd": "lib/__tests__/devapp"
-    },
-    "dev:diff": {
-      "name": "dev:diff",
-      "description": "cdk diff",
-      "steps": [
-        {
-          "exec": "npx cdk diff"
+          "exec": "npx cdk bootstrap"
         }
       ],
       "cwd": "lib/__tests__/devapp"
@@ -376,12 +675,12 @@
       ],
       "cwd": "lib/__tests__/devapp"
     },
-    "dev:bootstrap": {
-      "name": "dev:bootstrap",
-      "description": "cdk bootstrap",
+    "dev:diff": {
+      "name": "dev:diff",
+      "description": "cdk diff",
       "steps": [
         {
-          "exec": "npx cdk bootstrap"
+          "exec": "npx cdk diff"
         }
       ],
       "cwd": "lib/__tests__/devapp"
@@ -396,156 +695,55 @@
       ],
       "cwd": "lib/__tests__/devapp"
     },
-    "bundle:catalog-builder-mock": {
-      "name": "bundle:catalog-builder-mock",
-      "description": "Create an AWS Lambda bundle from src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts",
+    "dev:synth": {
+      "name": "dev:synth",
+      "description": "cdk synth",
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/catalog-builder-mock.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "npx cdk synth"
+        }
+      ],
+      "cwd": "lib/__tests__/devapp"
+    },
+    "docgen": {
+      "name": "docgen",
+      "description": "Generate API.md from .jsii manifest",
+      "steps": [
+        {
+          "exec": "jsii-docgen -o API.md"
         }
       ]
     },
-    "bundle:trigger.client-test": {
-      "name": "bundle:trigger.client-test",
-      "description": "Create an AWS Lambda bundle from src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts",
+    "eject": {
+      "name": "eject",
+      "description": "Remove projen from the project",
+      "env": {
+        "PROJEN_EJECTING": "true"
+      },
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/trigger.client-test.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "spawn": "default"
         }
       ]
     },
-    "bundle:trigger.prune-test": {
-      "name": "bundle:trigger.prune-test",
-      "description": "Create an AWS Lambda bundle from src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts",
+    "eslint": {
+      "name": "eslint",
+      "description": "Runs eslint against the codebase",
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/__tests__/backend/deny-list/integ/trigger.prune-test.bundle/index.js\" --external:aws-sdk --sourcemap"
+          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern src src/__tests__ build-tools .projenrc.js"
         }
       ]
     },
-    "bundle:catalog-builder": {
-      "name": "bundle:catalog-builder",
-      "description": "Create an AWS Lambda bundle from src/backend/catalog-builder/catalog-builder.lambda.ts",
+    "integ:deny-list:assert": {
+      "name": "integ:deny-list:assert",
+      "description": "synthesize integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/catalog-builder/catalog-builder.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/catalog-builder/catalog-builder.bundle/index.js\" --external:aws-sdk --sourcemap"
-        }
-      ]
-    },
-    "bundle:prune-handler": {
-      "name": "bundle:prune-handler",
-      "description": "Create an AWS Lambda bundle from src/backend/deny-list/prune-handler.lambda.ts",
-      "steps": [
+          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true -o src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.actual > /dev/null"
+        },
         {
-          "exec": "esbuild --bundle src/backend/deny-list/prune-handler.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-handler.bundle/index.js\" --external:aws-sdk --sourcemap"
-        }
-      ]
-    },
-    "bundle:prune-queue-handler": {
-      "name": "bundle:prune-queue-handler",
-      "description": "Create an AWS Lambda bundle from src/backend/deny-list/prune-queue-handler.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/backend/deny-list/prune-queue-handler.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/deny-list/prune-queue-handler.bundle/index.js\" --external:aws-sdk --sourcemap"
-        }
-      ]
-    },
-    "bundle:ingestion": {
-      "name": "bundle:ingestion",
-      "description": "Create an AWS Lambda bundle from src/backend/ingestion/ingestion.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/backend/ingestion/ingestion.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/ingestion.bundle/index.js\" --external:aws-sdk --sourcemap"
-        }
-      ]
-    },
-    "bundle:re-ingest": {
-      "name": "bundle:re-ingest",
-      "description": "Create an AWS Lambda bundle from src/backend/ingestion/re-ingest.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/backend/ingestion/re-ingest.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/ingestion/re-ingest.bundle/index.js\" --external:aws-sdk --sourcemap"
-        }
-      ]
-    },
-    "bundle:canary": {
-      "name": "bundle:canary",
-      "description": "Create an AWS Lambda bundle from src/backend/inventory/canary.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/backend/inventory/canary.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/inventory/canary.bundle/index.js\" --external:aws-sdk --sourcemap"
-        }
-      ]
-    },
-    "bundle:redrive-state-machine": {
-      "name": "bundle:redrive-state-machine",
-      "description": "Create an AWS Lambda bundle from src/backend/orchestration/redrive-state-machine.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/backend/orchestration/redrive-state-machine.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/orchestration/redrive-state-machine.bundle/index.js\" --external:aws-sdk --sourcemap"
-        }
-      ]
-    },
-    "bundle:package-stats": {
-      "name": "bundle:package-stats",
-      "description": "Create an AWS Lambda bundle from src/backend/package-stats/package-stats.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/backend/package-stats/package-stats.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/backend/package-stats/package-stats.bundle/index.js\" --external:aws-sdk --sourcemap"
-        }
-      ]
-    },
-    "bundle:certificate-monitor": {
-      "name": "bundle:certificate-monitor",
-      "description": "Create an AWS Lambda bundle from src/monitored-certificate/certificate-monitor.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/monitored-certificate/certificate-monitor.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitored-certificate/certificate-monitor.bundle/index.js\" --external:aws-sdk --sourcemap"
-        }
-      ]
-    },
-    "bundle:http-get-function": {
-      "name": "bundle:http-get-function",
-      "description": "Create an AWS Lambda bundle from src/monitoring/http-get-function.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/monitoring/http-get-function.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/monitoring/http-get-function.bundle/index.js\" --external:aws-sdk --sourcemap"
-        }
-      ]
-    },
-    "bundle:code-artifact-forwarder": {
-      "name": "bundle:code-artifact-forwarder",
-      "description": "Create an AWS Lambda bundle from src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/codeartifact/code-artifact-forwarder.bundle/index.js\" --external:aws-sdk --sourcemap"
-        }
-      ]
-    },
-    "bundle:npm-js-follower": {
-      "name": "bundle:npm-js-follower",
-      "description": "Create an AWS Lambda bundle from src/package-sources/npmjs/npm-js-follower.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/package-sources/npmjs/npm-js-follower.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/npm-js-follower.bundle/index.js\" --external:aws-sdk --sourcemap"
-        }
-      ]
-    },
-    "bundle:stage-and-notify": {
-      "name": "bundle:stage-and-notify",
-      "description": "Create an AWS Lambda bundle from src/package-sources/npmjs/stage-and-notify.lambda.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outfile=\"lib/package-sources/npmjs/stage-and-notify.bundle/index.js\" --external:aws-sdk --sourcemap"
-        }
-      ]
-    },
-    "bundle:transliterator": {
-      "name": "bundle:transliterator",
-      "description": "Create an AWS Fargate bundle from src/backend/transliterator/transliterator.ecstask.ts",
-      "steps": [
-        {
-          "exec": "esbuild --bundle src/backend/transliterator/transliterator.ecs-entrypoint.ts --target=\"node16\" --platform=\"node\" --outfile=\"lib/backend/transliterator/transliterator.bundle/index.js\" --sourcemap"
+          "exec": "diff -r -x asset.* -x cdk.out -x manifest.json -x tree.json src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout/ src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.actual/"
         }
       ]
     },
@@ -557,7 +755,7 @@
           "exec": "rm -fr src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.deploy"
         },
         {
-          "exec": "cdk deploy --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting --require-approval=never -o src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.deploy"
+          "exec": "cdk deploy --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true --require-approval=never -o src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.deploy"
         },
         {
           "exec": "rm -fr src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout"
@@ -579,26 +777,130 @@
         }
       ]
     },
-    "integ:deny-list:assert": {
-      "name": "integ:deny-list:assert",
-      "description": "synthesize integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
-      "steps": [
-        {
-          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting -o src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.actual > /dev/null"
-        },
-        {
-          "exec": "diff -r -x asset.* -x cdk.out -x manifest.json -x tree.json src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout/ src/__tests__/backend/deny-list/integ/.tmp.deny-list.integ.cdkout.actual/"
-        }
-      ]
-    },
     "integ:deny-list:snapshot": {
       "name": "integ:deny-list:snapshot",
       "description": "update snapshot for integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
       "steps": [
         {
-          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting -o src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout > /dev/null"
+          "exec": "cdk synth --app \"node lib/__tests__/backend/deny-list/integ/deny-list.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true -o src/__tests__/backend/deny-list/integ/deny-list.integ.cdkout > /dev/null"
         }
       ]
+    },
+    "integ:domain-redirect:assert": {
+      "name": "integ:domain-redirect:assert",
+      "description": "synthesize integration test __tests__/domain-redirect.integ.ts",
+      "steps": [
+        {
+          "exec": "cdk synth --app \"node lib/__tests__/domain-redirect.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true -o src/__tests__/.tmp.domain-redirect.integ.cdkout.actual > /dev/null"
+        },
+        {
+          "exec": "diff -r -x asset.* -x cdk.out -x manifest.json -x tree.json src/__tests__/domain-redirect.integ.cdkout/ src/__tests__/.tmp.domain-redirect.integ.cdkout.actual/"
+        }
+      ]
+    },
+    "integ:domain-redirect:deploy": {
+      "name": "integ:domain-redirect:deploy",
+      "description": "deploy integration test __tests__/domain-redirect.integ.ts",
+      "steps": [
+        {
+          "exec": "rm -fr src/__tests__/.tmp.domain-redirect.integ.cdkout.deploy"
+        },
+        {
+          "exec": "cdk deploy --app \"node lib/__tests__/domain-redirect.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true --require-approval=never -o src/__tests__/.tmp.domain-redirect.integ.cdkout.deploy"
+        },
+        {
+          "exec": "rm -fr src/__tests__/domain-redirect.integ.cdkout"
+        },
+        {
+          "exec": "mv src/__tests__/.tmp.domain-redirect.integ.cdkout.deploy src/__tests__/domain-redirect.integ.cdkout"
+        },
+        {
+          "spawn": "integ:domain-redirect:destroy"
+        }
+      ]
+    },
+    "integ:domain-redirect:destroy": {
+      "name": "integ:domain-redirect:destroy",
+      "description": "destroy integration test __tests__/domain-redirect.integ.ts",
+      "steps": [
+        {
+          "exec": "cdk destroy --app src/__tests__/domain-redirect.integ.cdkout --no-version-reporting"
+        }
+      ]
+    },
+    "integ:domain-redirect:snapshot": {
+      "name": "integ:domain-redirect:snapshot",
+      "description": "update snapshot for integration test __tests__/domain-redirect.integ.ts",
+      "steps": [
+        {
+          "exec": "cdk synth --app \"node lib/__tests__/domain-redirect.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true -o src/__tests__/domain-redirect.integ.cdkout > /dev/null"
+        }
+      ]
+    },
+    "package": {
+      "name": "package",
+      "description": "Creates the distribution package",
+      "steps": [
+        {
+          "exec": "mkdir -p dist"
+        },
+        {
+          "exec": "rsync -a . dist --exclude .git --exclude node_modules"
+        }
+      ]
+    },
+    "package-all": {
+      "name": "package-all",
+      "description": "Packages artifacts for all target languages",
+      "steps": [
+        {
+          "spawn": "package:js"
+        },
+        {
+          "spawn": "package:python"
+        }
+      ]
+    },
+    "package:js": {
+      "name": "package:js",
+      "description": "Create js language bindings",
+      "steps": [
+        {
+          "exec": "jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
+        },
+        {
+          "exec": "npx jsii-pacmak@$jsii_version -v --target js"
+        }
+      ]
+    },
+    "package:python": {
+      "name": "package:python",
+      "description": "Create python language bindings",
+      "steps": [
+        {
+          "exec": "jsii_version=$(node -p \"JSON.parse(fs.readFileSync('.jsii')).jsiiVersion.split(' ')[0]\")"
+        },
+        {
+          "exec": "npx jsii-pacmak@$jsii_version -v --target python"
+        }
+      ]
+    },
+    "post-compile": {
+      "name": "post-compile",
+      "description": "Runs after successful compilation",
+      "steps": [
+        {
+          "spawn": "docgen"
+        }
+      ]
+    },
+    "post-upgrade": {
+      "name": "post-upgrade",
+      "description": "Runs after upgrading dependencies"
+    },
+    "pre-compile": {
+      "name": "pre-compile",
+      "description": "Prepare the project for compilation"
     },
     "release": {
       "name": "release",
@@ -624,6 +926,57 @@
         }
       ]
     },
+    "test": {
+      "name": "test",
+      "description": "Run tests",
+      "steps": [
+        {
+          "exec": "jest --passWithNoTests --all --updateSnapshot --coverageProvider=v8"
+        },
+        {
+          "spawn": "eslint"
+        },
+        {
+          "spawn": "integ:deny-list:assert"
+        },
+        {
+          "spawn": "integ:domain-redirect:assert"
+        }
+      ]
+    },
+    "test:update": {
+      "name": "test:update",
+      "description": "Update jest snapshots",
+      "steps": [
+        {
+          "exec": "jest --updateSnapshot"
+        }
+      ]
+    },
+    "test:watch": {
+      "name": "test:watch",
+      "description": "Run jest in watch mode",
+      "steps": [
+        {
+          "exec": "jest --watch"
+        }
+      ]
+    },
+    "unbump": {
+      "name": "unbump",
+      "description": "Restores version to 0.0.0",
+      "env": {
+        "OUTFILE": "package.json",
+        "CHANGELOG": "dist/changelog.md",
+        "BUMPFILE": "dist/version.txt",
+        "RELEASETAG": "dist/releasetag.txt"
+      },
+      "steps": [
+        {
+          "builtin": "release/reset-version"
+        }
+      ]
+    },
     "upgrade": {
       "name": "upgrade",
       "description": "upgrade dependencies",
@@ -632,28 +985,40 @@
       },
       "steps": [
         {
-          "exec": "npm-check-updates --dep dev --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk'"
+          "exec": "npm-check-updates --dep dev --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk,cdk-triggers'"
         },
         {
-          "exec": "npm-check-updates --dep optional --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk'"
+          "exec": "npm-check-updates --dep optional --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk,cdk-triggers'"
         },
         {
-          "exec": "npm-check-updates --dep peer --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk'"
+          "exec": "npm-check-updates --dep peer --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk,cdk-triggers'"
         },
         {
-          "exec": "npm-check-updates --dep prod --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk'"
+          "exec": "npm-check-updates --dep prod --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk,cdk-triggers'"
         },
         {
-          "exec": "npm-check-updates --dep bundle --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk'"
+          "exec": "npm-check-updates --dep bundle --upgrade --target=minor --reject='@aws-cdk/aws-certificatemanager,@aws-cdk/aws-cloudfront-origins,@aws-cdk/aws-cloudfront,@aws-cdk/aws-cloudwatch-actions,@aws-cdk/aws-cloudwatch,@aws-cdk/aws-codeartifact,@aws-cdk/aws-ec2,@aws-cdk/aws-ecs,@aws-cdk/aws-events,@aws-cdk/aws-events-targets,@aws-cdk/assets,@aws-cdk/aws-iam,@aws-cdk/aws-lambda-event-sources,@aws-cdk/aws-lambda,@aws-cdk/aws-logs,@aws-cdk/aws-route53-targets,@aws-cdk/aws-route53,@aws-cdk/aws-s3-deployment,@aws-cdk/aws-s3,@aws-cdk/aws-s3-notifications,@aws-cdk/aws-sns,@aws-cdk/aws-sqs,@aws-cdk/aws-stepfunctions,@aws-cdk/aws-stepfunctions-tasks,@aws-cdk/core,@aws-cdk/custom-resources,@aws-cdk/cx-api,cdk-watchful,constructs,@aws-cdk/assert,aws-cdk,cdk-triggers'"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @aws-sdk/client-sfn @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case cdk-triggers construct-hub-webapp esbuild eslint eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen jsii-pacmak json-schema normalize-registry-metadata npm-check-updates projen semver spdx-license-list standard-version tar-stream typescript yaml"
+          "exec": "yarn upgrade @aws-sdk/client-sfn @jsii/spec @types/aws-lambda @types/fs-extra @types/jest @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case construct-hub-webapp esbuild eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint fs-extra glob got jest jest-junit jsii jsii-diff jsii-docgen json-schema JSONStream normalize-registry-metadata npm-check-updates projen semver spdx-license-list standard-version tar-stream typescript uuid yaml"
         },
         {
           "exec": "npx projen"
+        },
+        {
+          "spawn": "post-upgrade"
+        }
+      ]
+    },
+    "watch": {
+      "name": "watch",
+      "description": "Watch & compile in the background",
+      "steps": [
+        {
+          "exec": "jsii -w --silence-warnings=reserved-word --no-fix-peer-dependencies"
         }
       ]
     }

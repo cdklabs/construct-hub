@@ -4,9 +4,12 @@ import { Construct, Duration } from '@aws-cdk/core';
 import { DenyList } from './backend/deny-list';
 import { Ingestion } from './backend/ingestion';
 import { Inventory } from './backend/inventory';
+import { PackageVersionsTableWidget } from './backend/inventory/package-versions-table-widget';
 import { Orchestration } from './backend/orchestration';
 import { PackageStats } from './backend/package-stats';
+import { missingDocumentationReport, UNINSTALLABLE_PACKAGES_REPORT, corruptAssemblyReport, VERSION_TRACKER_KEY } from './backend/shared/constants';
 import { DocumentationLanguage } from './backend/shared/language';
+import { VersionTracker } from './backend/version-tracker';
 import { ecsClusterUrl, lambdaFunctionUrl, lambdaSearchLogGroupUrl, logGroupUrl, s3ObjectUrl, sqsQueueUrl, stateMachineUrl } from './deep-link';
 import { fillMetric } from './metric-utils';
 import { PackageSourceBindResult } from './package-source';
@@ -20,14 +23,46 @@ export interface BackendDashboardProps {
   readonly denyList: DenyList;
   readonly packageData: IBucket;
   readonly packageStats?: PackageStats;
+  readonly versionTracker: VersionTracker;
 }
 
 export class BackendDashboard extends Construct {
   public constructor(scope: Construct, id: string, props: BackendDashboardProps) {
     super(scope, id);
 
-    new Dashboard(this, 'Resource', {
-      dashboardName: props.dashboardName,
+    const reports: IWidget[][] = [[
+      new PackageVersionsTableWidget(this, 'UninstallablePackages', {
+        title: 'Package Versions Report | Uninstallable',
+        description: [
+          "These packages could not be installed. Note that currently they will also appear in the 'missing' documentation reports.",
+          '',
+          "The specific error can be found in the package directory inside a file named 'uninstallable'",
+        ].join('\n'),
+        bucket: props.packageData,
+        key: UNINSTALLABLE_PACKAGES_REPORT,
+        height: 6,
+        width: 24,
+      }),
+    ]];
+
+    for (const language of DocumentationLanguage.ALL) {
+      for (const report of this.perLanguageReports(language, props.packageData)) {
+        // put every report in a new line
+        reports.push([report]);
+      }
+    }
+
+    const dashboardName = props.dashboardName ?? 'ConstructHubBackend';
+
+    new Dashboard(this, 'Reports', {
+      dashboardName: `${dashboardName}-reports`,
+      periodOverride: PeriodOverride.AUTO,
+      start: '-P1W', // Show 1 week by default
+      widgets: reports,
+    });
+
+    new Dashboard(this, 'Graphs', {
+      dashboardName: `${dashboardName}-graphs`,
       periodOverride: PeriodOverride.AUTO,
       start: '-P1W', // Show 1 week by default
       widgets: [
@@ -67,6 +102,7 @@ export class BackendDashboard extends Construct {
               props.inventory.metricMissingAssemblyCount({ label: 'Missing Assembly' }),
               props.inventory.metricMissingPackageMetadataCount({ label: 'Missing Metadata' }),
               props.inventory.metricMissingPackageTarballCount({ label: 'Missing Tarball' }),
+              props.inventory.metricUninstallablePackageCount({ label: 'Uninstallable Package' }),
             ],
             leftYAxis: { min: 0 },
             right: [
@@ -268,8 +304,41 @@ export class BackendDashboard extends Construct {
         ],
 
         ...(props.packageStats ? renderPackageStatsWidgets(props.packageStats) : []),
+        ...renderVersionTrackerWidgets(props.versionTracker),
       ],
     });
+  }
+
+  private perLanguageReports(language: DocumentationLanguage, packageData: IBucket): IWidget[] {
+
+    return [
+      new PackageVersionsTableWidget(this, `MissingDocs-${language.name}`, {
+        title: `Package Versions Report | Missing Documentation | _${language.name}_`,
+        description: [
+          `These packages are missing ${language.name} documentation.`,
+          'Apart from the uninstallable packages, this report should stay empty',
+          '',
+          'To investigate inspect the orchestration DLQ.',
+        ].join('\n'),
+        bucket: packageData,
+        key: missingDocumentationReport(language),
+        height: 6,
+        width: 24,
+      }),
+      new PackageVersionsTableWidget(this, `CorruptAssemblyDocs-${language.name}`, {
+        title: `Package Versions Report | Corrupt Assembly | _${language.name}_`,
+        description: [
+          `These packages are missing ${language.name} documentation because of a corrupted assembly.`,
+          '',
+          "The specific error can be found in the package directory inside files suffixed with '.corruptassembly'",
+        ].join('\n'),
+        bucket: packageData,
+        key: corruptAssemblyReport(language),
+        height: 6,
+        width: 24,
+      }),
+    ];
+
   }
 
   private *catalogOverviewLanguageSections({ inventory, orchestration }: BackendDashboardProps): Generator<IWidget[]> {
@@ -344,10 +413,11 @@ export class BackendDashboard extends Construct {
       yield [
         new GraphWidget({
           height: 6,
-          width: 6,
+          width: 12,
           title: 'Package Versions',
           left: [
             inventory.metricSupportedPackageVersionCount(language, { label: 'Available', color: '#2ca02c' }),
+            inventory.metricCorruptAssemblyPackageVersionCount(language, { label: 'Corrupt Assembly', color: '#3542D7' }),
             inventory.metricUnsupportedPackageVersionCount(language, { label: 'Unsupported', color: '#9467bd' }),
             inventory.metricMissingPackageVersionCount(language, { label: 'Missing', color: '#d62728' }),
           ],
@@ -356,39 +426,16 @@ export class BackendDashboard extends Construct {
         }),
         new GraphWidget({
           height: 6,
-          width: 6,
-          title: 'Package Versions',
-          left: [
-            inventory.metricSupportedPackageVersionCount(language, { label: 'Available', color: '#2ca02c' }),
-            inventory.metricUnsupportedPackageVersionCount(language, { label: 'Unsupported', color: '#9467bd' }),
-            inventory.metricMissingPackageVersionCount(language, { label: 'Missing', color: '#d62728' }),
-          ],
-          leftYAxis: { showUnits: false },
-          stacked: true,
-        }),
-        new GraphWidget({
-          height: 6,
-          width: 6,
+          width: 12,
           title: 'Package Version Submodules',
           left: [
             inventory.metricSupportedSubmoduleCount(language, { label: 'Available', color: '#2ca02c' }),
+            inventory.metricCorruptAssemblySubmoduleCount(language, { label: 'Corrupt Assembly', color: '#3542D7' }),
             inventory.metricUnsupportedSubmoduleCount(language, { label: 'Unsupported', color: '#9467bd' }),
             inventory.metricMissingSubmoduleCount(language, { label: 'Missing', color: '#d62728' }),
           ],
           leftYAxis: { showUnits: false },
           view: GraphWidgetView.PIE,
-        }),
-        new GraphWidget({
-          height: 6,
-          width: 6,
-          title: 'Package Version Submodules',
-          left: [
-            inventory.metricSupportedSubmoduleCount(language, { label: 'Available', color: '#2ca02c' }),
-            inventory.metricUnsupportedSubmoduleCount(language, { label: 'Unsupported', color: '#9467bd' }),
-            inventory.metricMissingSubmoduleCount(language, { label: 'Missing', color: '#d62728' }),
-          ],
-          leftYAxis: { showUnits: false },
-          stacked: true,
         }),
       ];
     }
@@ -452,6 +499,50 @@ function renderPackageStatsWidgets(packageStats: PackageStats): IWidget[][] {
           color: '#ffa500',
           label: '15 minutes (Lambda timeout)',
           value: Duration.minutes(15).toSeconds(),
+        }],
+      }),
+    ],
+  ];
+}
+
+function renderVersionTrackerWidgets(versionTracker: VersionTracker): IWidget[][] {
+  return [
+    [
+      new TextWidget({
+        height: 2,
+        width: 24,
+        markdown:
+          [
+            '# Version Tracker',
+            '',
+            `[button:primary:Versions Object](${s3ObjectUrl(versionTracker.bucket, VERSION_TRACKER_KEY)})`,
+            `[button:Version Tracker Function](${lambdaFunctionUrl(versionTracker.handler)})`,
+            `[button:Version Tracker Logs](${lambdaSearchLogGroupUrl(versionTracker.handler)})`,
+          ].join('\n'),
+      }),
+    ],
+    [
+      new GraphWidget({
+        height: 6,
+        width: 12,
+        title: 'Number of Package Versions Recorded',
+        left: [
+          fillMetric(versionTracker.metricTrackedVersionsCount({ label: 'Package versions recorded' }), 'REPEAT'),
+        ],
+        leftYAxis: { min: 0 },
+      }),
+      new GraphWidget({
+        height: 6,
+        width: 12,
+        title: 'Invocation Duration',
+        left: [
+          versionTracker.handler.metricDuration({ label: 'Duration' }),
+        ],
+        leftYAxis: { min: 0 },
+        rightAnnotations: [{
+          color: '#ffa500',
+          label: '1 minutes (Lambda timeout)',
+          value: Duration.minutes(1).toSeconds(),
         }],
       }),
     ],

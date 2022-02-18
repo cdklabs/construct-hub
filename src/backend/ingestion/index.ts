@@ -1,21 +1,25 @@
 import { ComparisonOperator, MathExpression, Metric, MetricOptions, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
+import { Rule, RuleTargetInput, Schedule } from '@aws-cdk/aws-events';
+import { SfnStateMachine } from '@aws-cdk/aws-events-targets';
 import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
 import { FunctionProps, IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
 import { RetentionDays } from '@aws-cdk/aws-logs';
-import { BlockPublicAccess, Bucket, IBucket } from '@aws-cdk/aws-s3';
+import { BlockPublicAccess, IBucket } from '@aws-cdk/aws-s3';
 import { BucketDeployment, Source } from '@aws-cdk/aws-s3-deployment';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
-import { StateMachine, JsonPath, Choice, Succeed, Condition, Map } from '@aws-cdk/aws-stepfunctions';
-import { CallAwsService, LambdaInvoke } from '@aws-cdk/aws-stepfunctions-tasks';
-import { Construct, Duration } from '@aws-cdk/core';
+import { StateMachine, JsonPath, Choice, Succeed, Condition, Map, TaskInput, IntegrationPattern, Wait, WaitTime } from '@aws-cdk/aws-stepfunctions';
+import { CallAwsService, LambdaInvoke, StepFunctionsStartExecution } from '@aws-cdk/aws-stepfunctions-tasks';
+import { Construct, Duration, Stack, ArnFormat } from '@aws-cdk/core';
 import { Repository } from '../../codeartifact/repository';
-import { ConfigFile } from '../../config-file';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { PackageTagConfig } from '../../package-tag';
 import { RUNBOOK_URL } from '../../runbook-url';
+import { S3StorageFactory } from '../../s3/storage';
+import { TempFile } from '../../temp-file';
 import type { PackageLinkConfig } from '../../webapp';
+import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 import { Orchestration } from '../orchestration';
 import { STORAGE_KEY_PREFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX } from '../shared/constants';
 import { MetricName, METRICS_NAMESPACE } from './constants';
@@ -61,6 +65,16 @@ export interface IngestionProps {
    * Serialized configuration for custom package tags.
    */
   readonly packageTags?: PackageTagConfig[];
+
+  /**
+   * How frequently all packages should get fully reprocessed.
+   *
+   * See the operator runbook for more information about reprocessing.
+   * @see https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+   *
+   * @default - never
+   */
+  readonly reprocessFrequency?: Duration;
 }
 
 /**
@@ -109,14 +123,16 @@ export class Ingestion extends Construct implements IGrantable {
     });
 
     const configFilename = 'config.json';
-    const config = new ConfigFile(configFilename, JSON.stringify({
+    const config = new TempFile(configFilename, JSON.stringify({
       packageLinks: props.packageLinks ?? [],
       packageTags: props.packageTags ?? [],
     }));
 
-    const configBucket = new Bucket(this, 'ConfigBucket', {
+    const storageFactory = S3StorageFactory.getOrCreate(this);
+    const configBucket = storageFactory.newBucket(this, 'ConfigBucket', {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
+      versioned: true,
     });
 
     new BucketDeployment(this, 'DeployIngestionConfiguration', {
@@ -171,11 +187,25 @@ export class Ingestion extends Construct implements IGrantable {
     });
     props.bucket.grantRead(this.function, `${STORAGE_KEY_PREFIX}*${PACKAGE_KEY_SUFFIX}`);
     this.function.addEventSource(new SqsEventSource(reprocessQueue, { batchSize: 1 }));
-    new ReprocessIngestionWorkflow(this, 'ReprocessWorkflow', { bucket: props.bucket, queue: reprocessQueue });
+    const reprocessWorkflow = new ReprocessIngestionWorkflow(this, 'ReprocessWorkflow', { bucket: props.bucket, queue: reprocessQueue });
+
+    // Run reprocess workflow on a daily basis
+    const updatePeriod = props.reprocessFrequency;
+    if (updatePeriod) {
+      const rule = new Rule(this, 'ReprocessCronJob', {
+        schedule: Schedule.rate(updatePeriod),
+        description: 'Periodically reprocess all packages',
+      });
+      rule.addTarget(new SfnStateMachine(reprocessWorkflow.stateMachine, {
+        input: RuleTargetInput.fromObject({
+          comment: 'Scheduled reprocessing event from cron job.',
+        }),
+      }));
+    }
 
     this.grantPrincipal = this.function.grantPrincipal;
 
-    props.monitoring.addHighSeverityAlarm(
+    props.monitoring.addLowSeverityAlarm(
       'Ingestion Dead-Letter Queue not empty',
       new MathExpression({
         expression: 'm1 + m2',
@@ -290,21 +320,29 @@ interface ReprocessIngestionWorkflowProps {
  * https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
  */
 class ReprocessIngestionWorkflow extends Construct {
+  public readonly stateMachine: StateMachine;
+
   public constructor(scope: Construct, id: string, props: ReprocessIngestionWorkflowProps) {
     super(scope, id);
 
     const lambdaFunction = new ReIngest(this, 'Function', {
+      architecture: gravitonLambdaIfAvailable(this),
       description: '[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion',
       environment: { BUCKET_NAME: props.bucket.bucketName, QUEUE_URL: props.queue.queueUrl },
+      memorySize: 10_240,
       tracing: Tracing.ACTIVE,
+      timeout: Duration.minutes(3),
     });
 
     props.queue.grantSendMessages(lambdaFunction);
     props.bucket.grantRead(lambdaFunction, `${STORAGE_KEY_PREFIX}*${METADATA_KEY_SUFFIX}`);
     props.bucket.grantRead(lambdaFunction, `${STORAGE_KEY_PREFIX}*${PACKAGE_KEY_SUFFIX}`);
 
-    const listBucket = new Choice(this, 'Has a NextContinuationToken?')
-      .when(Condition.isPresent('$.response.NextContinuationToken'),
+    // Need to physical-name the state machine so it can self-invoke.
+    const stateMachineName = stateMachineNameFrom(this.node.path);
+
+    const listBucket = new Choice(this, 'Has a ContinuationToken?')
+      .when(Condition.isPresent('$.ContinuationToken'),
         new CallAwsService(this, 'S3.ListObjectsV2(NextPage)', {
           service: 's3',
           action: 'listObjectsV2',
@@ -312,12 +350,11 @@ class ReprocessIngestionWorkflow extends Construct {
           iamResources: [props.bucket.bucketArn],
           parameters: {
             Bucket: props.bucket.bucketName,
-            ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken'),
-            MaxKeys: 250, // <- Limits the response size, and ensures we don't spawn too many Lambdas at once in the Map state.
+            ContinuationToken: JsonPath.stringAt('$.ContinuationToken'),
             Prefix: STORAGE_KEY_PREFIX,
           },
           resultPath: '$.response',
-        }))
+        }).addRetry({ errors: ['S3.SdkClientException'] }))
       .otherwise(new CallAwsService(this, 'S3.ListObjectsV2(FirstPage)', {
         service: 's3',
         action: 'listObjectsV2',
@@ -328,7 +365,7 @@ class ReprocessIngestionWorkflow extends Construct {
           Prefix: STORAGE_KEY_PREFIX,
         },
         resultPath: '$.response',
-      })).afterwards();
+      }).addRetry({ errors: ['S3.SdkClientException'] })).afterwards();
 
     const process = new Map(this, 'Process Result', {
       itemsPath: '$.response.Contents',
@@ -344,16 +381,80 @@ class ReprocessIngestionWorkflow extends Construct {
         .otherwise(new Succeed(this, 'Nothing to do')),
     );
 
-    listBucket.next(process.next(new Choice(this, 'Is there more?')
-      .when(Condition.isPresent('$.response.NextContinuationToken'), listBucket)
-      .otherwise(new Succeed(this, 'All Done'))));
 
-    const stateMachine = new StateMachine(this, 'StateMachine', {
+    listBucket.next(
+      new Choice(this, 'Is there more?')
+        .when(
+          Condition.isPresent('$.response.NextContinuationToken'),
+
+          new Wait(this, 'Give room for on-demand work', {
+            // Sleep a little before enqueuing the next batch, so that we leave room in the worker
+            // pool for handling on-demand work. If we don't do this, 60k items will be queued at
+            // once and live updates from NPM will struggle to get in in a reasonable time.
+            time: WaitTime.duration(waitTimeBetweenReprocessBatches()),
+          }).next(new StepFunctionsStartExecution(this, 'Continue as new', {
+            associateWithParent: true,
+            stateMachine: StateMachine.fromStateMachineArn(this, 'ThisStateMachine', Stack.of(this).formatArn({
+              arnFormat: ArnFormat.COLON_RESOURCE_NAME,
+              service: 'states',
+              resource: 'stateMachine',
+              resourceName: stateMachineName,
+            })),
+            input: TaskInput.fromObject({ ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken') }),
+            integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
+            resultPath: JsonPath.DISCARD,
+          }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })),
+        ).afterwards({ includeOtherwise: true })
+        .next(process),
+    );
+
+    this.stateMachine = new StateMachine(this, 'StateMachine', {
       definition: listBucket,
+      stateMachineName,
       timeout: Duration.hours(1),
     });
 
-    props.bucket.grantRead(stateMachine);
-    props.queue.grantSendMessages(stateMachine);
+    props.bucket.grantRead(this.stateMachine);
+    props.queue.grantSendMessages(this.stateMachine);
   }
+}
+
+/**
+ * This turns a node path into a valid state machine name, to try and improve
+ * the StepFunction's AWS console experience while minimizing the risk for
+ * collisons.
+ */
+function stateMachineNameFrom(nodePath: string): string {
+  // Poor man's replace all...
+  return nodePath.split(/[^a-z0-9+!@.()=_'-]+/i).join('.');
+}
+
+/**
+ * The time we wait between enqueueing different batches of the reprocessing machine
+ */
+function waitTimeBetweenReprocessBatches() {
+  // Average time per ECS task. We don've have statistics on this, but
+  // can be roughly derived from:
+
+  // Every day we process about 60k items with 1000 workers in 4 hours.
+  // 4 hours / (60_000 / 1000) ~= 4 minutes
+  const avgTimePerTask = Duration.minutes(4);
+
+  // How many objects are returned by 'listObjectsV2', per call
+  const batchSize = 1000;
+
+  // How many workers we have at our disposal
+  const workers = 1000;
+
+  // The step functions state machine can't instantaneously start all 1000
+  // tasks, they are staggered over time -- so in practice the average load a
+  // single batch puts on the ECS cluster at any point in time is a lot lower.
+  const sfnStaggerFactor = 0.05;
+
+  // What fraction of capacity [0..1) we want to keep available for on-demand
+  // work, while reprocessing.
+  const marginFrac = 0.2;
+
+  const seconds = (avgTimePerTask.toSeconds() * sfnStaggerFactor / (1 - marginFrac)) * (batchSize / workers);
+  return Duration.seconds(Math.floor(seconds));
 }

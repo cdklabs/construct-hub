@@ -9,13 +9,11 @@ instance with personalized configuration.
 
 [aws-cdk]: https://github.com/aws/aws-cdk
 
-
 ## :question: Getting Started
 
 > :warning: Disclaimer
 >
-> The [public instance of ConstructHub](https://constructs.dev) is currently in
-> *Developer Preview*.
+> The [public instance of ConstructHub](https://constructs.dev) is Generally Available.
 >
 > Self-hosted ConstructHub instances are however in active development and
 > should be considered *experimental*. Breaking changes to the public API of
@@ -136,6 +134,27 @@ new ConstructHub(stack, 'ConstructHub', {
 });
 ```
 
+#### Redirecting from additional domains
+
+You can add additional domains that will be redirected to your primary Construct
+Hub domain:
+
+```ts
+import * as r53 from '@aws-cdk/aws-route53';
+
+const myDomainZone = r53.HostedZone.fromHostedZoneAttributes(this, 'MyDomainZone', {
+  hostedZoneId: 'AZ1234',
+  zoneName: 'my.domain.com',
+});
+
+new ConstructHub(this, 'ConstructHub', {
+  additionalDomains: [ { hostedZone: myDomainZone } ]
+});
+```
+
+This will set up full domain redirect using Amazon S3 and Amazon CloudFront. All
+requests will be redirected to your primary Construct Hub domain.
+
 #### Decrease deployment footprint
 
 By default, ConstructHub executes the documentation rendering process in the
@@ -152,7 +171,6 @@ ConstructHub instance only indexes *trusted* packages (as could be the case for
 an instance that does not list packages from the public `npmjs.com` registry),
 you may set the `isolateLambdas` setting to `false`.
 
-
 ## :gear: Operating a self-hosted instance
 
 1. [Application Overview](./docs/application-overview.md) provides a high-level
@@ -164,6 +182,67 @@ you may set the `isolateLambdas` setting to `false`.
    troubleshooting guides indended for operators to have a quick and easy way to
    navigate a ConstructHub instance when they are reacting to an alarm or bug
    report.
+
+### :baby_chick: Deployment Canaries
+
+Construct Hub provides several built-in validation mechanisms to make sure the
+deployment of your instance is continuously operating as expected.
+
+These mechanisms come in the form of canary testers that are part of the
+ConstructHub deployment stack. Each canary runs periodically and performs a
+different check, triggering a different CloudWatch alarm in case it detects a
+failure.
+
+We recommend that you use staged deployments, and block promotions to the
+production stage in case any preivous stage triggers an alarm within a specific
+timeframe.
+
+#### Discovery Canary
+
+When configuring an `NpmJs` package source, a package discovery canary can be
+enabled using the `enableCanary` property (and optionally configured using the
+`canaryPackage` and `canarySla` properties). This feature is activated by
+default and monitors availability of releases of the `construct-hub-probe` npm
+package in the ConstructHub instance.
+
+Probe packages, such as `construct-hub-probe` are published frequently (e.g:
+every 3 hours or more frequently), and can be used to ensure the ConstructHub
+instance correctly discovers, indexes and represents those packages.
+
+If a different package or SLA should be used, you can configure the `NpmJs`
+package source manually like so:
+
+```ts
+import * as codeartifact from '@aws-cdk/aws-codeartifact';
+import { App, Stack } from '@aws-cdk/core';
+import { sources, ConstructHub } from 'construct-hub';
+
+const app = new App();
+const stack = new Stack(app, 'StackName', { /* ... */ });
+
+new ConstructHub(stack, 'ConstructHub', {
+  // ...
+  packageSources: [
+    // ...
+    new sources.NpmJs({
+      enableCanary: true, // This is the default
+      canaryPackage: '@acme/my-constructhub-probe',
+      canarySla: Duration.minutes(30),
+    }),
+    // ...
+  ],
+  // ...
+});
+```
+
+In case the new package isn't fully available in the predefined SLA, a
+**high severity** CloudWatch alarm will trigger, which will in turn trigger
+the configured action for low severity alarms.
+
+> See [Monitoring & Alarms](./docs/application-overview.md#monitoring--alarming)
+
+The operator runbook contains [instructions](./docs/operator-runbook.md) on how
+to diagnose and mitigate the root cause of the failure.
 
 ### :nail_care: Customizing the frontend
 
@@ -178,6 +257,7 @@ trusted organizations, or any other arbitrary conditions, and can be referenced
 while searching.
 
 For example:
+
 ```ts
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
@@ -205,6 +285,12 @@ The `searchFilter` key can also be used to show tags as search filters grouped
 together.
 
 ```ts
+const authorsGroup = new PackageTagGroup("authors", {
+  label: "Authors",
+  tooltip: "Information about the authors filter",
+  filterType: FilterType.checkbox(),
+});
+
 const isAws = TagCondition.field('name').eq('construct-hub');
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
@@ -212,14 +298,14 @@ new ConstructHub(this, "ConstructHub", {
     id: 'AWS',
     condition: isAws,
     searchFilter: {
-      groupBy: 'Authors',
+      group: authorsGroup,
       display: 'AWS',
     },
   }, {
     id: 'Community',
     condition: TagCondition.not(isAws),
     searchFilter: {
-      groupBy: 'Authors',
+      group: authorsGroup,
       display: 'AWS',
     },
   }]
@@ -231,6 +317,7 @@ with a checkbox for each `AWS` and `Community` packages, allowing users to
 filter results by the presence of these tags.
 
 Combinations of conditions are also supported:
+
 ```ts
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
@@ -252,11 +339,20 @@ condition: TagCondition.or(
 ```
 
 You can assert against any value within package json including nested ones.
+
 ```ts
 TagCondition.field('constructHub', 'nested', 'key').eq('value');
 
 // checks
 packageJson?.constructHub?.nested?.key === value;
+```
+
+You can also assert that a string occurs at least a certain number of times
+within the package's README.
+
+```ts
+TagCondition.readme().includes('ECS');
+TagCondition.readme().includes('fargate', { atLeast: 3, caseSensitive: false });
 ```
 
 #### Package Links
@@ -265,6 +361,7 @@ Configuring package links allows you to replace the `Repository`, `License`,
 and `Registry` links on the package details page with whatever you choose.
 
 For example:
+
 ```ts
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
@@ -301,6 +398,7 @@ Currently, for a given section you can display either the most recently updated
 packages, or a curated list of packages.
 
 For example:
+
 ```ts
 new ConstructHub(this, "ConstructHub", {
   ...myProps,
@@ -334,24 +432,43 @@ new ConstructHub(this, "ConstructHub", {
 });
 ```
 
+#### Browse Categories
+
+The Construct Hub home page includes a section that displays a set of buttons
+that represent browsing categories (e.g. "Databases", "Monitoring",
+"Serverless", etc).
+
+You can use the `categories` option to configure these categories. Each category
+is defined by a `title` and a `url`, which will be the link associated with the
+button.
+
+```ts
+new ConstructHub(this, "ConstructHub", {
+  ...myProps,
+  categories: [
+    { title: 'Databases', url: '?keywords=databases' },
+    { title: 'Monitoring', url: '?q=monitoring' },
+    { title: 'Partners', url: '?tags=aws-partner' }
+  ]
+});
+```
+
 #### Feature Flags
 
 Feature flags for the web app can be used to enable or disable experimental
 features. These can be customized through the `featureFlags` property - for
 more information about the available flags, check the documentation for
-https://github.com/cdklabs/construct-hub-webapp/.
+<https://github.com/cdklabs/construct-hub-webapp/>.
 
 ## :raised_hand: Contributing
 
 If you are looking to contribute to this project, but don't know where to start,
 have a look at our [contributing guide](CONTRIBUTING.md)!
 
-
 ## :cop: Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more
 information.
-
 
 ## :balance_scale: License
 

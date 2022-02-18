@@ -1,7 +1,8 @@
 import * as AWS from 'aws-sdk';
+import { AWSError } from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import type { PackageInfo } from '../../../backend/catalog-builder';
-import { CatalogClient } from '../../../backend/catalog-builder/client.lambda-shared';
+import { CatalogClient, CatalogNotFoundError } from '../../../backend/catalog-builder/client.lambda-shared';
 import * as aws from '../../../backend/shared/aws.lambda-shared';
 
 const samplePackages: Partial<PackageInfo>[] = [
@@ -48,10 +49,10 @@ test('s3 object not found error', async () => {
   AWSMock.mock('S3', 'getObject', (_, callback) => {
     const err = new Error('NoSuchKey');
     (err as any).code = 'NoSuchKey';
-    callback(err, null);
+    callback(err as AWSError, undefined);
   });
 
-  const expected = new Error('No catalog was found at catalog-bucket-name/catalog.json');
+  const expected = new CatalogNotFoundError('catalog-bucket-name/catalog.json');
   return expect(async () => CatalogClient.newClient()).rejects.toEqual(expected);
 });
 
@@ -59,10 +60,10 @@ test('s3 bucket not found error', async () => {
   AWSMock.mock('S3', 'getObject', (_, callback) => {
     const err = new Error('NoSuchBucket');
     (err as any).code = 'NoSuchBucket';
-    callback(err, null);
+    callback(err as AWSError, undefined);
   });
 
-  const expected = new Error('No catalog was found at catalog-bucket-name/catalog.json');
+  const expected = new CatalogNotFoundError('catalog-bucket-name/catalog.json');
   return expect(async () => CatalogClient.newClient()).rejects.toEqual(expected);
 });
 
@@ -70,7 +71,7 @@ test('empty file', async () => {
   AWSMock.mock('S3', 'getObject', (params, callback) => {
     expect(params.Bucket).toBe('catalog-bucket-name');
     expect(params.Key).toBe('catalog.json');
-    callback(null, { Body: '' });
+    callback(undefined, { Body: '' });
   });
 
   const expected = new Error('Catalog body is empty at catalog-bucket-name/catalog.json');
@@ -81,7 +82,7 @@ test('json parsing error', async () => {
   AWSMock.mock('S3', 'getObject', (params, callback) => {
     expect(params.Bucket).toBe('catalog-bucket-name');
     expect(params.Key).toBe('catalog.json');
-    callback(null, { Body: '09x{}' });
+    callback(undefined, { Body: '09x{}' });
   });
 
   const expected = new Error('Unable to parse catalog file catalog-bucket-name/catalog.json: SyntaxError: Unexpected number in JSON at position 1');
@@ -92,7 +93,7 @@ test('happy path - get packages', async () => {
   AWSMock.mock('S3', 'getObject', (params, callback) => {
     expect(params.Bucket).toBe('catalog-bucket-name');
     expect(params.Key).toBe('catalog.json');
-    callback(null, { Body: JSON.stringify({ packages: samplePackages }) });
+    callback(undefined, { Body: JSON.stringify({ packages: samplePackages }) });
   });
 
   const client = await CatalogClient.newClient();

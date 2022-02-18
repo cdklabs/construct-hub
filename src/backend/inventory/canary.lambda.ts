@@ -1,7 +1,9 @@
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { Context, ScheduledEvent } from 'aws-lambda';
+import { PromiseResult } from 'aws-sdk/lib/request';
 import { SemVer } from 'semver';
 import * as aws from '../shared/aws.lambda-shared';
+import { compressContent } from '../shared/compress-content.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DocumentationLanguage } from '../shared/language';
@@ -9,7 +11,7 @@ import { METRICS_NAMESPACE, MetricName, LANGUAGE_DIMENSION } from './constants';
 
 Configuration.namespace = METRICS_NAMESPACE;
 
-export async function handler(event: ScheduledEvent, _context: Context) {
+export async function handler(event: ScheduledEvent, context: Context) {
   console.log('Event:', JSON.stringify(event, null, 2));
 
   const indexedPackages = new Map<string, IndexedPackageStatus>();
@@ -73,12 +75,15 @@ export async function handler(event: ScheduledEvent, _context: Context) {
       status.tarballPresent = true;
     } else if (key.endsWith(constants.ASSEMBLY_KEY_SUFFIX)) {
       status.assemblyPresent = true;
+    } else if (key.endsWith(constants.UNINSTALLABLE_PACKAGE_SUFFIX)) {
+      status.uninstallable = true;
     } else {
       let identified = false;
       for (const language of DocumentationLanguage.ALL) {
-        const match = submoduleKeyRegexp(language).exec(key);
-        if (match != null) {
-          const [, submodule, isUnsupported] = match;
+        const matchJson = submoduleKeyRegexp(language, 'json').exec(key);
+        const matchMd = submoduleKeyRegexp(language, 'md').exec(key);
+        if (matchJson != null) {
+          const [, submodule, isUnsupported] = matchJson;
           if (status.submodules == null) {
             status.submodules = new Set();
           }
@@ -92,11 +97,26 @@ export async function handler(event: ScheduledEvent, _context: Context) {
             submodule,
           );
           identified = true;
-        } else if (key.endsWith(constants.docsKeySuffix(language))) {
+        } else if (key.endsWith(constants.docsKeySuffix(language, undefined, 'json'))) {
           recordPerLanguage(language, PerLanguageStatus.SUPPORTED, name, majorVersion, fullName);
           identified = true;
-        } else if (key.endsWith(constants.docsKeySuffix(language) + constants.NOT_SUPPORTED_SUFFIX)) {
+        } else if (key.endsWith(constants.notSupportedKeySuffix(language, undefined, 'json'))) {
           recordPerLanguage(language, PerLanguageStatus.UNSUPPORTED, name, majorVersion, fullName);
+          identified = true;
+        } else if (key.endsWith(constants.corruptAssemblyKeySuffix(language, undefined, 'json'))) {
+          recordPerLanguage(language, PerLanguageStatus.CORRUPT_ASSEMBLY, name, majorVersion, fullName);
+          identified = true;
+
+        // Currently we generate both JSON files and markdown files, so for now
+        // we record JSON files as the source of truth, but still identify
+        // markdown files so they are not counted as unknown.
+        } else if (matchMd != null) {
+          identified = true;
+        } else if (key.endsWith(constants.docsKeySuffix(language, undefined, 'md'))) {
+          identified = true;
+        } else if (key.endsWith(constants.notSupportedKeySuffix(language, undefined, 'md'))) {
+          identified = true;
+        } else if (key.endsWith(constants.corruptAssemblyKeySuffix(language, undefined, 'md'))) {
           identified = true;
         }
       }
@@ -107,6 +127,29 @@ export async function handler(event: ScheduledEvent, _context: Context) {
     }
   }
 
+  const reports: Promise<PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>>[] = [];
+
+  function createReport(reportKey: string, packageVersions: string[]) {
+
+    const report = JSON.stringify(packageVersions, null, 2);
+    const { buffer, contentEncoding } = compressContent(Buffer.from(report));
+    console.log(`Uploading list to s3://${bucket}/${reportKey}`);
+    reports.push(aws.s3().putObject({
+      Body: buffer,
+      Bucket: bucket,
+      ContentEncoding: contentEncoding,
+      ContentType: 'application/json',
+      Expires: new Date(Date.now() + 300_000), // 5 minutes from now
+      Key: reportKey,
+      Metadata: {
+        'Lambda-Run-Id': context.awsRequestId,
+        'Lambda-Log-Group-Name': context.logGroupName,
+        'Lambda-Log-Stream-Name': context.logStreamName,
+      },
+    }).promise());
+
+  }
+
   await metricScope((metrics) => () => {
     // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
     metrics.setDimensions();
@@ -114,6 +157,7 @@ export async function handler(event: ScheduledEvent, _context: Context) {
     const missingMetadata = new Array<string>();
     const missingAssembly = new Array<string>();
     const missingTarball = new Array<string>();
+    const uninstallable = new Array<string>();
     const unknownObjects = new Array<string>();
     const submodules = new Array<string>();
     for (const [name, status] of indexedPackages.entries()) {
@@ -126,6 +170,9 @@ export async function handler(event: ScheduledEvent, _context: Context) {
       if (!status.tarballPresent) {
         missingTarball.push(name);
       }
+      if (status.uninstallable) {
+        uninstallable.push(name);
+      }
       if (status.unknownObjects?.length ?? 0 > 0) {
         unknownObjects.push(...status.unknownObjects!);
       }
@@ -137,6 +184,7 @@ export async function handler(event: ScheduledEvent, _context: Context) {
 
     metrics.setProperty('detail', { missingMetadata, missingAssembly, missingTarball, unknownObjects });
 
+    metrics.putMetric(MetricName.UNINSTALLABLE_PACKAGE_COUNT, uninstallable.length, Unit.Count);
     metrics.putMetric(MetricName.MISSING_METADATA_COUNT, missingMetadata.length, Unit.Count);
     metrics.putMetric(MetricName.MISSING_ASSEMBLY_COUNT, missingAssembly.length, Unit.Count);
     metrics.putMetric(MetricName.MISSING_TARBALL_COUNT, missingTarball.length, Unit.Count);
@@ -145,20 +193,37 @@ export async function handler(event: ScheduledEvent, _context: Context) {
     metrics.putMetric(MetricName.PACKAGE_VERSION_COUNT, indexedPackages.size, Unit.Count);
     metrics.putMetric(MetricName.SUBMODULE_COUNT, submodules.length, Unit.Count);
     metrics.putMetric(MetricName.UNKNOWN_OBJECT_COUNT, unknownObjects.length, Unit.Count);
+
+    createReport(constants.UNINSTALLABLE_PACKAGES_REPORT, uninstallable);
+
   })();
 
   for (const entry of Array.from(perLanguage.entries())) {
-    await metricScope((metrics) => (language: DocumentationLanguage, data: PerLanguageData) => {
+    await metricScope((metrics) => async (language: DocumentationLanguage, data: PerLanguageData) => {
       console.log( '');
       console.log('##################################################');
       console.log(`### Start of data for ${language}`);
 
       metrics.setDimensions({ [LANGUAGE_DIMENSION]: language.toString() });
 
-      for (const forStatus of [PerLanguageStatus.SUPPORTED, PerLanguageStatus.UNSUPPORTED, PerLanguageStatus.MISSING]) {
+      for (const forStatus of [
+        PerLanguageStatus.SUPPORTED,
+        PerLanguageStatus.UNSUPPORTED,
+        PerLanguageStatus.MISSING,
+        PerLanguageStatus.CORRUPT_ASSEMBLY,
+      ]) {
         for (const [key, statuses] of Object.entries(data)) {
           let filtered = Array.from(statuses.entries()).filter(([, status]) => forStatus === status);
           let metricName = METRIC_NAME_BY_STATUS_AND_GRAIN[forStatus as PerLanguageStatus][key as keyof PerLanguageData];
+
+          if ((forStatus === PerLanguageStatus.MISSING && metricName === MetricName.PER_LANGUAGE_MISSING_VERSIONS)
+           || (forStatus === PerLanguageStatus.CORRUPT_ASSEMBLY && metricName === MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_VERSIONS)) {
+            // generate reports for missing/corrupt only for package versions granularity
+            const reportKey = forStatus === PerLanguageStatus.MISSING ?
+              constants.missingDocumentationReport(language) :
+              constants.corruptAssemblyReport(language);
+            createReport(reportKey, filtered.map(([name]) => name).sort());
+          }
 
           console.log(`${forStatus} ${key} for ${language}: ${filtered.length} entries`);
           metrics.putMetric(metricName, filtered.length, Unit.Count);
@@ -169,6 +234,10 @@ export async function handler(event: ScheduledEvent, _context: Context) {
       console.log('##################################################');
       console.log('');
     })(...entry);
+  }
+
+  for (const report of reports) {
+    await report;
   }
 }
 
@@ -192,13 +261,13 @@ async function* relevantObjectKeys(bucket: string): AsyncGenerator<string, void,
  * determining the submodule name from a submodule documentation key, and
  * another to determine whether the object is an "unsupported beacon" or not.
  */
-function submoduleKeyRegexp(language: DocumentationLanguage): RegExp {
+function submoduleKeyRegexp(language: DocumentationLanguage, fileExt: string): RegExp {
   // We use a placeholder to be able to insert the capture group once we have
   // fully quoted the key prefix for Regex safety.
   const placeholder = '<SUBMODULENAME>';
 
-  // We obtain the standard key prefix.
-  const keyPrefix = constants.docsKeySuffix(language, placeholder);
+  // We obtain the standard key suffix.
+  const keyPrefix = constants.docsKeySuffix(language, placeholder, fileExt);
 
   // Finally, assemble the regular expression with the capture group.
   return new RegExp(`.*${reQuote(keyPrefix).replace(placeholder, '(.+)')}(${reQuote(constants.NOT_SUPPORTED_SUFFIX)})?$`);
@@ -215,6 +284,7 @@ function submoduleKeyRegexp(language: DocumentationLanguage): RegExp {
 interface IndexedPackageStatus {
   metadataPresent?: boolean;
   assemblyPresent?: boolean;
+  uninstallable?: boolean;
   submodules?: Set<string>;
   tarballPresent?: boolean;
   unknownObjects?: string[];
@@ -232,6 +302,7 @@ type PerLanguageData = { readonly [grain in Grain]: Map<string, PerLanguageStatu
 const enum PerLanguageStatus {
   MISSING = 'Missing',
   UNSUPPORTED = 'Unsupported',
+  CORRUPT_ASSEMBLY = 'CorruptAssembly',
   SUPPORTED = 'Supported',
 }
 
@@ -253,6 +324,12 @@ const METRIC_NAME_BY_STATUS_AND_GRAIN: { readonly [status in PerLanguageStatus]:
     [Grain.PACKAGE_MAJOR_VERSIONS]: MetricName.PER_LANGUAGE_SUPPORTED_MAJORS,
     [Grain.PACKAGE_VERSIONS]: MetricName.PER_LANGUAGE_SUPPORTED_VERSIONS,
     [Grain.PACKAGE_VERSION_SUBMODULES]: MetricName.PER_LANGUAGE_SUPPORTED_SUBMODULES,
+  },
+  [PerLanguageStatus.CORRUPT_ASSEMBLY]: {
+    [Grain.PACKAGES]: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_PACKAGES,
+    [Grain.PACKAGE_MAJOR_VERSIONS]: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_MAJORS,
+    [Grain.PACKAGE_VERSIONS]: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_VERSIONS,
+    [Grain.PACKAGE_VERSION_SUBMODULES]: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_SUBMODULES,
   },
 };
 
@@ -308,7 +385,8 @@ function doRecordPerLanguage(
         map.set(name, status);
         break;
       case PerLanguageStatus.UNSUPPORTED:
-        // If we already have a status, only override with "UNSUPPORTED" if it was "MISSING".
+      case PerLanguageStatus.CORRUPT_ASSEMBLY:
+        // If we already have a status, only override with if it was "MISSING".
         if (!map.has(name) || map.get(name) === PerLanguageStatus.MISSING) {
           map.set(name, status);
         }

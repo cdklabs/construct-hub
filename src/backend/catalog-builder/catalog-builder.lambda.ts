@@ -6,6 +6,7 @@ import { AWSError, S3 } from 'aws-sdk';
 import { SemVer } from 'semver';
 import { extract } from 'tar-stream';
 import { CatalogModel, PackageInfo } from '.';
+import { CacheStrategy } from '../../caching';
 import { DenyListClient } from '../deny-list/client.lambda-shared';
 import type { CatalogBuilderInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
@@ -145,7 +146,7 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     Key: constants.CATALOG_KEY,
     Body: JSON.stringify(catalog, null, 2),
     ContentType: 'application/json',
-    CacheControl: 'public, max-age=300, must-revalidate, proxy-revalidate', // Expire from cache after 5 minutes
+    CacheControl: CacheStrategy.default().toString(),
     Metadata: {
       'Lambda-Log-Group': context.logGroupName,
       'Lambda-Log-Stream': context.logStreamName,
@@ -230,7 +231,7 @@ async function appendPackage(packages: any, pkgKey: string, bucketName: string, 
   const metadataKey = pkgKey.replace(constants.PACKAGE_KEY_SUFFIX, constants.METADATA_KEY_SUFFIX);
   const metadataResponse = await aws.s3().getObject({ Bucket: bucketName, Key: metadataKey }).promise();
   const manifest = await new Promise<Buffer>((ok, ko) => {
-    gunzip(Buffer.from(pkg.Body!), (err, tar) => {
+    gunzip(Buffer.from(pkg.Body! as any), (err, tar) => {
       if (err) {
         return ko(err);
       }

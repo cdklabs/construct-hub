@@ -1,5 +1,5 @@
 import { ComparisonOperator, MathExpression, MathExpressionOptions, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
-import { SubnetSelection, Vpc } from '@aws-cdk/aws-ec2';
+import { SubnetSelection, Vpc, ISecurityGroup } from '@aws-cdk/aws-ec2';
 import { Cluster, ICluster } from '@aws-cdk/aws-ecs';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
@@ -12,10 +12,12 @@ import { Repository } from '../../codeartifact/repository';
 import { sqsQueueUrl, stateMachineUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { RUNBOOK_URL } from '../../runbook-url';
+import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 import { CatalogBuilder } from '../catalog-builder';
 import { DenyList } from '../deny-list';
-import { ASSEMBLY_KEY_SUFFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX, STORAGE_KEY_PREFIX } from '../shared/constants';
+import { ASSEMBLY_KEY_SUFFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX, STORAGE_KEY_PREFIX, CATALOG_KEY, UNPROCESSABLE_PACKAGE_ERROR_NAME } from '../shared/constants';
 import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
+import { NeedsCatalogUpdate } from './needs-catalog-update';
 import { RedriveStateMachine } from './redrive-state-machine';
 
 /**
@@ -35,6 +37,27 @@ import { RedriveStateMachine } from './redrive-state-machine';
  * is actually a good thing.
  */
 const THROTTLE_RETRY_POLICY = { backoffRate: 1.1, interval: Duration.minutes(1), maxAttempts: 30 };
+
+/**
+ * This retry policy is used for transliteration tasks and allows ample
+ * retry attempts in order to avoid having to implement a custom backpressure
+ * handling mehanism.
+ *
+ * This is meant as a stop-gap until we can implement a more resilient system,
+ * which likely will involve more SQS queues, but will probably need to be
+ * throughoutly vetted before it is rolled out everywhere.
+ *
+ * The interval is determined by the execution duration we currently expect from jsii-docgen.
+ * See https://github.com/cdklabs/jsii-docgen/blob/main/test/docgen/view/documentation.test.ts#L13.
+ *
+ * We don't apply backoff because this inevitably causes longer wait times than desired, and unfortunately
+ * there is no way to configure max interval. In addition, since a task duration is fairly stable,
+ * we can assume capacity will free up after roughly 2 minutes.
+ *
+ * Combined with a two minute interval, and a backoff factor of 1, 200 attempts gives us just under 7 hours to complete
+ * a full reprocessing workflow, which should be sufficient.
+ */
+const DOCGEN_THROTTLE_RETRY_POLICY = { backoffRate: 1, interval: Duration.minutes(2), maxAttempts: 200 };
 
 export interface OrchestrationProps {
   /**
@@ -66,6 +89,11 @@ export interface OrchestrationProps {
    * VPC endpoints to use for interacting with CodeArtifact and S3.
    */
   readonly vpcEndpoints?: TransliteratorVpcEndpoints;
+
+  /**
+   * VPC Security groups to associate with the ECS tasks.
+   */
+  readonly vpcSecurityGroups?: ISecurityGroup[];
 
   /**
    * How long should execution logs be retained?
@@ -163,6 +191,8 @@ export class Orchestration extends Construct {
       resultPath: JsonPath.DISCARD,
     }).next(new Succeed(this, 'Sent to DLQ'));
 
+    const ignore = new Pass(this, 'Ignore');
+
     this.catalogBuilder = new CatalogBuilder(this, 'CatalogBuilder', props);
 
     const addToCatalog = new tasks.LambdaInvoke(this, 'Add to catalog.json', {
@@ -175,24 +205,39 @@ export class Orchestration extends Construct {
     })
       // This has a concurrency of 1, so we want to aggressively retry being throttled here.
       .addRetry({ errors: ['Lambda.TooManyRequestsException'], ...THROTTLE_RETRY_POLICY })
-      .addCatch(
-        new Pass(this, '"Add to catalog.json" throttled', {
-          parameters: { 'error.$': '$.Cause' },
-          resultPath: '$.error',
-        }).next(sendToDeadLetterQueue),
-        { errors: ['Lambda.TooManyRequestsException'] },
-      )
-      .addCatch(
-        new Pass(this, '"Add to catalog.json" failure', {
-          parameters: { 'error.$': 'States.StringToJson($.Cause)' },
-          resultPath: '$.error',
-        }).next(sendToDeadLetterQueue),
-        { errors: ['States.TaskFailed'] },
-      )
-      .addCatch(new Pass(this, '"Add to catalog.json" fault', {
-        parameters: { 'error.$': '$.Cause' },
-        resultPath: '$.error',
-      }).next(sendToDeadLetterQueue), { errors: ['States.ALL'] });
+      .addCatch(sendToDeadLetterQueue, { errors: ['Lambda.TooManyRequestsException'], resultPath: '$.error' })
+      .addCatch(sendToDeadLetterQueue, { errors: ['States.TaskFailed'], resultPath: '$.error' })
+      .addCatch(sendToDeadLetterQueue, { errors: ['States.ALL'], resultPath: '$.error' });
+
+    const needsCatalogUpdateFunction = new NeedsCatalogUpdate(this, 'NeedsCatalogUpdate', {
+      architecture: gravitonLambdaIfAvailable(this),
+      description: '[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether a package version requires a catalog update',
+      environment: { CATALOG_BUCKET_NAME: props.bucket.bucketName, CATALOG_OBJECT_KEY: CATALOG_KEY },
+      memorySize: 1_024,
+      timeout: Duration.minutes(1),
+    });
+    props.bucket.grantRead(needsCatalogUpdateFunction);
+
+    // Check whether the catalog needs updating. If so, trigger addToCatalog.
+    const addToCatalogIfNeeded = new tasks.LambdaInvoke(this, 'Check whether catalog needs udpating', {
+      lambdaFunction: needsCatalogUpdateFunction,
+      payloadResponseOnly: true,
+      resultPath: '$.catalogNeedsUpdating',
+    })
+      .addRetry({
+        errors: [
+          'Lambda.TooManyRequestsException',
+          'Lambda.Unknown', // happens when a lambda times out.
+        ],
+        ...THROTTLE_RETRY_POLICY,
+      })
+      .addCatch(sendToDeadLetterQueue, { errors: ['Lambda.TooManyRequestsException', 'Lambda.Unknown'], resultPath: '$.error' } )
+      .addCatch(sendToDeadLetterQueue, { errors: ['States.TaskFailed'], resultPath: '$.error' } )
+      .addCatch(sendToDeadLetterQueue, { errors: ['States.ALL'], resultPath: '$.error' })
+      .next(new Choice(this, 'Is catalog update needed?')
+        .when(Condition.booleanEquals('$.catalogNeedsUpdating', true), addToCatalog)
+        .otherwise(new Succeed(this, 'Done')),
+      );
 
     this.ecsCluster = new Cluster(this, 'Cluster', {
       containerInsights: true,
@@ -201,6 +246,7 @@ export class Orchestration extends Construct {
     });
 
     this.transliterator = new Transliterator(this, 'Transliterator', props);
+
 
     const definition = new Pass(this, 'Track Execution Infos', {
       inputPath: '$$.Execution',
@@ -223,11 +269,13 @@ export class Orchestration extends Construct {
           cluster: this.ecsCluster,
           inputPath: '$.docGen.command',
           resultPath: '$.docGenOutput',
-          // Expect this to complete within one hour
-          timeout: Duration.hours(1),
+          // aws-cdk-lib succeeds in roughly 1 hour, so this should give us
+          // enough of a buffer and prorably account for all other libraries out there.
+          timeout: Duration.hours(2),
           vpcSubnets: props.vpcSubnets,
+          securityGroups: props.vpcSecurityGroups,
         })
-        // Do not retry NoSpaceLeftOnDevice errors, these are typically not transient.
+          // Do not retry NoSpaceLeftOnDevice errors, these are typically not transient.
           .addRetry({ errors: ['jsii-docgen.NoSpaceLeftOnDevice'], maxAttempts: 0 })
           .addRetry({
             errors: [
@@ -236,7 +284,7 @@ export class Orchestration extends Construct {
               'jsii-docgen.NpmError.E429', // HTTP 429 ("Too Many Requests") from CodeArtifact's S3 bucket
               'jsii-codgen.NpmError.EPROTO', // Sporadic TLS negotiation failures we see in logs, transient
             ],
-            ...THROTTLE_RETRY_POLICY,
+            ...DOCGEN_THROTTLE_RETRY_POLICY,
           })
           .addRetry({
             errors: ['jsii-docgen.NpmError.ETARGET'], // Seen when dependencies aren't available yet
@@ -246,26 +294,12 @@ export class Orchestration extends Construct {
             maxAttempts: 3,
           })
           .addRetry({ maxAttempts: 3 })
-          .addCatch(
-            new Pass(this, '"Generate docs" timed out', { parameters: { error: 'Timed out!' } })
-              .next(sendToDeadLetterQueue),
-            { errors: ['States.Timeout'] },
-          )
-          .addCatch(
-            new Pass(this, '"Generate docs" service error', { parameters: { 'error.$': '$.Cause' } })
-              .next(sendToDeadLetterQueue),
-            { errors: ['ECS.AmazonECSException', 'ECS.InvalidParameterException'] },
-          )
-          .addCatch(
-            new Pass(this, '"Generate docs" failure', { parameters: { 'error.$': 'States.StringToJson($.Cause)' } })
-              .next(sendToDeadLetterQueue),
-            { errors: ['States.TaskFailed'] },
-          )
-          .addCatch(
-            new Pass(this, '"Generate docs" fault', { parameters: { 'error.$': '$.Cause' } })
-              .next(sendToDeadLetterQueue),
-            { errors: ['States.ALL'] },
-          ).next(addToCatalog),
+          .addCatch(ignore, { errors: [UNPROCESSABLE_PACKAGE_ERROR_NAME] })
+          .addCatch(sendToDeadLetterQueue, { errors: ['States.Timeout'], resultPath: '$.error' } )
+          .addCatch(sendToDeadLetterQueue, { errors: ['ECS.AmazonECSException', 'ECS.InvalidParameterException'], resultPath: '$.error' })
+          .addCatch(sendToDeadLetterQueue, { errors: ['States.TaskFailed'], resultPath: '$.error' })
+          .addCatch(sendToDeadLetterQueue, { errors: ['States.ALL'], resultPath: '$.error' })
+          .next(addToCatalogIfNeeded),
       );
 
     this.stateMachine = new StateMachine(this, 'Resource', {
@@ -444,7 +478,7 @@ class RegenerateAllDocumentation extends Construct {
           Prefix: JsonPath.stringAt('$.Prefix'),
         },
         resultPath: '$.response',
-      }))
+      }).addRetry({ errors: ['S3.SdkClientException'] }))
       .otherwise(new tasks.CallAwsService(this, 'First versions page', {
         service: 's3',
         action: 'listObjectsV2',
@@ -456,21 +490,20 @@ class RegenerateAllDocumentation extends Construct {
           Prefix: JsonPath.stringAt('$.Prefix'),
         },
         resultPath: '$.response',
-      }))
+      }).addRetry({ errors: ['S3.SdkClientException'] }))
       .afterwards()
       .next(new Map(this, 'For each key prefix', { itemsPath: '$.response.CommonPrefixes', resultPath: JsonPath.DISCARD })
         .iterator(new tasks.StepFunctionsStartExecution(this, 'Start Orchestration Workflow', {
           stateMachine: props.stateMachine,
+          associateWithParent: true,
           input: TaskInput.fromObject({
-            // Associate the child workflow with the execution that started it.
-            AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID: JsonPath.stringAt('$$.Execution.Id'),
             bucket: props.bucket.bucketName,
             assembly: { key: JsonPath.stringAt(`States.Format('{}${ASSEMBLY_KEY_SUFFIX.substr(1)}', $.Prefix)`) },
             metadata: { key: JsonPath.stringAt(`States.Format('{}${METADATA_KEY_SUFFIX.substr(1)}', $.Prefix)`) },
             package: { key: JsonPath.stringAt(`States.Format('{}${PACKAGE_KEY_SUFFIX.substr(1)}', $.Prefix)`) },
           }),
           integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
-        })));
+        }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })));
     processVersions.next(new Choice(this, 'Has more versions?')
       .when(Condition.isPresent('$.response.NextContinuationToken'), processVersions)
       .otherwise(new Succeed(this, 'Success')));
@@ -495,7 +528,7 @@ class RegenerateAllDocumentation extends Construct {
           Prefix: JsonPath.stringAt('$.Prefix'),
         },
         resultPath: '$.response',
-      }))
+      }).addRetry({ errors: ['S3.SdkClientException'] }))
       .otherwise(new tasks.CallAwsService(this, 'First @scope page', {
         service: 's3',
         action: 'listObjectsV2',
@@ -507,18 +540,17 @@ class RegenerateAllDocumentation extends Construct {
           Prefix: JsonPath.stringAt('$.Prefix'),
         },
         resultPath: '$.response',
-      }))
+      }).addRetry({ errors: ['S3.SdkClientException'] }))
       .afterwards()
       .next(new Map(this, 'For each @scope/pkg', { itemsPath: '$.response.CommonPrefixes', resultPath: JsonPath.DISCARD })
         .iterator(new tasks.StepFunctionsStartExecution(this, 'Process scoped package', {
           stateMachine: processPackageVersions,
+          associateWithParent: true,
           input: TaskInput.fromObject({
-            // Associate the child workflow with the execution that started it,
-            AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID: JsonPath.stringAt('$$.Execution.Id'),
             Prefix: JsonPath.stringAt('$.Prefix'),
           }),
           integrationPattern: IntegrationPattern.RUN_JOB,
-        })));
+        }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })));
     processNamespace.next(new Choice(this, 'Has more packages?')
       .when(Condition.isPresent('$.response.NextContinuationToken'), processNamespace)
       .otherwise(new Succeed(this, 'All Done')));
@@ -538,7 +570,7 @@ class RegenerateAllDocumentation extends Construct {
             Prefix: STORAGE_KEY_PREFIX,
           },
           resultPath: '$.response',
-        }),
+        }).addRetry({ errors: ['S3.SdkClientException'] }),
       )
       .otherwise(
         new tasks.CallAwsService(this, 'First prefix page', {
@@ -552,7 +584,7 @@ class RegenerateAllDocumentation extends Construct {
             Prefix: STORAGE_KEY_PREFIX,
           },
           resultPath: '$.response',
-        }),
+        }).addRetry({ errors: ['S3.SdkClientException'] }),
       ).afterwards()
       .next(new Map(this, 'For each prefix', { itemsPath: '$.response.CommonPrefixes', resultPath: JsonPath.DISCARD })
         .iterator(
@@ -560,13 +592,12 @@ class RegenerateAllDocumentation extends Construct {
             .when(Condition.stringMatches('$.Prefix', `${STORAGE_KEY_PREFIX}@*`), processNamespace)
             .otherwise(new tasks.StepFunctionsStartExecution(this, 'Process unscoped package', {
               stateMachine: processPackageVersions,
+              associateWithParent: true,
               input: TaskInput.fromObject({
-                // Associate the child workflow with the execution that started it,
-                AWS_STEP_FUNCTIONS_STARTED_BY_EXECUTION_ID: JsonPath.stringAt('$$.Execution.Id'),
                 Prefix: JsonPath.stringAt('$.Prefix'),
               }),
               integrationPattern: IntegrationPattern.RUN_JOB,
-            }))
+            }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] }))
             .afterwards(),
         ));
 

@@ -80,8 +80,22 @@ export function getObjectKeys(packageName: string, packageVersion: string) {
 /**
  * The key suffix for documentation artifacts by language and submodule.
  */
-export function docsKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string) {
-  return `/docs-${submodule ? `${submodule}-` : ''}${lang}.md`;
+export function docsKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string, fileExt?: string) {
+  return `/docs-${submodule ? `${submodule}-` : ''}${lang}.${fileExt ?? '*'}`;
+}
+
+/**
+ * The key suffix for a corrupted assembly marker by language and submodule.
+ */
+export function corruptAssemblyKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string, fileExt?: string) {
+  return `${docsKeySuffix(lang, submodule, fileExt)}${CORRUPT_ASSEMBLY_SUFFIX}`;
+}
+
+/**
+ * The key suffix for a not supported marker by language and submodule.
+ */
+export function notSupportedKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string, fileExt?: string) {
+  return `${docsKeySuffix(lang, submodule, fileExt)}${NOT_SUPPORTED_SUFFIX}`;
 }
 
 /**
@@ -92,9 +106,63 @@ export function docsKeySuffix(lang?: DocumentationLanguage | '*', submodule?: st
 export const NOT_SUPPORTED_SUFFIX = '.not-supported';
 
 /**
+ * Key suffix for beacon files marking that a language specific assembly is corrupt
+ * and we cannot generate docs from it.
+ */
+export const CORRUPT_ASSEMBLY_SUFFIX = '.corruptassembly';
+
+/**
+ * Key suffix for a beacon file when a package cannot be installed.
+ */
+export const UNINSTALLABLE_PACKAGE_SUFFIX = '/uninstallable';
+
+/**
+ * Name of the error denoting an unprocessable package that should be diverted away from the DLQ.
+ */
+export const UNPROCESSABLE_PACKAGE_ERROR_NAME = 'UnprocessablePackageError';
+
+/**
  * The key for the catalog document.
  */
 export const CATALOG_KEY = 'catalog.json';
+
+/**
+ * The key for the version tracking document.
+ */
+export const VERSION_TRACKER_KEY = 'all-versions.json';
+
+/**
+ * The key for missing documentation report.
+ *
+ * @param language the language for which missing documentation is requested.
+ */
+export function missingDocumentationReport(language: DocumentationLanguage): string {
+  return `missing-objects/${language.name}-documentation.json`;
+}
+
+/**
+ * The key for corrupt assembly report.
+ *
+ * @param language the language for which the report is requested.
+ */
+export function corruptAssemblyReport(language: DocumentationLanguage): string {
+  return `corruptassembly-objects/${language.name}.json`;
+}
+
+/**
+ * The key for uninstallable packages report.
+ */
+export const UNINSTALLABLE_PACKAGES_REPORT = 'uninstallable-objects/data.json';
+
+/**
+ * The key pattern for objects containing missing documentation lists.
+ */
+export const MISSING_DOCUMENTATION_REPORT_PATTERN = 'missing-objects/*-documentation.json';
+
+/**
+ * The key pattern for objects containing unprocessable assembly lists.
+ */
+export const CORRUPT_ASSEMBLY_REPORT_PATTERN = 'corruptassembly-objects/*.json';
 
 /**
  * A regular expression that can be used to parse out a storage key.

@@ -1,4 +1,4 @@
-import { GatewayVpcEndpoint, InterfaceVpcEndpoint, SubnetSelection } from '@aws-cdk/aws-ec2';
+import { GatewayVpcEndpoint, InterfaceVpcEndpoint, SubnetSelection, ISecurityGroup } from '@aws-cdk/aws-ec2';
 import { ContainerDefinition, FargatePlatformVersion, FargateTaskDefinition, ICluster, LogDrivers } from '@aws-cdk/aws-ecs';
 import { Effect, PolicyStatement } from '@aws-cdk/aws-iam';
 import { ILogGroup, LogGroup, RetentionDays } from '@aws-cdk/aws-logs';
@@ -51,12 +51,12 @@ export interface TransliteratorVpcEndpoints {
   /**
    * The VPC endpoint for the CodeArtifact API (service: 'codeartifact.api')
    */
-  readonly codeArtifactApi: InterfaceVpcEndpoint;
+  readonly codeArtifactApi?: InterfaceVpcEndpoint;
 
   /**
    * The VPC endpoint for the CodeArtifact repositories (service: 'codeartifact.repositories')
    */
-  readonly codeArtifact: InterfaceVpcEndpoint;
+  readonly codeArtifact?: InterfaceVpcEndpoint;
 
   /**
    * The VPC endpoint to interact with ECR.
@@ -84,7 +84,7 @@ export interface TransliteratorVpcEndpoints {
  */
 export class Transliterator extends Construct {
   public readonly containerDefinition: ContainerDefinition;
-  public readonly logGroup: ILogGroup
+  public readonly logGroup: ILogGroup;
 
   public get taskDefinition() {
     return this.containerDefinition.taskDefinition;
@@ -93,7 +93,7 @@ export class Transliterator extends Construct {
   public constructor(scope: Construct, id: string, props: TransliteratorProps) {
     super(scope, id);
 
-    const repository = props.vpcEndpoints
+    const repository = props.vpcEndpoints?.codeArtifact && props.vpcEndpoints.codeArtifactApi
       ? props.codeArtifact?.throughVpcEndpoint(props.vpcEndpoints.codeArtifactApi, props.vpcEndpoints.codeArtifact)
       : props.codeArtifact;
 
@@ -108,7 +108,7 @@ export class Transliterator extends Construct {
       // Set embedded metrics format environment to "Local", to have a consistent experience.
       AWS_EMF_ENVIRONMENT: 'Local',
     };
-    if (props.vpcEndpoints) {
+    if (props.vpcEndpoints?.codeArtifactApi) {
       // Those are returned as an array of HOSTED_ZONE_ID:DNS_NAME... We care
       // only about the DNS_NAME of the first entry in that array (which is
       // the AZ-agnostic DNS name).
@@ -139,11 +139,18 @@ export class Transliterator extends Construct {
     // The task handler reads & writes to this bucket.
     bucket.grantRead(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.ASSEMBLY_KEY_SUFFIX}`);
     bucket.grantRead(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.PACKAGE_KEY_SUFFIX}`);
+    bucket.grantRead(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.UNINSTALLABLE_PACKAGE_SUFFIX}`);
+    bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.UNINSTALLABLE_PACKAGE_SUFFIX}`);
+    bucket.grantDelete(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.UNINSTALLABLE_PACKAGE_SUFFIX}`);
     for (const language of DocumentationLanguage.ALL) {
       bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}`);
       bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language, '*')}`);
       bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}${constants.NOT_SUPPORTED_SUFFIX}`);
       bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language, '*')}${constants.NOT_SUPPORTED_SUFFIX}`);
+      bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
+      bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language, '*')}${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
+      bucket.grantDelete(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
+      bucket.grantDelete(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language, '*')}${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
     }
 
     const executionRole = this.taskDefinition.obtainExecutionRole();
@@ -219,6 +226,7 @@ export class Transliterator extends Construct {
       integrationPattern: IntegrationPattern.WAIT_FOR_TASK_TOKEN,
       launchTarget: new EcsFargateLaunchTarget({ platformVersion: FargatePlatformVersion.VERSION1_4 }),
       subnets: opts.vpcSubnets,
+      securityGroups: opts.securityGroups,
       taskDefinition: this.taskDefinition,
     });
   }
@@ -243,4 +251,11 @@ export interface CreateEcsRunTaskOpts extends TaskStateBaseProps {
    * VPC Subnet placement options, if relevant.
    */
   readonly vpcSubnets?: SubnetSelection;
+
+  /**
+   * Existing security groups to use for the tasks.
+   *
+   * @default - A new security group is created
+   */
+  readonly securityGroups?: ISecurityGroup[];
 }
