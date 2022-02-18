@@ -160,7 +160,7 @@ export class Orchestration extends Construct {
       visibilityTimeout: Duration.minutes(15),
     });
 
-    props.monitoring.addHighSeverityAlarm(
+    props.monitoring.addLowSeverityAlarm(
       'Backend Orchestration Dead-Letter Queue is not empty',
       new MathExpression({
         expression: 'm1 + m2',
