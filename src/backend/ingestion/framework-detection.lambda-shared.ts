@@ -20,6 +20,12 @@ export interface ConstructFramework {
   readonly majorVersion?: number;
 }
 
+const FRAMEWORK_TESTS: Record<ConstructFrameworkName, (name: string) => boolean> = {
+  [ConstructFrameworkName.AWS_CDK]: (name: string) => name.startsWith('@aws-cdk/') || name === 'aws-cdk-lib' || name === 'monocdk',
+  [ConstructFrameworkName.CDK8S]: (name: string) => name === 'cdk8s' || /^cdk8s-plus(?:-(?:17|20|21|22))?$/.test(name),
+  [ConstructFrameworkName.CDKTF]: (name: string) => name === 'cdktf',
+};
+
 /**
  * Determines the Construct framework used by the provided assembly.
  *
@@ -28,65 +34,55 @@ export interface ConstructFramework {
  *
  * @returns a construct framework if one could be identified.
  */
-export function detectConstructFramework(assembly: Assembly): ConstructFramework | undefined {
-  let name: ConstructFramework['name'] | undefined;
-  let nameAmbiguous = false;
-  let majorVersion: number | undefined;
-  let majorVersionAmbiguous = false;
-
-  // exception: we assume all @cdktf/ libraries are cdktf, even if they
-  // also take other CDK types as dependencies
-  if (assembly.name.startsWith('@cdktf/')) {
-    name = ConstructFrameworkName.CDKTF;
-    if ('cdktf' in (assembly.dependencyClosure ?? {})) {
-      detectConstructFrameworkPackage('cdktf');
-    }
-    return { name, majorVersion };
-  }
+export function detectConstructFrameworks(assembly: Assembly): ConstructFramework[] {
+  // number indicates we have seen that framework and there is a single major
+  // version associated with it, while null indicates that multiple major
+  // versions were seen so the framework version is ambiguous
+  const detectedFrameworks: { [P in ConstructFrameworkName]?: number | null } = {};
 
   detectConstructFrameworkPackage(assembly.name, assembly.version);
   for (const depName of Object.keys(assembly.dependencyClosure ?? {})) {
     detectConstructFrameworkPackage(depName);
-    if (nameAmbiguous) {
-      return undefined;
+  }
+
+  const frameworks: ConstructFramework[] = [];
+  for (const [frameworkName, majorVersion] of Object.entries(detectedFrameworks)) {
+    const name = frameworkName as ConstructFrameworkName;
+    if (majorVersion === undefined) {
+      continue;
+    } else if (majorVersion === null) {
+      frameworks.push({ name });
+    } else if (typeof majorVersion === 'number') {
+      frameworks.push({ name, majorVersion });
     }
   }
 
-  return name && { name, majorVersion: majorVersionAmbiguous ? undefined : majorVersion };
+  return frameworks;
 
+  /**
+   * Analyses the package name and version range, and updates
+   * `detectedFrameworks` from the parent scope appropriately
+   */
   function detectConstructFrameworkPackage(packageName: string, versionRange = assembly.dependencies?.[packageName]): void {
-    if (packageName.startsWith('@aws-cdk/') || packageName === 'aws-cdk-lib' || packageName === 'monocdk') {
-      if (name && name !== ConstructFrameworkName.AWS_CDK) {
-        // Identified multiple candidates, so returning ambiguous...
-        nameAmbiguous = true;
-        return;
+    const packageMajor = versionRange ? minVersion(versionRange)?.major : undefined;
+
+    for (const frameworkName of [ConstructFrameworkName.AWS_CDK, ConstructFrameworkName.CDK8S, ConstructFrameworkName.CDKTF]) {
+      const matchesFramework = FRAMEWORK_TESTS[frameworkName];
+      if (matchesFramework(packageName)) {
+        const frameworkVersion: number | null | undefined = detectedFrameworks[frameworkName];
+        if (frameworkVersion === undefined) {
+          detectedFrameworks[frameworkName] = typeof packageMajor === 'number' ? packageMajor : null;
+          return;
+        } else if (frameworkVersion === null) {
+        // already identified this framework as ambiguous, so we are done
+          return;
+        } else if (typeof packageMajor === 'number') {
+          if (frameworkVersion !== packageMajor) {
+            detectedFrameworks[frameworkName] = null;
+          }
+          return;
+        }
       }
-      name = ConstructFrameworkName.AWS_CDK;
-    } else if (packageName === 'cdktf') {
-      if (name && name !== ConstructFrameworkName.CDKTF) {
-        // Identified multiple candidates, so returning ambiguous...
-        nameAmbiguous = true;
-        return;
-      }
-      name = ConstructFrameworkName.CDKTF;
-    } else if (packageName === 'cdk8s' || /^cdk8s-plus(?:-(?:17|20|21|22))?$/.test(packageName)) {
-      if (name && name !== ConstructFrameworkName.CDK8S) {
-        // Identified multiple candidates, so returning ambiguous...
-        nameAmbiguous = true;
-        return;
-      }
-      name = ConstructFrameworkName.CDK8S;
-    } else {
-      return;
     }
-    if (versionRange) {
-      const major = minVersion(versionRange)?.major;
-      if (majorVersion != null && majorVersion !== major) {
-        // Identified multiple candidates, so this is ambiguous...
-        majorVersionAmbiguous = true;
-      }
-      majorVersion = major;
-    }
-    return;
   }
 }

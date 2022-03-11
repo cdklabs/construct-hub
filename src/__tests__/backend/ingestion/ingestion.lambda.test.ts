@@ -142,7 +142,12 @@ test('basic happy case', async () => {
           break;
         case metadataKey:
           expect(req.ContentType).toBe('application/json');
-          expect(Buffer.from(req.Body! as any)).toEqual(Buffer.from(JSON.stringify({ date: time, packageLinks: {}, packageTags: [] })));
+          expect(Buffer.from(req.Body! as any)).toEqual(Buffer.from(JSON.stringify({
+            constructFrameworks: [],
+            date: time,
+            packageLinks: {},
+            packageTags: [],
+          })));
           mockMetadataCreated = true;
           break;
         case packageKey:
@@ -302,6 +307,7 @@ test('basic happy case with license file', async () => {
           expect(req.ContentType).toBe('application/json');
           expect(Buffer.from(req.Body! as any))
             .toEqual(Buffer.from(JSON.stringify({
+              constructFrameworks: [],
               date: time,
               licenseText: fakeLicense,
               packageLinks: {},
@@ -490,6 +496,7 @@ test('basic happy case with custom package links', async () => {
         case metadataKey:
           expect(req.ContentType).toBe('application/json');
           expect(Buffer.from(req.Body! as any)).toEqual(Buffer.from(JSON.stringify({
+            constructFrameworks: [],
             date: time,
             packageLinks: {
               PackageLinkKey: packageLinkValue,
@@ -699,6 +706,7 @@ test('basic happy case with custom tags', async () => {
         case metadataKey:
           expect(req.ContentType).toBe('application/json');
           expect(Buffer.from(req.Body! as any)).toEqual(Buffer.from(JSON.stringify({
+            constructFrameworks: [],
             date: time,
             packageLinks: {},
             // only includes true tags
@@ -865,7 +873,7 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
           case metadataKey:
             expect(req.ContentType).toBe('application/json');
             expect(JSON.parse(req.Body!.toString('utf-8'))).toEqual({
-              constructFramework: { name: frameworkName, majorVersion: 1337 },
+              constructFrameworks: [{ name: frameworkName, majorVersion: 1337 }],
               date: time,
               packageLinks: {},
               packageTags: [],
@@ -1025,7 +1033,7 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
           case metadataKey:
             expect(req.ContentType).toBe('application/json');
             expect(JSON.parse(req.Body!.toString('utf-8'))).toEqual({
-              constructFramework: { name: frameworkName, majorVersion: 42 },
+              constructFrameworks: [{ name: frameworkName, majorVersion: 42 }],
               date: time,
               packageLinks: {},
               packageTags: [],
@@ -1191,7 +1199,7 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
           case metadataKey:
             expect(req.ContentType).toBe('application/json');
             expect(JSON.parse(req.Body!.toString('utf-8'))).toEqual({
-              constructFramework: { name: frameworkName }, // No major versio here (intentional)
+              constructFrameworks: [{ name: frameworkName }], // No major version here (intentional)
               date: time,
               packageLinks: {},
               packageTags: [],
