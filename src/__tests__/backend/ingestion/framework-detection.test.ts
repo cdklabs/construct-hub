@@ -28,6 +28,27 @@ describe('AWS CDK frameworks', () => {
     expect(frameworkForDeps(['aws-cdk-lib@2.0.0']))
       .toEqual([{ name: ConstructFrameworkName.AWS_CDK, majorVersion: 2 }]);
   });
+
+  it('classifies when there are transitive dependencies without major version information', () => {
+    const assembly = {
+      name: 'mylib',
+      version: '1.2.3',
+      dependencies: {
+        '@aws-cdk/core': '1.123.0',
+        '@aws-cdk/s3': '1.123.0',
+        '@aws-cdk/ec2': '1.123.0',
+      },
+      dependencyClosure: {
+        '@aws-cdk/assets': {},
+        '@aws-cdk/core': {},
+        '@aws-cdk/s3': {},
+        '@aws-cdk/iam': {},
+        '@aws-cdk/ec2': {},
+      },
+    };
+    expect(detectConstructFrameworks(assembly as unknown as Assembly))
+      .toEqual([{ name: ConstructFrameworkName.AWS_CDK, majorVersion: 1 }]);
+  });
 });
 
 describe('cdk8s frameworks', () => {

@@ -20,9 +20,15 @@ export interface ConstructFramework {
   readonly majorVersion?: number;
 }
 
-const FRAMEWORK_TESTS: Record<ConstructFrameworkName, (name: string) => boolean> = {
+/**
+ * Predicates that determine whether a package is indicative of the CDK
+ * framework someone is using.
+ */
+const FRAMEWORK_MATCHERS: Record<ConstructFrameworkName, (name: string) => boolean> = {
   [ConstructFrameworkName.AWS_CDK]: (name: string) => name.startsWith('@aws-cdk/') || name === 'aws-cdk-lib' || name === 'monocdk',
   [ConstructFrameworkName.CDK8S]: (name: string) => name === 'cdk8s' || /^cdk8s-plus(?:-(?:17|20|21|22))?$/.test(name),
+  // cdktf providers dependencies ("@cdktf/provider-xxx") are major versioned
+  // differently than the core library, so do not take them into account
   [ConstructFrameworkName.CDKTF]: (name: string) => name === 'cdktf',
 };
 
@@ -35,10 +41,11 @@ const FRAMEWORK_TESTS: Record<ConstructFrameworkName, (name: string) => boolean>
  * @returns a construct framework if one could be identified.
  */
 export function detectConstructFrameworks(assembly: Assembly): ConstructFramework[] {
-  // number indicates we have seen that framework and there is a single major
-  // version associated with it, while null indicates that multiple major
-  // versions were seen so the framework version is ambiguous
-  const detectedFrameworks: { [P in ConstructFrameworkName]?: number | null } = {};
+  // "not-sure" means we haven't seen a major version for the framework yet,
+  // e.g. in the case of a transitive dependency where the info isn't provided
+  // "ambiguous" means we have seen multiple major versions so it's impossible
+  // to resolve a single number
+  const detectedFrameworks: { [P in ConstructFrameworkName]?: number | 'not-sure' | 'ambiguous' } = {};
 
   detectConstructFrameworkPackage(assembly.name, assembly.version);
   for (const depName of Object.keys(assembly.dependencyClosure ?? {})) {
@@ -50,7 +57,7 @@ export function detectConstructFrameworks(assembly: Assembly): ConstructFramewor
     const name = frameworkName as ConstructFrameworkName;
     if (majorVersion === undefined) {
       continue;
-    } else if (majorVersion === null) {
+    } else if (majorVersion === 'ambiguous' || majorVersion === 'not-sure') {
       frameworks.push({ name });
     } else if (typeof majorVersion === 'number') {
       frameworks.push({ name, majorVersion });
@@ -64,21 +71,32 @@ export function detectConstructFrameworks(assembly: Assembly): ConstructFramewor
    * `detectedFrameworks` from the parent scope appropriately
    */
   function detectConstructFrameworkPackage(packageName: string, versionRange = assembly.dependencies?.[packageName]): void {
-    const packageMajor = versionRange ? minVersion(versionRange)?.major : undefined;
-
     for (const frameworkName of [ConstructFrameworkName.AWS_CDK, ConstructFrameworkName.CDK8S, ConstructFrameworkName.CDKTF]) {
-      const matchesFramework = FRAMEWORK_TESTS[frameworkName];
+      const matchesFramework = FRAMEWORK_MATCHERS[frameworkName];
       if (matchesFramework(packageName)) {
-        const frameworkVersion: number | null | undefined = detectedFrameworks[frameworkName];
+        const frameworkVersion: number | 'not-sure' | 'ambiguous' | undefined = detectedFrameworks[frameworkName];
+        const packageMajor: number | 'not-sure' = (versionRange ? minVersion(versionRange)?.major : undefined) ?? 'not-sure';
+
         if (frameworkVersion === undefined) {
-          detectedFrameworks[frameworkName] = typeof packageMajor === 'number' ? packageMajor : null;
+          // It's the first time seeing this major version, so we record
+          // whatever new information we found ("not-sure" or number).
+          detectedFrameworks[frameworkName] = packageMajor;
           return;
-        } else if (frameworkVersion === null) {
-        // already identified this framework as ambiguous, so we are done
+        } else if (frameworkVersion === 'ambiguous') {
+          // We have already seen multiple major versions, so just give up
+          // trying to identify this framework.
           return;
-        } else if (typeof packageMajor === 'number') {
-          if (frameworkVersion !== packageMajor) {
-            detectedFrameworks[frameworkName] = null;
+        } else if (frameworkVersion === 'not-sure') {
+          // We haven't seen a major version for this framework yet, so record
+          // whatever new information we found ("not-sure" or number).
+          detectedFrameworks[frameworkName] = packageMajor;
+          return;
+        } else if (typeof frameworkVersion === 'number') {
+          // We've seen evidence of a particular major version for this
+          // framework, so only update if this package conflicts with what
+          // we're expecting.
+          if (packageMajor !== 'not-sure' && frameworkVersion !== packageMajor) {
+            detectedFrameworks[frameworkName] = 'ambiguous';
           }
           return;
         }
