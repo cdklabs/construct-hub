@@ -134,9 +134,10 @@ export function handler(event: TransliteratorInput): Promise<{ created: string[]
 
               console.log(`Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`);
 
+              const docgenLang = docgen.Language.fromString(lang.name);
               const json = await docs.toJson({
                 submodule,
-                language: docgen.Language.fromString(lang.name),
+                language: docgenLang,
               });
 
               const jsonPage = Buffer.from(json.render());
@@ -151,7 +152,7 @@ export function handler(event: TransliteratorInput): Promise<{ created: string[]
 
               const markdown = MarkdownRenderer.fromSchema(json.content, {
                 anchorFormatter,
-                linkFormatter: linkFormatter(lang),
+                linkFormatter: linkFormatter(docgenLang),
               });
 
               const page = Buffer.from(markdown.render());
