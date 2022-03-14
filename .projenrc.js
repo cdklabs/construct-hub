@@ -117,10 +117,11 @@ const project = new cdk.JsiiProject({
   //  packageId: 'Construct.Hub',
   //},
 
-  publishToPypi: {
-    distName: 'construct-hub',
-    module: 'construct_hub',
-  },
+  // https://github.com/cdklabs/construct-hub/issues/775
+  // publishToPypi: {
+  //   distName: 'construct-hub',
+  //   module: 'construct_hub',
+  // },
 
   // run tests from .js -- otherwise lambda bundlers get confused
   testdir: 'src/__tests__',
@@ -486,8 +487,7 @@ function newEcsTask(entrypoint) {
   }
 
   // This uses the AWS SDK v3 client to achieve a smaller bundle size.
-  // NOTE: currently pinned due to https://github.com/aws/aws-sdk-js-v3/issues/3297
-  project.addDevDeps('@aws-sdk/client-sfn@3.49.0');
+  project.addDevDeps('@aws-sdk/client-sfn');
 
   entrypoint = relative(project.srcdir, entrypoint);
 

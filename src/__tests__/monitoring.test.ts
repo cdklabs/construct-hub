@@ -83,6 +83,24 @@ test('high severity alarms trigger the correct action', () => {
   });
 });
 
+test('monitoring exposes a list of high severity alarms', () => {
+  // GIVEN
+  const stack = new Stack();
+  const topic = new sns.Topic(stack, 'Topic');
+  const monitoring = new Monitoring(stack, 'Monitoring', {
+    alarmActions: actions,
+  });
+  const alarm1 = topic.metricNumberOfNotificationsFailed().createAlarm(stack, 'Alarm1', { threshold: 1, evaluationPeriods: 1 });
+  const alarm2 = topic.metricSMSMonthToDateSpentUSD().createAlarm(stack, 'Alarm2', { threshold: 100, evaluationPeriods: 1 });
+
+  // WHEN
+  monitoring.addHighSeverityAlarm('My Alarm', alarm1);
+  monitoring.addLowSeverityAlarm('My Other Alarm', alarm2);
+
+  expect(monitoring.highSeverityAlarms.map((alarm) => alarm.alarmArn)).toEqual([alarm1.alarmArn]);
+  expect(monitoring.lowSeverityAlarms.map((alarm) => alarm.alarmArn)).toEqual([alarm2.alarmArn]);
+});
+
 test('web canaries can ping URLs and raise high severity alarms', () => {
   // GIVEN
   const stack = new Stack();
