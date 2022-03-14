@@ -117,10 +117,11 @@ const project = new cdk.JsiiProject({
   //  packageId: 'Construct.Hub',
   //},
 
-  publishToPypi: {
-    distName: 'construct-hub',
-    module: 'construct_hub',
-  },
+  // https://github.com/cdklabs/construct-hub/issues/775
+  // publishToPypi: {
+  //   distName: 'construct-hub',
+  //   module: 'construct_hub',
+  // },
 
   // run tests from .js -- otherwise lambda bundlers get confused
   testdir: 'src/__tests__',
