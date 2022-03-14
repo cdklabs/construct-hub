@@ -1,5 +1,9 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+import assert = require('assert');
+
 import { Assembly } from '@jsii/spec';
 import { minVersion } from 'semver';
+
 
 export const enum ConstructFrameworkName {
   AWS_CDK = 'aws-cdk',
@@ -45,19 +49,19 @@ export function detectConstructFrameworks(assembly: Assembly): ConstructFramewor
   // e.g. in the case of a transitive dependency where the info isn't provided
   // "ambiguous" means we have seen multiple major versions so it's impossible
   // to resolve a single number
-  const detectedFrameworks: { [P in ConstructFrameworkName]?: number | 'not-sure' | 'ambiguous' } = {};
+  const detectedFrameworks: { [P in ConstructFrameworkName]?: number | 'no-data' | 'ambiguous' } = {};
 
   detectConstructFrameworkPackage(assembly.name, assembly.version);
   for (const depName of Object.keys(assembly.dependencyClosure ?? {})) {
     detectConstructFrameworkPackage(depName);
   }
 
-  const frameworks: ConstructFramework[] = [];
+  const frameworks = new Array<ConstructFramework>();
   for (const [frameworkName, majorVersion] of Object.entries(detectedFrameworks)) {
     const name = frameworkName as ConstructFrameworkName;
     if (majorVersion === undefined) {
       continue;
-    } else if (majorVersion === 'ambiguous' || majorVersion === 'not-sure') {
+    } else if (majorVersion === 'ambiguous' || majorVersion === 'no-data') {
       frameworks.push({ name });
     } else if (typeof majorVersion === 'number') {
       frameworks.push({ name, majorVersion });
@@ -74,28 +78,34 @@ export function detectConstructFrameworks(assembly: Assembly): ConstructFramewor
     for (const frameworkName of [ConstructFrameworkName.AWS_CDK, ConstructFrameworkName.CDK8S, ConstructFrameworkName.CDKTF]) {
       const matchesFramework = FRAMEWORK_MATCHERS[frameworkName];
       if (matchesFramework(packageName)) {
-        const frameworkVersion: number | 'not-sure' | 'ambiguous' | undefined = detectedFrameworks[frameworkName];
-        const packageMajor: number | 'not-sure' = (versionRange ? minVersion(versionRange)?.major : undefined) ?? 'not-sure';
+        const frameworkVersion = detectedFrameworks[frameworkName];
+        if (frameworkVersion === 'ambiguous') {
+          // We have already seen multiple major versions and have determined
+          // the major version is ambiguous, so this package won't give
+          // us any new information.
+          return;
+        }
+
+        const packageMajor = (versionRange ? minVersion(versionRange)?.major : undefined) ?? 'no-data';
 
         if (frameworkVersion === undefined) {
           // It's the first time seeing this major version, so we record
-          // whatever new information we found ("not-sure" or number).
+          // whatever new information we found ("no-data" or number).
           detectedFrameworks[frameworkName] = packageMajor;
           return;
-        } else if (frameworkVersion === 'ambiguous') {
-          // We have already seen multiple major versions, so just give up
-          // trying to identify this framework.
-          return;
-        } else if (frameworkVersion === 'not-sure') {
-          // We haven't seen a major version for this framework yet, so record
-          // whatever new information we found ("not-sure" or number).
+        } else if (frameworkVersion === 'no-data') {
+          // We've seen this framework before but haven't seen a major version,
+          // so record whatever new information we found ("no-data" or number).
           detectedFrameworks[frameworkName] = packageMajor;
           return;
-        } else if (typeof frameworkVersion === 'number') {
+        } else {
+          // At this point, frameworkVersion can only be a MV number
+          assert(typeof frameworkVersion === 'number');
+
           // We've seen evidence of a particular major version for this
           // framework, so only update if this package conflicts with what
           // we're expecting.
-          if (packageMajor !== 'not-sure' && frameworkVersion !== packageMajor) {
+          if (packageMajor !== 'no-data' && frameworkVersion !== packageMajor) {
             detectedFrameworks[frameworkName] = 'ambiguous';
           }
           return;
