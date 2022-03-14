@@ -330,7 +330,7 @@ function discoverIntegrationTests() {
       description: `synthesize integration test ${entry}`,
     });
 
-    const exclude = ['asset.*', 'cdk.out', 'manifest.json', 'tree.json'];
+    const exclude = ['asset.*', 'cdk.out', 'manifest.json', 'tree.json', '.cache'];
 
     assert.exec(`cdk synth ${options} -o ${actualdir} > /dev/null`);
     assert.exec(`diff -r ${exclude.map(x => `-x ${x}`).join(' ')} ${snapshotdir}/ ${actualdir}/`);
