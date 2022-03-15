@@ -18,7 +18,7 @@ import { integrity } from '../shared/integrity.lambda-shared';
 import { isTagApplicable } from '../shared/tags';
 import { extractObjects } from '../shared/tarball.lambda-shared';
 import { MetricName, METRICS_NAMESPACE } from './constants';
-import { ConstructFramework, detectConstructFramework } from './framework-detection.lambda-shared';
+import { ConstructFramework, detectConstructFrameworks } from './framework-detection.lambda-shared';
 
 Configuration.namespace = METRICS_NAMESPACE;
 
@@ -95,7 +95,7 @@ export const handler = metricScope(
 
 
       let parsedAssembly: Assembly;
-      let constructFramework: ConstructFramework | undefined;
+      let constructFrameworks: ConstructFramework[];
       let packageLicense: string;
       let packageName: string;
       let packageVersion: string;
@@ -104,7 +104,7 @@ export const handler = metricScope(
         parsedAssembly = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
 
         // needs `dependencyClosure`
-        constructFramework = detectConstructFramework(parsedAssembly);
+        constructFrameworks = detectConstructFrameworks(parsedAssembly);
         const { license, name, version, readme } = parsedAssembly;
         packageLicense = license;
         packageName = name;
@@ -204,7 +204,7 @@ export const handler = metricScope(
       }
 
       const metadata = {
-        constructFramework,
+        constructFrameworks,
         date: payload.time,
         licenseText: licenseText?.toString('utf-8'),
         packageLinks,
