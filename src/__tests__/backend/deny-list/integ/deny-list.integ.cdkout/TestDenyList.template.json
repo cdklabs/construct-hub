@@ -696,6 +696,88 @@
         "aws:cdk:path": "TestDenyList/Monitoring/HighSeverityDashboard/Resource"
       }
     },
+    "OnCallDashboardOnCalldashboard2A5A17A3": {
+      "Type": "AWS::CloudWatch::Dashboard",
+      "Properties": {
+        "DashboardBody": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"widgets\":[{\"type\":\"metric\",\"width\":12,\"height\":8,\"x\":0,\"y\":0,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Lambda concurrent execution quota\",\"region\":\"",
+              {
+                "Ref": "AWS::Region"
+              },
+              "\",\"metrics\":[[\"AWS/Lambda\",\"ConcurrentExecutions\",{\"label\":\"Lambda Concurrent Executions\",\"stat\":\"Maximum\",\"id\":\"mLambdaUsage\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
+              {
+                "Ref": "DenyListPrunePruneHandler5F946B07"
+              },
+              "\",{\"label\":\"",
+              {
+                "Ref": "DenyListPrunePruneHandler5F946B07"
+              },
+              "\",\"stat\":\"Maximum\",\"id\":\"m1\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
+              {
+                "Ref": "DenyListPrunePruneQueueHandler087D6B50"
+              },
+              "\",{\"label\":\"",
+              {
+                "Ref": "DenyListPrunePruneQueueHandler087D6B50"
+              },
+              "\",\"stat\":\"Maximum\",\"id\":\"m2\"}],[{\"label\":\"Concurrent executions quota usage %\",\"expression\":\"mLambdaUsage / mLambdaQuota * 100\",\"yAxis\":\"right\"}],[{\"expression\":\"SERVICE_QUOTA(mLambdaUsage)\",\"visible\":false,\"id\":\"mLambdaQuota\"}],[{\"label\":\"",
+              {
+                "Ref": "DenyListPrunePruneHandler5F946B07"
+              },
+              " quota usage %\",\"expression\":\"m1 / mLambdaQuota * 100\",\"yAxis\":\"right\"}],[{\"expression\":\"SERVICE_QUOTA(mLambdaUsage)\",\"visible\":false,\"id\":\"lambdaQuotaLimit\"}],[{\"label\":\"",
+              {
+                "Ref": "DenyListPrunePruneQueueHandler087D6B50"
+              },
+              " quota usage %\",\"expression\":\"m2 / mLambdaQuota * 100\",\"yAxis\":\"right\"}]],\"yAxis\":{\"left\":{\"label\":\"Concurrent execution count\"},\"right\":{\"label\":\"Quota Percent\",\"min\":0,\"max\":100}}}}]}"
+            ]
+          ]
+        },
+        "DashboardName": "OnCall"
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/OnCallDashboard/On-Call dashboard/Resource"
+      }
+    },
+    "OnCallDashboardOnCallDashboardlambdaServiceQuota93F133BD": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 5,
+        "AlarmDescription": "Lambda concurrent execution exceeded 70% of SERVICE_QUOTA\n\nRunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md\n\nRequest a service quota increase for lambda functions",
+        "Metrics": [
+          {
+            "Expression": "mLambdaUsage / mLambdaQuota * 100",
+            "Id": "expr_1",
+            "Label": "Concurrent executions quota usage %"
+          },
+          {
+            "Id": "mLambdaUsage",
+            "MetricStat": {
+              "Metric": {
+                "MetricName": "ConcurrentExecutions",
+                "Namespace": "AWS/Lambda"
+              },
+              "Period": 300,
+              "Stat": "Maximum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Expression": "SERVICE_QUOTA(mLambdaUsage)",
+            "Id": "mLambdaQuota",
+            "ReturnData": false
+          }
+        ],
+        "Threshold": 70,
+        "TreatMissingData": "missing"
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/OnCallDashboard/OnCallDashboard--lambdaServiceQuota/Resource"
+      }
+    },
     "DenyListBucketC1C9D3D9": {
       "Type": "AWS::S3::Bucket",
       "Properties": {

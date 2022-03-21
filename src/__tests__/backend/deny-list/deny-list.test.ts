@@ -6,6 +6,7 @@ import { Duration, Stack } from '@aws-cdk/core';
 import { DenyList, DenyListRule } from '../../../backend';
 import { createDenyListMap } from '../../../backend/deny-list/create-map';
 import { Monitoring } from '../../../monitoring';
+import { OnCallDashboard } from '../../../on-call-dashboard';
 import { CatalogBuilderMock } from './integ/catalog-builder-mock';
 
 test('defaults - empty deny list', () => {
@@ -15,6 +16,7 @@ test('defaults - empty deny list', () => {
     monitoring: new Monitoring(stack, 'Monitoring'),
     packageDataBucket: new s3.Bucket(stack, 'PackageDataBucket'),
     packageDataKeyPrefix: 'my-data/',
+    onCallDashboard: new OnCallDashboard(stack, 'OnCallDashboard'),
   });
 
   denyList.prune.onChangeInvoke(new CatalogBuilderMock(stack, 'CatalogBuilderMock'));
@@ -31,6 +33,7 @@ test('pruneOnChange is disabled', () => {
     packageDataBucket: new s3.Bucket(stack, 'PackageDataBucket'),
     packageDataKeyPrefix: 'my-data/',
     pruneOnChange: false,
+    onCallDashboard: new OnCallDashboard(stack, 'OnCallDashboard'),
   });
   denyList.prune.onChangeInvoke(new CatalogBuilderMock(stack, 'CatalogBuilderMock'));
 
@@ -46,6 +49,7 @@ test('prunePeriod controls period', () => {
     packageDataBucket: new s3.Bucket(stack, 'PackageDataBucket'),
     packageDataKeyPrefix: 'my-data/',
     prunePeriod: Duration.minutes(10),
+    onCallDashboard: new OnCallDashboard(stack, 'OnCallDashboard'),
   });
 
   // THEN
@@ -62,6 +66,7 @@ test('prunePeriod of zero disables periodical pruning', () => {
     packageDataBucket: new s3.Bucket(stack, 'PackageDataBucket'),
     packageDataKeyPrefix: 'my-data/',
     prunePeriod: Duration.minutes(0),
+    onCallDashboard: new OnCallDashboard(stack, 'OnCallDashboard'),
   });
 
   // THEN

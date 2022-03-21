@@ -8,6 +8,7 @@ import type { AssemblyTargets } from '@jsii/spec';
 import { lambdaFunctionUrl, s3ObjectUrl } from '../../deep-link';
 
 import { Monitoring } from '../../monitoring';
+import { OnCallDashboard } from '../../on-call-dashboard';
 import { RUNBOOK_URL } from '../../runbook-url';
 import { DenyList } from '../deny-list';
 import type { ConstructFramework } from '../ingestion/framework-detection.lambda-shared';
@@ -27,6 +28,11 @@ export interface CatalogBuilderProps {
    * The monitoring handler to register alarms with.
    */
   readonly monitoring: Monitoring;
+
+  /**
+   * The on-call dashboard to add widgets to.
+   */
+  readonly onCallDashboard: OnCallDashboard;
 
   /**
    * How long should execution logs be retained?
@@ -63,6 +69,7 @@ export class CatalogBuilder extends Construct {
       tracing: Tracing.PASS_THROUGH,
     });
     this.function = handler;
+    props.onCallDashboard.addConcurrentExecutionMetricToOnCallDashboard(handler);
 
     // This function may invoke itself in case it needs to continue it's work in
     // a "child" invocation. We must hence allow it to invoke itself. We cannot

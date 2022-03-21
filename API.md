@@ -1541,6 +1541,7 @@ const packageSourceBindOptions: PackageSourceBindOptions = { ... }
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.ingestion">ingestion</a></code> | <code>@aws-cdk/aws-iam.IGrantable</code> | The `IGrantable` that will process downstream messages from the bound package source. |
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.licenseList">licenseList</a></code> | <code><a href="#construct-hub.ILicenseList">ILicenseList</a></code> | The license list applied by the bound Construct Hub instance. |
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.monitoring">monitoring</a></code> | <code><a href="#construct-hub.IMonitoring">IMonitoring</a></code> | The monitoring instance to use for registering alarms, etc. |
+| <code><a href="#construct-hub.PackageSourceBindOptions.property.onCallDashboard">onCallDashboard</a></code> | <code><a href="#construct-hub.IOnCallDashboard">IOnCallDashboard</a></code> | The on-call dashboard to add widgets to. |
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.queue">queue</a></code> | <code>@aws-cdk/aws-sqs.IQueue</code> | The SQS queue to which messages should be sent. |
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.denyList">denyList</a></code> | <code><a href="#construct-hub.IDenyList">IDenyList</a></code> | The configured `DenyList` for the bound Construct Hub instance, if any. |
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.repository">repository</a></code> | <code><a href="#construct-hub.IRepository">IRepository</a></code> | The CodeArtifact repository that is internally used by ConstructHub. |
@@ -1599,6 +1600,18 @@ public readonly monitoring: IMonitoring;
 - *Type:* <a href="#construct-hub.IMonitoring">IMonitoring</a>
 
 The monitoring instance to use for registering alarms, etc.
+
+---
+
+##### `onCallDashboard`<sup>Required</sup> <a name="onCallDashboard" id="construct-hub.PackageSourceBindOptions.property.onCallDashboard"></a>
+
+```typescript
+public readonly onCallDashboard: IOnCallDashboard;
+```
+
+- *Type:* <a href="#construct-hub.IOnCallDashboard">IOnCallDashboard</a>
+
+The on-call dashboard to add widgets to.
 
 ---
 
@@ -10098,6 +10111,73 @@ a user-friendly title for the alarm (not currently used).
 - *Type:* @aws-cdk/aws-cloudwatch.Alarm
 
 the alarm to be added.
+
+---
+
+
+### IOnCallDashboard <a name="IOnCallDashboard" id="construct-hub.IOnCallDashboard"></a>
+
+- *Implemented By:* <a href="#construct-hub.IOnCallDashboard">IOnCallDashboard</a>
+
+ConstructHub OnCall dashboard exposed to extension points.
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#construct-hub.IOnCallDashboard.addConcurrentExecutionMetricToOnCallDashboard">addConcurrentExecutionMetricToOnCallDashboard</a></code> | Adds a metric widget to the on-call dashboard showing the total number concurrent executions  of a Lambda function and the percentage of SERVICE_QUOTA utilized by the function. |
+| <code><a href="#construct-hub.IOnCallDashboard.addDLQMetricToOnCallDashboard">addDLQMetricToOnCallDashboard</a></code> | Adds widgets to on-call dashboard with link to the dashboard and number of visible messages. |
+
+---
+
+##### `addConcurrentExecutionMetricToOnCallDashboard` <a name="addConcurrentExecutionMetricToOnCallDashboard" id="construct-hub.IOnCallDashboard.addConcurrentExecutionMetricToOnCallDashboard"></a>
+
+```typescript
+public addConcurrentExecutionMetricToOnCallDashboard(fn: IFunction): void
+```
+
+Adds a metric widget to the on-call dashboard showing the total number concurrent executions  of a Lambda function and the percentage of SERVICE_QUOTA utilized by the function.
+
+This can be
+ used to see which function has the most impact of the service quota.
+
+###### `fn`<sup>Required</sup> <a name="fn" id="construct-hub.IOnCallDashboard.addConcurrentExecutionMetricToOnCallDashboard.parameter.fn"></a>
+
+- *Type:* @aws-cdk/aws-lambda.IFunction
+
+Lambda function to be monitored.
+
+---
+
+##### `addDLQMetricToOnCallDashboard` <a name="addDLQMetricToOnCallDashboard" id="construct-hub.IOnCallDashboard.addDLQMetricToOnCallDashboard"></a>
+
+```typescript
+public addDLQMetricToOnCallDashboard(name: string, deadLetterQueue: IQueue, reDriveFunction?: IFunction): void
+```
+
+Adds widgets to on-call dashboard with link to the dashboard and number of visible messages.
+
+###### `name`<sup>Required</sup> <a name="name" id="construct-hub.IOnCallDashboard.addDLQMetricToOnCallDashboard.parameter.name"></a>
+
+- *Type:* string
+
+of the DLQ that will be used in the dashboard.
+
+---
+
+###### `deadLetterQueue`<sup>Required</sup> <a name="deadLetterQueue" id="construct-hub.IOnCallDashboard.addDLQMetricToOnCallDashboard.parameter.deadLetterQueue"></a>
+
+- *Type:* @aws-cdk/aws-sqs.IQueue
+
+Dead Letter Queue to be used in the dashboard.
+
+---
+
+###### `reDriveFunction`<sup>Optional</sup> <a name="reDriveFunction" id="construct-hub.IOnCallDashboard.addDLQMetricToOnCallDashboard.parameter.reDriveFunction"></a>
+
+- *Type:* @aws-cdk/aws-lambda.IFunction
+
+a lambda function that will be used to re-drive the DLQ.
 
 ---
 
