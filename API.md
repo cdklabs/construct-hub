@@ -378,7 +378,9 @@ public readonly url: string;
 
 The URL that this category links to.
 
-This is the full path to the link that this category button will have. You can use any query options such as `?keywords=`, `?q=`, or a combination thereof.
+This is the full path to the link that
+this category button will have. You can use any query options such as
+`?keywords=`, `?q=`, or a combination thereof.
 
 ---
 
@@ -577,7 +579,8 @@ public readonly categories: Category[];
 
 Browse categories.
 
-Each category will appear in the home page as a button with a link to the relevant search query.
+Each category will appear in the home page as a button
+with a link to the relevant search query.
 
 ---
 
@@ -592,7 +595,8 @@ public readonly codeArtifactDomain: CodeArtifactDomainProps;
 
 When using a CodeArtifact package source, it is often desirable to have ConstructHub provision it's internal CodeArtifact repository in the same CodeArtifact domain, and to configure the package source repository as an upstream of the internal repository.
 
-This way, all packages in the source are available to ConstructHub's backend processing.
+This way, all packages in the source
+are available to ConstructHub's backend processing.
 
 ---
 
@@ -632,7 +636,8 @@ public readonly failoverStorage: boolean;
 
 Wire construct hub to use the failover storage buckets.
 
-Do not activate this property until you've populated your failover buckets with the necessary data.
+Do not activate this property until you've populated your failover buckets
+with the necessary data.
 
 > [https://github.com/cdklabs/construct-hub/blob/dev/docs/operator-runbook.md#storage-disaster](https://github.com/cdklabs/construct-hub/blob/dev/docs/operator-runbook.md#storage-disaster)
 
@@ -688,7 +693,11 @@ public readonly isolateSensitiveTasks: boolean;
 
 Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments.
 
-This implies the creation of additonal resources, including:  - A VPC with only isolated subnets. - VPC Endpoints (CloudWatch Logs, CodeArtifact, CodeArtifact API, S3, ...) - A CodeArtifact Repository with an external connection to npmjs.com
+This implies the creation of additonal resources, including:
+
+- A VPC with only isolated subnets.
+- VPC Endpoints (CloudWatch Logs, CodeArtifact, CodeArtifact API, S3, ...)
+- A CodeArtifact Repository with an external connection to npmjs.com
 
 ---
 
@@ -793,7 +802,11 @@ public readonly sensitiveTaskIsolation: Isolation;
 
 Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments.
 
-This implies the creation of additonal resources, including:  - A VPC with only isolated subnets. - VPC Endpoints (CloudWatch Logs, CodeArtifact, CodeArtifact API, S3, ...) - A CodeArtifact Repository with an external connection to npmjs.com
+This implies the creation of additonal resources, including:
+
+- A VPC with only isolated subnets.
+- VPC Endpoints (CloudWatch Logs, CodeArtifact, CodeArtifact API, S3, ...)
+- A CodeArtifact Repository with an external connection to npmjs.com
 
 ---
 
@@ -854,7 +867,8 @@ public readonly reason: string;
 
 The reason why this package/version is denied.
 
-This information will be emitted to the construct hub logs.
+This information will be
+emitted to the construct hub logs.
 
 ---
 
@@ -1338,7 +1352,10 @@ public readonly primary: boolean;
 
 Whether this is the primary resource of the bound package source.
 
-It is not necessary that there is one, and there could be multiple primary resources. The buttons for those will be rendered with a different style on the dashboard.
+It is not
+necessary that there is one, and there could be multiple primary resources.
+The buttons for those will be rendered with a different style on the
+dashboard.
 
 ---
 
@@ -1387,7 +1404,8 @@ public readonly canarySla: Duration;
 
 The maximum amount of time it is supposed to take for packages to become visible in this ConstructHub instance.
 
-If `enableCanary` is enabled, an alarm will trigger if this SLA is breached by the `canaryPackage`.
+If `enableCanary` is enabled, an
+alarm will trigger if this SLA is breached by the `canaryPackage`.
 
 ---
 
@@ -1536,7 +1554,8 @@ public readonly ingestion: IGrantable;
 
 The `IGrantable` that will process downstream messages from the bound package source.
 
-It needs to be granted permissions to read package data from the URLs sent to the `queue`.
+It needs to be granted permissions to read package data
+from the URLs sent to the `queue`.
 
 ---
 
@@ -1550,7 +1569,9 @@ public readonly licenseList: ILicenseList;
 
 The license list applied by the bound Construct Hub instance.
 
-This can be used to filter down the package only to those which will pass the license filter.
+This can be
+used to filter down the package only to those which will pass the license
+filter.
 
 ---
 
@@ -1576,7 +1597,8 @@ public readonly queue: IQueue;
 
 The SQS queue to which messages should be sent.
 
-Sent objects should match the package discovery schema.
+Sent objects should match
+the package discovery schema.
 
 ---
 
@@ -1602,7 +1624,8 @@ public readonly repository: IRepository;
 
 The CodeArtifact repository that is internally used by ConstructHub.
 
-This may be undefined if no CodeArtifact repository is internally used.
+This
+may be undefined if no CodeArtifact repository is internally used.
 
 ---
 
@@ -1638,7 +1661,9 @@ public readonly dashboardWidgets: IWidget[][];
 
 Widgets to add to the operator dashbaord for monitoring the health of the bound package source.
 
-It is not necessary for this list of widgets to include a title section (this will be added automatically). One array represents a row of widgets on the dashboard.
+It is not necessary for this list of widgets to
+include a title section (this will be added automatically). One array
+represents a row of widgets on the dashboard.
 
 ---
 
@@ -1652,7 +1677,8 @@ public readonly name: string;
 
 The name of the bound package source.
 
-It will be used to render operator dashboards (so it should be a meaningful identification of the source).
+It will be used to render operator
+dashboards (so it should be a meaningful identification of the source).
 
 ---
 
@@ -1672,7 +1698,8 @@ An optional list of linked resources to be displayed on the monitoring dashboard
 
 Configuration for applying custom tags to relevant packages.
 
-Custom tags are displayed on the package details page, and can be used for searching.
+Custom tags are
+displayed on the package details page, and can be used for searching.
 
 #### Initializer <a name="Initializer" id="construct-hub.PackageTag.Initializer"></a>
 
@@ -2262,7 +2289,8 @@ public readonly caseSensitive: boolean;
 
 String matches must match the casing of the original string.
 
-This option is ignored if the value we are checking is an array.
+This option
+is ignored if the value we are checking is an array.
 
 ---
 
@@ -2540,7 +2568,8 @@ public metricLastSeq(opts?: MetricOptions): Metric
 
 The last sequence number that was processed.
 
-This metric can be used to discover when a sequence reset has happened in the CouchDB instance.
+This metric can be used to
+discover when a sequence reset has happened in the CouchDB instance.
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricLastSeq.parameter.opts"></a>
 
@@ -10011,7 +10040,8 @@ public addHighSeverityAlarm(title: string, alarm: Alarm): void
 
 Adds a high-severity alarm.
 
-If this alarm goes off, the action specified in `highSeverityAlarmActionArn` is triggered.
+If this alarm goes off, the action specified in
+`highSeverityAlarmActionArn` is triggered.
 
 ###### `title`<sup>Required</sup> <a name="title" id="construct-hub.IMonitoring.addHighSeverityAlarm.parameter.title"></a>
 
@@ -10037,7 +10067,8 @@ public addLowSeverityAlarm(title: string, alarm: Alarm): void
 
 Adds a low-severity alarm.
 
-If this alarm goes off, the action specified in `normalAlarmAction` is triggered.
+If this alarm goes off, the action specified in
+`normalAlarmAction` is triggered.
 
 ###### `title`<sup>Required</sup> <a name="title" id="construct-hub.IMonitoring.addLowSeverityAlarm.parameter.title"></a>
 
@@ -10146,7 +10177,13 @@ How possibly risky operations (such as doc-generation, which requires installing
 
 No isolation is done whatsoever. The doc-generation process still is provisioned with least-privilege permissions, but retains complete access to internet.
 
-While this maximizes the chances of successfully installing packages (and hence successfully generating documentation for those), it is also the least secure mode of operation.  We advise you only consider using this isolation mode if you are hosting a ConstructHub instance that only indexes trusted packages (including transitive dependencies).
+While this maximizes the chances of successfully installing packages (and
+hence successfully generating documentation for those), it is also the
+least secure mode of operation.
+
+We advise you only consider using this isolation mode if you are hosting a
+ConstructHub instance that only indexes trusted packages (including
+transitive dependencies).
 
 ---
 
@@ -10162,7 +10199,12 @@ The same protections as `UNLIMITED_INTERNET_ACCESS`, except outbound internet co
 
 The same protections as `LIMITED_INTERNET_ACCESS`, except all remaining internet access is removed.
 
-All traffic to AWS service endpoints is routed through VPC Endpoints, as the compute nodes are jailed in a completely isolated VPC.  This is the most secure (and recommended) mode of operation for ConstructHub instances.
+All traffic to AWS service endpoints is routed
+through VPC Endpoints, as the compute nodes are jailed in a completely
+isolated VPC.
+
+This is the most secure (and recommended) mode of operation for
+ConstructHub instances.
 
 ---
 
