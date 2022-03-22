@@ -382,7 +382,7 @@ This is the full path to the link that this category button will have. You can u
 
 ---
 
-###### Example <a name="Example" id="construct-hub.Category.property.url.example"></a>
+*Example*
 
 ```typescript
 "/search?keywords=monitoring"
