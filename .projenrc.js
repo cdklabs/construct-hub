@@ -9,6 +9,7 @@ const uuid = require('uuid');
 const BUNDLE_DIR_ENV = 'BUNDLE_DIR';
 
 const peerDeps = [
+  '@aws-cdk/aws-servicecatalogappregistry',
   '@aws-cdk/aws-certificatemanager',
   '@aws-cdk/aws-cloudfront-origins',
   '@aws-cdk/aws-cloudfront',
