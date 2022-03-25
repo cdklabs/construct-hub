@@ -6942,6 +6942,20 @@ Resources:
               minutes (Lambda
               timeout)","value":60,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}}]}'
       DashboardName: construct-hub-backend-graphs
+  ConstructHubApplication64E14E14:
+    Type: AWS::ServiceCatalogAppRegistry::Application
+    Properties:
+      Name: ConstructHub
+  ConstructHubApplicationResourceAssociationcebc72c5fe8aD250F770:
+    Type: AWS::ServiceCatalogAppRegistry::ResourceAssociation
+    Properties:
+      Application:
+        Fn::GetAtt:
+          - ConstructHubApplication64E14E14
+          - Id
+      Resource:
+        Ref: AWS::StackId
+      ResourceType: CFN_STACK
   AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2:
     Type: AWS::IAM::Role
     Properties:
