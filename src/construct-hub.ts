@@ -418,7 +418,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       }
     }
 
-    if (props.appRegistryApplication) {
+    if (props.appRegistryApplication ?? true) {
       const application = new appreg.Application(this, 'Application', {
         applicationName: 'ConstructHub',
       });
