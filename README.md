@@ -460,6 +460,11 @@ features. These can be customized through the `featureFlags` property - for
 more information about the available flags, check the documentation for
 <https://github.com/cdklabs/construct-hub-webapp/>.
 
+#### AppRegistry
+
+By default, an AppRegistry application will be created that is associated
+with the stack you put the `ConstructHub` construct in.
+
 ## :raised_hand: Contributing
 
 If you are looking to contribute to this project, but don't know where to start,

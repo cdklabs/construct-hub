@@ -498,6 +498,7 @@ const constructHubProps: ConstructHubProps = { ... }
 | <code><a href="#construct-hub.ConstructHubProps.property.additionalDomains">additionalDomains</a></code> | <code><a href="#construct-hub.DomainRedirectSource">DomainRedirectSource</a>[]</code> | Additional domains which will be set up to redirect to the primary construct hub domain. |
 | <code><a href="#construct-hub.ConstructHubProps.property.alarmActions">alarmActions</a></code> | <code><a href="#construct-hub.AlarmActions">AlarmActions</a></code> | Actions to perform when alarms are set. |
 | <code><a href="#construct-hub.ConstructHubProps.property.allowedLicenses">allowedLicenses</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a>[]</code> | The allowed licenses for packages indexed by this instance of ConstructHub. |
+| <code><a href="#construct-hub.ConstructHubProps.property.appRegistryApplication">appRegistryApplication</a></code> | <code>boolean</code> | Create an AppRegistry application associated with the stack containing this construct. |
 | <code><a href="#construct-hub.ConstructHubProps.property.backendDashboardName">backendDashboardName</a></code> | <code>string</code> | The name of the CloudWatch dashboard that represents the health of backend systems. |
 | <code><a href="#construct-hub.ConstructHubProps.property.categories">categories</a></code> | <code><a href="#construct-hub.Category">Category</a>[]</code> | Browse categories. |
 | <code><a href="#construct-hub.ConstructHubProps.property.codeArtifactDomain">codeArtifactDomain</a></code> | <code><a href="#construct-hub.CodeArtifactDomainProps">CodeArtifactDomainProps</a></code> | When using a CodeArtifact package source, it is often desirable to have ConstructHub provision it's internal CodeArtifact repository in the same CodeArtifact domain, and to configure the package source repository as an upstream of the internal repository. |
@@ -554,6 +555,19 @@ public readonly allowedLicenses: SpdxLicense[];
 - *Default:* [...SpdxLicense.apache(),...SpdxLicense.bsd(),...SpdxLicense.cddl(),...SpdxLicense.epl(),SpdxLicense.ISC,...SpdxLicense.mit(),SpdxLicense.MPL_2_0]
 
 The allowed licenses for packages indexed by this instance of ConstructHub.
+
+---
+
+##### `appRegistryApplication`<sup>Optional</sup> <a name="appRegistryApplication" id="construct-hub.ConstructHubProps.property.appRegistryApplication"></a>
+
+```typescript
+public readonly appRegistryApplication: boolean;
+```
+
+- *Type:* boolean
+- *Default:* true
+
+Create an AppRegistry application associated with the stack containing this construct.
 
 ---
 
@@ -769,6 +783,7 @@ public readonly preloadScript: PreloadFile;
 ```
 
 - *Type:* <a href="#construct-hub.PreloadFile">PreloadFile</a>
+- *Default:* create an empty file
 
 Javascript to run on webapp before app loads.
 

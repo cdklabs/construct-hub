@@ -4,6 +4,7 @@ import { AnyPrincipal, Effect, PolicyStatement } from '@aws-cdk/aws-iam';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import * as s3 from '@aws-cdk/aws-s3';
 import { BlockPublicAccess } from '@aws-cdk/aws-s3';
+import * as appreg from '@aws-cdk/aws-servicecatalogappregistry';
 import * as sqs from '@aws-cdk/aws-sqs';
 import { Construct as CoreConstruct, Duration, Stack, Tags } from '@aws-cdk/core';
 import { Construct } from 'constructs';
@@ -190,8 +191,18 @@ export interface ConstructHubProps {
 
   /**
    * Javascript to run on webapp before app loads
+   *
+   * @default - create an empty file
    */
   readonly preloadScript?: PreloadFile;
+
+  /**
+   * Create an AppRegistry application associated with the stack containing
+   * this construct.
+   *
+   * @default true
+   */
+  readonly appRegistryApplication?: boolean;
 }
 
 /**
@@ -405,6 +416,13 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       if (props.additionalDomains && props.additionalDomains.length > 0) {
         throw new Error('Cannot specify "domainRedirects" if a domain is not specified');
       }
+    }
+
+    if (props.appRegistryApplication) {
+      const application = new appreg.Application(this, 'Application', {
+        applicationName: 'ConstructHub',
+      });
+      application.associateStack(Stack.of(this));
     }
   }
 
