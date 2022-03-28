@@ -7,6 +7,10 @@
           {
             "Key": "aws-cdk:auto-delete-objects",
             "Value": "true"
+          },
+          {
+            "Key": "aws-cdk:cr-owned:1bf84d9e",
+            "Value": "true"
           }
         ]
       },
@@ -124,7 +128,7 @@
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": "1f7e277bd526ebce1983fa1e7a84a5281ec533d9187caaebb773681bbf7bf4c1.zip"
+          "S3Key": "15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538.zip"
         },
         "Timeout": 900,
         "MemorySize": 128,
@@ -153,7 +157,9 @@
         "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092"
       ],
       "Metadata": {
-        "aws:cdk:path": "TestDenyList/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler"
+        "aws:cdk:path": "TestDenyList/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler",
+        "aws:asset:path": "asset.15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538",
+        "aws:asset:property": "Code"
       }
     },
     "MockDataAwsCliLayerE631E742": {
@@ -163,13 +169,14 @@
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": "e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68.zip"
+          "S3Key": "d78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27.zip"
         },
         "Description": "/opt/awscli/aws"
       },
       "Metadata": {
         "aws:cdk:path": "TestDenyList/MockData/AwsCliLayer/Resource",
-        "aws:asset:path": "asset.e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68.zip",
+        "aws:asset:path": "asset.d78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27.zip",
+        "aws:asset:is-bundled": false,
         "aws:asset:property": "Content"
       }
     },
@@ -368,7 +375,7 @@
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": "a3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8.zip"
+          "S3Key": "f98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711da.zip"
         },
         "Role": {
           "Fn::GetAtt": [
@@ -391,7 +398,8 @@
       ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource",
-        "aws:asset:path": "asset.a3058ccb468d757ebb89df5363a1c20f5307c6911136f29d00e1a68c9b2aa7e8",
+        "aws:asset:path": "asset.f98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711da",
+        "aws:asset:is-bundled": false,
         "aws:asset:property": "Code"
       }
     },
@@ -688,56 +696,6 @@
         "aws:cdk:path": "TestDenyList/Monitoring/HighSeverityDashboard/Resource"
       }
     },
-    "DenyListBucketNotificationsEF0449EB": {
-      "Type": "Custom::S3BucketNotifications",
-      "Properties": {
-        "ServiceToken": {
-          "Fn::GetAtt": [
-            "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691",
-            "Arn"
-          ]
-        },
-        "BucketName": {
-          "Ref": "DenyListBucketC1C9D3D9"
-        },
-        "NotificationConfiguration": {
-          "LambdaFunctionConfigurations": [
-            {
-              "Events": [
-                "s3:ObjectCreated:*"
-              ],
-              "Filter": {
-                "Key": {
-                  "FilterRules": [
-                    {
-                      "Name": "suffix",
-                      "Value": "deny-list.json"
-                    },
-                    {
-                      "Name": "prefix",
-                      "Value": "deny-list.json"
-                    }
-                  ]
-                }
-              },
-              "LambdaFunctionArn": {
-                "Fn::GetAtt": [
-                  "DenyListPrunePruneHandler5F946B07",
-                  "Arn"
-                ]
-              }
-            }
-          ]
-        },
-        "Managed": true
-      },
-      "DependsOn": [
-        "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7"
-      ],
-      "Metadata": {
-        "aws:cdk:path": "TestDenyList/DenyList/Bucket/Notifications/Resource"
-      }
-    },
     "DenyListBucketC1C9D3D9": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
@@ -759,6 +717,10 @@
         "Tags": [
           {
             "Key": "aws-cdk:auto-delete-objects",
+            "Value": "true"
+          },
+          {
+            "Key": "aws-cdk:cr-owned:7abd3c79",
             "Value": "true"
           }
         ],
@@ -880,6 +842,56 @@
       "DeletionPolicy": "Delete",
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/Bucket/AutoDeleteObjectsCustomResource/Default"
+      }
+    },
+    "DenyListBucketNotificationsEF0449EB": {
+      "Type": "Custom::S3BucketNotifications",
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691",
+            "Arn"
+          ]
+        },
+        "BucketName": {
+          "Ref": "DenyListBucketC1C9D3D9"
+        },
+        "NotificationConfiguration": {
+          "LambdaFunctionConfigurations": [
+            {
+              "Events": [
+                "s3:ObjectCreated:*"
+              ],
+              "Filter": {
+                "Key": {
+                  "FilterRules": [
+                    {
+                      "Name": "suffix",
+                      "Value": "deny-list.json"
+                    },
+                    {
+                      "Name": "prefix",
+                      "Value": "deny-list.json"
+                    }
+                  ]
+                }
+              },
+              "LambdaFunctionArn": {
+                "Fn::GetAtt": [
+                  "DenyListPrunePruneHandler5F946B07",
+                  "Arn"
+                ]
+              }
+            }
+          ]
+        },
+        "Managed": true
+      },
+      "DependsOn": [
+        "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/DenyList/Bucket/Notifications/Resource"
       }
     },
     "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7": {
@@ -1062,13 +1074,14 @@
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": "e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68.zip"
+          "S3Key": "d78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27.zip"
         },
         "Description": "/opt/awscli/aws"
       },
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/BucketDeployment/AwsCliLayer/Resource",
-        "aws:asset:path": "asset.e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68.zip",
+        "aws:asset:path": "asset.d78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27.zip",
+        "aws:asset:is-bundled": false,
         "aws:asset:property": "Content"
       }
     },
@@ -1231,12 +1244,28 @@
             {
               "Action": "lambda:InvokeFunction",
               "Effect": "Allow",
-              "Resource": {
-                "Fn::GetAtt": [
-                  "CatalogBuilderMock263D4D67",
-                  "Arn"
-                ]
-              }
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "CatalogBuilderMock263D4D67",
+                    "Arn"
+                  ]
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "CatalogBuilderMock263D4D67",
+                          "Arn"
+                        ]
+                      },
+                      ":*"
+                    ]
+                  ]
+                }
+              ]
             }
           ],
           "Version": "2012-10-17"
@@ -1300,6 +1329,7 @@
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneHandler/Resource",
         "aws:asset:path": "asset.f619f24346a72f8faee2f35ae0ef65513506df1c91bf6ffb8e5ccd6e952df7ad.bundle",
+        "aws:asset:is-bundled": false,
         "aws:asset:property": "Code"
       }
     },
@@ -1424,6 +1454,7 @@
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneQueueHandler/Resource",
         "aws:asset:path": "asset.131923f414bf62ed2624c8877698a9b4a926cbf71e6096a20d7071ef39b8442d.bundle",
+        "aws:asset:is-bundled": false,
         "aws:asset:property": "Code"
       }
     },
@@ -1629,6 +1660,7 @@
       "Metadata": {
         "aws:cdk:path": "TestDenyList/CatalogBuilderMock/Resource",
         "aws:asset:path": "asset.dcb0208ae8cffcba95b58eb208117d2d29cc2e6f2561230aadf9bbbfd7298823.bundle",
+        "aws:asset:is-bundled": false,
         "aws:asset:property": "Code"
       }
     },
@@ -1753,6 +1785,7 @@
       "Metadata": {
         "aws:cdk:path": "TestDenyList/ClientTest/Resource",
         "aws:asset:path": "asset.ebe28b0d6dd3bf9e8a58e01cf772f2d69fb859cb47b4c84dcda11bde2f11bf42.bundle",
+        "aws:asset:is-bundled": false,
         "aws:asset:property": "Code"
       }
     },
@@ -1766,7 +1799,7 @@
           ]
         },
         "HandlerArn": {
-          "Ref": "ClientTestCurrentVersionAB7E7F65271b541ed7ed5b474acf87b47ae914e5"
+          "Ref": "ClientTestCurrentVersionAB7E7F6519ec58c5d858c4ade95c9ee60248c955"
         }
       },
       "DependsOn": [
@@ -1797,7 +1830,7 @@
         "aws:cdk:path": "TestDenyList/ClientTest/Trigger/Resource/Default"
       }
     },
-    "ClientTestCurrentVersionAB7E7F65271b541ed7ed5b474acf87b47ae914e5": {
+    "ClientTestCurrentVersionAB7E7F6519ec58c5d858c4ade95c9ee60248c955": {
       "Type": "AWS::Lambda::Version",
       "Properties": {
         "FunctionName": {
@@ -1859,7 +1892,7 @@
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": "a442e7f999fb578af28cce5aee09eec7238adf13be26c8d94656e5417c2f6e34.zip"
+          "S3Key": "ca530133551e24ed5b697763cd2423c8ed2b0ec9b98ce029dcf09cea69c4af9c.zip"
         },
         "Timeout": 900,
         "MemorySize": 128,
@@ -1876,7 +1909,9 @@
         "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A"
       ],
       "Metadata": {
-        "aws:cdk:path": "TestDenyList/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider/Handler"
+        "aws:cdk:path": "TestDenyList/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider/Handler",
+        "aws:asset:path": "asset.ca530133551e24ed5b697763cd2423c8ed2b0ec9b98ce029dcf09cea69c4af9c",
+        "aws:asset:property": "Code"
       }
     },
     "PruneTestServiceRole91D2E3A2": {
@@ -1998,6 +2033,7 @@
       "Metadata": {
         "aws:cdk:path": "TestDenyList/PruneTest/Resource",
         "aws:asset:path": "asset.62c1221a70dd458cd2199aad2c2de7161a0080a9a51ea2bbcf6e642bb4120d10.bundle",
+        "aws:asset:is-bundled": false,
         "aws:asset:property": "Code"
       }
     },
@@ -2011,7 +2047,7 @@
           ]
         },
         "HandlerArn": {
-          "Ref": "PruneTestCurrentVersion332993F8c9a51c5b55c971b1d1ec4d6886d994cf"
+          "Ref": "PruneTestCurrentVersion332993F844791299f8dae3aedc5b3173b4461c11"
         }
       },
       "DependsOn": [
@@ -2042,7 +2078,7 @@
         "aws:cdk:path": "TestDenyList/PruneTest/Trigger/Resource/Default"
       }
     },
-    "PruneTestCurrentVersion332993F8c9a51c5b55c971b1d1ec4d6886d994cf": {
+    "PruneTestCurrentVersion332993F844791299f8dae3aedc5b3173b4461c11": {
       "Type": "AWS::Lambda::Version",
       "Properties": {
         "FunctionName": {
@@ -2095,7 +2131,7 @@
     "BootstrapVersion": {
       "Type": "AWS::SSM::Parameter::Value<String>",
       "Default": "/cdk-bootstrap/hnb659fds/version",
-      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store."
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
     }
   },
   "Rules": {

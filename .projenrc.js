@@ -276,6 +276,7 @@ function addDevApp() {
         '@aws-cdk/aws-ecs-patterns:removeDefaultDesiredCount': true,
         '@aws-cdk/aws-rds:lowercaseDbIdentifier': true,
         '@aws-cdk/aws-efs:defaultEncryptionAtRest': true,
+        '@aws-cdk/aws-iam:minimizePolicies': true,
       },
     },
   });
