@@ -91,7 +91,7 @@
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-us-east-1"
           },
-          "S3Key": "7af6295e521fd55af94332393ceffb3e866aac4dc4956321f7918f21e72199e4.zip"
+          "S3Key": "eaa023ef906da86aea06311db5d373bc377ad8eb87d4047a16b4116bc848d3d0.zip"
         },
         "Role": {
           "Fn::GetAtt": [
@@ -109,7 +109,8 @@
       ],
       "Metadata": {
         "aws:cdk:path": "DomainRedirectIntegrationTest/MyDomainRedirect/Certificate/CertificateRequestorFunction/Resource",
-        "aws:asset:path": "asset.7af6295e521fd55af94332393ceffb3e866aac4dc4956321f7918f21e72199e4",
+        "aws:asset:path": "asset.eaa023ef906da86aea06311db5d373bc377ad8eb87d4047a16b4116bc848d3d0",
+        "aws:asset:is-bundled": false,
         "aws:asset:property": "Code"
       }
     },
@@ -278,7 +279,7 @@
     "BootstrapVersion": {
       "Type": "AWS::SSM::Parameter::Value<String>",
       "Default": "/cdk-bootstrap/hnb659fds/version",
-      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store."
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
     }
   },
   "Rules": {
