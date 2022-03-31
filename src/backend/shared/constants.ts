@@ -37,19 +37,14 @@ export const DOCS_KEY_SUFFIX_TYPESCRIPT = docsKeySuffix(DocumentationLanguage.TY
 export const DOCS_KEY_SUFFIX_PYTHON = docsKeySuffix(DocumentationLanguage.PYTHON);
 
 /**
- * The key suffix for a Java doc artifact (root module).
+ * The key suffix for a Python doc artifact (root module).
  */
 export const DOCS_KEY_SUFFIX_JAVA = docsKeySuffix(DocumentationLanguage.JAVA);
 
 /**
- * The key suffix for a Dotnet doc artifact (root module).
+ * The key suffix for a Python doc artifact (root module).
  */
 export const DOCS_KEY_SUFFIX_CSHARP = docsKeySuffix(DocumentationLanguage.CSHARP);
-
-/**
- * The key suffix for a Go doc artifact (root module).
- */
-export const DOCS_KEY_SUFFIX_GO = docsKeySuffix(DocumentationLanguage.GO);
 
 /**
  * The key suffix matching any documentation artifact.
