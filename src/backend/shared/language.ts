@@ -23,11 +23,6 @@ export class DocumentationLanguage {
   public static readonly CSHARP = new DocumentationLanguage('csharp', 'dotnet');
 
   /**
-   * Go.
-   */
-  public static readonly GO = new DocumentationLanguage('go');
-
-  /**
    * All supported languages.
    */
   public static readonly ALL = [
@@ -35,7 +30,6 @@ export class DocumentationLanguage {
     DocumentationLanguage.PYTHON,
     DocumentationLanguage.JAVA,
     DocumentationLanguage.CSHARP,
-    DocumentationLanguage.GO,
   ] as const;
 
   /**
@@ -54,8 +48,6 @@ export class DocumentationLanguage {
       case DocumentationLanguage.CSHARP.toString():
       case DocumentationLanguage.CSHARP.targetName:
         return DocumentationLanguage.CSHARP;
-      case DocumentationLanguage.GO.toString():
-        return DocumentationLanguage.GO;
       default:
         throw new UnsupportedLanguageError(lang, DocumentationLanguage.ALL);
     }
