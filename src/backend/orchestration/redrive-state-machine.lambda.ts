@@ -15,10 +15,13 @@ export async function handler(event: unknown, context: Context): Promise<void> {
     const input = JSON.parse(message.Body!);
     console.log(`Redriving message ${JSON.stringify(input, null, 2)}`);
 
+    // Strip the docgen field before redriving as this contains error messages that
+    // be too long for ECS inputs.
+    const { docGen, ...formatted } = input;
     const { executionArn } = await sfn.startExecution({
       stateMachineArn: stateMachineArn,
       input: JSON.stringify({
-        ...input,
+        ...formatted,
         // Remove the _error information
         _error: undefined,
         // Add the redrive information
