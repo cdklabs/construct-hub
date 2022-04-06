@@ -1,5 +1,5 @@
 import * as console from 'console';
-import { gzipSync, gunzipSync } from 'zlib';
+import { gunzipSync } from 'zlib';
 
 import { metricScope, Configuration, MetricsLogger, Unit } from 'aws-embedded-metrics';
 import type { Context, ScheduledEvent } from 'aws-lambda';
@@ -229,25 +229,21 @@ async function saveLastTransactionMarker(context: Context, stagingBucket: string
     context,
     stagingBucket,
     MARKER_FILE_NAME,
-    gzipSync(
-      JSON.stringify(
-        { marker, knownVersions },
-        (_, value) => {
-          if (value instanceof Date) {
-            return value.toISOString();
-          } else if (value instanceof Map) {
-            return Object.fromEntries(value);
-          } else {
-            return value;
-          }
-        },
-        2,
-      ),
-      { level: 9 },
+    JSON.stringify(
+      { marker, knownVersions },
+      (_, value) => {
+        if (value instanceof Date) {
+          return value.toISOString();
+        } else if (value instanceof Map) {
+          return Object.fromEntries(value);
+        } else {
+          return value;
+        }
+      },
+      2,
     ),
     {
       ContentType: 'application/json',
-      ContentEncoding: 'gzip',
     },
   );
 }
