@@ -129,6 +129,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
               version: infos.version,
             };
             // "Fire-and-forget" invocation here.
+            console.log(`Sending ${invokeArgs.tarballUrl} for staging`);
             await aws.lambda().invokeAsync({
               FunctionName: stagingFunction,
               InvokeArgs: JSON.stringify(invokeArgs, null, 2),
