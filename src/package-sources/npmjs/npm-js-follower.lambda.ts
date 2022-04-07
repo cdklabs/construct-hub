@@ -70,6 +70,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
   do {
     await metricScope((metrics) => async () => {
+      console.log('Polling changes from npm replica');
       const changes = await npm.changes(updatedMarker);
 
       // Clear automatically set dimensions - we don't need them (see https://github.com/awslabs/aws-embedded-metrics-node/issues/73)
@@ -139,6 +140,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
         // Updating the S3 stored marker with the new seq id as communicated by nano.
         await saveLastTransactionMarker(context, stagingBucket, updatedMarker, knownVersions);
+        console.log('Successfully updated marker');
 
       } finally {
         // Markers may not always be numeric (but in practice they are now), so we protect against that...
