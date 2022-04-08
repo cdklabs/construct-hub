@@ -85,7 +85,7 @@ const project = new cdk.JsiiProject({
     'yaml',
     'normalize-registry-metadata',
   ],
-
+  // exclude all the lambda assets from JSII compilation
   peerDeps: peerDeps,
 
   minNodeVersion: '14.17.0',
@@ -128,7 +128,11 @@ const project = new cdk.JsiiProject({
   testdir: 'src/__tests__',
 
   // Exclude handler images from TypeScript compier path
-  excludeTypescript: ['resources/**'],
+  excludeTypescript: [
+    'resources/**',
+    '**/*.lambda.ts',
+    '**/*.lambda-shared.ts',
+  ],
   autoApproveOptions: {
     allowedUsernames: ['cdklabs-automation'],
     secret: 'GITHUB_TOKEN',
