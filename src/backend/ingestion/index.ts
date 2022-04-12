@@ -14,6 +14,7 @@ import { Construct, Duration, Stack, ArnFormat } from '@aws-cdk/core';
 import { Repository } from '../../codeartifact/repository';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
+import { OverviewDashboard } from '../../overview-dashboard';
 import { PackageTagConfig } from '../../package-tag';
 import { RUNBOOK_URL } from '../../runbook-url';
 import { S3StorageFactory } from '../../s3/storage';
@@ -48,6 +49,8 @@ export interface IngestionProps {
    * successfully registered.
    */
   readonly orchestration: Orchestration;
+
+  readonly onCallDashboard: OverviewDashboard;
 
   /**
    * How long to retain the CloudWatch logs.
@@ -230,6 +233,8 @@ export class Ingestion extends Construct implements IGrantable {
         treatMissingData: TreatMissingData.NOT_BREACHING,
       }),
     );
+
+    props.onCallDashboard.addDLQMetricToDashboard('Ingestion DLQ', this.deadLetterQueue);
     props.monitoring.addHighSeverityAlarm(
       'Ingestion failures',
       this.function.metricErrors().createAlarm(this, 'FailureAlarm', {
@@ -248,6 +253,8 @@ export class Ingestion extends Construct implements IGrantable {
         treatMissingData: TreatMissingData.NOT_BREACHING,
       }),
     );
+
+    props.onCallDashboard.addConcurrentExecutionMetricToOnCallDashboard(handler, 'IngestionLambda');
   }
 
   public metricFoundLicenseFile(opts?: MetricOptions): Metric {

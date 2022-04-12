@@ -6,6 +6,7 @@ import { IDenyList } from './backend/deny-list/api';
 import { ILicenseList } from './backend/license-list/api';
 import { IRepository } from './codeartifact/api';
 import { IMonitoring } from './monitoring/api';
+import { IOverviewDashboard } from './overview-dashboard/api';
 
 /**
  * A package source for ConstructHub.
@@ -55,6 +56,11 @@ export interface PackageSourceBindOptions {
    * The monitoring instance to use for registering alarms, etc.
    */
   readonly monitoring: IMonitoring;
+
+  /**
+   * The on-call dashboard to add widgets to.
+   */
+  readonly onCallDashboard: IOverviewDashboard;
 
   /**
    * The SQS queue to which messages should be sent. Sent objects should match

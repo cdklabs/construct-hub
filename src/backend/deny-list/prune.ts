@@ -4,6 +4,7 @@ import * as s3 from '@aws-cdk/aws-s3';
 import * as sqs from '@aws-cdk/aws-sqs';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
+import { OverviewDashboard } from '../../overview-dashboard';
 import { ENV_DELETE_OBJECT_DATA_BUCKET_NAME, ENV_PRUNE_ON_CHANGE_FUNCTION_NAME, ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME, ENV_PRUNE_PACKAGE_DATA_KEY_PREFIX, ENV_PRUNE_QUEUE_URL } from './constants';
 import { PruneHandler } from './prune-handler';
 import { PruneQueueHandler } from './prune-queue-handler';
@@ -26,6 +27,11 @@ export interface PruneProps {
    * The monitoring system.
    */
   readonly monitoring: Monitoring;
+
+  /**
+   * OnCall dasHboard
+    */
+  readonly onCallDashBoard: OverviewDashboard;
 }
 
 /**
@@ -85,6 +91,8 @@ export class Prune extends Construct {
 
     props.monitoring.watchful.watchLambdaFunction('Deny List - Prune Function', this.pruneHandler);
     props.monitoring.watchful.watchLambdaFunction('Deny List - Prune Delete Function', this.deleteHandler);
+    props.onCallDashBoard.addConcurrentExecutionMetricToOnCallDashboard(this.pruneHandler, 'PruneHandlerLambda');
+    props.onCallDashBoard.addConcurrentExecutionMetricToOnCallDashboard(this.deleteHandler, 'PruneQueueHandlerLambda');
   }
 
   /**

@@ -7,6 +7,7 @@ import { App, ConstructNode, Stack } from '@aws-cdk/core';
 import { DenyList, IDenyList } from '../../backend';
 import { ILicenseList } from '../../backend/license-list/api';
 import { Monitoring } from '../../monitoring';
+import { OverviewDashboard } from '../../overview-dashboard';
 import { CodeArtifact } from '../../package-sources/code-artifact';
 import { safeMock } from '../safe-mock';
 
@@ -26,6 +27,8 @@ test('default configuration', () => {
   const mockQueueGrantSendMessages = jest.fn().mockName('mockQueue.grantSendMessages');
   const mockMonitoringAddLowSeverityAlarm = jest.fn().mockName('mockMonitoring.addLowSeverityAlarm');
   const mockMonitoringAddHighSeverityAlarm = jest.fn().mockName('mockMonitoring.addHighSeverityAlarm');
+  const mockAddDLQMetricToOnCallDashboard = jest.fn().mockName('mockAddDLQMetricToOnCallDashboard');
+  const mockAddConcurrentExecutionMetricToOnCallDashboard = jest.fn().mockName('mockAddConcurrentExecutionMetricToOnCallDashboard');
 
   const mockDenyList = safeMock<DenyList>('mockDenyList', {
     grantRead: mockDenyListGrantRead,
@@ -40,6 +43,11 @@ test('default configuration', () => {
     addLowSeverityAlarm: mockMonitoringAddLowSeverityAlarm,
     addHighSeverityAlarm: mockMonitoringAddHighSeverityAlarm,
   });
+
+  const mockOnCallDashboard = safeMock<OverviewDashboard>('mockOnCallDashboard', {
+    addDLQMetricToDashboard: mockAddDLQMetricToOnCallDashboard,
+    addConcurrentExecutionMetricToOnCallDashboard: mockAddConcurrentExecutionMetricToOnCallDashboard,
+  });
   const mockQueue = safeMock<IQueue>('mockQueue', {
     grantSendMessages: mockQueueGrantSendMessages,
     queueUrl: 'https://fake-queue-url/phony',
@@ -53,6 +61,7 @@ test('default configuration', () => {
     licenseList: mockLicenseList,
     ingestion: mockIngestion,
     monitoring: mockMonitoring,
+    onCallDashboard: mockOnCallDashboard,
     queue: mockQueue,
   });
 
@@ -85,6 +94,9 @@ test('user-provided staging bucket', () => {
   const mockQueueGrantSendMessages = jest.fn().mockName('mockQueue.grantSendMessages');
   const mockMonitoringAddLowSeverityAlarm = jest.fn().mockName('mockMonitoring.addLowSeverityAlarm');
   const mockMonitoringAddHighSeverityAlarm = jest.fn().mockName('mockMonitoring.addHighSeverityAlarm');
+  const mockAddDLQMetricToOnCallDashboard = jest.fn().mockName('mockAddDLQMetricToOnCallDashboard');
+  const mockAddConcurrentExecutionMetricToOnCallDashboard = jest.fn().mockName('mockAddConcurrentExecutionMetricToOnCallDashboard');
+
 
   const mockBucket = safeMock<IBucket>('mockBucket', {
     bucketName: 'mock-bucket',
@@ -102,6 +114,13 @@ test('user-provided staging bucket', () => {
     addLowSeverityAlarm: mockMonitoringAddLowSeverityAlarm,
     addHighSeverityAlarm: mockMonitoringAddHighSeverityAlarm,
   });
+
+  const mockOnCallDashboard = safeMock<OverviewDashboard>('mockOnCallDashboard', {
+    addDLQMetricToDashboard: mockAddDLQMetricToOnCallDashboard,
+    addConcurrentExecutionMetricToOnCallDashboard: mockAddConcurrentExecutionMetricToOnCallDashboard,
+  });
+
+
   const mockQueue = safeMock<IQueue>('mockQueue', {
     grantSendMessages: mockQueueGrantSendMessages,
     queueUrl: 'https://fake-queue-url/phony',
@@ -115,6 +134,7 @@ test('user-provided staging bucket', () => {
     licenseList: mockLicenseList,
     ingestion: mockIngestion,
     monitoring: mockMonitoring,
+    onCallDashboard: mockOnCallDashboard,
     queue: mockQueue,
   });
 

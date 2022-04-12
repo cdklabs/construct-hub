@@ -12,6 +12,7 @@ import { CATALOG_KEY, VERSION_TRACKER_KEY } from '../backend/shared/constants';
 import { CacheStrategy } from '../caching';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
+import { OverviewDashboard } from '../overview-dashboard';
 import { PreloadFile } from '../preload-file';
 import { S3StorageFactory } from '../s3/storage';
 import { TempFile } from '../temp-file';
@@ -134,6 +135,11 @@ export interface WebAppProps extends WebappConfigProps {
   readonly monitoring: Monitoring;
 
   /**
+  * On-call dashboard.
+  */
+  readonly onCallDashboard: OverviewDashboard;
+
+  /**
    * The bucket containing package data.
    */
   readonly packageData: s3.Bucket;
@@ -192,6 +198,8 @@ export class WebApp extends Construct {
       })),
       minimumProtocolVersion: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2018,
     });
+
+    props.onCallDashboard.addDistributionMetricToDashboard(this.distribution);
 
     // The base URL is currently the custom DNS if any was used, or the distribution domain name.
     // This needs changing in case, for example, we add support for a custom URL prefix.

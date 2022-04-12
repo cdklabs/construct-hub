@@ -34,7 +34,17 @@ export class CodeArtifact implements IPackageSource {
   public constructor(private readonly props: CodeArtifactProps) {
   }
 
-  public bind(scope: Construct, { denyList, ingestion, licenseList, monitoring, queue }: PackageSourceBindOptions): PackageSourceBindResult {
+  public bind(
+    scope: Construct,
+    {
+      denyList,
+      ingestion,
+      licenseList,
+      monitoring,
+      onCallDashboard,
+      queue,
+    }: PackageSourceBindOptions,
+  ): PackageSourceBindResult {
     const idPrefix = this.props.repository.node.path;
     const repositoryId = `${this.props.repository.attrDomainOwner}:${this.props.repository.attrDomainName}/${this.props.repository.attrName}`;
 
@@ -137,6 +147,9 @@ export class CodeArtifact implements IPackageSource {
     monitoring.addLowSeverityAlarm(`CodeArtifact/${repositoryId} DLQ Not Empty`, dlqNotEmptyAlarm);
 
     rule.node.addDependency(failureAlarm, dlqNotEmptyAlarm);
+
+    onCallDashboard.addDLQMetricToDashboard(`CodeArtifact/${repositoryId} DLQ`, dlq);
+    onCallDashboard.addConcurrentExecutionMetricToOnCallDashboard(forwarder, `${idPrefix}/ForwarderLambda`);
 
     return {
       name: `CodeArtifact: ${repositoryId}`,

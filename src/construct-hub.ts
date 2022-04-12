@@ -22,6 +22,7 @@ import { VersionTracker } from './backend/version-tracker';
 import { Repository } from './codeartifact/repository';
 import { DomainRedirect, DomainRedirectSource } from './domain-redirect';
 import { Monitoring } from './monitoring';
+import { OverviewDashboard } from './overview-dashboard';
 import { IPackageSource } from './package-source';
 import { NpmJs } from './package-sources';
 import { PackageTag } from './package-tag';
@@ -246,6 +247,11 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       alarmActions: props.alarmActions,
     });
 
+    const onCallDashboard = new OverviewDashboard(this, 'OnCallDashboard', {
+      lambdaServiceAlarmThreshold: 70,
+      dashboardName: props.backendDashboardName ? `${props.backendDashboardName}-overview` : undefined,
+    });
+
     const packageData = storageFactory.newBucket(this, 'PackageData', {
       blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
       enforceSSL: true,
@@ -292,6 +298,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       packageDataBucket: packageData,
       packageDataKeyPrefix: STORAGE_KEY_PREFIX,
       monitoring: monitoring,
+      onCallDashboard: onCallDashboard,
     });
 
     // disable fetching package stats by default if a different package
@@ -323,6 +330,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       denyList,
       logRetention: props.logRetention,
       monitoring,
+      onCallDashboard,
       vpc,
       vpcEndpoints,
       vpcSubnets,
@@ -348,6 +356,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       packageLinks: props.packageLinks,
       packageTags: packageTagsSerialized,
       reprocessFrequency: props.reprocessFrequency,
+      onCallDashboard: onCallDashboard,
     });
 
     const licenseList = new LicenseList(this, 'LicenseList', {
@@ -374,6 +383,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       featureFlags: props.featureFlags,
       categories: props.categories,
       preloadScript: props.preloadScript,
+      onCallDashboard,
     });
 
     const sources = new CoreConstruct(this, 'Sources');
@@ -387,10 +397,11 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
           monitoring,
           queue: this.ingestion.queue,
           repository: codeArtifact,
+          onCallDashboard,
         }),
     );
 
-    const inventory = new Inventory(this, 'InventoryCanary', { bucket: packageData, logRetention: props.logRetention, monitoring });
+    const inventory = new Inventory(this, 'InventoryCanary', { bucket: packageData, logRetention: props.logRetention, monitoring, onCallDashboard });
 
     new BackendDashboard(this, 'BackendDashboard', {
       packageData,

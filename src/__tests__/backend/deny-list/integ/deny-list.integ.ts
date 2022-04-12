@@ -5,6 +5,7 @@ import { App, Duration, RemovalPolicy, Stack } from '@aws-cdk/core';
 import { DenyList } from '../../../../backend';
 import { STORAGE_KEY_PREFIX } from '../../../../backend/shared/constants';
 import { Monitoring } from '../../../../monitoring';
+import { OverviewDashboard } from '../../../../overview-dashboard';
 import { CatalogBuilderMock } from './catalog-builder-mock';
 import { TriggerClientTest } from './trigger.client-test';
 import { TriggerPruneTest } from './trigger.prune-test';
@@ -26,9 +27,11 @@ new BucketDeployment(stack, 'MockData', {
 });
 
 const monitoring = new Monitoring(stack, 'Monitoring');
+const onCallDashboard = new OverviewDashboard(stack, 'OnCallDashboard');
 
 const denylist = new DenyList(stack, 'DenyList', {
   monitoring: monitoring,
+  onCallDashboard,
   packageDataBucket: packageData,
   packageDataKeyPrefix: STORAGE_KEY_PREFIX,
   rules: [
