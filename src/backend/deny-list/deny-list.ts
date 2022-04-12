@@ -10,6 +10,7 @@ import * as s3 from '@aws-cdk/aws-s3';
 import * as s3deploy from '@aws-cdk/aws-s3-deployment';
 import { Construct, Duration, IConstruct, RemovalPolicy } from '@aws-cdk/core';
 import { Monitoring } from '../../monitoring';
+import { OverviewDashboard } from '../../overview-dashboard';
 import { S3StorageFactory } from '../../s3/storage';
 import { DenyListRule, IDenyList } from './api';
 import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY, MetricName, METRICS_NAMESPACE } from './constants';
@@ -58,6 +59,8 @@ export interface DenyListProps {
    * The monitoring system.
    */
   readonly monitoring: Monitoring;
+
+  readonly overviewDashboard: OverviewDashboard;
 }
 
 /**
@@ -114,6 +117,7 @@ export class DenyList extends Construct implements IDenyList {
       packageDataBucket: props.packageDataBucket,
       packageDataKeyPrefix: props.packageDataKeyPrefix,
       monitoring: props.monitoring,
+      overviewDashboard: props.overviewDashboard,
     });
 
     this.grantRead(this.prune.pruneHandler);

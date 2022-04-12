@@ -1809,6 +1809,69 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
+    "OverviewDashboardOverviewDashboardlambdaServiceQuotaAA204E67": Object {
+      "Properties": Object {
+        "AlarmDescription": "Lambda concurrent execution exceeded 70% of SERVICE_QUOTA
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
+Request a service quota increase for lambda functions",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 5,
+        "Metrics": Array [
+          Object {
+            "Expression": "mLambdaUsage / mLambdaQuota * 100",
+            "Id": "expr_1",
+            "Label": "Concurrent executions quota usage %",
+          },
+          Object {
+            "Id": "mLambdaUsage",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "ConcurrentExecutions",
+                "Namespace": "AWS/Lambda",
+              },
+              "Period": 300,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+          Object {
+            "Expression": "SERVICE_QUOTA(mLambdaUsage)",
+            "Id": "mLambdaQuota",
+            "ReturnData": false,
+          },
+        ],
+        "Threshold": 70,
+        "TreatMissingData": "missing",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "OverviewDashboardOverviewdashboard17E450B5": Object {
+      "Properties": Object {
+        "DashboardBody": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "{\\"widgets\\":[{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":8,\\"x\\":0,\\"y\\":0,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Lambda concurrent execution quota\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"metrics\\":[[{\\"label\\":\\"Concurrent executions quota usage %\\",\\"expression\\":\\"mLambdaUsage / mLambdaQuota * 100\\",\\"yAxis\\":\\"right\\"}],[\\"AWS/Lambda\\",\\"ConcurrentExecutions\\",{\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mLambdaUsage\\"}],[{\\"expression\\":\\"SERVICE_QUOTA(mLambdaUsage)\\",\\"visible\\":false,\\"id\\":\\"mLambdaQuota\\"}],[{\\"label\\":\\"PruneHandlerLambda quota usage %\\",\\"expression\\":\\"m1 / mLambdaQuota * 100\\",\\"yAxis\\":\\"right\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "DenyListPrunePruneHandler5F946B07",
+              },
+              "\\",{\\"label\\":\\"PruneHandlerLambda\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"m1\\"}],[{\\"expression\\":\\"SERVICE_QUOTA(mLambdaUsage)\\",\\"visible\\":false,\\"id\\":\\"lambdaQuotaLimit\\"}],[{\\"label\\":\\"PruneQueueHandlerLambda quota usage %\\",\\"expression\\":\\"m2 / mLambdaQuota * 100\\",\\"yAxis\\":\\"right\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
+              Object {
+                "Ref": "DenyListPrunePruneQueueHandler087D6B50",
+              },
+              "\\",{\\"label\\":\\"PruneQueueHandlerLambda\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"m2\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"value\\":70,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"right\\":{\\"label\\":\\"Quota Percent\\",\\"min\\":0,\\"max\\":100}}}}]}",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::CloudWatch::Dashboard",
+    },
     "PackageDataBucket1F18522B": Object {
       "DeletionPolicy": "Retain",
       "Type": "AWS::S3::Bucket",

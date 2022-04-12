@@ -7,6 +7,7 @@ import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
+import { OverviewDashboard } from '../../overview-dashboard';
 import { RUNBOOK_URL } from '../../runbook-url';
 import { MISSING_DOCUMENTATION_REPORT_PATTERN, UNINSTALLABLE_PACKAGES_REPORT, CORRUPT_ASSEMBLY_REPORT_PATTERN } from '../shared/constants';
 import { DocumentationLanguage } from '../shared/language';
@@ -23,6 +24,11 @@ export interface InventoryProps {
    * The `Monitoring` instance to use for reporting this canary's health.
    */
   readonly monitoring: Monitoring;
+
+  /**
+   * The overview dashboard to add widgets to.
+   */
+  readonly overviewDashboard: OverviewDashboard;
 
   /**
    * How long should canary logs be retained?
@@ -106,6 +112,8 @@ export class Inventory extends Construct {
         threshold: 1,
       }),
     );
+    props.overviewDashboard.addConcurrentExecutionMetricToDashboard(this.canary, 'CanaryResourceLambda');
+    props.overviewDashboard.addInventoryMetrics(this);
   }
 
   public get function(): IFunction {

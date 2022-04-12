@@ -359,6 +359,137 @@ Resources:
           ReturnData: true
       Threshold: 4
       TreatMissingData: breaching
+  ConstructHubOverviewDashboardOverviewdashboardF4B7B78C:
+    Type: AWS::CloudWatch::Dashboard
+    Properties:
+      DashboardBody:
+        Fn::Join:
+          - ""
+          - - '{"widgets":[{"type":"metric","width":12,"height":8,"x":0,"y":0,"properties":{"view":"timeSeries","title":"Lambda
+              concurrent execution quota","region":"'
+            - Ref: AWS::Region
+            - '","metrics":[[{"label":"Concurrent executions quota usage
+              %","expression":"mLambdaUsage / mLambdaQuota *
+              100","yAxis":"right"}],["AWS/Lambda","ConcurrentExecutions",{"stat":"Maximum","visible":false,"id":"mLambdaUsage"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"mLambdaQuota"}],[{"label":"PruneHandlerLambda
+              quota usage %","expression":"m1 / mLambdaQuota *
+              100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","'
+            - Ref: ConstructHubDenyListPrunePruneHandler30B33551
+            - '",{"label":"PruneHandlerLambda","stat":"Maximum","visible":false,"id":"m1"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"lambdaQuotaLimit"}],[{"label":"PruneQueueHandlerLambda
+              quota usage %","expression":"m2 / mLambdaQuota *
+              100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","'
+            - Ref: ConstructHubDenyListPrunePruneQueueHandlerF7EB599B
+            - '",{"label":"PruneQueueHandlerLambda","stat":"Maximum","visible":false,"id":"m2"}],[{"label":"CatalogBuilderLambda
+              quota usage %","expression":"m3 / mLambdaQuota *
+              100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","'
+            - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
+            - '",{"label":"CatalogBuilderLambda","stat":"Maximum","visible":false,"id":"m3"}],[{"label":"NeedsCatalogUpdateLambda
+              quota usage %","expression":"m4 / mLambdaQuota *
+              100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","'
+            - Ref: ConstructHubOrchestrationNeedsCatalogUpdate5D7370DC
+            - '",{"label":"NeedsCatalogUpdateLambda","stat":"Maximum","visible":false,"id":"m4"}],[{"label":"IngestionLambda
+              quota usage %","expression":"m5 / mLambdaQuota *
+              100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","'
+            - Ref: ConstructHubIngestion407909CE
+            - '",{"label":"IngestionLambda","stat":"Maximum","visible":false,"id":"m5"}],[{"label":"NpmJsLambda
+              quota usage %","expression":"m6 / mLambdaQuota *
+              100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","'
+            - Ref: ConstructHubSourcesNpmJs15A77D2D
+            - '",{"label":"NpmJsLambda","stat":"Maximum","visible":false,"id":"m6"}],[{"label":"NpmJs-StageAndNotifyLambda
+              quota usage %","expression":"m7 / mLambdaQuota *
+              100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","'
+            - Ref: ConstructHubSourcesNpmJsStageAndNotify591C0CFA
+            - '",{"label":"NpmJs-StageAndNotifyLambda","stat":"Maximum","visible":false,"id":"m7"}],[{"label":"CanaryResourceLambda
+              quota usage %","expression":"m8 / mLambdaQuota *
+              100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","'
+            - Ref: ConstructHubInventoryCanary63D899BC
+            - '",{"label":"CanaryResourceLambda","stat":"Maximum","visible":false,"id":"m8"}]],"annotations":{"horizontal":[{"value":70,"yAxis":"right"}]},"yAxis":{"right":{"label":"Quota
+              Percent","min":0,"max":100}}}},{"type":"custom","width":12,"height":8,"x":0,"y":8,"properties":{"endpoint":"'
+            - Fn::GetAtt:
+                - SQSDLQStatsWidgetHandlerfc176846044f5e56baf2c71723501885366DDBD5
+                - Arn
+            - '","params":{"description":"","title":"SQS
+              DLQ","emptyQueueMessage":"There are no messages in the DLQs. This
+              is normal and no action is
+              required.","nonEmptyQueueMessage":"There are some message in the
+              DLQ. The table below lists the queues with non-empty DLQs. Please
+              check the DLQs and re-drive the messages. Once the messages are
+              re-driven, check the queue again as the metrics takes time to
+              updated.","queues":{"'
+            - Fn::GetAtt:
+                - ConstructHubOrchestrationDLQ9C6D9BD4
+                - QueueName
+            - '":{"name":"Orchestration DLQ","queueName":"'
+            - Fn::GetAtt:
+                - ConstructHubOrchestrationDLQ9C6D9BD4
+                - QueueName
+            - '","reDriveFunctionArn":"'
+            - Fn::GetAtt:
+                - ConstructHubOrchestrationRedrive8DDBA67E
+                - Arn
+            - '"},"'
+            - Fn::GetAtt:
+                - ConstructHubIngestionDLQ3E96A5F2
+                - QueueName
+            - '":{"name":"Ingestion DLQ","queueName":"'
+            - Fn::GetAtt:
+                - ConstructHubIngestionDLQ3E96A5F2
+                - QueueName
+            - '"},"'
+            - Fn::GetAtt:
+                - ConstructHubSourcesStagerDLQ80BD2600
+                - QueueName
+            - '":{"name":"NPM JS Stager DLQ","queueName":"'
+            - Fn::GetAtt:
+                - ConstructHubSourcesStagerDLQ80BD2600
+                - QueueName
+            - '"}}},"title":"SQS
+              DLQ","updateOn":{"refresh":true,"resize":false,"timeRange":false}}},{"type":"metric","width":12,"height":8,"x":0,"y":16,"properties":{"view":"timeSeries","title":"CloudFront
+              Metrics","region":"'
+            - Ref: AWS::Region
+            - '","metrics":[["AWS/CloudFront","Requests","DistributionId","'
+            - Ref: ConstructHubWebAppDistribution1F181DC9
+            - '","Region","Global",{"region":"us-east-1"}],["AWS/CloudFront","4xxErrorRate","DistributionId","'
+            - Ref: ConstructHubWebAppDistribution1F181DC9
+            - '","Region","Global",{"region":"us-east-1","yAxis":"right"}],["AWS/CloudFront","5xxErrorRate","DistributionId","'
+            - Ref: ConstructHubWebAppDistribution1F181DC9
+            - '","Region","Global",{"region":"us-east-1","yAxis":"right"}]],"yAxis":{"left":{"label":"Requests
+              count"},"right":{"label":"Request
+              Percent","min":0,"max":100}}}},{"type":"metric","width":12,"height":8,"x":0,"y":24,"properties":{"view":"timeSeries","title":"Construct
+              Hub Inventory","region":"'
+            - Ref: AWS::Region
+            - '","metrics":[["ConstructHub/Inventory","PackageCount",{"period":900,"stat":"Maximum"}],["ConstructHub/Inventory","PackageMajorVersionCount",{"period":900,"stat":"Maximum"}]],"yAxis":{"left":{"label":"Package
+              count"}}}}]}'
+      DashboardName: construct-hub-backend-overview
+  ConstructHubOverviewDashboardOverviewDashboardlambdaServiceQuota29721FC0:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanThreshold
+      EvaluationPeriods: 5
+      AlarmDescription: >-
+        Lambda concurrent execution exceeded 70% of SERVICE_QUOTA
+
+
+        RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
+
+        Request a service quota increase for lambda functions
+      Metrics:
+        - Expression: mLambdaUsage / mLambdaQuota * 100
+          Id: expr_1
+          Label: Concurrent executions quota usage %
+        - Id: mLambdaUsage
+          MetricStat:
+            Metric:
+              MetricName: ConcurrentExecutions
+              Namespace: AWS/Lambda
+            Period: 300
+            Stat: Maximum
+          ReturnData: false
+        - Expression: SERVICE_QUOTA(mLambdaUsage)
+          Id: mLambdaQuota
+          ReturnData: false
+      Threshold: 70
+      TreatMissingData: missing
   ConstructHubPackageDataDC5EF35E:
     Type: AWS::S3::Bucket
     Properties:
@@ -3810,7 +3941,7 @@ Resources:
                 - Ref: AWS::Region
                 - .
                 - Ref: AWS::URLSuffix
-                - /aws-cdk/assets:c68796fc985ae8e7a52b4188592bda0ae232160f87300f2069132082c484ea65
+                - /aws-cdk/assets:d1ebb1b1342b0576245256140a68149639ae54757b8ab2d2bab00c1b6275dc80
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -5629,7 +5760,7 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParameters1cada380e08ddfd7c59dc3b3381a72e6c989bcc9ac798ce62878dcbd5203f1f3S3BucketCC7585BE
+        - Ref: AssetParameters3291be6767d37fffafc188da9b85e5084da3e5ce0565205d3b36ce549726bf14S3Bucket7E63E7A3
       SourceObjectKeys:
         - Fn::Join:
             - ""
@@ -5637,12 +5768,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters1cada380e08ddfd7c59dc3b3381a72e6c989bcc9ac798ce62878dcbd5203f1f3S3VersionKey19B01B68
+                      - Ref: AssetParameters3291be6767d37fffafc188da9b85e5084da3e5ce0565205d3b36ce549726bf14S3VersionKey2784B079
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters1cada380e08ddfd7c59dc3b3381a72e6c989bcc9ac798ce62878dcbd5203f1f3S3VersionKey19B01B68
+                      - Ref: AssetParameters3291be6767d37fffafc188da9b85e5084da3e5ce0565205d3b36ce549726bf14S3VersionKey2784B079
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: false
@@ -7492,13 +7623,13 @@ Resources:
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters1cada380e08ddfd7c59dc3b3381a72e6c989bcc9ac798ce62878dcbd5203f1f3S3BucketCC7585BE
+                    - Ref: AssetParameters3291be6767d37fffafc188da9b85e5084da3e5ce0565205d3b36ce549726bf14S3Bucket7E63E7A3
               - Fn::Join:
                   - ""
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters1cada380e08ddfd7c59dc3b3381a72e6c989bcc9ac798ce62878dcbd5203f1f3S3BucketCC7585BE
+                    - Ref: AssetParameters3291be6767d37fffafc188da9b85e5084da3e5ce0565205d3b36ce549726bf14S3Bucket7E63E7A3
                     - /*
           - Action:
               - s3:GetObject*
@@ -7806,6 +7937,69 @@ Resources:
     DependsOn:
       - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB
       - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB
+  SQSDLQStatsWidgetHandlerfc176846044f5e56baf2c71723501885ServiceRole2F995712:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Tags:
+        - Key: function-purpose
+          Value: cloudwatch-custom-widget
+  SQSDLQStatsWidgetHandlerfc176846044f5e56baf2c71723501885ServiceRoleDefaultPolicyF8BBCE33:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: cloudwatch:GetMetricData
+            Effect: Allow
+            Resource: "*"
+        Version: 2012-10-17
+      PolicyName: SQSDLQStatsWidgetHandlerfc176846044f5e56baf2c71723501885ServiceRoleDefaultPolicyF8BBCE33
+      Roles:
+        - Ref: SQSDLQStatsWidgetHandlerfc176846044f5e56baf2c71723501885ServiceRole2F995712
+  SQSDLQStatsWidgetHandlerfc176846044f5e56baf2c71723501885366DDBD5:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Ref: AssetParameters7cdb9d161bcc9f7ded7317e16a6dd40615bc08dce404045bf22a82332c57e87fS3BucketB4A9F631
+        S3Key:
+          Fn::Join:
+            - ""
+            - - Fn::Select:
+                  - 0
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters7cdb9d161bcc9f7ded7317e16a6dd40615bc08dce404045bf22a82332c57e87fS3VersionKeyCDEC3581
+              - Fn::Select:
+                  - 1
+                  - Fn::Split:
+                      - "||"
+                      - Ref: AssetParameters7cdb9d161bcc9f7ded7317e16a6dd40615bc08dce404045bf22a82332c57e87fS3VersionKeyCDEC3581
+      Role:
+        Fn::GetAtt:
+          - SQSDLQStatsWidgetHandlerfc176846044f5e56baf2c71723501885ServiceRole2F995712
+          - Arn
+      Description: "[ConstructHub/SQSDLQWidget] Is a custom CloudWatch widget handler"
+      Handler: index.handler
+      Runtime: nodejs14.x
+      Tags:
+        - Key: function-purpose
+          Value: cloudwatch-custom-widget
+    DependsOn:
+      - SQSDLQStatsWidgetHandlerfc176846044f5e56baf2c71723501885ServiceRoleDefaultPolicyF8BBCE33
+      - SQSDLQStatsWidgetHandlerfc176846044f5e56baf2c71723501885ServiceRole2F995712
   PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfServiceRole060BA12C:
     Type: AWS::IAM::Role
     Properties:
@@ -8266,6 +8460,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "31fadf0cd6c7acfedd6b2b7505b8660c93da8b459c65b8bc34cad5df4867dace"
+  AssetParameters7cdb9d161bcc9f7ded7317e16a6dd40615bc08dce404045bf22a82332c57e87fS3BucketB4A9F631:
+    Type: String
+    Description: S3 bucket for asset
+      "7cdb9d161bcc9f7ded7317e16a6dd40615bc08dce404045bf22a82332c57e87f"
+  AssetParameters7cdb9d161bcc9f7ded7317e16a6dd40615bc08dce404045bf22a82332c57e87fS3VersionKeyCDEC3581:
+    Type: String
+    Description: S3 key for asset version
+      "7cdb9d161bcc9f7ded7317e16a6dd40615bc08dce404045bf22a82332c57e87f"
+  AssetParameters7cdb9d161bcc9f7ded7317e16a6dd40615bc08dce404045bf22a82332c57e87fArtifactHash52E91C67:
+    Type: String
+    Description: Artifact hash for asset
+      "7cdb9d161bcc9f7ded7317e16a6dd40615bc08dce404045bf22a82332c57e87f"
   AssetParametersb32de5d6fb92c01b03e93e387691b3f444ac4e9800273abf834874c427c640f0S3Bucket0D334DA1:
     Type: String
     Description: S3 bucket for asset
@@ -8314,18 +8520,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "67e7c217b6ba727846031d77eb42a1a2bbc780507e11f9ad3192a0f98abe450a"
-  AssetParameters1cada380e08ddfd7c59dc3b3381a72e6c989bcc9ac798ce62878dcbd5203f1f3S3BucketCC7585BE:
+  AssetParameters3291be6767d37fffafc188da9b85e5084da3e5ce0565205d3b36ce549726bf14S3Bucket7E63E7A3:
     Type: String
     Description: S3 bucket for asset
-      "1cada380e08ddfd7c59dc3b3381a72e6c989bcc9ac798ce62878dcbd5203f1f3"
-  AssetParameters1cada380e08ddfd7c59dc3b3381a72e6c989bcc9ac798ce62878dcbd5203f1f3S3VersionKey19B01B68:
+      "3291be6767d37fffafc188da9b85e5084da3e5ce0565205d3b36ce549726bf14"
+  AssetParameters3291be6767d37fffafc188da9b85e5084da3e5ce0565205d3b36ce549726bf14S3VersionKey2784B079:
     Type: String
     Description: S3 key for asset version
-      "1cada380e08ddfd7c59dc3b3381a72e6c989bcc9ac798ce62878dcbd5203f1f3"
-  AssetParameters1cada380e08ddfd7c59dc3b3381a72e6c989bcc9ac798ce62878dcbd5203f1f3ArtifactHashC495306E:
+      "3291be6767d37fffafc188da9b85e5084da3e5ce0565205d3b36ce549726bf14"
+  AssetParameters3291be6767d37fffafc188da9b85e5084da3e5ce0565205d3b36ce549726bf14ArtifactHashD2367AE9:
     Type: String
     Description: Artifact hash for asset
-      "1cada380e08ddfd7c59dc3b3381a72e6c989bcc9ac798ce62878dcbd5203f1f3"
+      "3291be6767d37fffafc188da9b85e5084da3e5ce0565205d3b36ce549726bf14"
   AssetParameterse55830a9b80764bba7a1d95af568e482da15437ad646619e8f6c76dc8c098c91S3Bucket880B69C6:
     Type: String
     Description: S3 bucket for asset
