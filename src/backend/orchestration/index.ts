@@ -77,9 +77,9 @@ export interface OrchestrationProps {
   readonly monitoring: Monitoring;
 
   /**
-   * The onCall dashboard to register dashboards with.
+   * The overview dashboard to register dashboards with.
    */
-  readonly onCallDashboard: OverviewDashboard;
+  readonly overviewDashboard: OverviewDashboard;
 
   /**
    * The VPC in which to place networked resources.
@@ -364,7 +364,7 @@ export class Orchestration extends Construct {
     });
     this.stateMachine.grantStartExecution(this.redriveFunction);
     this.deadLetterQueue.grantConsumeMessages(this.redriveFunction);
-    props.onCallDashboard.addDLQMetricToDashboard('Orchestration DLQ', this.deadLetterQueue, this.redriveFunction);
+    props.overviewDashboard.addDLQMetricToDashboard('Orchestration DLQ', this.deadLetterQueue, this.redriveFunction);
 
     // The workflow is intended to be manually triggered by an operator to
     // reprocess all package versions currently in store through the orchestrator.
@@ -373,7 +373,7 @@ export class Orchestration extends Construct {
       stateMachine: this.stateMachine,
     }).stateMachine;
 
-    props.onCallDashboard.addConcurrentExecutionMetricToOnCallDashboard(needsCatalogUpdateFunction, 'NeedsCatalogUpdateLambda');
+    props.overviewDashboard.addConcurrentExecutionMetricToDashboard(needsCatalogUpdateFunction, 'NeedsCatalogUpdateLambda');
   }
 
   public metricEcsTaskCount(opts: MetricOptions): Metric {

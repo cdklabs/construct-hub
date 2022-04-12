@@ -8,6 +8,9 @@ import { RUNBOOK_URL } from '../runbook-url';
 import { IOverviewDashboard } from './api';
 import { SQSDLQWidget } from './sqs-dlq-widget';
 
+/**
+ * Properties for OverviewDashboard
+ */
 export interface OverviewDashboardProps {
   readonly lambdaServiceAlarmThreshold?: number;
   readonly dashboardName?: string;
@@ -50,7 +53,7 @@ export class OverviewDashboard extends Construct implements IOverviewDashboard {
     super(scope, id);
     this.lambdaServiceAlarmThreshold = props?.lambdaServiceAlarmThreshold ?? 70;
     this.dashboard = new Dashboard(this, 'Overview dashboard', { dashboardName: props?.dashboardName });
-    this.lambdaServiceLimitGraph = this.addLambdaServiceQuotaWidgetToOnCallDashboard();
+    this.lambdaServiceLimitGraph = this.addLambdaServiceQuotaWidgetToDashboard();
     this.dashboard.addWidgets(this.lambdaServiceLimitGraph);
   }
 
@@ -61,7 +64,7 @@ export class OverviewDashboard extends Construct implements IOverviewDashboard {
    * @param fn Lambda function to be monitored
    */
 
-  public addConcurrentExecutionMetricToOnCallDashboard(fn: IFunction, name?: string) {
+  public addConcurrentExecutionMetricToDashboard(fn: IFunction, name?: string) {
     const metricName = `m${this.metricCount++}`;
     const invocationCount = fn.metricInvocations({
       statistic: Statistic.MAXIMUM,
@@ -150,14 +153,14 @@ export class OverviewDashboard extends Construct implements IOverviewDashboard {
     return widget;
   }
 
-  private addLambdaServiceQuotaWidgetToOnCallDashboard() {
+  private addLambdaServiceQuotaWidgetToDashboard() {
     const serviceQuotaLimit = new MathExpression({
       expression: 'mLambdaUsage / mLambdaQuota * 100',
       label: 'Concurrent executions quota usage %',
       usingMetrics: { mLambdaUsage: OverviewDashboard.mLambdaUsage, mLambdaQuota: OverviewDashboard.mLambdaQuota },
     });
 
-    const alarm = serviceQuotaLimit.createAlarm(this, 'OnCallDashboard/lambdaServiceQuota', {
+    const alarm = serviceQuotaLimit.createAlarm(this, 'OverviewDashboard/lambdaServiceQuota', {
       alarmDescription: [
         `Lambda concurrent execution exceeded ${this.lambdaServiceAlarmThreshold}% of SERVICE_QUOTA`,
         '',

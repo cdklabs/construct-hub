@@ -9,7 +9,7 @@ import { OverviewDashboard } from '../overview-dashboard';
 test('minimally it should create a dashboard with lambda SERVICE metrics', () => {
   const stack = new Stack();
   const lambdaServiceAlarmThreshold = 90;
-  new OverviewDashboard(stack, 'OnCallDashboard', {
+  new OverviewDashboard(stack, 'OverviewDashboard', {
     lambdaServiceAlarmThreshold,
   });
 
@@ -57,8 +57,8 @@ test('adds lambda function to concurrent usage graph', () => {
     runtime: lambda.Runtime.NODEJS_14_X,
   });
 
-  const dashboard = new OverviewDashboard(stack, 'OnCallDashboard');
-  dashboard.addConcurrentExecutionMetricToOnCallDashboard(fn);
+  const dashboard = new OverviewDashboard(stack, 'OverViewDashboard');
+  dashboard.addConcurrentExecutionMetricToDashboard(fn);
 
   expect(stack).toHaveResource('AWS::CloudWatch::Dashboard', {
     DashboardBody: {
@@ -101,7 +101,7 @@ test('It adds cloud front distribution to the dashboard when present', () => {
       },
     }],
   });
-  const dashboard = new OverviewDashboard(stack, 'OnCallDashboard');
+  const dashboard = new OverviewDashboard(stack, 'OverviewDashboard');
   dashboard.addDistributionMetricToDashboard(distribution);
   expect(stack).toHaveResource('AWS::CloudWatch::Dashboard', {
     DashboardBody: {

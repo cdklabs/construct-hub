@@ -29,9 +29,9 @@ export interface PruneProps {
   readonly monitoring: Monitoring;
 
   /**
-   * OnCall dasHboard
+   * Overview dashboard
     */
-  readonly onCallDashBoard: OverviewDashboard;
+  readonly overviewDashboard: OverviewDashboard;
 }
 
 /**
@@ -91,8 +91,8 @@ export class Prune extends Construct {
 
     props.monitoring.watchful.watchLambdaFunction('Deny List - Prune Function', this.pruneHandler);
     props.monitoring.watchful.watchLambdaFunction('Deny List - Prune Delete Function', this.deleteHandler);
-    props.onCallDashBoard.addConcurrentExecutionMetricToOnCallDashboard(this.pruneHandler, 'PruneHandlerLambda');
-    props.onCallDashBoard.addConcurrentExecutionMetricToOnCallDashboard(this.deleteHandler, 'PruneQueueHandlerLambda');
+    props.overviewDashboard.addConcurrentExecutionMetricToDashboard(this.pruneHandler, 'PruneHandlerLambda');
+    props.overviewDashboard.addConcurrentExecutionMetricToDashboard(this.deleteHandler, 'PruneQueueHandlerLambda');
   }
 
   /**

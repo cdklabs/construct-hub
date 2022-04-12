@@ -135,9 +135,9 @@ export interface WebAppProps extends WebappConfigProps {
   readonly monitoring: Monitoring;
 
   /**
-  * On-call dashboard.
+  * overview dashboard.
   */
-  readonly onCallDashboard: OverviewDashboard;
+  readonly overviewDashboard: OverviewDashboard;
 
   /**
    * The bucket containing package data.
@@ -199,7 +199,7 @@ export class WebApp extends Construct {
       minimumProtocolVersion: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2018,
     });
 
-    props.onCallDashboard.addDistributionMetricToDashboard(this.distribution);
+    props.overviewDashboard.addDistributionMetricToDashboard(this.distribution);
 
     // The base URL is currently the custom DNS if any was used, or the distribution domain name.
     // This needs changing in case, for example, we add support for a custom URL prefix.

@@ -27,8 +27,8 @@ test('default configuration', () => {
   const mockQueueGrantSendMessages = jest.fn().mockName('mockQueue.grantSendMessages');
   const mockMonitoringAddLowSeverityAlarm = jest.fn().mockName('mockMonitoring.addLowSeverityAlarm');
   const mockMonitoringAddHighSeverityAlarm = jest.fn().mockName('mockMonitoring.addHighSeverityAlarm');
-  const mockAddDLQMetricToOnCallDashboard = jest.fn().mockName('mockAddDLQMetricToOnCallDashboard');
-  const mockAddConcurrentExecutionMetricToOnCallDashboard = jest.fn().mockName('mockAddConcurrentExecutionMetricToOnCallDashboard');
+  const mockAddDLQMetricToOverviewDashboard = jest.fn().mockName('mockAddDLQMetricToOverviewDashboard');
+  const mockAddConcurrentExecutionMetricToOverviewDashboard = jest.fn().mockName('mockAddConcurrentExecutionMetricToOverviewDashboard');
 
   const mockDenyList = safeMock<DenyList>('mockDenyList', {
     grantRead: mockDenyListGrantRead,
@@ -44,9 +44,9 @@ test('default configuration', () => {
     addHighSeverityAlarm: mockMonitoringAddHighSeverityAlarm,
   });
 
-  const mockOnCallDashboard = safeMock<OverviewDashboard>('mockOnCallDashboard', {
-    addDLQMetricToDashboard: mockAddDLQMetricToOnCallDashboard,
-    addConcurrentExecutionMetricToOnCallDashboard: mockAddConcurrentExecutionMetricToOnCallDashboard,
+  const mockOverviewDashboard = safeMock<OverviewDashboard>('mockOverviewDashboard', {
+    addDLQMetricToDashboard: mockAddDLQMetricToOverviewDashboard,
+    addConcurrentExecutionMetricToDashboard: mockAddConcurrentExecutionMetricToOverviewDashboard,
   });
   const mockQueue = safeMock<IQueue>('mockQueue', {
     grantSendMessages: mockQueueGrantSendMessages,
@@ -61,7 +61,7 @@ test('default configuration', () => {
     licenseList: mockLicenseList,
     ingestion: mockIngestion,
     monitoring: mockMonitoring,
-    onCallDashboard: mockOnCallDashboard,
+    overviewDashboard: mockOverviewDashboard,
     queue: mockQueue,
   });
 
@@ -94,8 +94,8 @@ test('user-provided staging bucket', () => {
   const mockQueueGrantSendMessages = jest.fn().mockName('mockQueue.grantSendMessages');
   const mockMonitoringAddLowSeverityAlarm = jest.fn().mockName('mockMonitoring.addLowSeverityAlarm');
   const mockMonitoringAddHighSeverityAlarm = jest.fn().mockName('mockMonitoring.addHighSeverityAlarm');
-  const mockAddDLQMetricToOnCallDashboard = jest.fn().mockName('mockAddDLQMetricToOnCallDashboard');
-  const mockAddConcurrentExecutionMetricToOnCallDashboard = jest.fn().mockName('mockAddConcurrentExecutionMetricToOnCallDashboard');
+  const mockAddDLQMetricToOverviewDashboard = jest.fn().mockName('mockAddDLQMetricToOverviewDashboard');
+  const mockAddConcurrentExecutionMetricToOverviewDashboard = jest.fn().mockName('mockAddConcurrentExecutionMetricToOverviewDashboard');
 
 
   const mockBucket = safeMock<IBucket>('mockBucket', {
@@ -115,9 +115,9 @@ test('user-provided staging bucket', () => {
     addHighSeverityAlarm: mockMonitoringAddHighSeverityAlarm,
   });
 
-  const mockOnCallDashboard = safeMock<OverviewDashboard>('mockOnCallDashboard', {
-    addDLQMetricToDashboard: mockAddDLQMetricToOnCallDashboard,
-    addConcurrentExecutionMetricToOnCallDashboard: mockAddConcurrentExecutionMetricToOnCallDashboard,
+  const mockOverviewDashboard = safeMock<OverviewDashboard>('mockOverviewDashboard', {
+    addDLQMetricToDashboard: mockAddDLQMetricToOverviewDashboard,
+    addConcurrentExecutionMetricToDashboard: mockAddConcurrentExecutionMetricToOverviewDashboard,
   });
 
 
@@ -134,7 +134,7 @@ test('user-provided staging bucket', () => {
     licenseList: mockLicenseList,
     ingestion: mockIngestion,
     monitoring: mockMonitoring,
-    onCallDashboard: mockOnCallDashboard,
+    overviewDashboard: mockOverviewDashboard,
     queue: mockQueue,
   });
 

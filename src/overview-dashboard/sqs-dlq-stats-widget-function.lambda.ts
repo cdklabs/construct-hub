@@ -1,9 +1,5 @@
 /// @singleton SQSDLQStatsWidget-Handler
 const DOCS = `
-## Include Text Widget from CloudWatch Dashboard
-This widget displays the first text widget from a specified CloudWatch Dashboard. 
-
-This is useful for embedding the same text context in multiple dashboards and update it from a central place. An example would be a menu of links between dashboards.
 
 ### Widget parameters
 Param | Description
@@ -56,7 +52,7 @@ type QueueConfig = {
 }
 
 export async function handler(event: Event): Promise<string | { markdown: string }> {
-  console.log(event);
+  console.log(JSON.stringify(event));
   try {
     if (event.describe) {
       return DOCS;

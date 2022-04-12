@@ -247,7 +247,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       alarmActions: props.alarmActions,
     });
 
-    const onCallDashboard = new OverviewDashboard(this, 'OnCallDashboard', {
+    const overviewDashboard = new OverviewDashboard(this, 'OverviewDashboard', {
       lambdaServiceAlarmThreshold: 70,
       dashboardName: props.backendDashboardName ? `${props.backendDashboardName}-overview` : undefined,
     });
@@ -298,7 +298,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       packageDataBucket: packageData,
       packageDataKeyPrefix: STORAGE_KEY_PREFIX,
       monitoring: monitoring,
-      onCallDashboard: onCallDashboard,
+      overviewDashboard: overviewDashboard,
     });
 
     // disable fetching package stats by default if a different package
@@ -330,7 +330,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       denyList,
       logRetention: props.logRetention,
       monitoring,
-      onCallDashboard,
+      overviewDashboard: overviewDashboard,
       vpc,
       vpcEndpoints,
       vpcSubnets,
@@ -356,7 +356,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       packageLinks: props.packageLinks,
       packageTags: packageTagsSerialized,
       reprocessFrequency: props.reprocessFrequency,
-      onCallDashboard: onCallDashboard,
+      overviewDashboard: overviewDashboard,
     });
 
     const licenseList = new LicenseList(this, 'LicenseList', {
@@ -383,7 +383,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       featureFlags: props.featureFlags,
       categories: props.categories,
       preloadScript: props.preloadScript,
-      onCallDashboard,
+      overviewDashboard: overviewDashboard,
     });
 
     const sources = new CoreConstruct(this, 'Sources');
@@ -397,11 +397,11 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
           monitoring,
           queue: this.ingestion.queue,
           repository: codeArtifact,
-          onCallDashboard,
+          overviewDashboard: overviewDashboard,
         }),
     );
 
-    const inventory = new Inventory(this, 'InventoryCanary', { bucket: packageData, logRetention: props.logRetention, monitoring, onCallDashboard });
+    const inventory = new Inventory(this, 'InventoryCanary', { bucket: packageData, logRetention: props.logRetention, monitoring, overviewDashboard: overviewDashboard });
 
     new BackendDashboard(this, 'BackendDashboard', {
       packageData,

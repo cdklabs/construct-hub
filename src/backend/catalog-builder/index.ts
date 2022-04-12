@@ -30,9 +30,9 @@ export interface CatalogBuilderProps {
   readonly monitoring: Monitoring;
 
   /**
-   * The on-call dashboard to add widgets to.
+   * The overview dashboard to add widgets to.
    */
-  readonly onCallDashboard: OverviewDashboard;
+  readonly overviewDashboard: OverviewDashboard;
 
   /**
    * How long should execution logs be retained?
@@ -69,7 +69,7 @@ export class CatalogBuilder extends Construct {
       tracing: Tracing.PASS_THROUGH,
     });
     this.function = handler;
-    props.onCallDashboard.addConcurrentExecutionMetricToOnCallDashboard(handler, 'CatalogBuilderLambda');
+    props.overviewDashboard.addConcurrentExecutionMetricToDashboard(handler, 'CatalogBuilderLambda');
 
     // This function may invoke itself in case it needs to continue it's work in
     // a "child" invocation. We must hence allow it to invoke itself. We cannot

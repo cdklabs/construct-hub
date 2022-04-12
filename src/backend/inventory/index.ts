@@ -26,9 +26,9 @@ export interface InventoryProps {
   readonly monitoring: Monitoring;
 
   /**
-   * The on-call dashboard to add widgets to.
+   * The overview dashboard to add widgets to.
    */
-  readonly onCallDashboard: OverviewDashboard;
+  readonly overviewDashboard: OverviewDashboard;
 
   /**
    * How long should canary logs be retained?
@@ -112,8 +112,8 @@ export class Inventory extends Construct {
         threshold: 1,
       }),
     );
-    props.onCallDashboard.addConcurrentExecutionMetricToOnCallDashboard(this.canary, 'CanaryResourceLambda');
-    props.onCallDashboard.addInventoryMetrics(this);
+    props.overviewDashboard.addConcurrentExecutionMetricToDashboard(this.canary, 'CanaryResourceLambda');
+    props.overviewDashboard.addInventoryMetrics(this);
   }
 
   public get function(): IFunction {

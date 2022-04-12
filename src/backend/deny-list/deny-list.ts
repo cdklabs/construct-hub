@@ -60,7 +60,7 @@ export interface DenyListProps {
    */
   readonly monitoring: Monitoring;
 
-  readonly onCallDashboard: OverviewDashboard;
+  readonly overviewDashboard: OverviewDashboard;
 }
 
 /**
@@ -117,7 +117,7 @@ export class DenyList extends Construct implements IDenyList {
       packageDataBucket: props.packageDataBucket,
       packageDataKeyPrefix: props.packageDataKeyPrefix,
       monitoring: props.monitoring,
-      onCallDashBoard: props.onCallDashboard,
+      overviewDashboard: props.overviewDashboard,
     });
 
     this.grantRead(this.prune.pruneHandler);

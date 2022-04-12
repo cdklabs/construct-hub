@@ -41,7 +41,7 @@ export class CodeArtifact implements IPackageSource {
       ingestion,
       licenseList,
       monitoring,
-      onCallDashboard,
+      overviewDashboard,
       queue,
     }: PackageSourceBindOptions,
   ): PackageSourceBindResult {
@@ -148,8 +148,8 @@ export class CodeArtifact implements IPackageSource {
 
     rule.node.addDependency(failureAlarm, dlqNotEmptyAlarm);
 
-    onCallDashboard.addDLQMetricToDashboard(`CodeArtifact/${repositoryId} DLQ`, dlq);
-    onCallDashboard.addConcurrentExecutionMetricToOnCallDashboard(forwarder, `${idPrefix}/ForwarderLambda`);
+    overviewDashboard.addDLQMetricToDashboard(`CodeArtifact/${repositoryId} DLQ`, dlq);
+    overviewDashboard.addConcurrentExecutionMetricToDashboard(forwarder, `${idPrefix}/ForwarderLambda`);
 
     return {
       name: `CodeArtifact: ${repositoryId}`,

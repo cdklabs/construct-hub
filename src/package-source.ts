@@ -58,9 +58,9 @@ export interface PackageSourceBindOptions {
   readonly monitoring: IMonitoring;
 
   /**
-   * The on-call dashboard to add widgets to.
+   * The overview dashboard to add widgets to.
    */
-  readonly onCallDashboard: IOverviewDashboard;
+  readonly overviewDashboard: IOverviewDashboard;
 
   /**
    * The SQS queue to which messages should be sent. Sent objects should match

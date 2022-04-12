@@ -16,7 +16,7 @@ test('defaults - empty deny list', () => {
     monitoring: new Monitoring(stack, 'Monitoring'),
     packageDataBucket: new s3.Bucket(stack, 'PackageDataBucket'),
     packageDataKeyPrefix: 'my-data/',
-    onCallDashboard: new OverviewDashboard(stack, 'OnCallDashboard'),
+    overviewDashboard: new OverviewDashboard(stack, 'OverviewDashboard'),
   });
 
   denyList.prune.onChangeInvoke(new CatalogBuilderMock(stack, 'CatalogBuilderMock'));
@@ -33,7 +33,7 @@ test('pruneOnChange is disabled', () => {
     packageDataBucket: new s3.Bucket(stack, 'PackageDataBucket'),
     packageDataKeyPrefix: 'my-data/',
     pruneOnChange: false,
-    onCallDashboard: new OverviewDashboard(stack, 'OnCallDashboard'),
+    overviewDashboard: new OverviewDashboard(stack, 'OverviewDashboard'),
   });
   denyList.prune.onChangeInvoke(new CatalogBuilderMock(stack, 'CatalogBuilderMock'));
 
@@ -49,7 +49,7 @@ test('prunePeriod controls period', () => {
     packageDataBucket: new s3.Bucket(stack, 'PackageDataBucket'),
     packageDataKeyPrefix: 'my-data/',
     prunePeriod: Duration.minutes(10),
-    onCallDashboard: new OverviewDashboard(stack, 'OnCallDashboard'),
+    overviewDashboard: new OverviewDashboard(stack, 'OverviewDashboard'),
   });
 
   // THEN
@@ -66,7 +66,7 @@ test('prunePeriod of zero disables periodical pruning', () => {
     packageDataBucket: new s3.Bucket(stack, 'PackageDataBucket'),
     packageDataKeyPrefix: 'my-data/',
     prunePeriod: Duration.minutes(0),
-    onCallDashboard: new OverviewDashboard(stack, 'OnCallDashboard'),
+    overviewDashboard: new OverviewDashboard(stack, 'OverviewDashboard'),
   });
 
   // THEN

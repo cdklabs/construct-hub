@@ -50,7 +50,7 @@ export interface IngestionProps {
    */
   readonly orchestration: Orchestration;
 
-  readonly onCallDashboard: OverviewDashboard;
+  readonly overviewDashboard: OverviewDashboard;
 
   /**
    * How long to retain the CloudWatch logs.
@@ -234,7 +234,7 @@ export class Ingestion extends Construct implements IGrantable {
       }),
     );
 
-    props.onCallDashboard.addDLQMetricToDashboard('Ingestion DLQ', this.deadLetterQueue);
+    props.overviewDashboard.addDLQMetricToDashboard('Ingestion DLQ', this.deadLetterQueue);
     props.monitoring.addHighSeverityAlarm(
       'Ingestion failures',
       this.function.metricErrors().createAlarm(this, 'FailureAlarm', {
@@ -254,7 +254,7 @@ export class Ingestion extends Construct implements IGrantable {
       }),
     );
 
-    props.onCallDashboard.addConcurrentExecutionMetricToOnCallDashboard(handler, 'IngestionLambda');
+    props.overviewDashboard.addConcurrentExecutionMetricToDashboard(handler, 'IngestionLambda');
   }
 
   public metricFoundLicenseFile(opts?: MetricOptions): Metric {

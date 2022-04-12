@@ -27,11 +27,11 @@ new BucketDeployment(stack, 'MockData', {
 });
 
 const monitoring = new Monitoring(stack, 'Monitoring');
-const onCallDashboard = new OverviewDashboard(stack, 'OnCallDashboard');
+const overviewDashboard = new OverviewDashboard(stack, 'OverviewDashboard');
 
 const denylist = new DenyList(stack, 'DenyList', {
   monitoring: monitoring,
-  onCallDashboard,
+  overviewDashboard: overviewDashboard,
   packageDataBucket: packageData,
   packageDataKeyPrefix: STORAGE_KEY_PREFIX,
   rules: [

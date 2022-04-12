@@ -1541,7 +1541,7 @@ const packageSourceBindOptions: PackageSourceBindOptions = { ... }
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.ingestion">ingestion</a></code> | <code>@aws-cdk/aws-iam.IGrantable</code> | The `IGrantable` that will process downstream messages from the bound package source. |
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.licenseList">licenseList</a></code> | <code><a href="#construct-hub.ILicenseList">ILicenseList</a></code> | The license list applied by the bound Construct Hub instance. |
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.monitoring">monitoring</a></code> | <code><a href="#construct-hub.IMonitoring">IMonitoring</a></code> | The monitoring instance to use for registering alarms, etc. |
-| <code><a href="#construct-hub.PackageSourceBindOptions.property.onCallDashboard">onCallDashboard</a></code> | <code><a href="#construct-hub.IOverviewDashboard">IOverviewDashboard</a></code> | The on-call dashboard to add widgets to. |
+| <code><a href="#construct-hub.PackageSourceBindOptions.property.overviewDashboard">overviewDashboard</a></code> | <code><a href="#construct-hub.IOverviewDashboard">IOverviewDashboard</a></code> | The overview dashboard to add widgets to. |
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.queue">queue</a></code> | <code>@aws-cdk/aws-sqs.IQueue</code> | The SQS queue to which messages should be sent. |
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.denyList">denyList</a></code> | <code><a href="#construct-hub.IDenyList">IDenyList</a></code> | The configured `DenyList` for the bound Construct Hub instance, if any. |
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.repository">repository</a></code> | <code><a href="#construct-hub.IRepository">IRepository</a></code> | The CodeArtifact repository that is internally used by ConstructHub. |
@@ -1603,15 +1603,15 @@ The monitoring instance to use for registering alarms, etc.
 
 ---
 
-##### `onCallDashboard`<sup>Required</sup> <a name="onCallDashboard" id="construct-hub.PackageSourceBindOptions.property.onCallDashboard"></a>
+##### `overviewDashboard`<sup>Required</sup> <a name="overviewDashboard" id="construct-hub.PackageSourceBindOptions.property.overviewDashboard"></a>
 
 ```typescript
-public readonly onCallDashboard: IOverviewDashboard;
+public readonly overviewDashboard: IOverviewDashboard;
 ```
 
 - *Type:* <a href="#construct-hub.IOverviewDashboard">IOverviewDashboard</a>
 
-The on-call dashboard to add widgets to.
+The overview dashboard to add widgets to.
 
 ---
 
@@ -10659,29 +10659,29 @@ the alarm to be added.
 
 - *Implemented By:* <a href="#construct-hub.IOverviewDashboard">IOverviewDashboard</a>
 
-ConstructHub OnCall dashboard exposed to extension points.
+ConstructHub overview dashboard exposed to extension points.
 
 #### Methods <a name="Methods" id="Methods"></a>
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.IOverviewDashboard.addConcurrentExecutionMetricToOnCallDashboard">addConcurrentExecutionMetricToOnCallDashboard</a></code> | Adds a metric widget to the on-call dashboard showing the total number concurrent executions of a Lambda function and the percentage of SERVICE_QUOTA utilized by the function. |
-| <code><a href="#construct-hub.IOverviewDashboard.addDLQMetricToDashboard">addDLQMetricToDashboard</a></code> | Adds widgets to on-call dashboard with link to the dashboard and number of visible messages. |
+| <code><a href="#construct-hub.IOverviewDashboard.addConcurrentExecutionMetricToDashboard">addConcurrentExecutionMetricToDashboard</a></code> | Adds a metric widget to the overview dashboard showing the total number concurrent executions of a Lambda function and the percentage of SERVICE_QUOTA utilized by the function. |
+| <code><a href="#construct-hub.IOverviewDashboard.addDLQMetricToDashboard">addDLQMetricToDashboard</a></code> | Adds widgets to overview dashboard with link to the dashboard and number of visible messages. |
 
 ---
 
-##### `addConcurrentExecutionMetricToOnCallDashboard` <a name="addConcurrentExecutionMetricToOnCallDashboard" id="construct-hub.IOverviewDashboard.addConcurrentExecutionMetricToOnCallDashboard"></a>
+##### `addConcurrentExecutionMetricToDashboard` <a name="addConcurrentExecutionMetricToDashboard" id="construct-hub.IOverviewDashboard.addConcurrentExecutionMetricToDashboard"></a>
 
 ```typescript
-public addConcurrentExecutionMetricToOnCallDashboard(fn: IFunction, name?: string): void
+public addConcurrentExecutionMetricToDashboard(fn: IFunction, name?: string): void
 ```
 
-Adds a metric widget to the on-call dashboard showing the total number concurrent executions of a Lambda function and the percentage of SERVICE_QUOTA utilized by the function.
+Adds a metric widget to the overview dashboard showing the total number concurrent executions of a Lambda function and the percentage of SERVICE_QUOTA utilized by the function.
 
 This can be
 used to see which function has the most impact of the service quota.
 
-###### `fn`<sup>Required</sup> <a name="fn" id="construct-hub.IOverviewDashboard.addConcurrentExecutionMetricToOnCallDashboard.parameter.fn"></a>
+###### `fn`<sup>Required</sup> <a name="fn" id="construct-hub.IOverviewDashboard.addConcurrentExecutionMetricToDashboard.parameter.fn"></a>
 
 - *Type:* @aws-cdk/aws-lambda.IFunction
 
@@ -10689,7 +10689,7 @@ Lambda function to be monitored.
 
 ---
 
-###### `name`<sup>Optional</sup> <a name="name" id="construct-hub.IOverviewDashboard.addConcurrentExecutionMetricToOnCallDashboard.parameter.name"></a>
+###### `name`<sup>Optional</sup> <a name="name" id="construct-hub.IOverviewDashboard.addConcurrentExecutionMetricToDashboard.parameter.name"></a>
 
 - *Type:* string
 
@@ -10701,7 +10701,7 @@ Lambda function to be monitored.
 public addDLQMetricToDashboard(name: string, deadLetterQueue: IQueue, reDriveFunction?: IFunction): void
 ```
 
-Adds widgets to on-call dashboard with link to the dashboard and number of visible messages.
+Adds widgets to overview dashboard with link to the dashboard and number of visible messages.
 
 ###### `name`<sup>Required</sup> <a name="name" id="construct-hub.IOverviewDashboard.addDLQMetricToDashboard.parameter.name"></a>
 
