@@ -117,4 +117,5 @@ export class Monitoring extends Construct implements IMonitoring {
 
     this.addHighSeverityAlarm(`${name} Canary`, canary.alarm);
   }
+
 }

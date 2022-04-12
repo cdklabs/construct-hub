@@ -8,6 +8,7 @@ export * from './backend/deny-list/api';
 export * from './backend/license-list/api';
 export * from './codeartifact/api';
 export * from './monitoring/api';
+export * from './overview-dashboard/api';
 
 /**
  * Domain configuration for the website.

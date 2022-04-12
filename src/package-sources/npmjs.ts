@@ -67,7 +67,7 @@ export class NpmJs implements IPackageSource {
 
   public bind(
     scope: Construct,
-    { baseUrl, denyList, ingestion, licenseList, monitoring, queue, repository }: PackageSourceBindOptions,
+    { baseUrl, denyList, ingestion, licenseList, monitoring, queue, repository, overviewDashboard }: PackageSourceBindOptions,
   ): PackageSourceBindResult {
     repository?.addExternalConnection('public:npmjs');
 
@@ -129,6 +129,12 @@ export class NpmJs implements IPackageSource {
     });
 
     this.registerAlarms(scope, follower, stager, monitoring, rule);
+
+
+    stager.deadLetterQueue && overviewDashboard.addDLQMetricToDashboard('NPM JS Stager DLQ', stager.deadLetterQueue);
+    follower.deadLetterQueue && overviewDashboard.addDLQMetricToDashboard('NPM JS Follower DLQ', follower.deadLetterQueue);
+    overviewDashboard.addConcurrentExecutionMetricToDashboard(follower, 'NpmJsLambda');
+    overviewDashboard.addConcurrentExecutionMetricToDashboard(stager, 'NpmJs-StageAndNotifyLambda');
 
     return {
       name: follower.node.path,
