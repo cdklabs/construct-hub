@@ -140,7 +140,7 @@ export const handler = metricScope(
         packageJsonLicense !== packageLicense
       ) {
         console.log(
-          `Ignoring package with mismatched name, version, and/or license (${packageJsonName}@${packageJsonVersion} is ${packageJsonLicense} !== ${packageName}@${packageVersion} is ${packageLicense})`,
+          `Ignoring package because the name, version, and/or license does not match between package.json and .jsii. (${packageJsonName}@${packageJsonVersion} is ${packageJsonLicense} !== ${packageName}@${packageVersion} is ${packageLicense})`,
         );
         metrics.putMetric(
           MetricName.MISMATCHED_IDENTITY_REJECTIONS,
