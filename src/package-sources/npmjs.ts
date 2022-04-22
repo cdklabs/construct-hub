@@ -25,6 +25,15 @@ import { StageAndNotify } from './npmjs/stage-and-notify';
  */
 const FOLLOWER_RUN_RATE = Duration.minutes(5);
 
+/**
+ * Alarm if we haven't seen changes over this time
+ *
+ * The CouchDB leader occasionally just starts tossing out timeouts and they
+ * may last for a good while. We need to be conservative with our alarms
+ * otherwise we're just going to be too spammy.
+ */
+const NO_CHANGES_ALARM_DURATION = Duration.hours(1);
+
 export interface NpmJsProps {
   /**
    * The bucket to use for staging npm packages.
@@ -391,14 +400,14 @@ export class NpmJs implements IPackageSource {
       .createAlarm(scope, 'NpmJs/Follower/NoChanges', {
         alarmName: `${scope.node.path}/NpmJs/Follower/NoChanges`,
         alarmDescription: [
-          'The NpmJs follower function is no discovering any changes from CouchDB!',
+          'The NpmJs follower function is not discovering any changes from CouchDB!',
           '',
           `RunBook: ${RUNBOOK_URL}`,
           '',
           `Direct link to Lambda function: ${lambdaFunctionUrl(follower)}`,
         ].join('\n'),
         comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
-        evaluationPeriods: 2,
+        evaluationPeriods: howOften(FOLLOWER_RUN_RATE, NO_CHANGES_ALARM_DURATION),
         threshold: 1,
         // If the metric is not emitted, it can be assumed to be zero.
         treatMissingData: TreatMissingData.BREACHING,
@@ -489,4 +498,11 @@ export class NpmJs implements IPackageSource {
       }),
     ];
   }
+}
+
+/**
+ * How often 'rate' goes into 'duration' (rounded up)
+ */
+function howOften(rate: Duration, duration: Duration) {
+  return Math.ceil(rate.toSeconds() / duration.toSeconds());
 }
