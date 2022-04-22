@@ -78,6 +78,11 @@ export interface IngestionProps {
    * @default - never
    */
   readonly reprocessFrequency?: Duration;
+
+  /**
+   * The SQS queue where new package will be added to fetch release notes.
+   */
+  readonly releaseNotesFetchQueue?: IQueue;
 }
 
 /**
@@ -157,6 +162,10 @@ export class Ingestion extends Construct implements IGrantable {
       environment.CODE_ARTIFACT_DOMAIN_OWNER = props.codeArtifact.repositoryDomainOwner;
     }
 
+    if (props.releaseNotesFetchQueue) {
+      environment.RELEASE_NOTES_FETCH_QUEUE_URL = props.releaseNotesFetchQueue.queueUrl;
+    }
+
     const handler = new Handler(this, 'Default', {
       description: '[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub',
       environment,
@@ -176,6 +185,9 @@ export class Ingestion extends Construct implements IGrantable {
     // This event source is disabled, and can be used to re-process dead-letter-queue messages
     this.function.addEventSource(new SqsEventSource(this.deadLetterQueue, { batchSize: 1, enabled: false }));
 
+    if (props.releaseNotesFetchQueue) {
+      props.releaseNotesFetchQueue.grantSendMessages(this.function);
+    }
 
     // Reprocess workflow
     const reprocessQueue = new Queue(this, 'ReprocessQueue', {

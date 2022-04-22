@@ -218,6 +218,20 @@ is described in the operator runbook.
 
 - [`ConstructHub/Sources/NpmJs/Canary/SLA-Breached`](./operator-runbook.md#constructhubsourcesnpmjscanarysla-breached)
 
+### 6. Feed Generation
+
+Construct hub generates RSS/ATOM feed when the package catalog gets updated. The feed generator looks at the latest 100 packages and generates the feed. If the construct hub is configured to generate release notes, then the generated feed will contain the change log for the packages where it can be generated.
+
+
+#### 6. Release Notes Fetcher
+
+Construct hub can be configured to generate release notes for the packages that are added to the catalog. The release notes are generated from Github when the release information is available. The generation of release notes looks for the following places in Github
+ - Get the release notes from individual release from Github
+ - Get the list of all the releases from Github and then match the release number
+ - Get the changelog.md file and match the release number to generate the release notes
+
+Github APIs are rate-limited and for the construct hub to generate the release notes, it has to be configured with Github [Personal Access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token). The release notes generation process uses a step function to ensure that the rate limits are respected and will back up the request when the API service limits are hit
+
 
 ## Monitoring & Alarming
 

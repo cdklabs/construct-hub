@@ -16,6 +16,7 @@ import { RUNBOOK_URL } from '../../runbook-url';
 import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 import { CatalogBuilder } from '../catalog-builder';
 import { DenyList } from '../deny-list';
+import { FeedBuilder } from '../feed-builder';
 import { ASSEMBLY_KEY_SUFFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX, STORAGE_KEY_PREFIX, CATALOG_KEY, UNPROCESSABLE_PACKAGE_ERROR_NAME } from '../shared/constants';
 import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
 import { NeedsCatalogUpdate } from './needs-catalog-update';
@@ -112,6 +113,11 @@ export interface OrchestrationProps {
    * The deny list.
    */
   readonly denyList: DenyList;
+
+  /**
+   * The construct that generates RSS/ATOM feed
+   */
+  readonly feedBuilder: FeedBuilder;
 }
 
 /**

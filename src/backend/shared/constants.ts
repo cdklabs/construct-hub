@@ -27,6 +27,11 @@ export const METADATA_KEY_SUFFIX = '/metadata.json';
 export const ASSEMBLY_KEY_SUFFIX = '/assembly.json';
 
 /**
+ * The key suffix release notes file
+ */
+export const PACKAGE_RELEASE_NOTES_KEY_SUFFIX = '/release-notes.md';
+
+/**
  * The key suffix for a TypeScript doc artifact (root module).
  */
 export const DOCS_KEY_SUFFIX_TYPESCRIPT = docsKeySuffix(DocumentationLanguage.TYPESCRIPT);
@@ -57,6 +62,26 @@ export const DOCS_KEY_SUFFIX_GO = docsKeySuffix(DocumentationLanguage.GO);
 export const DOCS_KEY_SUFFIX_ANY = docsKeySuffix('*');
 
 /**
+ * Key for RSS document
+ */
+export const FEED_RSS_KEY = 'rss';
+
+/**
+ * Key for RSS document
+ */
+export const FEED_ATOM_KEY = 'atom';
+
+
+/**
+ * Env variable name used to set construct hub url for RSS/ATOM feed
+ */
+export const CONSTRUCT_HUB_URL_ENV_VAR_NAME = 'CONSTRUCT_HUB_URL';
+
+export const CONSTRUCT_HUB_FEED_TITLE = 'CONSTRUCT_HUB_FEED_TITLE';
+
+export const CONSTRUCT_HUB_FEED_DESCRIPTION = 'CONSTRUCT_HUB_FEED_DESCRIPTION';
+
+/**
  * Return the S3 object key prefix for a specific package name and optionally a
  * version. Note that the prefix does not end with a "/" so you will likely want
  * to add that if you want to match a specific set of objects.
@@ -79,6 +104,7 @@ export function getObjectKeys(packageName: string, packageVersion: string) {
     assemblyKey: `${prefix}${ASSEMBLY_KEY_SUFFIX}`,
     packageKey: `${prefix}${PACKAGE_KEY_SUFFIX}`,
     metadataKey: `${prefix}${METADATA_KEY_SUFFIX}`,
+    releaseNotesKey: `${prefix}${PACKAGE_RELEASE_NOTES_KEY_SUFFIX}`,
   };
 }
 
@@ -130,6 +156,9 @@ export const UNPROCESSABLE_PACKAGE_ERROR_NAME = 'UnprocessablePackageError';
  * The key for the catalog document.
  */
 export const CATALOG_KEY = 'catalog.json';
+
+/** Key for feed metadata document*/
+export const FEED_METADATA_KEY = 'feed-metadata.json';
 
 /**
  * The key for the version tracking document.

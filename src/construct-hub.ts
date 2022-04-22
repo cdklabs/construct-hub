@@ -4,6 +4,7 @@ import { AnyPrincipal, Effect, PolicyStatement } from '@aws-cdk/aws-iam';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import * as s3 from '@aws-cdk/aws-s3';
 import { BlockPublicAccess } from '@aws-cdk/aws-s3';
+import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 import * as appreg from '@aws-cdk/aws-servicecatalogappregistry';
 import * as sqs from '@aws-cdk/aws-sqs';
 import { Construct as CoreConstruct, Duration, Stack, Tags } from '@aws-cdk/core';
@@ -13,10 +14,12 @@ import { AlarmActions, Domain } from './api';
 import { DenyList, Ingestion } from './backend';
 import { BackendDashboard } from './backend-dashboard';
 import { DenyListRule } from './backend/deny-list/api';
+import { FeedBuilder } from './backend/feed-builder';
 import { Inventory } from './backend/inventory';
 import { LicenseList } from './backend/license-list';
 import { Orchestration } from './backend/orchestration';
 import { PackageStats } from './backend/package-stats';
+import { ReleaseNoteFetcher } from './backend/release-notes';
 import { CATALOG_KEY, STORAGE_KEY_PREFIX } from './backend/shared/constants';
 import { VersionTracker } from './backend/version-tracker';
 import { Repository } from './codeartifact/repository';
@@ -31,6 +34,26 @@ import { PreloadFile } from './preload-file';
 import { S3StorageFactory } from './s3/storage';
 import { SpdxLicense } from './spdx-license';
 import { WebApp, PackageLinkConfig, FeaturedPackages, FeatureFlags, Category } from './webapp';
+
+/**
+ * Configuration for generating RSS and ATOM feed for the latest packages
+ */
+export interface FeedConfiguration {
+  /**
+  * Github token for generating release notes. When missing no release notes will be included in the generated RSS/ATOM feed
+  */
+  readonly githubTokenSecret?: secretsmanager.ISecret;
+
+  /**
+   * Title used in the generated feed
+   */
+  readonly feedTitle?: string;
+
+  /**
+   * description used in the generated feed
+   */
+  readonly feedDescription?: string;
+}
 
 /**
  * Props for `ConstructHub`.
@@ -204,6 +227,12 @@ export interface ConstructHubProps {
    * @default true
    */
   readonly appRegistryApplication?: boolean;
+
+  /**
+   * Configuration for generating RSS/Atom feeds with the latest packages. If the value is missing
+   * the generated RSS/ATOM feed would not contain release notes
+   */
+  readonly feedConfiguration?: FeedConfiguration;
 }
 
 /**
@@ -238,6 +267,8 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     if (props.isolateSensitiveTasks != null && props.sensitiveTaskIsolation != null) {
       throw new Error('Supplying both isolateSensitiveTasks and sensitiveTaskIsolation is not supported. Remove usage of isolateSensitiveTasks.');
     }
+
+    const shouldFetchReleaseNotes = props.feedConfiguration?.githubTokenSecret ? true : false;
 
     const storageFactory = S3StorageFactory.getOrCreate(this, {
       failover: props.failoverStorage,
@@ -324,6 +355,13 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       logRetention: props.logRetention,
     });
 
+    const feedBuilder = new FeedBuilder(this, 'FeedBuilder', {
+      bucket: packageData,
+      overviewDashboard,
+      feedDescription: props.feedConfiguration?.feedDescription,
+      feedTitle: props.feedConfiguration?.feedTitle,
+    });
+
     const orchestration = new Orchestration(this, 'Orchestration', {
       bucket: packageData,
       codeArtifact,
@@ -335,6 +373,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       vpcEndpoints,
       vpcSubnets,
       vpcSecurityGroups,
+      feedBuilder,
     });
 
     // rebuild the catalog when the deny list changes.
@@ -347,6 +386,17 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       };
     }) ?? [];
 
+    let releaseNotes;
+    if (shouldFetchReleaseNotes) {
+      releaseNotes = new ReleaseNoteFetcher(this, 'ReleaseNotes', {
+        bucket: packageData,
+        gitHubCredentialsSecret: props.feedConfiguration?.githubTokenSecret,
+        feedBuilder,
+        monitoring,
+        overviewDashboard,
+      });
+    }
+
     this.ingestion = new Ingestion(this, 'Ingestion', {
       bucket: packageData,
       codeArtifact,
@@ -356,6 +406,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       packageLinks: props.packageLinks,
       packageTags: packageTagsSerialized,
       reprocessFrequency: props.reprocessFrequency,
+      releaseNotesFetchQueue: releaseNotes?.queue,
       overviewDashboard: overviewDashboard,
     });
 
@@ -384,7 +435,11 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       categories: props.categories,
       preloadScript: props.preloadScript,
       overviewDashboard: overviewDashboard,
+      includeFeedLink: true,
     });
+
+    // Set the base URL that will be used in the RSS/ATOM feed
+    feedBuilder.setConstructHubUrl(webApp.baseUrl);
 
     const sources = new CoreConstruct(this, 'Sources');
     const packageSources = (props.packageSources ?? [new NpmJs()]).map(
@@ -413,6 +468,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       denyList,
       packageStats,
       versionTracker,
+      releaseNotes,
     });
 
     // add domain redirects

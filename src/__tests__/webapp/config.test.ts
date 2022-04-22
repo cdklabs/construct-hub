@@ -2,7 +2,7 @@ import { readJsonSync } from 'fs-extra';
 import { TagCondition } from '../../package-tag';
 import { PackageTagGroup } from '../../package-tag-group';
 import { Category } from '../../webapp';
-import { WebappConfig } from '../../webapp/config';
+import { FeedConfig, WebappConfig } from '../../webapp/config';
 
 const DEFAULT_CONFIG = {
   featuredPackages: {
@@ -294,5 +294,31 @@ test('categories', () => {
   expect(file).toEqual({
     ...DEFAULT_CONFIG,
     categories,
+  });
+});
+
+test('feed', () => {
+  // GIVEN
+  const feedConfig: FeedConfig[] = [
+    {
+      mimeType: 'application/atom+xml',
+      url: '/atom',
+    },
+    {
+      mimeType: 'application/atom+xml',
+      url: '/rss',
+    },
+  ];
+
+  // WHEN
+  const config = new WebappConfig({
+    feedConfig,
+  });
+
+  // THEN
+  const file = readJsonSync(config.file.path);
+  expect(file).toEqual({
+    ...DEFAULT_CONFIG,
+    feeds: feedConfig,
   });
 });

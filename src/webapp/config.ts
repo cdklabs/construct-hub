@@ -15,7 +15,7 @@ interface FrontendPackageTagConfigBase {
   color?: string;
 }
 
-interface FrontendPackageTagHighlightConfig extends FrontendPackageTagConfigBase{
+interface FrontendPackageTagHighlightConfig extends FrontendPackageTagConfigBase {
   icon?: string;
 }
 
@@ -38,6 +38,11 @@ interface FrontendDebugInfo {
   constructHubWebappVersion: string;
 }
 
+export interface FeedConfig {
+  mimeType: string;
+  url: string;
+}
+
 interface FrontendConfig {
   packageLinks?: FrontendPackageLinkConfig[];
   packageTags?: FrontendPackageTagConfig[];
@@ -47,6 +52,7 @@ interface FrontendConfig {
   featureFlags?: FeatureFlags;
   categories?: Category[];
   debugInfo?: FrontendDebugInfo;
+  feeds?: FeedConfig[];
 }
 
 export interface WebappConfigProps {
@@ -88,6 +94,8 @@ export interface WebappConfigProps {
    * with a link to the relevant search query.
    */
   readonly categories?: Category[];
+
+  readonly feedConfig?: FeedConfig[];
 }
 
 export class WebappConfig {
@@ -106,6 +114,7 @@ export class WebappConfig {
       featureFlags: this.props.featureFlags,
       categories: this.props.categories,
       debugInfo: this.debugInfo,
+      feeds: this.latestPackageFeedConfig,
     };
   }
 
@@ -153,7 +162,7 @@ export class WebappConfig {
     };
     for (const section of config.sections) {
       if ((section.showPackages !== undefined && section.showLastUpdated !== undefined) ||
-          (section.showPackages === undefined && section.showLastUpdated === undefined)) {
+        (section.showPackages === undefined && section.showLastUpdated === undefined)) {
         throw new Error('Exactly one of \'showPackages\' and \'showPackages\' should be provided.');
       }
     }
@@ -167,5 +176,9 @@ export class WebappConfig {
       constructHubVersion: packageJson.version,
       constructHubWebappVersion: packageJson.devDependencies['construct-hub-webapp'],
     };
+  }
+
+  private get latestPackageFeedConfig() {
+    return this.props.feedConfig;
   }
 }
