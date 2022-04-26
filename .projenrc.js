@@ -146,9 +146,6 @@ const project = new cdk.JsiiProject({
     workflowOptions: {
       labels: ['auto-approve'],
       secret: 'PROJEN_GITHUB_TOKEN',
-      container: {
-        image: 'jsii/superchain',
-      },
     },
   },
 
