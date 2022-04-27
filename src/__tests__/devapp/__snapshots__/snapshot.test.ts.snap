@@ -3026,7 +3026,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4S3BucketDB3720F4
+          Ref: AssetParameters3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57cS3Bucket7ACC0791
         S3Key:
           Fn::Join:
             - ""
@@ -3034,12 +3034,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4S3VersionKey6ECBA1B2
+                      - Ref: AssetParameters3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57cS3VersionKey288336AA
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4S3VersionKey6ECBA1B2
+                      - Ref: AssetParameters3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57cS3VersionKey288336AA
       Role:
         Fn::GetAtt:
           - ConstructHubFeedBuilderReleaseNotesUpdateFeedServiceRoleC857E364
@@ -4114,7 +4114,7 @@ Resources:
                 - Ref: AWS::Region
                 - .
                 - Ref: AWS::URLSuffix
-                - /aws-cdk/assets:906167965e5d6c597e7eaeb4b2df04d0a824595a676ca7c1d0f4f13409b95091
+                - /aws-cdk/assets:9e3fbe6994fbcdff7404c950fd1045943420115ee04c9bdd6766ae26aeace906
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -6569,7 +6569,7 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParametersd77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1aS3Bucket962C10C5
+        - Ref: AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3BucketA2379B42
       SourceObjectKeys:
         - Fn::Join:
             - ""
@@ -6577,12 +6577,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersd77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1aS3VersionKey1449E350
+                      - Ref: AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3VersionKeyFA1BA673
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersd77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1aS3VersionKey1449E350
+                      - Ref: AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3VersionKeyFA1BA673
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: false
@@ -8477,13 +8477,13 @@ Resources:
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParametersd77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1aS3Bucket962C10C5
+                    - Ref: AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3BucketA2379B42
               - Fn::Join:
                   - ""
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParametersd77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1aS3Bucket962C10C5
+                    - Ref: AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3BucketA2379B42
                     - /*
           - Action:
               - s3:GetObject*
@@ -9278,18 +9278,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "a3341106d17d38963f6119c8a573da38d6d6752b25431ce64c2924f3972d5379"
-  AssetParameters92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4S3BucketDB3720F4:
+  AssetParameters3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57cS3Bucket7ACC0791:
     Type: String
     Description: S3 bucket for asset
-      "92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4"
-  AssetParameters92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4S3VersionKey6ECBA1B2:
+      "3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57c"
+  AssetParameters3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57cS3VersionKey288336AA:
     Type: String
     Description: S3 key for asset version
-      "92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4"
-  AssetParameters92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4ArtifactHashF7D41393:
+      "3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57c"
+  AssetParameters3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57cArtifactHash3A5B7588:
     Type: String
     Description: Artifact hash for asset
-      "92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4"
+      "3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57c"
   AssetParameters15b599afc00a9546180d55a4dac00f8afb6b97bb2acda9ce1e82bc9fb159be2fS3BucketD3D6FF98:
     Type: String
     Description: S3 bucket for asset
@@ -9422,18 +9422,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "67e7c217b6ba727846031d77eb42a1a2bbc780507e11f9ad3192a0f98abe450a"
-  AssetParametersd77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1aS3Bucket962C10C5:
+  AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3BucketA2379B42:
     Type: String
     Description: S3 bucket for asset
-      "d77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1a"
-  AssetParametersd77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1aS3VersionKey1449E350:
+      "dd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58b"
+  AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3VersionKeyFA1BA673:
     Type: String
     Description: S3 key for asset version
-      "d77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1a"
-  AssetParametersd77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1aArtifactHashFB36733E:
+      "dd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58b"
+  AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bArtifactHashA086BEA2:
     Type: String
     Description: Artifact hash for asset
-      "d77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1a"
+      "dd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58b"
   AssetParameters14e4f0139224d21210279e451b3ecaef287913006c68e6050415f640c0ef7522S3BucketF816D9C3:
     Type: String
     Description: S3 bucket for asset
