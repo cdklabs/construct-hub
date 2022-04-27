@@ -391,6 +391,26 @@ This would allow publishers to add the following to their package.json:
 Then the links on the corresponding package page would show these items as
 configured.
 
+### RSS/ATOM feeds for recent packages
+
+Construct hub automatically generates RSS/ATOM feed showing the list of latest
+100 packages added. The generated feed can be configured to get release notes from
+GitHub by configuring it with [personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+The access token has to be stored in AWS Secretsmanager and should be passed to `feedConfiguration`
+
+For example:
+```ts
+new ConstructHub(this, "ConstructHub", {
+  ...myProps,
+  feedConfiguration: {
+      gitHubTokenSecret: secretsManager.Secret.fromSecretCompleteArn(this, 'GitHubToken', '<arn:aws:secretsmanager:us-east-2:11111111111:secret:releaseNotesFetcherGitHubToken-abCd1>'),
+      feedDescription: 'Latest Constructs in the construct hub',
+      feedTitle: 'Latest constructs',
+    }
+  }
+});
+```
+
 #### Home Page
 
 The home page is divided into sections, each with a header and list of packages.

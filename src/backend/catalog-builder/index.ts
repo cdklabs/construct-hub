@@ -11,6 +11,7 @@ import { Monitoring } from '../../monitoring';
 import { OverviewDashboard } from '../../overview-dashboard';
 import { RUNBOOK_URL } from '../../runbook-url';
 import { DenyList } from '../deny-list';
+import { FeedBuilder } from '../feed-builder';
 import type { ConstructFramework } from '../ingestion/framework-detection.lambda-shared';
 import { CatalogBuilder as Handler } from './catalog-builder';
 import { MetricName, METRICS_NAMESPACE } from './constants';
@@ -45,6 +46,11 @@ export interface CatalogBuilderProps {
    * The deny list construct.
    */
   readonly denyList: DenyList;
+
+  /**
+   * Construct that generates RSS/ATOM feed after catalog is updated
+   */
+  readonly feedBuilder: FeedBuilder;
 }
 
 /**
@@ -61,6 +67,7 @@ export class CatalogBuilder extends Construct {
       environment: {
         BUCKET_NAME: props.bucket.bucketName,
         AWS_EMF_ENVIRONMENT: 'Local',
+        FEED_BUILDER_FUNCTION_NAME: props.feedBuilder.updateFeedFunction.functionName,
       },
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 10_240, // Currently the maximum possible setting
@@ -84,6 +91,14 @@ export class CatalogBuilder extends Construct {
         resource: 'function',
         resourceName: '*',
       })],
+    }));
+
+    // using handler.grantInvoke(props.feedBuilder.updateFeedFunction)
+    // causes circular dependency error
+    handler.addToRolePolicy(new PolicyStatement({
+      actions: ['lambda:InvokeFunction'],
+      effect: Effect.ALLOW,
+      resources: [props.feedBuilder.updateFeedFunction.functionArn],
     }));
 
     // allow the catalog builder to use the client.

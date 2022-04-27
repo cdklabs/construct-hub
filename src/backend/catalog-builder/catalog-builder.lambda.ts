@@ -164,6 +164,18 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
       FunctionName: context.functionName,
       InvokeArgs: JSON.stringify(nextEvent, null, 2),
     }).promise();
+  } else {
+    if (process.env.FEED_BUILDER_FUNCTION_NAME) {
+      // Catalog is updated. Update the RSS/ATOM feed
+      await aws
+        .lambda()
+        .invokeAsync({
+          FunctionName: process.env.FEED_BUILDER_FUNCTION_NAME,
+          InvokeArgs: JSON.stringify({}),
+        })
+        .promise();
+    }
+
   }
 
   return result;

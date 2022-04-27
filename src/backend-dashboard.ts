@@ -7,6 +7,7 @@ import { Inventory } from './backend/inventory';
 import { PackageVersionsTableWidget } from './backend/inventory/package-versions-table-widget';
 import { Orchestration } from './backend/orchestration';
 import { PackageStats } from './backend/package-stats';
+import { ReleaseNoteFetcher } from './backend/release-notes';
 import { missingDocumentationReport, UNINSTALLABLE_PACKAGES_REPORT, corruptAssemblyReport, VERSION_TRACKER_KEY } from './backend/shared/constants';
 import { DocumentationLanguage } from './backend/shared/language';
 import { VersionTracker } from './backend/version-tracker';
@@ -24,6 +25,7 @@ export interface BackendDashboardProps {
   readonly packageData: IBucket;
   readonly packageStats?: PackageStats;
   readonly versionTracker: VersionTracker;
+  readonly releaseNotes?: ReleaseNoteFetcher;
 }
 
 export class BackendDashboard extends Construct {
@@ -305,6 +307,8 @@ export class BackendDashboard extends Construct {
 
         ...(props.packageStats ? renderPackageStatsWidgets(props.packageStats) : []),
         ...renderVersionTrackerWidgets(props.versionTracker),
+        ...(props.releaseNotes ? renderReleaseNotesWidgets(props.releaseNotes) : []),
+
       ],
     });
   }
@@ -544,6 +548,54 @@ function renderVersionTrackerWidgets(versionTracker: VersionTracker): IWidget[][
           label: '1 minutes (Lambda timeout)',
           value: Duration.minutes(1).toSeconds(),
         }],
+      }),
+    ],
+  ];
+}
+
+function renderReleaseNotesWidgets(releaseNotes: ReleaseNoteFetcher): IWidget[][] {
+  return [
+    [
+      new TextWidget({
+        height: 2,
+        width: 24,
+        markdown:
+          [
+            '# Release Notes',
+            '',
+            `[button:primary:StateMachine](${stateMachineUrl(releaseNotes.stateMachine)})`,
+            `[button:releaseNotesTrigger](${lambdaFunctionUrl(releaseNotes.releaseNotesTriggerLambda)})`,
+            `[button:generateReleaseNotes](${lambdaFunctionUrl(releaseNotes.generateReleaseNotesLambda)})`,
+            `[button:updateFeed](${lambdaFunctionUrl(releaseNotes.updateFeedFunction)})`,
+            `[button:queue](${sqsQueueUrl(releaseNotes.queue)})`,
+            `[button:workerQueue](${sqsQueueUrl(releaseNotes.workerQueue)})`,
+            `[button:workerDLQ](${sqsQueueUrl(releaseNotes.workerDLQ)})`,
+          ].join('\n'),
+      }),
+    ],
+    [
+      new GraphWidget({
+        height: 6,
+        width: 12,
+        title: 'Number of release Notes',
+        left: [
+          fillMetric(releaseNotes.metricPackagesWithReleaseNotesCount({ label: 'Packages with release notes' }), 'REPEAT'),
+        ],
+        leftYAxis: { min: 0 },
+      }),
+      new GraphWidget({
+        height: 6,
+        width: 12,
+        title: 'Release notes generation Errors',
+        left: [
+          releaseNotes.metricChangeLogAllError({ label: 'All Errors' }),
+          releaseNotes.metricRequestUnknownError({ label: 'UnknownError' }),
+          releaseNotes.metricInvalidCredentials({ label: 'InvalidCredentials' }),
+          releaseNotes.metricRequestQuotaExhausted({ label: 'RequestQuotaExhausted' }),
+          releaseNotes.metricRequestUnSupportedRepo({ label: 'UnSupportedRepo' }),
+          releaseNotes.metricRequestInvalidPackageJson({ label: 'InvalidPackageJson' }),
+          releaseNotes.metricChangeLogFetchError({ label: 'ChangeLogFetchError' }),
+        ],
       }),
     ],
   ];

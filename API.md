@@ -507,6 +507,7 @@ const constructHubProps: ConstructHubProps = { ... }
 | <code><a href="#construct-hub.ConstructHubProps.property.failoverStorage">failoverStorage</a></code> | <code>boolean</code> | Wire construct hub to use the failover storage buckets. |
 | <code><a href="#construct-hub.ConstructHubProps.property.featuredPackages">featuredPackages</a></code> | <code><a href="#construct-hub.FeaturedPackages">FeaturedPackages</a></code> | Configuration for packages to feature on the home page. |
 | <code><a href="#construct-hub.ConstructHubProps.property.featureFlags">featureFlags</a></code> | <code><a href="#construct-hub.FeatureFlags">FeatureFlags</a></code> | Configure feature flags for the web app. |
+| <code><a href="#construct-hub.ConstructHubProps.property.feedConfiguration">feedConfiguration</a></code> | <code><a href="#construct-hub.FeedConfiguration">FeedConfiguration</a></code> | Configuration for generating RSS/Atom feeds with the latest packages. |
 | <code><a href="#construct-hub.ConstructHubProps.property.fetchPackageStats">fetchPackageStats</a></code> | <code>boolean</code> | Configure whether or not the backend should periodically query NPM for the number of downloads a package has in the past week, and display download counts on the web app. |
 | <code><a href="#construct-hub.ConstructHubProps.property.isolateSensitiveTasks">isolateSensitiveTasks</a></code> | <code>boolean</code> | Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments. |
 | <code><a href="#construct-hub.ConstructHubProps.property.logRetention">logRetention</a></code> | <code>@aws-cdk/aws-logs.RetentionDays</code> | How long to retain CloudWatch logs for. |
@@ -679,6 +680,21 @@ public readonly featureFlags: FeatureFlags;
 - *Type:* <a href="#construct-hub.FeatureFlags">FeatureFlags</a>
 
 Configure feature flags for the web app.
+
+---
+
+##### `feedConfiguration`<sup>Optional</sup> <a name="feedConfiguration" id="construct-hub.ConstructHubProps.property.feedConfiguration"></a>
+
+```typescript
+public readonly feedConfiguration: FeedConfiguration;
+```
+
+- *Type:* <a href="#construct-hub.FeedConfiguration">FeedConfiguration</a>
+
+Configuration for generating RSS/Atom feeds with the latest packages.
+
+If the value is missing
+the generated RSS/ATOM feed would not contain release notes
 
 ---
 
@@ -1183,6 +1199,66 @@ public readonly searchRedesign: boolean;
 ```
 
 - *Type:* boolean
+
+---
+
+### FeedConfiguration <a name="FeedConfiguration" id="construct-hub.FeedConfiguration"></a>
+
+Configuration for generating RSS and ATOM feed for the latest packages.
+
+#### Initializer <a name="Initializer" id="construct-hub.FeedConfiguration.Initializer"></a>
+
+```typescript
+import { FeedConfiguration } from 'construct-hub'
+
+const feedConfiguration: FeedConfiguration = { ... }
+```
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#construct-hub.FeedConfiguration.property.feedDescription">feedDescription</a></code> | <code>string</code> | description used in the generated feed. |
+| <code><a href="#construct-hub.FeedConfiguration.property.feedTitle">feedTitle</a></code> | <code>string</code> | Title used in the generated feed. |
+| <code><a href="#construct-hub.FeedConfiguration.property.githubTokenSecret">githubTokenSecret</a></code> | <code>@aws-cdk/aws-secretsmanager.ISecret</code> | Github token for generating release notes. |
+
+---
+
+##### `feedDescription`<sup>Optional</sup> <a name="feedDescription" id="construct-hub.FeedConfiguration.property.feedDescription"></a>
+
+```typescript
+public readonly feedDescription: string;
+```
+
+- *Type:* string
+
+description used in the generated feed.
+
+---
+
+##### `feedTitle`<sup>Optional</sup> <a name="feedTitle" id="construct-hub.FeedConfiguration.property.feedTitle"></a>
+
+```typescript
+public readonly feedTitle: string;
+```
+
+- *Type:* string
+
+Title used in the generated feed.
+
+---
+
+##### `githubTokenSecret`<sup>Optional</sup> <a name="githubTokenSecret" id="construct-hub.FeedConfiguration.property.githubTokenSecret"></a>
+
+```typescript
+public readonly githubTokenSecret: ISecret;
+```
+
+- *Type:* @aws-cdk/aws-secretsmanager.ISecret
+
+Github token for generating release notes.
+
+When missing no release notes will be included in the generated RSS/ATOM feed
 
 ---
 

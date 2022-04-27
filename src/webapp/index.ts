@@ -8,7 +8,7 @@ import * as s3deploy from '@aws-cdk/aws-s3-deployment';
 import { CfnOutput, Construct } from '@aws-cdk/core';
 import { Domain } from '../api';
 import { PackageStats } from '../backend/package-stats';
-import { CATALOG_KEY, VERSION_TRACKER_KEY } from '../backend/shared/constants';
+import { CATALOG_KEY, VERSION_TRACKER_KEY, FEED_RSS_KEY, FEED_ATOM_KEY } from '../backend/shared/constants';
 import { CacheStrategy } from '../caching';
 import { MonitoredCertificate } from '../monitored-certificate';
 import { Monitoring } from '../monitoring';
@@ -153,6 +153,11 @@ export interface WebAppProps extends WebappConfigProps {
    * JavaScript file which will be loaded before the webapp
    */
   readonly preloadScript?: PreloadFile;
+
+  /**
+   * Include <link> tag for ATOM and RSS feeds to the web app's head metadata
+   */
+  readonly includeFeedLink?: boolean;
 }
 
 export class WebApp extends Construct {
@@ -209,6 +214,12 @@ export class WebApp extends Construct {
     this.distribution.addBehavior('/data/*', jsiiObjOrigin, behaviorOptions);
     this.distribution.addBehavior(`/${CATALOG_KEY}`, jsiiObjOrigin, behaviorOptions);
     this.distribution.addBehavior(`/${VERSION_TRACKER_KEY}`, jsiiObjOrigin, behaviorOptions);
+
+    if (props.includeFeedLink) {
+      this.distribution.addBehavior(`/${FEED_ATOM_KEY}`, jsiiObjOrigin, behaviorOptions);
+      this.distribution.addBehavior(`/${FEED_RSS_KEY}`, jsiiObjOrigin, behaviorOptions);
+    }
+
     if (props.packageStats) {
       this.distribution.addBehavior(`/${props.packageStats.statsKey}`, jsiiObjOrigin, behaviorOptions);
     }
@@ -257,9 +268,22 @@ export class WebApp extends Construct {
       packageTags: props.packageTags,
       packageTagGroups: props.packageTagGroups,
       featuredPackages: props.featuredPackages,
-      showPackageStats: props.showPackageStats ?? props.packageStats !== undefined,
+      showPackageStats:
+        props.showPackageStats ?? props.packageStats !== undefined,
       featureFlags: props.featureFlags,
       categories: props.categories,
+      feedConfig: props.includeFeedLink
+        ? [
+          {
+            mimeType: 'application/atom+xml',
+            url: `/${FEED_ATOM_KEY}`,
+          },
+          {
+            mimeType: 'application/rss+xml',
+            url: `/${FEED_RSS_KEY}`,
+          },
+        ]
+        : undefined,
     });
 
     // Generate preload.js

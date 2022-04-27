@@ -14,6 +14,11 @@ export interface IngestionInput {
   readonly metadata: { readonly [key: string]: string };
 
   /**
+   * The flag to indicate if this is a re-ingestion request
+   */
+  reIngest?: boolean;
+
+  /**
    * The URI to an npm package tarball.
    */
   readonly tarballUri: string;

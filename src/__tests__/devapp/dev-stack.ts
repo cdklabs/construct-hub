@@ -1,6 +1,9 @@
+import * as path from 'path';
 import * as process from 'process';
 import { RetentionDays } from '@aws-cdk/aws-logs';
+import * as secretsManager from '@aws-cdk/aws-secretsmanager';
 import { Construct, Stack } from '@aws-cdk/core';
+import * as dotenv from 'dotenv';
 import { ConstructHub, Isolation } from '../..';
 import { TagCondition } from '../../package-tag';
 import { PackageTagGroup, FilterType } from '../../package-tag-group';
@@ -86,6 +89,15 @@ export class DevStack extends Stack {
       },
     });
 
+    dotenv.config({
+      path: path.join(__dirname, '../../../src/__tests__/devapp/.env'), // joining path to make sure the file is being picked up from src instead of lib
+    });
+
+    const feedConfiguration = process.env.GITHUB_TOKEN ? {
+      githubTokenSecret: secretsManager.Secret.fromSecretCompleteArn(this, 'GitHubToken', process.env.GITHUB_TOKEN),
+      feedDescription: 'Latest Constructs in the construct hub',
+      feedTitle: 'Latest constructs',
+    } : undefined;
     const sensitiveTaskIsolation =
       props.sensitiveTaskIsolation ?? defaultIsolateSensitiveTasks();
 
@@ -127,6 +139,7 @@ export class DevStack extends Stack {
         { title: 'Category2', url: '/search?keywords=boom' },
       ],
       preloadScript: PreloadFile.fromCode('console.log("This is a custom preloadScript")'),
+      feedConfiguration,
     });
   }
 }

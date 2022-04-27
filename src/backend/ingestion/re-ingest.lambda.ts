@@ -34,6 +34,7 @@ export async function handler(event: Input, context: Context) {
   const ingestionInput = integrity({
     tarballUri: `s3://${bucket}/${tarballKey}${versionId ? `?versionId=${versionId}` : ''}`,
     time,
+    reIngest: true,
     metadata: {
       reprocessRequestId: context.awsRequestId,
       reprocessLogGroup: context.logGroupName,
