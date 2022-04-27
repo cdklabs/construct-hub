@@ -53,6 +53,7 @@ void https
 
         savePrefixLists(data.git, 'git');
         savePrefixLists(data.web, 'web');
+        savePrefixLists(data.api, 'api');
       });
     }
   )

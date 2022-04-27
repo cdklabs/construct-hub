@@ -66,6 +66,7 @@ test('basic case', () => {
       expect(request.QueueUrl).toBe(mockQueueUrl);
       expect(JSON.parse(request.MessageBody)).toEqual({
         integrity: 'sha384-sQ9dnSmDKM875DcJKcQNmU6VKy/nJe3iA5GmaREMnoXxFOpjxEOxNYqwByBj/iyb',
+        reIngest: true,
         metadata: {
           reprocessLogGroup: context.logGroupName,
           reprocessLogStream: context.logStreamName,

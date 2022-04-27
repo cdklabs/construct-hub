@@ -306,6 +306,18 @@ export const handler = metricScope(
         .promise();
       console.log(`Started StateMachine execution: ${sfn.executionArn}`);
       result.push(sfn.executionArn);
+
+      // Dont fetch release notes if its a reIngestion request
+      if (payload.reIngest !== true && process.env.RELEASE_NOTES_FETCH_QUEUE_URL) {
+        const body = JSON.stringify({
+          tarballUri: `s3://${BUCKET_NAME}/${packageKey}`,
+        });
+        console.log('sending message to release note fetcher ', body);
+        await aws.sqs().sendMessage({
+          QueueUrl: process.env.RELEASE_NOTES_FETCH_QUEUE_URL,
+          MessageBody: body,
+        }).promise();
+      }
     }
 
     return result;
