@@ -1,14 +1,18 @@
 import { ComparisonOperator, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
-import { Rule, Schedule } from '@aws-cdk/aws-events';
-import { LambdaFunction } from '@aws-cdk/aws-events-targets';
+import * as events from '@aws-cdk/aws-events';
+import * as targets from '@aws-cdk/aws-events-targets';
 import { IFunction } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
-import { IBucket } from '@aws-cdk/aws-s3';
+import * as s3 from '@aws-cdk/aws-s3';
+import * as sfn from '@aws-cdk/aws-stepfunctions';
+import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
+import * as cdk from '@aws-cdk/core';
 import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { OverviewDashboard } from '../../overview-dashboard';
 import { RUNBOOK_URL } from '../../runbook-url';
+import { S3StorageFactory } from '../../s3/storage';
 import { MISSING_DOCUMENTATION_REPORT_PATTERN, UNINSTALLABLE_PACKAGES_REPORT, CORRUPT_ASSEMBLY_REPORT_PATTERN } from '../shared/constants';
 import { DocumentationLanguage } from '../shared/language';
 import { Canary } from './canary';
@@ -18,7 +22,7 @@ export interface InventoryProps {
   /**
    * The data storage bucket.
    */
-  readonly bucket: IBucket;
+  readonly bucket: s3.IBucket;
 
   /**
    * The `Monitoring` instance to use for reporting this canary's health.
@@ -44,7 +48,7 @@ export interface InventoryProps {
 }
 
 /**
- * Periodically computes an inventory of all indexed packages into the storage
+ * Periodically computes an inventory of all indexed packages in the storage
  * bucket, and produces metrics with an overview of the index' state.
  */
 export class Inventory extends Construct {
@@ -56,29 +60,67 @@ export class Inventory extends Construct {
 
     this.rate = props.scheduleRate ?? Duration.minutes(15);
 
+    // Store intermediate state information in a bucket so that we can sort of
+    // run the lambda for more than 15 minutes
+    const storageFactory = S3StorageFactory.getOrCreate(this);
+    const scratchworkBucket = storageFactory.newBucket(this, 'ScratchworkBucket', {
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      encryption: s3.BucketEncryption.S3_MANAGED,
+      enforceSSL: true,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
     this.canary = new Canary(this, 'Resource', {
       description: '[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages',
       environment: {
         AWS_EMF_ENVIRONMENT: 'Local',
-        BUCKET_NAME: props.bucket.bucketName,
+        PACKAGE_DATA_BUCKET_NAME: props.bucket.bucketName,
+        SCRATCHWORK_BUCKET_NAME: scratchworkBucket.bucketName,
       },
       logRetention: props.logRetention,
       memorySize: 10_240,
-      timeout: this.rate,
+      timeout: Duration.minutes(15),
     });
     const grantRead = props.bucket.grantRead(this.canary);
     const grantWriteMissing = props.bucket.grantWrite(this.canary, MISSING_DOCUMENTATION_REPORT_PATTERN);
     const grantWriteCorruptAssembly = props.bucket.grantWrite(this.canary, CORRUPT_ASSEMBLY_REPORT_PATTERN);
     const grantWriteUnInstallable = props.bucket.grantWrite(this.canary, UNINSTALLABLE_PACKAGES_REPORT);
+    const grantReadWriteScratchwork = scratchworkBucket.grantReadWrite(this.canary);
 
-    const rule = new Rule(this, 'ScheduleRule', {
-      schedule: Schedule.rate(this.rate),
-      targets: [new LambdaFunction(this.canary)],
+    const processBucket = new tasks.LambdaInvoke(this, 'Process for 15 minutes.', {
+      lambdaFunction: this.canary,
+      payloadResponseOnly: true,
+      inputPath: '$.result',
+      resultPath: '$.result',
+    });
+    processBucket.next(new sfn.Choice(this, 'Remaining items to process?')
+      .when(sfn.Condition.isPresent('$.result.continuationObjectKey'), processBucket)
+      .otherwise(new sfn.Succeed(this, 'Success')));
+
+    const stateMachine = new sfn.StateMachine(this, 'StateMachine', {
+      definition: processBucket,
+      timeout: Duration.hours(6),
+      tracingEnabled: true,
     });
 
-    rule.node.addDependency(grantRead, grantWriteMissing);
-    rule.node.addDependency(grantRead, grantWriteCorruptAssembly);
-    rule.node.addDependency(grantRead, grantWriteUnInstallable);
+    const rule = new events.Rule(this, 'ScheduleRule', {
+      schedule: events.Schedule.rate(this.rate),
+      targets: [new targets.SfnStateMachine(stateMachine, {
+        input: events.RuleTargetInput.fromObject({
+          comment: 'Scheduled event from cron job.',
+          result: {},
+        }),
+        retryAttempts: 3,
+      })],
+    });
+
+    rule.node.addDependency(
+      grantRead,
+      grantWriteMissing,
+      grantWriteCorruptAssembly,
+      grantWriteUnInstallable,
+      grantReadWriteScratchwork,
+    );
 
     props.monitoring.addLowSeverityAlarm(
       'Inventory Canary is not Running',
