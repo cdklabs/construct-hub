@@ -15,43 +15,35 @@ Configuration.namespace = METRICS_NAMESPACE;
 export async function handler(event: InventoryCanaryEvent, context: Context) {
   console.log('Event:', JSON.stringify(event, null, 2));
 
-  let continuationToken: string | undefined;
-  let indexedPackages: Map<string, IndexedPackageStatus>;
-  let packageNames: Set<string>;
-  let packageMajorVersions: Set<string>;
-  let perLanguage: Map<string, PerLanguageData>;
-
   const scratchworkBucket = requireEnv('SCRATCHWORK_BUCKET_NAME');
 
-  if (event.continuationObjectKey) {
+  const { continuationToken, indexedPackages, packageNames, packageMajorVersions, perLanguage } = event.continuationObjectKey ? await loadProgress(event.continuationObjectKey) : {
+    continuationToken: undefined,
+    indexedPackages: new Map<string, IndexedPackageStatus>(),
+    packageNames: new Set<string>(),
+    packageMajorVersions: new Set<string>(),
+    perLanguage: new Map<string, PerLanguageData>()
+  };
+
+  async function loadProgress(continuationObjectKey: string) {
 
     console.log('Found a continuation object key, retrieving data from the existing run...');
     let { Body, ContentEncoding } = await aws.s3().getObject({
       Bucket: scratchworkBucket,
-      Key: event.continuationObjectKey,
+      Key: continuationObjectKey,
     }).promise();
-
     // If it was compressed, decompress it.
     if (ContentEncoding === 'gzip') {
       Body = gunzipSync(Buffer.from(Body! as any));
     }
-
     if (!Body) {
       throw new Error(`Object key "${event.continuationObjectKey}" not found in bucket "${scratchworkBucket}".`);
     }
-
     console.log('Deserializing data...');
     const serializedState = Body.toString('utf-8') as Serialized<InventoryCanaryState>;
     const state = deserialize(serializedState);
     console.log('Deserializing finished.');
-    ({ continuationToken, packageNames, packageMajorVersions, indexedPackages, perLanguage } = state);
-
-  } else {
-
-    indexedPackages = new Map<string, IndexedPackageStatus>();
-    packageNames = new Set<string>();
-    packageMajorVersions = new Set<string>();
-    perLanguage = new Map<string, PerLanguageData>();
+    return state;
 
   }
 
