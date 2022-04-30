@@ -68,6 +68,7 @@ export class Inventory extends Construct {
       encryption: s3.BucketEncryption.S3_MANAGED,
       enforceSSL: true,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
+      lifecycleRules: [{ expiration: cdk.Duration.days(30) }]
     });
 
     this.canary = new Canary(this, 'Resource', {
