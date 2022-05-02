@@ -17,13 +17,15 @@ export async function handler(event: InventoryCanaryEvent, context: Context) {
 
   const scratchworkBucket = requireEnv('SCRATCHWORK_BUCKET_NAME');
 
-  const { continuationToken, indexedPackages, packageNames, packageMajorVersions, perLanguage } = event.continuationObjectKey ? await loadProgress(event.continuationObjectKey) : {
-    continuationToken: undefined,
-    indexedPackages: new Map<string, IndexedPackageStatus>(),
-    packageNames: new Set<string>(),
-    packageMajorVersions: new Set<string>(),
-    perLanguage: new Map<string, PerLanguageData>()
-  };
+  const { continuationToken, indexedPackages, packageNames, packageMajorVersions, perLanguage } = event.continuationObjectKey
+    ? await loadProgress(event.continuationObjectKey)
+    : {
+      continuationToken: undefined,
+      indexedPackages: new Map<string, IndexedPackageStatus>(),
+      packageNames: new Set<string>(),
+      packageMajorVersions: new Set<string>(),
+      perLanguage: new Map<string, PerLanguageData>(),
+    };
 
   async function loadProgress(continuationObjectKey: string) {
 
