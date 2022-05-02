@@ -7391,6 +7391,10 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - ExpirationInDays: 30
+            Status: Enabled
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -7430,6 +7434,10 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - ExpirationInDays: 30
+            Status: Enabled
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -7573,7 +7581,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersb23018b5a2dbdf5fd3bbf2408f568fbae86fdbfb43f11a36a02f0e6a264627c7S3Bucket7CC072B9
+          Ref: AssetParametersf115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04S3BucketC8E6D03E
         S3Key:
           Fn::Join:
             - ""
@@ -7581,12 +7589,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersb23018b5a2dbdf5fd3bbf2408f568fbae86fdbfb43f11a36a02f0e6a264627c7S3VersionKey49774C95
+                      - Ref: AssetParametersf115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04S3VersionKeyF2C79541
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersb23018b5a2dbdf5fd3bbf2408f568fbae86fdbfb43f11a36a02f0e6a264627c7S3VersionKey49774C95
+                      - Ref: AssetParametersf115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04S3VersionKeyF2C79541
       Role:
         Fn::GetAtt:
           - ConstructHubInventoryCanaryServiceRole7684EDDE
@@ -9696,18 +9704,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "4350dc4da0d8a13c87f42843e78b0b4af80e9702aa9a9c99a82f0205e64e08f5"
-  AssetParametersb23018b5a2dbdf5fd3bbf2408f568fbae86fdbfb43f11a36a02f0e6a264627c7S3Bucket7CC072B9:
+  AssetParametersf115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04S3BucketC8E6D03E:
     Type: String
     Description: S3 bucket for asset
-      "b23018b5a2dbdf5fd3bbf2408f568fbae86fdbfb43f11a36a02f0e6a264627c7"
-  AssetParametersb23018b5a2dbdf5fd3bbf2408f568fbae86fdbfb43f11a36a02f0e6a264627c7S3VersionKey49774C95:
+      "f115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04"
+  AssetParametersf115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04S3VersionKeyF2C79541:
     Type: String
     Description: S3 key for asset version
-      "b23018b5a2dbdf5fd3bbf2408f568fbae86fdbfb43f11a36a02f0e6a264627c7"
-  AssetParametersb23018b5a2dbdf5fd3bbf2408f568fbae86fdbfb43f11a36a02f0e6a264627c7ArtifactHash42A15BAE:
+      "f115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04"
+  AssetParametersf115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04ArtifactHashEE804AD2:
     Type: String
     Description: Artifact hash for asset
-      "b23018b5a2dbdf5fd3bbf2408f568fbae86fdbfb43f11a36a02f0e6a264627c7"
+      "f115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04"
   AssetParametersd9b674f82d1e3d22daf401c98b1681d167319055c2e4c0f9c1a9e2b06e90ea20S3Bucket89D05AD1:
     Type: String
     Description: S3 bucket for asset
