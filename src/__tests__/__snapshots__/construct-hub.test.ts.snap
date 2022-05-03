@@ -57091,6 +57091,13 @@ Direct link to function: /lambda/home#/functions/",
               "\\",\\"",
               Object {
                 "Fn::GetAtt": Array [
+                  "ConstructHubgithubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378fea58CEE8E4",
+                  "GroupId",
+                ],
+              },
+              "\\",\\"",
+              Object {
+                "Fn::GetAtt": Array [
                   "ConstructHubgithubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6dAAE47857",
                   "GroupId",
                 ],
@@ -61918,6 +61925,12 @@ Direct link to Lambda function: /lambda/home#/functions/",
           },
           Object {
             "Fn::GetAtt": Array [
+              "ConstructHubgithubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378fea58CEE8E4",
+              "GroupId",
+            ],
+          },
+          Object {
+            "Fn::GetAtt": Array [
               "ConstructHubgithubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6dAAE47857",
               "GroupId",
             ],
@@ -61988,6 +62001,12 @@ Direct link to Lambda function: /lambda/home#/functions/",
           Object {
             "Fn::GetAtt": Array [
               "ConstructHubcloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec16388066AC9B4",
+              "GroupId",
+            ],
+          },
+          Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubgithubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378fea58CEE8E4",
               "GroupId",
             ],
           },
@@ -62086,6 +62105,12 @@ Direct link to Lambda function: /lambda/home#/functions/",
           Object {
             "Fn::GetAtt": Array [
               "ConstructHubcloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec16388066AC9B4",
+              "GroupId",
+            ],
+          },
+          Object {
+            "Fn::GetAtt": Array [
+              "ConstructHubgithubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378fea58CEE8E4",
               "GroupId",
             ],
           },
@@ -63934,6 +63959,12 @@ Direct link to Lambda function: /lambda/home#/functions/",
           },
           Object {
             "Fn::GetAtt": Array [
+              "ConstructHubgithubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378fea58CEE8E4",
+              "GroupId",
+            ],
+          },
+          Object {
+            "Fn::GetAtt": Array [
               "ConstructHubgithubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6dAAE47857",
               "GroupId",
             ],
@@ -65062,6 +65093,131 @@ function handler(event) {
         "GroupId": Object {
           "Fn::GetAtt": Array [
             "ConstructHubcloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec16388066AC9B4",
+            "GroupId",
+          ],
+        },
+        "IpProtocol": "tcp",
+        "ToPort": 443,
+      },
+      "Type": "AWS::EC2::SecurityGroupEgress",
+    },
+    "ConstructHubgithubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378fea3790BA1F": Object {
+      "Properties": Object {
+        "AddressFamily": "IPv4",
+        "Entries": Array [
+          Object {
+            "Cidr": "102.133.202.248/32",
+          },
+          Object {
+            "Cidr": "13.209.163.61/32",
+          },
+          Object {
+            "Cidr": "13.230.158.120/32",
+          },
+          Object {
+            "Cidr": "13.233.76.15/32",
+          },
+          Object {
+            "Cidr": "13.234.168.60/32",
+          },
+          Object {
+            "Cidr": "13.236.14.80/32",
+          },
+          Object {
+            "Cidr": "13.238.54.232/32",
+          },
+          Object {
+            "Cidr": "140.82.112.0/20",
+          },
+          Object {
+            "Cidr": "143.55.64.0/20",
+          },
+          Object {
+            "Cidr": "18.179.245.253/32",
+          },
+          Object {
+            "Cidr": "185.199.108.0/22",
+          },
+          Object {
+            "Cidr": "192.30.252.0/22",
+          },
+          Object {
+            "Cidr": "20.201.28.148/32",
+          },
+          Object {
+            "Cidr": "20.205.243.168/32",
+          },
+          Object {
+            "Cidr": "52.63.231.178/32",
+          },
+          Object {
+            "Cidr": "52.69.239.207/32",
+          },
+          Object {
+            "Cidr": "54.180.75.25/32",
+          },
+        ],
+        "MaxEntries": 17,
+        "PrefixListName": "github.api.IPv4",
+      },
+      "Type": "AWS::EC2::PrefixList",
+    },
+    "ConstructHubgithubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378fea58CEE8E4": Object {
+      "Properties": Object {
+        "GroupDescription": "Test/ConstructHub/github.api-IPv4",
+        "SecurityGroupIngress": Array [
+          Object {
+            "CidrIp": Object {
+              "Fn::GetAtt": Array [
+                "ConstructHubVPC16ECCEA2",
+                "CidrBlock",
+              ],
+            },
+            "Description": Object {
+              "Fn::Join": Array [
+                "",
+                Array [
+                  "from ",
+                  Object {
+                    "Fn::GetAtt": Array [
+                      "ConstructHubVPC16ECCEA2",
+                      "CidrBlock",
+                    ],
+                  },
+                  ":443",
+                ],
+              ],
+            },
+            "FromPort": 443,
+            "IpProtocol": "tcp",
+            "ToPort": 443,
+          },
+        ],
+        "Tags": Array [
+          Object {
+            "Key": "Name",
+            "Value": "github.api.IPv4",
+          },
+        ],
+        "VpcId": Object {
+          "Ref": "ConstructHubVPC16ECCEA2",
+        },
+      },
+      "Type": "AWS::EC2::SecurityGroup",
+    },
+    "ConstructHubgithubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378featoTestConstructHubgithubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378fea4439F120606": Object {
+      "Properties": Object {
+        "Description": "to github.api (IPv4)",
+        "DestinationPrefixListId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubgithubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378fea3790BA1F",
+            "PrefixListId",
+          ],
+        },
+        "FromPort": 443,
+        "GroupId": Object {
+          "Fn::GetAtt": Array [
+            "ConstructHubgithubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378fea58CEE8E4",
             "GroupId",
           ],
         },
