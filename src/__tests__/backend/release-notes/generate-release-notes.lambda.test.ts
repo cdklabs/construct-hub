@@ -9,7 +9,7 @@ import { extractObjects } from '../../../backend/shared/tarball.lambda-shared';
 jest.mock('aws-embedded-metrics');
 jest.mock('../../../backend/shared/tarball.lambda-shared');
 jest.mock(
-  '../../../backend/release-notes/shared/github-changelog-fetcher.lambda-shared',
+  '../../../backend/release-notes/shared/github-changelog-fetcher.lambda-shared'
 );
 
 const MOCK_BUCKET_NAME = 'package-data-bucket';
@@ -47,12 +47,15 @@ const MOCKED_RELEASE_NOTES = `
 
 const mockPutMetric = jest
   .fn()
-  .mockName('MetricsLogger.putMetric') as jest.MockedFunction<MetricsLogger['putMetric']>;
-
+  .mockName('MetricsLogger.putMetric') as jest.MockedFunction<
+  MetricsLogger['putMetric']
+>;
 
 const mockSetNamespace = jest
   .fn()
-  .mockName('MetricsLogger.mockSetNamespace') as jest.MockedFunction<MetricsLogger['setNamespace']>;
+  .mockName('MetricsLogger.mockSetNamespace') as jest.MockedFunction<
+  MetricsLogger['setNamespace']
+>;
 
 let handler: any;
 let s3GetObjSpy: jest.Mock;
@@ -60,10 +63,9 @@ let s3PutObjSpy: jest.Mock;
 const extractObjectMock = <jest.MockedFunction<typeof extractObjects>>(
   extractObjects
 );
-const generateReleaseNotesMock = <jest.MockedFunction<typeof generateReleaseNotes>>(
-  generateReleaseNotes
-);
-
+const generateReleaseNotesMock = <
+  jest.MockedFunction<typeof generateReleaseNotes>
+>generateReleaseNotes;
 
 beforeAll(() => {
   // Setup the metric scope
@@ -88,9 +90,7 @@ beforeAll(() => {
   ({
     handler,
   } = require('../../../backend/release-notes/generate-release-notes.lambda')); // eslint-disable-line @typescript-eslint/no-require-imports
-
 });
-
 
 beforeEach(async () => {
   // Set Env var needed for the lambda
@@ -118,7 +118,7 @@ type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
 
 test('happy case', async () => {
   await expect(
-    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any),
+    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any)
   ).resolves.toEqual({ error: null, releaseNotes: MOCKED_RELEASE_NOTES });
   expect(extractObjectMock).toHaveBeenCalledTimes(1);
   expect(extractObjectMock).toHaveBeenCalledWith(FAKE_TAR_GZ, {
@@ -134,10 +134,9 @@ test('happy case', async () => {
     MOCK_PKG_PROJECT_NAME,
     MOCK_PKG_NAME,
     MOCK_PKG_VERSION,
-    MOCK_PKG_DIRECTORY,
+    MOCK_PKG_DIRECTORY
   );
 });
-
 
 test('When repository uses git@github.com url', async () => {
   const PKG_JSON_GITHUB_REPO_URL = {
@@ -153,7 +152,7 @@ test('When repository uses git@github.com url', async () => {
   });
 
   await expect(
-    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any),
+    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any)
   ).resolves.toEqual({ error: null, releaseNotes: MOCKED_RELEASE_NOTES });
 
   expect(extractObjectMock).toHaveBeenCalledTimes(1);
@@ -170,7 +169,7 @@ test('When repository uses git@github.com url', async () => {
     MOCK_PKG_PROJECT_NAME,
     MOCK_PKG_NAME,
     MOCK_PKG_VERSION,
-    MOCK_PKG_DIRECTORY,
+    MOCK_PKG_DIRECTORY
   );
 });
 
@@ -184,7 +183,7 @@ test('When repository info is missing sends "UnSupportedRepo"', async () => {
   });
 
   await expect(
-    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any),
+    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any)
   ).resolves.toEqual({ error: 'UnSupportedRepo' });
   expect(generateReleaseNotes).not.toHaveBeenCalled();
 
@@ -200,12 +199,16 @@ test('When repository info is missing sends "UnSupportedRepo"', async () => {
   });
 
   await expect(
-    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any),
+    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any)
   ).resolves.toEqual({ error: 'UnSupportedRepo' });
   expect(generateReleaseNotes).not.toHaveBeenCalled();
   expect(s3GetObjSpy).toHaveBeenCalledTimes(2);
   expect(s3PutObjSpy).not.toHaveBeenCalled();
-  expect(mockPutMetric).toHaveBeenCalledWith(constants.UnSupportedRepo, 1, Unit.Count);
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    constants.UnSupportedRepo,
+    1,
+    Unit.Count
+  );
 });
 
 test('sends RequestQuotaExhausted error when GitHub sends error code 403', async () => {
@@ -217,7 +220,7 @@ test('sends RequestQuotaExhausted error when GitHub sends error code 403', async
   });
 
   await expect(
-    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any),
+    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any)
   ).resolves.toEqual({
     error: 'RequestQuotaExhausted',
     releaseNotes: undefined,
@@ -230,7 +233,11 @@ test('sends RequestQuotaExhausted error when GitHub sends error code 403', async
 
   expect(s3GetObjSpy).toHaveBeenCalledTimes(1);
   expect(s3PutObjSpy).not.toHaveBeenCalled();
-  expect(mockPutMetric).toHaveBeenCalledWith(constants.RequestQuotaExhausted, 1, Unit.Count);
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    constants.RequestQuotaExhausted,
+    1,
+    Unit.Count
+  );
 });
 
 test('sends InvalidCredentials error when GitHub sends error code 401', async () => {
@@ -243,7 +250,7 @@ test('sends InvalidCredentials error when GitHub sends error code 401', async ()
   });
 
   await expect(
-    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any),
+    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any)
   ).resolves.toEqual({ error: 'InvalidCredentials', releaseNotes: undefined });
 
   expect(extractObjectMock).toHaveBeenCalledTimes(1);
@@ -253,7 +260,11 @@ test('sends InvalidCredentials error when GitHub sends error code 401', async ()
 
   expect(s3GetObjSpy).toHaveBeenCalledTimes(1);
   expect(s3PutObjSpy).not.toHaveBeenCalled();
-  expect(mockPutMetric).toHaveBeenCalledWith(constants.InvalidCredentials, 1, Unit.Count);
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    constants.InvalidCredentials,
+    1,
+    Unit.Count
+  );
 });
 
 test('When GH does not have any release notes', async () => {
@@ -264,7 +275,7 @@ test('When GH does not have any release notes', async () => {
   generateReleaseNotesMock.mockResolvedValueOnce(undefined);
 
   await expect(
-    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any),
+    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any)
   ).resolves.toEqual({ error: null, releaseNotes: undefined });
 
   expect(extractObjectMock).toHaveBeenCalledTimes(1);
@@ -278,9 +289,11 @@ test('When GH does not have any release notes', async () => {
 
 test('when tarball is invalid send InvalidTarball error', async () => {
   // Missing package.json
-  extractObjectMock.mockRejectedValueOnce(new Error('Missing required entry in tarball: package.json'));
+  extractObjectMock.mockRejectedValueOnce(
+    new Error('Missing required entry in tarball: package.json')
+  );
   await expect(
-    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any),
+    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any)
   ).resolves.toEqual({ error: 'InvalidTarball', releaseNotes: undefined });
 
   expect(extractObjectMock).toHaveBeenCalledTimes(1);
@@ -290,14 +303,22 @@ test('when tarball is invalid send InvalidTarball error', async () => {
 
   expect(s3GetObjSpy).toHaveBeenCalledTimes(1);
   expect(s3PutObjSpy).not.toHaveBeenCalled();
-  expect(mockPutMetric).toHaveBeenCalledWith(constants.InvalidTarball, 1, Unit.Count);
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    constants.InvalidTarball,
+    1,
+    Unit.Count
+  );
 });
 
 test('throw error when the tarball uri is not a valid s3 url', async () => {
   await expect(
-    handler({ tarballUri: 'http://something.com/my-package' }, {} as any),
+    handler({ tarballUri: 'http://something.com/my-package' }, {} as any)
   ).resolves.toEqual({ error: 'UnSupportedTarballUrl' });
-  expect(mockPutMetric).toHaveBeenCalledWith(constants.UnSupportedTarballUrl, 1, Unit.Count);
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    constants.UnSupportedTarballUrl,
+    1,
+    Unit.Count
+  );
 });
 
 test('throw error when package.json is not valid', async () => {
@@ -306,7 +327,7 @@ test('throw error when package.json is not valid', async () => {
     packageJson: Buffer.from('{InvalidJSON}'),
   });
   await expect(
-    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any),
+    handler({ tarballUri: MOCK_TARBALL_URI }, {} as any)
   ).resolves.toEqual({ error: 'InvalidPackageJson' });
 
   expect(extractObjectMock).toHaveBeenCalledTimes(1);
@@ -316,8 +337,11 @@ test('throw error when package.json is not valid', async () => {
 
   expect(s3GetObjSpy).toHaveBeenCalledTimes(1);
   expect(s3PutObjSpy).not.toHaveBeenCalled();
-  expect(mockPutMetric).toHaveBeenCalledWith(constants.InvalidPackageJson, 1, Unit.Count);
-
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    constants.InvalidPackageJson,
+    1,
+    Unit.Count
+  );
 });
 
 // Helper functions
@@ -334,7 +358,7 @@ const setupPkgTarS3GetObjectMock = () => {
         return cb(e);
       }
       return cb(null, spy());
-    },
+    }
   );
   return spy;
 };
@@ -353,7 +377,7 @@ function setupReleaseNotesS3PutObjectMock() {
         return cb(e as AWSError);
       }
       return cb(null, spy(req));
-    },
+    }
   );
   return spy;
 }

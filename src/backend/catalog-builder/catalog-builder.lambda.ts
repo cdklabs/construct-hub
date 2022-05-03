@@ -36,10 +36,17 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
 
   console.log('Loading existing catalog (if present)...');
 
-  const data = await aws.s3().getObject({ Bucket: BUCKET_NAME, Key: constants.CATALOG_KEY }).promise()
-    .catch((err: AWSError) => err.code !== 'NoSuchKey'
-      ? Promise.reject(err)
-      : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
+  const data = await aws
+    .s3()
+    .getObject({ Bucket: BUCKET_NAME, Key: constants.CATALOG_KEY })
+    .promise()
+    .catch((err: AWSError) =>
+      err.code !== 'NoSuchKey'
+        ? Promise.reject(err)
+        : Promise.resolve({
+            /* no data */
+          } as S3.GetObjectOutput)
+    );
 
   if (data.Body) {
     console.log('Catalog found. Loading...');
@@ -47,7 +54,9 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     for (const info of catalog.packages) {
       const denyRule = denyList.lookup(info.name, info.version);
       if (denyRule != null) {
-        console.log(`Dropping ${info.name}@${info.version} from catalog: ${denyRule.reason}`);
+        console.log(
+          `Dropping ${info.name}@${info.version} from catalog: ${denyRule.reason}`
+        );
         continue;
       }
       if (!packages.has(info.name)) {
@@ -63,7 +72,9 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
 
   if (event.package) {
     if (!event.package.key.endsWith(constants.PACKAGE_KEY_SUFFIX)) {
-      throw new Error(`The provided package key is invalid: ${event.package.key} does not end in ${constants.PACKAGE_KEY_SUFFIX}`);
+      throw new Error(
+        `The provided package key is invalid: ${event.package.key} does not end in ${constants.PACKAGE_KEY_SUFFIX}`
+      );
     }
 
     console.log('Registering new packages...');
@@ -76,10 +87,12 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
   // don't have a catalog body (from scratch) or if "startAfter" is set (continuation of from
   // scratch).
   if (!event?.package || !data.Body || event.startAfter) {
-
     console.log('Recreating or refreshing catalog...');
     const failures: any = {};
-    for await (const { Key: pkgKey } of relevantObjects(BUCKET_NAME, event.startAfter)) {
+    for await (const { Key: pkgKey } of relevantObjects(
+      BUCKET_NAME,
+      event.startAfter
+    )) {
       try {
         await appendPackage(packages, pkgKey!, BUCKET_NAME, denyList);
       } catch (e) {
@@ -100,37 +113,50 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
       metrics.setDimensions();
       const failedCount = Object.keys(failures).length;
       console.log(`Marking ${failedCount} failed packages`);
-      metrics.putMetric(MetricName.FAILED_PACKAGES_ON_RECREATION, failedCount, Unit.Count);
+      metrics.putMetric(
+        MetricName.FAILED_PACKAGES_ON_RECREATION,
+        failedCount,
+        Unit.Count
+      );
     })();
   }
 
   // Build the final data package...
   console.log('Consolidating catalog...');
-  const catalog: CatalogModel = { packages: new Array<PackageInfo>(), updated: new Date().toISOString() };
+  const catalog: CatalogModel = {
+    packages: new Array<PackageInfo>(),
+    updated: new Date().toISOString(),
+  };
   for (const majors of packages.values()) {
     for (const pkg of majors.values()) {
       catalog.packages.push(pkg);
     }
   }
 
-  console.log(`There are now ${catalog.packages.length} registered package major versions`);
+  console.log(
+    `There are now ${catalog.packages.length} registered package major versions`
+  );
   await metricScope((metrics) => async () => {
     metrics.setDimensions();
-    metrics.putMetric(MetricName.REGISTERED_PACKAGES_MAJOR_VERSION, catalog.packages.length, Unit.Count);
+    metrics.putMetric(
+      MetricName.REGISTERED_PACKAGES_MAJOR_VERSION,
+      catalog.packages.length,
+      Unit.Count
+    );
     metrics.putMetric(
       MetricName.MISSING_CONSTRUCT_FRAMEWORK_COUNT,
       catalog.packages.filter((pkg) => pkg.constructFramework == null).length,
-      Unit.Count,
+      Unit.Count
     );
     metrics.putMetric(
       MetricName.MISSING_CONSTRUCT_FRAMEWORK_VERSION_COUNT,
       catalog.packages.filter(
-        (pkg) => pkg.constructFramework && pkg.constructFramework.majorVersion == null,
+        (pkg) =>
+          pkg.constructFramework && pkg.constructFramework.majorVersion == null
       ).length,
-      Unit.Count,
+      Unit.Count
     );
   })();
-
 
   // Clean up existing entries if necessary. In particular, remove the license texts as they make
   // the catalog unnecessarily large, and may hinder some search queries' result quality.
@@ -141,29 +167,38 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
   }
 
   // Upload the result to S3 and exit.
-  const result = await aws.s3().putObject({
-    Bucket: BUCKET_NAME,
-    Key: constants.CATALOG_KEY,
-    Body: JSON.stringify(catalog, null, 2),
-    ContentType: 'application/json',
-    CacheControl: CacheStrategy.default().toString(),
-    Metadata: {
-      'Lambda-Log-Group': context.logGroupName,
-      'Lambda-Log-Stream': context.logStreamName,
-      'Lambda-Run-Id': context.awsRequestId,
-      'Package-Count': `${catalog.packages.length}`,
-    },
-  }).promise();
+  const result = await aws
+    .s3()
+    .putObject({
+      Bucket: BUCKET_NAME,
+      Key: constants.CATALOG_KEY,
+      Body: JSON.stringify(catalog, null, 2),
+      ContentType: 'application/json',
+      CacheControl: CacheStrategy.default().toString(),
+      Metadata: {
+        'Lambda-Log-Group': context.logGroupName,
+        'Lambda-Log-Stream': context.logStreamName,
+        'Lambda-Run-Id': context.awsRequestId,
+        'Package-Count': `${catalog.packages.length}`,
+      },
+    })
+    .promise();
 
   if (nextStartAfter != null) {
     console.log(`Will continue from ${nextStartAfter} in new invocation...`);
-    const nextEvent: CatalogBuilderInput = { ...event, startAfter: nextStartAfter };
+    const nextEvent: CatalogBuilderInput = {
+      ...event,
+      startAfter: nextStartAfter,
+    };
     // We start it asynchronously, as this function has a provisionned
     // concurrency of 1 (so a synchronous attempt would always be throttled).
-    await aws.lambda().invokeAsync({
-      FunctionName: context.functionName,
-      InvokeArgs: JSON.stringify(nextEvent, null, 2),
-    }).promise();
+    await aws
+      .lambda()
+      .invokeAsync({
+        FunctionName: context.functionName,
+        InvokeArgs: JSON.stringify(nextEvent, null, 2),
+      })
+      .promise();
   } else {
     if (process.env.FEED_BUILDER_FUNCTION_NAME) {
       // Catalog is updated. Update the RSS/ATOM feed
@@ -175,7 +210,6 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
         })
         .promise();
     }
-
   }
 
   return result;
@@ -202,16 +236,33 @@ async function* relevantObjects(bucket: string, startAfter?: string) {
         continue;
       }
       // We only register packages if they have AT LEAST docs in one language.
-      const tsDocs = `${object.Key.substring(0, object.Key.length - constants.PACKAGE_KEY_SUFFIX.length)}${constants.DOCS_KEY_SUFFIX_TYPESCRIPT}`;
-      const pyDocs = `${object.Key.substring(0, object.Key.length - constants.PACKAGE_KEY_SUFFIX.length)}${constants.DOCS_KEY_SUFFIX_PYTHON}`;
-      const javaDocs = `${object.Key.substring(0, object.Key.length - constants.PACKAGE_KEY_SUFFIX.length)}${constants.DOCS_KEY_SUFFIX_JAVA}`;
-      const csharpDocs = `${object.Key.substring(0, object.Key.length - constants.PACKAGE_KEY_SUFFIX.length)}${constants.DOCS_KEY_SUFFIX_CSHARP}`;
-      const goDocs = `${object.Key.substring(0, object.Key.length - constants.PACKAGE_KEY_SUFFIX.length)}${constants.DOCS_KEY_SUFFIX_GO}`;
-      if (!(await aws.s3ObjectExists(bucket, tsDocs)) &&
-          !(await aws.s3ObjectExists(bucket, pyDocs)) &&
-          !(await aws.s3ObjectExists(bucket, javaDocs)) &&
-          !(await aws.s3ObjectExists(bucket, csharpDocs)) &&
-          !(await aws.s3ObjectExists(bucket, goDocs))) {
+      const tsDocs = `${object.Key.substring(
+        0,
+        object.Key.length - constants.PACKAGE_KEY_SUFFIX.length
+      )}${constants.DOCS_KEY_SUFFIX_TYPESCRIPT}`;
+      const pyDocs = `${object.Key.substring(
+        0,
+        object.Key.length - constants.PACKAGE_KEY_SUFFIX.length
+      )}${constants.DOCS_KEY_SUFFIX_PYTHON}`;
+      const javaDocs = `${object.Key.substring(
+        0,
+        object.Key.length - constants.PACKAGE_KEY_SUFFIX.length
+      )}${constants.DOCS_KEY_SUFFIX_JAVA}`;
+      const csharpDocs = `${object.Key.substring(
+        0,
+        object.Key.length - constants.PACKAGE_KEY_SUFFIX.length
+      )}${constants.DOCS_KEY_SUFFIX_CSHARP}`;
+      const goDocs = `${object.Key.substring(
+        0,
+        object.Key.length - constants.PACKAGE_KEY_SUFFIX.length
+      )}${constants.DOCS_KEY_SUFFIX_GO}`;
+      if (
+        !(await aws.s3ObjectExists(bucket, tsDocs)) &&
+        !(await aws.s3ObjectExists(bucket, pyDocs)) &&
+        !(await aws.s3ObjectExists(bucket, javaDocs)) &&
+        !(await aws.s3ObjectExists(bucket, csharpDocs)) &&
+        !(await aws.s3ObjectExists(bucket, goDocs))
+      ) {
         continue;
       }
       yield object;
@@ -220,30 +271,53 @@ async function* relevantObjects(bucket: string, startAfter?: string) {
   } while (request.ContinuationToken != null);
 }
 
-async function appendPackage(packages: any, pkgKey: string, bucketName: string, denyList: DenyListClient) {
+async function appendPackage(
+  packages: any,
+  pkgKey: string,
+  bucketName: string,
+  denyList: DenyListClient
+) {
   console.log(`Processing key: ${pkgKey}`);
-  const [, packageName, versionStr] = constants.STORAGE_KEY_FORMAT_REGEX.exec(pkgKey)!;
+  const [, packageName, versionStr] =
+    constants.STORAGE_KEY_FORMAT_REGEX.exec(pkgKey)!;
   const version = new SemVer(versionStr);
   const found = packages.get(packageName)?.get(version.major);
   // If the version is === to the current latest, we'll be replacing that (so re-generated metadata are taken into account)
   if (found != null && version.compare(found.version) < 0) {
-    console.log(`Skipping ${packageName}@${version} because it is not newer than the existing ${found.version}`);
+    console.log(
+      `Skipping ${packageName}@${version} because it is not newer than the existing ${found.version}`
+    );
     return;
   }
 
-  console.log(`Checking if ${packageName}@${version.version} matches a deny list rule`);
+  console.log(
+    `Checking if ${packageName}@${version.version} matches a deny list rule`
+  );
   const blocked = denyList.lookup(packageName, version.version);
   if (blocked) {
-    console.log(`Skipping ${packageName}@${version.version} because it is blocked by the deny list rule: ${JSON.stringify(blocked)}`);
+    console.log(
+      `Skipping ${packageName}@${
+        version.version
+      } because it is blocked by the deny list rule: ${JSON.stringify(blocked)}`
+    );
     return;
   }
 
   console.log(`Registering ${packageName}@${version}`);
 
   // Donwload the tarball to inspect the `package.json` data therein.
-  const pkg = await aws.s3().getObject({ Bucket: bucketName, Key: pkgKey }).promise();
-  const metadataKey = pkgKey.replace(constants.PACKAGE_KEY_SUFFIX, constants.METADATA_KEY_SUFFIX);
-  const metadataResponse = await aws.s3().getObject({ Bucket: bucketName, Key: metadataKey }).promise();
+  const pkg = await aws
+    .s3()
+    .getObject({ Bucket: bucketName, Key: pkgKey })
+    .promise();
+  const metadataKey = pkgKey.replace(
+    constants.PACKAGE_KEY_SUFFIX,
+    constants.METADATA_KEY_SUFFIX
+  );
+  const metadataResponse = await aws
+    .s3()
+    .getObject({ Bucket: bucketName, Key: metadataKey })
+    .promise();
   const manifest = await new Promise<Buffer>((ok, ko) => {
     gunzip(Buffer.from(pkg.Body! as any), (err, tar) => {
       if (err) {
@@ -274,9 +348,11 @@ async function appendPackage(packages: any, pkgKey: string, bucketName: string, 
         });
     });
   });
-    // Add the PackageInfo into the working set
+  // Add the PackageInfo into the working set
   const pkgMetadata = JSON.parse(manifest.toString('utf-8'));
-  const npmMetadata = JSON.parse(metadataResponse?.Body?.toString('utf-8') ?? '{}');
+  const npmMetadata = JSON.parse(
+    metadataResponse?.Body?.toString('utf-8') ?? '{}'
+  );
   const major = new SemVer(pkgMetadata.version).major;
   if (!packages.has(pkgMetadata.name)) {
     packages.set(pkgMetadata.name, new Map());
@@ -292,5 +368,4 @@ async function appendPackage(packages: any, pkgKey: string, bucketName: string, 
     name: pkgMetadata.name,
     version: pkgMetadata.version,
   });
-
 }

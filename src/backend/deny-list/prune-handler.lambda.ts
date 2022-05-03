@@ -3,7 +3,14 @@ import * as AWS from 'aws-sdk';
 import * as clients from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DenyListClient } from './client.lambda-shared';
-import { ENV_PRUNE_ON_CHANGE_FUNCTION_NAME, ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME, ENV_PRUNE_PACKAGE_DATA_KEY_PREFIX, ENV_PRUNE_QUEUE_URL, MetricName, METRICS_NAMESPACE } from './constants';
+import {
+  ENV_PRUNE_ON_CHANGE_FUNCTION_NAME,
+  ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME,
+  ENV_PRUNE_PACKAGE_DATA_KEY_PREFIX,
+  ENV_PRUNE_QUEUE_URL,
+  MetricName,
+  METRICS_NAMESPACE,
+} from './constants';
 
 const s3 = clients.s3();
 const sqs = clients.sqs();
@@ -31,7 +38,9 @@ export async function handler(event: unknown) {
 
   for (const nameVersion of Object.keys(client.map)) {
     const prefix = `${keyPrefix}${nameVersion}/`;
-    console.log(`Querying bucket ${packageData} for all objects with prefix ${prefix}`);
+    console.log(
+      `Querying bucket ${packageData} for all objects with prefix ${prefix}`
+    );
 
     // for each prefix, query the package data bucket for all objects with that
     // prefix and delete them
@@ -57,11 +66,12 @@ export async function handler(event: unknown) {
         };
 
         console.log(JSON.stringify({ sendMessageRequest }));
-        const sendMessageResponse = await sqs.sendMessage(sendMessageRequest).promise();
+        const sendMessageResponse = await sqs
+          .sendMessage(sendMessageRequest)
+          .promise();
         console.log(JSON.stringify({ sendMessageResponse }));
         objectsFound.push(object.Key);
       }
-
     } while (continuation);
 
     // trigger the "on change" handler objects were found and we have a handler
@@ -74,7 +84,9 @@ export async function handler(event: unknown) {
       };
 
       console.log(JSON.stringify({ onChangeCallbackRequest }));
-      const onChangeCallbackResponse = await lambda.invoke(onChangeCallbackRequest).promise();
+      const onChangeCallbackResponse = await lambda
+        .invoke(onChangeCallbackRequest)
+        .promise();
       console.log(JSON.stringify({ onChangeCallbackResponse }));
     }
   }

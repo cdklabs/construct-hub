@@ -60,7 +60,10 @@ export class LicenseList extends Construct implements ILicenseList {
    * `LicenseListClient`.
    */
   public grantRead(handler: lambda.Function) {
-    handler.addEnvironment(EnvironmentVariables.BUCKET_NAME, this.bucket.bucketName);
+    handler.addEnvironment(
+      EnvironmentVariables.BUCKET_NAME,
+      this.bucket.bucketName
+    );
     handler.addEnvironment(EnvironmentVariables.OBJECT_KEY, this.objectKey);
     this.bucket.grantRead(handler);
     // The handler now depends on the deny-list having been uploaded
@@ -71,8 +74,12 @@ export class LicenseList extends Construct implements ILicenseList {
     const tmpdir = fs.mkdtempSync(path.join(os.tmpdir(), 'license-list-'));
     fs.writeFileSync(
       path.join(tmpdir, this.objectKey),
-      JSON.stringify(licenses.map((l) => l.id), null, 2),
-      'utf-8',
+      JSON.stringify(
+        licenses.map((l) => l.id),
+        null,
+        2
+      ),
+      'utf-8'
     );
     return s3deploy.Source.asset(tmpdir);
   }

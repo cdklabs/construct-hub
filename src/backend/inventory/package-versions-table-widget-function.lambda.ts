@@ -11,24 +11,32 @@ interface Event {
   readonly widgetContext: WidgetContext;
 }
 
-export async function handler({ key, description, widgetContext }: Event): Promise<string | { markdown: string }> {
-  console.log(`Event: ${JSON.stringify({ key, description, widgetContext }, null, 2)}`);
+export async function handler({
+  key,
+  description,
+  widgetContext,
+}: Event): Promise<string | { markdown: string }> {
+  console.log(
+    `Event: ${JSON.stringify({ key, description, widgetContext }, null, 2)}`
+  );
 
   try {
     const bucketName = requireEnv('BUCKET_NAME');
 
-    let { Body, ContentEncoding, LastModified } = await s3().getObject({
-      Bucket: bucketName,
-      Key: key,
-    }).promise();
+    let { Body, ContentEncoding, LastModified } = await s3()
+      .getObject({
+        Bucket: bucketName,
+        Key: key,
+      })
+      .promise();
     // If it was compressed, de-compress it now...
     if (ContentEncoding === 'gzip') {
       Body = gunzipSync(Buffer.from(Body! as any));
     }
 
-    const list = Array.from((JSON.parse(Body!.toString('utf-8')) as string[])
-      .reduce(
-        (map, entry) => {
+    const list = Array.from(
+      (JSON.parse(Body!.toString('utf-8')) as string[])
+        .reduce((map, entry) => {
           // Split on the @ that is not at the beginning of the string
           const [name, version] = entry.split(/(?!^)@/);
           if (!map.has(name)) {
@@ -36,11 +44,9 @@ export async function handler({ key, description, widgetContext }: Event): Promi
           }
           map.get(name)!.push(version);
           return map;
-        },
-        new Map<string, string[]>(),
-      )
-      .entries())
-      .sort(([l], [r]) => l.localeCompare(r));
+        }, new Map<string, string[]>())
+        .entries()
+    ).sort(([l], [r]) => l.localeCompare(r));
 
     // Trying to ensure we don't cause the dashboard to hang due to large DOM.
     const maxCount = 100;
@@ -51,16 +57,18 @@ export async function handler({ key, description, widgetContext }: Event): Promi
         description,
         ...(list.length > maxCount
           ? [
-            `Showing only the first ${maxCount} packages.`,
-            `The complete list can be obtained [from S3](${objectUrl}).`,
-            '',
-          ]
+              `Showing only the first ${maxCount} packages.`,
+              `The complete list can be obtained [from S3](${objectUrl}).`,
+              '',
+            ]
           : []),
         'Id | Package Name | Count | Versions',
         '--:|--------------|-------|---------',
         ...list.slice(0, maxCount).map(([name, versions], index) => {
           versions = semverSort(versions).reverse();
-          return `${index + 1} | \`${name}\` | ${versions.length} | ${versions.map((v) => `[\`${v}\`](${s3ConsoleUrl(bucketName, name, v)})`).join(', ')}`;
+          return `${index + 1} | \`${name}\` | ${versions.length} | ${versions
+            .map((v) => `[\`${v}\`](${s3ConsoleUrl(bucketName, name, v)})`)
+            .join(', ')}`;
         }),
         '',
         `Last updated: \`${LastModified?.toISOString() ?? 'N/A'}\``,
@@ -79,7 +87,7 @@ export async function handler({ key, description, widgetContext }: Event): Promi
           '  ```',
         ].join('\n'),
       };
-    };
+    }
     throw error;
   }
 }
@@ -118,7 +126,13 @@ export interface WidgetContext {
   readonly height: number;
 }
 
-function s3ConsoleUrl(bucket: string, packageName: string, packageVersion: string) {
-  const encodedPrefix = encodeURIComponent(`data/${packageName}/v${packageVersion}/`);
+function s3ConsoleUrl(
+  bucket: string,
+  packageName: string,
+  packageVersion: string
+) {
+  const encodedPrefix = encodeURIComponent(
+    `data/${packageName}/v${packageVersion}/`
+  );
   return `https://s3.console.aws.amazon.com/s3/buckets/${bucket}?prefix=${encodedPrefix}&showversions=false`;
 }

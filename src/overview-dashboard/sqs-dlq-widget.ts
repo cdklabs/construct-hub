@@ -42,24 +42,34 @@ export class SQSDLQWidget extends ConcreteWidget {
 
     this.title = props.title ?? 'SQS DLQ';
     this.description = props.description ?? '';
-    this.emptyQueueMessage = props.emptyQueueMessage ?? 'There are no messages in the DLQs. This is normal and no action is required.';
-    this.nonEmptyQueueMessage = props.nonEmptyQueueMessage ?? 'There are some message in the DLQ. The table below lists the queues with non-empty DLQs. Please check the DLQs and re-drive the messages. Once the messages are re-driven, check the queue again as the metrics takes time to updated.';
+    this.emptyQueueMessage =
+      props.emptyQueueMessage ??
+      'There are no messages in the DLQs. This is normal and no action is required.';
+    this.nonEmptyQueueMessage =
+      props.nonEmptyQueueMessage ??
+      'There are some message in the DLQ. The table below lists the queues with non-empty DLQs. Please check the DLQs and re-drive the messages. Once the messages are re-driven, check the queue again as the metrics takes time to updated.';
 
     this.handler = new SqsDlqStatsWidgetFunction(scope, id, {
       architecture: gravitonLambdaIfAvailable(scope),
-      description: '[ConstructHub/SQSDLQWidget] Is a custom CloudWatch widget handler',
+      description:
+        '[ConstructHub/SQSDLQWidget] Is a custom CloudWatch widget handler',
     });
     // The handler is a SingletonFunction, so the actual Function resource is
     // not in the construct's scope, instead it's in the Stack scope. We must
     // hence refer to the REAL function via a private property (UGLY!).
 
-    Tags.of((this.handler as any).lambdaFunction).add('function-purpose', 'cloudwatch-custom-widget');
+    Tags.of((this.handler as any).lambdaFunction).add(
+      'function-purpose',
+      'cloudwatch-custom-widget'
+    );
 
-    this.handler.addToRolePolicy(new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: ['cloudwatch:GetMetricData'],
-      resources: ['*'],
-    }));
+    this.handler.addToRolePolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['cloudwatch:GetMetricData'],
+        resources: ['*'],
+      })
+    );
   }
 
   public addQueue(name: string, queue: IQueue, reDriveFunction?: IFunction) {
@@ -71,37 +81,39 @@ export class SQSDLQWidget extends ConcreteWidget {
   }
 
   public toJson() {
-    return [{
-      type: 'custom',
-      width: this.width,
-      height: this.height,
-      x: this.x,
-      y: this.y,
-      properties: {
-        endpoint: this.handler.functionArn,
-        params: {
-          description: this.description,
+    return [
+      {
+        type: 'custom',
+        width: this.width,
+        height: this.height,
+        x: this.x,
+        y: this.y,
+        properties: {
+          endpoint: this.handler.functionArn,
+          params: {
+            description: this.description,
+            title: this.title,
+            emptyQueueMessage: this.emptyQueueMessage,
+            nonEmptyQueueMessage: this.nonEmptyQueueMessage,
+            queues: Object.values(this.queues).reduce((acc, q) => {
+              const queueName = q.queue.queueName;
+              const fnArn = q.reDriveFunction?.functionArn;
+              acc[queueName] = {
+                name: q.name,
+                queueName: queueName,
+                reDriveFunctionArn: fnArn ?? undefined,
+              };
+              return acc;
+            }, {} as Record<string, any>),
+          },
           title: this.title,
-          emptyQueueMessage: this.emptyQueueMessage,
-          nonEmptyQueueMessage: this.nonEmptyQueueMessage,
-          queues: Object.values(this.queues).reduce((acc, q) => {
-            const queueName = q.queue.queueName;
-            const fnArn = q.reDriveFunction?.functionArn;
-            acc[queueName] = {
-              name: q.name,
-              queueName: queueName,
-              reDriveFunctionArn: fnArn ?? undefined,
-            };
-            return acc;
-          }, {} as Record<string, any>),
-        },
-        title: this.title,
-        updateOn: {
-          refresh: true,
-          resize: false,
-          timeRange: false,
+          updateOn: {
+            refresh: true,
+            resize: false,
+            timeRange: false,
+          },
         },
       },
-    }];
+    ];
   }
 }

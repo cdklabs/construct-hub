@@ -20,11 +20,11 @@ export interface Domain {
   readonly zone: route53.IHostedZone;
 
   /**
-    * The certificate to use for serving the Construct Hub over a custom domain.
-    *
-    * @default - a DNS-Validated certificate will be provisioned using the
-    *            provided `hostedZone`.
-    */
+   * The certificate to use for serving the Construct Hub over a custom domain.
+   *
+   * @default - a DNS-Validated certificate will be provisioned using the
+   *            provided `hostedZone`.
+   */
   readonly cert: certificatemanager.ICertificate;
 
   /**

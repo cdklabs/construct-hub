@@ -48,15 +48,15 @@ const useCaseSearchFilter = new PackageTagGroup('use-case', {
 
 const serverlessUseCase = TagCondition.or(
   TagCondition.field('keywords').includes('serverless'),
-  TagCondition.readme().includes('serverless'),
+  TagCondition.readme().includes('serverless')
 );
 const containersUseCase = TagCondition.or(
   TagCondition.field('keywords').includes('containers'),
-  TagCondition.readme().includes('containers'),
+  TagCondition.readme().includes('containers')
 );
 const k8sUseCase = TagCondition.or(
   TagCondition.field('keywords').includes('k8s'),
-  TagCondition.readme().includes('k8s'),
+  TagCondition.readme().includes('k8s')
 );
 
 const makeUseCaseTag = (label: string, useCase: TagCondition) => ({
@@ -93,11 +93,17 @@ export class DevStack extends Stack {
       path: path.join(__dirname, '../../../src/__tests__/devapp/.env'), // joining path to make sure the file is being picked up from src instead of lib
     });
 
-    const feedConfiguration = process.env.GITHUB_TOKEN ? {
-      githubTokenSecret: secretsManager.Secret.fromSecretCompleteArn(this, 'GitHubToken', process.env.GITHUB_TOKEN),
-      feedDescription: 'Latest Constructs in the construct hub',
-      feedTitle: 'Latest constructs',
-    } : undefined;
+    const feedConfiguration = process.env.GITHUB_TOKEN
+      ? {
+          githubTokenSecret: secretsManager.Secret.fromSecretCompleteArn(
+            this,
+            'GitHubToken',
+            process.env.GITHUB_TOKEN
+          ),
+          feedDescription: 'Latest Constructs in the construct hub',
+          feedTitle: 'Latest constructs',
+        }
+      : undefined;
     const sensitiveTaskIsolation =
       props.sensitiveTaskIsolation ?? defaultIsolateSensitiveTasks();
 
@@ -138,7 +144,9 @@ export class DevStack extends Stack {
         { title: 'Category1', url: '/search?q=cat1' },
         { title: 'Category2', url: '/search?keywords=boom' },
       ],
-      preloadScript: PreloadFile.fromCode('console.log("This is a custom preloadScript")'),
+      preloadScript: PreloadFile.fromCode(
+        'console.log("This is a custom preloadScript")'
+      ),
       feedConfiguration,
     });
   }

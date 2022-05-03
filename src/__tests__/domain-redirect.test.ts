@@ -61,9 +61,18 @@ test('a bucket is created for each redirect target', () => {
   const stack = new Stack();
   const target1 = 'to.bar1.com';
   const target2 = 'to.bar2.com';
-  const source1 = HostedZone.fromHostedZoneAttributes(stack, 'HostedZone1', { hostedZoneId: 'AZ1234', zoneName: 'from1.com' });
-  const source2 = HostedZone.fromHostedZoneAttributes(stack, 'HostedZone2', { hostedZoneId: 'AZ1234', zoneName: 'from2.com' });
-  const source3 = HostedZone.fromHostedZoneAttributes(stack, 'HostedZone3', { hostedZoneId: 'AZ1234', zoneName: 'from3.com' });
+  const source1 = HostedZone.fromHostedZoneAttributes(stack, 'HostedZone1', {
+    hostedZoneId: 'AZ1234',
+    zoneName: 'from1.com',
+  });
+  const source2 = HostedZone.fromHostedZoneAttributes(stack, 'HostedZone2', {
+    hostedZoneId: 'AZ1234',
+    zoneName: 'from2.com',
+  });
+  const source3 = HostedZone.fromHostedZoneAttributes(stack, 'HostedZone3', {
+    hostedZoneId: 'AZ1234',
+    zoneName: 'from3.com',
+  });
 
   // WHEN
   new DomainRedirect(stack, 'DomainRedirect1to1', {
@@ -82,7 +91,6 @@ test('a bucket is created for each redirect target', () => {
     source: { hostedZone: source2 },
     targetDomainName: target1,
   });
-
 
   // THEN
 

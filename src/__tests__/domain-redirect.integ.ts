@@ -11,10 +11,14 @@ const stack = new Stack(app, 'DomainRedirectIntegrationTest', {
   },
 });
 
-const sourceZone = route53.HostedZone.fromHostedZoneAttributes(stack, 'SourceZone', {
-  hostedZoneId: process.env.SOURCE_ZONE_ID ?? 'AZ1234',
-  zoneName: process.env.SOURCE_ZONE_NAME ?? 'from.com',
-});
+const sourceZone = route53.HostedZone.fromHostedZoneAttributes(
+  stack,
+  'SourceZone',
+  {
+    hostedZoneId: process.env.SOURCE_ZONE_ID ?? 'AZ1234',
+    zoneName: process.env.SOURCE_ZONE_NAME ?? 'from.com',
+  }
+);
 
 new DomainRedirect(stack, 'MyDomainRedirect', {
   source: { hostedZone: sourceZone },

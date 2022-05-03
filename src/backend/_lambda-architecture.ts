@@ -21,7 +21,9 @@ const REGIONS_WITH_GRAVITON_LAMBDA = new Set([
  *
  * @param scope the scope from which the region should be extracted.
  */
-export function gravitonLambdaIfAvailable(scope: Construct): Architecture | undefined {
+export function gravitonLambdaIfAvailable(
+  scope: Construct
+): Architecture | undefined {
   return REGIONS_WITH_GRAVITON_LAMBDA.has(Stack.of(scope).region)
     ? Architecture.ARM_64
     : undefined;

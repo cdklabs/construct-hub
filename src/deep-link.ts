@@ -24,7 +24,10 @@ export function lambdaSearchLogGroupUrl(lambda: IFunction): string {
 }
 
 export function logGroupUrl(logGroup: ILogGroup): string {
-  return `/cloudwatch/home#logsV2:log-groups/log-group/${Fn.join('%252', Fn.split('/', logGroup.logGroupName))}`;
+  return `/cloudwatch/home#logsV2:log-groups/log-group/${Fn.join(
+    '%252',
+    Fn.split('/', logGroup.logGroupName)
+  )}`;
 }
 
 export function s3ObjectUrl(bucket: IBucket, objectKey?: string): string {

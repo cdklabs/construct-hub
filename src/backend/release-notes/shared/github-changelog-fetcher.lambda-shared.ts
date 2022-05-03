@@ -2,13 +2,12 @@ import { Octokit } from '@octokit/rest';
 import * as changelogFilenameRegex from 'changelog-filename-regex';
 import getReleaseNotesMd from './md-changelog-parser.lambda-shared.js';
 
-
 export async function getReleaseNotesFromAllReleases(
   octakit: Octokit,
   owner: string,
   repo: string,
   projectName: string,
-  version: string,
+  version: string
 ): Promise<string | undefined> {
   const iterator = octakit.paginate.iterator(octakit.rest.repos.listReleases, {
     owner,
@@ -16,7 +15,12 @@ export async function getReleaseNotesFromAllReleases(
   });
   for await (const item of iterator) {
     try {
-      const result = item.data.find(release => release.tag_name === `v${version}` || release.tag_name === `${projectName}/${version}` || release.tag_name === `${projectName}/v${version}`);
+      const result = item.data.find(
+        (release) =>
+          release.tag_name === `v${version}` ||
+          release.tag_name === `${projectName}/${version}` ||
+          release.tag_name === `${projectName}/v${version}`
+      );
       if (result) {
         return result.body ?? undefined;
       }
@@ -28,14 +32,13 @@ export async function getReleaseNotesFromAllReleases(
     }
   }
   return undefined;
-
 }
 
 export async function getChangelogFileFromGitHub(
   octokit: Octokit,
   owner: string,
   repo: string,
-  directory?: string,
+  directory?: string
 ): Promise<string | undefined> {
   if (directory) {
     directory = directory.trim();
@@ -61,7 +64,10 @@ export async function getChangelogFileFromGitHub(
 
     const changeLogFiles = tree.data.tree
       .filter(
-        (entry) => entry?.type === 'blob' && entry.path && changelogFilenameRegex.test(entry.path),
+        (entry) =>
+          entry?.type === 'blob' &&
+          entry.path &&
+          changelogFilenameRegex.test(entry.path)
       )
       .filter((e) => {
         return (
@@ -94,15 +100,19 @@ export async function getChangelogFileFromGitHub(
   }
 }
 
-
 export async function getReleaseNotesFromChangelogFile(
   octakit: Octokit,
   owner: string,
   repo: string,
   version: string,
-  directory?: string,
+  directory?: string
 ): Promise<string | void> {
-  const changelog = await getChangelogFileFromGitHub(octakit, owner, repo, directory);
+  const changelog = await getChangelogFileFromGitHub(
+    octakit,
+    owner,
+    repo,
+    directory
+  );
   if (changelog) {
     return getReleaseNotesMd(changelog, version);
   }
@@ -113,7 +123,7 @@ async function getReleaseNotesFromTag(
   owner: string,
   repo: string,
   version: string,
-  projectName?: string,
+  projectName?: string
 ): Promise<string | undefined> {
   try {
     const release = octokit.rest.repos.getReleaseByTag({
@@ -151,7 +161,7 @@ export async function generateReleaseNotes(
   repo: string,
   projectName: string,
   version: string,
-  directory?: string,
+  directory?: string
 ): Promise<string | void> {
   let changelog: string | void;
 
@@ -160,17 +170,39 @@ export async function generateReleaseNotes(
     userAgent: 'github-changelog-generator',
   });
 
-  changelog = await getReleaseNotesFromTag(octakit, owner, repo, version, projectName);
+  changelog = await getReleaseNotesFromTag(
+    octakit,
+    owner,
+    repo,
+    version,
+    projectName
+  );
   if (!changelog) {
-    changelog = await getReleaseNotesFromAllReleases(octakit, owner, repo, projectName, version);
+    changelog = await getReleaseNotesFromAllReleases(
+      octakit,
+      owner,
+      repo,
+      projectName,
+      version
+    );
   } else if (!changelog) {
-    changelog = await getReleaseNotesFromChangelogFile(octakit, owner, repo, version, directory);
+    changelog = await getReleaseNotesFromChangelogFile(
+      octakit,
+      owner,
+      repo,
+      version,
+      directory
+    );
   }
   return changelog;
-
 }
 
-export async function getServiceLimits(): Promise<{ limit: number; remaining: number; reset: number; used: number }> {
+export async function getServiceLimits(): Promise<{
+  limit: number;
+  remaining: number;
+  reset: number;
+  used: number;
+}> {
   const octakit = new Octokit({
     auth: process.env.GITHUB_TOKEN,
     userAgent: 'github-changelog-generator',

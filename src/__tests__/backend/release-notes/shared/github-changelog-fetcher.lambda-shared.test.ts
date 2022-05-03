@@ -13,8 +13,15 @@ describe('github-changelog-fetcher', () => {
 
   test('getServiceLimits', async () => {
     const mockedOctoKit = Octokit as jest.MockedClass<typeof Octokit>;
-    const rateLimitResponseCore = { limit: 500, remaining: 400, reset: new Date().getMilliseconds() + 1000, used: 100 };
-    const requestHandler = jest.fn().mockResolvedValue({ data: { resources: { core: rateLimitResponseCore } } });
+    const rateLimitResponseCore = {
+      limit: 500,
+      remaining: 400,
+      reset: new Date().getMilliseconds() + 1000,
+      used: 100,
+    };
+    const requestHandler = jest.fn().mockResolvedValue({
+      data: { resources: { core: rateLimitResponseCore } },
+    });
     mockedOctoKit.prototype.rest = {
       rateLimit: {
         get: requestHandler,
@@ -27,9 +34,5 @@ describe('github-changelog-fetcher', () => {
     });
   });
 
-  test('getReleaseNotesFromTag', async () => {
-
-  });
-
+  test('getReleaseNotesFromTag', async () => {});
 });
-

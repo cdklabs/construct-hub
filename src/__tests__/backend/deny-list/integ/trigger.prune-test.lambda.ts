@@ -23,7 +23,9 @@ export async function handler() {
     }
   }
 
-  throw new Error(`assertion failed. the following objects were not deleted after ${timeoutSec}s. Actual: ${actual}. Expected: ${expected}`);
+  throw new Error(
+    `assertion failed. the following objects were not deleted after ${timeoutSec}s. Actual: ${actual}. Expected: ${expected}`
+  );
 }
 
 async function getAllObjectKeys(bucket: string) {
@@ -40,10 +42,11 @@ async function getAllObjectKeys(bucket: string) {
     continuationToken = listResponse.NextContinuationToken;
 
     for (const { Key: key } of listResponse.Contents ?? []) {
-      if (!key) { continue; }
+      if (!key) {
+        continue;
+      }
       objectKeys.push(key);
     }
-
   } while (continuationToken);
 
   return objectKeys;

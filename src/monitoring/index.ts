@@ -45,14 +45,21 @@ export class Monitoring extends Construct implements IMonitoring {
 
     this.watchful = new Watchful(this, 'Watchful', {
       // alarms that come from watchful are all considered normal severity
-      alarmActionArns: this.alarmActions?.normalSeverity ? [this.alarmActions.normalSeverity] : [],
-      alarmActions: this.alarmActions?.normalSeverityAction ? [this.alarmActions.normalSeverityAction] : [],
+      alarmActionArns: this.alarmActions?.normalSeverity
+        ? [this.alarmActions.normalSeverity]
+        : [],
+      alarmActions: this.alarmActions?.normalSeverityAction
+        ? [this.alarmActions.normalSeverityAction]
+        : [],
     });
 
     this._highSeverityAlarms = [];
     this._lowSeverityAlarms = [];
 
-    this.highSeverityDashboard = new cw.Dashboard(this, 'HighSeverityDashboard');
+    this.highSeverityDashboard = new cw.Dashboard(
+      this,
+      'HighSeverityDashboard'
+    );
   }
 
   /**
@@ -71,11 +78,13 @@ export class Monitoring extends Construct implements IMonitoring {
       alarm.addAlarmAction(highSeverityAction);
     }
 
-    this.highSeverityDashboard.addWidgets(new cw.AlarmWidget({
-      alarm,
-      title,
-      width: 24,
-    }));
+    this.highSeverityDashboard.addWidgets(
+      new cw.AlarmWidget({
+        alarm,
+        title,
+        width: 24,
+      })
+    );
 
     this._highSeverityAlarms?.push(alarm);
   }
@@ -83,7 +92,9 @@ export class Monitoring extends Construct implements IMonitoring {
   public addLowSeverityAlarm(_title: string, alarm: cw.Alarm) {
     const normalSeverityActionArn = this.alarmActions?.normalSeverity;
     if (normalSeverityActionArn) {
-      alarm.addAlarmAction({ bind: () => ({ alarmActionArn: normalSeverityActionArn }) });
+      alarm.addAlarmAction({
+        bind: () => ({ alarmActionArn: normalSeverityActionArn }),
+      });
     }
     const normalSeverityAction = this.alarmActions?.normalSeverityAction;
     if (normalSeverityAction) {
@@ -110,12 +121,15 @@ export class Monitoring extends Construct implements IMonitoring {
    * @param url The URL to ping
    */
   public addWebCanary(name: string, url: string) {
-    const canary = new WebCanary(this, `WebCanary${name.replace(/[^A-Z0-9]/ig, '')}`, {
-      url,
-      displayName: name,
-    });
+    const canary = new WebCanary(
+      this,
+      `WebCanary${name.replace(/[^A-Z0-9]/gi, '')}`,
+      {
+        url,
+        displayName: name,
+      }
+    );
 
     this.addHighSeverityAlarm(`${name} Canary`, canary.alarm);
   }
-
 }

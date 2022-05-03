@@ -3,7 +3,10 @@ import { spawn } from 'child_process';
 /**
  * Executes the specified command in a sub-shell, and asserts success.
  */
-export function shellOut(cmd: string, ...args: readonly string[]): Promise<void> {
+export function shellOut(
+  cmd: string,
+  ...args: readonly string[]
+): Promise<void> {
   return new Promise<void>((ok, ko) => {
     const child = spawn(cmd, args, { stdio: ['ignore', 'inherit', 'inherit'] });
     child.once('error', ko);
@@ -11,9 +14,7 @@ export function shellOut(cmd: string, ...args: readonly string[]): Promise<void>
       if (code === 0) {
         return ok();
       }
-      const reason = code != null
-        ? `exit code ${code}`
-        : `signal ${signal}`;
+      const reason = code != null ? `exit code ${code}` : `signal ${signal}`;
       ko(new Error(`Command "${cmd} ${args.join(' ')}" failed with ${reason}`));
     });
   });
@@ -24,7 +25,10 @@ export function shellOut(cmd: string, ...args: readonly string[]): Promise<void>
  * this captures all data sent to `STDOUT` and returns that, with the command's
  * exit code or signal.
  */
-export function shellOutWithOutput(cmd: string, ...args: readonly string[]): Promise<ShellOutResult> {
+export function shellOutWithOutput(
+  cmd: string,
+  ...args: readonly string[]
+): Promise<ShellOutResult> {
   return new Promise((ok, ko) => {
     const child = spawn(cmd, args, { stdio: ['ignore', 'pipe', 'inherit'] });
     const chunks = new Array<Buffer>();

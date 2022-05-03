@@ -21,7 +21,7 @@ export class CacheStrategy {
   private constructor(private readonly cacheControl: CacheControl[]) {}
 
   public toString() {
-    return this.cacheControl.map(c => c.value).join(', ');
+    return this.cacheControl.map((c) => c.value).join(', ');
   }
 
   public toArray() {

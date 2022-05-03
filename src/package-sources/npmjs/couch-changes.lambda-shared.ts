@@ -34,7 +34,7 @@ export class CouchChanges extends EventEmitter {
    * @returns summary informations about the database.
    */
   public async info(): Promise<DatabaseInfos> {
-    return await this.https('get', this.baseUrl) as any;
+    return (await this.https('get', this.baseUrl)) as any;
   }
 
   /**
@@ -45,7 +45,10 @@ export class CouchChanges extends EventEmitter {
    *
    * @returns a page of changes.
    */
-  public async changes(since: string | number, opts?: { readonly batchSize?: number }): Promise<DatabaseChanges> {
+  public async changes(
+    since: string | number,
+    opts?: { readonly batchSize?: number }
+  ): Promise<DatabaseChanges> {
     const batchSize = opts?.batchSize ?? 100;
 
     const changesUrl = new URL('_changes', this.baseUrl);
@@ -76,18 +79,21 @@ export class CouchChanges extends EventEmitter {
    *
    * @returns the JSON-decoded response body.
    */
-  private https(method: string, url: URL, body?: { [key: string]: unknown }, attempt = 1): Promise<{ [key: string]: unknown }> {
+  private https(
+    method: string,
+    url: URL,
+    body?: { [key: string]: unknown },
+    attempt = 1
+  ): Promise<{ [key: string]: unknown }> {
     return new Promise((ok, ko) => {
-      const retry = () => setTimeout(
-        () => {
+      const retry = () =>
+        setTimeout(() => {
           console.log(`Retrying ${method.toUpperCase()} ${url}`);
           this.https(method, url, body, attempt + 1).then(ok, ko);
-        },
-        Math.min(500 * attempt, 5_000),
-      );
+        }, Math.min(500 * attempt, 5_000));
 
       const headers: OutgoingHttpHeaders = {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Accept-Encoding': 'gzip',
       };
       if (body) {
@@ -105,22 +111,36 @@ export class CouchChanges extends EventEmitter {
         },
         (res) => {
           if (res.statusCode == null) {
-            const error = new Error(`[FATAL] Request failed: ${method.toUpperCase()} ${url}`);
+            const error = new Error(
+              `[FATAL] Request failed: ${method.toUpperCase()} ${url}`
+            );
             Error.captureStackTrace(error);
             return ko(error);
           }
 
-          console.log(`Response: ${method.toUpperCase()} ${url} => HTTP ${res.statusCode} (${res.statusMessage})`);
+          console.log(
+            `Response: ${method.toUpperCase()} ${url} => HTTP ${
+              res.statusCode
+            } (${res.statusMessage})`
+          );
 
           // Transient (server) errors:
           if (res.statusCode >= 500 && res.statusCode < 600) {
-            console.error(`[RETRYABLE] HTTP ${res.statusCode} (${res.statusMessage}) - ${method.toUpperCase()} ${url}`);
+            console.error(
+              `[RETRYABLE] HTTP ${res.statusCode} (${
+                res.statusMessage
+              }) - ${method.toUpperCase()} ${url}`
+            );
             // Call again after a short back-off
             return retry();
           }
           // Permanent (client) errors:
           if (res.statusCode >= 400 && res.statusCode < 500) {
-            const error = new Error(`[FATAL] HTTP ${res.statusCode} (${res.statusMessage}) - ${method.toUpperCase()} ${url}`);
+            const error = new Error(
+              `[FATAL] HTTP ${res.statusCode} (${
+                res.statusMessage
+              }) - ${method.toUpperCase()} ${url}`
+            );
             Error.captureStackTrace(error);
             return ko(error);
           }
@@ -128,7 +148,9 @@ export class CouchChanges extends EventEmitter {
           const onError = (err: Error & { code?: string }) => {
             if (err.code === 'ECONNRESET') {
               // Transient networking problem?
-              console.error(`[RETRYABLE] ${err.code} - ${method.toUpperCase()} ${url}`);
+              console.error(
+                `[RETRYABLE] ${err.code} - ${method.toUpperCase()} ${url}`
+              );
               retry();
             } else {
               Error.captureStackTrace(err);
@@ -143,10 +165,11 @@ export class CouchChanges extends EventEmitter {
           json.once('data', ok);
           json.once('error', onError);
 
-          const plainPayload = res.headers['content-encoding'] === 'gzip' ? gunzip(res) : res;
+          const plainPayload =
+            res.headers['content-encoding'] === 'gzip' ? gunzip(res) : res;
           plainPayload.pipe(json, { end: true });
           plainPayload.once('error', onError);
-        },
+        }
       );
       req.end(body && JSON.stringify(body, null, 2));
     });

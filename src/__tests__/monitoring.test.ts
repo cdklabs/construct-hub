@@ -56,7 +56,9 @@ test('high severity alarms trigger the correct action', () => {
   const monitoring = new Monitoring(stack, 'Monitoring', {
     alarmActions: actions,
   });
-  const alarm = topic.metricNumberOfNotificationsFailed().createAlarm(stack, 'Alarm', { threshold: 1, evaluationPeriods: 1 });
+  const alarm = topic
+    .metricNumberOfNotificationsFailed()
+    .createAlarm(stack, 'Alarm', { threshold: 1, evaluationPeriods: 1 });
 
   // WHEN
   monitoring.addHighSeverityAlarm('My Alarm', alarm);
@@ -64,7 +66,12 @@ test('high severity alarms trigger the correct action', () => {
   // a dashboard is automatically created
   expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
     AlarmActions: ['arn:aws:sns:us-east-1:123456789012:high'],
-    Dimensions: [{ Name: 'TopicName', Value: { 'Fn::GetAtt': ['TopicBFC7AF6E', 'TopicName'] } }],
+    Dimensions: [
+      {
+        Name: 'TopicName',
+        Value: { 'Fn::GetAtt': ['TopicBFC7AF6E', 'TopicName'] },
+      },
+    ],
   });
 
   expect(stack).toHaveResource('AWS::CloudWatch::Dashboard', {
@@ -90,15 +97,23 @@ test('monitoring exposes a list of high severity alarms', () => {
   const monitoring = new Monitoring(stack, 'Monitoring', {
     alarmActions: actions,
   });
-  const alarm1 = topic.metricNumberOfNotificationsFailed().createAlarm(stack, 'Alarm1', { threshold: 1, evaluationPeriods: 1 });
-  const alarm2 = topic.metricSMSMonthToDateSpentUSD().createAlarm(stack, 'Alarm2', { threshold: 100, evaluationPeriods: 1 });
+  const alarm1 = topic
+    .metricNumberOfNotificationsFailed()
+    .createAlarm(stack, 'Alarm1', { threshold: 1, evaluationPeriods: 1 });
+  const alarm2 = topic
+    .metricSMSMonthToDateSpentUSD()
+    .createAlarm(stack, 'Alarm2', { threshold: 100, evaluationPeriods: 1 });
 
   // WHEN
   monitoring.addHighSeverityAlarm('My Alarm', alarm1);
   monitoring.addLowSeverityAlarm('My Other Alarm', alarm2);
 
-  expect(monitoring.highSeverityAlarms.map((alarm) => alarm.alarmArn)).toEqual([alarm1.alarmArn]);
-  expect(monitoring.lowSeverityAlarms.map((alarm) => alarm.alarmArn)).toEqual([alarm2.alarmArn]);
+  expect(monitoring.highSeverityAlarms.map((alarm) => alarm.alarmArn)).toEqual([
+    alarm1.alarmArn,
+  ]);
+  expect(monitoring.lowSeverityAlarms.map((alarm) => alarm.alarmArn)).toEqual([
+    alarm2.alarmArn,
+  ]);
 });
 
 test('web canaries can ping URLs and raise high severity alarms', () => {
@@ -115,9 +130,7 @@ test('web canaries can ping URLs and raise high severity alarms', () => {
   expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
     ComparisonOperator: 'GreaterThanOrEqualToThreshold',
     EvaluationPeriods: 1,
-    AlarmActions: [
-      'arn:aws:sns:us-east-1:123456789012:high',
-    ],
+    AlarmActions: ['arn:aws:sns:us-east-1:123456789012:high'],
     AlarmDescription: '80% error rate for https://ping1 (Ping1)',
     Metrics: [
       {
@@ -146,7 +159,6 @@ test('web canaries can ping URLs and raise high severity alarms', () => {
     TreatMissingData: 'breaching',
   });
 
-
   expect(stack).toHaveResource('AWS::Lambda::Function', {
     Environment: {
       Variables: {
@@ -164,7 +176,9 @@ describe('web canary handler', () => {
 
   test('web ping throws for a non-200 response', async () => {
     process.env.URL = 'https://amazon.com/not-found-please12345';
-    await expect(webCanaryHandler({})).rejects.toThrow(/Response code 404 \(Not Found\)/);
+    await expect(webCanaryHandler({})).rejects.toThrow(
+      /Response code 404 \(Not Found\)/
+    );
   });
 });
 
@@ -173,13 +187,18 @@ test('normal-severity alarm actions are registered', () => {
   const stack = new Stack(undefined, 'TestStack');
   const alarm = new Alarm(stack, 'Alarm', {
     evaluationPeriods: 1,
-    metric: new Metric({ metricName: 'FakeMetricName', namespace: 'FakeNamespace' }),
+    metric: new Metric({
+      metricName: 'FakeMetricName',
+      namespace: 'FakeNamespace',
+    }),
     threshold: 0,
   });
 
   const normalSeverity = 'fake::arn::of::an::action';
   const normalSeverityActionArn = 'fake::arn::of::bound:alarm::action';
-  const normalSeverityAction: IAlarmAction = { bind: () => ({ alarmActionArn: normalSeverityActionArn }) };
+  const normalSeverityAction: IAlarmAction = {
+    bind: () => ({ alarmActionArn: normalSeverityActionArn }),
+  };
 
   // WHEN
   new Monitoring(stack, 'Monitoring', {
@@ -197,13 +216,18 @@ test('high-severity alarm actions are registered', () => {
   const stack = new Stack(undefined, 'TestStack');
   const alarm = new Alarm(stack, 'Alarm', {
     evaluationPeriods: 1,
-    metric: new Metric({ metricName: 'FakeMetricName', namespace: 'FakeNamespace' }),
+    metric: new Metric({
+      metricName: 'FakeMetricName',
+      namespace: 'FakeNamespace',
+    }),
     threshold: 0,
   });
 
   const highSeverity = 'fake::arn::of::an::action';
   const highSeverityActionArn = 'fake::arn::of::bound:alarm::action';
-  const highSeverityAction: IAlarmAction = { bind: () => ({ alarmActionArn: highSeverityActionArn }) };
+  const highSeverityAction: IAlarmAction = {
+    bind: () => ({ alarmActionArn: highSeverityActionArn }),
+  };
 
   // WHEN
   new Monitoring(stack, 'Monitoring', {
@@ -215,5 +239,3 @@ test('high-severity alarm actions are registered', () => {
     AlarmActions: [highSeverity, highSeverityActionArn],
   });
 });
-
-

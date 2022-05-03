@@ -19,7 +19,9 @@ test('defaults - empty deny list', () => {
     overviewDashboard: new OverviewDashboard(stack, 'OverviewDashboard'),
   });
 
-  denyList.prune.onChangeInvoke(new CatalogBuilderMock(stack, 'CatalogBuilderMock'));
+  denyList.prune.onChangeInvoke(
+    new CatalogBuilderMock(stack, 'CatalogBuilderMock')
+  );
 
   // THEN
   expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
@@ -35,7 +37,9 @@ test('pruneOnChange is disabled', () => {
     pruneOnChange: false,
     overviewDashboard: new OverviewDashboard(stack, 'OverviewDashboard'),
   });
-  denyList.prune.onChangeInvoke(new CatalogBuilderMock(stack, 'CatalogBuilderMock'));
+  denyList.prune.onChangeInvoke(
+    new CatalogBuilderMock(stack, 'CatalogBuilderMock')
+  );
 
   // THEN
   expect(stack).not.toHaveResource('Custom::S3BucketNotifications');
@@ -93,55 +97,111 @@ describe('createDenyListMap()', () => {
       { packageName: '@my-scope/my-package', reason: 'my reason' },
     ];
     expect(createDenyListMap(rules)).toEqual({
-      '@my-scope/my-package': { packageName: '@my-scope/my-package', reason: 'my reason' },
+      '@my-scope/my-package': {
+        packageName: '@my-scope/my-package',
+        reason: 'my reason',
+      },
     });
   });
 
   test('rule with "package" and "version"', () => {
     const rules: DenyListRule[] = [
-      { packageName: 'my-package', version: '1.2.3', reason: 'my reason 1.2.3' },
+      {
+        packageName: 'my-package',
+        version: '1.2.3',
+        reason: 'my reason 1.2.3',
+      },
     ];
     expect(createDenyListMap(rules)).toEqual({
-      'my-package/v1.2.3': { packageName: 'my-package', version: '1.2.3', reason: 'my reason 1.2.3' },
+      'my-package/v1.2.3': {
+        packageName: 'my-package',
+        version: '1.2.3',
+        reason: 'my reason 1.2.3',
+      },
     });
   });
 
   test('fail for duplicate rules for the same package + version', () => {
     const rules: DenyListRule[] = [
-      { packageName: 'my-package', version: '1.2.3', reason: 'my reason 1.2.3' },
+      {
+        packageName: 'my-package',
+        version: '1.2.3',
+        reason: 'my reason 1.2.3',
+      },
       { packageName: 'my-package', version: '1.2.3', reason: 'your reason' },
     ];
 
-    expect(() => createDenyListMap(rules)).toThrow(/Duplicate deny list entry: my-package\/v1\.2\.3/);
+    expect(() => createDenyListMap(rules)).toThrow(
+      /Duplicate deny list entry: my-package\/v1\.2\.3/
+    );
   });
 
   test('fails for duplicate rules for p+v,p (in that order)', () => {
     const rules: DenyListRule[] = [
-      { packageName: 'my-package', version: '1.2.3', reason: 'only my-package@1.2.3 is blocked' },
-      { packageName: 'my-package', version: '3.4.5', reason: 'only my-package@3.4.5 is blocked' },
-      { packageName: 'my-package', reason: 'all versions of my-package are denied' },
+      {
+        packageName: 'my-package',
+        version: '1.2.3',
+        reason: 'only my-package@1.2.3 is blocked',
+      },
+      {
+        packageName: 'my-package',
+        version: '3.4.5',
+        reason: 'only my-package@3.4.5 is blocked',
+      },
+      {
+        packageName: 'my-package',
+        reason: 'all versions of my-package are denied',
+      },
     ];
 
-    expect(() => createDenyListMap(rules)).toThrow(/Found rules that match specific versions of \"my-package\" \(1\.2\.3,3\.4\.5\) but there is also a rule that matches all versions/);
+    expect(() => createDenyListMap(rules)).toThrow(
+      /Found rules that match specific versions of \"my-package\" \(1\.2\.3,3\.4\.5\) but there is also a rule that matches all versions/
+    );
   });
 
   test('fails for duplicate rules for p,p+v,p+v (in that order)', () => {
     const rules: DenyListRule[] = [
-      { packageName: 'my-package', reason: 'all versions of my-package are denied' },
-      { packageName: 'my-package', version: '1.2.3', reason: 'only my-package@1.2.3 is blocked' },
-      { packageName: 'my-package', version: '3.4.5', reason: 'only my-package@3.4.5 is blocked' },
+      {
+        packageName: 'my-package',
+        reason: 'all versions of my-package are denied',
+      },
+      {
+        packageName: 'my-package',
+        version: '1.2.3',
+        reason: 'only my-package@1.2.3 is blocked',
+      },
+      {
+        packageName: 'my-package',
+        version: '3.4.5',
+        reason: 'only my-package@3.4.5 is blocked',
+      },
     ];
 
-    expect(() => createDenyListMap(rules)).toThrow(/Found rules that match specific versions of \"my-package\" \(1\.2\.3,3\.4\.5\) but there is also a rule that matches all versions/);
+    expect(() => createDenyListMap(rules)).toThrow(
+      /Found rules that match specific versions of \"my-package\" \(1\.2\.3,3\.4\.5\) but there is also a rule that matches all versions/
+    );
   });
 
   test('fails for duplicate rules for p+v,p,p+v (in that order)', () => {
     const rules: DenyListRule[] = [
-      { packageName: 'my-package', version: '1.2.3', reason: 'only my-package@1.2.3 is blocked' },
-      { packageName: 'my-package', reason: 'all versions of my-package are denied' },
-      { packageName: 'my-package', version: '3.4.5', reason: 'only my-package@3.4.5 is blocked' },
+      {
+        packageName: 'my-package',
+        version: '1.2.3',
+        reason: 'only my-package@1.2.3 is blocked',
+      },
+      {
+        packageName: 'my-package',
+        reason: 'all versions of my-package are denied',
+      },
+      {
+        packageName: 'my-package',
+        version: '3.4.5',
+        reason: 'only my-package@3.4.5 is blocked',
+      },
     ];
 
-    expect(() => createDenyListMap(rules)).toThrow(/Found rules that match specific versions of \"my-package\" \(1\.2\.3,3\.4\.5\) but there is also a rule that matches all versions/);
+    expect(() => createDenyListMap(rules)).toThrow(
+      /Found rules that match specific versions of \"my-package\" \(1\.2\.3,3\.4\.5\) but there is also a rule that matches all versions/
+    );
   });
 });

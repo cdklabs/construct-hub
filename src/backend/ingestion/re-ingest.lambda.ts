@@ -16,40 +16,72 @@ export async function handler(event: Input, context: Context) {
   const queueUrl = requireEnv('QUEUE_URL');
 
   console.log(`Download metadata object at ${bucket}/${event.Key}`);
-  const { Body: jsonMetadata } = await aws.s3().getObject({ Bucket: bucket, Key: event.Key }).promise();
+  const { Body: jsonMetadata } = await aws
+    .s3()
+    .getObject({ Bucket: bucket, Key: event.Key })
+    .promise();
   if (jsonMetadata == null) {
     console.error(`No body found in ${bucket}/${event.Key}, aborting.`);
     return;
   }
   const { date: time } = JSON.parse(jsonMetadata.toString('utf-8'));
 
-  const tarballKey = `${event.Key.substr(0, event.Key.length - METADATA_KEY_SUFFIX.length)}${PACKAGE_KEY_SUFFIX}`;
+  const tarballKey = `${event.Key.substr(
+    0,
+    event.Key.length - METADATA_KEY_SUFFIX.length
+  )}${PACKAGE_KEY_SUFFIX}`;
   console.log(`Download metadata object at ${bucket}/${tarballKey}`);
-  const { Body: tarball, VersionId: versionId } = await aws.s3().getObject({ Bucket: bucket, Key: tarballKey }).promise();
+  const { Body: tarball, VersionId: versionId } = await aws
+    .s3()
+    .getObject({ Bucket: bucket, Key: tarballKey })
+    .promise();
   if (tarball == null) {
     console.error(`No body found in ${bucket}/${tarballKey}, aborting.`);
     return;
   }
 
-  const ingestionInput = integrity({
-    tarballUri: `s3://${bucket}/${tarballKey}${versionId ? `?versionId=${versionId}` : ''}`,
-    time,
-    reIngest: true,
-    metadata: {
-      reprocessRequestId: context.awsRequestId,
-      reprocessLogGroup: context.logGroupName,
-      reprocessLogStream: context.logStreamName,
+  const ingestionInput = integrity(
+    {
+      tarballUri: `s3://${bucket}/${tarballKey}${
+        versionId ? `?versionId=${versionId}` : ''
+      }`,
+      time,
+      reIngest: true,
+      metadata: {
+        reprocessRequestId: context.awsRequestId,
+        reprocessLogGroup: context.logGroupName,
+        reprocessLogStream: context.logStreamName,
+      },
     },
-  }, Buffer.from(tarball as any));
+    Buffer.from(tarball as any)
+  );
 
-  console.log(`Sending message to reprocess queue: ${JSON.stringify(ingestionInput, null, 2)}`);
-  return aws.sqs().sendMessage({
-    QueueUrl: queueUrl,
-    MessageBody: JSON.stringify(ingestionInput, null, 2),
-    MessageAttributes: {
-      'Reprocess-RequestID': { DataType: 'String', StringValue: context.awsRequestId },
-      'Reprocess-LogGroup': { DataType: 'String', StringValue: context.logGroupName },
-      'Reprocess-LogStream': { DataType: 'String', StringValue: context.logStreamName },
-    },
-  }).promise();
+  console.log(
+    `Sending message to reprocess queue: ${JSON.stringify(
+      ingestionInput,
+      null,
+      2
+    )}`
+  );
+  return aws
+    .sqs()
+    .sendMessage({
+      QueueUrl: queueUrl,
+      MessageBody: JSON.stringify(ingestionInput, null, 2),
+      MessageAttributes: {
+        'Reprocess-RequestID': {
+          DataType: 'String',
+          StringValue: context.awsRequestId,
+        },
+        'Reprocess-LogGroup': {
+          DataType: 'String',
+          StringValue: context.logGroupName,
+        },
+        'Reprocess-LogStream': {
+          DataType: 'String',
+          StringValue: context.logStreamName,
+        },
+      },
+    })
+    .promise();
 }

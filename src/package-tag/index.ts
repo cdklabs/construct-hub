@@ -164,7 +164,7 @@ class TagConditionLogic extends TagCondition {
   public readonly isLogic = true;
   public constructor(
     private readonly type: TagConditionLogicType,
-    private readonly children: TagCondition[],
+    private readonly children: TagCondition[]
   ) {
     super();
   }
@@ -184,7 +184,7 @@ class TagConditionPredicate extends TagCondition {
     private readonly source?: TagConditionSource,
     private readonly key?: string[],
     private readonly value?: string,
-    private readonly options?: TagConditionIncludesOptions,
+    private readonly options?: TagConditionIncludesOptions
   ) {
     super();
   }
@@ -215,7 +215,7 @@ export class TagConditionField {
       TagConditionLogicType.EQUALS,
       TagConditionSource.PACKAGE_JSON,
       this.field,
-      value,
+      value
     );
   }
 
@@ -224,13 +224,16 @@ export class TagConditionField {
    * field within the package's package.json includes the value. This works for
    * arrays or strings.
    */
-  public includes(value: any, options: TagConditionIncludesOptions = {}): TagCondition {
+  public includes(
+    value: any,
+    options: TagConditionIncludesOptions = {}
+  ): TagCondition {
     return new TagConditionPredicate(
       TagConditionLogicType.INCLUDES,
       TagConditionSource.PACKAGE_JSON,
       this.field,
       value,
-      options,
+      options
     );
   }
 
@@ -244,7 +247,7 @@ export class TagConditionField {
       TagConditionLogicType.STARTS_WITH,
       TagConditionSource.PACKAGE_JSON,
       this.field,
-      value,
+      value
     );
   }
 }
@@ -259,13 +262,16 @@ export class TagConditionReadme {
    * Create a `readme.includes(value)` condition which applies if the README
    * includes the specified string.
    */
-  public includes(value: string, options: TagConditionIncludesOptions = {}): TagCondition {
+  public includes(
+    value: string,
+    options: TagConditionIncludesOptions = {}
+  ): TagCondition {
     return new TagConditionPredicate(
       TagConditionLogicType.INCLUDES,
       TagConditionSource.README,
       undefined, // no key
       value,
-      options,
+      options
     );
   }
 }

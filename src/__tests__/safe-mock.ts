@@ -11,7 +11,10 @@
  *
  * @returns a new mock instance of T.
  */
-export function safeMock<T extends object>(mockName: string, partial: Partial<T>): T {
+export function safeMock<T extends object>(
+  mockName: string,
+  partial: Partial<T>
+): T {
   (partial as any)[MOCK_NAME] = mockName;
   return new Proxy<any>(partial, PROXY_HANDLER);
 }
@@ -25,10 +28,16 @@ const ALWAYS_PASS_THROUGH = new Set([
 
 const PROXY_HANDLER: ProxyHandler<any> = {
   get: (target: any, name: string | symbol) => {
-    if (name in target || typeof name !== 'string' || ALWAYS_PASS_THROUGH.has(name)) {
+    if (
+      name in target ||
+      typeof name !== 'string' ||
+      ALWAYS_PASS_THROUGH.has(name)
+    ) {
       return target[name];
     }
     // Throw if we try to use a property or method that was not mocked.
-    throw new TypeError(`Attempted to use un-mocked property ${name} on ${target[MOCK_NAME]}`);
+    throw new TypeError(
+      `Attempted to use un-mocked property ${name} on ${target[MOCK_NAME]}`
+    );
   },
 };

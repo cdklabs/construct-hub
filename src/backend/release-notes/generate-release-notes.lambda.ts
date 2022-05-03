@@ -6,8 +6,7 @@ import { extractObjects } from '../shared/tarball.lambda-shared';
 import * as constants from './constants';
 import { generateReleaseNotes } from './shared/github-changelog-fetcher.lambda-shared';
 
-
-export type ReleaseNotesGenerateEvent = { tarballUri: string }
+export type ReleaseNotesGenerateEvent = { tarballUri: string };
 
 /**
  * * @param event: ReleaseNotesGenerateEvent
@@ -50,7 +49,7 @@ export const handler = metricScope(
         Buffer.from(tarball.Body! as any),
         {
           packageJson: { path: 'package/package.json', required: true },
-        },
+        }
       ));
     } catch (err) {
       console.error(`Invalid tarball content: ${err}`);
@@ -60,7 +59,6 @@ export const handler = metricScope(
     }
     let packageJsonObj;
     try {
-
       packageJsonObj = JSON.parse(packageJson.toString('utf-8'));
     } catch (e) {
       metrics.putMetric(constants.InvalidPackageJson, 1, Unit.Count);
@@ -83,12 +81,16 @@ export const handler = metricScope(
         repoDetails.repo,
         packageJsonObj.name,
         packageJsonObj.version,
-        repoDetails.directory,
+        repoDetails.directory
       );
       if (releaseNotes) {
         metrics.putMetric(constants.PackageWithChangeLog, 1, Unit.Count);
-        const releaseNotesPath = tarballUri.pathname.replace('package.tgz', 'release-notes.md').substring(1);
-        console.log(`storing release notes to s3://${BUCKET_NAME}${releaseNotesPath}`);
+        const releaseNotesPath = tarballUri.pathname
+          .replace('package.tgz', 'release-notes.md')
+          .substring(1);
+        console.log(
+          `storing release notes to s3://${BUCKET_NAME}${releaseNotesPath}`
+        );
         await new aws.S3()
           .putObject({
             Bucket: BUCKET_NAME,
@@ -127,30 +129,33 @@ export const handler = metricScope(
       return { error: 'UnknownError:' + e };
     }
     return { error: null, releaseNotes };
-  },
+  }
 );
 
 function getGithubRepoDetails(
   repositoryDetails?:
-  | {
-    url: string;
-    directory?: string;
-  }
-  | string,
+    | {
+        url: string;
+        directory?: string;
+      }
+    | string
 ): { owner: string; repo: string; directory?: string } | undefined {
-  if (
-    repositoryDetails &&
-    typeof repositoryDetails === 'object'
-  ) {
+  if (repositoryDetails && typeof repositoryDetails === 'object') {
     if (repositoryDetails.url.startsWith('https://github.com/')) {
       const slug = repositoryDetails.url.replace('https://github.com/', '');
       const [owner, repo = ''] = slug.split('/');
-      return { owner, repo: repo.replace('.git', ''), directory: repositoryDetails.directory };
+      return {
+        owner,
+        repo: repo.replace('.git', ''),
+        directory: repositoryDetails.directory,
+      };
     } else if (repositoryDetails.url.startsWith('git@github.com:')) {
       const slug = repositoryDetails.url.replace('git@github.com:', '');
       const [owner, repo = ''] = slug.split('/');
       return {
-        owner, repo: repo.replace('.git', ''), directory: repositoryDetails.directory,
+        owner,
+        repo: repo.replace('.git', ''),
+        directory: repositoryDetails.directory,
       };
     }
   } else if (
@@ -163,4 +168,3 @@ function getGithubRepoDetails(
   }
   return;
 }
-

@@ -10,7 +10,10 @@ import type { PackageTagConfig } from '../../package-tag';
 import type { PackageLinkConfig } from '../../webapp';
 import type { StateMachineInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
-import { CodeArtifactProps, codeArtifactPublishPackage } from '../shared/code-artifact.lambda-shared';
+import {
+  CodeArtifactProps,
+  codeArtifactPublishPackage,
+} from '../shared/code-artifact.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
@@ -18,7 +21,10 @@ import { integrity } from '../shared/integrity.lambda-shared';
 import { isTagApplicable } from '../shared/tags';
 import { extractObjects } from '../shared/tarball.lambda-shared';
 import { MetricName, METRICS_NAMESPACE } from './constants';
-import { ConstructFramework, detectConstructFrameworks } from './framework-detection.lambda-shared';
+import {
+  ConstructFramework,
+  detectConstructFrameworks,
+} from './framework-detection.lambda-shared';
 
 Configuration.namespace = METRICS_NAMESPACE;
 
@@ -35,7 +41,10 @@ export const handler = metricScope(
     const CONFIG_FILE_KEY = requireEnv('CONFIG_FILE_KEY');
 
     // Load configuration
-    const { packageTags: packageTagsConfig, packageLinks: allowedLinks }: Config = await getConfig(CONFIG_BUCKET_NAME, CONFIG_FILE_KEY);
+    const {
+      packageTags: packageTagsConfig,
+      packageLinks: allowedLinks,
+    }: Config = await getConfig(CONFIG_BUCKET_NAME, CONFIG_FILE_KEY);
 
     const codeArtifactProps: CodeArtifactProps | undefined = (function () {
       const endpoint = process.env.CODE_ARTIFACT_REPOSITORY_ENDPOINT;
@@ -68,10 +77,13 @@ export const handler = metricScope(
         })
         .promise();
 
-      const { integrity: integrityCheck } = integrity(payload, Buffer.from(tarball.Body! as any));
+      const { integrity: integrityCheck } = integrity(
+        payload,
+        Buffer.from(tarball.Body! as any)
+      );
       if (payload.integrity !== integrityCheck) {
         throw new Error(
-          `Integrity check failed: ${payload.integrity} !== ${integrityCheck}`,
+          `Integrity check failed: ${payload.integrity} !== ${integrityCheck}`
         );
       }
 
@@ -85,14 +97,13 @@ export const handler = metricScope(
             dotJsii: { path: 'package/.jsii', required: true },
             packageJson: { path: 'package/package.json', required: true },
             licenseText: { filter: isLicenseFile },
-          },
+          }
         ));
       } catch (err) {
         console.error(`Invalid tarball content: ${err}`);
         metrics.putMetric(MetricName.INVALID_TARBALL, 1, Unit.Count);
         return;
       }
-
 
       let parsedAssembly: Assembly;
       let constructFrameworks: ConstructFramework[];
@@ -101,7 +112,9 @@ export const handler = metricScope(
       let packageVersion: string;
       let packageReadme: string;
       try {
-        parsedAssembly = validateAssembly(JSON.parse(dotJsii.toString('utf-8')));
+        parsedAssembly = validateAssembly(
+          JSON.parse(dotJsii.toString('utf-8'))
+        );
 
         // needs `dependencyClosure`
         constructFrameworks = detectConstructFrameworks(parsedAssembly);
@@ -120,7 +133,7 @@ export const handler = metricScope(
         metrics.putMetric(MetricName.INVALID_ASSEMBLY, 0, Unit.Count);
       } catch (ex) {
         console.error(
-          `Package does not contain a valid assembly -- ignoring: ${ex}`,
+          `Package does not contain a valid assembly -- ignoring: ${ex}`
         );
         metrics.putMetric(MetricName.INVALID_ASSEMBLY, 1, Unit.Count);
         return;
@@ -140,63 +153,79 @@ export const handler = metricScope(
         packageJsonLicense !== packageLicense
       ) {
         console.log(
-          `Ignoring package because the name, version, and/or license does not match between package.json and .jsii. (${packageJsonName}@${packageJsonVersion} is ${packageJsonLicense} !== ${packageName}@${packageVersion} is ${packageLicense})`,
+          `Ignoring package because the name, version, and/or license does not match between package.json and .jsii. (${packageJsonName}@${packageJsonVersion} is ${packageJsonLicense} !== ${packageName}@${packageVersion} is ${packageLicense})`
         );
         metrics.putMetric(
           MetricName.MISMATCHED_IDENTITY_REJECTIONS,
           1,
-          Unit.Count,
+          Unit.Count
         );
         continue;
       }
       metrics.putMetric(
         MetricName.MISMATCHED_IDENTITY_REJECTIONS,
         0,
-        Unit.Count,
+        Unit.Count
       );
 
       // Did we identify a license file or not?
       metrics.putMetric(
         MetricName.FOUND_LICENSE_FILE,
         licenseText != null ? 1 : 0,
-        Unit.Count,
+        Unit.Count
       );
 
-      const packageLinks = allowedLinks.reduce((accum, { configKey, allowedDomains }) => {
-        const pkgValue = constructHub?.packageLinks[configKey];
+      const packageLinks = allowedLinks.reduce(
+        (accum, { configKey, allowedDomains }) => {
+          const pkgValue = constructHub?.packageLinks[configKey];
 
-        if (!pkgValue) {
+          if (!pkgValue) {
+            return accum;
+          }
+
+          // check if value is in allowed domains list
+          const url = new URL(pkgValue);
+          if (allowedDomains?.length && !allowedDomains.includes(url.host)) {
+            return accum;
+          }
+
+          // if no allow list is provided
+          return { ...accum, [configKey]: pkgValue };
+        },
+        {}
+      );
+
+      const packageTags = packageTagsConfig.reduce(
+        (accum: Array<Omit<PackageTagConfig, 'condition'>>, tagConfig) => {
+          const { condition, ...tagData } = tagConfig;
+          if (
+            isTagApplicable(condition, {
+              pkg: packageJsonObj,
+              readme: packageReadme,
+            })
+          ) {
+            return [...accum, tagData];
+          }
+
           return accum;
-        }
-
-        // check if value is in allowed domains list
-        const url = new URL(pkgValue);
-        if (allowedDomains?.length && !allowedDomains.includes(url.host)) {
-          return accum;
-        }
-
-        // if no allow list is provided
-        return { ...accum, [configKey]: pkgValue };
-      }, {});
-
-      const packageTags = packageTagsConfig.reduce((accum: Array<Omit<PackageTagConfig, 'condition'>>, tagConfig) => {
-        const { condition, ...tagData } = tagConfig;
-        if (isTagApplicable(condition, { pkg: packageJsonObj, readme: packageReadme })) {
-          return [...accum, tagData];
-        }
-
-        return accum;
-      }, []);
-
+        },
+        []
+      );
 
       if (codeArtifactProps) {
         console.log('Publishing to the internal CodeArtifact...');
         try {
           const { publishConfig } = packageJsonObj;
           if (publishConfig) {
-            console.log('Not publishing to CodeArtifact due to the presence of publishConfig in package.json: ', publishConfig);
+            console.log(
+              'Not publishing to CodeArtifact due to the presence of publishConfig in package.json: ',
+              publishConfig
+            );
           } else {
-            await codeArtifactPublishPackage(Buffer.from(tarball.Body! as any), codeArtifactProps);
+            await codeArtifactPublishPackage(
+              Buffer.from(tarball.Body! as any),
+              codeArtifactProps
+            );
           }
         } catch (err) {
           console.error('Failed publishing to CodeArtifact: ', err);
@@ -213,7 +242,7 @@ export const handler = metricScope(
 
       const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(
         packageName,
-        packageVersion,
+        packageVersion
       );
       console.log(`Writing assembly at ${assemblyKey}`);
       console.log(`Writing package at  ${packageKey}`);
@@ -222,7 +251,7 @@ export const handler = metricScope(
       // we upload the metadata file first because the catalog builder depends on
       // it and is triggered by the assembly file upload.
       console.log(
-        `${packageName}@${packageVersion} | Uploading package and metadata files`,
+        `${packageName}@${packageVersion} | Uploading package and metadata files`
       );
       const [pkg, storedMetadata] = await Promise.all([
         aws
@@ -299,7 +328,7 @@ export const handler = metricScope(
           name: sfnExecutionNameFromParts(
             packageName,
             `v${packageVersion}`,
-            context.awsRequestId,
+            context.awsRequestId
           ),
           stateMachineArn: STATE_MACHINE_ARN,
         })
@@ -308,20 +337,26 @@ export const handler = metricScope(
       result.push(sfn.executionArn);
 
       // Dont fetch release notes if its a reIngestion request
-      if (payload.reIngest !== true && process.env.RELEASE_NOTES_FETCH_QUEUE_URL) {
+      if (
+        payload.reIngest !== true &&
+        process.env.RELEASE_NOTES_FETCH_QUEUE_URL
+      ) {
         const body = JSON.stringify({
           tarballUri: `s3://${BUCKET_NAME}/${packageKey}`,
         });
         console.log('sending message to release note fetcher ', body);
-        await aws.sqs().sendMessage({
-          QueueUrl: process.env.RELEASE_NOTES_FETCH_QUEUE_URL,
-          MessageBody: body,
-        }).promise();
+        await aws
+          .sqs()
+          .sendMessage({
+            QueueUrl: process.env.RELEASE_NOTES_FETCH_QUEUE_URL,
+            MessageBody: body,
+          })
+          .promise();
       }
     }
 
     return result;
-  },
+  }
 );
 
 /**
@@ -387,10 +422,13 @@ async function getConfig(bucket: string, key: string): Promise<Config> {
     packageLinks: [],
   };
   try {
-    const req = await aws.s3().getObject({
-      Bucket: bucket,
-      Key: key,
-    }).promise();
+    const req = await aws
+      .s3()
+      .getObject({
+        Bucket: bucket,
+        Key: key,
+      })
+      .promise();
     const body = req?.Body?.toString();
     if (body) {
       return JSON.parse(body);

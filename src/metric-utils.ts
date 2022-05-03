@@ -5,7 +5,10 @@ import { MathExpression, Metric } from '@aws-cdk/aws-cloudwatch';
  * Creates a MathExpression on the current metric, applying the `FILL` function
  * to it. This is useful to turn a sparse metric into a continuous one.
  */
-export function fillMetric(metric: Metric, value: number | 'REPEAT' = 0): MathExpression {
+export function fillMetric(
+  metric: Metric,
+  value: number | 'REPEAT' = 0
+): MathExpression {
   // We assume namespace + name is enough to uniquely identify a metric here.
   // This is true locally at this time, but in case this ever changes, consider
   // also processing dimensions and period.

@@ -1,4 +1,13 @@
-import { ComparisonOperator, GraphWidget, MathExpression, Metric, MetricOptions, Statistic, TreatMissingData, IWidget } from '@aws-cdk/aws-cloudwatch';
+import {
+  ComparisonOperator,
+  GraphWidget,
+  MathExpression,
+  Metric,
+  MetricOptions,
+  Statistic,
+  TreatMissingData,
+  IWidget,
+} from '@aws-cdk/aws-cloudwatch';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { Tracing } from '@aws-cdk/aws-lambda';
@@ -9,11 +18,20 @@ import { Construct, Duration } from '@aws-cdk/core';
 import { lambdaFunctionUrl, s3ObjectUrl, sqsQueueUrl } from '../deep-link';
 import { fillMetric } from '../metric-utils';
 import { IMonitoring } from '../monitoring/api';
-import type { IPackageSource, PackageSourceBindOptions, PackageSourceBindResult } from '../package-source';
+import type {
+  IPackageSource,
+  PackageSourceBindOptions,
+  PackageSourceBindResult,
+} from '../package-source';
 import { RUNBOOK_URL } from '../runbook-url';
 import { S3StorageFactory } from '../s3/storage';
 import { NpmJsPackageCanary } from './npmjs/canary';
-import { MARKER_FILE_NAME, METRICS_NAMESPACE, MetricName, S3KeyPrefix } from './npmjs/constants.lambda-shared';
+import {
+  MARKER_FILE_NAME,
+  METRICS_NAMESPACE,
+  MetricName,
+  S3KeyPrefix,
+} from './npmjs/constants.lambda-shared';
 
 import { NpmJsFollower } from './npmjs/npm-js-follower';
 import { StageAndNotify } from './npmjs/stage-and-notify';
@@ -76,16 +94,32 @@ export class NpmJs implements IPackageSource {
 
   public bind(
     scope: Construct,
-    { baseUrl, denyList, ingestion, licenseList, monitoring, queue, repository, overviewDashboard }: PackageSourceBindOptions,
+    {
+      baseUrl,
+      denyList,
+      ingestion,
+      licenseList,
+      monitoring,
+      queue,
+      repository,
+      overviewDashboard,
+    }: PackageSourceBindOptions
   ): PackageSourceBindResult {
     repository?.addExternalConnection('public:npmjs');
 
     const storageFactory = S3StorageFactory.getOrCreate(scope);
-    const bucket = this.props.stagingBucket || storageFactory.newBucket(scope, 'NpmJs/StagingBucket', {
-      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
-      enforceSSL: true,
-      lifecycleRules: [{ prefix: S3KeyPrefix.STAGED_KEY_PREFIX, expiration: Duration.days(30) }],
-    });
+    const bucket =
+      this.props.stagingBucket ||
+      storageFactory.newBucket(scope, 'NpmJs/StagingBucket', {
+        blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+        enforceSSL: true,
+        lifecycleRules: [
+          {
+            prefix: S3KeyPrefix.STAGED_KEY_PREFIX,
+            expiration: Duration.days(30),
+          },
+        ],
+      });
     bucket.grantRead(ingestion);
 
     const stager = new StageAndNotify(scope, 'NpmJs-StageAndNotify', {
@@ -110,8 +144,12 @@ export class NpmJs implements IPackageSource {
     denyList?.grantRead(stager);
     queue.grantSendMessages(stager);
 
-    stager.addEventSource(new SqsEventSource(stager.deadLetterQueue!, { batchSize: 1, enabled: false }));
-
+    stager.addEventSource(
+      new SqsEventSource(stager.deadLetterQueue!, {
+        batchSize: 1,
+        enabled: false,
+      })
+    );
 
     const follower = new NpmJsFollower(scope, 'NpmJs', {
       description: `[${scope.node.path}/NpmJs] Periodically query npmjs.com index for new packages`,
@@ -139,16 +177,33 @@ export class NpmJs implements IPackageSource {
 
     this.registerAlarms(scope, follower, stager, monitoring, rule);
 
-
-    stager.deadLetterQueue && overviewDashboard.addDLQMetricToDashboard('NPM JS Stager DLQ', stager.deadLetterQueue);
-    follower.deadLetterQueue && overviewDashboard.addDLQMetricToDashboard('NPM JS Follower DLQ', follower.deadLetterQueue);
-    overviewDashboard.addConcurrentExecutionMetricToDashboard(follower, 'NpmJsLambda');
-    overviewDashboard.addConcurrentExecutionMetricToDashboard(stager, 'NpmJs-StageAndNotifyLambda');
+    stager.deadLetterQueue &&
+      overviewDashboard.addDLQMetricToDashboard(
+        'NPM JS Stager DLQ',
+        stager.deadLetterQueue
+      );
+    follower.deadLetterQueue &&
+      overviewDashboard.addDLQMetricToDashboard(
+        'NPM JS Follower DLQ',
+        follower.deadLetterQueue
+      );
+    overviewDashboard.addConcurrentExecutionMetricToDashboard(
+      follower,
+      'NpmJsLambda'
+    );
+    overviewDashboard.addConcurrentExecutionMetricToDashboard(
+      stager,
+      'NpmJs-StageAndNotifyLambda'
+    );
 
     return {
       name: follower.node.path,
       links: [
-        { name: 'NpmJs Follower', url: lambdaFunctionUrl(follower), primary: true },
+        {
+          name: 'NpmJs Follower',
+          url: lambdaFunctionUrl(follower),
+          primary: true,
+        },
         { name: 'Marker Object', url: s3ObjectUrl(bucket, MARKER_FILE_NAME) },
         { name: 'Stager', url: lambdaFunctionUrl(stager) },
         { name: 'Stager DLQ', url: sqsQueueUrl(stager.deadLetterQueue!) },
@@ -164,9 +219,7 @@ export class NpmJs implements IPackageSource {
               fillMetric(follower.metricErrors({ label: 'Errors' })),
             ],
             leftYAxis: { min: 0 },
-            right: [
-              this.metricRemainingTime({ label: 'Remaining Time' }),
-            ],
+            right: [this.metricRemainingTime({ label: 'Remaining Time' })],
             rightYAxis: { min: 0 },
             period: Duration.minutes(5),
           }),
@@ -179,25 +232,33 @@ export class NpmJs implements IPackageSource {
               fillMetric(stager.metricErrors({ label: 'Errors' })),
             ],
             leftYAxis: { min: 0 },
-            right: [
-              stager.metricDuration({ label: 'Duration' }),
-            ],
+            right: [stager.metricDuration({ label: 'Duration' })],
             rightYAxis: { min: 0 },
             period: Duration.minutes(5),
           }),
-        ], [
+        ],
+        [
           new GraphWidget({
             height: 6,
             width: 12,
             title: 'CouchDB Follower',
             left: [
               fillMetric(this.metricChangeCount({ label: 'Change Count' }), 0),
-              fillMetric(this.metricUnprocessableEntity({ label: 'Unprocessable' }), 0),
+              fillMetric(
+                this.metricUnprocessableEntity({ label: 'Unprocessable' }),
+                0
+              ),
             ],
             leftYAxis: { min: 0 },
             right: [
-              fillMetric(this.metricNpmJsChangeAge({ label: 'Lag to npmjs.com' }), 'REPEAT'),
-              fillMetric(this.metricPackageVersionAge({ label: 'Package Version Age' }), 'REPEAT'),
+              fillMetric(
+                this.metricNpmJsChangeAge({ label: 'Lag to npmjs.com' }),
+                'REPEAT'
+              ),
+              fillMetric(
+                this.metricPackageVersionAge({ label: 'Package Version Age' }),
+                'REPEAT'
+              ),
             ],
             rightYAxis: { label: 'Milliseconds', min: 0, showUnits: false },
             period: Duration.minutes(5),
@@ -207,35 +268,51 @@ export class NpmJs implements IPackageSource {
             width: 12,
             title: 'CouchDB Changes',
             left: [
-              fillMetric(this.metricLastSeq({ label: 'Last Sequence Number' }), 'REPEAT'),
+              fillMetric(
+                this.metricLastSeq({ label: 'Last Sequence Number' }),
+                'REPEAT'
+              ),
             ],
             period: Duration.minutes(5),
           }),
-        ], [
+        ],
+        [
           new GraphWidget({
             height: 6,
             width: 12,
             title: 'Stager Dead-Letter Queue',
             left: [
-              fillMetric(stager.deadLetterQueue!.metricApproximateNumberOfMessagesVisible({ label: 'Visible Messages' }), 0),
-              fillMetric(stager.deadLetterQueue!.metricApproximateNumberOfMessagesNotVisible({ label: 'Invisible Messages' }), 0),
+              fillMetric(
+                stager.deadLetterQueue!.metricApproximateNumberOfMessagesVisible(
+                  { label: 'Visible Messages' }
+                ),
+                0
+              ),
+              fillMetric(
+                stager.deadLetterQueue!.metricApproximateNumberOfMessagesNotVisible(
+                  { label: 'Invisible Messages' }
+                ),
+                0
+              ),
             ],
             leftYAxis: { min: 0 },
             right: [
-              stager.deadLetterQueue!.metricApproximateAgeOfOldestMessage({ label: 'Oldest Message' }),
+              stager.deadLetterQueue!.metricApproximateAgeOfOldestMessage({
+                label: 'Oldest Message',
+              }),
             ],
             rightYAxis: { min: 0 },
             period: Duration.minutes(1),
           }),
-          ...((this.props.enableCanary ?? true)
+          ...(this.props.enableCanary ?? true
             ? this.registerCanary(
-              follower,
-              this.props.canaryPackage ?? 'construct-hub-probe',
-              this.props.canarySla ?? Duration.minutes(5),
-              bucket,
-              baseUrl,
-              monitoring,
-            )
+                follower,
+                this.props.canaryPackage ?? 'construct-hub-probe',
+                this.props.canarySla ?? Duration.minutes(5),
+                bucket,
+                baseUrl,
+                monitoring
+              )
             : []),
         ],
       ],
@@ -359,24 +436,34 @@ export class NpmJs implements IPackageSource {
     });
   }
 
-  private registerAlarms(scope: Construct, follower: NpmJsFollower, stager: StageAndNotify, monitoring: IMonitoring, schedule: Rule) {
-    const failureAlarm = follower.metricErrors().createAlarm(scope, 'NpmJs/Follower/Failures', {
-      alarmName: `${scope.node.path}/NpmJs/Follower/Failures`,
-      alarmDescription: [
-        'The NpmJs follower function failed!',
-        '',
-        `RunBook: ${RUNBOOK_URL}`,
-        '',
-        `Direct link to Lambda function: ${lambdaFunctionUrl(follower)}`,
-      ].join('\n'),
-      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      evaluationPeriods: 3,
-      threshold: 1,
-      treatMissingData: TreatMissingData.MISSING,
-    });
+  private registerAlarms(
+    scope: Construct,
+    follower: NpmJsFollower,
+    stager: StageAndNotify,
+    monitoring: IMonitoring,
+    schedule: Rule
+  ) {
+    const failureAlarm = follower
+      .metricErrors()
+      .createAlarm(scope, 'NpmJs/Follower/Failures', {
+        alarmName: `${scope.node.path}/NpmJs/Follower/Failures`,
+        alarmDescription: [
+          'The NpmJs follower function failed!',
+          '',
+          `RunBook: ${RUNBOOK_URL}`,
+          '',
+          `Direct link to Lambda function: ${lambdaFunctionUrl(follower)}`,
+        ].join('\n'),
+        comparisonOperator:
+          ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        evaluationPeriods: 3,
+        threshold: 1,
+        treatMissingData: TreatMissingData.MISSING,
+      });
     monitoring.addHighSeverityAlarm('NpmJs/Follower Failures', failureAlarm);
 
-    const notRunningAlarm = follower.metricInvocations({ period: FOLLOWER_RUN_RATE })
+    const notRunningAlarm = follower
+      .metricInvocations({ period: FOLLOWER_RUN_RATE })
       .createAlarm(scope, 'NpmJs/Follower/NotRunning', {
         alarmName: `${scope.node.path}/NpmJs/Follower/NotRunning`,
         alarmDescription: [
@@ -391,34 +478,47 @@ export class NpmJs implements IPackageSource {
         threshold: 1,
         treatMissingData: TreatMissingData.BREACHING,
       });
-    monitoring.addHighSeverityAlarm('NpmJs/Follower Not Running', notRunningAlarm);
+    monitoring.addHighSeverityAlarm(
+      'NpmJs/Follower Not Running',
+      notRunningAlarm
+    );
 
     // The period for this alarm needs to match the scheduling interval of the
     // follower, otherwise the metric will be too sparse to properly detect
     // problems.
-    const noChangeAlarm = this.metricChangeCount({ period: FOLLOWER_RUN_RATE })
-      .createAlarm(scope, 'NpmJs/Follower/NoChanges', {
-        alarmName: `${scope.node.path}/NpmJs/Follower/NoChanges`,
-        alarmDescription: [
-          'The NpmJs follower function is not discovering any changes from CouchDB!',
-          '',
-          `RunBook: ${RUNBOOK_URL}`,
-          '',
-          `Direct link to Lambda function: ${lambdaFunctionUrl(follower)}`,
-        ].join('\n'),
-        comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
-        evaluationPeriods: howOften(FOLLOWER_RUN_RATE, NO_CHANGES_ALARM_DURATION),
-        threshold: 1,
-        // If the metric is not emitted, it can be assumed to be zero.
-        treatMissingData: TreatMissingData.BREACHING,
-      });
-    monitoring.addLowSeverityAlarm('Np npmjs.com changes discovered', noChangeAlarm);
+    const noChangeAlarm = this.metricChangeCount({
+      period: FOLLOWER_RUN_RATE,
+    }).createAlarm(scope, 'NpmJs/Follower/NoChanges', {
+      alarmName: `${scope.node.path}/NpmJs/Follower/NoChanges`,
+      alarmDescription: [
+        'The NpmJs follower function is not discovering any changes from CouchDB!',
+        '',
+        `RunBook: ${RUNBOOK_URL}`,
+        '',
+        `Direct link to Lambda function: ${lambdaFunctionUrl(follower)}`,
+      ].join('\n'),
+      comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+      evaluationPeriods: howOften(FOLLOWER_RUN_RATE, NO_CHANGES_ALARM_DURATION),
+      threshold: 1,
+      // If the metric is not emitted, it can be assumed to be zero.
+      treatMissingData: TreatMissingData.BREACHING,
+    });
+    monitoring.addLowSeverityAlarm(
+      'Np npmjs.com changes discovered',
+      noChangeAlarm
+    );
 
     const dlqNotEmptyAlarm = new MathExpression({
       expression: 'mVisible + mHidden',
       usingMetrics: {
-        mVisible: stager.deadLetterQueue!.metricApproximateNumberOfMessagesVisible({ period: Duration.minutes(1) }),
-        mHidden: stager.deadLetterQueue!.metricApproximateNumberOfMessagesNotVisible({ period: Duration.minutes(1) }),
+        mVisible:
+          stager.deadLetterQueue!.metricApproximateNumberOfMessagesVisible({
+            period: Duration.minutes(1),
+          }),
+        mHidden:
+          stager.deadLetterQueue!.metricApproximateNumberOfMessagesNotVisible({
+            period: Duration.minutes(1),
+          }),
       },
     }).createAlarm(scope, `${scope.node.path}/NpmJs/Stager/DLQNotEmpty`, {
       alarmName: `${scope.node.path}/NpmJs/Stager/DLQNotEmpty`,
@@ -426,7 +526,9 @@ export class NpmJs implements IPackageSource {
         'The NpmJS package stager is failing - its dead letter queue is not empty',
         '',
         `Link to the lambda function: ${lambdaFunctionUrl(stager)}`,
-        `Link to the dead letter queue: ${sqsQueueUrl(stager.deadLetterQueue!)}`,
+        `Link to the dead letter queue: ${sqsQueueUrl(
+          stager.deadLetterQueue!
+        )}`,
         '',
         `Runbook: ${RUNBOOK_URL}`,
       ].join('/n'),
@@ -435,7 +537,10 @@ export class NpmJs implements IPackageSource {
       threshold: 1,
       treatMissingData: TreatMissingData.NOT_BREACHING,
     });
-    monitoring.addLowSeverityAlarm('NpmJs/Stager DLQ Not Empty', dlqNotEmptyAlarm);
+    monitoring.addLowSeverityAlarm(
+      'NpmJs/Stager DLQ Not Empty',
+      dlqNotEmptyAlarm
+    );
 
     // Finally - the "not running" alarm depends on the schedule (it won't run until the schedule
     // exists!), and the schedule depends on the failure alarm existing (we don't want it to run
@@ -451,9 +556,13 @@ export class NpmJs implements IPackageSource {
     visibilitySla: Duration,
     bucket: IBucket,
     constructHubBaseUrl: string,
-    monitoring: IMonitoring,
+    monitoring: IMonitoring
   ): IWidget[] {
-    const canary = new NpmJsPackageCanary(scope, 'Canary', { bucket, constructHubBaseUrl, packageName });
+    const canary = new NpmJsPackageCanary(scope, 'Canary', {
+      bucket,
+      constructHubBaseUrl,
+      packageName,
+    });
 
     const alarm = new MathExpression({
       expression: 'MAX([mDwell, mTTC])',
@@ -474,7 +583,10 @@ export class NpmJs implements IPackageSource {
       treatMissingData: TreatMissingData.BREACHING,
       threshold: visibilitySla.toSeconds(),
     });
-    monitoring.addHighSeverityAlarm('New version visibility SLA breached', alarm);
+    monitoring.addHighSeverityAlarm(
+      'New version visibility SLA breached',
+      alarm
+    );
 
     return [
       new GraphWidget({
@@ -485,11 +597,13 @@ export class NpmJs implements IPackageSource {
           canary.metricDwellTime({ label: 'Dwell Time' }),
           canary.metricTimeToCatalog({ label: 'Time to Catalog' }),
         ],
-        leftAnnotations: [{
-          color: '#ff0000',
-          label: `SLA (${visibilitySla.toHumanString()})`,
-          value: visibilitySla.toSeconds(),
-        }],
+        leftAnnotations: [
+          {
+            color: '#ff0000',
+            label: `SLA (${visibilitySla.toHumanString()})`,
+            value: visibilitySla.toSeconds(),
+          },
+        ],
         leftYAxis: { min: 0 },
         right: [
           canary.metricTrackedVersionCount({ label: 'Tracked Version Count' }),

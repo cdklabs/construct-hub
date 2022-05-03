@@ -2,7 +2,10 @@ import * as AWS from 'aws-sdk';
 import { s3 } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DenyListMap, DenyListRule } from './api';
-import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY } from './constants';
+import {
+  ENV_DENY_LIST_BUCKET_NAME,
+  ENV_DENY_LIST_OBJECT_KEY,
+} from './constants';
 
 /**
  * A client for working with the deny list.
@@ -49,7 +52,9 @@ export class DenyListClient {
 
       const { Body: body } = await this.s3.getObject(params).promise();
       if (!body) {
-        console.log(`WARNING: deny list body is empty at ${this.bucketName}/${this.objectKey}`);
+        console.log(
+          `WARNING: deny list body is empty at ${this.bucketName}/${this.objectKey}`
+        );
         return;
       }
 
@@ -61,8 +66,10 @@ export class DenyListClient {
       }
 
       const data = JSON.parse(contents) as DenyListMap;
-      if (typeof(data) != 'object') {
-        throw new Error(`Invalid format in deny list file at ${this.bucketName}/${this.objectKey}. Expecting a map`);
+      if (typeof data != 'object') {
+        throw new Error(
+          `Invalid format in deny list file at ${this.bucketName}/${this.objectKey}. Expecting a map`
+        );
       }
 
       this._map = data;
@@ -71,7 +78,9 @@ export class DenyListClient {
         return;
       }
 
-      throw new Error(`Unable to parse deny list file ${this.bucketName}/${this.objectKey}: ${e}`);
+      throw new Error(
+        `Unable to parse deny list file ${this.bucketName}/${this.objectKey}: ${e}`
+      );
     }
   }
 

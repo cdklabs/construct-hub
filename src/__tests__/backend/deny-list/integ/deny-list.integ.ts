@@ -11,7 +11,20 @@ import { TriggerClientTest } from './trigger.client-test';
 import { TriggerPruneTest } from './trigger.prune-test';
 
 // we need to pull mock package data from `src/` because we execute in `lib/`
-const mockPackageDataDir = join(__dirname, '..', '..', '..', '..', '..', 'src', '__tests__', 'backend', 'deny-list', 'integ', 'package-data');
+const mockPackageDataDir = join(
+  __dirname,
+  '..',
+  '..',
+  '..',
+  '..',
+  '..',
+  'src',
+  '__tests__',
+  'backend',
+  'deny-list',
+  'integ',
+  'package-data'
+);
 
 const app = new App();
 const stack = new Stack(app, 'TestDenyList');
@@ -36,7 +49,11 @@ const denylist = new DenyList(stack, 'DenyList', {
   packageDataKeyPrefix: STORAGE_KEY_PREFIX,
   rules: [
     { packageName: 'mypackage', reason: '"mypackage" is deprecated' },
-    { packageName: 'your', version: '1.2.3', reason: 'v1.2.3 of "your" has a security issue' },
+    {
+      packageName: 'your',
+      version: '1.2.3',
+      reason: 'v1.2.3 of "your" has a security issue',
+    },
   ],
 });
 
@@ -51,7 +68,6 @@ const test1 = new TriggerClientTest(stack, 'ClientTest', {
   },
 });
 denylist.grantRead(test1);
-
 
 const test2 = new TriggerPruneTest(stack, 'PruneTest', {
   invokeAfter: [denylist],

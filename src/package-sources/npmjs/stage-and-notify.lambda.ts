@@ -16,7 +16,10 @@ import { S3KeyPrefix } from './constants.lambda-shared';
  * it in the staging bucket, then send a message to the ConstructHub ingestion SQS queue in order to
  * trigger ingestion of this package.
  */
-export async function handler(event: PackageVersion | SQSEvent, context: Context): Promise<void> {
+export async function handler(
+  event: PackageVersion | SQSEvent,
+  context: Context
+): Promise<void> {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
 
   if ('Records' in event) {
@@ -42,24 +45,28 @@ export async function handler(event: PackageVersion | SQSEvent, context: Context
   // Store the tarball into the staging bucket
   // - infos.dist.tarball => https://registry.npmjs.org/<@scope>/<name>/-/<name>-<version>.tgz
   // - stagingKey         =>                     staged/<@scope>/<name>/-/<name>-<version>.tgz
-  const stagingKey = `${S3KeyPrefix.STAGED_KEY_PREFIX}${new URL(event.tarballUrl).pathname}`.replace(/\/{2,}/g, '/');
+  const stagingKey = `${S3KeyPrefix.STAGED_KEY_PREFIX}${
+    new URL(event.tarballUrl).pathname
+  }`.replace(/\/{2,}/g, '/');
   console.log(`Storing tarball in staging bucket with key ${stagingKey}`);
-  await s3().putObject({
-    Bucket: stagingBucket,
-    Key: stagingKey,
-    Body: tarball,
-    ContentType: 'application/octet-stream',
-    Metadata: {
-      'Lambda-Log-Group': context.logGroupName,
-      'Lambda-Log-Stream': context.logStreamName,
-      'Lambda-Run-Id': context.awsRequestId,
-      'Modified-At': event.modified,
-      'Origin-Integrity': event.integrity,
-      'Origin-URI': event.tarballUrl,
-      // Seq might not be present... so skip it if absent...
-      ...(event.seq ? { Sequence: event.seq } : {}),
-    },
-  }).promise();
+  await s3()
+    .putObject({
+      Bucket: stagingBucket,
+      Key: stagingKey,
+      Body: tarball,
+      ContentType: 'application/octet-stream',
+      Metadata: {
+        'Lambda-Log-Group': context.logGroupName,
+        'Lambda-Log-Stream': context.logStreamName,
+        'Lambda-Run-Id': context.awsRequestId,
+        'Modified-At': event.modified,
+        'Origin-Integrity': event.integrity,
+        'Origin-URI': event.tarballUrl,
+        // Seq might not be present... so skip it if absent...
+        ...(event.seq ? { Sequence: event.seq } : {}),
+      },
+    })
+    .promise();
 
   // Prepare ingestion request
   const message = integrity(
@@ -70,24 +77,41 @@ export async function handler(event: PackageVersion | SQSEvent, context: Context
         integrity: event.integrity,
         modified: event.modified,
         // Seq might not be present... so skip it if absent...
-        ...(event.seq ? { seq: event.seq } : { }),
+        ...(event.seq ? { seq: event.seq } : {}),
       },
       time: event.modified,
     },
-    tarball,
+    tarball
   );
 
   // Send message to SQS
-  console.log(`Sending message to ConstructHub ingestion queue: ${JSON.stringify(message, null, 2)}`);
-  await sqs().sendMessage({
-    MessageBody: JSON.stringify(message, null, 2),
-    MessageAttributes: {
-      'Lambda-Log-Group': { DataType: 'String', StringValue: context.logGroupName },
-      'Lambda-Log-Stream': { DataType: 'String', StringValue: context.logStreamName },
-      'Lambda-Run-Id': { DataType: 'String', StringValue: context.awsRequestId },
-    },
-    QueueUrl: queueUrl,
-  }).promise();
+  console.log(
+    `Sending message to ConstructHub ingestion queue: ${JSON.stringify(
+      message,
+      null,
+      2
+    )}`
+  );
+  await sqs()
+    .sendMessage({
+      MessageBody: JSON.stringify(message, null, 2),
+      MessageAttributes: {
+        'Lambda-Log-Group': {
+          DataType: 'String',
+          StringValue: context.logGroupName,
+        },
+        'Lambda-Log-Stream': {
+          DataType: 'String',
+          StringValue: context.logStreamName,
+        },
+        'Lambda-Run-Id': {
+          DataType: 'String',
+          StringValue: context.awsRequestId,
+        },
+      },
+      QueueUrl: queueUrl,
+    })
+    .promise();
 }
 
 export interface PackageVersion {
@@ -112,11 +136,18 @@ function httpGet(url: string) {
   return new Promise<Buffer>((ok, ko) => {
     https.get(url, (response) => {
       if (response.statusCode !== 200) {
-        ko(new Error(`Unsuccessful GET: ${response.statusCode} - ${response.statusMessage}`));
+        ko(
+          new Error(
+            `Unsuccessful GET: ${response.statusCode} - ${response.statusMessage}`
+          )
+        );
       }
 
       let body = Buffer.alloc(0);
-      response.on('data', (chunk) => body = Buffer.concat([body, Buffer.from(chunk)]));
+      response.on(
+        'data',
+        (chunk) => (body = Buffer.concat([body, Buffer.from(chunk)]))
+      );
       response.once('close', () => ok(body));
       response.once('error', ko);
     });

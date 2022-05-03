@@ -3,7 +3,10 @@ import type { AWSError } from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import { DenyListRule } from '../../../backend/deny-list/api';
 import { DenyListClient } from '../../../backend/deny-list/client.lambda-shared';
-import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY } from '../../../backend/deny-list/constants';
+import {
+  ENV_DENY_LIST_BUCKET_NAME,
+  ENV_DENY_LIST_OBJECT_KEY,
+} from '../../../backend/deny-list/constants';
 import * as aws from '../../../backend/shared/aws.lambda-shared';
 
 const sample: Record<string, DenyListRule> = {
@@ -12,7 +15,7 @@ const sample: Record<string, DenyListRule> = {
     version: '1.2.3',
     reason: 'bar',
   },
-  'bar': {
+  bar: {
     packageName: 'bar',
     reason: 'hello bar',
   },
@@ -71,7 +74,9 @@ test('json parsing error', async () => {
     callback(undefined, { Body: '09x{}' });
   });
 
-  const expected = new Error('Unable to parse deny list file deny-list-bucket-name/deny-list.json: SyntaxError: Unexpected number in JSON at position 1');
+  const expected = new Error(
+    'Unable to parse deny list file deny-list-bucket-name/deny-list.json: SyntaxError: Unexpected number in JSON at position 1'
+  );
   await expect(DenyListClient.newClient()).rejects.toEqual(expected);
 });
 

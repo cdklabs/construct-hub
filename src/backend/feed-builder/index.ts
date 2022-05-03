@@ -23,8 +23,8 @@ export interface FeedBuilderProps {
   readonly constructHubUrl?: string;
 
   /**
-  * The package data storage bucket, where release-notes.md will be stored along with other assets
-  */
+   * The package data storage bucket, where release-notes.md will be stored along with other assets
+   */
   readonly bucket: s3.IBucket;
 
   /**
@@ -73,28 +73,27 @@ export class FeedBuilder extends cdk.Construct {
     if (props.feedTitle) {
       this.updateFeedFunction.addEnvironment(
         CONSTRUCT_HUB_FEED_TITLE,
-        props.feedTitle,
+        props.feedTitle
       );
     }
 
     if (props.feedDescription) {
       this.updateFeedFunction.addEnvironment(
         CONSTRUCT_HUB_FEED_DESCRIPTION,
-        props.feedDescription,
+        props.feedDescription
       );
     }
-
 
     this.bucket.grantRead(this.updateFeedFunction, CATALOG_KEY);
     this.bucket.grantWrite(this.updateFeedFunction, FEED_ATOM_KEY);
     this.bucket.grantWrite(this.updateFeedFunction, FEED_RSS_KEY);
     this.bucket.grantRead(
       this.updateFeedFunction,
-      `${STORAGE_KEY_PREFIX}*${PACKAGE_RELEASE_NOTES_KEY_SUFFIX}`,
+      `${STORAGE_KEY_PREFIX}*${PACKAGE_RELEASE_NOTES_KEY_SUFFIX}`
     );
     props.overviewDashboard.addConcurrentExecutionMetricToDashboard(
       this.updateFeedFunction,
-      'updateFeedFunction',
+      'updateFeedFunction'
     );
 
     this.setConstructHubUrl(props.constructHubUrl);
@@ -107,7 +106,7 @@ export class FeedBuilder extends cdk.Construct {
 
     this.updateFeedFunction.addEnvironment(
       CONSTRUCT_HUB_URL_ENV_VAR_NAME,
-      this.constructHubUrl,
+      this.constructHubUrl
     );
   }
 }

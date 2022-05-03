@@ -28,7 +28,9 @@ describe('Tag conditional logic', () => {
     const readme = '';
 
     // THEN
-    const condition = TagCondition.field(...keys).eq(value).bind();
+    const condition = TagCondition.field(...keys)
+      .eq(value)
+      .bind();
     expect(isTagApplicable(condition, { pkg, readme })).toBe(true);
   });
 
@@ -85,7 +87,9 @@ describe('Tag conditional logic', () => {
       const readme = '';
 
       // THEN
-      const condition = TagCondition.field(key).includes('SOME_SUBSTRING').bind();
+      const condition = TagCondition.field(key)
+        .includes('SOME_SUBSTRING')
+        .bind();
       expect(isTagApplicable(condition, { pkg, readme })).toBe(false);
     });
   });
@@ -188,7 +192,9 @@ describe('Tag conditional logic', () => {
       const readme = '';
 
       // THEN
-      const condition = TagCondition.field(key).includes('NOT_IN_THE_ARRAY').bind();
+      const condition = TagCondition.field(key)
+        .includes('NOT_IN_THE_ARRAY')
+        .bind();
       expect(isTagApplicable(condition, { pkg, readme })).toBe(false);
     });
   });
@@ -207,7 +213,6 @@ describe('Tag conditional logic', () => {
     const condition = TagCondition.field(key).startsWith(prefix).bind();
     expect(isTagApplicable(condition, { pkg, readme })).toBe(true);
   });
-
 
   describe('Logic operators', () => {
     // GIVEN
@@ -230,9 +235,12 @@ describe('Tag conditional logic', () => {
 
     test('Or ||', () => {
       //THEN
-      const tconditions = [TagCondition.or(t, f).bind(), TagCondition.or(t, t).bind()];
+      const tconditions = [
+        TagCondition.or(t, f).bind(),
+        TagCondition.or(t, t).bind(),
+      ];
       const fcondition = TagCondition.or(f, f).bind();
-      tconditions.forEach(c => {
+      tconditions.forEach((c) => {
         expect(isTagApplicable(c, { pkg, readme })).toBe(true);
       });
       expect(isTagApplicable(fcondition, { pkg, readme })).toBe(false);
@@ -241,8 +249,11 @@ describe('Tag conditional logic', () => {
     test('And &&', () => {
       //THEN
       const tcondition = TagCondition.and(t, t).bind();
-      const fconditions = [TagCondition.and(t, f).bind(), TagCondition.and(f, f).bind()];
-      fconditions.forEach(c => {
+      const fconditions = [
+        TagCondition.and(t, f).bind(),
+        TagCondition.and(f, f).bind(),
+      ];
+      fconditions.forEach((c) => {
         expect(isTagApplicable(c, { pkg, readme })).toBe(false);
       });
       expect(isTagApplicable(tcondition, { pkg, readme })).toBe(true);
