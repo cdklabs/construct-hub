@@ -19,16 +19,30 @@ test('default configuration', () => {
     attrDomainOwner: '123456789012',
     attrDomainName: 'mock-domain-name',
     attrName: 'mock-repository-name',
-    node: safeMock<ConstructNode>('mockRepository.node', { path: 'fake/path/to/repository' }),
+    node: safeMock<ConstructNode>('mockRepository.node', {
+      path: 'fake/path/to/repository',
+    }),
   });
 
   const mockDenyListGrantRead = jest.fn().mockName('mockDenyList.grantRead');
-  const mockLicenseListGrantRead = jest.fn().mockName('mockLicenseList.grantRead');
-  const mockQueueGrantSendMessages = jest.fn().mockName('mockQueue.grantSendMessages');
-  const mockMonitoringAddLowSeverityAlarm = jest.fn().mockName('mockMonitoring.addLowSeverityAlarm');
-  const mockMonitoringAddHighSeverityAlarm = jest.fn().mockName('mockMonitoring.addHighSeverityAlarm');
-  const mockAddDLQMetricToOverviewDashboard = jest.fn().mockName('mockAddDLQMetricToOverviewDashboard');
-  const mockAddConcurrentExecutionMetricToOverviewDashboard = jest.fn().mockName('mockAddConcurrentExecutionMetricToOverviewDashboard');
+  const mockLicenseListGrantRead = jest
+    .fn()
+    .mockName('mockLicenseList.grantRead');
+  const mockQueueGrantSendMessages = jest
+    .fn()
+    .mockName('mockQueue.grantSendMessages');
+  const mockMonitoringAddLowSeverityAlarm = jest
+    .fn()
+    .mockName('mockMonitoring.addLowSeverityAlarm');
+  const mockMonitoringAddHighSeverityAlarm = jest
+    .fn()
+    .mockName('mockMonitoring.addHighSeverityAlarm');
+  const mockAddDLQMetricToOverviewDashboard = jest
+    .fn()
+    .mockName('mockAddDLQMetricToOverviewDashboard');
+  const mockAddConcurrentExecutionMetricToOverviewDashboard = jest
+    .fn()
+    .mockName('mockAddConcurrentExecutionMetricToOverviewDashboard');
 
   const mockDenyList = safeMock<DenyList>('mockDenyList', {
     grantRead: mockDenyListGrantRead,
@@ -44,10 +58,14 @@ test('default configuration', () => {
     addHighSeverityAlarm: mockMonitoringAddHighSeverityAlarm,
   });
 
-  const mockOverviewDashboard = safeMock<OverviewDashboard>('mockOverviewDashboard', {
-    addDLQMetricToDashboard: mockAddDLQMetricToOverviewDashboard,
-    addConcurrentExecutionMetricToDashboard: mockAddConcurrentExecutionMetricToOverviewDashboard,
-  });
+  const mockOverviewDashboard = safeMock<OverviewDashboard>(
+    'mockOverviewDashboard',
+    {
+      addDLQMetricToDashboard: mockAddDLQMetricToOverviewDashboard,
+      addConcurrentExecutionMetricToDashboard:
+        mockAddConcurrentExecutionMetricToOverviewDashboard,
+    }
+  );
   const mockQueue = safeMock<IQueue>('mockQueue', {
     grantSendMessages: mockQueueGrantSendMessages,
     queueUrl: 'https://fake-queue-url/phony',
@@ -73,7 +91,9 @@ test('default configuration', () => {
   expect(mockQueueGrantSendMessages).toHaveBeenCalledTimes(1);
   expect(mockMonitoringAddLowSeverityAlarm).toHaveBeenCalledTimes(1);
   expect(mockMonitoringAddHighSeverityAlarm).toHaveBeenCalledTimes(1);
-  expect(app.synth().getStackByName(stack.stackName).template).toMatchSnapshot();
+  expect(
+    app.synth().getStackByName(stack.stackName).template
+  ).toMatchSnapshot();
 });
 
 test('user-provided staging bucket', () => {
@@ -84,19 +104,34 @@ test('user-provided staging bucket', () => {
     attrDomainOwner: '123456789012',
     attrDomainName: 'mock-domain-name',
     attrName: 'mock-repository-name',
-    node: safeMock<ConstructNode>('mockRepository.node', { path: 'fake/path/to/repository' }),
+    node: safeMock<ConstructNode>('mockRepository.node', {
+      path: 'fake/path/to/repository',
+    }),
   });
 
   const mockBucketGrantRead = jest.fn().mockName('mockBucket.grantRead');
-  const mockBucketGrantReadWrite = jest.fn().mockName('mockBucket.grantReadWrite');
+  const mockBucketGrantReadWrite = jest
+    .fn()
+    .mockName('mockBucket.grantReadWrite');
   const mockDenyListGrantRead = jest.fn().mockName('mockDenyList.grantRead');
-  const mockLicenseListGrantRead = jest.fn().mockName('mockLicenseList.grantRead');
-  const mockQueueGrantSendMessages = jest.fn().mockName('mockQueue.grantSendMessages');
-  const mockMonitoringAddLowSeverityAlarm = jest.fn().mockName('mockMonitoring.addLowSeverityAlarm');
-  const mockMonitoringAddHighSeverityAlarm = jest.fn().mockName('mockMonitoring.addHighSeverityAlarm');
-  const mockAddDLQMetricToOverviewDashboard = jest.fn().mockName('mockAddDLQMetricToOverviewDashboard');
-  const mockAddConcurrentExecutionMetricToOverviewDashboard = jest.fn().mockName('mockAddConcurrentExecutionMetricToOverviewDashboard');
-
+  const mockLicenseListGrantRead = jest
+    .fn()
+    .mockName('mockLicenseList.grantRead');
+  const mockQueueGrantSendMessages = jest
+    .fn()
+    .mockName('mockQueue.grantSendMessages');
+  const mockMonitoringAddLowSeverityAlarm = jest
+    .fn()
+    .mockName('mockMonitoring.addLowSeverityAlarm');
+  const mockMonitoringAddHighSeverityAlarm = jest
+    .fn()
+    .mockName('mockMonitoring.addHighSeverityAlarm');
+  const mockAddDLQMetricToOverviewDashboard = jest
+    .fn()
+    .mockName('mockAddDLQMetricToOverviewDashboard');
+  const mockAddConcurrentExecutionMetricToOverviewDashboard = jest
+    .fn()
+    .mockName('mockAddConcurrentExecutionMetricToOverviewDashboard');
 
   const mockBucket = safeMock<IBucket>('mockBucket', {
     bucketName: 'mock-bucket',
@@ -115,11 +150,14 @@ test('user-provided staging bucket', () => {
     addHighSeverityAlarm: mockMonitoringAddHighSeverityAlarm,
   });
 
-  const mockOverviewDashboard = safeMock<OverviewDashboard>('mockOverviewDashboard', {
-    addDLQMetricToDashboard: mockAddDLQMetricToOverviewDashboard,
-    addConcurrentExecutionMetricToDashboard: mockAddConcurrentExecutionMetricToOverviewDashboard,
-  });
-
+  const mockOverviewDashboard = safeMock<OverviewDashboard>(
+    'mockOverviewDashboard',
+    {
+      addDLQMetricToDashboard: mockAddDLQMetricToOverviewDashboard,
+      addConcurrentExecutionMetricToDashboard:
+        mockAddConcurrentExecutionMetricToOverviewDashboard,
+    }
+  );
 
   const mockQueue = safeMock<IQueue>('mockQueue', {
     grantSendMessages: mockQueueGrantSendMessages,
@@ -127,7 +165,10 @@ test('user-provided staging bucket', () => {
   });
 
   // WHEN
-  const source = new CodeArtifact({ bucket: mockBucket, repository: mockRepository });
+  const source = new CodeArtifact({
+    bucket: mockBucket,
+    repository: mockRepository,
+  });
   const bound = source.bind(stack, {
     baseUrl: 'https://dummy.cloudfront.net',
     denyList: mockDenyList,
@@ -148,5 +189,7 @@ test('user-provided staging bucket', () => {
   expect(mockQueueGrantSendMessages).toHaveBeenCalledWith(expect.any(Function));
   expect(mockMonitoringAddLowSeverityAlarm).toHaveBeenCalledTimes(1);
   expect(mockMonitoringAddHighSeverityAlarm).toHaveBeenCalledTimes(1);
-  expect(app.synth().getStackByName(stack.stackName).template).toMatchSnapshot();
+  expect(
+    app.synth().getStackByName(stack.stackName).template
+  ).toMatchSnapshot();
 });

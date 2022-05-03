@@ -2,12 +2,11 @@ import { URL } from 'url';
 import * as MarkdownIt from 'markdown-it';
 export const getReleaseNotesMd = async (
   markdownString: string,
-  version: string,
+  version: string
 ): Promise<string | undefined> => {
-
   const changelogMd = markdownString.replace(
     /\n\s*<a name="[^"]*">.*?<\/a>\n/g,
-    '\n',
+    '\n'
   );
   for (const level of [1, 2, 3, 4, 5, 6]) {
     const changelogParsed = await getContentBySection(level, changelogMd);
@@ -26,7 +25,6 @@ export const getReleaseNotesMd = async (
           let body = section.replace(/.*?\n([-|=]{3,}\n)?/, '').trim();
           for (const word of title) {
             if (word.includes(version) && !isUrl(word)) {
-
               if (body.trim().length > 0) {
                 return body;
               }
@@ -41,7 +39,10 @@ export const getReleaseNotesMd = async (
   return undefined;
 };
 
-async function getContentBySection(headingLevel: number, text: string): Promise<string[]> {
+async function getContentBySection(
+  headingLevel: number,
+  text: string
+): Promise<string[]> {
   // Using dynamic import to ensure JSII doesnot complain about esModuleInterop
   const markDownIt = await import('markdown-it');
   // Common JS module. So calling default. Jest does the esModule interops so no default

@@ -4,7 +4,12 @@ import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 import { gravitonLambdaIfAvailable } from '../../../backend/_lambda-architecture';
-import { Environment, ObjectKey, METRICS_NAMESPACE, MetricName } from './constants';
+import {
+  Environment,
+  ObjectKey,
+  METRICS_NAMESPACE,
+  MetricName,
+} from './constants';
 import { NpmjsPackageCanary as Handler } from './npmjs-package-canary';
 
 export interface NpmJsPackageCanaryProps {
@@ -14,7 +19,11 @@ export interface NpmJsPackageCanaryProps {
 }
 
 export class NpmJsPackageCanary extends Construct {
-  public constructor(scope: Construct, id: string, props: NpmJsPackageCanaryProps) {
+  public constructor(
+    scope: Construct,
+    id: string,
+    props: NpmJsPackageCanaryProps
+  ) {
     super(scope, id);
 
     const handler = new Handler(this, 'Resource', {
@@ -29,7 +38,10 @@ export class NpmJsPackageCanary extends Construct {
       memorySize: 10_024,
       timeout: Duration.minutes(1),
     });
-    const grant = props.bucket.grantReadWrite(handler, `${ObjectKey.STATE_PREFIX}*${ObjectKey.STATE_SUFFIX}`);
+    const grant = props.bucket.grantReadWrite(
+      handler,
+      `${ObjectKey.STATE_PREFIX}*${ObjectKey.STATE_SUFFIX}`
+    );
 
     const schedule = new Rule(this, 'Schedule', {
       description: 'Scheduled executions of the NpmJS package canary',
@@ -69,5 +81,4 @@ export class NpmJsPackageCanary extends Construct {
       namespace: METRICS_NAMESPACE,
     });
   }
-
 }

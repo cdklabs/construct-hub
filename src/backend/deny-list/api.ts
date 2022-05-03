@@ -31,7 +31,7 @@ export interface DenyListMap {
    * A map from "name@version" to deny list rule.
    */
   readonly [key: string]: DenyListRule;
-};
+}
 
 /**
  * DenyList features exposed to extension points.

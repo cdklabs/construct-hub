@@ -1,11 +1,29 @@
-import { ComparisonOperator, MathExpression, MathExpressionOptions, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
+import {
+  ComparisonOperator,
+  MathExpression,
+  MathExpressionOptions,
+  Metric,
+  MetricOptions,
+  Statistic,
+} from '@aws-cdk/aws-cloudwatch';
 import { SubnetSelection, Vpc, ISecurityGroup } from '@aws-cdk/aws-ec2';
 import { Cluster, ICluster } from '@aws-cdk/aws-ecs';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
-import { Choice, Condition, IntegrationPattern, IStateMachine, JsonPath, Map, Pass, StateMachine, Succeed, TaskInput } from '@aws-cdk/aws-stepfunctions';
+import {
+  Choice,
+  Condition,
+  IntegrationPattern,
+  IStateMachine,
+  JsonPath,
+  Map,
+  Pass,
+  StateMachine,
+  Succeed,
+  TaskInput,
+} from '@aws-cdk/aws-stepfunctions';
 import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
 import { Construct, Duration } from '@aws-cdk/core';
 import { Repository } from '../../codeartifact/repository';
@@ -17,7 +35,14 @@ import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 import { CatalogBuilder } from '../catalog-builder';
 import { DenyList } from '../deny-list';
 import { FeedBuilder } from '../feed-builder';
-import { ASSEMBLY_KEY_SUFFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX, STORAGE_KEY_PREFIX, CATALOG_KEY, UNPROCESSABLE_PACKAGE_ERROR_NAME } from '../shared/constants';
+import {
+  ASSEMBLY_KEY_SUFFIX,
+  METADATA_KEY_SUFFIX,
+  PACKAGE_KEY_SUFFIX,
+  STORAGE_KEY_PREFIX,
+  CATALOG_KEY,
+  UNPROCESSABLE_PACKAGE_ERROR_NAME,
+} from '../shared/constants';
 import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
 import { NeedsCatalogUpdate } from './needs-catalog-update';
 import { RedriveStateMachine } from './redrive-state-machine';
@@ -38,7 +63,11 @@ import { RedriveStateMachine } from './redrive-state-machine';
  * time, but in extreme burst situations (i.e: reprocessing everything), this
  * is actually a good thing.
  */
-const THROTTLE_RETRY_POLICY = { backoffRate: 1.1, interval: Duration.minutes(1), maxAttempts: 30 };
+const THROTTLE_RETRY_POLICY = {
+  backoffRate: 1.1,
+  interval: Duration.minutes(1),
+  maxAttempts: 30,
+};
 
 /**
  * This retry policy is used for transliteration tasks and allows ample
@@ -59,7 +88,11 @@ const THROTTLE_RETRY_POLICY = { backoffRate: 1.1, interval: Duration.minutes(1),
  * Combined with a two minute interval, and a backoff factor of 1, 200 attempts gives us just under 7 hours to complete
  * a full reprocessing workflow, which should be sufficient.
  */
-const DOCGEN_THROTTLE_RETRY_POLICY = { backoffRate: 1, interval: Duration.minutes(2), maxAttempts: 200 };
+const DOCGEN_THROTTLE_RETRY_POLICY = {
+  backoffRate: 1,
+  interval: Duration.minutes(2),
+  maxAttempts: 200,
+};
 
 export interface OrchestrationProps {
   /**
@@ -178,8 +211,12 @@ export class Orchestration extends Construct {
         expression: 'm1 + m2',
         label: 'Dead-Letter Queue not empty',
         usingMetrics: {
-          m1: this.deadLetterQueue.metricApproximateNumberOfMessagesVisible({ period: Duration.minutes(1) }),
-          m2: this.deadLetterQueue.metricApproximateNumberOfMessagesNotVisible({ period: Duration.minutes(1) }),
+          m1: this.deadLetterQueue.metricApproximateNumberOfMessagesVisible({
+            period: Duration.minutes(1),
+          }),
+          m2: this.deadLetterQueue.metricApproximateNumberOfMessagesNotVisible({
+            period: Duration.minutes(1),
+          }),
         },
       }).createAlarm(this, 'DLQAlarm', {
         alarmName: `${this.deadLetterQueue.node.path}/NotEmpty`,
@@ -191,17 +228,22 @@ export class Orchestration extends Construct {
           `Direct link to queue: ${sqsQueueUrl(this.deadLetterQueue)}`,
           'Warning: State Machines executions that sent messages to the DLQ will not show as "failed".',
         ].join('\n'),
-        comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        comparisonOperator:
+          ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
         evaluationPeriods: 1,
         threshold: 1,
-      }),
+      })
     );
 
-    const sendToDeadLetterQueue = new tasks.SqsSendMessage(this, 'Send to Dead Letter Queue', {
-      messageBody: TaskInput.fromJsonPathAt('$'),
-      queue: this.deadLetterQueue,
-      resultPath: JsonPath.DISCARD,
-    }).next(new Succeed(this, 'Sent to DLQ'));
+    const sendToDeadLetterQueue = new tasks.SqsSendMessage(
+      this,
+      'Send to Dead Letter Queue',
+      {
+        messageBody: TaskInput.fromJsonPathAt('$'),
+        queue: this.deadLetterQueue,
+        resultPath: JsonPath.DISCARD,
+      }
+    ).next(new Succeed(this, 'Sent to DLQ'));
 
     const ignore = new Pass(this, 'Ignore');
 
@@ -216,26 +258,50 @@ export class Orchestration extends Construct {
       },
     })
       // This has a concurrency of 1, so we want to aggressively retry being throttled here.
-      .addRetry({ errors: ['Lambda.TooManyRequestsException'], ...THROTTLE_RETRY_POLICY })
-      .addCatch(sendToDeadLetterQueue, { errors: ['Lambda.TooManyRequestsException'], resultPath: '$.error' })
-      .addCatch(sendToDeadLetterQueue, { errors: ['States.TaskFailed'], resultPath: '$.error' })
-      .addCatch(sendToDeadLetterQueue, { errors: ['States.ALL'], resultPath: '$.error' });
+      .addRetry({
+        errors: ['Lambda.TooManyRequestsException'],
+        ...THROTTLE_RETRY_POLICY,
+      })
+      .addCatch(sendToDeadLetterQueue, {
+        errors: ['Lambda.TooManyRequestsException'],
+        resultPath: '$.error',
+      })
+      .addCatch(sendToDeadLetterQueue, {
+        errors: ['States.TaskFailed'],
+        resultPath: '$.error',
+      })
+      .addCatch(sendToDeadLetterQueue, {
+        errors: ['States.ALL'],
+        resultPath: '$.error',
+      });
 
-    const needsCatalogUpdateFunction = new NeedsCatalogUpdate(this, 'NeedsCatalogUpdate', {
-      architecture: gravitonLambdaIfAvailable(this),
-      description: '[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether a package version requires a catalog update',
-      environment: { CATALOG_BUCKET_NAME: props.bucket.bucketName, CATALOG_OBJECT_KEY: CATALOG_KEY },
-      memorySize: 1_024,
-      timeout: Duration.minutes(1),
-    });
+    const needsCatalogUpdateFunction = new NeedsCatalogUpdate(
+      this,
+      'NeedsCatalogUpdate',
+      {
+        architecture: gravitonLambdaIfAvailable(this),
+        description:
+          '[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether a package version requires a catalog update',
+        environment: {
+          CATALOG_BUCKET_NAME: props.bucket.bucketName,
+          CATALOG_OBJECT_KEY: CATALOG_KEY,
+        },
+        memorySize: 1_024,
+        timeout: Duration.minutes(1),
+      }
+    );
     props.bucket.grantRead(needsCatalogUpdateFunction);
 
     // Check whether the catalog needs updating. If so, trigger addToCatalog.
-    const addToCatalogIfNeeded = new tasks.LambdaInvoke(this, 'Check whether catalog needs udpating', {
-      lambdaFunction: needsCatalogUpdateFunction,
-      payloadResponseOnly: true,
-      resultPath: '$.catalogNeedsUpdating',
-    })
+    const addToCatalogIfNeeded = new tasks.LambdaInvoke(
+      this,
+      'Check whether catalog needs udpating',
+      {
+        lambdaFunction: needsCatalogUpdateFunction,
+        payloadResponseOnly: true,
+        resultPath: '$.catalogNeedsUpdating',
+      }
+    )
       .addRetry({
         errors: [
           'Lambda.TooManyRequestsException',
@@ -243,12 +309,25 @@ export class Orchestration extends Construct {
         ],
         ...THROTTLE_RETRY_POLICY,
       })
-      .addCatch(sendToDeadLetterQueue, { errors: ['Lambda.TooManyRequestsException', 'Lambda.Unknown'], resultPath: '$.error' } )
-      .addCatch(sendToDeadLetterQueue, { errors: ['States.TaskFailed'], resultPath: '$.error' } )
-      .addCatch(sendToDeadLetterQueue, { errors: ['States.ALL'], resultPath: '$.error' })
-      .next(new Choice(this, 'Is catalog update needed?')
-        .when(Condition.booleanEquals('$.catalogNeedsUpdating', true), addToCatalog)
-        .otherwise(new Succeed(this, 'Done')),
+      .addCatch(sendToDeadLetterQueue, {
+        errors: ['Lambda.TooManyRequestsException', 'Lambda.Unknown'],
+        resultPath: '$.error',
+      })
+      .addCatch(sendToDeadLetterQueue, {
+        errors: ['States.TaskFailed'],
+        resultPath: '$.error',
+      })
+      .addCatch(sendToDeadLetterQueue, {
+        errors: ['States.ALL'],
+        resultPath: '$.error',
+      })
+      .next(
+        new Choice(this, 'Is catalog update needed?')
+          .when(
+            Condition.booleanEquals('$.catalogNeedsUpdating', true),
+            addToCatalog
+          )
+          .otherwise(new Succeed(this, 'Done'))
       );
 
     this.ecsCluster = new Cluster(this, 'Cluster', {
@@ -258,7 +337,6 @@ export class Orchestration extends Construct {
     });
 
     this.transliterator = new Transliterator(this, 'Transliterator', props);
-
 
     const definition = new Pass(this, 'Track Execution Infos', {
       inputPath: '$$.Execution',
@@ -274,26 +352,30 @@ export class Orchestration extends Construct {
         new Pass(this, 'Prepare doc-gen ECS Command', {
           parameters: { 'command.$': 'States.Array(States.JsonToString($))' },
           resultPath: '$.docGen',
-        }),
+        })
       )
       .next(
-        this.transliterator.createEcsRunTask(this, 'Generate docs', {
-          cluster: this.ecsCluster,
-          inputPath: '$.docGen.command',
-          resultPath: '$.docGenOutput',
-          // aws-cdk-lib succeeds in roughly 1 hour, so this should give us
-          // enough of a buffer and prorably account for all other libraries out there.
-          timeout: Duration.hours(2),
-          vpcSubnets: props.vpcSubnets,
-          securityGroups: props.vpcSecurityGroups,
-          // The task code sends a heartbeat back every minute, but in rare
-          // cases the first heartbeat may take a while to come back due to
-          // the time it takes to provision the task in the cluster, so we
-          // give a more generous buffer here.
-          heartbeat: Duration.minutes(10),
-        })
+        this.transliterator
+          .createEcsRunTask(this, 'Generate docs', {
+            cluster: this.ecsCluster,
+            inputPath: '$.docGen.command',
+            resultPath: '$.docGenOutput',
+            // aws-cdk-lib succeeds in roughly 1 hour, so this should give us
+            // enough of a buffer and prorably account for all other libraries out there.
+            timeout: Duration.hours(2),
+            vpcSubnets: props.vpcSubnets,
+            securityGroups: props.vpcSecurityGroups,
+            // The task code sends a heartbeat back every minute, but in rare
+            // cases the first heartbeat may take a while to come back due to
+            // the time it takes to provision the task in the cluster, so we
+            // give a more generous buffer here.
+            heartbeat: Duration.minutes(10),
+          })
           // Do not retry NoSpaceLeftOnDevice errors, these are typically not transient.
-          .addRetry({ errors: ['jsii-docgen.NoSpaceLeftOnDevice'], maxAttempts: 0 })
+          .addRetry({
+            errors: ['jsii-docgen.NoSpaceLeftOnDevice'],
+            maxAttempts: 0,
+          })
           .addRetry({
             errors: [
               'ECS.AmazonECSException', // Task failed starting, usually due to throttle / out of capacity
@@ -318,11 +400,23 @@ export class Orchestration extends Construct {
           })
           .addRetry({ maxAttempts: 3 })
           .addCatch(ignore, { errors: [UNPROCESSABLE_PACKAGE_ERROR_NAME] })
-          .addCatch(sendToDeadLetterQueue, { errors: ['States.Timeout'], resultPath: '$.error' } )
-          .addCatch(sendToDeadLetterQueue, { errors: ['ECS.AmazonECSException', 'ECS.InvalidParameterException'], resultPath: '$.error' })
-          .addCatch(sendToDeadLetterQueue, { errors: ['States.TaskFailed'], resultPath: '$.error' })
-          .addCatch(sendToDeadLetterQueue, { errors: ['States.ALL'], resultPath: '$.error' })
-          .next(addToCatalogIfNeeded),
+          .addCatch(sendToDeadLetterQueue, {
+            errors: ['States.Timeout'],
+            resultPath: '$.error',
+          })
+          .addCatch(sendToDeadLetterQueue, {
+            errors: ['ECS.AmazonECSException', 'ECS.InvalidParameterException'],
+            resultPath: '$.error',
+          })
+          .addCatch(sendToDeadLetterQueue, {
+            errors: ['States.TaskFailed'],
+            resultPath: '$.error',
+          })
+          .addCatch(sendToDeadLetterQueue, {
+            errors: ['States.ALL'],
+            resultPath: '$.error',
+          })
+          .next(addToCatalogIfNeeded)
       );
 
     this.stateMachine = new StateMachine(this, 'Resource', {
@@ -334,32 +428,41 @@ export class Orchestration extends Construct {
 
     if (props.vpc) {
       // Ensure the State Machine does not get to run before the VPC can be used.
-      this.stateMachine.node.addDependency(props.vpc.internetConnectivityEstablished);
+      this.stateMachine.node.addDependency(
+        props.vpc.internetConnectivityEstablished
+      );
     }
 
     props.monitoring.addHighSeverityAlarm(
       'Backend Orchestration Failed',
-      this.stateMachine.metricFailed()
+      this.stateMachine
+        .metricFailed()
         .createAlarm(this, 'OrchestrationFailed', {
-          alarmName: `${this.stateMachine.node.path}/${this.stateMachine.metricFailed().metricName}`,
+          alarmName: `${this.stateMachine.node.path}/${
+            this.stateMachine.metricFailed().metricName
+          }`,
           alarmDescription: [
             'Backend orchestration failed!',
             '',
             `RunBook: ${RUNBOOK_URL}`,
             '',
-            `Direct link to state machine: ${stateMachineUrl(this.stateMachine)}`,
+            `Direct link to state machine: ${stateMachineUrl(
+              this.stateMachine
+            )}`,
             'Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!',
           ].join('\n'),
-          comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+          comparisonOperator:
+            ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
           evaluationPeriods: 1,
           threshold: 1,
-        }));
-
+        })
+    );
 
     // This function is intended to be manually triggered by an operrator to
     // attempt redriving messages from the DLQ.
     this.redriveFunction = new RedriveStateMachine(this, 'Redrive', {
-      description: '[ConstructHub/Redrive] Manually redrives all messages from the backend dead letter queue',
+      description:
+        '[ConstructHub/Redrive] Manually redrives all messages from the backend dead letter queue',
       environment: {
         STATE_MACHINE_ARN: this.stateMachine.stateMachineArn,
         QUEUE_URL: this.deadLetterQueue.queueUrl,
@@ -370,16 +473,27 @@ export class Orchestration extends Construct {
     });
     this.stateMachine.grantStartExecution(this.redriveFunction);
     this.deadLetterQueue.grantConsumeMessages(this.redriveFunction);
-    props.overviewDashboard.addDLQMetricToDashboard('Orchestration DLQ', this.deadLetterQueue, this.redriveFunction);
+    props.overviewDashboard.addDLQMetricToDashboard(
+      'Orchestration DLQ',
+      this.deadLetterQueue,
+      this.redriveFunction
+    );
 
     // The workflow is intended to be manually triggered by an operator to
     // reprocess all package versions currently in store through the orchestrator.
-    this.regenerateAllDocumentation = new RegenerateAllDocumentation(this, 'RegenerateAllDocumentation', {
-      bucket: props.bucket,
-      stateMachine: this.stateMachine,
-    }).stateMachine;
+    this.regenerateAllDocumentation = new RegenerateAllDocumentation(
+      this,
+      'RegenerateAllDocumentation',
+      {
+        bucket: props.bucket,
+        stateMachine: this.stateMachine,
+      }
+    ).stateMachine;
 
-    props.overviewDashboard.addConcurrentExecutionMetricToDashboard(needsCatalogUpdateFunction, 'NeedsCatalogUpdateLambda');
+    props.overviewDashboard.addConcurrentExecutionMetricToDashboard(
+      needsCatalogUpdateFunction,
+      'NeedsCatalogUpdateLambda'
+    );
   }
 
   public metricEcsTaskCount(opts: MetricOptions): Metric {
@@ -446,13 +560,16 @@ export class Orchestration extends Construct {
     });
   }
 
-  public metricEcsMemoryUtilization(opts?: MathExpressionOptions): MathExpression {
+  public metricEcsMemoryUtilization(
+    opts?: MathExpressionOptions
+  ): MathExpression {
     return new MathExpression({
       ...opts,
       // Calculates the % memory utilization from the RAM utilization &
       // reservation. FILL is used to make a non-sparse time-series (the metrics
       // are not emitted if no task runs)
-      expression: '100 * FILL(mMemoryUtilized, 0) / FILL(mMemoryReserved, REPEAT)',
+      expression:
+        '100 * FILL(mMemoryUtilized, 0) / FILL(mMemoryReserved, REPEAT)',
       usingMetrics: {
         mMemoryReserved: this.metricEcsMemoryReserved(),
         mMemoryUtilized: this.metricEcsMemoryUtilized(),
@@ -489,51 +606,95 @@ interface RegenerateAllDocumentationProps {
 class RegenerateAllDocumentation extends Construct {
   public readonly stateMachine: StateMachine;
 
-  public constructor(scope: Construct, id: string, props: RegenerateAllDocumentationProps) {
+  public constructor(
+    scope: Construct,
+    id: string,
+    props: RegenerateAllDocumentationProps
+  ) {
     super(scope, id);
 
     const processVersions = new Choice(this, 'Get package versions page')
-      .when(Condition.isPresent('$.response.NextContinuationToken'), new tasks.CallAwsService(this, 'Next versions page', {
-        service: 's3',
-        action: 'listObjectsV2',
-        iamAction: 's3:ListBucket',
-        iamResources: [props.bucket.bucketArn],
-        parameters: {
-          Bucket: props.bucket.bucketName,
-          ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken'),
-          Delimiter: '/',
-          Prefix: JsonPath.stringAt('$.Prefix'),
-        },
-        resultPath: '$.response',
-      }).addRetry({ errors: ['S3.SdkClientException'] }))
-      .otherwise(new tasks.CallAwsService(this, 'First versions page', {
-        service: 's3',
-        action: 'listObjectsV2',
-        iamAction: 's3:ListBucket',
-        iamResources: [props.bucket.bucketArn],
-        parameters: {
-          Bucket: props.bucket.bucketName,
-          Delimiter: '/',
-          Prefix: JsonPath.stringAt('$.Prefix'),
-        },
-        resultPath: '$.response',
-      }).addRetry({ errors: ['S3.SdkClientException'] }))
+      .when(
+        Condition.isPresent('$.response.NextContinuationToken'),
+        new tasks.CallAwsService(this, 'Next versions page', {
+          service: 's3',
+          action: 'listObjectsV2',
+          iamAction: 's3:ListBucket',
+          iamResources: [props.bucket.bucketArn],
+          parameters: {
+            Bucket: props.bucket.bucketName,
+            ContinuationToken: JsonPath.stringAt(
+              '$.response.NextContinuationToken'
+            ),
+            Delimiter: '/',
+            Prefix: JsonPath.stringAt('$.Prefix'),
+          },
+          resultPath: '$.response',
+        }).addRetry({ errors: ['S3.SdkClientException'] })
+      )
+      .otherwise(
+        new tasks.CallAwsService(this, 'First versions page', {
+          service: 's3',
+          action: 'listObjectsV2',
+          iamAction: 's3:ListBucket',
+          iamResources: [props.bucket.bucketArn],
+          parameters: {
+            Bucket: props.bucket.bucketName,
+            Delimiter: '/',
+            Prefix: JsonPath.stringAt('$.Prefix'),
+          },
+          resultPath: '$.response',
+        }).addRetry({ errors: ['S3.SdkClientException'] })
+      )
       .afterwards()
-      .next(new Map(this, 'For each key prefix', { itemsPath: '$.response.CommonPrefixes', resultPath: JsonPath.DISCARD })
-        .iterator(new tasks.StepFunctionsStartExecution(this, 'Start Orchestration Workflow', {
-          stateMachine: props.stateMachine,
-          associateWithParent: true,
-          input: TaskInput.fromObject({
-            bucket: props.bucket.bucketName,
-            assembly: { key: JsonPath.stringAt(`States.Format('{}${ASSEMBLY_KEY_SUFFIX.substr(1)}', $.Prefix)`) },
-            metadata: { key: JsonPath.stringAt(`States.Format('{}${METADATA_KEY_SUFFIX.substr(1)}', $.Prefix)`) },
-            package: { key: JsonPath.stringAt(`States.Format('{}${PACKAGE_KEY_SUFFIX.substr(1)}', $.Prefix)`) },
-          }),
-          integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
-        }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })));
-    processVersions.next(new Choice(this, 'Has more versions?')
-      .when(Condition.isPresent('$.response.NextContinuationToken'), processVersions)
-      .otherwise(new Succeed(this, 'Success')));
+      .next(
+        new Map(this, 'For each key prefix', {
+          itemsPath: '$.response.CommonPrefixes',
+          resultPath: JsonPath.DISCARD,
+        }).iterator(
+          new tasks.StepFunctionsStartExecution(
+            this,
+            'Start Orchestration Workflow',
+            {
+              stateMachine: props.stateMachine,
+              associateWithParent: true,
+              input: TaskInput.fromObject({
+                bucket: props.bucket.bucketName,
+                assembly: {
+                  key: JsonPath.stringAt(
+                    `States.Format('{}${ASSEMBLY_KEY_SUFFIX.substr(
+                      1
+                    )}', $.Prefix)`
+                  ),
+                },
+                metadata: {
+                  key: JsonPath.stringAt(
+                    `States.Format('{}${METADATA_KEY_SUFFIX.substr(
+                      1
+                    )}', $.Prefix)`
+                  ),
+                },
+                package: {
+                  key: JsonPath.stringAt(
+                    `States.Format('{}${PACKAGE_KEY_SUFFIX.substr(
+                      1
+                    )}', $.Prefix)`
+                  ),
+                },
+              }),
+              integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
+            }
+          ).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
+        )
+      );
+    processVersions.next(
+      new Choice(this, 'Has more versions?')
+        .when(
+          Condition.isPresent('$.response.NextContinuationToken'),
+          processVersions
+        )
+        .otherwise(new Succeed(this, 'Success'))
+    );
     const processPackageVersions = new StateMachine(this, 'PerPackage', {
       definition: processVersions,
       timeout: Duration.hours(1),
@@ -543,44 +704,66 @@ class RegenerateAllDocumentation extends Construct {
     // This workflow is broken into two sub-workflows because otherwise it hits the 25K events limit
     // of StepFunction executions relatively quickly.
     const processNamespace = new Choice(this, 'Get @scope page')
-      .when(Condition.isPresent('$.response.NextContinuationToken'), new tasks.CallAwsService(this, 'Next @scope page', {
-        service: 's3',
-        action: 'listObjectsV2',
-        iamAction: 's3:ListBucket',
-        iamResources: [props.bucket.bucketArn],
-        parameters: {
-          Bucket: props.bucket.bucketName,
-          ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken'),
-          Delimiter: '/',
-          Prefix: JsonPath.stringAt('$.Prefix'),
-        },
-        resultPath: '$.response',
-      }).addRetry({ errors: ['S3.SdkClientException'] }))
-      .otherwise(new tasks.CallAwsService(this, 'First @scope page', {
-        service: 's3',
-        action: 'listObjectsV2',
-        iamAction: 's3:ListBucket',
-        iamResources: [props.bucket.bucketArn],
-        parameters: {
-          Bucket: props.bucket.bucketName,
-          Delimiter: '/',
-          Prefix: JsonPath.stringAt('$.Prefix'),
-        },
-        resultPath: '$.response',
-      }).addRetry({ errors: ['S3.SdkClientException'] }))
-      .afterwards()
-      .next(new Map(this, 'For each @scope/pkg', { itemsPath: '$.response.CommonPrefixes', resultPath: JsonPath.DISCARD })
-        .iterator(new tasks.StepFunctionsStartExecution(this, 'Process scoped package', {
-          stateMachine: processPackageVersions,
-          associateWithParent: true,
-          input: TaskInput.fromObject({
+      .when(
+        Condition.isPresent('$.response.NextContinuationToken'),
+        new tasks.CallAwsService(this, 'Next @scope page', {
+          service: 's3',
+          action: 'listObjectsV2',
+          iamAction: 's3:ListBucket',
+          iamResources: [props.bucket.bucketArn],
+          parameters: {
+            Bucket: props.bucket.bucketName,
+            ContinuationToken: JsonPath.stringAt(
+              '$.response.NextContinuationToken'
+            ),
+            Delimiter: '/',
             Prefix: JsonPath.stringAt('$.Prefix'),
-          }),
-          integrationPattern: IntegrationPattern.RUN_JOB,
-        }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })));
-    processNamespace.next(new Choice(this, 'Has more packages?')
-      .when(Condition.isPresent('$.response.NextContinuationToken'), processNamespace)
-      .otherwise(new Succeed(this, 'All Done')));
+          },
+          resultPath: '$.response',
+        }).addRetry({ errors: ['S3.SdkClientException'] })
+      )
+      .otherwise(
+        new tasks.CallAwsService(this, 'First @scope page', {
+          service: 's3',
+          action: 'listObjectsV2',
+          iamAction: 's3:ListBucket',
+          iamResources: [props.bucket.bucketArn],
+          parameters: {
+            Bucket: props.bucket.bucketName,
+            Delimiter: '/',
+            Prefix: JsonPath.stringAt('$.Prefix'),
+          },
+          resultPath: '$.response',
+        }).addRetry({ errors: ['S3.SdkClientException'] })
+      )
+      .afterwards()
+      .next(
+        new Map(this, 'For each @scope/pkg', {
+          itemsPath: '$.response.CommonPrefixes',
+          resultPath: JsonPath.DISCARD,
+        }).iterator(
+          new tasks.StepFunctionsStartExecution(
+            this,
+            'Process scoped package',
+            {
+              stateMachine: processPackageVersions,
+              associateWithParent: true,
+              input: TaskInput.fromObject({
+                Prefix: JsonPath.stringAt('$.Prefix'),
+              }),
+              integrationPattern: IntegrationPattern.RUN_JOB,
+            }
+          ).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
+        )
+      );
+    processNamespace.next(
+      new Choice(this, 'Has more packages?')
+        .when(
+          Condition.isPresent('$.response.NextContinuationToken'),
+          processNamespace
+        )
+        .otherwise(new Succeed(this, 'All Done'))
+    );
 
     const start = new Choice(this, 'Get prefix page')
       .when(
@@ -592,12 +775,14 @@ class RegenerateAllDocumentation extends Construct {
           iamResources: [props.bucket.bucketArn],
           parameters: {
             Bucket: props.bucket.bucketName,
-            ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken'),
+            ContinuationToken: JsonPath.stringAt(
+              '$.response.NextContinuationToken'
+            ),
             Delimiter: '/',
             Prefix: STORAGE_KEY_PREFIX,
           },
           resultPath: '$.response',
-        }).addRetry({ errors: ['S3.SdkClientException'] }),
+        }).addRetry({ errors: ['S3.SdkClientException'] })
       )
       .otherwise(
         new tasks.CallAwsService(this, 'First prefix page', {
@@ -611,26 +796,42 @@ class RegenerateAllDocumentation extends Construct {
             Prefix: STORAGE_KEY_PREFIX,
           },
           resultPath: '$.response',
-        }).addRetry({ errors: ['S3.SdkClientException'] }),
-      ).afterwards()
-      .next(new Map(this, 'For each prefix', { itemsPath: '$.response.CommonPrefixes', resultPath: JsonPath.DISCARD })
-        .iterator(
+        }).addRetry({ errors: ['S3.SdkClientException'] })
+      )
+      .afterwards()
+      .next(
+        new Map(this, 'For each prefix', {
+          itemsPath: '$.response.CommonPrefixes',
+          resultPath: JsonPath.DISCARD,
+        }).iterator(
           new Choice(this, 'Is this a @scope/ prefix?')
-            .when(Condition.stringMatches('$.Prefix', `${STORAGE_KEY_PREFIX}@*`), processNamespace)
-            .otherwise(new tasks.StepFunctionsStartExecution(this, 'Process unscoped package', {
-              stateMachine: processPackageVersions,
-              associateWithParent: true,
-              input: TaskInput.fromObject({
-                Prefix: JsonPath.stringAt('$.Prefix'),
-              }),
-              integrationPattern: IntegrationPattern.RUN_JOB,
-            }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] }))
-            .afterwards(),
-        ));
+            .when(
+              Condition.stringMatches('$.Prefix', `${STORAGE_KEY_PREFIX}@*`),
+              processNamespace
+            )
+            .otherwise(
+              new tasks.StepFunctionsStartExecution(
+                this,
+                'Process unscoped package',
+                {
+                  stateMachine: processPackageVersions,
+                  associateWithParent: true,
+                  input: TaskInput.fromObject({
+                    Prefix: JsonPath.stringAt('$.Prefix'),
+                  }),
+                  integrationPattern: IntegrationPattern.RUN_JOB,
+                }
+              ).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
+            )
+            .afterwards()
+        )
+      );
 
-    start.next(new Choice(this, 'Has more prefixes?')
-      .when(Condition.isPresent('$.response.NextContinuationToken'), start)
-      .otherwise(new Succeed(this, 'Done')));
+    start.next(
+      new Choice(this, 'Has more prefixes?')
+        .when(Condition.isPresent('$.response.NextContinuationToken'), start)
+        .otherwise(new Succeed(this, 'Done'))
+    );
 
     this.stateMachine = new StateMachine(this, 'Resource', {
       definition: start,

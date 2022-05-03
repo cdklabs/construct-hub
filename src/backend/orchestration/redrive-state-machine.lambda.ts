@@ -18,26 +18,31 @@ export async function handler(event: unknown, context: Context): Promise<void> {
     // Strip the docgen field before redriving as this contains error messages that
     // be too long for ECS inputs.
     const { docGen, ...formatted } = input;
-    const { executionArn } = await sfn.startExecution({
-      stateMachineArn: stateMachineArn,
-      input: JSON.stringify({
-        ...formatted,
-        // Remove the _error information
-        _error: undefined,
-        // Add the redrive information
-        _redrive: {
-          lambdaRequestId: context.awsRequestId,
-          lambdaLogGroupName: context.logGroupName,
-          lambdaLogStreamName: context.logStreamName,
-        },
-      }),
-    }).promise();
+    const { executionArn } = await sfn
+      .startExecution({
+        stateMachineArn: stateMachineArn,
+        input: JSON.stringify({
+          ...formatted,
+          // Remove the _error information
+          _error: undefined,
+          // Add the redrive information
+          _redrive: {
+            lambdaRequestId: context.awsRequestId,
+            lambdaLogGroupName: context.logGroupName,
+            lambdaLogStreamName: context.logStreamName,
+          },
+        }),
+      })
+      .promise();
     console.log(`Redrive execution ARN: ${executionArn}`);
 
-    await aws.sqs().deleteMessage({
-      QueueUrl: queueUrl,
-      ReceiptHandle: message.ReceiptHandle!,
-    }).promise();
+    await aws
+      .sqs()
+      .deleteMessage({
+        QueueUrl: queueUrl,
+        ReceiptHandle: message.ReceiptHandle!,
+      })
+      .promise();
   }
 }
 
@@ -45,10 +50,12 @@ async function* messagesToRedrive(queueUrl: string) {
   const sqs = aws.sqs();
   let result: AWS.SQS.ReceiveMessageResult;
   do {
-    result = await sqs.receiveMessage({
-      QueueUrl: queueUrl,
-      VisibilityTimeout: 900, // 15 minutes
-    }).promise();
+    result = await sqs
+      .receiveMessage({
+        QueueUrl: queueUrl,
+        VisibilityTimeout: 900, // 15 minutes
+      })
+      .promise();
     if (result.Messages) {
       yield* result.Messages;
     }

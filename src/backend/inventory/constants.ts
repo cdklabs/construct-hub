@@ -37,7 +37,6 @@ export const enum MetricName {
   PER_LANGUAGE_CORRUPT_ASSEMBLY_MAJORS = 'CorruptAssemblyMajorVersionCount',
   PER_LANGUAGE_CORRUPT_ASSEMBLY_VERSIONS = 'CorruptAssemblyPackageVersionCount',
   PER_LANGUAGE_CORRUPT_ASSEMBLY_SUBMODULES = 'CorruptAssemblySubmoduleCount',
-
 }
 
 /**

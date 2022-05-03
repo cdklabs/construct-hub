@@ -2,7 +2,10 @@ import * as AWS from 'aws-sdk';
 import { AWSError } from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import type { PackageInfo } from '../../../backend/catalog-builder';
-import { CatalogClient, CatalogNotFoundError } from '../../../backend/catalog-builder/client.lambda-shared';
+import {
+  CatalogClient,
+  CatalogNotFoundError,
+} from '../../../backend/catalog-builder/client.lambda-shared';
 import * as aws from '../../../backend/shared/aws.lambda-shared';
 
 const samplePackages: Partial<PackageInfo>[] = [
@@ -53,7 +56,9 @@ test('s3 object not found error', async () => {
   });
 
   const expected = new CatalogNotFoundError('catalog-bucket-name/catalog.json');
-  return expect(async () => CatalogClient.newClient()).rejects.toEqual(expected);
+  return expect(async () => CatalogClient.newClient()).rejects.toEqual(
+    expected
+  );
 });
 
 test('s3 bucket not found error', async () => {
@@ -64,7 +69,9 @@ test('s3 bucket not found error', async () => {
   });
 
   const expected = new CatalogNotFoundError('catalog-bucket-name/catalog.json');
-  return expect(async () => CatalogClient.newClient()).rejects.toEqual(expected);
+  return expect(async () => CatalogClient.newClient()).rejects.toEqual(
+    expected
+  );
 });
 
 test('empty file', async () => {
@@ -74,8 +81,12 @@ test('empty file', async () => {
     callback(undefined, { Body: '' });
   });
 
-  const expected = new Error('Catalog body is empty at catalog-bucket-name/catalog.json');
-  return expect(async () => CatalogClient.newClient()).rejects.toEqual(expected);
+  const expected = new Error(
+    'Catalog body is empty at catalog-bucket-name/catalog.json'
+  );
+  return expect(async () => CatalogClient.newClient()).rejects.toEqual(
+    expected
+  );
 });
 
 test('json parsing error', async () => {
@@ -85,8 +96,12 @@ test('json parsing error', async () => {
     callback(undefined, { Body: '09x{}' });
   });
 
-  const expected = new Error('Unable to parse catalog file catalog-bucket-name/catalog.json: SyntaxError: Unexpected number in JSON at position 1');
-  return expect(async () => CatalogClient.newClient()).rejects.toEqual(expected);
+  const expected = new Error(
+    'Unable to parse catalog file catalog-bucket-name/catalog.json: SyntaxError: Unexpected number in JSON at position 1'
+  );
+  return expect(async () => CatalogClient.newClient()).rejects.toEqual(
+    expected
+  );
 });
 
 test('happy path - get packages', async () => {

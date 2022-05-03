@@ -16,13 +16,12 @@ type ServiceLimit = {
   remaining: number;
   limit: number;
   used: number;
-}
+};
 type ExecutionResult = {
   error?: string;
   status?: string;
   messages?: SQS.Message[];
-}
-
+};
 
 /**
  * Lambda function executed by the release notes fetch step function to get the
@@ -40,62 +39,72 @@ type ExecutionResult = {
  *
  * @returns ExecutionResult | ServiceLimit
  */
-export const handler =
-  async (): Promise<ExecutionResult | ServiceLimit> => {
-    let serviceLimit;
-    try {
-      serviceLimit = await getServiceLimits();
-    } catch (e) {
-      if ((e as any).status == 401) {
-        await metricScope((metrics) => async () => {
-          metrics.setDimensions();
-
-          metrics.setNamespace(constants.METRICS_NAMESPACE);
-          metrics.putMetric(constants.InvalidCredentials, 1, Unit.Count);
-        })();
-
-        return { error: 'InvalidCredentials' };
-      }
+export const handler = async (): Promise<ExecutionResult | ServiceLimit> => {
+  let serviceLimit;
+  try {
+    serviceLimit = await getServiceLimits();
+  } catch (e) {
+    if ((e as any).status == 401) {
       await metricScope((metrics) => async () => {
         metrics.setDimensions();
 
         metrics.setNamespace(constants.METRICS_NAMESPACE);
-        metrics.putMetric(constants.UnknownError, 1, Unit.Count);
+        metrics.putMetric(constants.InvalidCredentials, 1, Unit.Count);
       })();
-      return { error: 'UnknownError' };
+
+      return { error: 'InvalidCredentials' };
     }
+    await metricScope((metrics) => async () => {
+      metrics.setDimensions();
 
-    const sfnArn = requireEnv('STEP_FUNCTION_ARN');
+      metrics.setNamespace(constants.METRICS_NAMESPACE);
+      metrics.putMetric(constants.UnknownError, 1, Unit.Count);
+    })();
+    return { error: 'UnknownError' };
+  }
 
-    // Ensure only one instance of step function is running
-    const activities = await new StepFunctions().listExecutions({
+  const sfnArn = requireEnv('STEP_FUNCTION_ARN');
+
+  // Ensure only one instance of step function is running
+  const activities = await new StepFunctions()
+    .listExecutions({
       stateMachineArn: sfnArn,
       maxResults: 1,
       statusFilter: 'RUNNING',
-    }).promise();
+    })
+    .promise();
 
-    if (activities.executions.length > 1) {
-      return { error: 'MaxConcurrentExecutionError' };
-    }
-    if (serviceLimit.remaining <= MAX_GH_REQUEST_PER_PACKAGE) {
-      return {
-        waitUntil: new Date(serviceLimit.reset * 1000).toISOString(),
-        remaining: serviceLimit.remaining,
-        limit: serviceLimit.limit,
-        used: serviceLimit.used,
-      };
-    }
+  if (activities.executions.length > 1) {
+    return { error: 'MaxConcurrentExecutionError' };
+  }
+  if (serviceLimit.remaining <= MAX_GH_REQUEST_PER_PACKAGE) {
+    return {
+      waitUntil: new Date(serviceLimit.reset * 1000).toISOString(),
+      remaining: serviceLimit.remaining,
+      limit: serviceLimit.limit,
+      used: serviceLimit.used,
+    };
+  }
 
-    const messages = await (new SQS().receiveMessage({
+  const messages = await new SQS()
+    .receiveMessage({
       QueueUrl: process.env.SQS_QUEUE_URL!,
-      MaxNumberOfMessages: Math.min(Math.floor(serviceLimit.remaining / MAX_GH_REQUEST_PER_PACKAGE), 10),
-    }).promise());
+      MaxNumberOfMessages: Math.min(
+        Math.floor(serviceLimit.remaining / MAX_GH_REQUEST_PER_PACKAGE),
+        10
+      ),
+    })
+    .promise();
 
-    if (messages.Messages?.length) {
-      return { messages: messages.Messages.map(m => ({ ...m, Body: JSON.parse(m.Body || '{}') })) };
-    } else {
-      console.log('no messages');
-    }
-    return { status: 'NoMoreMessagesLeft' };
-
-  };
+  if (messages.Messages?.length) {
+    return {
+      messages: messages.Messages.map((m) => ({
+        ...m,
+        Body: JSON.parse(m.Body || '{}'),
+      })),
+    };
+  } else {
+    console.log('no messages');
+  }
+  return { status: 'NoMoreMessagesLeft' };
+};

@@ -1,7 +1,11 @@
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
 import { reset } from '../../../backend/shared/aws.lambda-shared';
-import { STORAGE_KEY_PREFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX } from '../../../backend/shared/constants';
+import {
+  STORAGE_KEY_PREFIX,
+  METADATA_KEY_SUFFIX,
+  PACKAGE_KEY_SUFFIX,
+} from '../../../backend/shared/constants';
 import type { requireEnv } from '../../../backend/shared/env.lambda-shared';
 
 jest.mock('../../../backend/shared/env.lambda-shared');
@@ -10,7 +14,8 @@ const mockBucketName = 'fake-bucket-name';
 const mockQueueUrl = 'https://dummy-queue.url';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
+const mockRequireEnv = require('../../../backend/shared/env.lambda-shared')
+  .requireEnv as jest.MockedFunction<typeof requireEnv>;
 mockRequireEnv.mockImplementation((name) => {
   if (name === 'BUCKET_NAME') {
     return mockBucketName;
@@ -65,7 +70,8 @@ test('basic case', () => {
     try {
       expect(request.QueueUrl).toBe(mockQueueUrl);
       expect(JSON.parse(request.MessageBody)).toEqual({
-        integrity: 'sha384-sQ9dnSmDKM875DcJKcQNmU6VKy/nJe3iA5GmaREMnoXxFOpjxEOxNYqwByBj/iyb',
+        integrity:
+          'sha384-sQ9dnSmDKM875DcJKcQNmU6VKy/nJe3iA5GmaREMnoXxFOpjxEOxNYqwByBj/iyb',
         reIngest: true,
         metadata: {
           reprocessLogGroup: context.logGroupName,
@@ -82,7 +88,11 @@ test('basic case', () => {
   });
 
   // THEN
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  return expect(require('../../../backend/ingestion/re-ingest.lambda').handler(event, context))
-    .resolves.not.toThrowError();
+  return expect(
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('../../../backend/ingestion/re-ingest.lambda').handler(
+      event,
+      context
+    )
+  ).resolves.not.toThrowError();
 });

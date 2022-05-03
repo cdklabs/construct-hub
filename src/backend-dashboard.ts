@@ -1,4 +1,14 @@
-import { Dashboard, GraphWidget, GraphWidgetView, TextWidget, IWidget, MathExpression, Metric, Statistic, PeriodOverride } from '@aws-cdk/aws-cloudwatch';
+import {
+  Dashboard,
+  GraphWidget,
+  GraphWidgetView,
+  TextWidget,
+  IWidget,
+  MathExpression,
+  Metric,
+  Statistic,
+  PeriodOverride,
+} from '@aws-cdk/aws-cloudwatch';
 import { IBucket } from '@aws-cdk/aws-s3';
 import { Construct, Duration } from '@aws-cdk/core';
 import { DenyList } from './backend/deny-list';
@@ -8,10 +18,23 @@ import { PackageVersionsTableWidget } from './backend/inventory/package-versions
 import { Orchestration } from './backend/orchestration';
 import { PackageStats } from './backend/package-stats';
 import { ReleaseNoteFetcher } from './backend/release-notes';
-import { missingDocumentationReport, UNINSTALLABLE_PACKAGES_REPORT, corruptAssemblyReport, VERSION_TRACKER_KEY } from './backend/shared/constants';
+import {
+  missingDocumentationReport,
+  UNINSTALLABLE_PACKAGES_REPORT,
+  corruptAssemblyReport,
+  VERSION_TRACKER_KEY,
+} from './backend/shared/constants';
 import { DocumentationLanguage } from './backend/shared/language';
 import { VersionTracker } from './backend/version-tracker';
-import { ecsClusterUrl, lambdaFunctionUrl, lambdaSearchLogGroupUrl, logGroupUrl, s3ObjectUrl, sqsQueueUrl, stateMachineUrl } from './deep-link';
+import {
+  ecsClusterUrl,
+  lambdaFunctionUrl,
+  lambdaSearchLogGroupUrl,
+  logGroupUrl,
+  s3ObjectUrl,
+  sqsQueueUrl,
+  stateMachineUrl,
+} from './deep-link';
 import { fillMetric } from './metric-utils';
 import { PackageSourceBindResult } from './package-source';
 
@@ -29,26 +52,35 @@ export interface BackendDashboardProps {
 }
 
 export class BackendDashboard extends Construct {
-  public constructor(scope: Construct, id: string, props: BackendDashboardProps) {
+  public constructor(
+    scope: Construct,
+    id: string,
+    props: BackendDashboardProps
+  ) {
     super(scope, id);
 
-    const reports: IWidget[][] = [[
-      new PackageVersionsTableWidget(this, 'UninstallablePackages', {
-        title: 'Package Versions Report | Uninstallable',
-        description: [
-          "These packages could not be installed. Note that currently they will also appear in the 'missing' documentation reports.",
-          '',
-          "The specific error can be found in the package directory inside a file named 'uninstallable'",
-        ].join('\n'),
-        bucket: props.packageData,
-        key: UNINSTALLABLE_PACKAGES_REPORT,
-        height: 6,
-        width: 24,
-      }),
-    ]];
+    const reports: IWidget[][] = [
+      [
+        new PackageVersionsTableWidget(this, 'UninstallablePackages', {
+          title: 'Package Versions Report | Uninstallable',
+          description: [
+            "These packages could not be installed. Note that currently they will also appear in the 'missing' documentation reports.",
+            '',
+            "The specific error can be found in the package directory inside a file named 'uninstallable'",
+          ].join('\n'),
+          bucket: props.packageData,
+          key: UNINSTALLABLE_PACKAGES_REPORT,
+          height: 6,
+          width: 24,
+        }),
+      ],
+    ];
 
     for (const language of DocumentationLanguage.ALL) {
-      for (const report of this.perLanguageReports(language, props.packageData)) {
+      for (const report of this.perLanguageReports(
+        language,
+        props.packageData
+      )) {
         // put every report in a new line
         reports.push([report]);
       }
@@ -75,10 +107,18 @@ export class BackendDashboard extends Construct {
             markdown: [
               '# Catalog Overview',
               '',
-              `[button:primary:Package Data](${s3ObjectUrl(props.packageData)})`,
-              `[button:Catalog Builder](${lambdaFunctionUrl(props.orchestration.catalogBuilder.function)})`,
-              `[button:Inventory Canary](${lambdaFunctionUrl(props.inventory.function)})`,
-              `[button:Search Canary Log Group](${lambdaSearchLogGroupUrl(props.inventory.function)})`,
+              `[button:primary:Package Data](${s3ObjectUrl(
+                props.packageData
+              )})`,
+              `[button:Catalog Builder](${lambdaFunctionUrl(
+                props.orchestration.catalogBuilder.function
+              )})`,
+              `[button:Inventory Canary](${lambdaFunctionUrl(
+                props.inventory.function
+              )})`,
+              `[button:Search Canary Log Group](${lambdaSearchLogGroupUrl(
+                props.inventory.function
+              )})`,
             ].join('\n'),
           }),
         ],
@@ -89,8 +129,12 @@ export class BackendDashboard extends Construct {
             title: 'Catalog Size',
             left: [
               props.inventory.metricSubmoduleCount({ label: 'Submodules' }),
-              props.inventory.metricPackageVersionCount({ label: 'Package Versions' }),
-              props.inventory.metricPackageMajorCount({ label: 'Package Majors' }),
+              props.inventory.metricPackageVersionCount({
+                label: 'Package Versions',
+              }),
+              props.inventory.metricPackageMajorCount({
+                label: 'Package Majors',
+              }),
               props.inventory.metricPackageCount({ label: 'Packages' }),
             ],
             leftYAxis: { min: 0 },
@@ -101,15 +145,27 @@ export class BackendDashboard extends Construct {
             title: 'Catalog Issues',
             left: [
               props.inventory.metricUnknownObjectCount({ label: 'Unknown' }),
-              props.inventory.metricMissingAssemblyCount({ label: 'Missing Assembly' }),
-              props.inventory.metricMissingPackageMetadataCount({ label: 'Missing Metadata' }),
-              props.inventory.metricMissingPackageTarballCount({ label: 'Missing Tarball' }),
-              props.inventory.metricUninstallablePackageCount({ label: 'Uninstallable Package' }),
+              props.inventory.metricMissingAssemblyCount({
+                label: 'Missing Assembly',
+              }),
+              props.inventory.metricMissingPackageMetadataCount({
+                label: 'Missing Metadata',
+              }),
+              props.inventory.metricMissingPackageTarballCount({
+                label: 'Missing Tarball',
+              }),
+              props.inventory.metricUninstallablePackageCount({
+                label: 'Uninstallable Package',
+              }),
             ],
             leftYAxis: { min: 0 },
             right: [
-              props.orchestration.catalogBuilder.metricMissingConstructFrameworkCount({ label: 'No Construct Framework' }),
-              props.orchestration.catalogBuilder.metricMissingConstructFrameworkVersionCount({ label: 'No Construct Framework Version' }),
+              props.orchestration.catalogBuilder.metricMissingConstructFrameworkCount(
+                { label: 'No Construct Framework' }
+              ),
+              props.orchestration.catalogBuilder.metricMissingConstructFrameworkVersionCount(
+                { label: 'No Construct Framework Version' }
+              ),
             ],
             rightYAxis: { min: 0 },
           }),
@@ -123,8 +179,12 @@ export class BackendDashboard extends Construct {
             markdown: [
               '# Ingestion Function',
               '',
-              `[button:Ingestion Function](${lambdaFunctionUrl(props.ingestion.function)})`,
-              `[button:primary:Search Log Group](${lambdaSearchLogGroupUrl(props.ingestion.function)})`,
+              `[button:Ingestion Function](${lambdaFunctionUrl(
+                props.ingestion.function
+              )})`,
+              `[button:primary:Search Log Group](${lambdaSearchLogGroupUrl(
+                props.ingestion.function
+              )})`,
               `[button:DLQ](${sqsQueueUrl(props.ingestion.deadLetterQueue)})`,
             ].join('\n'),
           }),
@@ -135,8 +195,14 @@ export class BackendDashboard extends Construct {
             width: 12,
             title: 'Function Health',
             left: [
-              fillMetric(props.ingestion.function.metricInvocations({ label: 'Invocations' })),
-              fillMetric(props.ingestion.function.metricErrors({ label: 'Errors' })),
+              fillMetric(
+                props.ingestion.function.metricInvocations({
+                  label: 'Invocations',
+                })
+              ),
+              fillMetric(
+                props.ingestion.function.metricErrors({ label: 'Errors' })
+              ),
             ],
             leftYAxis: { min: 0 },
             period: Duration.minutes(1),
@@ -146,18 +212,28 @@ export class BackendDashboard extends Construct {
             width: 12,
             title: 'Input Queue',
             left: [
-              props.ingestion.queue.metricApproximateNumberOfMessagesVisible({ label: 'Visible Messages', period: Duration.minutes(1) }),
-              props.ingestion.queue.metricApproximateNumberOfMessagesNotVisible({ label: 'Hidden Messages', period: Duration.minutes(1) }),
+              props.ingestion.queue.metricApproximateNumberOfMessagesVisible({
+                label: 'Visible Messages',
+                period: Duration.minutes(1),
+              }),
+              props.ingestion.queue.metricApproximateNumberOfMessagesNotVisible(
+                { label: 'Hidden Messages', period: Duration.minutes(1) }
+              ),
             ],
             leftYAxis: { min: 0 },
             right: [
-              props.ingestion.queue.metricApproximateAgeOfOldestMessage({ label: 'Oldest Message Age', period: Duration.minutes(1) }),
+              props.ingestion.queue.metricApproximateAgeOfOldestMessage({
+                label: 'Oldest Message Age',
+                period: Duration.minutes(1),
+              }),
             ],
-            rightAnnotations: [{
-              color: '#ffa500',
-              label: '10 Minutes',
-              value: Duration.minutes(10).toSeconds(),
-            }],
+            rightAnnotations: [
+              {
+                color: '#ffa500',
+                label: '10 Minutes',
+                value: Duration.minutes(10).toSeconds(),
+              },
+            ],
             rightYAxis: { min: 0 },
             period: Duration.minutes(1),
           }),
@@ -168,11 +244,31 @@ export class BackendDashboard extends Construct {
             width: 12,
             title: 'Input Quality',
             left: [
-              fillMetric(props.ingestion.metricInvalidAssembly({ label: 'Invalid Assemblies' })),
-              fillMetric(props.ingestion.metricInvalidTarball({ label: 'Invalid Tarball' })),
-              fillMetric(props.ingestion.metricIneligibleLicense({ label: 'Ineligible License' })),
-              fillMetric(props.ingestion.metricMismatchedIdentityRejections({ label: 'Mismatched Identity' })),
-              fillMetric(props.ingestion.metricFoundLicenseFile({ label: 'Found License file' })),
+              fillMetric(
+                props.ingestion.metricInvalidAssembly({
+                  label: 'Invalid Assemblies',
+                })
+              ),
+              fillMetric(
+                props.ingestion.metricInvalidTarball({
+                  label: 'Invalid Tarball',
+                })
+              ),
+              fillMetric(
+                props.ingestion.metricIneligibleLicense({
+                  label: 'Ineligible License',
+                })
+              ),
+              fillMetric(
+                props.ingestion.metricMismatchedIdentityRejections({
+                  label: 'Mismatched Identity',
+                })
+              ),
+              fillMetric(
+                props.ingestion.metricFoundLicenseFile({
+                  label: 'Found License file',
+                })
+              ),
             ],
             leftYAxis: { label: 'Count', min: 0, showUnits: false },
             stacked: true,
@@ -182,22 +278,31 @@ export class BackendDashboard extends Construct {
             width: 12,
             title: 'Dead Letters',
             left: [
-              props.ingestion.deadLetterQueue.metricApproximateNumberOfMessagesVisible({ label: 'Visible Messages' }),
-              props.ingestion.deadLetterQueue.metricApproximateNumberOfMessagesNotVisible({ label: 'Invisible Messages' }),
+              props.ingestion.deadLetterQueue.metricApproximateNumberOfMessagesVisible(
+                { label: 'Visible Messages' }
+              ),
+              props.ingestion.deadLetterQueue.metricApproximateNumberOfMessagesNotVisible(
+                { label: 'Invisible Messages' }
+              ),
             ],
             leftYAxis: { min: 0 },
             right: [
-              props.ingestion.deadLetterQueue.metricApproximateAgeOfOldestMessage({ label: 'Oldest Message Age' }),
+              props.ingestion.deadLetterQueue.metricApproximateAgeOfOldestMessage(
+                { label: 'Oldest Message Age' }
+              ),
             ],
-            rightAnnotations: [{
-              color: '#ff7f0e',
-              label: '10 days',
-              value: Duration.days(10).toSeconds(),
-            }, {
-              color: '#ff0000',
-              label: '14 days (DLQ Retention)',
-              value: Duration.days(14).toSeconds(),
-            }],
+            rightAnnotations: [
+              {
+                color: '#ff7f0e',
+                label: '10 days',
+                value: Duration.days(10).toSeconds(),
+              },
+              {
+                color: '#ff0000',
+                label: '14 days (DLQ Retention)',
+                value: Duration.days(14).toSeconds(),
+              },
+            ],
             rightYAxis: { min: 0 },
             period: Duration.minutes(1),
           }),
@@ -206,15 +311,22 @@ export class BackendDashboard extends Construct {
           new TextWidget({
             height: 2,
             width: 24,
-            markdown:
-              [
-                '# Orchestration',
-                '',
-                `[button:primary:State Machine](${stateMachineUrl(props.orchestration.stateMachine)})`,
-                `[button:DLQ](${sqsQueueUrl(props.orchestration.deadLetterQueue)})`,
-                `[button:Redrive DLQ](${lambdaFunctionUrl(props.orchestration.redriveFunction)})`,
-                `[button:Regenerate All Documentation](${stateMachineUrl(props.orchestration.regenerateAllDocumentation)})`,
-              ].join('\n'),
+            markdown: [
+              '# Orchestration',
+              '',
+              `[button:primary:State Machine](${stateMachineUrl(
+                props.orchestration.stateMachine
+              )})`,
+              `[button:DLQ](${sqsQueueUrl(
+                props.orchestration.deadLetterQueue
+              )})`,
+              `[button:Redrive DLQ](${lambdaFunctionUrl(
+                props.orchestration.redriveFunction
+              )})`,
+              `[button:Regenerate All Documentation](${stateMachineUrl(
+                props.orchestration.regenerateAllDocumentation
+              )})`,
+            ].join('\n'),
           }),
         ],
         [
@@ -223,16 +335,42 @@ export class BackendDashboard extends Construct {
             width: 12,
             title: 'State Machine Executions',
             left: [
-              fillMetric(props.orchestration.stateMachine.metricStarted({ label: 'Started' })),
-              fillMetric(props.orchestration.stateMachine.metricSucceeded({ label: 'Succeeded' })),
-              fillMetric(props.orchestration.stateMachine.metricAborted({ label: 'Aborted' })),
-              fillMetric(props.orchestration.stateMachine.metricFailed({ label: 'Failed' })),
-              fillMetric(props.orchestration.stateMachine.metricThrottled({ label: 'Throttled' })),
-              fillMetric(props.orchestration.stateMachine.metricTimedOut({ label: 'Timed Out' })),
+              fillMetric(
+                props.orchestration.stateMachine.metricStarted({
+                  label: 'Started',
+                })
+              ),
+              fillMetric(
+                props.orchestration.stateMachine.metricSucceeded({
+                  label: 'Succeeded',
+                })
+              ),
+              fillMetric(
+                props.orchestration.stateMachine.metricAborted({
+                  label: 'Aborted',
+                })
+              ),
+              fillMetric(
+                props.orchestration.stateMachine.metricFailed({
+                  label: 'Failed',
+                })
+              ),
+              fillMetric(
+                props.orchestration.stateMachine.metricThrottled({
+                  label: 'Throttled',
+                })
+              ),
+              fillMetric(
+                props.orchestration.stateMachine.metricTimedOut({
+                  label: 'Timed Out',
+                })
+              ),
             ],
             leftYAxis: { min: 0 },
             right: [
-              props.orchestration.stateMachine.metricTime({ label: 'Duration' }),
+              props.orchestration.stateMachine.metricTime({
+                label: 'Duration',
+              }),
             ],
             rightYAxis: { min: 0 },
           }),
@@ -241,22 +379,31 @@ export class BackendDashboard extends Construct {
             width: 12,
             title: 'Dead Letter Queue',
             left: [
-              props.orchestration.deadLetterQueue.metricApproximateNumberOfMessagesVisible({ label: 'Visible Messages' }),
-              props.orchestration.deadLetterQueue.metricApproximateNumberOfMessagesNotVisible({ label: 'Invisible Messages' }),
+              props.orchestration.deadLetterQueue.metricApproximateNumberOfMessagesVisible(
+                { label: 'Visible Messages' }
+              ),
+              props.orchestration.deadLetterQueue.metricApproximateNumberOfMessagesNotVisible(
+                { label: 'Invisible Messages' }
+              ),
             ],
             leftYAxis: { min: 0 },
             right: [
-              props.orchestration.deadLetterQueue.metricApproximateAgeOfOldestMessage({ label: 'Oldest Message Age' }),
+              props.orchestration.deadLetterQueue.metricApproximateAgeOfOldestMessage(
+                { label: 'Oldest Message Age' }
+              ),
             ],
-            rightAnnotations: [{
-              color: '#ff7f0e',
-              label: '10 days',
-              value: Duration.days(10).toSeconds(),
-            }, {
-              color: '#ff0000',
-              label: '14 days (DLQ Retention)',
-              value: Duration.days(14).toSeconds(),
-            }],
+            rightAnnotations: [
+              {
+                color: '#ff7f0e',
+                label: '10 days',
+                value: Duration.days(10).toSeconds(),
+              },
+              {
+                color: '#ff0000',
+                label: '14 days (DLQ Retention)',
+                value: Duration.days(14).toSeconds(),
+              },
+            ],
             rightYAxis: { min: 0 },
             period: Duration.minutes(1),
           }),
@@ -268,16 +415,26 @@ export class BackendDashboard extends Construct {
           new TextWidget({
             height: 2,
             width: 24,
-            markdown:
-              [
-                '# Deny List',
-                '',
-                `[button:primary:Deny List Object](${s3ObjectUrl(props.denyList.bucket, props.denyList.objectKey)})`,
-                `[button:Prune Function](${lambdaFunctionUrl(props.denyList.prune.pruneHandler)})`,
-                `[button:Prune Logs](${lambdaSearchLogGroupUrl(props.denyList.prune.pruneHandler)})`,
-                `[button:Delete Queue](${sqsQueueUrl(props.denyList.prune.queue)})`,
-                `[button:Delete Logs](${lambdaSearchLogGroupUrl(props.denyList.prune.deleteHandler)})`,
-              ].join('\n'),
+            markdown: [
+              '# Deny List',
+              '',
+              `[button:primary:Deny List Object](${s3ObjectUrl(
+                props.denyList.bucket,
+                props.denyList.objectKey
+              )})`,
+              `[button:Prune Function](${lambdaFunctionUrl(
+                props.denyList.prune.pruneHandler
+              )})`,
+              `[button:Prune Logs](${lambdaSearchLogGroupUrl(
+                props.denyList.prune.pruneHandler
+              )})`,
+              `[button:Delete Queue](${sqsQueueUrl(
+                props.denyList.prune.queue
+              )})`,
+              `[button:Delete Logs](${lambdaSearchLogGroupUrl(
+                props.denyList.prune.deleteHandler
+              )})`,
+            ].join('\n'),
           }),
         ],
         [
@@ -286,8 +443,13 @@ export class BackendDashboard extends Construct {
             width: 12,
             title: 'Deny List',
             left: [
-              fillMetric(props.denyList.metricDenyListRules({ label: 'Rules' }), 'REPEAT'),
-              props.denyList.prune.queue.metricNumberOfMessagesDeleted({ label: 'Deleted Files' }),
+              fillMetric(
+                props.denyList.metricDenyListRules({ label: 'Rules' }),
+                'REPEAT'
+              ),
+              props.denyList.prune.queue.metricNumberOfMessagesDeleted({
+                label: 'Deleted Files',
+              }),
             ],
             leftYAxis: { min: 0 },
             period: Duration.minutes(5),
@@ -297,24 +459,37 @@ export class BackendDashboard extends Construct {
             width: 12,
             title: 'Prune Function Health',
             left: [
-              fillMetric(props.denyList.prune.pruneHandler.metricInvocations({ label: 'Invocations' })),
-              fillMetric(props.denyList.prune.pruneHandler.metricErrors({ label: 'Errors' })),
+              fillMetric(
+                props.denyList.prune.pruneHandler.metricInvocations({
+                  label: 'Invocations',
+                })
+              ),
+              fillMetric(
+                props.denyList.prune.pruneHandler.metricErrors({
+                  label: 'Errors',
+                })
+              ),
             ],
             leftYAxis: { min: 0 },
             period: Duration.minutes(5),
           }),
         ],
 
-        ...(props.packageStats ? renderPackageStatsWidgets(props.packageStats) : []),
+        ...(props.packageStats
+          ? renderPackageStatsWidgets(props.packageStats)
+          : []),
         ...renderVersionTrackerWidgets(props.versionTracker),
-        ...(props.releaseNotes ? renderReleaseNotesWidgets(props.releaseNotes) : []),
-
+        ...(props.releaseNotes
+          ? renderReleaseNotesWidgets(props.releaseNotes)
+          : []),
       ],
     });
   }
 
-  private perLanguageReports(language: DocumentationLanguage, packageData: IBucket): IWidget[] {
-
+  private perLanguageReports(
+    language: DocumentationLanguage,
+    packageData: IBucket
+  ): IWidget[] {
     return [
       new PackageVersionsTableWidget(this, `MissingDocs-${language.name}`, {
         title: `Package Versions Report | Missing Documentation | _${language.name}_`,
@@ -329,23 +504,29 @@ export class BackendDashboard extends Construct {
         height: 6,
         width: 24,
       }),
-      new PackageVersionsTableWidget(this, `CorruptAssemblyDocs-${language.name}`, {
-        title: `Package Versions Report | Corrupt Assembly | _${language.name}_`,
-        description: [
-          `These packages are missing ${language.name} documentation because of a corrupted assembly.`,
-          '',
-          "The specific error can be found in the package directory inside files suffixed with '.corruptassembly'",
-        ].join('\n'),
-        bucket: packageData,
-        key: corruptAssemblyReport(language),
-        height: 6,
-        width: 24,
-      }),
+      new PackageVersionsTableWidget(
+        this,
+        `CorruptAssemblyDocs-${language.name}`,
+        {
+          title: `Package Versions Report | Corrupt Assembly | _${language.name}_`,
+          description: [
+            `These packages are missing ${language.name} documentation because of a corrupted assembly.`,
+            '',
+            "The specific error can be found in the package directory inside files suffixed with '.corruptassembly'",
+          ].join('\n'),
+          bucket: packageData,
+          key: corruptAssemblyReport(language),
+          height: 6,
+          width: 24,
+        }
+      ),
     ];
-
   }
 
-  private *catalogOverviewLanguageSections({ inventory, orchestration }: BackendDashboardProps): Generator<IWidget[]> {
+  private *catalogOverviewLanguageSections({
+    inventory,
+    orchestration,
+  }: BackendDashboardProps): Generator<IWidget[]> {
     yield [
       new TextWidget({
         height: 2,
@@ -353,8 +534,12 @@ export class BackendDashboard extends Construct {
         markdown: [
           '# Documentation Generation',
           '',
-          `[button:primary:Transliterator Logs](${logGroupUrl(orchestration.transliterator.logGroup)})`,
-          `[button:Transliterator ECS Cluster](${ecsClusterUrl(orchestration.ecsCluster)})`,
+          `[button:primary:Transliterator Logs](${logGroupUrl(
+            orchestration.transliterator.logGroup
+          )})`,
+          `[button:Transliterator ECS Cluster](${ecsClusterUrl(
+            orchestration.ecsCluster
+          )})`,
         ].join('\n'),
       }),
     ];
@@ -386,7 +571,9 @@ export class BackendDashboard extends Construct {
         leftYAxis: { min: 0 },
         right: [
           orchestration.metricEcsCpuUtilization({ label: 'CPU Utilization' }),
-          orchestration.metricEcsMemoryUtilization({ label: 'Memory Utilization' }),
+          orchestration.metricEcsMemoryUtilization({
+            label: 'Memory Utilization',
+          }),
         ],
         rightYAxis: { label: 'Percent', min: 0, max: 100, showUnits: false },
       }),
@@ -395,8 +582,14 @@ export class BackendDashboard extends Construct {
         width: 12,
         title: 'ECS Resources',
         left: [
-          fillMetric(orchestration.metricEcsNetworkRxBytes({ label: 'Received Bytes' })),
-          fillMetric(orchestration.metricEcsNetworkTxBytes({ label: 'Transmitted Bytes' })),
+          fillMetric(
+            orchestration.metricEcsNetworkRxBytes({ label: 'Received Bytes' })
+          ),
+          fillMetric(
+            orchestration.metricEcsNetworkTxBytes({
+              label: 'Transmitted Bytes',
+            })
+          ),
         ],
         leftYAxis: { min: 0 },
         right: [
@@ -420,10 +613,22 @@ export class BackendDashboard extends Construct {
           width: 12,
           title: 'Package Versions',
           left: [
-            inventory.metricSupportedPackageVersionCount(language, { label: 'Available', color: '#2ca02c' }),
-            inventory.metricCorruptAssemblyPackageVersionCount(language, { label: 'Corrupt Assembly', color: '#3542D7' }),
-            inventory.metricUnsupportedPackageVersionCount(language, { label: 'Unsupported', color: '#9467bd' }),
-            inventory.metricMissingPackageVersionCount(language, { label: 'Missing', color: '#d62728' }),
+            inventory.metricSupportedPackageVersionCount(language, {
+              label: 'Available',
+              color: '#2ca02c',
+            }),
+            inventory.metricCorruptAssemblyPackageVersionCount(language, {
+              label: 'Corrupt Assembly',
+              color: '#3542D7',
+            }),
+            inventory.metricUnsupportedPackageVersionCount(language, {
+              label: 'Unsupported',
+              color: '#9467bd',
+            }),
+            inventory.metricMissingPackageVersionCount(language, {
+              label: 'Missing',
+              color: '#d62728',
+            }),
           ],
           leftYAxis: { showUnits: false },
           view: GraphWidgetView.PIE,
@@ -433,10 +638,22 @@ export class BackendDashboard extends Construct {
           width: 12,
           title: 'Package Version Submodules',
           left: [
-            inventory.metricSupportedSubmoduleCount(language, { label: 'Available', color: '#2ca02c' }),
-            inventory.metricCorruptAssemblySubmoduleCount(language, { label: 'Corrupt Assembly', color: '#3542D7' }),
-            inventory.metricUnsupportedSubmoduleCount(language, { label: 'Unsupported', color: '#9467bd' }),
-            inventory.metricMissingSubmoduleCount(language, { label: 'Missing', color: '#d62728' }),
+            inventory.metricSupportedSubmoduleCount(language, {
+              label: 'Available',
+              color: '#2ca02c',
+            }),
+            inventory.metricCorruptAssemblySubmoduleCount(language, {
+              label: 'Corrupt Assembly',
+              color: '#3542D7',
+            }),
+            inventory.metricUnsupportedSubmoduleCount(language, {
+              label: 'Unsupported',
+              color: '#9467bd',
+            }),
+            inventory.metricMissingSubmoduleCount(language, {
+              label: 'Missing',
+              color: '#d62728',
+            }),
           ],
           leftYAxis: { showUnits: false },
           view: GraphWidgetView.PIE,
@@ -446,7 +663,9 @@ export class BackendDashboard extends Construct {
   }
 }
 
-function* renderPackageSourcesWidgets(packageSources: PackageSourceBindResult[]): Generator<IWidget[], undefined, undefined> {
+function* renderPackageSourcesWidgets(
+  packageSources: PackageSourceBindResult[]
+): Generator<IWidget[], undefined, undefined> {
   for (const packageSource of packageSources) {
     yield [
       new TextWidget({
@@ -455,8 +674,10 @@ function* renderPackageSourcesWidgets(packageSources: PackageSourceBindResult[])
         markdown: [
           `# ${packageSource.name}`,
           '',
-          ...(packageSource.links ?? [])
-            .map(({ name, primary, url }) => `[${primary ? 'button:primary' : 'button'}:${name}](${url})`),
+          ...(packageSource.links ?? []).map(
+            ({ name, primary, url }) =>
+              `[${primary ? 'button:primary' : 'button'}:${name}](${url})`
+          ),
         ].join('\n'),
       }),
     ];
@@ -471,14 +692,20 @@ function renderPackageStatsWidgets(packageStats: PackageStats): IWidget[][] {
       new TextWidget({
         height: 2,
         width: 24,
-        markdown:
-          [
-            '# Package Stats',
-            '',
-            `[button:primary:Package Stats Object](${s3ObjectUrl(packageStats.bucket, packageStats.statsKey)})`,
-            `[button:Package Stats Function](${lambdaFunctionUrl(packageStats.handler)})`,
-            `[button:Package Stats Logs](${lambdaSearchLogGroupUrl(packageStats.handler)})`,
-          ].join('\n'),
+        markdown: [
+          '# Package Stats',
+          '',
+          `[button:primary:Package Stats Object](${s3ObjectUrl(
+            packageStats.bucket,
+            packageStats.statsKey
+          )})`,
+          `[button:Package Stats Function](${lambdaFunctionUrl(
+            packageStats.handler
+          )})`,
+          `[button:Package Stats Logs](${lambdaSearchLogGroupUrl(
+            packageStats.handler
+          )})`,
+        ].join('\n'),
       }),
     ],
     [
@@ -487,7 +714,10 @@ function renderPackageStatsWidgets(packageStats: PackageStats): IWidget[][] {
         width: 12,
         title: 'Number of Package Stats Recorded',
         left: [
-          fillMetric(packageStats.metricPackagesCount({ label: 'Packages with stats' }), 'REPEAT'),
+          fillMetric(
+            packageStats.metricPackagesCount({ label: 'Packages with stats' }),
+            'REPEAT'
+          ),
         ],
         leftYAxis: { min: 0 },
       }),
@@ -495,34 +725,42 @@ function renderPackageStatsWidgets(packageStats: PackageStats): IWidget[][] {
         height: 6,
         width: 12,
         title: 'Invocation Duration',
-        left: [
-          packageStats.handler.metricDuration({ label: 'Duration' }),
-        ],
+        left: [packageStats.handler.metricDuration({ label: 'Duration' })],
         leftYAxis: { min: 0 },
-        rightAnnotations: [{
-          color: '#ffa500',
-          label: '15 minutes (Lambda timeout)',
-          value: Duration.minutes(15).toSeconds(),
-        }],
+        rightAnnotations: [
+          {
+            color: '#ffa500',
+            label: '15 minutes (Lambda timeout)',
+            value: Duration.minutes(15).toSeconds(),
+          },
+        ],
       }),
     ],
   ];
 }
 
-function renderVersionTrackerWidgets(versionTracker: VersionTracker): IWidget[][] {
+function renderVersionTrackerWidgets(
+  versionTracker: VersionTracker
+): IWidget[][] {
   return [
     [
       new TextWidget({
         height: 2,
         width: 24,
-        markdown:
-          [
-            '# Version Tracker',
-            '',
-            `[button:primary:Versions Object](${s3ObjectUrl(versionTracker.bucket, VERSION_TRACKER_KEY)})`,
-            `[button:Version Tracker Function](${lambdaFunctionUrl(versionTracker.handler)})`,
-            `[button:Version Tracker Logs](${lambdaSearchLogGroupUrl(versionTracker.handler)})`,
-          ].join('\n'),
+        markdown: [
+          '# Version Tracker',
+          '',
+          `[button:primary:Versions Object](${s3ObjectUrl(
+            versionTracker.bucket,
+            VERSION_TRACKER_KEY
+          )})`,
+          `[button:Version Tracker Function](${lambdaFunctionUrl(
+            versionTracker.handler
+          )})`,
+          `[button:Version Tracker Logs](${lambdaSearchLogGroupUrl(
+            versionTracker.handler
+          )})`,
+        ].join('\n'),
       }),
     ],
     [
@@ -531,7 +769,12 @@ function renderVersionTrackerWidgets(versionTracker: VersionTracker): IWidget[][
         width: 12,
         title: 'Number of Package Versions Recorded',
         left: [
-          fillMetric(versionTracker.metricTrackedVersionsCount({ label: 'Package versions recorded' }), 'REPEAT'),
+          fillMetric(
+            versionTracker.metricTrackedVersionsCount({
+              label: 'Package versions recorded',
+            }),
+            'REPEAT'
+          ),
         ],
         leftYAxis: { min: 0 },
       }),
@@ -539,38 +782,47 @@ function renderVersionTrackerWidgets(versionTracker: VersionTracker): IWidget[][
         height: 6,
         width: 12,
         title: 'Invocation Duration',
-        left: [
-          versionTracker.handler.metricDuration({ label: 'Duration' }),
-        ],
+        left: [versionTracker.handler.metricDuration({ label: 'Duration' })],
         leftYAxis: { min: 0 },
-        rightAnnotations: [{
-          color: '#ffa500',
-          label: '1 minutes (Lambda timeout)',
-          value: Duration.minutes(1).toSeconds(),
-        }],
+        rightAnnotations: [
+          {
+            color: '#ffa500',
+            label: '1 minutes (Lambda timeout)',
+            value: Duration.minutes(1).toSeconds(),
+          },
+        ],
       }),
     ],
   ];
 }
 
-function renderReleaseNotesWidgets(releaseNotes: ReleaseNoteFetcher): IWidget[][] {
+function renderReleaseNotesWidgets(
+  releaseNotes: ReleaseNoteFetcher
+): IWidget[][] {
   return [
     [
       new TextWidget({
         height: 2,
         width: 24,
-        markdown:
-          [
-            '# Release Notes',
-            '',
-            `[button:primary:StateMachine](${stateMachineUrl(releaseNotes.stateMachine)})`,
-            `[button:releaseNotesTrigger](${lambdaFunctionUrl(releaseNotes.releaseNotesTriggerLambda)})`,
-            `[button:generateReleaseNotes](${lambdaFunctionUrl(releaseNotes.generateReleaseNotesLambda)})`,
-            `[button:updateFeed](${lambdaFunctionUrl(releaseNotes.updateFeedFunction)})`,
-            `[button:queue](${sqsQueueUrl(releaseNotes.queue)})`,
-            `[button:workerQueue](${sqsQueueUrl(releaseNotes.workerQueue)})`,
-            `[button:workerDLQ](${sqsQueueUrl(releaseNotes.workerDLQ)})`,
-          ].join('\n'),
+        markdown: [
+          '# Release Notes',
+          '',
+          `[button:primary:StateMachine](${stateMachineUrl(
+            releaseNotes.stateMachine
+          )})`,
+          `[button:releaseNotesTrigger](${lambdaFunctionUrl(
+            releaseNotes.releaseNotesTriggerLambda
+          )})`,
+          `[button:generateReleaseNotes](${lambdaFunctionUrl(
+            releaseNotes.generateReleaseNotesLambda
+          )})`,
+          `[button:updateFeed](${lambdaFunctionUrl(
+            releaseNotes.updateFeedFunction
+          )})`,
+          `[button:queue](${sqsQueueUrl(releaseNotes.queue)})`,
+          `[button:workerQueue](${sqsQueueUrl(releaseNotes.workerQueue)})`,
+          `[button:workerDLQ](${sqsQueueUrl(releaseNotes.workerDLQ)})`,
+        ].join('\n'),
       }),
     ],
     [
@@ -579,7 +831,12 @@ function renderReleaseNotesWidgets(releaseNotes: ReleaseNoteFetcher): IWidget[][
         width: 12,
         title: 'Number of release Notes',
         left: [
-          fillMetric(releaseNotes.metricPackagesWithReleaseNotesCount({ label: 'Packages with release notes' }), 'REPEAT'),
+          fillMetric(
+            releaseNotes.metricPackagesWithReleaseNotesCount({
+              label: 'Packages with release notes',
+            }),
+            'REPEAT'
+          ),
         ],
         leftYAxis: { min: 0 },
       }),
@@ -590,11 +847,21 @@ function renderReleaseNotesWidgets(releaseNotes: ReleaseNoteFetcher): IWidget[][
         left: [
           releaseNotes.metricChangeLogAllError({ label: 'All Errors' }),
           releaseNotes.metricRequestUnknownError({ label: 'UnknownError' }),
-          releaseNotes.metricInvalidCredentials({ label: 'InvalidCredentials' }),
-          releaseNotes.metricRequestQuotaExhausted({ label: 'RequestQuotaExhausted' }),
-          releaseNotes.metricRequestUnSupportedRepo({ label: 'UnSupportedRepo' }),
-          releaseNotes.metricRequestInvalidPackageJson({ label: 'InvalidPackageJson' }),
-          releaseNotes.metricChangeLogFetchError({ label: 'ChangeLogFetchError' }),
+          releaseNotes.metricInvalidCredentials({
+            label: 'InvalidCredentials',
+          }),
+          releaseNotes.metricRequestQuotaExhausted({
+            label: 'RequestQuotaExhausted',
+          }),
+          releaseNotes.metricRequestUnSupportedRepo({
+            label: 'UnSupportedRepo',
+          }),
+          releaseNotes.metricRequestInvalidPackageJson({
+            label: 'InvalidPackageJson',
+          }),
+          releaseNotes.metricChangeLogFetchError({
+            label: 'ChangeLogFetchError',
+          }),
         ],
       }),
     ],

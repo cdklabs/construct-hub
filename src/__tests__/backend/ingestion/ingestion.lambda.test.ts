@@ -1,6 +1,14 @@
 import { EventEmitter } from 'events';
 import type { createGunzip } from 'zlib';
-import { Assembly, CollectionKind, DependencyConfiguration, PrimitiveType, SchemaVersion, Stability, TypeKind } from '@jsii/spec';
+import {
+  Assembly,
+  CollectionKind,
+  DependencyConfiguration,
+  PrimitiveType,
+  SchemaVersion,
+  Stability,
+  TypeKind,
+} from '@jsii/spec';
 import type { metricScope, MetricsLogger } from 'aws-embedded-metrics';
 import { Context, SQSEvent } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
@@ -18,8 +26,13 @@ jest.mock('tar-stream');
 jest.mock('../../../backend/shared/env.lambda-shared');
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const mockMetricScope = require('aws-embedded-metrics').metricScope as jest.MockedFunction<typeof metricScope>;
-const mockPutMetric = jest.fn().mockName('MetricsLogger.putMetric') as jest.MockedFunction<MetricsLogger['putMetric']>;
+const mockMetricScope = require('aws-embedded-metrics')
+  .metricScope as jest.MockedFunction<typeof metricScope>;
+const mockPutMetric = jest
+  .fn()
+  .mockName('MetricsLogger.putMetric') as jest.MockedFunction<
+  MetricsLogger['putMetric']
+>;
 const mockMetrics: MetricsLogger = {
   putMetric: mockPutMetric,
   setDimensions: (...args: any[]) => expect(args).toEqual([]),
@@ -47,7 +60,8 @@ test('basic happy case', async () => {
   const mockConfigkey = 'fake-config-obj-key';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
+  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared')
+    .requireEnv as jest.MockedFunction<typeof requireEnv>;
   mockRequireEnv.mockImplementation((name) => {
     if (name === 'BUCKET_NAME') {
       return mockBucketName;
@@ -75,11 +89,15 @@ test('basic happy case', async () => {
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
-  const fakeDotJsii = JSON.stringify(fakeAssembly(packageName, packageVersion, packageLicense));
-  const mockConfig = Buffer.from(JSON.stringify({
-    packageLinks: [],
-    packageTags: [],
-  }));
+  const fakeDotJsii = JSON.stringify(
+    fakeAssembly(packageName, packageVersion, packageLicense)
+  );
+  const mockConfig = Buffer.from(
+    JSON.stringify({
+      packageLinks: [],
+      packageTags: [],
+    })
+  );
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -87,122 +105,178 @@ test('basic happy case', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-    if (req.Bucket === mockConfigBucket) {
+  AWSMock.mock(
+    'S3',
+    'getObject',
+    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      if (req.Bucket === mockConfigBucket) {
+        try {
+          expect(req.Bucket).toBe(mockConfigBucket);
+          expect(req.Key).toBe(mockConfigkey);
+        } catch (e) {
+          return cb(e);
+        }
+        return cb(null, { Body: mockConfig });
+      }
+
       try {
-        expect(req.Bucket).toBe(mockConfigBucket);
-        expect(req.Key).toBe(mockConfigkey);
+        expect(req.Bucket).toBe(stagingBucket);
+        expect(req.Key).toBe(stagingKey);
+        expect(req.VersionId).toBe(stagingVersion);
       } catch (e) {
         return cb(e);
       }
-      return cb(null, { Body: mockConfig });
+      return cb(null, { Body: fakeTarGz });
     }
-
-    try {
-      expect(req.Bucket).toBe(stagingBucket);
-      expect(req.Key).toBe(stagingKey);
-      expect(req.VersionId).toBe(stagingVersion);
-    } catch (e) {
-      return cb(e);
-    }
-    return cb(null, { Body: fakeTarGz });
-  });
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<typeof createGunzip>;
-  mockCreateGunzip.mockImplementation(() => new FakeGunzip(fakeTarGz, fakeTar) as any);
+  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
+    typeof createGunzip
+  >;
+  mockCreateGunzip.mockImplementation(
+    () => new FakeGunzip(fakeTarGz, fakeTar) as any
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<typeof extract>;
-  mockExtract.mockImplementation(() => new FakeExtract(fakeTar, {
-    'package/.jsii': fakeDotJsii,
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({ name: packageName, version: packageVersion, license: packageLicense }),
-  }) as any);
+  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
+    typeof extract
+  >;
+  mockExtract.mockImplementation(
+    () =>
+      new FakeExtract(fakeTar, {
+        'package/.jsii': fakeDotJsii,
+        'package/index.js': '// Ignore me!',
+        'package/package.json': JSON.stringify({
+          name: packageName,
+          version: packageVersion,
+          license: packageLicense,
+        }),
+      }) as any
+  );
 
   let mockTarballCreated = false;
   let mockMetadataCreated = false;
-  const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(packageName, packageVersion);
-  AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-    try {
-      expect(req.Bucket).toBe(mockBucketName);
-      expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
-      expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
-      expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
-      switch (req.Key) {
-        case assemblyKey:
-          expect(req.ContentType).toBe('application/json');
+  const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(
+    packageName,
+    packageVersion
+  );
+  AWSMock.mock(
+    'S3',
+    'putObject',
+    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
+      try {
+        expect(req.Bucket).toBe(mockBucketName);
+        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
+        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+        switch (req.Key) {
+          case assemblyKey:
+            expect(req.ContentType).toBe('application/json');
 
-          // our service removes the "types" field from the assembly since it is not needed
-          // and takes up a lot of space.
-          assertAssembly(fakeDotJsii, req.Body?.toString());
+            // our service removes the "types" field from the assembly since it is not needed
+            // and takes up a lot of space.
+            assertAssembly(fakeDotJsii, req.Body?.toString());
 
-          // Must be created strictly after the tarball and metadata files have been uploaded.
-          expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
-          break;
-        case metadataKey:
-          expect(req.ContentType).toBe('application/json');
-          expect(Buffer.from(req.Body! as any)).toEqual(Buffer.from(JSON.stringify({
-            constructFrameworks: [],
-            date: time,
-            packageLinks: {},
-            packageTags: [],
-          })));
-          mockMetadataCreated = true;
-          break;
-        case packageKey:
-          expect(req.ContentType).toBe('application/octet-stream');
-          expect(req.Body).toEqual(fakeTarGz);
-          mockTarballCreated = true;
-          break;
-        default:
-          fail(`Unexpected key: "${req.Key}"`);
+            // Must be created strictly after the tarball and metadata files have been uploaded.
+            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+            break;
+          case metadataKey:
+            expect(req.ContentType).toBe('application/json');
+            expect(Buffer.from(req.Body! as any)).toEqual(
+              Buffer.from(
+                JSON.stringify({
+                  constructFrameworks: [],
+                  date: time,
+                  packageLinks: {},
+                  packageTags: [],
+                })
+              )
+            );
+            mockMetadataCreated = true;
+            break;
+          case packageKey:
+            expect(req.ContentType).toBe('application/octet-stream');
+            expect(req.Body).toEqual(fakeTarGz);
+            mockTarballCreated = true;
+            break;
+          default:
+            fail(`Unexpected key: "${req.Key}"`);
+        }
+      } catch (e) {
+        return cb(e);
       }
-    } catch (e) {
-      return cb(e);
+      return cb(null, { VersionId: `${req.Key}-NewVersion` });
     }
-    return cb(null, { VersionId: `${req.Key}-NewVersion` });
-  });
+  );
 
   const executionArn = 'Fake-Execution-Arn';
-  AWSMock.mock('StepFunctions', 'startExecution', (req: AWS.StepFunctions.StartExecutionInput, cb: Response<AWS.StepFunctions.StartExecutionOutput>) => {
-    try {
-      expect(req.stateMachineArn).toBe(mockStateMachineArn);
-      expect(JSON.parse(req.input!)).toEqual({
-        bucket: mockBucketName,
-        assembly: { key: assemblyKey, versionId: `${assemblyKey}-NewVersion` },
-        metadata: { key: metadataKey, versionId: `${metadataKey}-NewVersion` },
-        package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
-      });
-    } catch (e) {
-      return cb(e);
+  AWSMock.mock(
+    'StepFunctions',
+    'startExecution',
+    (
+      req: AWS.StepFunctions.StartExecutionInput,
+      cb: Response<AWS.StepFunctions.StartExecutionOutput>
+    ) => {
+      try {
+        expect(req.stateMachineArn).toBe(mockStateMachineArn);
+        expect(JSON.parse(req.input!)).toEqual({
+          bucket: mockBucketName,
+          assembly: {
+            key: assemblyKey,
+            versionId: `${assemblyKey}-NewVersion`,
+          },
+          metadata: {
+            key: metadataKey,
+            versionId: `${metadataKey}-NewVersion`,
+          },
+          package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+        });
+      } catch (e) {
+        return cb(e);
+      }
+      return cb(null, { executionArn, startDate: new Date() });
     }
-    return cb(null, { executionArn, startDate: new Date() });
-  });
+  );
 
   const event: SQSEvent = {
-    Records: [{
-      attributes: {} as any,
-      awsRegion: 'test-bermuda-1',
-      body: JSON.stringify({ tarballUri, integrity, time }),
-      eventSource: 'sqs',
-      eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
-      md5OfBody: 'Fake-MD5-Of-Body',
-      messageAttributes: {},
-      messageId: 'Fake-Message-ID',
-      receiptHandle: 'Fake-Receipt-Handke',
-    }],
+    Records: [
+      {
+        attributes: {} as any,
+        awsRegion: 'test-bermuda-1',
+        body: JSON.stringify({ tarballUri, integrity, time }),
+        eventSource: 'sqs',
+        eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
+        md5OfBody: 'Fake-MD5-Of-Body',
+        messageAttributes: {},
+        messageId: 'Fake-Message-ID',
+        receiptHandle: 'Fake-Receipt-Handke',
+      },
+    ],
   };
 
   // We require the handler here so that any mocks to metricScope are set up
   // prior to the handler being created.
   //
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  await expect(require('../../../backend/ingestion/ingestion.lambda').handler(event, context))
-    .resolves.toEqual([executionArn]);
 
-  expect(mockPutMetric).toHaveBeenCalledWith(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 0, 'Count');
-  expect(mockPutMetric).toHaveBeenCalledWith(MetricName.FOUND_LICENSE_FILE, 0, 'Count');
+  await expect(
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('../../../backend/ingestion/ingestion.lambda').handler(
+      event,
+      context
+    )
+  ).resolves.toEqual([executionArn]);
+
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.MISMATCHED_IDENTITY_REJECTIONS,
+    0,
+    'Count'
+  );
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.FOUND_LICENSE_FILE,
+    0,
+    'Count'
+  );
 });
 
 test('basic happy case with license file', async () => {
@@ -212,7 +286,8 @@ test('basic happy case with license file', async () => {
   const mockConfigkey = 'fake-config-obj-key';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
+  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared')
+    .requireEnv as jest.MockedFunction<typeof requireEnv>;
   mockRequireEnv.mockImplementation((name) => {
     if (name === 'BUCKET_NAME') {
       return mockBucketName;
@@ -241,11 +316,15 @@ test('basic happy case with license file', async () => {
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
-  const fakeDotJsii = JSON.stringify(fakeAssembly(packageName, packageVersion, packageLicense));
-  const mockConfig = Buffer.from(JSON.stringify({
-    packageLinks: [],
-    packageTags: [],
-  }));
+  const fakeDotJsii = JSON.stringify(
+    fakeAssembly(packageName, packageVersion, packageLicense)
+  );
+  const mockConfig = Buffer.from(
+    JSON.stringify({
+      packageLinks: [],
+      packageTags: [],
+    })
+  );
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -253,124 +332,178 @@ test('basic happy case with license file', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-    if (req.Bucket === mockConfigBucket) {
+  AWSMock.mock(
+    'S3',
+    'getObject',
+    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      if (req.Bucket === mockConfigBucket) {
+        try {
+          expect(req.Bucket).toBe(mockConfigBucket);
+          expect(req.Key).toBe(mockConfigkey);
+        } catch (e) {
+          return cb(e);
+        }
+        return cb(null, { Body: mockConfig });
+      }
+
       try {
-        expect(req.Bucket).toBe(mockConfigBucket);
-        expect(req.Key).toBe(mockConfigkey);
+        expect(req.Bucket).toBe(stagingBucket);
+        expect(req.Key).toBe(stagingKey);
+        expect(req.VersionId).toBe(stagingVersion);
       } catch (e) {
         return cb(e);
       }
-      return cb(null, { Body: mockConfig });
+      return cb(null, { Body: fakeTarGz });
     }
-
-    try {
-      expect(req.Bucket).toBe(stagingBucket);
-      expect(req.Key).toBe(stagingKey);
-      expect(req.VersionId).toBe(stagingVersion);
-    } catch (e) {
-      return cb(e);
-    }
-    return cb(null, { Body: fakeTarGz });
-  });
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<typeof createGunzip>;
-  mockCreateGunzip.mockImplementation(() => new FakeGunzip(fakeTarGz, fakeTar) as any);
+  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
+    typeof createGunzip
+  >;
+  mockCreateGunzip.mockImplementation(
+    () => new FakeGunzip(fakeTarGz, fakeTar) as any
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<typeof extract>;
-  mockExtract.mockImplementation(() => new FakeExtract(fakeTar, {
-    'package/.jsii': fakeDotJsii,
-    'package/LICENSE.md': fakeLicense,
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({ name: packageName, version: packageVersion, license: packageLicense }),
-  }) as any);
+  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
+    typeof extract
+  >;
+  mockExtract.mockImplementation(
+    () =>
+      new FakeExtract(fakeTar, {
+        'package/.jsii': fakeDotJsii,
+        'package/LICENSE.md': fakeLicense,
+        'package/index.js': '// Ignore me!',
+        'package/package.json': JSON.stringify({
+          name: packageName,
+          version: packageVersion,
+          license: packageLicense,
+        }),
+      }) as any
+  );
 
   let mockTarballCreated = false;
   let mockMetadataCreated = false;
-  const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(packageName, packageVersion);
-  AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-    try {
-      expect(req.Bucket).toBe(mockBucketName);
-      expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
-      expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
-      expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
-      switch (req.Key) {
-        case assemblyKey:
-          expect(req.ContentType).toBe('application/json');
-          assertAssembly(fakeDotJsii, req.Body?.toString());
-          // Must be created strictly after the tarball and metadata files have been uploaded.
-          expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
-          break;
-        case metadataKey:
-          expect(req.ContentType).toBe('application/json');
-          expect(Buffer.from(req.Body! as any))
-            .toEqual(Buffer.from(JSON.stringify({
-              constructFrameworks: [],
-              date: time,
-              licenseText: fakeLicense,
-              packageLinks: {},
-              packageTags: [],
-            })));
-          mockMetadataCreated = true;
-          break;
-        case packageKey:
-          expect(req.ContentType).toBe('application/octet-stream');
-          expect(req.Body).toEqual(fakeTarGz);
-          mockTarballCreated = true;
-          break;
-        default:
-          fail(`Unexpected key: "${req.Key}"`);
+  const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(
+    packageName,
+    packageVersion
+  );
+  AWSMock.mock(
+    'S3',
+    'putObject',
+    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
+      try {
+        expect(req.Bucket).toBe(mockBucketName);
+        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
+        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+        switch (req.Key) {
+          case assemblyKey:
+            expect(req.ContentType).toBe('application/json');
+            assertAssembly(fakeDotJsii, req.Body?.toString());
+            // Must be created strictly after the tarball and metadata files have been uploaded.
+            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+            break;
+          case metadataKey:
+            expect(req.ContentType).toBe('application/json');
+            expect(Buffer.from(req.Body! as any)).toEqual(
+              Buffer.from(
+                JSON.stringify({
+                  constructFrameworks: [],
+                  date: time,
+                  licenseText: fakeLicense,
+                  packageLinks: {},
+                  packageTags: [],
+                })
+              )
+            );
+            mockMetadataCreated = true;
+            break;
+          case packageKey:
+            expect(req.ContentType).toBe('application/octet-stream');
+            expect(req.Body).toEqual(fakeTarGz);
+            mockTarballCreated = true;
+            break;
+          default:
+            fail(`Unexpected key: "${req.Key}"`);
+        }
+      } catch (e) {
+        return cb(e);
       }
-    } catch (e) {
-      return cb(e);
+      return cb(null, { VersionId: `${req.Key}-NewVersion` });
     }
-    return cb(null, { VersionId: `${req.Key}-NewVersion` });
-  });
+  );
 
   const executionArn = 'Fake-Execution-Arn';
-  AWSMock.mock('StepFunctions', 'startExecution', (req: AWS.StepFunctions.StartExecutionInput, cb: Response<AWS.StepFunctions.StartExecutionOutput>) => {
-    try {
-      expect(req.stateMachineArn).toBe(mockStateMachineArn);
-      expect(JSON.parse(req.input!)).toEqual({
-        bucket: mockBucketName,
-        assembly: { key: assemblyKey, versionId: `${assemblyKey}-NewVersion` },
-        metadata: { key: metadataKey, versionId: `${metadataKey}-NewVersion` },
-        package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+  AWSMock.mock(
+    'StepFunctions',
+    'startExecution',
+    (
+      req: AWS.StepFunctions.StartExecutionInput,
+      cb: Response<AWS.StepFunctions.StartExecutionOutput>
+    ) => {
+      try {
+        expect(req.stateMachineArn).toBe(mockStateMachineArn);
+        expect(JSON.parse(req.input!)).toEqual({
+          bucket: mockBucketName,
+          assembly: {
+            key: assemblyKey,
+            versionId: `${assemblyKey}-NewVersion`,
+          },
+          metadata: {
+            key: metadataKey,
+            versionId: `${metadataKey}-NewVersion`,
+          },
+          package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+        });
+      } catch (e) {
+        return cb(e);
+      }
+      return cb(null, {
+        executionArn,
+        startDate: new Date(),
       });
-    } catch (e) {
-      return cb(e);
     }
-    return cb(null, {
-      executionArn,
-      startDate: new Date(),
-    });
-  });
+  );
 
   const event: SQSEvent = {
-    Records: [{
-      attributes: {} as any,
-      awsRegion: 'test-bermuda-1',
-      body: JSON.stringify({ tarballUri, integrity, time }),
-      eventSource: 'sqs',
-      eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
-      md5OfBody: 'Fake-MD5-Of-Body',
-      messageAttributes: {},
-      messageId: 'Fake-Message-ID',
-      receiptHandle: 'Fake-Receipt-Handke',
-    }],
+    Records: [
+      {
+        attributes: {} as any,
+        awsRegion: 'test-bermuda-1',
+        body: JSON.stringify({ tarballUri, integrity, time }),
+        eventSource: 'sqs',
+        eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
+        md5OfBody: 'Fake-MD5-Of-Body',
+        messageAttributes: {},
+        messageId: 'Fake-Message-ID',
+        receiptHandle: 'Fake-Receipt-Handke',
+      },
+    ],
   };
 
   // We require the handler here so that any mocks to metricScope are set up
   // prior to the handler being created.
   //
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  await expect(require('../../../backend/ingestion/ingestion.lambda').handler(event, context))
-    .resolves.toEqual([executionArn]);
+  await expect(
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('../../../backend/ingestion/ingestion.lambda').handler(
+      event,
+      context
+    )
+  ).resolves.toEqual([executionArn]);
 
-  expect(mockPutMetric).toHaveBeenCalledWith(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 0, 'Count');
-  expect(mockPutMetric).toHaveBeenCalledWith(MetricName.FOUND_LICENSE_FILE, 1, 'Count');
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.MISMATCHED_IDENTITY_REJECTIONS,
+    0,
+    'Count'
+  );
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.FOUND_LICENSE_FILE,
+    1,
+    'Count'
+  );
 });
 
 test('basic happy case with custom package links', async () => {
@@ -380,7 +513,8 @@ test('basic happy case with custom package links', async () => {
   const mockConfigkey = 'fake-config-obj-key';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
+  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared')
+    .requireEnv as jest.MockedFunction<typeof requireEnv>;
   mockRequireEnv.mockImplementation((name) => {
     if (name === 'BUCKET_NAME') {
       return mockBucketName;
@@ -410,22 +544,30 @@ test('basic happy case with custom package links', async () => {
   const packageLicense = 'Apache-2.0';
   const packageLinkValue = 'https://somehost.com';
   const packageLinkBadValue = 'https://somebadhost.com';
-  const fakeDotJsii = JSON.stringify(fakeAssembly(packageName, packageVersion, packageLicense));
-  const mockConfig = Buffer.from(JSON.stringify({
-    packageLinks: [{
-      linkLabel: 'PackageLink',
-      configKey: 'PackageLinkKey',
-    }, {
-      linkLabel: 'PackageLinkDomain',
-      configKey: 'PackageLinkDomainKey',
-      allowedDomains: ['somehost.com'],
-    }, {
-      linkLabel: 'PackageLinkBadDomain',
-      configKey: 'PackageLinkBadDomainKey',
-      allowedDomains: ['somehost.com'],
-    }],
-    packageTags: [],
-  }));
+  const fakeDotJsii = JSON.stringify(
+    fakeAssembly(packageName, packageVersion, packageLicense)
+  );
+  const mockConfig = Buffer.from(
+    JSON.stringify({
+      packageLinks: [
+        {
+          linkLabel: 'PackageLink',
+          configKey: 'PackageLinkKey',
+        },
+        {
+          linkLabel: 'PackageLinkDomain',
+          configKey: 'PackageLinkDomainKey',
+          allowedDomains: ['somehost.com'],
+        },
+        {
+          linkLabel: 'PackageLinkBadDomain',
+          configKey: 'PackageLinkBadDomainKey',
+          allowedDomains: ['somehost.com'],
+        },
+      ],
+      packageTags: [],
+    })
+  );
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -433,133 +575,184 @@ test('basic happy case with custom package links', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-    if (req.Bucket === mockConfigBucket) {
+  AWSMock.mock(
+    'S3',
+    'getObject',
+    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      if (req.Bucket === mockConfigBucket) {
+        try {
+          expect(req.Bucket).toBe(mockConfigBucket);
+          expect(req.Key).toBe(mockConfigkey);
+        } catch (e) {
+          return cb(e);
+        }
+        return cb(null, { Body: mockConfig });
+      }
+
       try {
-        expect(req.Bucket).toBe(mockConfigBucket);
-        expect(req.Key).toBe(mockConfigkey);
+        expect(req.Bucket).toBe(stagingBucket);
+        expect(req.Key).toBe(stagingKey);
+        expect(req.VersionId).toBe(stagingVersion);
       } catch (e) {
         return cb(e);
       }
-      return cb(null, { Body: mockConfig });
+      return cb(null, { Body: fakeTarGz });
     }
-
-    try {
-      expect(req.Bucket).toBe(stagingBucket);
-      expect(req.Key).toBe(stagingKey);
-      expect(req.VersionId).toBe(stagingVersion);
-    } catch (e) {
-      return cb(e);
-    }
-    return cb(null, { Body: fakeTarGz });
-  });
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<typeof createGunzip>;
-  mockCreateGunzip.mockImplementation(() => new FakeGunzip(fakeTarGz, fakeTar) as any);
+  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
+    typeof createGunzip
+  >;
+  mockCreateGunzip.mockImplementation(
+    () => new FakeGunzip(fakeTarGz, fakeTar) as any
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<typeof extract>;
-  mockExtract.mockImplementation(() => new FakeExtract(fakeTar, {
-    'package/.jsii': fakeDotJsii,
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({
-      name: packageName,
-      version: packageVersion,
-      license: packageLicense,
-      constructHub: {
-        packageLinks: {
-          PackageLinkKey: packageLinkValue,
-          PackageLinkDomainKey: packageLinkValue,
-          PackageLinkBadDomainKey: packageLinkBadValue,
-        },
-      },
-    }),
-  }) as any);
-
-  let mockTarballCreated = false;
-  let mockMetadataCreated = false;
-  const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(packageName, packageVersion);
-  AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-    try {
-      expect(req.Bucket).toBe(mockBucketName);
-      expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
-      expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
-      expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
-      switch (req.Key) {
-        case assemblyKey:
-          expect(req.ContentType).toBe('application/json');
-          assertAssembly(fakeDotJsii, req.Body?.toString());
-          // Must be created strictly after the tarball and metadata files have been uploaded.
-          expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
-          break;
-        case metadataKey:
-          expect(req.ContentType).toBe('application/json');
-          expect(Buffer.from(req.Body! as any)).toEqual(Buffer.from(JSON.stringify({
-            constructFrameworks: [],
-            date: time,
+  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
+    typeof extract
+  >;
+  mockExtract.mockImplementation(
+    () =>
+      new FakeExtract(fakeTar, {
+        'package/.jsii': fakeDotJsii,
+        'package/index.js': '// Ignore me!',
+        'package/package.json': JSON.stringify({
+          name: packageName,
+          version: packageVersion,
+          license: packageLicense,
+          constructHub: {
             packageLinks: {
               PackageLinkKey: packageLinkValue,
               PackageLinkDomainKey: packageLinkValue,
-            // no bad domain key since validation fails
+              PackageLinkBadDomainKey: packageLinkBadValue,
             },
-            packageTags: [],
-          })));
-          mockMetadataCreated = true;
-          break;
-        case packageKey:
-          expect(req.ContentType).toBe('application/octet-stream');
-          expect(req.Body).toEqual(fakeTarGz);
-          mockTarballCreated = true;
-          break;
-        default:
-          fail(`Unexpected key: "${req.Key}"`);
+          },
+        }),
+      }) as any
+  );
+
+  let mockTarballCreated = false;
+  let mockMetadataCreated = false;
+  const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(
+    packageName,
+    packageVersion
+  );
+  AWSMock.mock(
+    'S3',
+    'putObject',
+    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
+      try {
+        expect(req.Bucket).toBe(mockBucketName);
+        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
+        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+        switch (req.Key) {
+          case assemblyKey:
+            expect(req.ContentType).toBe('application/json');
+            assertAssembly(fakeDotJsii, req.Body?.toString());
+            // Must be created strictly after the tarball and metadata files have been uploaded.
+            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+            break;
+          case metadataKey:
+            expect(req.ContentType).toBe('application/json');
+            expect(Buffer.from(req.Body! as any)).toEqual(
+              Buffer.from(
+                JSON.stringify({
+                  constructFrameworks: [],
+                  date: time,
+                  packageLinks: {
+                    PackageLinkKey: packageLinkValue,
+                    PackageLinkDomainKey: packageLinkValue,
+                    // no bad domain key since validation fails
+                  },
+                  packageTags: [],
+                })
+              )
+            );
+            mockMetadataCreated = true;
+            break;
+          case packageKey:
+            expect(req.ContentType).toBe('application/octet-stream');
+            expect(req.Body).toEqual(fakeTarGz);
+            mockTarballCreated = true;
+            break;
+          default:
+            fail(`Unexpected key: "${req.Key}"`);
+        }
+      } catch (e) {
+        return cb(e);
       }
-    } catch (e) {
-      return cb(e);
+      return cb(null, { VersionId: `${req.Key}-NewVersion` });
     }
-    return cb(null, { VersionId: `${req.Key}-NewVersion` });
-  });
+  );
 
   const executionArn = 'Fake-Execution-Arn';
-  AWSMock.mock('StepFunctions', 'startExecution', (req: AWS.StepFunctions.StartExecutionInput, cb: Response<AWS.StepFunctions.StartExecutionOutput>) => {
-    try {
-      expect(req.stateMachineArn).toBe(mockStateMachineArn);
-      expect(JSON.parse(req.input!)).toEqual({
-        bucket: mockBucketName,
-        assembly: { key: assemblyKey, versionId: `${assemblyKey}-NewVersion` },
-        metadata: { key: metadataKey, versionId: `${metadataKey}-NewVersion` },
-        package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
-      });
-    } catch (e) {
-      return cb(e);
+  AWSMock.mock(
+    'StepFunctions',
+    'startExecution',
+    (
+      req: AWS.StepFunctions.StartExecutionInput,
+      cb: Response<AWS.StepFunctions.StartExecutionOutput>
+    ) => {
+      try {
+        expect(req.stateMachineArn).toBe(mockStateMachineArn);
+        expect(JSON.parse(req.input!)).toEqual({
+          bucket: mockBucketName,
+          assembly: {
+            key: assemblyKey,
+            versionId: `${assemblyKey}-NewVersion`,
+          },
+          metadata: {
+            key: metadataKey,
+            versionId: `${metadataKey}-NewVersion`,
+          },
+          package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+        });
+      } catch (e) {
+        return cb(e);
+      }
+      return cb(null, { executionArn, startDate: new Date() });
     }
-    return cb(null, { executionArn, startDate: new Date() });
-  });
+  );
 
   const event: SQSEvent = {
-    Records: [{
-      attributes: {} as any,
-      awsRegion: 'test-bermuda-1',
-      body: JSON.stringify({ tarballUri, integrity, time }),
-      eventSource: 'sqs',
-      eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
-      md5OfBody: 'Fake-MD5-Of-Body',
-      messageAttributes: {},
-      messageId: 'Fake-Message-ID',
-      receiptHandle: 'Fake-Receipt-Handke',
-    }],
+    Records: [
+      {
+        attributes: {} as any,
+        awsRegion: 'test-bermuda-1',
+        body: JSON.stringify({ tarballUri, integrity, time }),
+        eventSource: 'sqs',
+        eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
+        md5OfBody: 'Fake-MD5-Of-Body',
+        messageAttributes: {},
+        messageId: 'Fake-Message-ID',
+        receiptHandle: 'Fake-Receipt-Handke',
+      },
+    ],
   };
 
   // We require the handler here so that any mocks to metricScope are set up
   // prior to the handler being created.
   //
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  await expect(require('../../../backend/ingestion/ingestion.lambda').handler(event, context))
-    .resolves.toEqual([executionArn]);
+  await expect(
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('../../../backend/ingestion/ingestion.lambda').handler(
+      event,
+      context
+    )
+  ).resolves.toEqual([executionArn]);
 
-  expect(mockPutMetric).toHaveBeenCalledWith(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 0, 'Count');
-  expect(mockPutMetric).toHaveBeenCalledWith(MetricName.FOUND_LICENSE_FILE, 0, 'Count');
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.MISMATCHED_IDENTITY_REJECTIONS,
+    0,
+    'Count'
+  );
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.FOUND_LICENSE_FILE,
+    0,
+    'Count'
+  );
 });
 
 test('basic happy case with custom tags', async () => {
@@ -570,7 +763,8 @@ test('basic happy case with custom tags', async () => {
   const mockConfigkey = 'fake-config-obj-key';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
+  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared')
+    .requireEnv as jest.MockedFunction<typeof requireEnv>;
   mockRequireEnv.mockImplementation((name) => {
     if (name === 'BUCKET_NAME') {
       return mockBucketName;
@@ -597,7 +791,9 @@ test('basic happy case with custom tags', async () => {
   const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
-  const fakeDotJsii = JSON.stringify(fakeAssembly(packageName, packageVersion, packageLicense));
+  const fakeDotJsii = JSON.stringify(
+    fakeAssembly(packageName, packageVersion, packageLicense)
+  );
 
   // Some true and false tags to assert against in output
   const mockTrueCondition = TagCondition.field('name').eq(packageName);
@@ -626,23 +822,22 @@ test('basic happy case with custom tags', async () => {
   // Useful for later since we need this ordered array to assert against
   const trueEntries = Object.entries(trueTags);
   const tagMaker = (prefix: string, tags: [string, TagCondition][]) =>
-    tags
-      .map(
-        ([key, cond]: [string, TagCondition]) => ({
-          condition: cond.bind(),
-          label: `${prefix}_${key}`,
-        }),
-      );
+    tags.map(([key, cond]: [string, TagCondition]) => ({
+      condition: cond.bind(),
+      label: `${prefix}_${key}`,
+    }));
 
   const mockPackageTags = [
     ...tagMaker('true', trueEntries),
     ...tagMaker('false', Object.entries(falseTags)),
   ];
 
-  const mockConfig = Buffer.from(JSON.stringify({
-    packageLinks: [],
-    packageTags: mockPackageTags,
-  }));
+  const mockConfig = Buffer.from(
+    JSON.stringify({
+      packageLinks: [],
+      packageTags: mockPackageTags,
+    })
+  );
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -650,126 +845,185 @@ test('basic happy case with custom tags', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-    if (req.Bucket === mockConfigBucket) {
+  AWSMock.mock(
+    'S3',
+    'getObject',
+    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      if (req.Bucket === mockConfigBucket) {
+        try {
+          expect(req.Bucket).toBe(mockConfigBucket);
+          expect(req.Key).toBe(mockConfigkey);
+        } catch (e) {
+          return cb(e);
+        }
+        return cb(null, { Body: mockConfig });
+      }
+
       try {
-        expect(req.Bucket).toBe(mockConfigBucket);
-        expect(req.Key).toBe(mockConfigkey);
+        expect(req.Bucket).toBe(stagingBucket);
+        expect(req.Key).toBe(stagingKey);
+        expect(req.VersionId).toBe(stagingVersion);
       } catch (e) {
         return cb(e);
       }
-      return cb(null, { Body: mockConfig });
+      return cb(null, { Body: fakeTarGz });
     }
-
-    try {
-      expect(req.Bucket).toBe(stagingBucket);
-      expect(req.Key).toBe(stagingKey);
-      expect(req.VersionId).toBe(stagingVersion);
-    } catch (e) {
-      return cb(e);
-    }
-    return cb(null, { Body: fakeTarGz });
-  });
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<typeof createGunzip>;
-  mockCreateGunzip.mockImplementation(() => new FakeGunzip(fakeTarGz, fakeTar) as any);
+  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
+    typeof createGunzip
+  >;
+  mockCreateGunzip.mockImplementation(
+    () => new FakeGunzip(fakeTarGz, fakeTar) as any
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<typeof extract>;
-  mockExtract.mockImplementation(() => new FakeExtract(fakeTar, {
-    'package/.jsii': fakeDotJsii,
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({
-      name: packageName,
-      version: packageVersion,
-      license: packageLicense,
-    }),
-  }) as any);
+  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
+    typeof extract
+  >;
+  mockExtract.mockImplementation(
+    () =>
+      new FakeExtract(fakeTar, {
+        'package/.jsii': fakeDotJsii,
+        'package/index.js': '// Ignore me!',
+        'package/package.json': JSON.stringify({
+          name: packageName,
+          version: packageVersion,
+          license: packageLicense,
+        }),
+      }) as any
+  );
 
   let mockTarballCreated = false;
   let mockMetadataCreated = false;
-  const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(packageName, packageVersion);
-  AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-    try {
-      expect(req.Bucket).toBe(mockBucketName);
-      expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
-      expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
-      expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
-      switch (req.Key) {
-        case assemblyKey:
-          expect(req.ContentType).toBe('application/json');
-          assertAssembly(fakeDotJsii, req.Body?.toString());
-          // Must be created strictly after the tarball and metadata files have been uploaded.
-          expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
-          break;
-        case metadataKey:
-          expect(req.ContentType).toBe('application/json');
-          expect(Buffer.from(req.Body! as any)).toEqual(Buffer.from(JSON.stringify({
-            constructFrameworks: [],
-            date: time,
-            packageLinks: {},
-            // only includes true tags
-            packageTags: trueEntries.map(([name]) => ({ label: `true_${name}` })),
-          })));
-          mockMetadataCreated = true;
-          break;
-        case packageKey:
-          expect(req.ContentType).toBe('application/octet-stream');
-          expect(req.Body).toEqual(fakeTarGz);
-          mockTarballCreated = true;
-          break;
-        default:
-          fail(`Unexpected key: "${req.Key}"`);
+  const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(
+    packageName,
+    packageVersion
+  );
+  AWSMock.mock(
+    'S3',
+    'putObject',
+    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
+      try {
+        expect(req.Bucket).toBe(mockBucketName);
+        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
+        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+        switch (req.Key) {
+          case assemblyKey:
+            expect(req.ContentType).toBe('application/json');
+            assertAssembly(fakeDotJsii, req.Body?.toString());
+            // Must be created strictly after the tarball and metadata files have been uploaded.
+            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+            break;
+          case metadataKey:
+            expect(req.ContentType).toBe('application/json');
+            expect(Buffer.from(req.Body! as any)).toEqual(
+              Buffer.from(
+                JSON.stringify({
+                  constructFrameworks: [],
+                  date: time,
+                  packageLinks: {},
+                  // only includes true tags
+                  packageTags: trueEntries.map(([name]) => ({
+                    label: `true_${name}`,
+                  })),
+                })
+              )
+            );
+            mockMetadataCreated = true;
+            break;
+          case packageKey:
+            expect(req.ContentType).toBe('application/octet-stream');
+            expect(req.Body).toEqual(fakeTarGz);
+            mockTarballCreated = true;
+            break;
+          default:
+            fail(`Unexpected key: "${req.Key}"`);
+        }
+      } catch (e) {
+        return cb(e);
       }
-    } catch (e) {
-      return cb(e);
+      return cb(null, { VersionId: `${req.Key}-NewVersion` });
     }
-    return cb(null, { VersionId: `${req.Key}-NewVersion` });
-  });
+  );
 
   const executionArn = 'Fake-Execution-Arn';
-  AWSMock.mock('StepFunctions', 'startExecution', (req: AWS.StepFunctions.StartExecutionInput, cb: Response<AWS.StepFunctions.StartExecutionOutput>) => {
-    try {
-      expect(req.stateMachineArn).toBe(mockStateMachineArn);
-      expect(JSON.parse(req.input!)).toEqual({
-        bucket: mockBucketName,
-        assembly: { key: assemblyKey, versionId: `${assemblyKey}-NewVersion` },
-        metadata: { key: metadataKey, versionId: `${metadataKey}-NewVersion` },
-        package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
-      });
-    } catch (e) {
-      return cb(e);
+  AWSMock.mock(
+    'StepFunctions',
+    'startExecution',
+    (
+      req: AWS.StepFunctions.StartExecutionInput,
+      cb: Response<AWS.StepFunctions.StartExecutionOutput>
+    ) => {
+      try {
+        expect(req.stateMachineArn).toBe(mockStateMachineArn);
+        expect(JSON.parse(req.input!)).toEqual({
+          bucket: mockBucketName,
+          assembly: {
+            key: assemblyKey,
+            versionId: `${assemblyKey}-NewVersion`,
+          },
+          metadata: {
+            key: metadataKey,
+            versionId: `${metadataKey}-NewVersion`,
+          },
+          package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+        });
+      } catch (e) {
+        return cb(e);
+      }
+      return cb(null, { executionArn, startDate: new Date() });
     }
-    return cb(null, { executionArn, startDate: new Date() });
-  });
+  );
 
   const event: SQSEvent = {
-    Records: [{
-      attributes: {} as any,
-      awsRegion: 'test-bermuda-1',
-      body: JSON.stringify({ tarballUri, integrity, time }),
-      eventSource: 'sqs',
-      eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
-      md5OfBody: 'Fake-MD5-Of-Body',
-      messageAttributes: {},
-      messageId: 'Fake-Message-ID',
-      receiptHandle: 'Fake-Receipt-Handke',
-    }],
+    Records: [
+      {
+        attributes: {} as any,
+        awsRegion: 'test-bermuda-1',
+        body: JSON.stringify({ tarballUri, integrity, time }),
+        eventSource: 'sqs',
+        eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
+        md5OfBody: 'Fake-MD5-Of-Body',
+        messageAttributes: {},
+        messageId: 'Fake-Message-ID',
+        receiptHandle: 'Fake-Receipt-Handke',
+      },
+    ],
   };
 
   // We require the handler here so that any mocks to metricScope are set up
   // prior to the handler being created.
   //
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  await expect(require('../../../backend/ingestion/ingestion.lambda').handler(event, context))
-    .resolves.toEqual([executionArn]);
 
-  expect(mockPutMetric).toHaveBeenCalledWith(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 0, 'Count');
-  expect(mockPutMetric).toHaveBeenCalledWith(MetricName.FOUND_LICENSE_FILE, 0, 'Count');
+  await expect(
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('../../../backend/ingestion/ingestion.lambda').handler(
+      event,
+      context
+    )
+  ).resolves.toEqual([executionArn]);
+
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.MISMATCHED_IDENTITY_REJECTIONS,
+    0,
+    'Count'
+  );
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.FOUND_LICENSE_FILE,
+    0,
+    'Count'
+  );
 });
 
-for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], ['aws-cdk', 'aws-cdk-lib'], ['cdk8s', 'cdk8s'], ['cdktf', 'cdktf']]) {
+for (const [frameworkName, frameworkPackage] of [
+  ['aws-cdk', '@aws-cdk/core'],
+  ['aws-cdk', 'aws-cdk-lib'],
+  ['cdk8s', 'cdk8s'],
+  ['cdktf', 'cdktf'],
+]) {
   test(`basic happy case with constructs framework (${frameworkName})`, async () => {
     const mockBucketName = 'fake-bucket';
     const mockStateMachineArn = 'fake-state-machine-arn';
@@ -777,7 +1031,8 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
     const mockConfigkey = 'fake-config-obj-key';
 
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
+    const mockRequireEnv = require('../../../backend/shared/env.lambda-shared')
+      .requireEnv as jest.MockedFunction<typeof requireEnv>;
     mockRequireEnv.mockImplementation((name) => {
       if (name === 'BUCKET_NAME') {
         return mockBucketName;
@@ -808,12 +1063,18 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
     const fakeDotJsii = JSON.stringify({
       ...fakeAssembly(packageName, packageVersion, packageLicense),
       dependencies: { [frameworkPackage]: '^1337.234.567' },
-      dependencyClosure: { [frameworkPackage]: { /* ... */ } },
+      dependencyClosure: {
+        [frameworkPackage]: {
+          /* ... */
+        },
+      },
     });
-    const mockConfig = Buffer.from(JSON.stringify({
-      packageLinks: [],
-      packageTags: [],
-    }));
+    const mockConfig = Buffer.from(
+      JSON.stringify({
+        packageLinks: [],
+        packageTags: [],
+      })
+    );
 
     const context: Context = {
       awsRequestId: 'Fake-Request-ID',
@@ -821,118 +1082,172 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
       logStreamName: 'Fake-Log-Stream',
     } as any;
 
-    AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      if (req.Bucket === mockConfigBucket) {
+    AWSMock.mock(
+      'S3',
+      'getObject',
+      (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+        if (req.Bucket === mockConfigBucket) {
+          try {
+            expect(req.Bucket).toBe(mockConfigBucket);
+            expect(req.Key).toBe(mockConfigkey);
+          } catch (e) {
+            return cb(e);
+          }
+          return cb(null, { Body: mockConfig });
+        }
+
         try {
-          expect(req.Bucket).toBe(mockConfigBucket);
-          expect(req.Key).toBe(mockConfigkey);
+          expect(req.Bucket).toBe(stagingBucket);
+          expect(req.Key).toBe(stagingKey);
+          expect(req.VersionId).toBe(stagingVersion);
         } catch (e) {
           return cb(e);
         }
-        return cb(null, { Body: mockConfig });
+        return cb(null, { Body: fakeTarGz });
       }
-
-      try {
-        expect(req.Bucket).toBe(stagingBucket);
-        expect(req.Key).toBe(stagingKey);
-        expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
-        return cb(e);
-      }
-      return cb(null, { Body: fakeTarGz });
-    });
+    );
 
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<typeof createGunzip>;
-    mockCreateGunzip.mockImplementation(() => new FakeGunzip(fakeTarGz, fakeTar) as any);
+    const mockCreateGunzip = require('zlib')
+      .createGunzip as jest.MockedFunction<typeof createGunzip>;
+    mockCreateGunzip.mockImplementation(
+      () => new FakeGunzip(fakeTarGz, fakeTar) as any
+    );
 
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mockExtract = require('tar-stream').extract as jest.MockedFunction<typeof extract>;
-    mockExtract.mockImplementation(() => new FakeExtract(fakeTar, {
-      'package/.jsii': fakeDotJsii,
-      'package/index.js': '// Ignore me!',
-      'package/package.json': JSON.stringify({ name: packageName, version: packageVersion, license: packageLicense }),
-    }) as any);
+    const mockExtract = require('tar-stream').extract as jest.MockedFunction<
+      typeof extract
+    >;
+    mockExtract.mockImplementation(
+      () =>
+        new FakeExtract(fakeTar, {
+          'package/.jsii': fakeDotJsii,
+          'package/index.js': '// Ignore me!',
+          'package/package.json': JSON.stringify({
+            name: packageName,
+            version: packageVersion,
+            license: packageLicense,
+          }),
+        }) as any
+    );
 
     let mockTarballCreated = false;
     let mockMetadataCreated = false;
-    const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(packageName, packageVersion);
-    AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-      try {
-        expect(req.Bucket).toBe(mockBucketName);
-        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
-        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
-        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
-        switch (req.Key) {
-          case assemblyKey:
-            expect(req.ContentType).toBe('application/json');
-            assertAssembly(fakeDotJsii, req.Body?.toString());
-            // Must be created strictly after the tarball and metadata files have been uploaded.
-            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
-            break;
-          case metadataKey:
-            expect(req.ContentType).toBe('application/json');
-            expect(JSON.parse(req.Body!.toString('utf-8'))).toEqual({
-              constructFrameworks: [{ name: frameworkName, majorVersion: 1337 }],
-              date: time,
-              packageLinks: {},
-              packageTags: [],
-            });
-            mockMetadataCreated = true;
-            break;
-          case packageKey:
-            expect(req.ContentType).toBe('application/octet-stream');
-            expect(req.Body).toEqual(fakeTarGz);
-            mockTarballCreated = true;
-            break;
-          default:
-            fail(`Unexpected key: "${req.Key}"`);
+    const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(
+      packageName,
+      packageVersion
+    );
+    AWSMock.mock(
+      'S3',
+      'putObject',
+      (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
+        try {
+          expect(req.Bucket).toBe(mockBucketName);
+          expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+          expect(req.Metadata?.['Lambda-Log-Stream']).toBe(
+            context.logStreamName
+          );
+          expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+          switch (req.Key) {
+            case assemblyKey:
+              expect(req.ContentType).toBe('application/json');
+              assertAssembly(fakeDotJsii, req.Body?.toString());
+              // Must be created strictly after the tarball and metadata files have been uploaded.
+              expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+              break;
+            case metadataKey:
+              expect(req.ContentType).toBe('application/json');
+              expect(JSON.parse(req.Body!.toString('utf-8'))).toEqual({
+                constructFrameworks: [
+                  { name: frameworkName, majorVersion: 1337 },
+                ],
+                date: time,
+                packageLinks: {},
+                packageTags: [],
+              });
+              mockMetadataCreated = true;
+              break;
+            case packageKey:
+              expect(req.ContentType).toBe('application/octet-stream');
+              expect(req.Body).toEqual(fakeTarGz);
+              mockTarballCreated = true;
+              break;
+            default:
+              fail(`Unexpected key: "${req.Key}"`);
+          }
+        } catch (e) {
+          return cb(e);
         }
-      } catch (e) {
-        return cb(e);
+        return cb(null, { VersionId: `${req.Key}-NewVersion` });
       }
-      return cb(null, { VersionId: `${req.Key}-NewVersion` });
-    });
+    );
 
     const executionArn = 'Fake-Execution-Arn';
-    AWSMock.mock('StepFunctions', 'startExecution', (req: AWS.StepFunctions.StartExecutionInput, cb: Response<AWS.StepFunctions.StartExecutionOutput>) => {
-      try {
-        expect(req.stateMachineArn).toBe(mockStateMachineArn);
-        expect(JSON.parse(req.input!)).toEqual({
-          bucket: mockBucketName,
-          assembly: { key: assemblyKey, versionId: `${assemblyKey}-NewVersion` },
-          metadata: { key: metadataKey, versionId: `${metadataKey}-NewVersion` },
-          package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
-        });
-      } catch (e) {
-        return cb(e);
+    AWSMock.mock(
+      'StepFunctions',
+      'startExecution',
+      (
+        req: AWS.StepFunctions.StartExecutionInput,
+        cb: Response<AWS.StepFunctions.StartExecutionOutput>
+      ) => {
+        try {
+          expect(req.stateMachineArn).toBe(mockStateMachineArn);
+          expect(JSON.parse(req.input!)).toEqual({
+            bucket: mockBucketName,
+            assembly: {
+              key: assemblyKey,
+              versionId: `${assemblyKey}-NewVersion`,
+            },
+            metadata: {
+              key: metadataKey,
+              versionId: `${metadataKey}-NewVersion`,
+            },
+            package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+          });
+        } catch (e) {
+          return cb(e);
+        }
+        return cb(null, { executionArn, startDate: new Date() });
       }
-      return cb(null, { executionArn, startDate: new Date() });
-    });
+    );
 
     const event: SQSEvent = {
-      Records: [{
-        attributes: {} as any,
-        awsRegion: 'test-bermuda-1',
-        body: JSON.stringify({ tarballUri, integrity, time }),
-        eventSource: 'sqs',
-        eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
-        md5OfBody: 'Fake-MD5-Of-Body',
-        messageAttributes: {},
-        messageId: 'Fake-Message-ID',
-        receiptHandle: 'Fake-Receipt-Handke',
-      }],
+      Records: [
+        {
+          attributes: {} as any,
+          awsRegion: 'test-bermuda-1',
+          body: JSON.stringify({ tarballUri, integrity, time }),
+          eventSource: 'sqs',
+          eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
+          md5OfBody: 'Fake-MD5-Of-Body',
+          messageAttributes: {},
+          messageId: 'Fake-Message-ID',
+          receiptHandle: 'Fake-Receipt-Handke',
+        },
+      ],
     };
 
-    // We require the handler here so that any mocks to metricScope are set up
-    // prior to the handler being created.
-    //
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    await expect(require('../../../backend/ingestion/ingestion.lambda').handler(event, context))
-      .resolves.toEqual([executionArn]);
+    await expect(
+      // We require the handler here so that any mocks to metricScope are set up
+      // prior to the handler being created.
+      //
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      require('../../../backend/ingestion/ingestion.lambda').handler(
+        event,
+        context
+      )
+    ).resolves.toEqual([executionArn]);
 
-    expect(mockPutMetric).toHaveBeenCalledWith(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 0, 'Count');
-    expect(mockPutMetric).toHaveBeenCalledWith(MetricName.FOUND_LICENSE_FILE, 0, 'Count');
+    expect(mockPutMetric).toHaveBeenCalledWith(
+      MetricName.MISMATCHED_IDENTITY_REJECTIONS,
+      0,
+      'Count'
+    );
+    expect(mockPutMetric).toHaveBeenCalledWith(
+      MetricName.FOUND_LICENSE_FILE,
+      0,
+      'Count'
+    );
   });
 
   test(`the construct framework package itself (${frameworkPackage} => ${frameworkName})`, async () => {
@@ -942,7 +1257,8 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
     const mockConfigkey = 'fake-config-obj-key';
 
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
+    const mockRequireEnv = require('../../../backend/shared/env.lambda-shared')
+      .requireEnv as jest.MockedFunction<typeof requireEnv>;
     mockRequireEnv.mockImplementation((name) => {
       if (name === 'BUCKET_NAME') {
         return mockBucketName;
@@ -969,11 +1285,15 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
     const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
     const packageVersion = '42.2.3-pre.4';
     const packageLicense = 'Apache-2.0';
-    const fakeDotJsii = JSON.stringify(fakeAssembly(frameworkPackage, packageVersion, packageLicense));
-    const mockConfig = Buffer.from(JSON.stringify({
-      packageLinks: [],
-      packageTags: [],
-    }));
+    const fakeDotJsii = JSON.stringify(
+      fakeAssembly(frameworkPackage, packageVersion, packageLicense)
+    );
+    const mockConfig = Buffer.from(
+      JSON.stringify({
+        packageLinks: [],
+        packageTags: [],
+      })
+    );
 
     const context: Context = {
       awsRequestId: 'Fake-Request-ID',
@@ -981,118 +1301,172 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
       logStreamName: 'Fake-Log-Stream',
     } as any;
 
-    AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      if (req.Bucket === mockConfigBucket) {
+    AWSMock.mock(
+      'S3',
+      'getObject',
+      (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+        if (req.Bucket === mockConfigBucket) {
+          try {
+            expect(req.Bucket).toBe(mockConfigBucket);
+            expect(req.Key).toBe(mockConfigkey);
+          } catch (e) {
+            return cb(e);
+          }
+          return cb(null, { Body: mockConfig });
+        }
+
         try {
-          expect(req.Bucket).toBe(mockConfigBucket);
-          expect(req.Key).toBe(mockConfigkey);
+          expect(req.Bucket).toBe(stagingBucket);
+          expect(req.Key).toBe(stagingKey);
+          expect(req.VersionId).toBe(stagingVersion);
         } catch (e) {
           return cb(e);
         }
-        return cb(null, { Body: mockConfig });
+        return cb(null, { Body: fakeTarGz });
       }
-
-      try {
-        expect(req.Bucket).toBe(stagingBucket);
-        expect(req.Key).toBe(stagingKey);
-        expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
-        return cb(e);
-      }
-      return cb(null, { Body: fakeTarGz });
-    });
+    );
 
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<typeof createGunzip>;
-    mockCreateGunzip.mockImplementation(() => new FakeGunzip(fakeTarGz, fakeTar) as any);
+    const mockCreateGunzip = require('zlib')
+      .createGunzip as jest.MockedFunction<typeof createGunzip>;
+    mockCreateGunzip.mockImplementation(
+      () => new FakeGunzip(fakeTarGz, fakeTar) as any
+    );
 
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mockExtract = require('tar-stream').extract as jest.MockedFunction<typeof extract>;
-    mockExtract.mockImplementation(() => new FakeExtract(fakeTar, {
-      'package/.jsii': fakeDotJsii,
-      'package/index.js': '// Ignore me!',
-      'package/package.json': JSON.stringify({ name: frameworkPackage, version: packageVersion, license: packageLicense }),
-    }) as any);
+    const mockExtract = require('tar-stream').extract as jest.MockedFunction<
+      typeof extract
+    >;
+    mockExtract.mockImplementation(
+      () =>
+        new FakeExtract(fakeTar, {
+          'package/.jsii': fakeDotJsii,
+          'package/index.js': '// Ignore me!',
+          'package/package.json': JSON.stringify({
+            name: frameworkPackage,
+            version: packageVersion,
+            license: packageLicense,
+          }),
+        }) as any
+    );
 
     let mockTarballCreated = false;
     let mockMetadataCreated = false;
-    const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(frameworkPackage, packageVersion);
-    AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-      try {
-        expect(req.Bucket).toBe(mockBucketName);
-        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
-        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
-        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
-        switch (req.Key) {
-          case assemblyKey:
-            expect(req.ContentType).toBe('application/json');
-            assertAssembly(fakeDotJsii, req.Body?.toString());
-            // Must be created strictly after the tarball and metadata files have been uploaded.
-            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
-            break;
-          case metadataKey:
-            expect(req.ContentType).toBe('application/json');
-            expect(JSON.parse(req.Body!.toString('utf-8'))).toEqual({
-              constructFrameworks: [{ name: frameworkName, majorVersion: 42 }],
-              date: time,
-              packageLinks: {},
-              packageTags: [],
-            });
-            mockMetadataCreated = true;
-            break;
-          case packageKey:
-            expect(req.ContentType).toBe('application/octet-stream');
-            expect(req.Body).toEqual(fakeTarGz);
-            mockTarballCreated = true;
-            break;
-          default:
-            fail(`Unexpected key: "${req.Key}"`);
+    const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(
+      frameworkPackage,
+      packageVersion
+    );
+    AWSMock.mock(
+      'S3',
+      'putObject',
+      (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
+        try {
+          expect(req.Bucket).toBe(mockBucketName);
+          expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+          expect(req.Metadata?.['Lambda-Log-Stream']).toBe(
+            context.logStreamName
+          );
+          expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+          switch (req.Key) {
+            case assemblyKey:
+              expect(req.ContentType).toBe('application/json');
+              assertAssembly(fakeDotJsii, req.Body?.toString());
+              // Must be created strictly after the tarball and metadata files have been uploaded.
+              expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+              break;
+            case metadataKey:
+              expect(req.ContentType).toBe('application/json');
+              expect(JSON.parse(req.Body!.toString('utf-8'))).toEqual({
+                constructFrameworks: [
+                  { name: frameworkName, majorVersion: 42 },
+                ],
+                date: time,
+                packageLinks: {},
+                packageTags: [],
+              });
+              mockMetadataCreated = true;
+              break;
+            case packageKey:
+              expect(req.ContentType).toBe('application/octet-stream');
+              expect(req.Body).toEqual(fakeTarGz);
+              mockTarballCreated = true;
+              break;
+            default:
+              fail(`Unexpected key: "${req.Key}"`);
+          }
+        } catch (e) {
+          return cb(e);
         }
-      } catch (e) {
-        return cb(e);
+        return cb(null, { VersionId: `${req.Key}-NewVersion` });
       }
-      return cb(null, { VersionId: `${req.Key}-NewVersion` });
-    });
+    );
 
     const executionArn = 'Fake-Execution-Arn';
-    AWSMock.mock('StepFunctions', 'startExecution', (req: AWS.StepFunctions.StartExecutionInput, cb: Response<AWS.StepFunctions.StartExecutionOutput>) => {
-      try {
-        expect(req.stateMachineArn).toBe(mockStateMachineArn);
-        expect(JSON.parse(req.input!)).toEqual({
-          bucket: mockBucketName,
-          assembly: { key: assemblyKey, versionId: `${assemblyKey}-NewVersion` },
-          metadata: { key: metadataKey, versionId: `${metadataKey}-NewVersion` },
-          package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
-        });
-      } catch (e) {
-        return cb(e);
+    AWSMock.mock(
+      'StepFunctions',
+      'startExecution',
+      (
+        req: AWS.StepFunctions.StartExecutionInput,
+        cb: Response<AWS.StepFunctions.StartExecutionOutput>
+      ) => {
+        try {
+          expect(req.stateMachineArn).toBe(mockStateMachineArn);
+          expect(JSON.parse(req.input!)).toEqual({
+            bucket: mockBucketName,
+            assembly: {
+              key: assemblyKey,
+              versionId: `${assemblyKey}-NewVersion`,
+            },
+            metadata: {
+              key: metadataKey,
+              versionId: `${metadataKey}-NewVersion`,
+            },
+            package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+          });
+        } catch (e) {
+          return cb(e);
+        }
+        return cb(null, { executionArn, startDate: new Date() });
       }
-      return cb(null, { executionArn, startDate: new Date() });
-    });
+    );
 
     const event: SQSEvent = {
-      Records: [{
-        attributes: {} as any,
-        awsRegion: 'test-bermuda-1',
-        body: JSON.stringify({ tarballUri, integrity, time }),
-        eventSource: 'sqs',
-        eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
-        md5OfBody: 'Fake-MD5-Of-Body',
-        messageAttributes: {},
-        messageId: 'Fake-Message-ID',
-        receiptHandle: 'Fake-Receipt-Handke',
-      }],
+      Records: [
+        {
+          attributes: {} as any,
+          awsRegion: 'test-bermuda-1',
+          body: JSON.stringify({ tarballUri, integrity, time }),
+          eventSource: 'sqs',
+          eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
+          md5OfBody: 'Fake-MD5-Of-Body',
+          messageAttributes: {},
+          messageId: 'Fake-Message-ID',
+          receiptHandle: 'Fake-Receipt-Handke',
+        },
+      ],
     };
 
-    // We require the handler here so that any mocks to metricScope are set up
-    // prior to the handler being created.
-    //
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    await expect(require('../../../backend/ingestion/ingestion.lambda').handler(event, context))
-      .resolves.toEqual([executionArn]);
+    await expect(
+      // We require the handler here so that any mocks to metricScope are set up
+      // prior to the handler being created.
+      //
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      require('../../../backend/ingestion/ingestion.lambda').handler(
+        event,
+        context
+      )
+    ).resolves.toEqual([executionArn]);
 
-    expect(mockPutMetric).toHaveBeenCalledWith(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 0, 'Count');
-    expect(mockPutMetric).toHaveBeenCalledWith(MetricName.FOUND_LICENSE_FILE, 0, 'Count');
+    expect(mockPutMetric).toHaveBeenCalledWith(
+      MetricName.MISMATCHED_IDENTITY_REJECTIONS,
+      0,
+      'Count'
+    );
+    expect(mockPutMetric).toHaveBeenCalledWith(
+      MetricName.FOUND_LICENSE_FILE,
+      0,
+      'Count'
+    );
   });
 
   test(`basic happy case with constructs framework (${frameworkName}), no major`, async () => {
@@ -1102,7 +1476,8 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
     const mockConfigkey = 'fake-config-obj-key';
 
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
+    const mockRequireEnv = require('../../../backend/shared/env.lambda-shared')
+      .requireEnv as jest.MockedFunction<typeof requireEnv>;
     mockRequireEnv.mockImplementation((name) => {
       if (name === 'BUCKET_NAME') {
         return mockBucketName;
@@ -1134,12 +1509,18 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
       ...fakeAssembly(packageName, packageVersion, packageLicense),
       // Not in the `dependencies` closure (e.g: transitive only), so we cannot
       // determine which major version of the framework is being used here.
-      dependencyClosure: { [frameworkPackage]: { /* ... */ } },
+      dependencyClosure: {
+        [frameworkPackage]: {
+          /* ... */
+        },
+      },
     });
-    const mockConfig = Buffer.from(JSON.stringify({
-      packageLinks: [],
-      packageTags: [],
-    }));
+    const mockConfig = Buffer.from(
+      JSON.stringify({
+        packageLinks: [],
+        packageTags: [],
+      })
+    );
 
     const context: Context = {
       awsRequestId: 'Fake-Request-ID',
@@ -1147,7 +1528,230 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
       logStreamName: 'Fake-Log-Stream',
     } as any;
 
-    AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+    AWSMock.mock(
+      'S3',
+      'getObject',
+      (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+        if (req.Bucket === mockConfigBucket) {
+          try {
+            expect(req.Bucket).toBe(mockConfigBucket);
+            expect(req.Key).toBe(mockConfigkey);
+          } catch (e) {
+            return cb(e);
+          }
+          return cb(null, { Body: mockConfig });
+        }
+
+        try {
+          expect(req.Bucket).toBe(stagingBucket);
+          expect(req.Key).toBe(stagingKey);
+          expect(req.VersionId).toBe(stagingVersion);
+        } catch (e) {
+          return cb(e);
+        }
+        return cb(null, { Body: fakeTarGz });
+      }
+    );
+
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const mockCreateGunzip = require('zlib')
+      .createGunzip as jest.MockedFunction<typeof createGunzip>;
+    mockCreateGunzip.mockImplementation(
+      () => new FakeGunzip(fakeTarGz, fakeTar) as any
+    );
+
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const mockExtract = require('tar-stream').extract as jest.MockedFunction<
+      typeof extract
+    >;
+    mockExtract.mockImplementation(
+      () =>
+        new FakeExtract(fakeTar, {
+          'package/.jsii': fakeDotJsii,
+          'package/index.js': '// Ignore me!',
+          'package/package.json': JSON.stringify({
+            name: packageName,
+            version: packageVersion,
+            license: packageLicense,
+          }),
+        }) as any
+    );
+
+    let mockTarballCreated = false;
+    let mockMetadataCreated = false;
+    const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(
+      packageName,
+      packageVersion
+    );
+    AWSMock.mock(
+      'S3',
+      'putObject',
+      (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
+        try {
+          expect(req.Bucket).toBe(mockBucketName);
+          expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+          expect(req.Metadata?.['Lambda-Log-Stream']).toBe(
+            context.logStreamName
+          );
+          expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+          switch (req.Key) {
+            case assemblyKey:
+              expect(req.ContentType).toBe('application/json');
+              assertAssembly(fakeDotJsii, req.Body?.toString());
+              // Must be created strictly after the tarball and metadata files have been uploaded.
+              expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+              break;
+            case metadataKey:
+              expect(req.ContentType).toBe('application/json');
+              expect(JSON.parse(req.Body!.toString('utf-8'))).toEqual({
+                constructFrameworks: [{ name: frameworkName }], // No major version here (intentional)
+                date: time,
+                packageLinks: {},
+                packageTags: [],
+              });
+              mockMetadataCreated = true;
+              break;
+            case packageKey:
+              expect(req.ContentType).toBe('application/octet-stream');
+              expect(req.Body).toEqual(fakeTarGz);
+              mockTarballCreated = true;
+              break;
+            default:
+              fail(`Unexpected key: "${req.Key}"`);
+          }
+        } catch (e) {
+          return cb(e);
+        }
+        return cb(null, { VersionId: `${req.Key}-NewVersion` });
+      }
+    );
+
+    const executionArn = 'Fake-Execution-Arn';
+    AWSMock.mock(
+      'StepFunctions',
+      'startExecution',
+      (
+        req: AWS.StepFunctions.StartExecutionInput,
+        cb: Response<AWS.StepFunctions.StartExecutionOutput>
+      ) => {
+        try {
+          expect(req.stateMachineArn).toBe(mockStateMachineArn);
+          expect(JSON.parse(req.input!)).toEqual({
+            bucket: mockBucketName,
+            assembly: {
+              key: assemblyKey,
+              versionId: `${assemblyKey}-NewVersion`,
+            },
+            metadata: {
+              key: metadataKey,
+              versionId: `${metadataKey}-NewVersion`,
+            },
+            package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+          });
+        } catch (e) {
+          return cb(e);
+        }
+        return cb(null, { executionArn, startDate: new Date() });
+      }
+    );
+
+    const event: SQSEvent = {
+      Records: [
+        {
+          attributes: {} as any,
+          awsRegion: 'test-bermuda-1',
+          body: JSON.stringify({ tarballUri, integrity, time }),
+          eventSource: 'sqs',
+          eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
+          md5OfBody: 'Fake-MD5-Of-Body',
+          messageAttributes: {},
+          messageId: 'Fake-Message-ID',
+          receiptHandle: 'Fake-Receipt-Handke',
+        },
+      ],
+    };
+
+    await expect(
+      // We require the handler here so that any mocks to metricScope are set up
+      // prior to the handler being created.
+      //
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      require('../../../backend/ingestion/ingestion.lambda').handler(
+        event,
+        context
+      )
+    ).resolves.toEqual([executionArn]);
+
+    expect(mockPutMetric).toHaveBeenCalledWith(
+      MetricName.MISMATCHED_IDENTITY_REJECTIONS,
+      0,
+      'Count'
+    );
+    expect(mockPutMetric).toHaveBeenCalledWith(
+      MetricName.FOUND_LICENSE_FILE,
+      0,
+      'Count'
+    );
+  });
+}
+
+test('mismatched package name', async () => {
+  const mockBucketName = 'fake-bucket';
+  const mockStateMachineArn = 'fake-state-machine-arn';
+  const mockConfigBucket = 'fake-config-bucket';
+  const mockConfigkey = 'fake-config-obj-key';
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared')
+    .requireEnv as jest.MockedFunction<typeof requireEnv>;
+  mockRequireEnv.mockImplementation((name) => {
+    if (name === 'BUCKET_NAME') {
+      return mockBucketName;
+    }
+    if (name === 'STATE_MACHINE_ARN') {
+      return mockStateMachineArn;
+    }
+    if (name === 'CONFIG_BUCKET_NAME') {
+      return mockConfigBucket;
+    }
+    if (name === 'CONFIG_FILE_KEY') {
+      return mockConfigkey;
+    }
+    throw new Error(`Bad environment variable: "${name}"`);
+  });
+
+  const stagingBucket = 'staging-bucket';
+  const stagingKey = 'staging-key';
+  const stagingVersion = 'staging-version-id';
+  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
+  const fakeTar = Buffer.from('fake-tarball-content');
+  const fakeLicense = 'inscrutable-legalese';
+  const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
+  const time = '2021-07-12T15:18:00.000000+02:00';
+  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
+  const packageName = '@package-scope/package-name';
+  const packageVersion = '1.2.3-pre.4';
+  const packageLicense = 'Apache-2.0';
+  const fakeDotJsii = JSON.stringify(
+    fakeAssembly(packageName + '-oops', packageVersion, packageLicense)
+  );
+  const mockConfig = Buffer.from(
+    JSON.stringify({
+      packageLinks: [],
+      packageTags: [],
+    })
+  );
+
+  const context: Context = {
+    awsRequestId: 'Fake-Request-ID',
+    logGroupName: 'Fake-Log-Group',
+    logStreamName: 'Fake-Log-Stream',
+  } as any;
+
+  AWSMock.mock(
+    'S3',
+    'getObject',
+    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
       if (req.Bucket === mockConfigBucket) {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
@@ -1166,78 +1770,38 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
-    });
+    }
+  );
 
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<typeof createGunzip>;
-    mockCreateGunzip.mockImplementation(() => new FakeGunzip(fakeTarGz, fakeTar) as any);
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
+    typeof createGunzip
+  >;
+  mockCreateGunzip.mockImplementation(
+    () => new FakeGunzip(fakeTarGz, fakeTar) as any
+  );
 
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mockExtract = require('tar-stream').extract as jest.MockedFunction<typeof extract>;
-    mockExtract.mockImplementation(() => new FakeExtract(fakeTar, {
-      'package/.jsii': fakeDotJsii,
-      'package/index.js': '// Ignore me!',
-      'package/package.json': JSON.stringify({ name: packageName, version: packageVersion, license: packageLicense }),
-    }) as any);
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
+    typeof extract
+  >;
+  mockExtract.mockImplementation(
+    () =>
+      new FakeExtract(fakeTar, {
+        'package/.jsii': fakeDotJsii,
+        'package/LICENSE.md': fakeLicense,
+        'package/index.js': '// Ignore me!',
+        'package/package.json': JSON.stringify({
+          name: packageName,
+          version: packageVersion,
+          license: packageLicense,
+        }),
+      }) as any
+  );
 
-    let mockTarballCreated = false;
-    let mockMetadataCreated = false;
-    const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(packageName, packageVersion);
-    AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-      try {
-        expect(req.Bucket).toBe(mockBucketName);
-        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
-        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
-        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
-        switch (req.Key) {
-          case assemblyKey:
-            expect(req.ContentType).toBe('application/json');
-            assertAssembly(fakeDotJsii, req.Body?.toString());
-            // Must be created strictly after the tarball and metadata files have been uploaded.
-            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
-            break;
-          case metadataKey:
-            expect(req.ContentType).toBe('application/json');
-            expect(JSON.parse(req.Body!.toString('utf-8'))).toEqual({
-              constructFrameworks: [{ name: frameworkName }], // No major version here (intentional)
-              date: time,
-              packageLinks: {},
-              packageTags: [],
-            });
-            mockMetadataCreated = true;
-            break;
-          case packageKey:
-            expect(req.ContentType).toBe('application/octet-stream');
-            expect(req.Body).toEqual(fakeTarGz);
-            mockTarballCreated = true;
-            break;
-          default:
-            fail(`Unexpected key: "${req.Key}"`);
-        }
-      } catch (e) {
-        return cb(e);
-      }
-      return cb(null, { VersionId: `${req.Key}-NewVersion` });
-    });
-
-    const executionArn = 'Fake-Execution-Arn';
-    AWSMock.mock('StepFunctions', 'startExecution', (req: AWS.StepFunctions.StartExecutionInput, cb: Response<AWS.StepFunctions.StartExecutionOutput>) => {
-      try {
-        expect(req.stateMachineArn).toBe(mockStateMachineArn);
-        expect(JSON.parse(req.input!)).toEqual({
-          bucket: mockBucketName,
-          assembly: { key: assemblyKey, versionId: `${assemblyKey}-NewVersion` },
-          metadata: { key: metadataKey, versionId: `${metadataKey}-NewVersion` },
-          package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
-        });
-      } catch (e) {
-        return cb(e);
-      }
-      return cb(null, { executionArn, startDate: new Date() });
-    });
-
-    const event: SQSEvent = {
-      Records: [{
+  const event: SQSEvent = {
+    Records: [
+      {
         attributes: {} as any,
         awsRegion: 'test-bermuda-1',
         body: JSON.stringify({ tarballUri, integrity, time }),
@@ -1247,125 +1811,26 @@ for (const [frameworkName, frameworkPackage] of [['aws-cdk', '@aws-cdk/core'], [
         messageAttributes: {},
         messageId: 'Fake-Message-ID',
         receiptHandle: 'Fake-Receipt-Handke',
-      }],
-    };
-
-    // We require the handler here so that any mocks to metricScope are set up
-    // prior to the handler being created.
-    //
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    await expect(require('../../../backend/ingestion/ingestion.lambda').handler(event, context))
-      .resolves.toEqual([executionArn]);
-
-    expect(mockPutMetric).toHaveBeenCalledWith(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 0, 'Count');
-    expect(mockPutMetric).toHaveBeenCalledWith(MetricName.FOUND_LICENSE_FILE, 0, 'Count');
-  });
-}
-
-test('mismatched package name', async () => {
-  const mockBucketName = 'fake-bucket';
-  const mockStateMachineArn = 'fake-state-machine-arn';
-  const mockConfigBucket = 'fake-config-bucket';
-  const mockConfigkey = 'fake-config-obj-key';
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
-  mockRequireEnv.mockImplementation((name) => {
-    if (name === 'BUCKET_NAME') {
-      return mockBucketName;
-    }
-    if (name === 'STATE_MACHINE_ARN') {
-      return mockStateMachineArn;
-    }
-    if (name === 'CONFIG_BUCKET_NAME') {
-      return mockConfigBucket;
-    }
-    if (name === 'CONFIG_FILE_KEY') {
-      return mockConfigkey;
-    }
-    throw new Error(`Bad environment variable: "${name}"`);
-  });
-
-  const stagingBucket = 'staging-bucket';
-  const stagingKey = 'staging-key';
-  const stagingVersion = 'staging-version-id';
-  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
-  const fakeTar = Buffer.from('fake-tarball-content');
-  const fakeLicense = 'inscrutable-legalese';
-  const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
-  const time = '2021-07-12T15:18:00.000000+02:00';
-  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
-  const packageName = '@package-scope/package-name';
-  const packageVersion = '1.2.3-pre.4';
-  const packageLicense = 'Apache-2.0';
-  const fakeDotJsii = JSON.stringify(fakeAssembly(packageName + '-oops', packageVersion, packageLicense));
-  const mockConfig = Buffer.from(JSON.stringify({
-    packageLinks: [],
-    packageTags: [],
-  }));
-
-  const context: Context = {
-    awsRequestId: 'Fake-Request-ID',
-    logGroupName: 'Fake-Log-Group',
-    logStreamName: 'Fake-Log-Stream',
-  } as any;
-
-  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-    if (req.Bucket === mockConfigBucket) {
-      try {
-        expect(req.Bucket).toBe(mockConfigBucket);
-        expect(req.Key).toBe(mockConfigkey);
-      } catch (e) {
-        return cb(e);
-      }
-      return cb(null, { Body: mockConfig });
-    }
-
-    try {
-      expect(req.Bucket).toBe(stagingBucket);
-      expect(req.Key).toBe(stagingKey);
-      expect(req.VersionId).toBe(stagingVersion);
-    } catch (e) {
-      return cb(e);
-    }
-    return cb(null, { Body: fakeTarGz });
-  });
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<typeof createGunzip>;
-  mockCreateGunzip.mockImplementation(() => new FakeGunzip(fakeTarGz, fakeTar) as any);
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<typeof extract>;
-  mockExtract.mockImplementation(() => new FakeExtract(fakeTar, {
-    'package/.jsii': fakeDotJsii,
-    'package/LICENSE.md': fakeLicense,
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({ name: packageName, version: packageVersion, license: packageLicense }),
-  }) as any);
-
-  const event: SQSEvent = {
-    Records: [{
-      attributes: {} as any,
-      awsRegion: 'test-bermuda-1',
-      body: JSON.stringify({ tarballUri, integrity, time }),
-      eventSource: 'sqs',
-      eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
-      md5OfBody: 'Fake-MD5-Of-Body',
-      messageAttributes: {},
-      messageId: 'Fake-Message-ID',
-      receiptHandle: 'Fake-Receipt-Handke',
-    }],
+      },
+    ],
   };
 
   // We require the handler here so that any mocks to metricScope are set up
   // prior to the handler being created.
   //
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  await expect(require('../../../backend/ingestion/ingestion.lambda').handler(event, context))
-    .resolves.toEqual([]);
+  await expect(
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('../../../backend/ingestion/ingestion.lambda').handler(
+      event,
+      context
+    )
+  ).resolves.toEqual([]);
 
-  expect(mockPutMetric).toHaveBeenCalledWith(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 1, 'Count');
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.MISMATCHED_IDENTITY_REJECTIONS,
+    1,
+    'Count'
+  );
 });
 
 test('mismatched package version', async () => {
@@ -1375,7 +1840,8 @@ test('mismatched package version', async () => {
   const mockConfigkey = 'fake-config-obj-key';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
+  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared')
+    .requireEnv as jest.MockedFunction<typeof requireEnv>;
   mockRequireEnv.mockImplementation((name) => {
     if (name === 'BUCKET_NAME') {
       return mockBucketName;
@@ -1404,11 +1870,15 @@ test('mismatched package version', async () => {
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
-  const fakeDotJsii = JSON.stringify(fakeAssembly(packageName, packageVersion + '-oops', packageLicense));
-  const mockConfig = Buffer.from(JSON.stringify({
-    packageLinks: [],
-    packageTags: [],
-  }));
+  const fakeDotJsii = JSON.stringify(
+    fakeAssembly(packageName, packageVersion + '-oops', packageLicense)
+  );
+  const mockConfig = Buffer.from(
+    JSON.stringify({
+      packageLinks: [],
+      packageTags: [],
+    })
+  );
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -1416,62 +1886,89 @@ test('mismatched package version', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-    if (req.Bucket === mockConfigBucket) {
+  AWSMock.mock(
+    'S3',
+    'getObject',
+    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      if (req.Bucket === mockConfigBucket) {
+        try {
+          expect(req.Bucket).toBe(mockConfigBucket);
+          expect(req.Key).toBe(mockConfigkey);
+        } catch (e) {
+          return cb(e);
+        }
+        return cb(null, { Body: mockConfig });
+      }
+
       try {
-        expect(req.Bucket).toBe(mockConfigBucket);
-        expect(req.Key).toBe(mockConfigkey);
+        expect(req.Bucket).toBe(stagingBucket);
+        expect(req.Key).toBe(stagingKey);
+        expect(req.VersionId).toBe(stagingVersion);
       } catch (e) {
         return cb(e);
       }
-      return cb(null, { Body: mockConfig });
+      return cb(null, { Body: fakeTarGz });
     }
-
-    try {
-      expect(req.Bucket).toBe(stagingBucket);
-      expect(req.Key).toBe(stagingKey);
-      expect(req.VersionId).toBe(stagingVersion);
-    } catch (e) {
-      return cb(e);
-    }
-    return cb(null, { Body: fakeTarGz });
-  });
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<typeof createGunzip>;
-  mockCreateGunzip.mockImplementation(() => new FakeGunzip(fakeTarGz, fakeTar) as any);
+  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
+    typeof createGunzip
+  >;
+  mockCreateGunzip.mockImplementation(
+    () => new FakeGunzip(fakeTarGz, fakeTar) as any
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<typeof extract>;
-  mockExtract.mockImplementation(() => new FakeExtract(fakeTar, {
-    'package/.jsii': fakeDotJsii,
-    'package/LICENSE.md': fakeLicense,
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({ name: packageName, version: packageVersion, license: packageLicense }),
-  }) as any);
+  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
+    typeof extract
+  >;
+  mockExtract.mockImplementation(
+    () =>
+      new FakeExtract(fakeTar, {
+        'package/.jsii': fakeDotJsii,
+        'package/LICENSE.md': fakeLicense,
+        'package/index.js': '// Ignore me!',
+        'package/package.json': JSON.stringify({
+          name: packageName,
+          version: packageVersion,
+          license: packageLicense,
+        }),
+      }) as any
+  );
 
   const event: SQSEvent = {
-    Records: [{
-      attributes: {} as any,
-      awsRegion: 'test-bermuda-1',
-      body: JSON.stringify({ tarballUri, integrity, time }),
-      eventSource: 'sqs',
-      eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
-      md5OfBody: 'Fake-MD5-Of-Body',
-      messageAttributes: {},
-      messageId: 'Fake-Message-ID',
-      receiptHandle: 'Fake-Receipt-Handke',
-    }],
+    Records: [
+      {
+        attributes: {} as any,
+        awsRegion: 'test-bermuda-1',
+        body: JSON.stringify({ tarballUri, integrity, time }),
+        eventSource: 'sqs',
+        eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
+        md5OfBody: 'Fake-MD5-Of-Body',
+        messageAttributes: {},
+        messageId: 'Fake-Message-ID',
+        receiptHandle: 'Fake-Receipt-Handke',
+      },
+    ],
   };
 
   // We require the handler here so that any mocks to metricScope are set up
   // prior to the handler being created.
   //
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  await expect(require('../../../backend/ingestion/ingestion.lambda').handler(event, context))
-    .resolves.toEqual([]);
+  await expect(
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('../../../backend/ingestion/ingestion.lambda').handler(
+      event,
+      context
+    )
+  ).resolves.toEqual([]);
 
-  expect(mockPutMetric).toHaveBeenCalledWith(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 1, 'Count');
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.MISMATCHED_IDENTITY_REJECTIONS,
+    1,
+    'Count'
+  );
 });
 
 test('mismatched package license', async () => {
@@ -1481,7 +1978,8 @@ test('mismatched package license', async () => {
   const mockConfigkey = 'fake-config-obj-key';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
+  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared')
+    .requireEnv as jest.MockedFunction<typeof requireEnv>;
   mockRequireEnv.mockImplementation((name) => {
     if (name === 'BUCKET_NAME') {
       return mockBucketName;
@@ -1510,11 +2008,15 @@ test('mismatched package license', async () => {
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
-  const fakeDotJsii = JSON.stringify(fakeAssembly(packageName, packageVersion, packageLicense + '-oops'));
-  const mockConfig = Buffer.from(JSON.stringify({
-    packageLinks: [],
-    packageTags: [],
-  }));
+  const fakeDotJsii = JSON.stringify(
+    fakeAssembly(packageName, packageVersion, packageLicense + '-oops')
+  );
+  const mockConfig = Buffer.from(
+    JSON.stringify({
+      packageLinks: [],
+      packageTags: [],
+    })
+  );
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -1522,62 +2024,89 @@ test('mismatched package license', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-    if (req.Bucket === mockConfigBucket) {
+  AWSMock.mock(
+    'S3',
+    'getObject',
+    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      if (req.Bucket === mockConfigBucket) {
+        try {
+          expect(req.Bucket).toBe(mockConfigBucket);
+          expect(req.Key).toBe(mockConfigkey);
+        } catch (e) {
+          return cb(e);
+        }
+        return cb(null, { Body: mockConfig });
+      }
+
       try {
-        expect(req.Bucket).toBe(mockConfigBucket);
-        expect(req.Key).toBe(mockConfigkey);
+        expect(req.Bucket).toBe(stagingBucket);
+        expect(req.Key).toBe(stagingKey);
+        expect(req.VersionId).toBe(stagingVersion);
       } catch (e) {
         return cb(e);
       }
-      return cb(null, { Body: mockConfig });
+      return cb(null, { Body: fakeTarGz });
     }
-
-    try {
-      expect(req.Bucket).toBe(stagingBucket);
-      expect(req.Key).toBe(stagingKey);
-      expect(req.VersionId).toBe(stagingVersion);
-    } catch (e) {
-      return cb(e);
-    }
-    return cb(null, { Body: fakeTarGz });
-  });
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<typeof createGunzip>;
-  mockCreateGunzip.mockImplementation(() => new FakeGunzip(fakeTarGz, fakeTar) as any);
+  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
+    typeof createGunzip
+  >;
+  mockCreateGunzip.mockImplementation(
+    () => new FakeGunzip(fakeTarGz, fakeTar) as any
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<typeof extract>;
-  mockExtract.mockImplementation(() => new FakeExtract(fakeTar, {
-    'package/.jsii': fakeDotJsii,
-    'package/LICENSE.md': fakeLicense,
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({ name: packageName, version: packageVersion, license: packageLicense }),
-  }) as any);
+  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
+    typeof extract
+  >;
+  mockExtract.mockImplementation(
+    () =>
+      new FakeExtract(fakeTar, {
+        'package/.jsii': fakeDotJsii,
+        'package/LICENSE.md': fakeLicense,
+        'package/index.js': '// Ignore me!',
+        'package/package.json': JSON.stringify({
+          name: packageName,
+          version: packageVersion,
+          license: packageLicense,
+        }),
+      }) as any
+  );
 
   const event: SQSEvent = {
-    Records: [{
-      attributes: {} as any,
-      awsRegion: 'test-bermuda-1',
-      body: JSON.stringify({ tarballUri, integrity, time }),
-      eventSource: 'sqs',
-      eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
-      md5OfBody: 'Fake-MD5-Of-Body',
-      messageAttributes: {},
-      messageId: 'Fake-Message-ID',
-      receiptHandle: 'Fake-Receipt-Handke',
-    }],
+    Records: [
+      {
+        attributes: {} as any,
+        awsRegion: 'test-bermuda-1',
+        body: JSON.stringify({ tarballUri, integrity, time }),
+        eventSource: 'sqs',
+        eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
+        md5OfBody: 'Fake-MD5-Of-Body',
+        messageAttributes: {},
+        messageId: 'Fake-Message-ID',
+        receiptHandle: 'Fake-Receipt-Handke',
+      },
+    ],
   };
 
   // We require the handler here so that any mocks to metricScope are set up
   // prior to the handler being created.
   //
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  await expect(require('../../../backend/ingestion/ingestion.lambda').handler(event, context))
-    .resolves.toEqual([]);
+  await expect(
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('../../../backend/ingestion/ingestion.lambda').handler(
+      event,
+      context
+    )
+  ).resolves.toEqual([]);
 
-  expect(mockPutMetric).toHaveBeenCalledWith(MetricName.MISMATCHED_IDENTITY_REJECTIONS, 1, 'Count');
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.MISMATCHED_IDENTITY_REJECTIONS,
+    1,
+    'Count'
+  );
 });
 
 test('missing .jsii file', async () => {
@@ -1587,7 +2116,8 @@ test('missing .jsii file', async () => {
   const mockConfigkey = 'fake-config-obj-key';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
+  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared')
+    .requireEnv as jest.MockedFunction<typeof requireEnv>;
   mockRequireEnv.mockImplementation((name) => {
     if (name === 'BUCKET_NAME') {
       return mockBucketName;
@@ -1616,10 +2146,12 @@ test('missing .jsii file', async () => {
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
-  const mockConfig = Buffer.from(JSON.stringify({
-    packageLinks: [],
-    packageTags: [],
-  }));
+  const mockConfig = Buffer.from(
+    JSON.stringify({
+      packageLinks: [],
+      packageTags: [],
+    })
+  );
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -1627,59 +2159,82 @@ test('missing .jsii file', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-    if (req.Bucket === mockConfigBucket) {
+  AWSMock.mock(
+    'S3',
+    'getObject',
+    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      if (req.Bucket === mockConfigBucket) {
+        try {
+          expect(req.Bucket).toBe(mockConfigBucket);
+          expect(req.Key).toBe(mockConfigkey);
+        } catch (e) {
+          return cb(e);
+        }
+        return cb(null, { Body: mockConfig });
+      }
+
       try {
-        expect(req.Bucket).toBe(mockConfigBucket);
-        expect(req.Key).toBe(mockConfigkey);
+        expect(req.Bucket).toBe(stagingBucket);
+        expect(req.Key).toBe(stagingKey);
+        expect(req.VersionId).toBe(stagingVersion);
       } catch (e) {
         return cb(e);
       }
-      return cb(null, { Body: mockConfig });
+      return cb(null, { Body: fakeTarGz });
     }
-
-    try {
-      expect(req.Bucket).toBe(stagingBucket);
-      expect(req.Key).toBe(stagingKey);
-      expect(req.VersionId).toBe(stagingVersion);
-    } catch (e) {
-      return cb(e);
-    }
-    return cb(null, { Body: fakeTarGz });
-  });
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<typeof createGunzip>;
-  mockCreateGunzip.mockImplementation(() => new FakeGunzip(fakeTarGz, fakeTar) as any);
+  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
+    typeof createGunzip
+  >;
+  mockCreateGunzip.mockImplementation(
+    () => new FakeGunzip(fakeTarGz, fakeTar) as any
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<typeof extract>;
-  mockExtract.mockImplementation(() => new FakeExtract(fakeTar, {
-    'package/LICENSE.md': fakeLicense,
-    'package/index.js': '// Ignore me!',
-    'package/package.json': JSON.stringify({ name: packageName, version: packageVersion, license: packageLicense }),
-  }) as any);
+  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
+    typeof extract
+  >;
+  mockExtract.mockImplementation(
+    () =>
+      new FakeExtract(fakeTar, {
+        'package/LICENSE.md': fakeLicense,
+        'package/index.js': '// Ignore me!',
+        'package/package.json': JSON.stringify({
+          name: packageName,
+          version: packageVersion,
+          license: packageLicense,
+        }),
+      }) as any
+  );
 
   const event: SQSEvent = {
-    Records: [{
-      attributes: {} as any,
-      awsRegion: 'test-bermuda-1',
-      body: JSON.stringify({ tarballUri, integrity, time }),
-      eventSource: 'sqs',
-      eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
-      md5OfBody: 'Fake-MD5-Of-Body',
-      messageAttributes: {},
-      messageId: 'Fake-Message-ID',
-      receiptHandle: 'Fake-Receipt-Handke',
-    }],
+    Records: [
+      {
+        attributes: {} as any,
+        awsRegion: 'test-bermuda-1',
+        body: JSON.stringify({ tarballUri, integrity, time }),
+        eventSource: 'sqs',
+        eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
+        md5OfBody: 'Fake-MD5-Of-Body',
+        messageAttributes: {},
+        messageId: 'Fake-Message-ID',
+        receiptHandle: 'Fake-Receipt-Handke',
+      },
+    ],
   };
 
-  // We require the handler here so that any mocks to metricScope are set up
-  // prior to the handler being created.
-  //
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  await expect(require('../../../backend/ingestion/ingestion.lambda').handler(event, context))
-    .resolves.toBeUndefined();
+  await expect(
+    // We require the handler here so that any mocks to metricScope are set up
+    // prior to the handler being created.
+    //
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('../../../backend/ingestion/ingestion.lambda').handler(
+      event,
+      context
+    )
+  ).resolves.toBeUndefined();
 });
 
 test('missing package.json file', async () => {
@@ -1689,7 +2244,8 @@ test('missing package.json file', async () => {
   const mockConfigkey = 'fake-config-obj-key';
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared').requireEnv as jest.MockedFunction<typeof requireEnv>;
+  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared')
+    .requireEnv as jest.MockedFunction<typeof requireEnv>;
   mockRequireEnv.mockImplementation((name) => {
     if (name === 'BUCKET_NAME') {
       return mockBucketName;
@@ -1718,11 +2274,15 @@ test('missing package.json file', async () => {
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
-  const fakeDotJsii = JSON.stringify(fakeAssembly(packageName, packageVersion, packageLicense));
-  const mockConfig = Buffer.from(JSON.stringify({
-    packageLinks: [],
-    packageTags: [],
-  }));
+  const fakeDotJsii = JSON.stringify(
+    fakeAssembly(packageName, packageVersion, packageLicense)
+  );
+  const mockConfig = Buffer.from(
+    JSON.stringify({
+      packageLinks: [],
+      packageTags: [],
+    })
+  );
 
   const context: Context = {
     awsRequestId: 'Fake-Request-ID',
@@ -1730,59 +2290,78 @@ test('missing package.json file', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
-  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-    if (req.Bucket === mockConfigBucket) {
+  AWSMock.mock(
+    'S3',
+    'getObject',
+    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      if (req.Bucket === mockConfigBucket) {
+        try {
+          expect(req.Bucket).toBe(mockConfigBucket);
+          expect(req.Key).toBe(mockConfigkey);
+        } catch (e) {
+          return cb(e);
+        }
+        return cb(null, { Body: mockConfig });
+      }
+
       try {
-        expect(req.Bucket).toBe(mockConfigBucket);
-        expect(req.Key).toBe(mockConfigkey);
+        expect(req.Bucket).toBe(stagingBucket);
+        expect(req.Key).toBe(stagingKey);
+        expect(req.VersionId).toBe(stagingVersion);
       } catch (e) {
         return cb(e);
       }
-      return cb(null, { Body: mockConfig });
+      return cb(null, { Body: fakeTarGz });
     }
-
-    try {
-      expect(req.Bucket).toBe(stagingBucket);
-      expect(req.Key).toBe(stagingKey);
-      expect(req.VersionId).toBe(stagingVersion);
-    } catch (e) {
-      return cb(e);
-    }
-    return cb(null, { Body: fakeTarGz });
-  });
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<typeof createGunzip>;
-  mockCreateGunzip.mockImplementation(() => new FakeGunzip(fakeTarGz, fakeTar) as any);
+  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
+    typeof createGunzip
+  >;
+  mockCreateGunzip.mockImplementation(
+    () => new FakeGunzip(fakeTarGz, fakeTar) as any
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<typeof extract>;
-  mockExtract.mockImplementation(() => new FakeExtract(fakeTar, {
-    'package/.jsii': fakeDotJsii,
-    'package/LICENSE.md': fakeLicense,
-    'package/index.js': '// Ignore me!',
-  }) as any);
+  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
+    typeof extract
+  >;
+  mockExtract.mockImplementation(
+    () =>
+      new FakeExtract(fakeTar, {
+        'package/.jsii': fakeDotJsii,
+        'package/LICENSE.md': fakeLicense,
+        'package/index.js': '// Ignore me!',
+      }) as any
+  );
 
   const event: SQSEvent = {
-    Records: [{
-      attributes: {} as any,
-      awsRegion: 'test-bermuda-1',
-      body: JSON.stringify({ tarballUri, integrity, time }),
-      eventSource: 'sqs',
-      eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
-      md5OfBody: 'Fake-MD5-Of-Body',
-      messageAttributes: {},
-      messageId: 'Fake-Message-ID',
-      receiptHandle: 'Fake-Receipt-Handke',
-    }],
+    Records: [
+      {
+        attributes: {} as any,
+        awsRegion: 'test-bermuda-1',
+        body: JSON.stringify({ tarballUri, integrity, time }),
+        eventSource: 'sqs',
+        eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
+        md5OfBody: 'Fake-MD5-Of-Body',
+        messageAttributes: {},
+        messageId: 'Fake-Message-ID',
+        receiptHandle: 'Fake-Receipt-Handke',
+      },
+    ],
   };
 
-  // We require the handler here so that any mocks to metricScope are set up
-  // prior to the handler being created.
-  //
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  await expect(require('../../../backend/ingestion/ingestion.lambda').handler(event, context))
-    .resolves.toBeUndefined();
+  await expect(
+    // We require the handler here so that any mocks to metricScope are set up
+    // prior to the handler being created.
+    //
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('../../../backend/ingestion/ingestion.lambda').handler(
+      event,
+      context
+    )
+  ).resolves.toBeUndefined();
 });
 
 type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
@@ -1790,7 +2369,10 @@ type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
 class FakeGunzip extends EventEmitter {
   private sent = 0;
 
-  public constructor(private readonly gz: Buffer, private readonly result: Buffer) {
+  public constructor(
+    private readonly gz: Buffer,
+    private readonly result: Buffer
+  ) {
     super();
   }
 
@@ -1817,7 +2399,10 @@ class FakeGunzip extends EventEmitter {
 class FakeExtract extends EventEmitter {
   private readonly files: Array<[string, string]>;
 
-  public constructor(private readonly tar: Buffer, files: Record<string, string>) {
+  public constructor(
+    private readonly tar: Buffer,
+    files: Record<string, string>
+  ) {
     super();
     this.files = Object.entries(files);
   }
@@ -1901,7 +2486,11 @@ interface FakeAssembly extends Assembly {
   };
 }
 
-function fakeAssembly(name: string, version: string, license: string): FakeAssembly {
+function fakeAssembly(
+  name: string,
+  version: string,
+  license: string
+): FakeAssembly {
   return {
     schema: SchemaVersion.LATEST,
     name,
@@ -1909,7 +2498,12 @@ function fakeAssembly(name: string, version: string, license: string): FakeAssem
     license,
     homepage: 'https://localhost.fake/repository',
     repository: { url: 'ssh://localhost.fake/repository.git', type: 'git' },
-    author: { name: 'ACME', email: 'test@acme', organization: true, roles: ['author'] },
+    author: {
+      name: 'ACME',
+      email: 'test@acme',
+      organization: true,
+      roles: ['author'],
+    },
     description: 'This is a fake package assembly',
     readme: { markdown: 'Foo Bar ReadMe' },
     dependencyClosure: {

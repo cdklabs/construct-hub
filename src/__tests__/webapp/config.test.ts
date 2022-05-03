@@ -82,7 +82,7 @@ describe('package tags', () => {
           keyword,
           condition: TagCondition.or(
             TagCondition.field('name').eq('construct-hub'),
-            TagCondition.field('name').eq('construct-hub-webapp'),
+            TagCondition.field('name').eq('construct-hub-webapp')
           ).bind(),
         },
       ],
@@ -114,7 +114,7 @@ describe('package tags', () => {
     const file = readJsonSync(config.file.path);
     expect(file).toEqual({
       ...DEFAULT_CONFIG,
-      packageTagGroups: groups.map(group => group.bind()),
+      packageTagGroups: groups.map((group) => group.bind()),
     });
   });
 
@@ -133,7 +133,7 @@ describe('package tags', () => {
           highlight,
           condition: TagCondition.or(
             TagCondition.field('name').eq('construct-hub'),
-            TagCondition.field('name').eq('construct-hub-webapp'),
+            TagCondition.field('name').eq('construct-hub-webapp')
           ).bind(),
         },
       ],
@@ -166,7 +166,7 @@ describe('package tags', () => {
           searchFilter,
           condition: TagCondition.or(
             TagCondition.field('name').eq('construct-hub'),
-            TagCondition.field('name').eq('construct-hub-webapp'),
+            TagCondition.field('name').eq('construct-hub-webapp')
           ).bind(),
         },
       ],
@@ -208,14 +208,18 @@ describe('package tags', () => {
     const file = readJsonSync(config.file.path);
     expect(file).toEqual({
       ...DEFAULT_CONFIG,
-      packageTagGroups: [{ id: group.id, label: group.label, filterType: group.filterType }],
-      packageTags: [{
-        id: 'ID',
-        searchFilter: {
-          groupBy: group.id,
-          display: 'DISPLAY',
+      packageTagGroups: [
+        { id: group.id, label: group.label, filterType: group.filterType },
+      ],
+      packageTags: [
+        {
+          id: 'ID',
+          searchFilter: {
+            groupBy: group.id,
+            display: 'DISPLAY',
+          },
         },
-      }],
+      ],
     });
   });
 });
@@ -243,7 +247,8 @@ test('featured packages', () => {
           },
           {
             name: '@aws-cdk/pipelines',
-            comment: 'The pipelines L3 construct library abstracts away many of the details of managing software deployment within AWS.',
+            comment:
+              'The pipelines L3 construct library abstracts away many of the details of managing software deployment within AWS.',
           },
         ],
       },

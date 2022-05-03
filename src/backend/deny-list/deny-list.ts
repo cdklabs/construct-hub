@@ -13,7 +13,12 @@ import { Monitoring } from '../../monitoring';
 import { OverviewDashboard } from '../../overview-dashboard';
 import { S3StorageFactory } from '../../s3/storage';
 import { DenyListRule, IDenyList } from './api';
-import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY, MetricName, METRICS_NAMESPACE } from './constants';
+import {
+  ENV_DENY_LIST_BUCKET_NAME,
+  ENV_DENY_LIST_OBJECT_KEY,
+  MetricName,
+  METRICS_NAMESPACE,
+} from './constants';
 import { createDenyListMap } from './create-map';
 import { Prune } from './prune';
 
@@ -125,10 +130,12 @@ export class DenyList extends Construct implements IDenyList {
     // trigger prune when the deny list changes
     const pruneOnChange = props.pruneOnChange ?? true;
     if (pruneOnChange) {
-      this.prune.pruneHandler.addEventSource(new S3EventSource(this.bucket, {
-        events: [s3.EventType.OBJECT_CREATED],
-        filters: [{ prefix: this.objectKey, suffix: this.objectKey }],
-      }));
+      this.prune.pruneHandler.addEventSource(
+        new S3EventSource(this.bucket, {
+          events: [s3.EventType.OBJECT_CREATED],
+          filters: [{ prefix: this.objectKey, suffix: this.objectKey }],
+        })
+      );
 
       // Add an explicit dep between upload and the bucket notification. We are
       // not using the whole bucket scope to reduce the likelihood of a

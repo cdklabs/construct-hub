@@ -1,5 +1,13 @@
 import { IDistribution } from '@aws-cdk/aws-cloudfront';
-import { ComparisonOperator, Dashboard, GraphWidget, MathExpression, Metric, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
+import {
+  ComparisonOperator,
+  Dashboard,
+  GraphWidget,
+  MathExpression,
+  Metric,
+  Statistic,
+  TreatMissingData,
+} from '@aws-cdk/aws-cloudwatch';
 import { IFunction } from '@aws-cdk/aws-lambda';
 import { IQueue } from '@aws-cdk/aws-sqs';
 import { Construct } from '@aws-cdk/core';
@@ -46,21 +54,23 @@ export class OverviewDashboard extends Construct implements IOverviewDashboard {
 
   private readonly lambdaServiceAlarmThreshold: number;
 
-
   private metricCount: number = 1;
 
   constructor(scope: Construct, id: string, props?: OverviewDashboardProps) {
     super(scope, id);
     this.lambdaServiceAlarmThreshold = props?.lambdaServiceAlarmThreshold ?? 70;
-    this.dashboard = new Dashboard(this, 'Overview dashboard', { dashboardName: props?.dashboardName });
-    this.lambdaServiceLimitGraph = this.addLambdaServiceQuotaWidgetToDashboard();
+    this.dashboard = new Dashboard(this, 'Overview dashboard', {
+      dashboardName: props?.dashboardName,
+    });
+    this.lambdaServiceLimitGraph =
+      this.addLambdaServiceQuotaWidgetToDashboard();
     this.dashboard.addWidgets(this.lambdaServiceLimitGraph);
   }
 
   /**
    * Adds a metric widget to the Overview dashboard showing the total number concurrent executions
-    * of a Lambda function and the percentage of SERVICE_QUOTA utilized by the function. This can be
-    * used to see which function has the most impact of the service quota.
+   * of a Lambda function and the percentage of SERVICE_QUOTA utilized by the function. This can be
+   * used to see which function has the most impact of the service quota.
    * @param fn Lambda function to be monitored
    */
 
@@ -70,11 +80,16 @@ export class OverviewDashboard extends Construct implements IOverviewDashboard {
       statistic: Statistic.MAXIMUM,
       label: name ?? `${fn.functionName}`,
     });
-    this.lambdaServiceLimitGraph.addRightMetric(new MathExpression({
-      expression: `${metricName} / mLambdaQuota * 100`,
-      usingMetrics: { [metricName]: invocationCount, lambdaQuotaLimit: OverviewDashboard.mLambdaQuota },
-      label: `${name ?? fn.functionName} quota usage %`,
-    }));
+    this.lambdaServiceLimitGraph.addRightMetric(
+      new MathExpression({
+        expression: `${metricName} / mLambdaQuota * 100`,
+        usingMetrics: {
+          [metricName]: invocationCount,
+          lambdaQuotaLimit: OverviewDashboard.mLambdaQuota,
+        },
+        label: `${name ?? fn.functionName} quota usage %`,
+      })
+    );
   }
 
   /**
@@ -83,12 +98,20 @@ export class OverviewDashboard extends Construct implements IOverviewDashboard {
    * @param deadLetterQueue Dead Letter Queue to be used in the dashboard
    * @param reDriveFunction a lambda function that will be used to re-drive the DLQ
    */
-  public addDLQMetricToDashboard(name: string, deadLetterQueue: IQueue, reDriveFunction?: IFunction) {
+  public addDLQMetricToDashboard(
+    name: string,
+    deadLetterQueue: IQueue,
+    reDriveFunction?: IFunction
+  ) {
     if (!this.queueMetricWidget) {
-      this.queueMetricWidget = this.queueMetricWidget = new SQSDLQWidget(this, 'QueueMetricWidget', {
-        queues: [],
-        key: 'QueueMetricWidget',
-      });
+      this.queueMetricWidget = this.queueMetricWidget = new SQSDLQWidget(
+        this,
+        'QueueMetricWidget',
+        {
+          queues: [],
+          key: 'QueueMetricWidget',
+        }
+      );
       this.dashboard.addWidgets(this.queueMetricWidget);
     }
     this.queueMetricWidget.addQueue(name, deadLetterQueue, reDriveFunction);
@@ -157,49 +180,58 @@ export class OverviewDashboard extends Construct implements IOverviewDashboard {
     const serviceQuotaLimit = new MathExpression({
       expression: 'mLambdaUsage / mLambdaQuota * 100',
       label: 'Concurrent executions quota usage %',
-      usingMetrics: { mLambdaUsage: OverviewDashboard.mLambdaUsage, mLambdaQuota: OverviewDashboard.mLambdaQuota },
+      usingMetrics: {
+        mLambdaUsage: OverviewDashboard.mLambdaUsage,
+        mLambdaQuota: OverviewDashboard.mLambdaQuota,
+      },
     });
 
-    const alarm = serviceQuotaLimit.createAlarm(this, 'OverviewDashboard/lambdaServiceQuota', {
-      alarmDescription: [
-        `Lambda concurrent execution exceeded ${this.lambdaServiceAlarmThreshold}% of SERVICE_QUOTA`,
-        '',
-        `RunBook: ${RUNBOOK_URL}`,
-        '',
-        'Request a service quota increase for lambda functions',
-      ].join('\n'),
-      comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
-      evaluationPeriods: 5,
-      threshold: this.lambdaServiceAlarmThreshold,
-      treatMissingData: TreatMissingData.MISSING,
-    });
+    const alarm = serviceQuotaLimit.createAlarm(
+      this,
+      'OverviewDashboard/lambdaServiceQuota',
+      {
+        alarmDescription: [
+          `Lambda concurrent execution exceeded ${this.lambdaServiceAlarmThreshold}% of SERVICE_QUOTA`,
+          '',
+          `RunBook: ${RUNBOOK_URL}`,
+          '',
+          'Request a service quota increase for lambda functions',
+        ].join('\n'),
+        comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+        evaluationPeriods: 5,
+        threshold: this.lambdaServiceAlarmThreshold,
+        treatMissingData: TreatMissingData.MISSING,
+      }
+    );
 
     const lambdaServiceQuotaWidget = new GraphWidget({
       title: 'Lambda concurrent execution quota',
       height: 8,
       width: 12,
-      right: [
-        alarm.metric,
-      ],
+      right: [alarm.metric],
       rightYAxis: { label: 'Quota Percent', min: 0, max: 100 },
-      rightAnnotations: [{
-        value: this.lambdaServiceAlarmThreshold,
-      }],
+      rightAnnotations: [
+        {
+          value: this.lambdaServiceAlarmThreshold,
+        },
+      ],
     });
 
     return lambdaServiceQuotaWidget;
   }
 
   public addInventoryMetrics(inventory: Inventory) {
-    this.dashboard.addWidgets(new GraphWidget({
-      title: 'Construct Hub Inventory',
-      height: 8,
-      width: 12,
-      left: [
-        inventory.metricPackageCount(),
-        inventory.metricPackageMajorCount(),
-      ],
-      leftYAxis: { label: 'Package count' },
-    }));
+    this.dashboard.addWidgets(
+      new GraphWidget({
+        title: 'Construct Hub Inventory',
+        height: 8,
+        width: 12,
+        left: [
+          inventory.metricPackageCount(),
+          inventory.metricPackageMajorCount(),
+        ],
+        leftYAxis: { label: 'Package count' },
+      })
+    );
   }
 }

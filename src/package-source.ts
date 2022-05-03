@@ -21,7 +21,10 @@ export interface IPackageSource {
    * @returns a dependable resource that can be used to create a CloudFormation
    *          dependency on the bound source.
    */
-  bind(scope: Construct, opts: PackageSourceBindOptions): PackageSourceBindResult;
+  bind(
+    scope: Construct,
+    opts: PackageSourceBindOptions
+  ): PackageSourceBindResult;
 }
 
 /**

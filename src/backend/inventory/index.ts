@@ -1,4 +1,9 @@
-import { ComparisonOperator, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
+import {
+  ComparisonOperator,
+  Metric,
+  MetricOptions,
+  Statistic,
+} from '@aws-cdk/aws-cloudwatch';
 import * as events from '@aws-cdk/aws-events';
 import * as targets from '@aws-cdk/aws-events-targets';
 import { IFunction } from '@aws-cdk/aws-lambda';
@@ -13,7 +18,11 @@ import { Monitoring } from '../../monitoring';
 import { OverviewDashboard } from '../../overview-dashboard';
 import { RUNBOOK_URL } from '../../runbook-url';
 import { S3StorageFactory } from '../../s3/storage';
-import { MISSING_DOCUMENTATION_REPORT_PATTERN, UNINSTALLABLE_PACKAGES_REPORT, CORRUPT_ASSEMBLY_REPORT_PATTERN } from '../shared/constants';
+import {
+  MISSING_DOCUMENTATION_REPORT_PATTERN,
+  UNINSTALLABLE_PACKAGES_REPORT,
+  CORRUPT_ASSEMBLY_REPORT_PATTERN,
+} from '../shared/constants';
 import { DocumentationLanguage } from '../shared/language';
 import { Canary } from './canary';
 import { METRICS_NAMESPACE, MetricName, LANGUAGE_DIMENSION } from './constants';
@@ -63,16 +72,21 @@ export class Inventory extends Construct {
     // Store intermediate state information in a bucket so that we can sort of
     // run the lambda for more than 15 minutes
     const storageFactory = S3StorageFactory.getOrCreate(this);
-    const scratchworkBucket = storageFactory.newBucket(this, 'ScratchworkBucket', {
-      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      encryption: s3.BucketEncryption.S3_MANAGED,
-      enforceSSL: true,
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
-      lifecycleRules: [{ expiration: cdk.Duration.days(30) }],
-    });
+    const scratchworkBucket = storageFactory.newBucket(
+      this,
+      'ScratchworkBucket',
+      {
+        blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+        encryption: s3.BucketEncryption.S3_MANAGED,
+        enforceSSL: true,
+        removalPolicy: cdk.RemovalPolicy.DESTROY,
+        lifecycleRules: [{ expiration: cdk.Duration.days(30) }],
+      }
+    );
 
     this.canary = new Canary(this, 'Resource', {
-      description: '[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages',
+      description:
+        '[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages',
       environment: {
         AWS_EMF_ENVIRONMENT: 'Local',
         PACKAGE_DATA_BUCKET_NAME: props.bucket.bucketName,
@@ -83,20 +97,40 @@ export class Inventory extends Construct {
       timeout: Duration.minutes(15),
     });
     const grantRead = props.bucket.grantRead(this.canary);
-    const grantWriteMissing = props.bucket.grantWrite(this.canary, MISSING_DOCUMENTATION_REPORT_PATTERN);
-    const grantWriteCorruptAssembly = props.bucket.grantWrite(this.canary, CORRUPT_ASSEMBLY_REPORT_PATTERN);
-    const grantWriteUnInstallable = props.bucket.grantWrite(this.canary, UNINSTALLABLE_PACKAGES_REPORT);
-    const grantReadWriteScratchwork = scratchworkBucket.grantReadWrite(this.canary);
+    const grantWriteMissing = props.bucket.grantWrite(
+      this.canary,
+      MISSING_DOCUMENTATION_REPORT_PATTERN
+    );
+    const grantWriteCorruptAssembly = props.bucket.grantWrite(
+      this.canary,
+      CORRUPT_ASSEMBLY_REPORT_PATTERN
+    );
+    const grantWriteUnInstallable = props.bucket.grantWrite(
+      this.canary,
+      UNINSTALLABLE_PACKAGES_REPORT
+    );
+    const grantReadWriteScratchwork = scratchworkBucket.grantReadWrite(
+      this.canary
+    );
 
-    const processBucket = new tasks.LambdaInvoke(this, 'Process for 15 minutes.', {
-      lambdaFunction: this.canary,
-      payloadResponseOnly: true,
-      inputPath: '$.result',
-      resultPath: '$.result',
-    });
-    processBucket.next(new sfn.Choice(this, 'Remaining items to process?')
-      .when(sfn.Condition.isPresent('$.result.continuationObjectKey'), processBucket)
-      .otherwise(new sfn.Succeed(this, 'Success')));
+    const processBucket = new tasks.LambdaInvoke(
+      this,
+      'Process for 15 minutes.',
+      {
+        lambdaFunction: this.canary,
+        payloadResponseOnly: true,
+        inputPath: '$.result',
+        resultPath: '$.result',
+      }
+    );
+    processBucket.next(
+      new sfn.Choice(this, 'Remaining items to process?')
+        .when(
+          sfn.Condition.isPresent('$.result.continuationObjectKey'),
+          processBucket
+        )
+        .otherwise(new sfn.Succeed(this, 'Success'))
+    );
 
     const stateMachine = new sfn.StateMachine(this, 'StateMachine', {
       definition: processBucket,
@@ -106,13 +140,15 @@ export class Inventory extends Construct {
 
     const rule = new events.Rule(this, 'ScheduleRule', {
       schedule: events.Schedule.rate(this.rate),
-      targets: [new targets.SfnStateMachine(stateMachine, {
-        input: events.RuleTargetInput.fromObject({
-          comment: 'Scheduled event from cron job.',
-          result: {},
+      targets: [
+        new targets.SfnStateMachine(stateMachine, {
+          input: events.RuleTargetInput.fromObject({
+            comment: 'Scheduled event from cron job.',
+            result: {},
+          }),
+          retryAttempts: 3,
         }),
-        retryAttempts: 3,
-      })],
+      ],
     });
 
     rule.node.addDependency(
@@ -120,42 +156,50 @@ export class Inventory extends Construct {
       grantWriteMissing,
       grantWriteCorruptAssembly,
       grantWriteUnInstallable,
-      grantReadWriteScratchwork,
+      grantReadWriteScratchwork
     );
 
     props.monitoring.addLowSeverityAlarm(
       'Inventory Canary is not Running',
-      this.canary.metricInvocations({ period: this.rate }).createAlarm(this, 'Not Running', {
-        alarmName: `${this.node.path}/NotRunning`,
-        alarmDescription: [
-          'The inventory canary is not running!',
-          '',
-          `RunBook: ${RUNBOOK_URL}`,
-          '',
-          `Direct link to function: ${lambdaFunctionUrl(this.canary)}`,
-        ].join('\n'),
-        comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
-        evaluationPeriods: 1,
-        threshold: 1,
-      }),
+      this.canary
+        .metricInvocations({ period: this.rate })
+        .createAlarm(this, 'Not Running', {
+          alarmName: `${this.node.path}/NotRunning`,
+          alarmDescription: [
+            'The inventory canary is not running!',
+            '',
+            `RunBook: ${RUNBOOK_URL}`,
+            '',
+            `Direct link to function: ${lambdaFunctionUrl(this.canary)}`,
+          ].join('\n'),
+          comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+          evaluationPeriods: 1,
+          threshold: 1,
+        })
     );
     props.monitoring.addLowSeverityAlarm(
       'Inventory Canary is failing',
-      this.canary.metricErrors({ period: this.rate }).createAlarm(this, 'Failures', {
-        alarmName: `${this.node.path}/Failures`,
-        alarmDescription: [
-          'The inventory canary is failing!',
-          '',
-          `RunBook: ${RUNBOOK_URL}`,
-          '',
-          `Direct link to function: ${lambdaFunctionUrl(this.canary)}`,
-        ].join('\n'),
-        comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-        evaluationPeriods: 2,
-        threshold: 1,
-      }),
+      this.canary
+        .metricErrors({ period: this.rate })
+        .createAlarm(this, 'Failures', {
+          alarmName: `${this.node.path}/Failures`,
+          alarmDescription: [
+            'The inventory canary is failing!',
+            '',
+            `RunBook: ${RUNBOOK_URL}`,
+            '',
+            `Direct link to function: ${lambdaFunctionUrl(this.canary)}`,
+          ].join('\n'),
+          comparisonOperator:
+            ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+          evaluationPeriods: 2,
+          threshold: 1,
+        })
     );
-    props.overviewDashboard.addConcurrentExecutionMetricToDashboard(this.canary, 'CanaryResourceLambda');
+    props.overviewDashboard.addConcurrentExecutionMetricToDashboard(
+      this.canary,
+      'CanaryResourceLambda'
+    );
     props.overviewDashboard.addInventoryMetrics(this);
   }
 
@@ -257,7 +301,10 @@ export class Inventory extends Construct {
    * The count of packages for which all versions are missing a documnetation artifact
    * (whether supported or not) for the provided `DocumentationLanguage`.
    */
-  public metricMissingPackageCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+  public metricMissingPackageCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: this.rate,
       statistic: Statistic.MAXIMUM,
@@ -275,7 +322,10 @@ export class Inventory extends Construct {
    * documnetation artifact (whether supported or not) for the provided
    * `DocumentationLanguage`.
    */
-  public metricMissingMajorVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+  public metricMissingMajorVersionCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: this.rate,
       statistic: Statistic.MAXIMUM,
@@ -292,7 +342,10 @@ export class Inventory extends Construct {
    * The count of package versions that are missing a documnetation artifact
    * (whether supported or not) for the provided `DocumentationLanguage`.
    */
-  public metricMissingPackageVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+  public metricMissingPackageVersionCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: this.rate,
       statistic: Statistic.MAXIMUM,
@@ -310,7 +363,10 @@ export class Inventory extends Construct {
    * artifact (whether supported or not) for the provided
    * `DocumentationLanguage`.
    */
-  public metricMissingSubmoduleCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+  public metricMissingSubmoduleCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: this.rate,
       statistic: Statistic.MAXIMUM,
@@ -327,7 +383,10 @@ export class Inventory extends Construct {
    * The count of packages that have at least one version for which there is
    * available documentation in the provided `DocumentationLanguage`.
    */
-  public metricSupportedPackageCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+  public metricSupportedPackageCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: this.rate,
       statistic: Statistic.MAXIMUM,
@@ -345,7 +404,10 @@ export class Inventory extends Construct {
    * which there is available documentation in the provided
    * `DocumentationLanguage`.
    */
-  public metricSupportedMajorVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+  public metricSupportedMajorVersionCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: this.rate,
       statistic: Statistic.MAXIMUM,
@@ -362,7 +424,10 @@ export class Inventory extends Construct {
    * The count of package versions that have available documentation in the
    * provided `DocumentationLanguage`.
    */
-  public metricSupportedPackageVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+  public metricSupportedPackageVersionCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: this.rate,
       statistic: Statistic.MAXIMUM,
@@ -379,7 +444,10 @@ export class Inventory extends Construct {
    * The count of package version submodules that have available documentation
    * in the provided `DocumentationLanguage`.
    */
-  public metricSupportedSubmoduleCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+  public metricSupportedSubmoduleCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: this.rate,
       statistic: Statistic.MAXIMUM,
@@ -396,7 +464,10 @@ export class Inventory extends Construct {
    * The count of packages that do not support the provided
    * `DocumentationLanguage`, and hence cannot have documentation for it.
    */
-  public metricUnsupportedPackageCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+  public metricUnsupportedPackageCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: this.rate,
       statistic: Statistic.MAXIMUM,
@@ -413,7 +484,10 @@ export class Inventory extends Construct {
    * The count of package major versions that do not support the provided
    * `DocumentationLanguage`, and hence cannot have documentation for it.
    */
-  public metricUnsupportedMajorVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+  public metricUnsupportedMajorVersionCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: this.rate,
       statistic: Statistic.MAXIMUM,
@@ -430,7 +504,10 @@ export class Inventory extends Construct {
    * The count of package versions that do not support the provided
    * `DocumentationLanguage`, and hence cannot have documentation for it.
    */
-  public metricUnsupportedPackageVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+  public metricUnsupportedPackageVersionCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: this.rate,
       statistic: Statistic.MAXIMUM,
@@ -447,7 +524,10 @@ export class Inventory extends Construct {
    * The count of package version submodules that do not support the provided
    * `DocumentationLanguage`, and hence cannot have documentation for it.
    */
-  public metricUnsupportedSubmoduleCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+  public metricUnsupportedSubmoduleCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: this.rate,
       statistic: Statistic.MAXIMUM,
@@ -463,7 +543,10 @@ export class Inventory extends Construct {
   /**
    * The count of packages that have a language specific corrupt assembly.
    */
-  public metricCorruptAssemblyPackageCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+  public metricCorruptAssemblyPackageCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: this.rate,
       statistic: Statistic.MAXIMUM,
@@ -479,7 +562,10 @@ export class Inventory extends Construct {
   /**
    * The count of package major versions that have a language specific corrupt assembly.
    */
-  public metricCorruptAssemblyMajorVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+  public metricCorruptAssemblyMajorVersionCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: this.rate,
       statistic: Statistic.MAXIMUM,
@@ -495,7 +581,10 @@ export class Inventory extends Construct {
   /**
    * The count of package versions that have a language specific corrupt assembly.
    */
-  public metricCorruptAssemblyPackageVersionCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+  public metricCorruptAssemblyPackageVersionCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: this.rate,
       statistic: Statistic.MAXIMUM,
@@ -511,7 +600,10 @@ export class Inventory extends Construct {
   /**
    * The count of package version submodules that have a language specific corrupt assembly.
    */
-  public metricCorruptAssemblySubmoduleCount(language: DocumentationLanguage, opts?: MetricOptions): Metric {
+  public metricCorruptAssemblySubmoduleCount(
+    language: DocumentationLanguage,
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: this.rate,
       statistic: Statistic.MAXIMUM,
@@ -523,5 +615,4 @@ export class Inventory extends Construct {
       namespace: METRICS_NAMESPACE,
     });
   }
-
 }

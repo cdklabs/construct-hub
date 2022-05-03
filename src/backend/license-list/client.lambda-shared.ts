@@ -43,16 +43,26 @@ export class LicenseListClient {
     if (this.#map != null) {
       throw new Error('init() cannot be called twice');
     }
-    const { Body: body } = await s3().getObject({ Bucket: this.#bucketName, Key: this.#objectKey }).promise();
+    const { Body: body } = await s3()
+      .getObject({ Bucket: this.#bucketName, Key: this.#objectKey })
+      .promise();
     if (!body) {
-      console.log(`WARNING: license list is empty at ${this.#bucketName}/${this.#objectKey}`);
+      console.log(
+        `WARNING: license list is empty at ${this.#bucketName}/${
+          this.#objectKey
+        }`
+      );
       this.#map = new Map();
       return;
     }
 
     const licenseIds = JSON.parse(body.toString('utf-8'));
     if (!Array.isArray(licenseIds)) {
-      throw new Error(`Invalid format in license list file at ${this.#bucketName}/${this.#objectKey}. Expected an array.`);
+      throw new Error(
+        `Invalid format in license list file at ${this.#bucketName}/${
+          this.#objectKey
+        }. Expected an array.`
+      );
     }
     this.#map = new Map(licenseIds.map((id) => [id.toUpperCase(), id]));
   }

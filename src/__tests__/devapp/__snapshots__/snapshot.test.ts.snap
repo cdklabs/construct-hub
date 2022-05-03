@@ -3026,7 +3026,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57cS3Bucket7ACC0791
+          Ref: AssetParameters92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4S3BucketDB3720F4
         S3Key:
           Fn::Join:
             - ""
@@ -3034,12 +3034,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57cS3VersionKey288336AA
+                      - Ref: AssetParameters92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4S3VersionKey6ECBA1B2
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParameters3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57cS3VersionKey288336AA
+                      - Ref: AssetParameters92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4S3VersionKey6ECBA1B2
       Role:
         Fn::GetAtt:
           - ConstructHubFeedBuilderReleaseNotesUpdateFeedServiceRoleC857E364
@@ -4114,7 +4114,7 @@ Resources:
                 - Ref: AWS::Region
                 - .
                 - Ref: AWS::URLSuffix
-                - /aws-cdk/assets:397bb6a4c7f8e082f54fdbf4c478efb28489d6cc1dd2b0384ebadd9a94c8ba7f
+                - /aws-cdk/assets:906167965e5d6c597e7eaeb4b2df04d0a824595a676ca7c1d0f4f13409b95091
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -6569,7 +6569,7 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3BucketA2379B42
+        - Ref: AssetParametersd77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1aS3Bucket962C10C5
       SourceObjectKeys:
         - Fn::Join:
             - ""
@@ -6577,12 +6577,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3VersionKeyFA1BA673
+                      - Ref: AssetParametersd77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1aS3VersionKey1449E350
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3VersionKeyFA1BA673
+                      - Ref: AssetParametersd77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1aS3VersionKey1449E350
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: false
@@ -7384,95 +7384,6 @@ Resources:
           ReturnData: false
       Threshold: 1
       TreatMissingData: notBreaching
-  ConstructHubInventoryCanaryScratchworkBucketC185625E:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
-      LifecycleConfiguration:
-        Rules:
-          - ExpirationInDays: 30
-            Status: Enabled
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        BlockPublicPolicy: true
-        IgnorePublicAcls: true
-        RestrictPublicBuckets: true
-    UpdateReplacePolicy: Delete
-    DeletionPolicy: Delete
-  ConstructHubInventoryCanaryScratchworkBucketPolicy51913ABF:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket:
-        Ref: ConstructHubInventoryCanaryScratchworkBucketC185625E
-      PolicyDocument:
-        Statement:
-          - Action: s3:*
-            Condition:
-              Bool:
-                aws:SecureTransport: "false"
-            Effect: Deny
-            Principal:
-              AWS: "*"
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubInventoryCanaryScratchworkBucketC185625E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubInventoryCanaryScratchworkBucketC185625E
-                        - Arn
-                    - /*
-        Version: 2012-10-17
-  ConstructHubInventoryCanaryFailoverScratchworkBucketE8015DAD:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
-      LifecycleConfiguration:
-        Rules:
-          - ExpirationInDays: 30
-            Status: Enabled
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        BlockPublicPolicy: true
-        IgnorePublicAcls: true
-        RestrictPublicBuckets: true
-      Tags:
-        - Key: failover
-          Value: "true"
-    UpdateReplacePolicy: Delete
-    DeletionPolicy: Delete
-  ConstructHubInventoryCanaryFailoverScratchworkBucketPolicy6E5D67F4:
-    Type: AWS::S3::BucketPolicy
-    Properties:
-      Bucket:
-        Ref: ConstructHubInventoryCanaryFailoverScratchworkBucketE8015DAD
-      PolicyDocument:
-        Statement:
-          - Action: s3:*
-            Condition:
-              Bool:
-                aws:SecureTransport: "false"
-            Effect: Deny
-            Principal:
-              AWS: "*"
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubInventoryCanaryFailoverScratchworkBucketE8015DAD
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubInventoryCanaryFailoverScratchworkBucketE8015DAD
-                        - Arn
-                    - /*
-        Version: 2012-10-17
   ConstructHubInventoryCanaryServiceRole7684EDDE:
     Type: AWS::IAM::Role
     Properties:
@@ -7554,24 +7465,6 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /uninstallable-objects/data.json
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
-              - s3:DeleteObject*
-              - s3:PutObject*
-              - s3:Abort*
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubInventoryCanaryScratchworkBucketC185625E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubInventoryCanaryScratchworkBucketC185625E
-                        - Arn
-                    - /*
         Version: 2012-10-17
       PolicyName: ConstructHubInventoryCanaryServiceRoleDefaultPolicy144783F1
       Roles:
@@ -7581,7 +7474,7 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersf115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04S3BucketC8E6D03E
+          Ref: AssetParametersa93be6850028ad80423a67c4bf9981e8b77a3d29dd036a5b0bb72eb090e4218fS3Bucket35CB6C8F
         S3Key:
           Fn::Join:
             - ""
@@ -7589,12 +7482,12 @@ Resources:
                   - 0
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersf115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04S3VersionKeyF2C79541
+                      - Ref: AssetParametersa93be6850028ad80423a67c4bf9981e8b77a3d29dd036a5b0bb72eb090e4218fS3VersionKey8FFC38B0
               - Fn::Select:
                   - 1
                   - Fn::Split:
                       - "||"
-                      - Ref: AssetParametersf115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04S3VersionKeyF2C79541
+                      - Ref: AssetParametersa93be6850028ad80423a67c4bf9981e8b77a3d29dd036a5b0bb72eb090e4218fS3VersionKey8FFC38B0
       Role:
         Fn::GetAtt:
           - ConstructHubInventoryCanaryServiceRole7684EDDE
@@ -7604,10 +7497,8 @@ Resources:
       Environment:
         Variables:
           AWS_EMF_ENVIRONMENT: Local
-          PACKAGE_DATA_BUCKET_NAME:
+          BUCKET_NAME:
             Ref: ConstructHubPackageDataDC5EF35E
-          SCRATCHWORK_BUCKET_NAME:
-            Ref: ConstructHubInventoryCanaryScratchworkBucketC185625E
       Handler: index.handler
       MemorySize: 10240
       Runtime: nodejs14.x
@@ -7628,96 +7519,6 @@ Resources:
           - - /aws/lambda/
             - Ref: ConstructHubInventoryCanary63D899BC
       RetentionInDays: 7
-  ConstructHubInventoryCanaryStateMachineRole9D5D502F:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Action: sts:AssumeRole
-            Effect: Allow
-            Principal:
-              Service:
-                Fn::FindInMap:
-                  - ServiceprincipalMap
-                  - Ref: AWS::Region
-                  - states
-        Version: 2012-10-17
-  ConstructHubInventoryCanaryStateMachineRoleDefaultPolicy6F9D94C1:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyDocument:
-        Statement:
-          - Action:
-              - xray:PutTraceSegments
-              - xray:PutTelemetryRecords
-              - xray:GetSamplingRules
-              - xray:GetSamplingTargets
-            Effect: Allow
-            Resource: "*"
-          - Action: lambda:InvokeFunction
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubInventoryCanary63D899BC
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubInventoryCanary63D899BC
-                        - Arn
-                    - :*
-        Version: 2012-10-17
-      PolicyName: ConstructHubInventoryCanaryStateMachineRoleDefaultPolicy6F9D94C1
-      Roles:
-        - Ref: ConstructHubInventoryCanaryStateMachineRole9D5D502F
-  ConstructHubInventoryCanaryStateMachineAA2D2A3A:
-    Type: AWS::StepFunctions::StateMachine
-    Properties:
-      RoleArn:
-        Fn::GetAtt:
-          - ConstructHubInventoryCanaryStateMachineRole9D5D502F
-          - Arn
-      DefinitionString:
-        Fn::Join:
-          - ""
-          - - '{"StartAt":"Process for 15 minutes.","States":{"Process for 15
-              minutes.":{"Next":"Remaining items to
-              process?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2}],"Type":"Task","InputPath":"$.result","ResultPath":"$.result","Resource":"'
-            - Fn::GetAtt:
-                - ConstructHubInventoryCanary63D899BC
-                - Arn
-            - '"},"Remaining items to
-              process?":{"Type":"Choice","Choices":[{"Variable":"$.result.continuationObjectKey","IsPresent":true,"Next":"Process
-              for 15
-              minutes."}],"Default":"Success"},"Success":{"Type":"Succeed"}},"TimeoutSeconds":21600}'
-      TracingConfiguration:
-        Enabled: true
-    DependsOn:
-      - ConstructHubInventoryCanaryStateMachineRoleDefaultPolicy6F9D94C1
-      - ConstructHubInventoryCanaryStateMachineRole9D5D502F
-  ConstructHubInventoryCanaryStateMachineEventsRole8AD19655:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Statement:
-          - Action: sts:AssumeRole
-            Effect: Allow
-            Principal:
-              Service: events.amazonaws.com
-        Version: 2012-10-17
-  ConstructHubInventoryCanaryStateMachineEventsRoleDefaultPolicyE2B4E72C:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyDocument:
-        Statement:
-          - Action: states:StartExecution
-            Effect: Allow
-            Resource:
-              Ref: ConstructHubInventoryCanaryStateMachineAA2D2A3A
-        Version: 2012-10-17
-      PolicyName: ConstructHubInventoryCanaryStateMachineEventsRoleDefaultPolicyE2B4E72C
-      Roles:
-        - Ref: ConstructHubInventoryCanaryStateMachineEventsRole8AD19655
   ConstructHubInventoryCanaryScheduleRule79F2F8D8:
     Type: AWS::Events::Rule
     Properties:
@@ -7725,15 +7526,25 @@ Resources:
       State: ENABLED
       Targets:
         - Arn:
-            Ref: ConstructHubInventoryCanaryStateMachineAA2D2A3A
-          Id: Target0
-          Input: '{"comment":"Scheduled event from cron job.","result":{}}'
-          RetryPolicy:
-            MaximumRetryAttempts: 3
-          RoleArn:
             Fn::GetAtt:
-              - ConstructHubInventoryCanaryStateMachineEventsRole8AD19655
+              - ConstructHubInventoryCanary63D899BC
               - Arn
+          Id: Target0
+    DependsOn:
+      - ConstructHubInventoryCanaryServiceRoleDefaultPolicy144783F1
+  ConstructHubInventoryCanaryScheduleRuleAllowEventRuledevConstructHubInventoryCanaryEF8B6D027C8F7E9D:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - ConstructHubInventoryCanary63D899BC
+          - Arn
+      Principal: events.amazonaws.com
+      SourceArn:
+        Fn::GetAtt:
+          - ConstructHubInventoryCanaryScheduleRule79F2F8D8
+          - Arn
     DependsOn:
       - ConstructHubInventoryCanaryServiceRoleDefaultPolicy144783F1
   ConstructHubInventoryCanaryNotRunningAF44D71C:
@@ -8666,13 +8477,13 @@ Resources:
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3BucketA2379B42
+                    - Ref: AssetParametersd77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1aS3Bucket962C10C5
               - Fn::Join:
                   - ""
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3BucketA2379B42
+                    - Ref: AssetParametersd77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1aS3Bucket962C10C5
                     - /*
           - Action:
               - s3:GetObject*
@@ -9346,15 +9157,6 @@ Outputs:
           - Ref: ConstructHubSourcesNpmJsStagingBucketB286F0E6
           - " s3://"
           - Ref: ConstructHubSourcesFailoverNpmJsStagingBucketF46C2C42
-  ConstructHubInventoryCanarySnapshotCommand6F498D77:
-    Description: Snapshot dev/ConstructHub/InventoryCanary/ScratchworkBucket
-    Value:
-      Fn::Join:
-        - ""
-        - - aws s3 sync s3://
-          - Ref: ConstructHubInventoryCanaryScratchworkBucketC185625E
-          - " s3://"
-          - Ref: ConstructHubInventoryCanaryFailoverScratchworkBucketE8015DAD
 Parameters:
   AssetParameters70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8dS3BucketF0537962:
     Type: String
@@ -9476,18 +9278,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "a3341106d17d38963f6119c8a573da38d6d6752b25431ce64c2924f3972d5379"
-  AssetParameters3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57cS3Bucket7ACC0791:
+  AssetParameters92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4S3BucketDB3720F4:
     Type: String
     Description: S3 bucket for asset
-      "3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57c"
-  AssetParameters3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57cS3VersionKey288336AA:
+      "92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4"
+  AssetParameters92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4S3VersionKey6ECBA1B2:
     Type: String
     Description: S3 key for asset version
-      "3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57c"
-  AssetParameters3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57cArtifactHash3A5B7588:
+      "92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4"
+  AssetParameters92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4ArtifactHashF7D41393:
     Type: String
     Description: Artifact hash for asset
-      "3749c0b29650fa1230ad95059060bb43112de771d2f078c0034d4d5b875bf57c"
+      "92c8823e834a6c9ac101ff009c0ffdd9da2ff6f4f0853fa8a043d416ecdde2c4"
   AssetParameters15b599afc00a9546180d55a4dac00f8afb6b97bb2acda9ce1e82bc9fb159be2fS3BucketD3D6FF98:
     Type: String
     Description: S3 bucket for asset
@@ -9620,18 +9422,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "67e7c217b6ba727846031d77eb42a1a2bbc780507e11f9ad3192a0f98abe450a"
-  AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3BucketA2379B42:
+  AssetParametersd77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1aS3Bucket962C10C5:
     Type: String
     Description: S3 bucket for asset
-      "dd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58b"
-  AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3VersionKeyFA1BA673:
+      "d77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1a"
+  AssetParametersd77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1aS3VersionKey1449E350:
     Type: String
     Description: S3 key for asset version
-      "dd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58b"
-  AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bArtifactHashA086BEA2:
+      "d77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1a"
+  AssetParametersd77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1aArtifactHashFB36733E:
     Type: String
     Description: Artifact hash for asset
-      "dd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58b"
+      "d77cf6df4e505ce0795b99e301dec4932a4ad03b022c01110d2c365cea5a8c1a"
   AssetParameters14e4f0139224d21210279e451b3ecaef287913006c68e6050415f640c0ef7522S3BucketF816D9C3:
     Type: String
     Description: S3 bucket for asset
@@ -9704,18 +9506,18 @@ Parameters:
     Type: String
     Description: Artifact hash for asset
       "4350dc4da0d8a13c87f42843e78b0b4af80e9702aa9a9c99a82f0205e64e08f5"
-  AssetParametersf115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04S3BucketC8E6D03E:
+  AssetParametersa93be6850028ad80423a67c4bf9981e8b77a3d29dd036a5b0bb72eb090e4218fS3Bucket35CB6C8F:
     Type: String
     Description: S3 bucket for asset
-      "f115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04"
-  AssetParametersf115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04S3VersionKeyF2C79541:
+      "a93be6850028ad80423a67c4bf9981e8b77a3d29dd036a5b0bb72eb090e4218f"
+  AssetParametersa93be6850028ad80423a67c4bf9981e8b77a3d29dd036a5b0bb72eb090e4218fS3VersionKey8FFC38B0:
     Type: String
     Description: S3 key for asset version
-      "f115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04"
-  AssetParametersf115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04ArtifactHashEE804AD2:
+      "a93be6850028ad80423a67c4bf9981e8b77a3d29dd036a5b0bb72eb090e4218f"
+  AssetParametersa93be6850028ad80423a67c4bf9981e8b77a3d29dd036a5b0bb72eb090e4218fArtifactHashB5AB8200:
     Type: String
     Description: Artifact hash for asset
-      "f115719422e919eeb80ac8975c35eb78c909fa6db7cc3d5ab54d32a77f8c5d04"
+      "a93be6850028ad80423a67c4bf9981e8b77a3d29dd036a5b0bb72eb090e4218f"
   AssetParametersd9b674f82d1e3d22daf401c98b1681d167319055c2e4c0f9c1a9e2b06e90ea20S3Bucket89D05AD1:
     Type: String
     Description: S3 bucket for asset
