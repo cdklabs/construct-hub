@@ -1,4 +1,10 @@
-import { ComparisonOperator, Metric, MetricOptions, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
+import {
+  ComparisonOperator,
+  Metric,
+  MetricOptions,
+  Statistic,
+  TreatMissingData,
+} from '@aws-cdk/aws-cloudwatch';
 import * as iam from '@aws-cdk/aws-iam';
 import * as lambda from '@aws-cdk/aws-lambda';
 import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
@@ -28,7 +34,6 @@ import { GenerateReleaseNotes } from './generate-release-notes';
 import { GetMessagesFromWorkerQueue } from './get-messages-from-worker-queue';
 import { ReleaseNotesTrigger } from './release-notes-trigger';
 
-
 /**
  * Properties for ReleaseNoteFetcher.
  */
@@ -39,9 +44,9 @@ export interface ReleaseNoteFetcherProps {
   readonly bucket: s3.IBucket;
 
   /**
-  * GitHub credential used to when making request to GitHub API to retrieve changelogs.
-  * @default - do not fetch changelogs from GitHub
-  */
+   * GitHub credential used to when making request to GitHub API to retrieve changelogs.
+   * @default - do not fetch changelogs from GitHub
+   */
   readonly gitHubCredentialsSecret?: ISecret;
 
   /**
@@ -87,7 +92,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
   constructor(
     scope: cdk.Construct,
     id: string,
-    props: ReleaseNoteFetcherProps,
+    props: ReleaseNoteFetcherProps
   ) {
     super(scope, id);
     this.bucket = props.bucket;
@@ -112,7 +117,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
 
     props.overviewDashboard.addDLQMetricToDashboard(
       'ReleaseNotesWorkerDLQ',
-      this.workerDLQ,
+      this.workerDLQ
     );
 
     // worker queue is the queue from which step function will retrieve messages from
@@ -143,12 +148,12 @@ export class ReleaseNoteFetcher extends cdk.Construct {
           WORKER_QUEUE_URL: this.workerQueue.queueUrl,
         },
         timeout: cdk.Duration.minutes(1),
-      },
+      }
     );
 
     props.overviewDashboard.addConcurrentExecutionMetricToDashboard(
       this.releaseNotesTriggerLambda,
-      'releaseNotesTrigger',
+      'releaseNotesTrigger'
     );
 
     this.workerQueue.grantSendMessages(this.releaseNotesTriggerLambda);
@@ -157,7 +162,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
         actions: ['states:ListExecutions', 'states:StartExecution'],
         effect: iam.Effect.ALLOW,
         resources: [stateMachineArn],
-      }),
+      })
     );
 
     const eventSource = new SqsEventSource(this.queue);
@@ -169,16 +174,18 @@ export class ReleaseNoteFetcher extends cdk.Construct {
       {
         description: 'ReleaseNotes generator',
         environment: {
-          ...(this.githubTokenSecret ? { GITHUB_TOKEN: this.githubTokenSecret.secretValue.toString() } : {}),
+          ...(this.githubTokenSecret
+            ? { GITHUB_TOKEN: this.githubTokenSecret.secretValue.toString() }
+            : {}),
           BUCKET_NAME: this.bucket.bucketName,
         },
         timeout: cdk.Duration.minutes(10),
         memorySize: 1024,
-      },
+      }
     );
     props.overviewDashboard.addConcurrentExecutionMetricToDashboard(
       this.generateReleaseNotesLambda,
-      'releaseNoteGenerateForPackage',
+      'releaseNoteGenerateForPackage'
     );
 
     const restartExecution = new tasks.StepFunctionsStartExecution(
@@ -189,11 +196,11 @@ export class ReleaseNoteFetcher extends cdk.Construct {
         stateMachine: sfn.StateMachine.fromStateMachineArn(
           this,
           'ThisStateMachine',
-          stateMachineArn,
+          stateMachineArn
         ),
         integrationPattern: sfn.IntegrationPattern.REQUEST_RESPONSE,
         resultPath: JsonPath.DISCARD,
-      },
+      }
     )
       .addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
       .next(new sfn.Succeed(this, 'done', { comment: 'New instance started' }));
@@ -205,20 +212,22 @@ export class ReleaseNoteFetcher extends cdk.Construct {
         description: 'ReleaseNotes get message from the worker queue',
 
         environment: {
-          ...(this.githubTokenSecret ? { GITHUB_TOKEN: this.githubTokenSecret.secretValue.toString() } : {}),
+          ...(this.githubTokenSecret
+            ? { GITHUB_TOKEN: this.githubTokenSecret.secretValue.toString() }
+            : {}),
           SQS_QUEUE_URL: this.workerQueue.queueUrl,
         },
         timeout: cdk.Duration.minutes(5),
-      },
+      }
     );
 
     this.bucket.grantRead(
       this.generateReleaseNotesLambda,
-      `${STORAGE_KEY_PREFIX}*${PACKAGE_KEY_SUFFIX}`,
+      `${STORAGE_KEY_PREFIX}*${PACKAGE_KEY_SUFFIX}`
     );
     this.bucket.grantReadWrite(
       this.generateReleaseNotesLambda,
-      `${STORAGE_KEY_PREFIX}*${PACKAGE_RELEASE_NOTES_KEY_SUFFIX}`,
+      `${STORAGE_KEY_PREFIX}*${PACKAGE_RELEASE_NOTES_KEY_SUFFIX}`
     );
 
     const generateReleaseNotesForEachPackage = new tasks.LambdaInvoke(
@@ -229,7 +238,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
         payloadResponseOnly: true,
         inputPath: '$.Body',
         resultPath: '$.result',
-      },
+      }
     ).next(
       new sfn.Choice(this, 'With result')
         .when(
@@ -249,8 +258,8 @@ export class ReleaseNoteFetcher extends cdk.Construct {
                 VisibilityTimeout: 0,
               },
               resultPath: '$.errorHandler',
-            },
-          ),
+            }
+          )
         )
         .when(
           sfn.Condition.stringEquals('$.result.error', 'InvalidCredentials'),
@@ -268,7 +277,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
                 MessageBody: JsonPath.jsonToString(JsonPath.stringAt('$.Body')),
               },
               resultPath: '$.errorHandler',
-            },
+            }
           ).next(
             new tasks.CallAwsService(
               this,
@@ -282,9 +291,9 @@ export class ReleaseNoteFetcher extends cdk.Construct {
                   ReceiptHandle: JsonPath.stringAt('$.ReceiptHandle'),
                 },
                 resultPath: '$.errorHandler',
-              },
-            ),
-          ),
+              }
+            )
+          )
         )
         .otherwise(
           new tasks.CallAwsService(this, 'remove the message from SQS', {
@@ -296,8 +305,8 @@ export class ReleaseNoteFetcher extends cdk.Construct {
               ReceiptHandle: JsonPath.stringAt('$.ReceiptHandle'),
             },
             resultPath: '$.cleanup',
-          }),
-        ),
+          })
+        )
     );
 
     const updateFeedTaskWhenWaitingForGHRateLimit = new tasks.LambdaInvoke(
@@ -306,7 +315,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
       {
         lambdaFunction: this.updateFeedFunction,
         comment: 'Update the RSS/Atom feed',
-      },
+      }
     );
 
     const updateFeedAfterProcessing = new tasks.LambdaInvoke(
@@ -316,7 +325,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
         lambdaFunction: this.updateFeedFunction,
         comment:
           'Update the RSS/Atom feed after processing all the items in the queue',
-      },
+      }
     );
 
     const getTasksFromQueue = new tasks.LambdaInvoke(
@@ -325,7 +334,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
       {
         lambdaFunction: getTasksFromWorkerQueue,
         payloadResponseOnly: true,
-      },
+      }
     ).next(
       new sfn.Choice(this, 'with result')
         .when(
@@ -335,29 +344,29 @@ export class ReleaseNoteFetcher extends cdk.Construct {
               new sfn.Wait(this, 'wait till service quota replenishes', {
                 time: sfn.WaitTime.timestampPath('$.waitUntil'),
               }),
-              updateFeedTaskWhenWaitingForGHRateLimit,
+              updateFeedTaskWhenWaitingForGHRateLimit
             )
-            .next(restartExecution),
+            .next(restartExecution)
         )
         .when(
           sfn.Condition.isPresent('$.error.MaxConcurrentExecutionError'),
           new sfn.Succeed(
             this,
-            'Stopping this execution since Max concurrent execution has reached',
-          ),
+            'Stopping this execution since Max concurrent execution has reached'
+          )
         )
         .when(
           sfn.Condition.isPresent('$.messages'),
           new sfn.Map(this, 'with each package', {
             comment: 'Fetch release notes for each package',
             itemsPath: '$.messages',
-          }).iterator(generateReleaseNotesForEachPackage),
+          }).iterator(generateReleaseNotesForEachPackage)
         )
         .otherwise(
-          updateFeedAfterProcessing.next(new sfn.Succeed(this, 'all done')),
+          updateFeedAfterProcessing.next(new sfn.Succeed(this, 'all done'))
         )
         .afterwards()
-        .next(restartExecution),
+        .next(restartExecution)
     );
 
     this.stateMachine = new sfn.StateMachine(this, 'StateMachine', {
@@ -369,7 +378,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
 
     getTasksFromWorkerQueue.addEnvironment(
       'STEP_FUNCTION_ARN',
-      stateMachineArn,
+      stateMachineArn
     );
 
     getTasksFromWorkerQueue.grantPrincipal.addToPrincipalPolicy(
@@ -377,7 +386,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
         actions: ['states:ListExecutions'],
         effect: iam.Effect.ALLOW,
         resources: [stateMachineArn],
-      }),
+      })
     );
     this.workerQueue.grantConsumeMessages(getTasksFromWorkerQueue);
 
@@ -393,7 +402,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
             `RunBook: ${RUNBOOK_URL}`,
             '',
             `Direct link to the function: ${stateMachineUrl(
-              this.stateMachine,
+              this.stateMachine
             )}`,
           ].join('\n'),
           comparisonOperator:
@@ -401,7 +410,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
           evaluationPeriods: 2,
           threshold: 1,
           treatMissingData: TreatMissingData.NOT_BREACHING,
-        }),
+        })
     );
 
     props.monitoring.addLowSeverityAlarm(
@@ -416,7 +425,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
             `RunBook: ${RUNBOOK_URL}`,
             '',
             `Direct link to the function: ${lambdaFunctionUrl(
-              this.releaseNotesTriggerLambda,
+              this.releaseNotesTriggerLambda
             )}`,
           ].join('\n'),
           comparisonOperator:
@@ -424,25 +433,31 @@ export class ReleaseNoteFetcher extends cdk.Construct {
           evaluationPeriods: 2,
           threshold: 1,
           treatMissingData: TreatMissingData.NOT_BREACHING,
-        }),
+        })
     );
 
-    props.monitoring.addHighSeverityAlarm('ReleaseNotes Github credential invalid', this.metricInvalidCredentials().createAlarm(this, 'ReleaseNotesInvalidGitHubCredentials', {
-      alarmName: `${this.node.path}/ ReleaseNotes / Invalid GitHub credential`,
-      alarmDescription: [
-        'Release notes generation is failing due to Invalid GitHub token',
-        '',
-        `RunBook: ${RUNBOOK_URL}`,
-        '',
-      ].join('\n'),
-      comparisonOperator:
-        ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      evaluationPeriods: 2,
-      threshold: 1,
-      treatMissingData: TreatMissingData.NOT_BREACHING,
-    }));
+    props.monitoring.addHighSeverityAlarm(
+      'ReleaseNotes Github credential invalid',
+      this.metricInvalidCredentials().createAlarm(
+        this,
+        'ReleaseNotesInvalidGitHubCredentials',
+        {
+          alarmName: `${this.node.path}/ ReleaseNotes / Invalid GitHub credential`,
+          alarmDescription: [
+            'Release notes generation is failing due to Invalid GitHub token',
+            '',
+            `RunBook: ${RUNBOOK_URL}`,
+            '',
+          ].join('\n'),
+          comparisonOperator:
+            ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+          evaluationPeriods: 2,
+          threshold: 1,
+          treatMissingData: TreatMissingData.NOT_BREACHING,
+        }
+      )
+    );
   }
-
 
   public metricPackagesWithReleaseNotesCount(opts?: MetricOptions): Metric {
     return new Metric({
@@ -503,7 +518,6 @@ export class ReleaseNoteFetcher extends cdk.Construct {
       namespace: metricConst.METRICS_NAMESPACE,
     });
   }
-
 
   public metricChangeLogFetchError(opts?: MetricOptions): Metric {
     return new Metric({

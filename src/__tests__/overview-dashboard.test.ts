@@ -44,7 +44,6 @@ test('minimally it should create a dashboard with lambda SERVICE metrics', () =>
     ],
     Threshold: 90,
     TreatMissingData: 'missing',
-
   });
 });
 
@@ -52,7 +51,9 @@ test('adds lambda function to concurrent usage graph', () => {
   const stack = new Stack();
 
   const fn = new lambda.Function(stack, 'Fn', {
-    code: lambda.Code.fromInline('const handler = () => {console.log("hello")};'),
+    code: lambda.Code.fromInline(
+      'const handler = () => {console.log("hello")};'
+    ),
     handler: 'handler',
     runtime: lambda.Runtime.NODEJS_14_X,
   });
@@ -92,14 +93,18 @@ test('It adds cloud front distribution to the dashboard when present', () => {
   const stack = new Stack();
   const bucket = new Bucket(stack, 'Bucket');
   const distribution = new CloudFrontWebDistribution(stack, 'Distribution', {
-    originConfigs: [{
-      behaviors: [{
-        isDefaultBehavior: true,
-      }],
-      s3OriginSource: {
-        s3BucketSource: bucket,
+    originConfigs: [
+      {
+        behaviors: [
+          {
+            isDefaultBehavior: true,
+          },
+        ],
+        s3OriginSource: {
+          s3BucketSource: bucket,
+        },
       },
-    }],
+    ],
   });
   const dashboard = new OverviewDashboard(stack, 'OverviewDashboard');
   dashboard.addDistributionMetricToDashboard(distribution);

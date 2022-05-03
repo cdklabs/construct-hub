@@ -1,4 +1,10 @@
-import { ComparisonOperator, MathExpression, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
+import {
+  ComparisonOperator,
+  MathExpression,
+  Metric,
+  MetricOptions,
+  Statistic,
+} from '@aws-cdk/aws-cloudwatch';
 import { Effect, PolicyStatement } from '@aws-cdk/aws-iam';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
 import { RetentionDays } from '@aws-cdk/aws-logs';
@@ -67,7 +73,8 @@ export class CatalogBuilder extends Construct {
       environment: {
         BUCKET_NAME: props.bucket.bucketName,
         AWS_EMF_ENVIRONMENT: 'Local',
-        FEED_BUILDER_FUNCTION_NAME: props.feedBuilder.updateFeedFunction.functionName,
+        FEED_BUILDER_FUNCTION_NAME:
+          props.feedBuilder.updateFeedFunction.functionName,
       },
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 10_240, // Currently the maximum possible setting
@@ -76,30 +83,39 @@ export class CatalogBuilder extends Construct {
       tracing: Tracing.PASS_THROUGH,
     });
     this.function = handler;
-    props.overviewDashboard.addConcurrentExecutionMetricToDashboard(handler, 'CatalogBuilderLambda');
+    props.overviewDashboard.addConcurrentExecutionMetricToDashboard(
+      handler,
+      'CatalogBuilderLambda'
+    );
 
     // This function may invoke itself in case it needs to continue it's work in
     // a "child" invocation. We must hence allow it to invoke itself. We cannot
     // use grantInvoke as this would (naturally) cause a circular reference
     // (Function -> Role -> Function).
-    handler.addToRolePolicy(new PolicyStatement({
-      actions: ['lambda:InvokeFunction'],
-      effect: Effect.ALLOW,
-      resources: [Stack.of(this).formatArn({
-        arnFormat: ArnFormat.COLON_RESOURCE_NAME,
-        service: 'lambda',
-        resource: 'function',
-        resourceName: '*',
-      })],
-    }));
+    handler.addToRolePolicy(
+      new PolicyStatement({
+        actions: ['lambda:InvokeFunction'],
+        effect: Effect.ALLOW,
+        resources: [
+          Stack.of(this).formatArn({
+            arnFormat: ArnFormat.COLON_RESOURCE_NAME,
+            service: 'lambda',
+            resource: 'function',
+            resourceName: '*',
+          }),
+        ],
+      })
+    );
 
     // using handler.grantInvoke(props.feedBuilder.updateFeedFunction)
     // causes circular dependency error
-    handler.addToRolePolicy(new PolicyStatement({
-      actions: ['lambda:InvokeFunction'],
-      effect: Effect.ALLOW,
-      resources: [props.feedBuilder.updateFeedFunction.functionArn],
-    }));
+    handler.addToRolePolicy(
+      new PolicyStatement({
+        actions: ['lambda:InvokeFunction'],
+        effect: Effect.ALLOW,
+        resources: [props.feedBuilder.updateFeedFunction.functionArn],
+      })
+    );
 
     // allow the catalog builder to use the client.
     props.denyList.grantRead(handler);
@@ -116,23 +132,30 @@ export class CatalogBuilder extends Construct {
       period: Duration.minutes(15),
       usingMetrics: { m1: this.metricRegisteredPackageMajorVersions() },
     });
-    const alarmShrinkingCatalog = catalogSizeChange.createAlarm(this, 'ShrinkingCatalogAlarm', {
-      alarmName: `${this.node.path}/ShrinkingCatalog`,
-      alarmDescription: [
-        'The number of packages registered in the catalog.json object has shrunk by more than 5',
-        'elements. There might be a mass extinction event going on. This should be investigated',
-        'as soon as possible.',
-        '',
-        `Catalog.json: ${s3ObjectUrl(props.bucket, 'catalog.json')}`,
-        `Catalog Builder: ${lambdaFunctionUrl(handler)}`,
-        '',
-        `RUNBOOK: ${RUNBOOK_URL}`,
-      ].join('\n'),
-      comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
-      evaluationPeriods: 1,
-      threshold: -5,
-    });
-    props.monitoring.addHighSeverityAlarm('Catalog Size Shrunk', alarmShrinkingCatalog);
+    const alarmShrinkingCatalog = catalogSizeChange.createAlarm(
+      this,
+      'ShrinkingCatalogAlarm',
+      {
+        alarmName: `${this.node.path}/ShrinkingCatalog`,
+        alarmDescription: [
+          'The number of packages registered in the catalog.json object has shrunk by more than 5',
+          'elements. There might be a mass extinction event going on. This should be investigated',
+          'as soon as possible.',
+          '',
+          `Catalog.json: ${s3ObjectUrl(props.bucket, 'catalog.json')}`,
+          `Catalog Builder: ${lambdaFunctionUrl(handler)}`,
+          '',
+          `RUNBOOK: ${RUNBOOK_URL}`,
+        ].join('\n'),
+        comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+        evaluationPeriods: 1,
+        threshold: -5,
+      }
+    );
+    props.monitoring.addHighSeverityAlarm(
+      'Catalog Size Shrunk',
+      alarmShrinkingCatalog
+    );
   }
 
   public metricMissingConstructFrameworkCount(opts?: MetricOptions): Metric {
@@ -145,7 +168,9 @@ export class CatalogBuilder extends Construct {
     });
   }
 
-  public metricMissingConstructFrameworkVersionCount(opts?: MetricOptions): Metric {
+  public metricMissingConstructFrameworkVersionCount(
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: Duration.minutes(15),
       statistic: Statistic.MAXIMUM,
@@ -247,4 +272,3 @@ export interface PackageInfo {
    */
   readonly description?: string;
 }
-

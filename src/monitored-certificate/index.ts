@@ -1,5 +1,12 @@
 import { ICertificate } from '@aws-cdk/aws-certificatemanager';
-import { Alarm, ComparisonOperator, Metric, MetricOptions, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
+import {
+  Alarm,
+  ComparisonOperator,
+  Metric,
+  MetricOptions,
+  Statistic,
+  TreatMissingData,
+} from '@aws-cdk/aws-cloudwatch';
 import { Rule, Schedule } from '@aws-cdk/aws-events';
 import { LambdaFunction } from '@aws-cdk/aws-events-targets';
 import { Construct, Duration, Stack } from '@aws-cdk/core';
@@ -26,12 +33,12 @@ export interface MonitoredCertificateProps {
   readonly metricNamespace?: string;
 
   /**
-    * The name of the CloudWatch metric emitted for the amount of days remaining
-    * before expiry of the certificate used to serve HTTPS traffic on the
-    * configured `domainName`.
-    *
-    * @default 'DaysToExpiry'
-    */
+   * The name of the CloudWatch metric emitted for the amount of days remaining
+   * before expiry of the certificate used to serve HTTPS traffic on the
+   * configured `domainName`.
+   *
+   * @default 'DaysToExpiry'
+   */
   readonly metricName?: string;
 }
 
@@ -59,11 +66,16 @@ export class MonitoredCertificate extends Construct {
   private readonly endpointMetricName: string;
   private readonly endpointMetricNamespace: string;
 
-  public constructor(scope: Construct, id: string, private readonly props: MonitoredCertificateProps) {
+  public constructor(
+    scope: Construct,
+    id: string,
+    private readonly props: MonitoredCertificateProps
+  ) {
     super(scope, id);
 
     this.endpointMetricName = props.metricName ?? 'DaysToExpiry';
-    this.endpointMetricNamespace = props.metricNamespace ?? Stack.of(this).stackName;
+    this.endpointMetricNamespace =
+      props.metricNamespace ?? Stack.of(this).stackName;
 
     const dynamicMonitor = new CertificateMonitor(this, 'Monitor', {
       description: `Monitors the days to expiry of the certificate used to serve ${props.domainName}`,
@@ -82,8 +94,8 @@ export class MonitoredCertificate extends Construct {
       targets: [new LambdaFunction(dynamicMonitor)],
     });
 
-    this.alarmAcmCertificateExpiresSoon = this.metricAcmCertificateDaysToExpiry()
-      .createAlarm(this, 'ACMAlarm', {
+    this.alarmAcmCertificateExpiresSoon =
+      this.metricAcmCertificateDaysToExpiry().createAlarm(this, 'ACMAlarm', {
         alarmDescription: `The ACM certificate ${props.certificate.certificateArn} will expire in less than 45 days!`,
         comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
         evaluationPeriods: 1,
@@ -91,14 +103,18 @@ export class MonitoredCertificate extends Construct {
         treatMissingData: TreatMissingData.BREACHING,
       });
 
-    this.alarmEndpointCertificateExpiresSoon = this.metricEndpointCertificateDaysToExpiry()
-      .createAlarm(this, 'EndpointAlarm', {
-        alarmDescription: `The certificate used to serve ${props.domainName} will expire in less than 45 days!`,
-        comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
-        evaluationPeriods: 1,
-        threshold: 45,
-        treatMissingData: TreatMissingData.BREACHING,
-      });
+    this.alarmEndpointCertificateExpiresSoon =
+      this.metricEndpointCertificateDaysToExpiry().createAlarm(
+        this,
+        'EndpointAlarm',
+        {
+          alarmDescription: `The certificate used to serve ${props.domainName} will expire in less than 45 days!`,
+          comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+          evaluationPeriods: 1,
+          threshold: 45,
+          treatMissingData: TreatMissingData.BREACHING,
+        }
+      );
     // Ensure we don't alarm before the function's trigger has been created...
     this.alarmEndpointCertificateExpiresSoon.node.addDependency(rule);
   }

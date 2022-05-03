@@ -1,5 +1,8 @@
 import { compare, major } from 'semver';
-import { CatalogClient, CatalogNotFoundError } from '../catalog-builder/client.lambda-shared';
+import {
+  CatalogClient,
+  CatalogNotFoundError,
+} from '../catalog-builder/client.lambda-shared';
 import type { StateMachineInput } from '../payload-schema';
 import { STORAGE_KEY_FORMAT_REGEX } from '../shared/constants';
 
@@ -20,12 +23,16 @@ export type Input = Pick<StateMachineInput, 'package'>;
 export async function handler(event: Input): Promise<boolean> {
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
 
-  const [, packageName, version] = STORAGE_KEY_FORMAT_REGEX.exec(event.package.key) ?? die(`Unexpected/invalid package key: ${event.package.key}`);
+  const [, packageName, version] =
+    STORAGE_KEY_FORMAT_REGEX.exec(event.package.key) ??
+    die(`Unexpected/invalid package key: ${event.package.key}`);
   const packageMajor = major(version);
 
   try {
     const catalogClient = await CatalogClient.newClient();
-    const existingEntry = catalogClient.packages.find((pkg) => pkg.name === packageName && pkg.major === packageMajor);
+    const existingEntry = catalogClient.packages.find(
+      (pkg) => pkg.name === packageName && pkg.major === packageMajor
+    );
     if (existingEntry == null) {
       return true;
     }
@@ -38,7 +45,6 @@ export async function handler(event: Input): Promise<boolean> {
     }
     throw e;
   }
-
 }
 
 function die(message: string): never {

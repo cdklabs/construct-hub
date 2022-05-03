@@ -50,7 +50,7 @@ export const handler = async (event: SQSEvent) => {
           Entries: messages,
           QueueUrl: WORKER_QUEUE_URL,
         })
-        .promise(),
+        .promise()
     );
   }
   await Promise.all(requests);

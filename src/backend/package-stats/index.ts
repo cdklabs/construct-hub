@@ -1,4 +1,10 @@
-import { ComparisonOperator, Metric, MetricOptions, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
+import {
+  ComparisonOperator,
+  Metric,
+  MetricOptions,
+  Statistic,
+  TreatMissingData,
+} from '@aws-cdk/aws-cloudwatch';
 import * as events from '@aws-cdk/aws-events';
 import * as targets from '@aws-cdk/aws-events-targets';
 import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
@@ -98,20 +104,23 @@ export class PackageStats extends Construct {
 
     this.bucket.grantReadWrite(this.handler);
 
-    const failureAlarm = this.handler.metricErrors().createAlarm(scope, 'PackageStats/Failures', {
-      alarmName: `${scope.node.path}/PackageStats/Failures`,
-      alarmDescription: [
-        'The package stats function failed!',
-        '',
-        `RunBook: ${RUNBOOK_URL}`,
-        '',
-        `Direct link to Lambda function: ${lambdaFunctionUrl(this.handler)}`,
-      ].join('\n'),
-      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      evaluationPeriods: 1,
-      threshold: 1,
-      treatMissingData: TreatMissingData.MISSING,
-    });
+    const failureAlarm = this.handler
+      .metricErrors()
+      .createAlarm(scope, 'PackageStats/Failures', {
+        alarmName: `${scope.node.path}/PackageStats/Failures`,
+        alarmDescription: [
+          'The package stats function failed!',
+          '',
+          `RunBook: ${RUNBOOK_URL}`,
+          '',
+          `Direct link to Lambda function: ${lambdaFunctionUrl(this.handler)}`,
+        ].join('\n'),
+        comparisonOperator:
+          ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        evaluationPeriods: 1,
+        threshold: 1,
+        treatMissingData: TreatMissingData.MISSING,
+      });
     props.monitoring.addLowSeverityAlarm('PackageStats Failures', failureAlarm);
   }
 

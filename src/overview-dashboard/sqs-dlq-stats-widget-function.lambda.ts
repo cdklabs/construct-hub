@@ -49,9 +49,11 @@ type QueueConfig = {
   queueName: string;
   name: string;
   reDriveFunctionArn?: string;
-}
+};
 
-export async function handler(event: Event): Promise<string | { markdown: string }> {
+export async function handler(
+  event: Event
+): Promise<string | { markdown: string }> {
   console.log(JSON.stringify(event));
   try {
     if (event.describe) {
@@ -66,12 +68,20 @@ export async function handler(event: Event): Promise<string | { markdown: string
     const data = await getVisibleMessageCount(queues);
 
     const heading = `<h4>${event.widgetContext.title}</h4>`;
-    const description = event.widgetContext.params.description ? `<p>${event.widgetContext.params.description}</p>` : '';
+    const description = event.widgetContext.params.description
+      ? `<p>${event.widgetContext.params.description}</p>`
+      : '';
     let rest = '';
-    if (Object.keys(data).length > 0 && Object.values(data).some(d => d > 0)) {
+    if (
+      Object.keys(data).length > 0 &&
+      Object.values(data).some((d) => d > 0)
+    ) {
       const filteredData = Object.entries(data)
         .filter(([_, count]) => count > 0)
-        .reduce((acc, [queueName, count]) => ({ ...acc, [queueName]: count }), {} as Record<string, number>);
+        .reduce(
+          (acc, [queueName, count]) => ({ ...acc, [queueName]: count }),
+          {} as Record<string, number>
+        );
       const table = generateTable(filteredData, queues, event.widgetContext);
       console.log(table);
       rest = `<p>${event.widgetContext.params.nonEmptyQueueMessage}</p>${table}`;
@@ -92,7 +102,7 @@ export async function handler(event: Event): Promise<string | { markdown: string
           '  ```',
         ].join('\n'),
       };
-    };
+    }
     throw error;
   }
 }
@@ -137,11 +147,13 @@ export interface WidgetContext {
   readonly height: number;
 }
 
-const getVisibleMessageCount = async (queueConfigs: Record<string, QueueConfig>): Promise<Record<string, number>> => {
+const getVisibleMessageCount = async (
+  queueConfigs: Record<string, QueueConfig>
+): Promise<Record<string, number>> => {
   // Keeping the time period to 5 minutes to show current state of the queue when re-drive happens
   const queues = Object.values(queueConfigs);
   const params: CloudWatch.GetMetricDataInput = {
-    StartTime: new Date(new Date().getTime() - (DURATION * 60 * 1000)), // 5 minutes ago
+    StartTime: new Date(new Date().getTime() - DURATION * 60 * 1000), // 5 minutes ago
     EndTime: new Date(), // now
     ScanBy: 'TimestampDescending',
     MetricDataQueries: queues.map((queue, index) => ({
@@ -172,24 +184,36 @@ const getVisibleMessageCount = async (queueConfigs: Record<string, QueueConfig>)
     return acc;
   }, {} as Record<string, number>);
   return data;
-
 };
 
-function generateTable(data: Record<string, number>, queueConfigs: Record<string, QueueConfig>, widgetContext: WidgetContext): string {
+function generateTable(
+  data: Record<string, number>,
+  queueConfigs: Record<string, QueueConfig>,
+  widgetContext: WidgetContext
+): string {
+  const rows = Object.entries(data)
+    .map(([queueName, count]) => {
+      const queueConfig = queueConfigs[queueName];
+      if (queueConfig) {
+        const url = sqsQueueUrl(queueName, widgetContext);
+        const reDriveButton = queueConfig?.reDriveFunctionArn
+          ? `<a class="btn btn-primary">ReDrive</a><cwdb-action action="call" display="widget" endpoint="${queueConfig.reDriveFunctionArn}" event="click"></<cwdb-action>`
+          : '';
+        const queueLink = `<a class="btn ${
+          !reDriveButton ? 'btn-primary' : ''
+        }" href="${url}">Goto Queue</a>`;
+        const row = [queueConfig.name, count, `${queueLink} ${reDriveButton}`]
+          .map((d) => `<td>${d}</td>`)
+          .join('');
+        return `<tr>${row}</tr>`;
+      }
+      return false;
+    })
+    .filter(Boolean);
 
-  const rows = Object.entries(data).map(([queueName, count]) => {
-    const queueConfig = queueConfigs[queueName];
-    if (queueConfig) {
-      const url = sqsQueueUrl(queueName, widgetContext);
-      const reDriveButton = queueConfig?.reDriveFunctionArn ? `<a class="btn btn-primary">ReDrive</a><cwdb-action action="call" display="widget" endpoint="${queueConfig.reDriveFunctionArn}" event="click"></<cwdb-action>` : '';
-      const queueLink = `<a class="btn ${!reDriveButton ? 'btn-primary' : ''}" href="${url}">Goto Queue</a>`;
-      const row = [queueConfig.name, count, `${queueLink} ${reDriveButton}`].map(d => `<td>${d}</td>`).join('');
-      return `<tr>${row}</tr>`;
-    }
-    return false;
-  }).filter(Boolean);
-
-  const tableHeader = ['Queue Name', 'Visible Messages', 'Action'].map(h => `<th>${h}</th>`);
+  const tableHeader = ['Queue Name', 'Visible Messages', 'Action'].map(
+    (h) => `<th>${h}</th>`
+  );
   const tableHeaderRow = `<tr>${tableHeader.join('')}</tr>`;
   const table = ['<table>', tableHeaderRow, ...rows, '</table>'].join('\n');
   return table;

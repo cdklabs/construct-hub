@@ -33,10 +33,12 @@ export class DomainRedirect extends CoreConstruct {
 
     const sourceDomainName = props.source.hostedZone.zoneName;
 
-    const cert = props.source.certificate ?? new acm.DnsValidatedCertificate(this, 'Certificate', {
-      domainName: sourceDomainName,
-      hostedZone: props.source.hostedZone,
-    });
+    const cert =
+      props.source.certificate ??
+      new acm.DnsValidatedCertificate(this, 'Certificate', {
+        domainName: sourceDomainName,
+        hostedZone: props.source.hostedZone,
+      });
 
     const dist = new cf.Distribution(this, 'Distribution', {
       domainNames: [sourceDomainName],
@@ -48,14 +50,18 @@ export class DomainRedirect extends CoreConstruct {
     // IPv4
     new route53.ARecord(this, 'ARecord', {
       zone: props.source.hostedZone,
-      target: route53.RecordTarget.fromAlias(new route53_targets.CloudFrontTarget(dist)),
+      target: route53.RecordTarget.fromAlias(
+        new route53_targets.CloudFrontTarget(dist)
+      ),
       comment: 'Created by the AWS CDK',
     });
 
     // IPv6
     new route53.AaaaRecord(this, 'AaaaRecord', {
       zone: props.source.hostedZone,
-      target: route53.RecordTarget.fromAlias(new route53_targets.CloudFrontTarget(dist)),
+      target: route53.RecordTarget.fromAlias(
+        new route53_targets.CloudFrontTarget(dist)
+      ),
       comment: 'Created by the AWS CDK',
     });
   }
@@ -69,11 +75,14 @@ export class DomainRedirect extends CoreConstruct {
   private getOrCreateBucket(domainName: string): s3.Bucket {
     const buckets = this.getOrCreateBucketsScope();
     const id = `RedirectBucket-${domainName}`;
-    return buckets.node.tryFindChild(id) as s3.Bucket | undefined ?? new s3.Bucket(buckets, id, {
-      websiteRedirect: {
-        hostName: domainName,
-      },
-    });
+    return (
+      (buckets.node.tryFindChild(id) as s3.Bucket | undefined) ??
+      new s3.Bucket(buckets, id, {
+        websiteRedirect: {
+          hostName: domainName,
+        },
+      })
+    );
   }
 
   /**
@@ -85,7 +94,10 @@ export class DomainRedirect extends CoreConstruct {
   private getOrCreateBucketsScope(): CoreConstruct {
     const stack = Stack.of(this);
     const scopeId = 'DomainRedirectBucketsA177hj';
-    return stack.node.tryFindChild(scopeId) as CoreConstruct | undefined ?? new CoreConstruct(stack, scopeId);
+    return (
+      (stack.node.tryFindChild(scopeId) as CoreConstruct | undefined) ??
+      new CoreConstruct(stack, scopeId)
+    );
   }
 }
 

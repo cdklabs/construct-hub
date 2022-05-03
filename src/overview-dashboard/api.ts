@@ -11,7 +11,11 @@ export interface IOverviewDashboard {
    * @param deadLetterQueue Dead Letter Queue to be used in the dashboard
    * @param reDriveFunction a lambda function that will be used to re-drive the DLQ
    */
-  addDLQMetricToDashboard(name: string, deadLetterQueue: IQueue, reDriveFunction?: IFunction): void;
+  addDLQMetricToDashboard(
+    name: string,
+    deadLetterQueue: IQueue,
+    reDriveFunction?: IFunction
+  ): void;
 
   /**
    * Adds a metric widget to the overview dashboard showing the total number concurrent executions
@@ -20,5 +24,4 @@ export interface IOverviewDashboard {
    * @param fn Lambda function to be monitored
    */
   addConcurrentExecutionMetricToDashboard(fn: IFunction, name?: string): void;
-
 }

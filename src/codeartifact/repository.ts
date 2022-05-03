@@ -2,7 +2,11 @@ import { CfnDomain, CfnRepository } from '@aws-cdk/aws-codeartifact';
 import { InterfaceVpcEndpoint } from '@aws-cdk/aws-ec2';
 import { Effect, Grant, IGrantable, PolicyStatement } from '@aws-cdk/aws-iam';
 import { ArnFormat, Construct, IConstruct, Lazy, Stack } from '@aws-cdk/core';
-import { AwsCustomResource, AwsCustomResourcePolicy, PhysicalResourceId } from '@aws-cdk/custom-resources';
+import {
+  AwsCustomResource,
+  AwsCustomResourcePolicy,
+  PhysicalResourceId,
+} from '@aws-cdk/custom-resources';
 import * as api from './api';
 
 export interface RepositoryProps {
@@ -121,14 +125,20 @@ export class Repository extends Construct implements IRepository {
     super(scope, id);
 
     if (props?.domainExists && !props.domainName) {
-      throw new Error('domainExists cannot be specified if no domainName is provided');
+      throw new Error(
+        'domainExists cannot be specified if no domainName is provided'
+      );
     }
     if (props?.upstreams && !props.domainExists) {
-      throw new Error('upstreams can only be specified if domainExists and domainName are provided');
+      throw new Error(
+        'upstreams can only be specified if domainExists and domainName are provided'
+      );
     }
 
     const domainName = props?.domainName ?? this.node.addr;
-    const domain = props?.domainExists ? undefined : new CfnDomain(this, 'Domain', { domainName });
+    const domain = props?.domainExists
+      ? undefined
+      : new CfnDomain(this, 'Domain', { domainName });
     const repositoryName = props?.repositoryName ?? this.node.addr;
 
     /**
@@ -137,11 +147,13 @@ export class Repository extends Construct implements IRepository {
      * to this repository will go in there, so we can separate "hand-published"
      * from "from upstream or external" packages.
      */
-    const publishingUpstream = domain && new CfnRepository(this, 'Publishing', {
-      description: 'Publishing repository',
-      domainName: domain.attrName,
-      repositoryName: `${repositoryName}-publish-overlay`,
-    });
+    const publishingUpstream =
+      domain &&
+      new CfnRepository(this, 'Publishing', {
+        description: 'Publishing repository',
+        domainName: domain.attrName,
+        repositoryName: `${repositoryName}-publish-overlay`,
+      });
 
     const repository = new CfnRepository(this, 'Default', {
       description: props?.description,
@@ -161,27 +173,35 @@ export class Repository extends Construct implements IRepository {
         produce: () =>
           domain && this.#externalConnections.length > 0
             ? [
-              ...(props?.upstreams ?? []),
-              ...this.#externalConnections.map((name) => this.makeUpstreamForId(name, { domain, repositoryName })),
-              ...(publishingUpstream ? [publishingUpstream.attrName] : []),
-            ]
-            : publishingUpstream ? [publishingUpstream?.attrName] : props?.upstreams,
+                ...(props?.upstreams ?? []),
+                ...this.#externalConnections.map((name) =>
+                  this.makeUpstreamForId(name, { domain, repositoryName })
+                ),
+                ...(publishingUpstream ? [publishingUpstream.attrName] : []),
+              ]
+            : publishingUpstream
+            ? [publishingUpstream?.attrName]
+            : props?.upstreams,
       }),
     });
 
-    this.repositoryDomainArn = domain?.attrArn ?? Stack.of(this).formatArn({
-      service: 'codeartifact',
-      resource: 'domain',
-      arnFormat: ArnFormat.SLASH_RESOURCE_NAME,
-      resourceName: domainName,
-    });
+    this.repositoryDomainArn =
+      domain?.attrArn ??
+      Stack.of(this).formatArn({
+        service: 'codeartifact',
+        resource: 'domain',
+        arnFormat: ArnFormat.SLASH_RESOURCE_NAME,
+        resourceName: domainName,
+      });
     this.repositoryDomainName = repository.attrDomainName;
     this.repositoryDomainOwner = repository.attrDomainOwner;
     this.repositoryArn = repository.attrArn;
     this.repositoryName = repository.attrName;
 
-    this.publishingRepositoryArn = publishingUpstream?.attrArn ?? this.repositoryArn;
-    this.publishingRepositoryName = publishingUpstream?.attrName ?? repositoryName;
+    this.publishingRepositoryArn =
+      publishingUpstream?.attrArn ?? this.repositoryArn;
+    this.publishingRepositoryName =
+      publishingUpstream?.attrName ?? repositoryName;
   }
 
   /**
@@ -209,15 +229,19 @@ export class Repository extends Construct implements IRepository {
           format: 'npm',
           repository: this.repositoryName,
         },
-        physicalResourceId: PhysicalResourceId.fromResponse('repositoryEndpoint'),
+        physicalResourceId:
+          PhysicalResourceId.fromResponse('repositoryEndpoint'),
       };
       const endpoint = new AwsCustomResource(this, 'GetEndpoint', {
         onCreate: serviceCall,
         onUpdate: serviceCall,
-        policy: AwsCustomResourcePolicy.fromSdkCalls({ resources: [this.repositoryArn] }),
+        policy: AwsCustomResourcePolicy.fromSdkCalls({
+          resources: [this.repositoryArn],
+        }),
         resourceType: 'Custom::CodeArtifactNpmRepositoryEndpoint',
       });
-      this.#repositoryNpmEndpoint = endpoint.getResponseField('repositoryEndpoint');
+      this.#repositoryNpmEndpoint =
+        endpoint.getResponseField('repositoryEndpoint');
     }
     return this.#repositoryNpmEndpoint;
   }
@@ -237,15 +261,19 @@ export class Repository extends Construct implements IRepository {
           format: 'npm',
           repository: this.publishingRepositoryName,
         },
-        physicalResourceId: PhysicalResourceId.fromResponse('repositoryEndpoint'),
+        physicalResourceId:
+          PhysicalResourceId.fromResponse('repositoryEndpoint'),
       };
       const endpoint = new AwsCustomResource(this, 'GetPublishingEndpoint', {
         onCreate: serviceCall,
         onUpdate: serviceCall,
-        policy: AwsCustomResourcePolicy.fromSdkCalls({ resources: [this.publishingRepositoryArn] }),
+        policy: AwsCustomResourcePolicy.fromSdkCalls({
+          resources: [this.publishingRepositoryArn],
+        }),
         resourceType: 'Custom::CodeArtifactNpmRepositoryEndpoint',
       });
-      this.#publishingRepositoryNpmEndpoint = endpoint.getResponseField('repositoryEndpoint');
+      this.#publishingRepositoryNpmEndpoint =
+        endpoint.getResponseField('repositoryEndpoint');
     }
     return this.#publishingRepositoryNpmEndpoint;
   }
@@ -265,24 +293,32 @@ export class Repository extends Construct implements IRepository {
             domain: this.repositoryDomainName,
             domainOwner: this.repositoryDomainOwner,
           },
-          physicalResourceId: PhysicalResourceId.fromResponse('domain.s3BucketArn'),
+          physicalResourceId:
+            PhysicalResourceId.fromResponse('domain.s3BucketArn'),
         },
-        policy: AwsCustomResourcePolicy.fromSdkCalls({ resources: [this.repositoryDomainArn] }),
+        policy: AwsCustomResourcePolicy.fromSdkCalls({
+          resources: [this.repositoryDomainArn],
+        }),
         resourceType: 'Custom::CoreArtifactDomainDescription',
       });
-      this.#s3BucketArn = domainDescription.getResponseField('domain.s3BucketArn');
+      this.#s3BucketArn =
+        domainDescription.getResponseField('domain.s3BucketArn');
     }
     return this.#s3BucketArn;
   }
 
   public grantReadFromRepository(grantee: IGrantable): Grant {
     // The Grant API does not allow conditions
-    const stsGrantResult = grantee.grantPrincipal.addToPrincipalPolicy(new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: ['sts:GetServiceBearerToken'],
-      conditions: { StringEquals: { 'sts:AWSServiceName': 'codeartifact.amazonaws.com' } },
-      resources: ['*'], // STS does not support resource-specified permissions
-    }));
+    const stsGrantResult = grantee.grantPrincipal.addToPrincipalPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['sts:GetServiceBearerToken'],
+        conditions: {
+          StringEquals: { 'sts:AWSServiceName': 'codeartifact.amazonaws.com' },
+        },
+        resources: ['*'], // STS does not support resource-specified permissions
+      })
+    );
     if (!stsGrantResult.statementAdded) {
       return Grant.drop(grantee, 'CodeArtifact:ReadFromRepository');
     }
@@ -293,7 +329,11 @@ export class Repository extends Construct implements IRepository {
         'codeartifact:GetRepositoryEndpoint',
         'codeartifact:ReadFromRepository',
       ],
-      resourceArns: [this.repositoryDomainArn, this.repositoryArn, this.publishingRepositoryArn],
+      resourceArns: [
+        this.repositoryDomainArn,
+        this.repositoryArn,
+        this.publishingRepositoryArn,
+      ],
     });
   }
 
@@ -308,12 +348,14 @@ export class Repository extends Construct implements IRepository {
         'codeartifact:PublishPackageVersion',
         'codeartifact:PutPackageMetadata',
       ],
-      resourceArns: [Stack.of(this).formatArn({
-        arnFormat: ArnFormat.SLASH_RESOURCE_NAME,
-        service: 'codeartifact',
-        resource: 'package',
-        resourceName: `${this.repositoryDomainName}/${this.publishingRepositoryName}/${format}/*`,
-      })],
+      resourceArns: [
+        Stack.of(this).formatArn({
+          arnFormat: ArnFormat.SLASH_RESOURCE_NAME,
+          service: 'codeartifact',
+          resource: 'package',
+          resourceName: `${this.repositoryDomainName}/${this.publishingRepositoryName}/${format}/*`,
+        }),
+      ],
     });
   }
 
@@ -329,7 +371,10 @@ export class Repository extends Construct implements IRepository {
    * @returns a view of this repository that appropriately grants permissions on
    *          the VPC endpoint policies, too.
    */
-  public throughVpcEndpoint(apiEndpoint: InterfaceVpcEndpoint, repoEndpoint: InterfaceVpcEndpoint): IRepository {
+  public throughVpcEndpoint(
+    apiEndpoint: InterfaceVpcEndpoint,
+    repoEndpoint: InterfaceVpcEndpoint
+  ): IRepository {
     return new Proxy(this, {
       get(target, property, _receiver) {
         if (property === 'grantReadFromRepository') {
@@ -338,7 +383,10 @@ export class Repository extends Construct implements IRepository {
         return (target as any)[property];
       },
       getOwnPropertyDescriptor(target, property) {
-        const realDescriptor = Object.getOwnPropertyDescriptor(target, property);
+        const realDescriptor = Object.getOwnPropertyDescriptor(
+          target,
+          property
+        );
         if (property === 'grantReadFromRepository') {
           return {
             ...realDescriptor,
@@ -351,34 +399,53 @@ export class Repository extends Construct implements IRepository {
       },
     });
 
-    function decoratedGrantReadFromRepository(this: Repository, grantee: IGrantable): Grant {
+    function decoratedGrantReadFromRepository(
+      this: Repository,
+      grantee: IGrantable
+    ): Grant {
       const mainGrant = this.grantReadFromRepository(grantee);
       if (mainGrant.success) {
-        apiEndpoint.addToPolicy(new PolicyStatement({
-          effect: Effect.ALLOW,
-          actions: ['sts:GetServiceBearerToken'],
-          conditions: { StringEquals: { 'sts:AWSServiceName': 'codeartifact.amazonaws.com' } },
-          resources: ['*'], // STS does not support resource-specified permissions
-          principals: [grantee.grantPrincipal],
-        }));
-        apiEndpoint.addToPolicy(new PolicyStatement({
-          effect: Effect.ALLOW,
-          actions: ['codeartifact:GetAuthorizationToken', 'codeartifact:GetRepositoryEndpoint'],
-          resources: [this.repositoryDomainArn, this.repositoryArn],
-          principals: [grantee.grantPrincipal],
-        }));
-        repoEndpoint.addToPolicy(new PolicyStatement({
-          effect: Effect.ALLOW,
-          actions: ['codeartifact:ReadFromRepository'],
-          resources: [this.repositoryArn],
-          principals: [grantee.grantPrincipal],
-        }));
+        apiEndpoint.addToPolicy(
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: ['sts:GetServiceBearerToken'],
+            conditions: {
+              StringEquals: {
+                'sts:AWSServiceName': 'codeartifact.amazonaws.com',
+              },
+            },
+            resources: ['*'], // STS does not support resource-specified permissions
+            principals: [grantee.grantPrincipal],
+          })
+        );
+        apiEndpoint.addToPolicy(
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: [
+              'codeartifact:GetAuthorizationToken',
+              'codeartifact:GetRepositoryEndpoint',
+            ],
+            resources: [this.repositoryDomainArn, this.repositoryArn],
+            principals: [grantee.grantPrincipal],
+          })
+        );
+        repoEndpoint.addToPolicy(
+          new PolicyStatement({
+            effect: Effect.ALLOW,
+            actions: ['codeartifact:ReadFromRepository'],
+            resources: [this.repositoryArn],
+            principals: [grantee.grantPrincipal],
+          })
+        );
       }
       return mainGrant;
     }
   }
 
-  private makeUpstreamForId(externalConnection: string, { domain, repositoryName }: {domain: CfnDomain; repositoryName: string}): string {
+  private makeUpstreamForId(
+    externalConnection: string,
+    { domain, repositoryName }: { domain: CfnDomain; repositoryName: string }
+  ): string {
     return new CfnRepository(this, `Upstream:${externalConnection}`, {
       domainName: domain.attrName,
       description: `Upstream with external connection to ${externalConnection}`,

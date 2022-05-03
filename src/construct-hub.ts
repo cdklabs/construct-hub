@@ -7,7 +7,12 @@ import { BlockPublicAccess } from '@aws-cdk/aws-s3';
 import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 import * as appreg from '@aws-cdk/aws-servicecatalogappregistry';
 import * as sqs from '@aws-cdk/aws-sqs';
-import { Construct as CoreConstruct, Duration, Stack, Tags } from '@aws-cdk/core';
+import {
+  Construct as CoreConstruct,
+  Duration,
+  Stack,
+  Tags,
+} from '@aws-cdk/core';
 import { Construct } from 'constructs';
 import { createRestrictedSecurityGroups } from './_limited-internet-access';
 import { AlarmActions, Domain } from './api';
@@ -33,15 +38,21 @@ import { PackageTagGroup } from './package-tag-group';
 import { PreloadFile } from './preload-file';
 import { S3StorageFactory } from './s3/storage';
 import { SpdxLicense } from './spdx-license';
-import { WebApp, PackageLinkConfig, FeaturedPackages, FeatureFlags, Category } from './webapp';
+import {
+  WebApp,
+  PackageLinkConfig,
+  FeaturedPackages,
+  FeatureFlags,
+  Category,
+} from './webapp';
 
 /**
  * Configuration for generating RSS and ATOM feed for the latest packages
  */
 export interface FeedConfiguration {
   /**
-  * Github token for generating release notes. When missing no release notes will be included in the generated RSS/ATOM feed
-  */
+   * Github token for generating release notes. When missing no release notes will be included in the generated RSS/ATOM feed
+   */
   readonly githubTokenSecret?: secretsmanager.ISecret;
 
   /**
@@ -260,15 +271,22 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
   public constructor(
     scope: Construct,
     id: string,
-    props: ConstructHubProps = {},
+    props: ConstructHubProps = {}
   ) {
     super(scope, id);
 
-    if (props.isolateSensitiveTasks != null && props.sensitiveTaskIsolation != null) {
-      throw new Error('Supplying both isolateSensitiveTasks and sensitiveTaskIsolation is not supported. Remove usage of isolateSensitiveTasks.');
+    if (
+      props.isolateSensitiveTasks != null &&
+      props.sensitiveTaskIsolation != null
+    ) {
+      throw new Error(
+        'Supplying both isolateSensitiveTasks and sensitiveTaskIsolation is not supported. Remove usage of isolateSensitiveTasks.'
+      );
     }
 
-    const shouldFetchReleaseNotes = props.feedConfiguration?.githubTokenSecret ? true : false;
+    const shouldFetchReleaseNotes = props.feedConfiguration?.githubTokenSecret
+      ? true
+      : false;
 
     const storageFactory = S3StorageFactory.getOrCreate(this, {
       failover: props.failoverStorage,
@@ -280,7 +298,9 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     const overviewDashboard = new OverviewDashboard(this, 'OverviewDashboard', {
       lambdaServiceAlarmThreshold: 70,
-      dashboardName: props.backendDashboardName ? `${props.backendDashboardName}-overview` : undefined,
+      dashboardName: props.backendDashboardName
+        ? `${props.backendDashboardName}-overview`
+        : undefined,
     });
 
     const packageData = storageFactory.newBucket(this, 'PackageData', {
@@ -310,19 +330,27 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       versioned: true,
     });
 
-    const isolation = props.sensitiveTaskIsolation
-      ?? (props.isolateSensitiveTasks ? Isolation.NO_INTERNET_ACCESS : Isolation.UNLIMITED_INTERNET_ACCESS);
+    const isolation =
+      props.sensitiveTaskIsolation ??
+      (props.isolateSensitiveTasks
+        ? Isolation.NO_INTERNET_ACCESS
+        : Isolation.UNLIMITED_INTERNET_ACCESS);
 
     // Create an internal CodeArtifact repository if we run in network-controlled mode, or if a domain is provided.
-    const codeArtifact = isolation === Isolation.NO_INTERNET_ACCESS || props.codeArtifactDomain != null
-      ? new Repository(this, 'CodeArtifact', {
-        description: 'Proxy to npmjs.com for ConstructHub',
-        domainName: props.codeArtifactDomain?.name,
-        domainExists: props.codeArtifactDomain != null,
-        upstreams: props.codeArtifactDomain?.upstreams,
-      })
-      : undefined;
-    const { vpc, vpcEndpoints, vpcSubnets, vpcSecurityGroups } = this.createVpc(isolation, codeArtifact);
+    const codeArtifact =
+      isolation === Isolation.NO_INTERNET_ACCESS ||
+      props.codeArtifactDomain != null
+        ? new Repository(this, 'CodeArtifact', {
+            description: 'Proxy to npmjs.com for ConstructHub',
+            domainName: props.codeArtifactDomain?.name,
+            domainExists: props.codeArtifactDomain != null,
+            upstreams: props.codeArtifactDomain?.upstreams,
+          })
+        : undefined;
+    const { vpc, vpcEndpoints, vpcSubnets, vpcSecurityGroups } = this.createVpc(
+      isolation,
+      codeArtifact
+    );
 
     const denyList = new DenyList(this, 'DenyList', {
       rules: props.denyList ?? [],
@@ -334,9 +362,8 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     // disable fetching package stats by default if a different package
     // source is configured
-    const fetchPackageStats = props.fetchPackageStats ?? (
-      props.packageSources ? false : true
-    );
+    const fetchPackageStats =
+      props.fetchPackageStats ?? (props.packageSources ? false : true);
 
     let packageStats: PackageStats | undefined;
     const statsKey = 'stats.json';
@@ -379,12 +406,13 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     // rebuild the catalog when the deny list changes.
     denyList.prune.onChangeInvoke(orchestration.catalogBuilder.function);
 
-    const packageTagsSerialized = props.packageTags?.map((config) => {
-      return {
-        ...config,
-        condition: config.condition.bind(),
-      };
-    }) ?? [];
+    const packageTagsSerialized =
+      props.packageTags?.map((config) => {
+        return {
+          ...config,
+          condition: config.condition.bind(),
+        };
+      }) ?? [];
 
     let releaseNotes;
     if (shouldFetchReleaseNotes) {
@@ -453,10 +481,15 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
           queue: this.ingestion.queue,
           repository: codeArtifact,
           overviewDashboard: overviewDashboard,
-        }),
+        })
     );
 
-    const inventory = new Inventory(this, 'InventoryCanary', { bucket: packageData, logRetention: props.logRetention, monitoring, overviewDashboard: overviewDashboard });
+    const inventory = new Inventory(this, 'InventoryCanary', {
+      bucket: packageData,
+      logRetention: props.logRetention,
+      monitoring,
+      overviewDashboard: overviewDashboard,
+    });
 
     new BackendDashboard(this, 'BackendDashboard', {
       packageData,
@@ -474,14 +507,20 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     // add domain redirects
     if (props.domain) {
       for (const redirctSource of props.additionalDomains ?? []) {
-        new DomainRedirect(this, `Redirect-${redirctSource.hostedZone.zoneName}`, {
-          source: redirctSource,
-          targetDomainName: props.domain?.zone.zoneName,
-        });
+        new DomainRedirect(
+          this,
+          `Redirect-${redirctSource.hostedZone.zoneName}`,
+          {
+            source: redirctSource,
+            targetDomainName: props.domain?.zone.zoneName,
+          }
+        );
       }
     } else {
       if (props.additionalDomains && props.additionalDomains.length > 0) {
-        throw new Error('Cannot specify "domainRedirects" if a domain is not specified');
+        throw new Error(
+          'Cannot specify "domainRedirects" if a domain is not specified'
+        );
       }
     }
 
@@ -501,14 +540,18 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     return this.ingestion.queue;
   }
 
-  private createVpc(isolation: Isolation, codeArtifact: Repository | undefined) {
+  private createVpc(
+    isolation: Isolation,
+    codeArtifact: Repository | undefined
+  ) {
     if (isolation === Isolation.UNLIMITED_INTERNET_ACCESS) {
       return { vpc: undefined, vpcEndpoints: undefined, vpcSubnets: undefined };
     }
 
-    const subnetType = isolation === Isolation.NO_INTERNET_ACCESS
-      ? ec2.SubnetType.ISOLATED
-      : ec2.SubnetType.PRIVATE_WITH_NAT;
+    const subnetType =
+      isolation === Isolation.NO_INTERNET_ACCESS
+        ? ec2.SubnetType.ISOLATED
+        : ec2.SubnetType.PRIVATE_WITH_NAT;
     const vpcSubnets = { subnetType };
 
     const vpc = new ec2.Vpc(this, 'VPC', {
@@ -520,16 +563,29 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       // a whole new VPC if we ever need to introduce subnets of these types.
       subnetConfiguration: [
         // If there is a PRIVATE subnet, there must also have a PUBLIC subnet (for NAT gateways).
-        { name: 'Public', subnetType: ec2.SubnetType.PUBLIC, reserved: subnetType === ec2.SubnetType.ISOLATED },
-        { name: 'Private', subnetType: ec2.SubnetType.PRIVATE_WITH_NAT, reserved: subnetType === ec2.SubnetType.ISOLATED },
-        { name: 'Isolated', subnetType: ec2.SubnetType.ISOLATED, reserved: subnetType !== ec2.SubnetType.ISOLATED },
+        {
+          name: 'Public',
+          subnetType: ec2.SubnetType.PUBLIC,
+          reserved: subnetType === ec2.SubnetType.ISOLATED,
+        },
+        {
+          name: 'Private',
+          subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
+          reserved: subnetType === ec2.SubnetType.ISOLATED,
+        },
+        {
+          name: 'Isolated',
+          subnetType: ec2.SubnetType.ISOLATED,
+          reserved: subnetType !== ec2.SubnetType.ISOLATED,
+        },
       ],
     });
     Tags.of(vpc.node.defaultChild!).add('Name', vpc.node.path);
 
-    const securityGroups = subnetType === ec2.SubnetType.PRIVATE_WITH_NAT
-      ? createRestrictedSecurityGroups(this, vpc)
-      : undefined;
+    const securityGroups =
+      subnetType === ec2.SubnetType.PRIVATE_WITH_NAT
+        ? createRestrictedSecurityGroups(this, vpc)
+        : undefined;
 
     // Creating the CodeArtifact endpoints only if a repository is present.
     const codeArtifactEndpoints = codeArtifact && {
@@ -541,7 +597,9 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
       }),
       codeArtifact: vpc.addInterfaceEndpoint('CodeArtifact', {
         privateDnsEnabled: true,
-        service: new ec2.InterfaceVpcEndpointAwsService('codeartifact.repositories'),
+        service: new ec2.InterfaceVpcEndpointAwsService(
+          'codeartifact.repositories'
+        ),
         subnets: vpcSubnets,
         securityGroups,
       }),
@@ -586,21 +644,23 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
 
     // The S3 access is necessary for the CodeArtifact Repository and ECR Docker
     // endpoints to be used (they serve objects from S3).
-    vpcEndpoints.s3.addToPolicy(new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: ['s3:GetObject'],
-      resources: [
-        // The in-region CodeArtifact S3 Bucket
-        ...codeArtifact ? [`${codeArtifact.s3BucketArn}/*`] : [],
-        // The in-region ECR layer bucket
-        `arn:aws:s3:::prod-${Stack.of(this).region}-starport-layer-bucket/*`,
-      ],
-      // It doesn't seem we can constrain principals for these grants (unclear
-      // which principal those calls are made from, or if that is something we
-      // could name here).
-      principals: [new AnyPrincipal()],
-      sid: 'Allow-CodeArtifact-and-ECR',
-    }));
+    vpcEndpoints.s3.addToPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['s3:GetObject'],
+        resources: [
+          // The in-region CodeArtifact S3 Bucket
+          ...(codeArtifact ? [`${codeArtifact.s3BucketArn}/*`] : []),
+          // The in-region ECR layer bucket
+          `arn:aws:s3:::prod-${Stack.of(this).region}-starport-layer-bucket/*`,
+        ],
+        // It doesn't seem we can constrain principals for these grants (unclear
+        // which principal those calls are made from, or if that is something we
+        // could name here).
+        principals: [new AnyPrincipal()],
+        sid: 'Allow-CodeArtifact-and-ECR',
+      })
+    );
 
     return { vpc, vpcEndpoints, vpcSubnets, vpcSecurityGroups: securityGroups };
   }
@@ -646,4 +706,3 @@ export enum Isolation {
    */
   NO_INTERNET_ACCESS,
 }
-

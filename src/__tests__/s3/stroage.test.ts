@@ -3,18 +3,15 @@ import { Stack } from '@aws-cdk/core';
 import { S3StorageFactory } from '../..';
 
 test('is a stack singleton', () => {
-
   const stack = new Stack();
 
   const factory1 = S3StorageFactory.getOrCreate(stack);
   const factory2 = S3StorageFactory.getOrCreate(stack);
 
   expect(factory1).toBe(factory2);
-
 });
 
 test('creates a failover bucket as well', () => {
-
   const stack = new Stack();
 
   const factory = S3StorageFactory.getOrCreate(stack);
@@ -31,7 +28,6 @@ test('creates a failover bucket as well', () => {
 });
 
 test('provides the primary bucket by default', () => {
-
   const stack = new Stack();
 
   const factory = S3StorageFactory.getOrCreate(stack);
@@ -41,7 +37,6 @@ test('provides the primary bucket by default', () => {
 });
 
 test('provides the failover bucket when requested', () => {
-
   const stack = new Stack();
 
   const factory = S3StorageFactory.getOrCreate(stack, { failover: true });

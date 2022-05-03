@@ -61,7 +61,10 @@ export class DocumentationLanguage {
     }
   }
 
-  private constructor(public readonly name: string, public readonly targetName = name) {}
+  private constructor(
+    public readonly name: string,
+    public readonly targetName = name
+  ) {}
 
   public toString() {
     return this.name;
@@ -70,6 +73,8 @@ export class DocumentationLanguage {
 
 export class UnsupportedLanguageError extends Error {
   constructor(lang: string, supported: readonly DocumentationLanguage[]) {
-    super(`Unsupported language: ${lang}. Supported languages are: [${supported}]`);
+    super(
+      `Unsupported language: ${lang}. Supported languages are: [${supported}]`
+    );
   }
 }
