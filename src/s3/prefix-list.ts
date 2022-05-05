@@ -1,11 +1,12 @@
-import { RetentionDays } from '@aws-cdk/aws-logs';
-import { Construct, Stack } from '@aws-cdk/core';
+import { Stack } from 'aws-cdk-lib';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import {
   AwsCustomResource,
   AwsSdkCall,
   AwsCustomResourcePolicy,
   PhysicalResourceId,
-} from '@aws-cdk/custom-resources';
+} from 'aws-cdk-lib/custom-resources';
+import { Construct } from 'constructs';
 
 /**
  * This obtains the PrefixLisId for the AWS-Managed prefix list of the S3

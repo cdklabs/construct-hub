@@ -1,10 +1,10 @@
-import * as acm from '@aws-cdk/aws-certificatemanager';
-import * as cf from '@aws-cdk/aws-cloudfront';
-import * as origins from '@aws-cdk/aws-cloudfront-origins';
-import * as route53 from '@aws-cdk/aws-route53';
-import * as route53_targets from '@aws-cdk/aws-route53-targets';
-import * as s3 from '@aws-cdk/aws-s3';
-import { Construct as CoreConstruct, Stack } from '@aws-cdk/core';
+import { Stack } from 'aws-cdk-lib';
+import * as acm from 'aws-cdk-lib/aws-certificatemanager';
+import * as cf from 'aws-cdk-lib/aws-cloudfront';
+import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
+import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as route53_targets from 'aws-cdk-lib/aws-route53-targets';
+import * as s3 from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 
 /**
@@ -25,7 +25,7 @@ export interface DomainRedirectProps {
 /**
  * Redirects one domain to another domain using S3 and CloudFront.
  */
-export class DomainRedirect extends CoreConstruct {
+export class DomainRedirect extends Construct {
   constructor(scope: Construct, id: string, props: DomainRedirectProps) {
     super(scope, id);
 
@@ -91,12 +91,12 @@ export class DomainRedirect extends CoreConstruct {
    *
    * @returns A construct
    */
-  private getOrCreateBucketsScope(): CoreConstruct {
+  private getOrCreateBucketsScope(): Construct {
     const stack = Stack.of(this);
     const scopeId = 'DomainRedirectBucketsA177hj';
     return (
-      (stack.node.tryFindChild(scopeId) as CoreConstruct | undefined) ??
-      new CoreConstruct(stack, scopeId)
+      (stack.node.tryFindChild(scopeId) as Construct | undefined) ??
+      new Construct(stack, scopeId)
     );
   }
 }

@@ -1,8 +1,8 @@
-import '@aws-cdk/assert/jest';
-import { CloudFrontWebDistribution } from '@aws-cdk/aws-cloudfront';
-import * as lambda from '@aws-cdk/aws-lambda';
-import { Bucket } from '@aws-cdk/aws-s3';
-import { Stack } from '@aws-cdk/core';
+import { Stack } from 'aws-cdk-lib';
+import { Match, Template } from 'aws-cdk-lib/assertions';
+import { CloudFrontWebDistribution } from 'aws-cdk-lib/aws-cloudfront';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
 
 import { OverviewDashboard } from '../overview-dashboard';
 
@@ -13,9 +13,12 @@ test('minimally it should create a dashboard with lambda SERVICE metrics', () =>
     lambdaServiceAlarmThreshold,
   });
 
-  expect(stack).toHaveResource('AWS::CloudWatch::Dashboard');
+  Template.fromStack(stack).hasResource(
+    'AWS::CloudWatch::Dashboard',
+    Match.anyValue()
+  );
 
-  expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
+  Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
     ComparisonOperator: 'GreaterThanThreshold',
     EvaluationPeriods: 5,
     Metrics: [
@@ -61,32 +64,35 @@ test('adds lambda function to concurrent usage graph', () => {
   const dashboard = new OverviewDashboard(stack, 'OverViewDashboard');
   dashboard.addConcurrentExecutionMetricToDashboard(fn);
 
-  expect(stack).toHaveResource('AWS::CloudWatch::Dashboard', {
-    DashboardBody: {
-      'Fn::Join': [
-        '',
-        [
-          '{"widgets":[{"type":"metric","width":12,"height":8,"x":0,"y":0,"properties":{"view":"timeSeries","title":"Lambda concurrent execution quota","region":"',
-          {
-            Ref: 'AWS::Region',
-          },
-          '","metrics":[[{"label":"Concurrent executions quota usage %","expression":"mLambdaUsage / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","ConcurrentExecutions",{"stat":"Maximum","visible":false,"id":"mLambdaUsage"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"mLambdaQuota"}],[{"label":"',
-          {
-            Ref: 'Fn9270CBC0',
-          },
-          ' quota usage %","expression":"m1 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","',
-          {
-            Ref: 'Fn9270CBC0',
-          },
-          '",{"label":"',
-          {
-            Ref: 'Fn9270CBC0',
-          },
-          '","stat":"Maximum","visible":false,"id":"m1"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"lambdaQuotaLimit"}]],"annotations":{"horizontal":[{"value":70,"yAxis":"right"}]},"yAxis":{"right":{"label":"Quota Percent","min":0,"max":100}}}}]}',
+  Template.fromStack(stack).hasResourceProperties(
+    'AWS::CloudWatch::Dashboard',
+    {
+      DashboardBody: {
+        'Fn::Join': [
+          '',
+          [
+            '{"widgets":[{"type":"metric","width":12,"height":8,"x":0,"y":0,"properties":{"view":"timeSeries","title":"Lambda concurrent execution quota","region":"',
+            {
+              Ref: 'AWS::Region',
+            },
+            '","metrics":[[{"label":"Concurrent executions quota usage %","expression":"mLambdaUsage / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","ConcurrentExecutions",{"stat":"Maximum","visible":false,"id":"mLambdaUsage"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"mLambdaQuota"}],[{"label":"',
+            {
+              Ref: 'Fn9270CBC0',
+            },
+            ' quota usage %","expression":"m1 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","',
+            {
+              Ref: 'Fn9270CBC0',
+            },
+            '",{"label":"',
+            {
+              Ref: 'Fn9270CBC0',
+            },
+            '","stat":"Maximum","visible":false,"id":"m1"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"lambdaQuotaLimit"}]],"annotations":{"horizontal":[{"value":70,"yAxis":"right"}]},"yAxis":{"right":{"label":"Quota Percent","min":0,"max":100}}}}]}',
+          ],
         ],
-      ],
-    },
-  });
+      },
+    }
+  );
 });
 
 test('It adds cloud front distribution to the dashboard when present', () => {
@@ -108,34 +114,37 @@ test('It adds cloud front distribution to the dashboard when present', () => {
   });
   const dashboard = new OverviewDashboard(stack, 'OverviewDashboard');
   dashboard.addDistributionMetricToDashboard(distribution);
-  expect(stack).toHaveResource('AWS::CloudWatch::Dashboard', {
-    DashboardBody: {
-      'Fn::Join': [
-        '',
-        [
-          '{"widgets":[{"type":"metric","width":12,"height":8,"x":0,"y":0,"properties":{"view":"timeSeries","title":"Lambda concurrent execution quota","region":"',
-          {
-            Ref: 'AWS::Region',
-          },
-          '","metrics":[[{"label":"Concurrent executions quota usage %","expression":"mLambdaUsage / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","ConcurrentExecutions",{"stat":"Maximum","visible":false,"id":"mLambdaUsage"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"mLambdaQuota"}]],"annotations":{"horizontal":[{"value":70,"yAxis":"right"}]},"yAxis":{"right":{"label":"Quota Percent","min":0,"max":100}}}},{"type":"metric","width":12,"height":8,"x":0,"y":8,"properties":{"view":"timeSeries","title":"CloudFront Metrics","region":"',
-          {
-            Ref: 'AWS::Region',
-          },
-          '","metrics":[["AWS/CloudFront","Requests","DistributionId","',
-          {
-            Ref: 'DistributionCFDistribution882A7313',
-          },
-          '","Region","Global",{"region":"us-east-1"}],["AWS/CloudFront","4xxErrorRate","DistributionId","',
-          {
-            Ref: 'DistributionCFDistribution882A7313',
-          },
-          '","Region","Global",{"region":"us-east-1","yAxis":"right"}],["AWS/CloudFront","5xxErrorRate","DistributionId","',
-          {
-            Ref: 'DistributionCFDistribution882A7313',
-          },
-          '","Region","Global",{"region":"us-east-1","yAxis":"right"}]],"yAxis":{"left":{"label":"Requests count"},"right":{"label":"Request Percent","min":0,"max":100}}}}]}',
+  Template.fromStack(stack).hasResourceProperties(
+    'AWS::CloudWatch::Dashboard',
+    {
+      DashboardBody: {
+        'Fn::Join': [
+          '',
+          [
+            '{"widgets":[{"type":"metric","width":12,"height":8,"x":0,"y":0,"properties":{"view":"timeSeries","title":"Lambda concurrent execution quota","region":"',
+            {
+              Ref: 'AWS::Region',
+            },
+            '","metrics":[[{"label":"Concurrent executions quota usage %","expression":"mLambdaUsage / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","ConcurrentExecutions",{"stat":"Maximum","visible":false,"id":"mLambdaUsage"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"mLambdaQuota"}]],"annotations":{"horizontal":[{"value":70,"yAxis":"right"}]},"yAxis":{"right":{"label":"Quota Percent","min":0,"max":100}}}},{"type":"metric","width":12,"height":8,"x":0,"y":8,"properties":{"view":"timeSeries","title":"CloudFront Metrics","region":"',
+            {
+              Ref: 'AWS::Region',
+            },
+            '","metrics":[["AWS/CloudFront","Requests","DistributionId","',
+            {
+              Ref: 'DistributionCFDistribution882A7313',
+            },
+            '","Region","Global",{"region":"us-east-1"}],["AWS/CloudFront","4xxErrorRate","DistributionId","',
+            {
+              Ref: 'DistributionCFDistribution882A7313',
+            },
+            '","Region","Global",{"region":"us-east-1","yAxis":"right"}],["AWS/CloudFront","5xxErrorRate","DistributionId","',
+            {
+              Ref: 'DistributionCFDistribution882A7313',
+            },
+            '","Region","Global",{"region":"us-east-1","yAxis":"right"}]],"yAxis":{"left":{"label":"Requests count"},"right":{"label":"Request Percent","min":0,"max":100}}}}]}',
+          ],
         ],
-      ],
-    },
-  });
+      },
+    }
+  );
 });

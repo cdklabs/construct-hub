@@ -1,3 +1,4 @@
+import { Duration } from 'aws-cdk-lib';
 import {
   ComparisonOperator,
   GraphWidget,
@@ -7,14 +8,14 @@ import {
   Statistic,
   TreatMissingData,
   IWidget,
-} from '@aws-cdk/aws-cloudwatch';
-import { Rule, Schedule } from '@aws-cdk/aws-events';
-import { LambdaFunction } from '@aws-cdk/aws-events-targets';
-import { Tracing } from '@aws-cdk/aws-lambda';
-import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
-import { BlockPublicAccess, IBucket } from '@aws-cdk/aws-s3';
-import { Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
-import { Construct, Duration } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-cloudwatch';
+import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
+import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
+import { Tracing } from 'aws-cdk-lib/aws-lambda';
+import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import { BlockPublicAccess, IBucket } from 'aws-cdk-lib/aws-s3';
+import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
+import { Construct } from 'constructs';
 import { lambdaFunctionUrl, s3ObjectUrl, sqsQueueUrl } from '../deep-link';
 import { fillMetric } from '../metric-utils';
 import { IMonitoring } from '../monitoring/api';

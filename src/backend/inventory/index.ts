@@ -1,18 +1,18 @@
+import * as cdk from 'aws-cdk-lib';
 import {
   ComparisonOperator,
   Metric,
   MetricOptions,
   Statistic,
-} from '@aws-cdk/aws-cloudwatch';
-import * as events from '@aws-cdk/aws-events';
-import * as targets from '@aws-cdk/aws-events-targets';
-import { IFunction } from '@aws-cdk/aws-lambda';
-import { RetentionDays } from '@aws-cdk/aws-logs';
-import * as s3 from '@aws-cdk/aws-s3';
-import * as sfn from '@aws-cdk/aws-stepfunctions';
-import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
-import * as cdk from '@aws-cdk/core';
-import { Construct, Duration } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-cloudwatch';
+import * as events from 'aws-cdk-lib/aws-events';
+import * as targets from 'aws-cdk-lib/aws-events-targets';
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
+import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
+import { Construct } from 'constructs';
 import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { OverviewDashboard } from '../../overview-dashboard';
@@ -53,7 +53,7 @@ export interface InventoryProps {
    *
    * @default Duration.minutes(15)
    */
-  readonly scheduleRate?: Duration;
+  readonly scheduleRate?: cdk.Duration;
 }
 
 /**
@@ -62,12 +62,12 @@ export interface InventoryProps {
  */
 export class Inventory extends Construct {
   private readonly canary: Canary;
-  private readonly rate: Duration;
+  private readonly rate: cdk.Duration;
 
   public constructor(scope: Construct, id: string, props: InventoryProps) {
     super(scope, id);
 
-    this.rate = props.scheduleRate ?? Duration.minutes(15);
+    this.rate = props.scheduleRate ?? cdk.Duration.minutes(15);
 
     // Store intermediate state information in a bucket so that we can sort of
     // run the lambda for more than 15 minutes
@@ -94,7 +94,7 @@ export class Inventory extends Construct {
       },
       logRetention: props.logRetention,
       memorySize: 10_240,
-      timeout: Duration.minutes(15),
+      timeout: cdk.Duration.minutes(15),
     });
     const grantRead = props.bucket.grantRead(this.canary);
     const grantWriteMissing = props.bucket.grantWrite(
@@ -134,7 +134,7 @@ export class Inventory extends Construct {
 
     const stateMachine = new sfn.StateMachine(this, 'StateMachine', {
       definition: processBucket,
-      timeout: Duration.hours(6),
+      timeout: cdk.Duration.hours(6),
       tracingEnabled: true,
     });
 
@@ -309,7 +309,7 @@ export class Inventory extends Construct {
       period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
-      dimensions: {
+      dimensionsMap: {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
       metricName: MetricName.PER_LANGUAGE_MISSING_PACKAGES,
@@ -330,7 +330,7 @@ export class Inventory extends Construct {
       period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
-      dimensions: {
+      dimensionsMap: {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
       metricName: MetricName.PER_LANGUAGE_MISSING_MAJORS,
@@ -350,7 +350,7 @@ export class Inventory extends Construct {
       period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
-      dimensions: {
+      dimensionsMap: {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
       metricName: MetricName.PER_LANGUAGE_MISSING_VERSIONS,
@@ -371,7 +371,7 @@ export class Inventory extends Construct {
       period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
-      dimensions: {
+      dimensionsMap: {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
       metricName: MetricName.PER_LANGUAGE_MISSING_SUBMODULES,
@@ -391,7 +391,7 @@ export class Inventory extends Construct {
       period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
-      dimensions: {
+      dimensionsMap: {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
       metricName: MetricName.PER_LANGUAGE_SUPPORTED_PACKAGES,
@@ -412,7 +412,7 @@ export class Inventory extends Construct {
       period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
-      dimensions: {
+      dimensionsMap: {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
       metricName: MetricName.PER_LANGUAGE_SUPPORTED_MAJORS,
@@ -432,7 +432,7 @@ export class Inventory extends Construct {
       period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
-      dimensions: {
+      dimensionsMap: {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
       metricName: MetricName.PER_LANGUAGE_SUPPORTED_VERSIONS,
@@ -452,7 +452,7 @@ export class Inventory extends Construct {
       period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
-      dimensions: {
+      dimensionsMap: {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
       metricName: MetricName.PER_LANGUAGE_SUPPORTED_SUBMODULES,
@@ -472,7 +472,7 @@ export class Inventory extends Construct {
       period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
-      dimensions: {
+      dimensionsMap: {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
       metricName: MetricName.PER_LANGUAGE_UNSUPPORTED_PACKAGES,
@@ -492,7 +492,7 @@ export class Inventory extends Construct {
       period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
-      dimensions: {
+      dimensionsMap: {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
       metricName: MetricName.PER_LANGUAGE_UNSUPPORTED_MAJORS,
@@ -512,7 +512,7 @@ export class Inventory extends Construct {
       period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
-      dimensions: {
+      dimensionsMap: {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
       metricName: MetricName.PER_LANGUAGE_UNSUPPORTED_VERSIONS,
@@ -532,7 +532,7 @@ export class Inventory extends Construct {
       period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
-      dimensions: {
+      dimensionsMap: {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
       metricName: MetricName.PER_LANGUAGE_UNSUPPORTED_SUBMODULES,
@@ -551,7 +551,7 @@ export class Inventory extends Construct {
       period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
-      dimensions: {
+      dimensionsMap: {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
       metricName: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_PACKAGES,
@@ -570,7 +570,7 @@ export class Inventory extends Construct {
       period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
-      dimensions: {
+      dimensionsMap: {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
       metricName: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_MAJORS,
@@ -589,7 +589,7 @@ export class Inventory extends Construct {
       period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
-      dimensions: {
+      dimensionsMap: {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
       metricName: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_VERSIONS,
@@ -608,7 +608,7 @@ export class Inventory extends Construct {
       period: this.rate,
       statistic: Statistic.MAXIMUM,
       ...opts,
-      dimensions: {
+      dimensionsMap: {
         [LANGUAGE_DIMENSION]: language.toString(),
       },
       metricName: MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_SUBMODULES,

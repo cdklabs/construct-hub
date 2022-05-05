@@ -1,22 +1,22 @@
+import * as cdk from 'aws-cdk-lib';
 import {
   ComparisonOperator,
   Metric,
   MetricOptions,
   Statistic,
   TreatMissingData,
-} from '@aws-cdk/aws-cloudwatch';
-import * as iam from '@aws-cdk/aws-iam';
-import * as lambda from '@aws-cdk/aws-lambda';
-import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
-import * as s3 from '@aws-cdk/aws-s3';
-import { ISecret } from '@aws-cdk/aws-secretsmanager';
-import * as sqs from '@aws-cdk/aws-sqs';
-import { IQueue } from '@aws-cdk/aws-sqs';
-import * as sfn from '@aws-cdk/aws-stepfunctions';
-import { JsonPath } from '@aws-cdk/aws-stepfunctions';
-import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
-import * as cdk from '@aws-cdk/core';
-import { Duration } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-cloudwatch';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import { ISecret } from 'aws-cdk-lib/aws-secretsmanager';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
+import { IQueue } from 'aws-cdk-lib/aws-sqs';
+import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
+import { JsonPath } from 'aws-cdk-lib/aws-stepfunctions';
+import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
+import { Construct } from 'constructs';
 import { stateMachineUrl, lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { OverviewDashboard } from '../../overview-dashboard';
@@ -71,7 +71,7 @@ export interface ReleaseNoteFetcherProps {
  * GitHub (release tag, releases and changelog.md file). When the GitHub credentials are passed,
  * the fetcher respects service rate limits of GitHub by pausing the generation of release notes
  */
-export class ReleaseNoteFetcher extends cdk.Construct {
+export class ReleaseNoteFetcher extends Construct {
   /**
    * The queue where packages where the packages will be added to generate release notes
    */
@@ -89,11 +89,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
   public readonly releaseNotesTriggerLambda: ReleaseNotesTrigger;
   public readonly generateReleaseNotesLambda: GenerateReleaseNotes;
 
-  constructor(
-    scope: cdk.Construct,
-    id: string,
-    props: ReleaseNoteFetcherProps
-  ) {
+  constructor(scope: Construct, id: string, props: ReleaseNoteFetcherProps) {
     super(scope, id);
     this.bucket = props.bucket;
     this.githubTokenSecret = props.gitHubCredentialsSecret;
@@ -461,7 +457,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
 
   public metricPackagesWithReleaseNotesCount(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: cdk.Duration.minutes(5),
       statistic: Statistic.SUM,
       ...opts,
       metricName: metricConst.PackageWithChangeLog,
@@ -471,7 +467,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
 
   public metricInvalidCredentials(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: cdk.Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: metricConst.InvalidCredentials,
@@ -481,7 +477,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
 
   public metricRequestQuotaExhausted(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: cdk.Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: metricConst.RequestQuotaExhausted,
@@ -491,7 +487,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
 
   public metricRequestUnknownError(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: cdk.Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: metricConst.UnknownError,
@@ -501,7 +497,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
 
   public metricRequestUnSupportedRepo(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: cdk.Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: metricConst.UnSupportedRepo,
@@ -511,7 +507,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
 
   public metricRequestInvalidPackageJson(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: cdk.Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: metricConst.InvalidPackageJson,
@@ -521,7 +517,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
 
   public metricChangeLogFetchError(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: cdk.Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: metricConst.ChangelogFetchError,
@@ -531,7 +527,7 @@ export class ReleaseNoteFetcher extends cdk.Construct {
 
   public metricChangeLogAllError(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(5),
+      period: cdk.Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: metricConst.AllErrors,

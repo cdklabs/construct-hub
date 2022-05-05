@@ -1,12 +1,12 @@
-import { GatewayVpcEndpoint } from '@aws-cdk/aws-ec2';
+import { GatewayVpcEndpoint } from 'aws-cdk-lib/aws-ec2';
 import {
   AnyPrincipal,
   Effect,
   Grant,
   IGrantable,
   PolicyStatement,
-} from '@aws-cdk/aws-iam';
-import { IBucket } from '@aws-cdk/aws-s3';
+} from 'aws-cdk-lib/aws-iam';
+import { IBucket } from 'aws-cdk-lib/aws-s3';
 
 /**
  * Decorates an S3 Bucket so that grants are made including a VPC endpoint

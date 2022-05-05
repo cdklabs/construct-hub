@@ -1,12 +1,18 @@
-import { CfnDomain, CfnRepository } from '@aws-cdk/aws-codeartifact';
-import { InterfaceVpcEndpoint } from '@aws-cdk/aws-ec2';
-import { Effect, Grant, IGrantable, PolicyStatement } from '@aws-cdk/aws-iam';
-import { ArnFormat, Construct, IConstruct, Lazy, Stack } from '@aws-cdk/core';
+import { ArnFormat, Lazy, Stack } from 'aws-cdk-lib';
+import { CfnDomain, CfnRepository } from 'aws-cdk-lib/aws-codeartifact';
+import { InterfaceVpcEndpoint } from 'aws-cdk-lib/aws-ec2';
+import {
+  Effect,
+  Grant,
+  IGrantable,
+  PolicyStatement,
+} from 'aws-cdk-lib/aws-iam';
 import {
   AwsCustomResource,
   AwsCustomResourcePolicy,
   PhysicalResourceId,
-} from '@aws-cdk/custom-resources';
+} from 'aws-cdk-lib/custom-resources';
+import { Construct, IConstruct } from 'constructs';
 import * as api from './api';
 
 export interface RepositoryProps {

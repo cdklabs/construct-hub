@@ -1,8 +1,8 @@
-import '@aws-cdk/assert/jest';
-import { SynthUtils } from '@aws-cdk/assert';
-import { Certificate } from '@aws-cdk/aws-certificatemanager';
-import { HostedZone } from '@aws-cdk/aws-route53';
-import { Stack, Construct } from '@aws-cdk/core';
+import { Stack } from 'aws-cdk-lib';
+import { Template } from 'aws-cdk-lib/assertions';
+import { Certificate } from 'aws-cdk-lib/aws-certificatemanager';
+import { HostedZone } from 'aws-cdk-lib/aws-route53';
+import { Construct } from 'constructs';
 import { DomainRedirect } from '../domain-redirect';
 
 test('minimal usage', () => {
@@ -17,10 +17,10 @@ test('minimal usage', () => {
     targetDomainName: 'to.bar.com',
   });
 
-  expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+  expect(Template.fromStack(stack).toJSON()).toMatchSnapshot();
 
   // bucket is set up with redirect
-  expect(stack).toHaveResource('AWS::S3::Bucket', {
+  Template.fromStack(stack).hasResourceProperties('AWS::S3::Bucket', {
     WebsiteConfiguration: {
       RedirectAllRequestsTo: {
         HostName: 'to.bar.com',
@@ -29,10 +29,13 @@ test('minimal usage', () => {
   });
 
   // DNS-validate certificate is automatically created
-  expect(stack).toHaveResource('AWS::CloudFormation::CustomResource', {
-    DomainName: 'from.com',
-    HostedZoneId: 'AZ1234',
-  });
+  Template.fromStack(stack).hasResourceProperties(
+    'AWS::CloudFormation::CustomResource',
+    {
+      DomainName: 'from.com',
+      HostedZoneId: 'AZ1234',
+    }
+  );
 });
 
 test('certificate is passed by user', () => {
@@ -53,7 +56,10 @@ test('certificate is passed by user', () => {
   });
 
   // DNS-validate certificate is automatically created
-  expect(stack).not.toHaveResource('AWS::CloudFormation::CustomResource');
+  Template.fromStack(stack).resourceCountIs(
+    'AWS::CloudFormation::CustomResource',
+    0
+  );
 });
 
 test('a bucket is created for each redirect target', () => {
@@ -95,6 +101,6 @@ test('a bucket is created for each redirect target', () => {
   // THEN
 
   // we only have two buckets (one for each target).
-  expect(SynthUtils.synthesize(stack).template).toMatchSnapshot();
-  expect(stack).toCountResources('AWS::S3::Bucket', 2);
+  expect(Template.fromStack(stack).toJSON()).toMatchSnapshot();
+  Template.fromStack(stack).resourceCountIs('AWS::S3::Bucket', 2);
 });

@@ -1,10 +1,11 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as s3 from '@aws-cdk/aws-s3';
-import * as s3deploy from '@aws-cdk/aws-s3-deployment';
-import { Construct, RemovalPolicy } from '@aws-cdk/core';
+import { RemovalPolicy } from 'aws-cdk-lib';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
+import { Construct } from 'constructs';
 import { S3StorageFactory } from '../../s3/storage';
 import { SpdxLicense } from '../../spdx-license';
 import { ILicenseList } from './api';

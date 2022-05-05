@@ -1,29 +1,30 @@
+import { ArnFormat, Duration, Fn, Stack } from 'aws-cdk-lib';
 import {
   GatewayVpcEndpoint,
   InterfaceVpcEndpoint,
   SubnetSelection,
   ISecurityGroup,
-} from '@aws-cdk/aws-ec2';
+} from 'aws-cdk-lib/aws-ec2';
 import {
   ContainerDefinition,
   FargatePlatformVersion,
   FargateTaskDefinition,
   ICluster,
   LogDrivers,
-} from '@aws-cdk/aws-ecs';
-import { Effect, PolicyStatement } from '@aws-cdk/aws-iam';
-import { ILogGroup, LogGroup, RetentionDays } from '@aws-cdk/aws-logs';
-import { IBucket } from '@aws-cdk/aws-s3';
+} from 'aws-cdk-lib/aws-ecs';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { IBucket } from 'aws-cdk-lib/aws-s3';
 import {
   IntegrationPattern,
   JsonPath,
   TaskStateBaseProps,
-} from '@aws-cdk/aws-stepfunctions';
+} from 'aws-cdk-lib/aws-stepfunctions';
 import {
   EcsFargateLaunchTarget,
   EcsRunTask,
-} from '@aws-cdk/aws-stepfunctions-tasks';
-import { ArnFormat, Construct, Duration, Fn, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-stepfunctions-tasks';
+import { Construct } from 'constructs';
 import { Repository } from '../../codeartifact/repository';
 import { Monitoring } from '../../monitoring';
 import * as s3 from '../../s3';

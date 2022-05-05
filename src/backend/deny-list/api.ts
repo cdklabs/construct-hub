@@ -1,4 +1,4 @@
-import type { Function } from '@aws-cdk/aws-lambda';
+import type { Function } from 'aws-cdk-lib/aws-lambda';
 
 /**
  * An entry in the list of packages blocked from display in the construct hub.

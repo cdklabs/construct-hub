@@ -2,48 +2,20 @@ const fs = require('fs');
 const { basename, join, dirname, relative } = require('path');
 const Case = require('case');
 const glob = require('glob');
-const { SourceCode, FileBase, JsonFile, cdk, github } = require('projen');
+const { SourceCode, JsonFile, cdk, github } = require('projen');
 const spdx = require('spdx-license-list');
 const uuid = require('uuid');
 
 const BUNDLE_DIR_ENV = 'BUNDLE_DIR';
 
 const peerDeps = [
-  '@aws-cdk/aws-servicecatalogappregistry',
-  '@aws-cdk/aws-certificatemanager',
-  '@aws-cdk/aws-cloudfront-origins',
-  '@aws-cdk/aws-cloudfront',
-  '@aws-cdk/aws-cloudwatch-actions',
-  '@aws-cdk/aws-cloudwatch',
-  '@aws-cdk/aws-codeartifact',
-  '@aws-cdk/aws-ec2',
-  '@aws-cdk/aws-ecs',
-  '@aws-cdk/aws-events',
-  '@aws-cdk/aws-events-targets',
-  '@aws-cdk/assets',
-  '@aws-cdk/aws-iam',
-  '@aws-cdk/aws-lambda-event-sources',
-  '@aws-cdk/aws-lambda',
-  '@aws-cdk/aws-logs',
-  '@aws-cdk/aws-route53-targets',
-  '@aws-cdk/aws-route53',
-  '@aws-cdk/aws-s3-deployment',
-  '@aws-cdk/aws-s3',
-  '@aws-cdk/aws-s3-notifications',
-  '@aws-cdk/aws-sns',
-  '@aws-cdk/aws-sqs',
-  '@aws-cdk/aws-stepfunctions',
-  '@aws-cdk/aws-stepfunctions-tasks',
-  '@aws-cdk/aws-secretsmanager',
-  '@aws-cdk/core',
-  '@aws-cdk/custom-resources',
-  '@aws-cdk/cx-api',
+  '@aws-cdk/aws-servicecatalogappregistry-alpha',
+  'aws-cdk-lib',
   'cdk-watchful',
   'constructs',
 ];
 
-const cdkAssert = '@aws-cdk/assert';
-const cdkCli = 'aws-cdk';
+const cdkCli = 'aws-cdk@^2';
 
 const project = new cdk.JsiiProject({
   name: 'construct-hub',
@@ -61,7 +33,6 @@ const project = new cdk.JsiiProject({
   authorOrganization: true,
 
   devDeps: [
-    cdkAssert,
     ...peerDeps,
     '@jsii/spec',
     '@types/fs-extra',
@@ -111,7 +82,7 @@ const project = new cdk.JsiiProject({
 
   releaseToNpm: true,
 
-  //publishToGo: {
+  // publishToGo: {
   //  moduleName: 'github.com/cdklabs/construct-hub-go',
   //},
 
@@ -147,12 +118,7 @@ const project = new cdk.JsiiProject({
   autoApproveUpgrades: true,
 
   depsUpgradeOptions: {
-    exclude: [
-      ...peerDeps,
-      cdkAssert,
-      cdkCli,
-      'cdk-triggers', // can be removed once Construct Hub uses CDK v2
-    ],
+    exclude: [...peerDeps, cdkCli],
     ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve'],
@@ -443,11 +409,11 @@ function newLambdaHandler(entrypoint, trigger) {
   const ts = new SourceCode(project, infra);
   ts.line(`// ${ts.marker}`);
   ts.line("import * as path from 'path';");
-  ts.line("import * as lambda from '@aws-cdk/aws-lambda';");
-  ts.line("import { Construct } from '@aws-cdk/core';");
+  ts.line("import * as lambda from 'aws-cdk-lib/aws-lambda';");
   if (trigger) {
-    ts.line("import { AfterCreate } from 'cdk-triggers';");
+    ts.line("import { Trigger } from 'aws-cdk-lib/triggers';");
   }
+  ts.line("import { Construct } from 'constructs';");
 
   ts.line();
   ts.open(`export interface ${propsName} extends lambda.FunctionOptions {`);
@@ -458,7 +424,7 @@ function newLambdaHandler(entrypoint, trigger) {
       ' * @default - trigger this handler after all implicit dependencies have been created'
     );
     ts.line(' */');
-    ts.line('readonly invokeAfter?: Construct[];');
+    ts.line('readonly executeAfter?: Construct[];');
   }
   ts.close('}');
   ts.line();
@@ -491,9 +457,9 @@ function newLambdaHandler(entrypoint, trigger) {
   ts.close('});');
   if (trigger) {
     ts.line();
-    ts.open("new AfterCreate(this, 'Trigger', {");
+    ts.open("new Trigger(this, 'Trigger', {");
     ts.line('handler: this,');
-    ts.line('resources: props?.invokeAfter,');
+    ts.line('executeAfter: props?.executeAfter,');
     ts.close('});');
   }
   ts.close('}');
@@ -554,9 +520,9 @@ function newEcsTask(entrypoint) {
   const ts = new SourceCode(project, infra);
   ts.line(`// ${ts.marker}`);
   ts.line("import * as path from 'path';");
-  ts.line("import * as ecs from '@aws-cdk/aws-ecs';");
-  ts.line("import * as iam from '@aws-cdk/aws-iam';");
-  ts.line("import { Construct } from '@aws-cdk/core';");
+  ts.line("import * as ecs from 'aws-cdk-lib/aws-ecs';");
+  ts.line("import * as iam from 'aws-cdk-lib/aws-iam';");
+  ts.line("import { Construct } from 'constructs';");
   ts.line();
   ts.open(
     `export interface ${propsName} extends Omit<ecs.ContainerDefinitionOptions, 'image'> {`
@@ -987,7 +953,6 @@ function generateSpdxLicenseEnum() {
 // and bundle it with this library. this way, we are only taking a
 // dev-dependency on the webapp instead of a normal/bundled dependency.
 project.addDevDeps('construct-hub-webapp');
-project.addDevDeps('cdk-triggers@0.0.x'); // can be unpinned once Construct Hub uses CDK v2
 
 project.compileTask.prependExec(
   'cp -r ./node_modules/construct-hub-webapp/build ./website'

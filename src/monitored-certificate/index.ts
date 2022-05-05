@@ -1,4 +1,5 @@
-import { ICertificate } from '@aws-cdk/aws-certificatemanager';
+import { Duration, Stack } from 'aws-cdk-lib';
+import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager';
 import {
   Alarm,
   ComparisonOperator,
@@ -6,10 +7,10 @@ import {
   MetricOptions,
   Statistic,
   TreatMissingData,
-} from '@aws-cdk/aws-cloudwatch';
-import { Rule, Schedule } from '@aws-cdk/aws-events';
-import { LambdaFunction } from '@aws-cdk/aws-events-targets';
-import { Construct, Duration, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-cloudwatch';
+import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
+import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
+import { Construct } from 'constructs';
 import { CertificateMonitor } from './certificate-monitor';
 
 export interface MonitoredCertificateProps {
@@ -129,7 +130,7 @@ export class MonitoredCertificate extends Construct {
       period: Duration.days(1),
       statistic: Statistic.MINIMUM,
       ...opts,
-      dimensions: { CertificateArn: this.props.certificate.certificateArn },
+      dimensionsMap: { CertificateArn: this.props.certificate.certificateArn },
       namespace: 'AWS/CertificateManager',
       metricName: 'DaysToExpiry',
       region: 'us-east-1', // <- ACM Certificates for CloudFront distributions are in us-east-1
@@ -146,7 +147,7 @@ export class MonitoredCertificate extends Construct {
       period: Duration.days(1),
       statistic: Statistic.MINIMUM,
       ...opts,
-      dimensions: { DomainName: this.props.domainName },
+      dimensionsMap: { DomainName: this.props.domainName },
       namespace: this.endpointMetricNamespace,
       metricName: this.endpointMetricName,
     });

@@ -1,11 +1,11 @@
 import * as fs from 'fs';
-import { Vpc } from '@aws-cdk/aws-ec2';
-import { Stack, App } from '@aws-cdk/core';
+import { Stack, App } from 'aws-cdk-lib';
+import { Template } from 'aws-cdk-lib/assertions';
+import { Vpc } from 'aws-cdk-lib/aws-ec2';
 import {
   parsePrefixList,
   createRestrictedSecurityGroups,
 } from '../_limited-internet-access';
-import '@aws-cdk/assert/jest';
 
 describe(createRestrictedSecurityGroups, () => {
   test('creates the correct resources', () => {
@@ -18,7 +18,7 @@ describe(createRestrictedSecurityGroups, () => {
     createRestrictedSecurityGroups(stack, vpc);
 
     // THEN
-    expect(app.synth().getStack(stack.stackName).template).toMatchSnapshot();
+    expect(Template.fromStack(stack).toJSON()).toMatchSnapshot();
   });
 });
 

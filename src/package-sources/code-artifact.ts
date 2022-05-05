@@ -1,3 +1,4 @@
+import { ArnFormat, Aws, Duration, Stack } from 'aws-cdk-lib';
 import {
   ComparisonOperator,
   GraphWidget,
@@ -6,15 +7,15 @@ import {
   MetricOptions,
   Statistic,
   TreatMissingData,
-} from '@aws-cdk/aws-cloudwatch';
-import { CfnRepository } from '@aws-cdk/aws-codeartifact';
-import { Rule } from '@aws-cdk/aws-events';
-import { LambdaFunction } from '@aws-cdk/aws-events-targets';
-import { Effect, PolicyStatement } from '@aws-cdk/aws-iam';
-import { Tracing } from '@aws-cdk/aws-lambda';
-import { BlockPublicAccess, IBucket } from '@aws-cdk/aws-s3';
-import { Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
-import { ArnFormat, Aws, Construct, Duration, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-cloudwatch';
+import { CfnRepository } from 'aws-cdk-lib/aws-codeartifact';
+import { Rule } from 'aws-cdk-lib/aws-events';
+import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { Tracing } from 'aws-cdk-lib/aws-lambda';
+import { BlockPublicAccess, IBucket } from 'aws-cdk-lib/aws-s3';
+import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
+import { Construct } from 'constructs';
 import {
   codeArtifactRepositoryUrl,
   lambdaFunctionUrl,

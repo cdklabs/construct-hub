@@ -1,6 +1,6 @@
-import * as cw from '@aws-cdk/aws-cloudwatch';
-import { Construct } from '@aws-cdk/core';
+import * as cw from 'aws-cdk-lib/aws-cloudwatch';
 import { Watchful } from 'cdk-watchful';
+import { Construct } from 'constructs';
 import { AlarmActions } from '../api';
 import { IMonitoring } from './api';
 import { WebCanary } from './web-canary';

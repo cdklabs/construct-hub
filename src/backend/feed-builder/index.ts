@@ -1,6 +1,7 @@
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as s3 from '@aws-cdk/aws-s3';
-import * as cdk from '@aws-cdk/core';
+import * as cdk from 'aws-cdk-lib';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import { Construct } from 'constructs';
 
 import { OverviewDashboard } from '../../overview-dashboard';
 import {
@@ -45,7 +46,7 @@ export interface FeedBuilderProps {
   readonly overviewDashboard: OverviewDashboard;
 }
 
-export class FeedBuilder extends cdk.Construct {
+export class FeedBuilder extends Construct {
   public readonly updateFeedFunction: lambda.Function;
 
   /**
@@ -54,7 +55,7 @@ export class FeedBuilder extends cdk.Construct {
   private readonly bucket: s3.IBucket;
   private constructHubUrl: string = 'https://constructs.dev';
 
-  constructor(scope: cdk.Construct, id: string, props: FeedBuilderProps) {
+  constructor(scope: Construct, id: string, props: FeedBuilderProps) {
     super(scope, id);
 
     this.bucket = props.bucket;

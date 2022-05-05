@@ -22,7 +22,7 @@ const MOCK_RELEASE_NOTES_KEY =
 const MOCK_PKG_REPO_OWNER = 'aws';
 const MOCK_PKG_PROJECT_NAME = 'aws-cdk';
 const MOCK_PKG_DIRECTORY = 'packages/@aws-cdk/aws-amplify';
-const MOCK_PKG_NAME = '@aws-cdk/aws-amplify';
+const MOCK_PKG_NAME = 'aws-cdk-lib/aws-amplify';
 const MOCK_PKG_VERSION = '1.144.0';
 
 const MOCKED_PACKAGE_JSON = {

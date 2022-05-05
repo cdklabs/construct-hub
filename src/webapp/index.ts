@@ -1,11 +1,12 @@
 import * as path from 'path';
-import * as cloudfront from '@aws-cdk/aws-cloudfront';
-import * as origins from '@aws-cdk/aws-cloudfront-origins';
-import * as r53 from '@aws-cdk/aws-route53';
-import * as r53targets from '@aws-cdk/aws-route53-targets';
-import * as s3 from '@aws-cdk/aws-s3';
-import * as s3deploy from '@aws-cdk/aws-s3-deployment';
-import { CfnOutput, Construct } from '@aws-cdk/core';
+import { CfnOutput } from 'aws-cdk-lib';
+import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
+import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
+import * as r53 from 'aws-cdk-lib/aws-route53';
+import * as r53targets from 'aws-cdk-lib/aws-route53-targets';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
+import { Construct } from 'constructs';
 import { Domain } from '../api';
 import { PackageStats } from '../backend/package-stats';
 import {

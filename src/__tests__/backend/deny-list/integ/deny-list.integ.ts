@@ -1,7 +1,7 @@
 import { join } from 'path';
-import * as s3 from '@aws-cdk/aws-s3';
-import { BucketDeployment, Source } from '@aws-cdk/aws-s3-deployment';
-import { App, Duration, RemovalPolicy, Stack } from '@aws-cdk/core';
+import { App, Duration, RemovalPolicy, Stack } from 'aws-cdk-lib';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
 import { DenyList } from '../../../../backend';
 import { STORAGE_KEY_PREFIX } from '../../../../backend/shared/constants';
 import { Monitoring } from '../../../../monitoring';
@@ -61,7 +61,7 @@ const catalogBuilderMock = new CatalogBuilderMock(stack, 'CatalogBuilderMock');
 denylist.prune.onChangeInvoke(catalogBuilderMock);
 
 const test1 = new TriggerClientTest(stack, 'ClientTest', {
-  invokeAfter: [denylist],
+  executeAfter: [denylist],
   environment: {
     BUCKET_NAME: denylist.bucket.bucketName,
     FILE_NAME: denylist.objectKey,
@@ -70,7 +70,7 @@ const test1 = new TriggerClientTest(stack, 'ClientTest', {
 denylist.grantRead(test1);
 
 const test2 = new TriggerPruneTest(stack, 'PruneTest', {
-  invokeAfter: [denylist],
+  executeAfter: [denylist],
   timeout: Duration.minutes(5),
   environment: {
     BUCKET_NAME: packageData.bucketName,

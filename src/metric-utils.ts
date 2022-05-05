@@ -1,5 +1,5 @@
 import { createHash } from 'crypto';
-import { MathExpression, Metric } from '@aws-cdk/aws-cloudwatch';
+import { MathExpression, Metric } from 'aws-cdk-lib/aws-cloudwatch';
 
 /**
  * Creates a MathExpression on the current metric, applying the `FILL` function

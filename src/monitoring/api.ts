@@ -1,4 +1,4 @@
-import type { Alarm } from '@aws-cdk/aws-cloudwatch';
+import type { Alarm } from 'aws-cdk-lib/aws-cloudwatch';
 
 /**
  * ConstructHub monitoring features exposed to extension points.
