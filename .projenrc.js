@@ -409,6 +409,10 @@ function newLambdaHandler(entrypoint, trigger) {
   const ts = new SourceCode(project, infra);
   ts.line(`// ${ts.marker}`);
   ts.line("import * as path from 'path';");
+  if (trigger) {
+    ts.line("import { CustomResourceProvider, Stack } from 'aws-cdk-lib';");
+    ts.line("import * as iam from 'aws-cdk-lib/aws-iam';");
+  }
   ts.line("import * as lambda from 'aws-cdk-lib/aws-lambda';");
   if (trigger) {
     ts.line("import { Trigger } from 'aws-cdk-lib/triggers';");
@@ -461,6 +465,23 @@ function newLambdaHandler(entrypoint, trigger) {
     ts.line('handler: this,');
     ts.line('executeAfter: props?.executeAfter,');
     ts.close('});');
+    ts.line();
+    // hacky workaround for https://github.com/aws/aws-cdk/issues/19272
+    ts.line(
+      "const provider = Stack.of(scope).node.tryFindChild('AWSCDK.TriggerCustomResourceProviderCustomResourceProvider') as CustomResourceProvider;"
+    );
+    ts.line('');
+    ts.line("new iam.Policy(this, 'Policy', {");
+    ts.line('  force: true,');
+    ts.line("  roles: [iam.Role.fromRoleArn(this, 'Role', provider.roleArn)],");
+    ts.line('  statements: [');
+    ts.line('    new iam.PolicyStatement({');
+    ts.line('      effect: iam.Effect.ALLOW,');
+    ts.line("      actions: ['lambda:InvokeFunction'],");
+    ts.line('      resources: [`${this.functionArn}*`],');
+    ts.line('    }),');
+    ts.line('  ],');
+    ts.line('});');
   }
   ts.close('}');
   ts.close('}');
