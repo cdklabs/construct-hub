@@ -1914,6 +1914,66 @@
         "aws:cdk:path": "TestDenyList/ClientTest/CurrentVersion/Resource"
       }
     },
+    "ClientTestPolicy7C5CF4ED": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "ClientTestBE4CEC14",
+                        "Arn"
+                      ]
+                    },
+                    "*"
+                  ]
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "ClientTestPolicy7C5CF4ED",
+        "Roles": [
+          {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::GetAtt": [
+                              "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A",
+                              "Arn"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/ClientTest/Policy/Resource"
+      }
+    },
     "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A": {
       "Type": "AWS::IAM::Role",
       "Properties": {
