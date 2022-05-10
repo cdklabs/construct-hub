@@ -618,5 +618,5 @@ export class NpmJs implements IPackageSource {
  * How often 'rate' goes into 'duration' (rounded up)
  */
 function howOften(rate: Duration, duration: Duration) {
-  return Math.ceil(rate.toSeconds() / duration.toSeconds());
+  return Math.ceil(duration.toSeconds() / rate.toSeconds());
 }
