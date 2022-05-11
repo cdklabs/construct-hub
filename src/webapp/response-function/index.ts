@@ -1,6 +1,6 @@
 import * as path from 'path';
-import * as cloudfront from '@aws-cdk/aws-cloudfront';
-import { Construct } from '@aws-cdk/core';
+import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
+import { Construct } from 'constructs';
 
 export interface ResponseFunctionProps
   extends Partial<cloudfront.FunctionProps> {}

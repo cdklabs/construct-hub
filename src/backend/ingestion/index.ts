@@ -1,3 +1,4 @@
+import { Duration, Stack, ArnFormat } from 'aws-cdk-lib';
 import {
   ComparisonOperator,
   MathExpression,
@@ -5,16 +6,16 @@ import {
   MetricOptions,
   Statistic,
   TreatMissingData,
-} from '@aws-cdk/aws-cloudwatch';
-import { Rule, RuleTargetInput, Schedule } from '@aws-cdk/aws-events';
-import { SfnStateMachine } from '@aws-cdk/aws-events-targets';
-import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
-import { FunctionProps, IFunction, Tracing } from '@aws-cdk/aws-lambda';
-import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
-import { RetentionDays } from '@aws-cdk/aws-logs';
-import { BlockPublicAccess, IBucket } from '@aws-cdk/aws-s3';
-import { BucketDeployment, Source } from '@aws-cdk/aws-s3-deployment';
-import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
+} from 'aws-cdk-lib/aws-cloudwatch';
+import { Rule, RuleTargetInput, Schedule } from 'aws-cdk-lib/aws-events';
+import { SfnStateMachine } from 'aws-cdk-lib/aws-events-targets';
+import { IGrantable, IPrincipal } from 'aws-cdk-lib/aws-iam';
+import { FunctionProps, IFunction, Tracing } from 'aws-cdk-lib/aws-lambda';
+import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { BlockPublicAccess, IBucket } from 'aws-cdk-lib/aws-s3';
+import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import { IQueue, Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import {
   StateMachine,
   JsonPath,
@@ -26,13 +27,13 @@ import {
   IntegrationPattern,
   Wait,
   WaitTime,
-} from '@aws-cdk/aws-stepfunctions';
+} from 'aws-cdk-lib/aws-stepfunctions';
 import {
   CallAwsService,
   LambdaInvoke,
   StepFunctionsStartExecution,
-} from '@aws-cdk/aws-stepfunctions-tasks';
-import { Construct, Duration, Stack, ArnFormat } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-stepfunctions-tasks';
+import { Construct } from 'constructs';
 import { Repository } from '../../codeartifact/repository';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';

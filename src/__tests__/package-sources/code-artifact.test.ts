@@ -1,9 +1,10 @@
-import { CfnRepository } from '@aws-cdk/aws-codeartifact';
-import { IGrantable, User } from '@aws-cdk/aws-iam';
-import { Function } from '@aws-cdk/aws-lambda';
-import { IBucket } from '@aws-cdk/aws-s3';
-import { IQueue } from '@aws-cdk/aws-sqs';
-import { App, ConstructNode, Stack } from '@aws-cdk/core';
+import { App, Stack } from 'aws-cdk-lib';
+import { CfnRepository } from 'aws-cdk-lib/aws-codeartifact';
+import { IGrantable, User } from 'aws-cdk-lib/aws-iam';
+import { Function } from 'aws-cdk-lib/aws-lambda';
+import { IBucket } from 'aws-cdk-lib/aws-s3';
+import { IQueue } from 'aws-cdk-lib/aws-sqs';
+import { Node } from 'constructs';
 import { DenyList, IDenyList } from '../../backend';
 import { ILicenseList } from '../../backend/license-list/api';
 import { Monitoring } from '../../monitoring';
@@ -19,7 +20,7 @@ test('default configuration', () => {
     attrDomainOwner: '123456789012',
     attrDomainName: 'mock-domain-name',
     attrName: 'mock-repository-name',
-    node: safeMock<ConstructNode>('mockRepository.node', {
+    node: safeMock<Node>('mockRepository.node', {
       path: 'fake/path/to/repository',
     }),
   });
@@ -104,7 +105,7 @@ test('user-provided staging bucket', () => {
     attrDomainOwner: '123456789012',
     attrDomainName: 'mock-domain-name',
     attrName: 'mock-repository-name',
-    node: safeMock<ConstructNode>('mockRepository.node', {
+    node: safeMock<Node>('mockRepository.node', {
       path: 'fake/path/to/repository',
     }),
   });

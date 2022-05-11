@@ -1,8 +1,9 @@
 import * as path from 'path';
 import * as process from 'process';
-import { RetentionDays } from '@aws-cdk/aws-logs';
-import * as secretsManager from '@aws-cdk/aws-secretsmanager';
-import { Construct, Stack } from '@aws-cdk/core';
+import { Stack } from 'aws-cdk-lib';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import * as secretsManager from 'aws-cdk-lib/aws-secretsmanager';
+import { Construct } from 'constructs';
 import * as dotenv from 'dotenv';
 import { ConstructHub, Isolation } from '../..';
 import { TagCondition } from '../../package-tag';

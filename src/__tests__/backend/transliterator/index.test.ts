@@ -1,19 +1,13 @@
-import '@aws-cdk/assert/jest';
+import { App, CfnResource, Fn, Stack } from 'aws-cdk-lib';
+import { Template } from 'aws-cdk-lib/assertions';
 import {
   GatewayVpcEndpointAwsService,
   InterfaceVpcEndpointAwsService,
   SubnetType,
   Vpc,
-} from '@aws-cdk/aws-ec2';
-import { Bucket } from '@aws-cdk/aws-s3';
-import {
-  App,
-  CfnResource,
-  Construct,
-  Fn,
-  IConstruct,
-  Stack,
-} from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-ec2';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
+import { Construct, IConstruct } from 'constructs';
 import { Transliterator } from '../../../backend/transliterator';
 import { Repository } from '../../../codeartifact/repository';
 import { Monitoring } from '../../../monitoring';
@@ -58,7 +52,7 @@ test('CodeArtifact repository', () => {
   });
 
   // THEN
-  expect(stack).toHaveResourceLike('AWS::ECS::TaskDefinition', {
+  Template.fromStack(stack).hasResourceProperties('AWS::ECS::TaskDefinition', {
     ContainerDefinitions: [
       {
         Environment: stack.resolve([
@@ -138,7 +132,7 @@ test('VPC Endpoints', () => {
   });
 
   // THEN
-  expect(stack).toHaveResourceLike('AWS::ECS::TaskDefinition', {
+  Template.fromStack(stack).hasResourceProperties('AWS::ECS::TaskDefinition', {
     ContainerDefinitions: [
       {
         Environment: stack.resolve([
@@ -214,7 +208,7 @@ test('VPC Endpoints and CodeArtifact repository', () => {
   });
 
   // THEN
-  expect(stack).toHaveResourceLike('AWS::ECS::TaskDefinition', {
+  Template.fromStack(stack).hasResourceProperties('AWS::ECS::TaskDefinition', {
     ContainerDefinitions: [
       {
         Environment: stack.resolve([

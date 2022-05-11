@@ -1,5 +1,5 @@
-import { Code, Function, Runtime } from '@aws-cdk/aws-lambda';
-import { App, Stack } from '@aws-cdk/core';
+import { App, Stack } from 'aws-cdk-lib';
+import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { LicenseList } from '../../../backend/license-list/license-list';
 import { SpdxLicense } from '../../../spdx-license';
 

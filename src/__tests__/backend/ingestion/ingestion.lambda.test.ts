@@ -20,6 +20,8 @@ import * as constants from '../../../backend/shared/constants';
 import type { requireEnv } from '../../../backend/shared/env.lambda-shared';
 import { TagCondition } from '../../../package-tag';
 
+jest.setTimeout(10_000);
+
 jest.mock('zlib');
 jest.mock('aws-embedded-metrics');
 jest.mock('tar-stream');

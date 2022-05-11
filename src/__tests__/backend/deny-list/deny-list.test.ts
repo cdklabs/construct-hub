@@ -1,8 +1,6 @@
-import '@aws-cdk/assert/jest';
-
-import { SynthUtils } from '@aws-cdk/assert';
-import * as s3 from '@aws-cdk/aws-s3';
-import { Duration, Stack } from '@aws-cdk/core';
+import { Duration, Stack } from 'aws-cdk-lib';
+import { Template } from 'aws-cdk-lib/assertions';
+import * as s3 from 'aws-cdk-lib/aws-s3';
 import { DenyList, DenyListRule } from '../../../backend';
 import { createDenyListMap } from '../../../backend/deny-list/create-map';
 import { Monitoring } from '../../../monitoring';
@@ -24,7 +22,7 @@ test('defaults - empty deny list', () => {
   );
 
   // THEN
-  expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+  expect(Template.fromStack(stack).toJSON()).toMatchSnapshot();
 });
 
 test('pruneOnChange is disabled', () => {
@@ -42,7 +40,7 @@ test('pruneOnChange is disabled', () => {
   );
 
   // THEN
-  expect(stack).not.toHaveResource('Custom::S3BucketNotifications');
+  Template.fromStack(stack).resourceCountIs('Custom::S3BucketNotifications', 0);
 });
 
 test('prunePeriod controls period', () => {
@@ -57,8 +55,10 @@ test('prunePeriod controls period', () => {
   });
 
   // THEN
-  expect(stack).toHaveResource('AWS::Events::Rule', {
-    ScheduleExpression: 'rate(10 minutes)',
+  Template.fromStack(stack).hasResource('AWS::Events::Rule', {
+    Properties: {
+      ScheduleExpression: 'rate(10 minutes)',
+    },
   });
 });
 
@@ -74,7 +74,7 @@ test('prunePeriod of zero disables periodical pruning', () => {
   });
 
   // THEN
-  expect(stack).not.toHaveResource('AWS::Events::Rule');
+  Template.fromStack(stack).resourceCountIs('AWS::Events::Rule', 0);
 });
 
 describe('createDenyListMap()', () => {

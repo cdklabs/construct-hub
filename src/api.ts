@@ -1,8 +1,8 @@
 // this file includes types that are part of the library's public API
 
-import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
-import { IAlarmAction } from '@aws-cdk/aws-cloudwatch';
-import * as route53 from '@aws-cdk/aws-route53';
+import * as certificatemanager from 'aws-cdk-lib/aws-certificatemanager';
+import { IAlarmAction } from 'aws-cdk-lib/aws-cloudwatch';
+import * as route53 from 'aws-cdk-lib/aws-route53';
 
 export * from './backend/deny-list/api';
 export * from './backend/license-list/api';

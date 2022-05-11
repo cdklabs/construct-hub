@@ -1,11 +1,10 @@
-import '@aws-cdk/assert/jest';
-import { SynthUtils } from '@aws-cdk/assert';
+import { App, Stack } from 'aws-cdk-lib';
+import { Template } from 'aws-cdk-lib/assertions';
 import {
   Certificate,
   DnsValidatedCertificate,
-} from '@aws-cdk/aws-certificatemanager';
-import { HostedZone, PublicHostedZone } from '@aws-cdk/aws-route53';
-import { App, Stack } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-certificatemanager';
+import { HostedZone, PublicHostedZone } from 'aws-cdk-lib/aws-route53';
 import { ConstructHub, Isolation } from '../construct-hub';
 
 const dummyAlarmAction = {
@@ -19,7 +18,7 @@ test('minimal usage', () => {
   new ConstructHub(stack, 'ConstructHub', {
     alarmActions: dummyAlarmAction,
   });
-  expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+  expect(Template.fromStack(stack).toJSON()).toMatchSnapshot();
 });
 
 test('piggy-backing on an existing CodeArtifact domain', () => {
@@ -32,7 +31,7 @@ test('piggy-backing on an existing CodeArtifact domain', () => {
       upstreams: ['repo-1', 'repo-2'],
     },
   });
-  expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+  expect(Template.fromStack(stack).toJSON()).toMatchSnapshot();
 });
 
 test('with all internet access', () => {
@@ -42,7 +41,7 @@ test('with all internet access', () => {
     alarmActions: dummyAlarmAction,
     sensitiveTaskIsolation: Isolation.UNLIMITED_INTERNET_ACCESS,
   });
-  expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+  expect(Template.fromStack(stack).toJSON()).toMatchSnapshot();
 });
 
 test('with limited internet access', () => {
@@ -52,7 +51,7 @@ test('with limited internet access', () => {
     alarmActions: dummyAlarmAction,
     sensitiveTaskIsolation: Isolation.LIMITED_INTERNET_ACCESS,
   });
-  expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+  expect(Template.fromStack(stack).toJSON()).toMatchSnapshot();
 });
 
 test('with domain', () => {
@@ -77,7 +76,7 @@ test('with domain', () => {
     alarmActions: dummyAlarmAction,
   });
 
-  expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
+  expect(Template.fromStack(stack).toJSON()).toMatchSnapshot();
 });
 
 describe('additionalDomains', () => {
@@ -114,8 +113,11 @@ describe('additionalDomains', () => {
     });
 
     // THEN
-    expect(stack).toCountResources('AWS::CloudFront::Distribution', 3);
-    expect(stack).toHaveResource('AWS::S3::Bucket', {
+    Template.fromStack(stack).resourceCountIs(
+      'AWS::CloudFront::Distribution',
+      3
+    );
+    Template.fromStack(stack).hasResourceProperties('AWS::S3::Bucket', {
       WebsiteConfiguration: {
         RedirectAllRequestsTo: {
           HostName: 'my.construct.hub',
@@ -159,7 +161,7 @@ test('uses failover buckets when requested', () => {
   // they can still refer to the primary buckets.
   const cfn: any = { Resources: {} };
   for (const [id, resource] of Object.entries(
-    SynthUtils.toCloudFormation(stack).Resources
+    Template.fromStack(stack).toJSON().Resources
   ) as Array<any>) {
     if (
       resource.Type !== 'AWS::S3::BucketPolicy' &&

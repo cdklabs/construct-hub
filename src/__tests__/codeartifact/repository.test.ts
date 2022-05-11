@@ -1,8 +1,7 @@
-import { MatchStyle } from '@aws-cdk/assert';
-import '@aws-cdk/assert/jest';
-import { InterfaceVpcEndpointAwsService, Vpc } from '@aws-cdk/aws-ec2';
-import { Role, ServicePrincipal } from '@aws-cdk/aws-iam';
-import { App, CfnOutput, Stack } from '@aws-cdk/core';
+import { App, CfnOutput, Stack } from 'aws-cdk-lib';
+import { Match, Template } from 'aws-cdk-lib/assertions';
+import { InterfaceVpcEndpointAwsService, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Repository } from '../../codeartifact/repository';
 
 test('basic usage', () => {
@@ -13,8 +12,8 @@ test('basic usage', () => {
   new Repository(stack, 'Repo');
 
   // THEN
-  expect(stack).toMatchTemplate(
-    {
+  Template.fromStack(stack).templateMatches(
+    Match.objectLike({
       Resources: {
         RepoDomainC79FB030: {
           Type: 'AWS::CodeArtifact::Domain',
@@ -33,8 +32,7 @@ test('basic usage', () => {
           },
         },
       },
-    },
-    MatchStyle.SUPERSET
+    })
   );
 });
 
@@ -50,8 +48,8 @@ test('using upstreams', () => {
   });
 
   // THEN
-  expect(stack).toMatchTemplate(
-    {
+  Template.fromStack(stack).templateMatches(
+    Match.objectLike({
       Resources: {
         Repo: {
           Type: 'AWS::CodeArtifact::Repository',
@@ -62,8 +60,7 @@ test('using upstreams', () => {
           },
         },
       },
-    },
-    MatchStyle.SUPERSET
+    })
   );
 });
 
@@ -75,8 +72,8 @@ test('external connection', () => {
   new Repository(stack, 'Repo').addExternalConnection('public:npmjs');
 
   // THEN
-  expect(stack).toMatchTemplate(
-    {
+  Template.fromStack(stack).templateMatches(
+    Match.objectLike({
       Resources: {
         RepoDomainC79FB030: {
           Type: 'AWS::CodeArtifact::Domain',
@@ -109,8 +106,7 @@ test('external connection', () => {
           },
         },
       },
-    },
-    MatchStyle.SUPERSET
+    })
   );
 });
 
@@ -122,8 +118,8 @@ test('custom domain name', () => {
   new Repository(stack, 'Repo', { domainName: 'custom-domain' });
 
   // THEN
-  expect(stack).toMatchTemplate(
-    {
+  Template.fromStack(stack).templateMatches(
+    Match.objectLike({
       Resources: {
         RepoDomainC79FB030: {
           Type: 'AWS::CodeArtifact::Domain',
@@ -142,8 +138,7 @@ test('custom domain name', () => {
           },
         },
       },
-    },
-    MatchStyle.SUPERSET
+    })
   );
 });
 
@@ -155,8 +150,8 @@ test('custom repository name', () => {
   new Repository(stack, 'Repo', { repositoryName: 'custom-repo' });
 
   // THEN
-  expect(stack).toMatchTemplate(
-    {
+  Template.fromStack(stack).templateMatches(
+    Match.objectLike({
       Resources: {
         RepoDomainC79FB030: {
           Type: 'AWS::CodeArtifact::Domain',
@@ -175,8 +170,7 @@ test('custom repository name', () => {
           },
         },
       },
-    },
-    MatchStyle.SUPERSET
+    })
   );
 });
 
@@ -191,8 +185,8 @@ test('custom domain & repository name', () => {
   });
 
   // THEN
-  expect(stack).toMatchTemplate(
-    {
+  Template.fromStack(stack).templateMatches(
+    Match.objectLike({
       Resources: {
         RepoDomainC79FB030: {
           Type: 'AWS::CodeArtifact::Domain',
@@ -211,8 +205,7 @@ test('custom domain & repository name', () => {
           },
         },
       },
-    },
-    MatchStyle.SUPERSET
+    })
   );
 });
 
@@ -285,7 +278,7 @@ test('grantReadFromRepository', () => {
   repo.grantReadFromRepository(role);
 
   // THEN
-  expect(stack).toHaveResource('AWS::IAM::Policy', {
+  Template.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
     PolicyDocument: {
       Statement: [
         {
@@ -343,7 +336,7 @@ test('throughVpcEndpoint', () => {
   // THEN
   expect(vpcRepo.repositoryDomainOwner).toBe(repo.repositoryDomainOwner); // Example pass-through...
 
-  expect(stack).toHaveResource('AWS::IAM::Policy', {
+  Template.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
     PolicyDocument: {
       Statement: [
         {
@@ -376,7 +369,7 @@ test('throughVpcEndpoint', () => {
     Roles: [stack.resolve(role.roleName)],
   });
 
-  expect(stack).toHaveResource('AWS::EC2::VPCEndpoint', {
+  Template.fromStack(stack).hasResourceProperties('AWS::EC2::VPCEndpoint', {
     PolicyDocument: {
       Statement: [
         {
@@ -410,7 +403,7 @@ test('throughVpcEndpoint', () => {
     ),
   });
 
-  expect(stack).toHaveResource('AWS::EC2::VPCEndpoint', {
+  Template.fromStack(stack).hasResourceProperties('AWS::EC2::VPCEndpoint', {
     PolicyDocument: {
       Statement: [
         {

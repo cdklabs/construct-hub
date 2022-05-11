@@ -1,16 +1,17 @@
+import type { AssemblyTargets } from '@jsii/spec';
+import { ArnFormat, Duration, Stack } from 'aws-cdk-lib';
 import {
   ComparisonOperator,
   MathExpression,
   Metric,
   MetricOptions,
   Statistic,
-} from '@aws-cdk/aws-cloudwatch';
-import { Effect, PolicyStatement } from '@aws-cdk/aws-iam';
-import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
-import { RetentionDays } from '@aws-cdk/aws-logs';
-import { IBucket } from '@aws-cdk/aws-s3';
-import { ArnFormat, Construct, Duration, Stack } from '@aws-cdk/core';
-import type { AssemblyTargets } from '@jsii/spec';
+} from 'aws-cdk-lib/aws-cloudwatch';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { IFunction, Tracing } from 'aws-cdk-lib/aws-lambda';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { IBucket } from 'aws-cdk-lib/aws-s3';
+import { Construct } from 'constructs';
 import { lambdaFunctionUrl, s3ObjectUrl } from '../../deep-link';
 
 import { Monitoring } from '../../monitoring';

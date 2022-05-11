@@ -1,8 +1,9 @@
-import { ConcreteWidget } from '@aws-cdk/aws-cloudwatch';
-import { Effect, PolicyStatement } from '@aws-cdk/aws-iam';
-import { IFunction } from '@aws-cdk/aws-lambda';
-import { IQueue } from '@aws-cdk/aws-sqs';
-import { Construct, Tags } from '@aws-cdk/core';
+import { Tags } from 'aws-cdk-lib';
+import { ConcreteWidget } from 'aws-cdk-lib/aws-cloudwatch';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
+import { IQueue } from 'aws-cdk-lib/aws-sqs';
+import { Construct } from 'constructs';
 import { gravitonLambdaIfAvailable } from '../backend/_lambda-architecture';
 import { SqsDlqStatsWidgetFunction } from './sqs-dlq-stats-widget-function';
 

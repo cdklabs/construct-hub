@@ -1,7 +1,7 @@
-import { IWidget } from '@aws-cdk/aws-cloudwatch';
-import { IGrantable } from '@aws-cdk/aws-iam';
-import { IQueue } from '@aws-cdk/aws-sqs';
-import { Construct } from '@aws-cdk/core';
+import { IWidget } from 'aws-cdk-lib/aws-cloudwatch';
+import { IGrantable } from 'aws-cdk-lib/aws-iam';
+import { IQueue } from 'aws-cdk-lib/aws-sqs';
+import { Construct } from 'constructs';
 import { IDenyList } from './backend/deny-list/api';
 import { ILicenseList } from './backend/license-list/api';
 import { IRepository } from './codeartifact/api';

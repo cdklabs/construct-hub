@@ -1,4 +1,4 @@
-import { IDistribution } from '@aws-cdk/aws-cloudfront';
+import { IDistribution } from 'aws-cdk-lib/aws-cloudfront';
 import {
   ComparisonOperator,
   Dashboard,
@@ -7,10 +7,10 @@ import {
   Metric,
   Statistic,
   TreatMissingData,
-} from '@aws-cdk/aws-cloudwatch';
-import { IFunction } from '@aws-cdk/aws-lambda';
-import { IQueue } from '@aws-cdk/aws-sqs';
-import { Construct } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-cloudwatch';
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
+import { IQueue } from 'aws-cdk-lib/aws-sqs';
+import { Construct } from 'constructs';
 import { Inventory } from '../backend/inventory';
 import { RUNBOOK_URL } from '../runbook-url';
 import { IOverviewDashboard } from './api';
