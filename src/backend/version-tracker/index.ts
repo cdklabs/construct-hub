@@ -1,16 +1,17 @@
+import { Duration } from 'aws-cdk-lib';
 import {
   ComparisonOperator,
   Metric,
   MetricOptions,
   Statistic,
   TreatMissingData,
-} from '@aws-cdk/aws-cloudwatch';
-import * as events from '@aws-cdk/aws-events';
-import * as targets from '@aws-cdk/aws-events-targets';
-import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
-import { RetentionDays } from '@aws-cdk/aws-logs';
-import type { IBucket } from '@aws-cdk/aws-s3';
-import { Construct, Duration } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-cloudwatch';
+import * as events from 'aws-cdk-lib/aws-events';
+import * as targets from 'aws-cdk-lib/aws-events-targets';
+import { IFunction, Tracing } from 'aws-cdk-lib/aws-lambda';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import type { IBucket } from 'aws-cdk-lib/aws-s3';
+import { Construct } from 'constructs';
 import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { RUNBOOK_URL } from '../../runbook-url';

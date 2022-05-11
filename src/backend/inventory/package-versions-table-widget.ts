@@ -1,6 +1,7 @@
-import { ConcreteWidget } from '@aws-cdk/aws-cloudwatch';
-import { IBucket } from '@aws-cdk/aws-s3';
-import { Construct, Tags, Duration } from '@aws-cdk/core';
+import { Tags, Duration } from 'aws-cdk-lib';
+import { ConcreteWidget } from 'aws-cdk-lib/aws-cloudwatch';
+import { IBucket } from 'aws-cdk-lib/aws-s3';
+import { Construct } from 'constructs';
 import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 import { PackageVersionsTableWidgetFunction } from './package-versions-table-widget-function';
 

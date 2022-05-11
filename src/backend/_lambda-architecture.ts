@@ -1,5 +1,6 @@
-import { Architecture } from '@aws-cdk/aws-lambda';
-import { Stack, Construct } from '@aws-cdk/core';
+import { Stack } from 'aws-cdk-lib';
+import { Architecture } from 'aws-cdk-lib/aws-lambda';
+import { Construct } from 'constructs';
 
 const REGIONS_WITH_GRAVITON_LAMBDA = new Set([
   'us-east-1',

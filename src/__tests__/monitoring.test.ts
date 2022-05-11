@@ -1,8 +1,8 @@
-import '@aws-cdk/assert/jest';
-import { IAlarmAction, Alarm, Metric } from '@aws-cdk/aws-cloudwatch';
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as sns from '@aws-cdk/aws-sns';
-import { Stack } from '@aws-cdk/core';
+import { Stack } from 'aws-cdk-lib';
+import { Match, Template } from 'aws-cdk-lib/assertions';
+import { IAlarmAction, Alarm, Metric } from 'aws-cdk-lib/aws-cloudwatch';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as sns from 'aws-cdk-lib/aws-sns';
 import { Monitoring } from '../monitoring';
 import { handler as webCanaryHandler } from '../monitoring/http-get-function.lambda';
 
@@ -21,7 +21,10 @@ test('minimal', () => {
   });
 
   // a dashboard is automatically created
-  expect(stack).toHaveResource('AWS::CloudWatch::Dashboard');
+  Template.fromStack(stack).hasResource(
+    'AWS::CloudWatch::Dashboard',
+    Match.anyValue()
+  );
 });
 
 test('watchful can be used for setting up automatic monitoring', () => {
@@ -40,7 +43,7 @@ test('watchful can be used for setting up automatic monitoring', () => {
   monitoring.watchful.watchLambdaFunction('My Function', fn);
 
   // an alarm is automatically created for this function
-  expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
+  Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
     Namespace: 'AWS/Lambda',
     MetricName: 'Errors',
     //TODO: uncomment when we can use cdk-watchful 0.145.0 or above
@@ -64,7 +67,7 @@ test('high severity alarms trigger the correct action', () => {
   monitoring.addHighSeverityAlarm('My Alarm', alarm);
 
   // a dashboard is automatically created
-  expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
+  Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
     AlarmActions: ['arn:aws:sns:us-east-1:123456789012:high'],
     Dimensions: [
       {
@@ -74,20 +77,23 @@ test('high severity alarms trigger the correct action', () => {
     ],
   });
 
-  expect(stack).toHaveResource('AWS::CloudWatch::Dashboard', {
-    DashboardBody: {
-      'Fn::Join': [
-        '',
-        [
-          '{"widgets":[{"type":"metric","width":24,"height":6,"x":0,"y":0,"properties":{"view":"timeSeries","title":"My Alarm","region":"',
-          { Ref: 'AWS::Region' },
-          '","annotations":{"alarms":["',
-          { 'Fn::GetAtt': ['Alarm7103F465', 'Arn'] },
-          '"]},"yAxis":{}}}]}',
+  Template.fromStack(stack).hasResourceProperties(
+    'AWS::CloudWatch::Dashboard',
+    {
+      DashboardBody: {
+        'Fn::Join': [
+          '',
+          [
+            '{"widgets":[{"type":"metric","width":24,"height":6,"x":0,"y":0,"properties":{"view":"timeSeries","title":"My Alarm","region":"',
+            { Ref: 'AWS::Region' },
+            '","annotations":{"alarms":["',
+            { 'Fn::GetAtt': ['Alarm7103F465', 'Arn'] },
+            '"]},"yAxis":{}}}]}',
+          ],
         ],
-      ],
-    },
-  });
+      },
+    }
+  );
 });
 
 test('monitoring exposes a list of high severity alarms', () => {
@@ -127,7 +133,7 @@ test('web canaries can ping URLs and raise high severity alarms', () => {
   monitoring.addWebCanary('Ping1', 'https://ping1');
 
   // THEN
-  expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
+  Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
     ComparisonOperator: 'GreaterThanOrEqualToThreshold',
     EvaluationPeriods: 1,
     AlarmActions: ['arn:aws:sns:us-east-1:123456789012:high'],
@@ -159,7 +165,7 @@ test('web canaries can ping URLs and raise high severity alarms', () => {
     TreatMissingData: 'breaching',
   });
 
-  expect(stack).toHaveResource('AWS::Lambda::Function', {
+  Template.fromStack(stack).hasResourceProperties('AWS::Lambda::Function', {
     Environment: {
       Variables: {
         URL: 'https://ping1',
@@ -206,7 +212,7 @@ test('normal-severity alarm actions are registered', () => {
   }).addLowSeverityAlarm('Alarm', alarm);
 
   // THEN
-  expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
+  Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
     AlarmActions: [normalSeverity, normalSeverityActionArn],
   });
 });
@@ -235,7 +241,7 @@ test('high-severity alarm actions are registered', () => {
   }).addHighSeverityAlarm('Alarm', alarm);
 
   // THEN
-  expect(stack).toHaveResource('AWS::CloudWatch::Alarm', {
+  Template.fromStack(stack).hasResourceProperties('AWS::CloudWatch::Alarm', {
     AlarmActions: [highSeverity, highSeverityActionArn],
   });
 });

@@ -1,6 +1,7 @@
 import { createHash } from 'crypto';
 import * as fs from 'fs';
 import { resolve, join } from 'path';
+import { Tags } from 'aws-cdk-lib';
 import {
   IVpc,
   ISecurityGroup,
@@ -10,8 +11,8 @@ import {
   IPeer,
   Connections,
   CfnPrefixList,
-} from '@aws-cdk/aws-ec2';
-import { Construct, Tags } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-ec2';
+import { Construct } from 'constructs';
 import { S3PrefixList } from './s3';
 
 /**

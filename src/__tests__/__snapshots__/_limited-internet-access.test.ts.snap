@@ -3,29 +3,10 @@
 exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
 Object {
   "Parameters": Object {
-    "AssetParameters70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8dArtifactHash6BDDF757": Object {
-      "Description": "Artifact hash for asset \\"70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8d\\"",
-      "Type": "String",
-    },
-    "AssetParameters70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8dS3BucketF0537962": Object {
-      "Description": "S3 bucket for asset \\"70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8d\\"",
-      "Type": "String",
-    },
-    "AssetParameters70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8dS3VersionKey46386A78": Object {
-      "Description": "S3 key for asset version \\"70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8d\\"",
-      "Type": "String",
-    },
-    "AssetParametersc13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5ArtifactHashE9AE13B7": Object {
-      "Description": "Artifact hash for asset \\"c13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5\\"",
-      "Type": "String",
-    },
-    "AssetParametersc13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5S3Bucket51CDED69": Object {
-      "Description": "S3 bucket for asset \\"c13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5\\"",
-      "Type": "String",
-    },
-    "AssetParametersc13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5S3VersionKey50C3CFF0": Object {
-      "Description": "S3 key for asset version \\"c13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5\\"",
-      "Type": "String",
+    "BootstrapVersion": Object {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
     },
   },
   "Resources": Object {
@@ -36,41 +17,9 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8dS3BucketF0537962",
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8dS3VersionKey46386A78",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParameters70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8dS3VersionKey46386A78",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
+          "S3Key": "39381d2c8b8ec42679de4960c24f0c83c56772cdc2b10b6fc14cd0a99aba42ed.zip",
         },
         "Handler": "index.handler",
         "Role": Object {
@@ -244,41 +193,9 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersc13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5S3Bucket51CDED69",
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": Object {
-            "Fn::Join": Array [
-              "",
-              Array [
-                Object {
-                  "Fn::Select": Array [
-                    0,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersc13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5S3VersionKey50C3CFF0",
-                        },
-                      ],
-                    },
-                  ],
-                },
-                Object {
-                  "Fn::Select": Array [
-                    1,
-                    Object {
-                      "Fn::Split": Array [
-                        "||",
-                        Object {
-                          "Ref": "AssetParametersc13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5S3VersionKey50C3CFF0",
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            ],
-          },
+          "S3Key": "558dc75fbdc793c8e2f64f85d2d7ed2cb820c727ec7e9b08666ad1af0103992e.zip",
         },
         "Handler": "index.handler",
         "Role": Object {
@@ -1211,6 +1128,33 @@ Object {
         "ToPort": 443,
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
+    },
+  },
+  "Rules": Object {
+    "CheckBootstrapVersion": Object {
+      "Assertions": Array [
+        Object {
+          "Assert": Object {
+            "Fn::Not": Array [
+              Object {
+                "Fn::Contains": Array [
+                  Array [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  Object {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
     },
   },
 }

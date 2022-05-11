@@ -1,3 +1,4 @@
+import { Duration } from 'aws-cdk-lib';
 import {
   ComparisonOperator,
   MathExpression,
@@ -5,13 +6,13 @@ import {
   Metric,
   MetricOptions,
   Statistic,
-} from '@aws-cdk/aws-cloudwatch';
-import { SubnetSelection, Vpc, ISecurityGroup } from '@aws-cdk/aws-ec2';
-import { Cluster, ICluster } from '@aws-cdk/aws-ecs';
-import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
-import { RetentionDays } from '@aws-cdk/aws-logs';
-import { IBucket } from '@aws-cdk/aws-s3';
-import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
+} from 'aws-cdk-lib/aws-cloudwatch';
+import { SubnetSelection, Vpc, ISecurityGroup } from 'aws-cdk-lib/aws-ec2';
+import { Cluster, ICluster } from 'aws-cdk-lib/aws-ecs';
+import { IFunction, Tracing } from 'aws-cdk-lib/aws-lambda';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { IBucket } from 'aws-cdk-lib/aws-s3';
+import { IQueue, Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import {
   Choice,
   Condition,
@@ -23,9 +24,9 @@ import {
   StateMachine,
   Succeed,
   TaskInput,
-} from '@aws-cdk/aws-stepfunctions';
-import * as tasks from '@aws-cdk/aws-stepfunctions-tasks';
-import { Construct, Duration } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-stepfunctions';
+import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
+import { Construct } from 'constructs';
 import { Repository } from '../../codeartifact/repository';
 import { sqsQueueUrl, stateMachineUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';

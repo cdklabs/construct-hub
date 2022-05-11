@@ -1,3 +1,4 @@
+import { Duration } from 'aws-cdk-lib';
 import {
   Dashboard,
   GraphWidget,
@@ -8,9 +9,9 @@ import {
   Metric,
   Statistic,
   PeriodOverride,
-} from '@aws-cdk/aws-cloudwatch';
-import { IBucket } from '@aws-cdk/aws-s3';
-import { Construct, Duration } from '@aws-cdk/core';
+} from 'aws-cdk-lib/aws-cloudwatch';
+import { IBucket } from 'aws-cdk-lib/aws-s3';
+import { Construct } from 'constructs';
 import { DenyList } from './backend/deny-list';
 import { Ingestion } from './backend/ingestion';
 import { Inventory } from './backend/inventory';

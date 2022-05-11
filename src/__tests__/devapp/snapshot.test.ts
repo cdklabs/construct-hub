@@ -1,7 +1,5 @@
-import '@aws-cdk/assert/jest';
-
-import { App } from '@aws-cdk/core';
-import * as cxapi from '@aws-cdk/cx-api';
+import { App } from 'aws-cdk-lib';
+import * as cxapi from 'aws-cdk-lib/cx-api';
 import { stringify as yaml } from 'yaml';
 
 import { Isolation } from '../../construct-hub';

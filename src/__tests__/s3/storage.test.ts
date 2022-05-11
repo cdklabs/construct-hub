@@ -1,5 +1,5 @@
-import '@aws-cdk/assert/jest';
-import { Stack } from '@aws-cdk/core';
+import { Stack } from 'aws-cdk-lib';
+import { Template } from 'aws-cdk-lib/assertions';
 import { S3StorageFactory } from '../..';
 
 test('is a stack singleton', () => {
@@ -17,7 +17,7 @@ test('creates a failover bucket as well', () => {
   const factory = S3StorageFactory.getOrCreate(stack);
   factory.newBucket(stack, 'Bucket');
 
-  expect(stack).toHaveResource('AWS::S3::Bucket', {
+  Template.fromStack(stack).hasResourceProperties('AWS::S3::Bucket', {
     Tags: [
       {
         Key: 'failover',

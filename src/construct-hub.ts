@@ -1,18 +1,13 @@
-import * as ec2 from '@aws-cdk/aws-ec2';
-import * as iam from '@aws-cdk/aws-iam';
-import { AnyPrincipal, Effect, PolicyStatement } from '@aws-cdk/aws-iam';
-import { RetentionDays } from '@aws-cdk/aws-logs';
-import * as s3 from '@aws-cdk/aws-s3';
-import { BlockPublicAccess } from '@aws-cdk/aws-s3';
-import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
-import * as appreg from '@aws-cdk/aws-servicecatalogappregistry';
-import * as sqs from '@aws-cdk/aws-sqs';
-import {
-  Construct as CoreConstruct,
-  Duration,
-  Stack,
-  Tags,
-} from '@aws-cdk/core';
+import { Application } from '@aws-cdk/aws-servicecatalogappregistry-alpha';
+import { Duration, Stack, Tags } from 'aws-cdk-lib';
+import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import { AnyPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import { BlockPublicAccess } from 'aws-cdk-lib/aws-s3';
+import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
 import { createRestrictedSecurityGroups } from './_limited-internet-access';
 import { AlarmActions, Domain } from './api';
@@ -265,7 +260,7 @@ export interface CodeArtifactDomainProps {
 /**
  * Construct Hub.
  */
-export class ConstructHub extends CoreConstruct implements iam.IGrantable {
+export class ConstructHub extends Construct implements iam.IGrantable {
   private readonly ingestion: Ingestion;
 
   public constructor(
@@ -469,7 +464,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     // Set the base URL that will be used in the RSS/ATOM feed
     feedBuilder.setConstructHubUrl(webApp.baseUrl);
 
-    const sources = new CoreConstruct(this, 'Sources');
+    const sources = new Construct(this, 'Sources');
     const packageSources = (props.packageSources ?? [new NpmJs()]).map(
       (source) =>
         source.bind(sources, {
@@ -525,7 +520,7 @@ export class ConstructHub extends CoreConstruct implements iam.IGrantable {
     }
 
     if (props.appRegistryApplication ?? true) {
-      const application = new appreg.Application(this, 'Application', {
+      const application = new Application(this, 'Application', {
         applicationName: 'ConstructHub',
       });
       application.associateStack(Stack.of(this));

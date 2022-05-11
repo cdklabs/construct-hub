@@ -1,8 +1,9 @@
-import { MetricOptions, Metric, Statistic } from '@aws-cdk/aws-cloudwatch';
-import { Rule, Schedule } from '@aws-cdk/aws-events';
-import { LambdaFunction } from '@aws-cdk/aws-events-targets';
-import { IBucket } from '@aws-cdk/aws-s3';
-import { Construct, Duration } from '@aws-cdk/core';
+import { Duration } from 'aws-cdk-lib';
+import { MetricOptions, Metric, Statistic } from 'aws-cdk-lib/aws-cloudwatch';
+import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
+import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
+import { IBucket } from 'aws-cdk-lib/aws-s3';
+import { Construct } from 'constructs';
 import { gravitonLambdaIfAvailable } from '../../../backend/_lambda-architecture';
 import {
   Environment,

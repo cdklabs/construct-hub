@@ -274,20 +274,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters7a3950dcfb45a45225ce95c69ab7a643cc8a9c89219b20ac4f2b48ebf6a176f0S3Bucket7B85BF5D
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters7a3950dcfb45a45225ce95c69ab7a643cc8a9c89219b20ac4f2b48ebf6a176f0S3VersionKey1E25848B
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters7a3950dcfb45a45225ce95c69ab7a643cc8a9c89219b20ac4f2b48ebf6a176f0S3VersionKey1E25848B
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 7a3950dcfb45a45225ce95c69ab7a643cc8a9c89219b20ac4f2b48ebf6a176f0.zip
       Role:
         Fn::GetAtt:
           - ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionServiceRole9AAAD93C
@@ -2642,20 +2630,8 @@ Resources:
     Properties:
       Content:
         S3Bucket:
-          Ref: AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27S3Bucket940CB35D
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27S3VersionKey248C9936
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27S3VersionKey248C9936
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip
       Description: /opt/awscli/aws
   ConstructHubDenyListBucketDeploymentCustomResourceF835956B:
     Type: Custom::CDKBucketDeployment
@@ -2665,20 +2641,9 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParameters6f1f07e70de63d5afdbcab762f8f867a2aedb494b30cd360d5deb518d3914263S3Bucket55D036C4
+        - Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
       SourceObjectKeys:
-        - Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters6f1f07e70de63d5afdbcab762f8f867a2aedb494b30cd360d5deb518d3914263S3VersionKey1CB8DF17
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters6f1f07e70de63d5afdbcab762f8f867a2aedb494b30cd360d5deb518d3914263S3VersionKey1CB8DF17
+        - 6f1f07e70de63d5afdbcab762f8f867a2aedb494b30cd360d5deb518d3914263.zip
       DestinationBucketName:
         Ref: ConstructHubDenyListBucket1B3C2C2E
       RetainOnDelete: true
@@ -2774,20 +2739,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters586152c743956e1b62d226221360e44c7b3cee461e2cfc97e29c1dad99c5a01eS3BucketCE10C735
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters586152c743956e1b62d226221360e44c7b3cee461e2cfc97e29c1dad99c5a01eS3VersionKey51CDD84C
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters586152c743956e1b62d226221360e44c7b3cee461e2cfc97e29c1dad99c5a01eS3VersionKey51CDD84C
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 586152c743956e1b62d226221360e44c7b3cee461e2cfc97e29c1dad99c5a01e.zip
       Role:
         Fn::GetAtt:
           - ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE
@@ -2863,20 +2816,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameterse418072f7d544cd4242af92741aa661776b95011d950d609265aa65eb8a30fc2S3Bucket76B4863D
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameterse418072f7d544cd4242af92741aa661776b95011d950d609265aa65eb8a30fc2S3VersionKey5848C736
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameterse418072f7d544cd4242af92741aa661776b95011d950d609265aa65eb8a30fc2S3VersionKey5848C736
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: e418072f7d544cd4242af92741aa661776b95011d950d609265aa65eb8a30fc2.zip
       Role:
         Fn::GetAtt:
           - ConstructHubDenyListPrunePruneQueueHandlerServiceRoleC10AC418
@@ -2956,7 +2897,11 @@ Resources:
               - s3:GetBucket*
               - s3:List*
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -2978,20 +2923,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters122201d072c4a054743e3a327cdd620c58a2089623dfc5d1b151a07a67c80cc6S3BucketBCE57318
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters122201d072c4a054743e3a327cdd620c58a2089623dfc5d1b151a07a67c80cc6S3VersionKeyB688B871
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters122201d072c4a054743e3a327cdd620c58a2089623dfc5d1b151a07a67c80cc6S3VersionKeyB688B871
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 6f9b37826014cf7306475a2e1d150ac8971800e6b552e9201c71ebe9a4684a30.zip
       Role:
         Fn::GetAtt:
           - ConstructHubStatsServiceRole48DCA379
@@ -3115,7 +3048,11 @@ Resources:
               - s3:GetBucket*
               - s3:List*
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -3137,20 +3074,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters71d309573226fa19ffae479b6248edf88e72aeeacf433b1ed5ee31eda5eb9513S3Bucket514B4402
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters71d309573226fa19ffae479b6248edf88e72aeeacf433b1ed5ee31eda5eb9513S3VersionKey0A9F6232
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters71d309573226fa19ffae479b6248edf88e72aeeacf433b1ed5ee31eda5eb9513S3VersionKey0A9F6232
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 78f71a28f105f17fb9dbda71b49756f97741132afa7869b67b22a21798c22235.zip
       Role:
         Fn::GetAtt:
           - ConstructHubVersionTrackerServiceRole721EE863
@@ -3314,7 +3239,11 @@ Resources:
                     - /catalog.json
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -3329,7 +3258,11 @@ Resources:
                     - /atom
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -3366,20 +3299,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters361e3c8a585b288414d1d66caca2e7200b26eeb19cc55df76473ec8f12a2a835S3Bucket833D39F2
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters361e3c8a585b288414d1d66caca2e7200b26eeb19cc55df76473ec8f12a2a835S3VersionKey905A3079
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters361e3c8a585b288414d1d66caca2e7200b26eeb19cc55df76473ec8f12a2a835S3VersionKey905A3079
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 8e6478d13edcf261970d22e31d3bd9d852097295a21cae8eaf2e31726ec966cc.zip
       Role:
         Fn::GetAtt:
           - ConstructHubFeedBuilderReleaseNotesUpdateFeedServiceRoleC857E364
@@ -3539,7 +3460,11 @@ Resources:
               - s3:GetBucket*
               - s3:List*
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -3561,20 +3486,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters03f652ae2efcc7d5c266ff7e0c5778bd5996835440fae375cc46123e637d4facS3BucketF16DA64A
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters03f652ae2efcc7d5c266ff7e0c5778bd5996835440fae375cc46123e637d4facS3VersionKey7DCB1533
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters03f652ae2efcc7d5c266ff7e0c5778bd5996835440fae375cc46123e637d4facS3VersionKey7DCB1533
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: ccaa24e67b84f6ada7fd7e2a6a00b87b20d653b2f5aae7148f4798ec1e4efa7a.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
@@ -3702,20 +3615,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters661b95e18bfc22c94f2007c047a429f3634283a0cfedf284e9bffa89d9c8eff5S3Bucket512118DF
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters661b95e18bfc22c94f2007c047a429f3634283a0cfedf284e9bffa89d9c8eff5S3VersionKeyF5621332
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters661b95e18bfc22c94f2007c047a429f3634283a0cfedf284e9bffa89d9c8eff5S3VersionKeyF5621332
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 661b95e18bfc22c94f2007c047a429f3634283a0cfedf284e9bffa89d9c8eff5.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationNeedsCatalogUpdateServiceRoleE6BF31C3
@@ -3844,7 +3745,11 @@ Resources:
                     - /data/*/uninstallable
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -3868,7 +3773,11 @@ Resources:
                   - /data/*/uninstallable
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -3883,7 +3792,11 @@ Resources:
                     - /data/*/docs-typescript.*
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -3898,7 +3811,11 @@ Resources:
                     - /data/*/docs-*-typescript.*
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -3928,7 +3845,11 @@ Resources:
                     - /data/*/docs-typescript.*.not-supported
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -3973,7 +3894,11 @@ Resources:
                     - /data/*/docs-typescript.*.corruptassembly
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4003,7 +3928,11 @@ Resources:
                     - /data/*/docs-*-typescript.*.corruptassembly
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4036,7 +3965,11 @@ Resources:
                   - /data/*/docs-*-typescript.*.corruptassembly
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4051,7 +3984,11 @@ Resources:
                     - /data/*/docs-python.*
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4066,7 +4003,11 @@ Resources:
                     - /data/*/docs-*-python.*
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4096,7 +4037,11 @@ Resources:
                     - /data/*/docs-python.*.not-supported
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4141,7 +4086,11 @@ Resources:
                     - /data/*/docs-python.*.corruptassembly
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4171,7 +4120,11 @@ Resources:
                     - /data/*/docs-*-python.*.corruptassembly
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4204,7 +4157,11 @@ Resources:
                   - /data/*/docs-*-python.*.corruptassembly
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4219,7 +4176,11 @@ Resources:
                     - /data/*/docs-java.*
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4234,7 +4195,11 @@ Resources:
                     - /data/*/docs-*-java.*
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4264,7 +4229,11 @@ Resources:
                     - /data/*/docs-java.*.not-supported
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4309,7 +4278,11 @@ Resources:
                     - /data/*/docs-java.*.corruptassembly
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4339,7 +4312,11 @@ Resources:
                     - /data/*/docs-*-java.*.corruptassembly
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4372,7 +4349,11 @@ Resources:
                   - /data/*/docs-*-java.*.corruptassembly
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4387,7 +4368,11 @@ Resources:
                     - /data/*/docs-csharp.*
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4402,7 +4387,11 @@ Resources:
                     - /data/*/docs-*-csharp.*
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4432,7 +4421,11 @@ Resources:
                     - /data/*/docs-csharp.*.not-supported
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4477,7 +4470,11 @@ Resources:
                     - /data/*/docs-csharp.*.corruptassembly
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4507,7 +4504,11 @@ Resources:
                     - /data/*/docs-*-csharp.*.corruptassembly
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4540,7 +4541,11 @@ Resources:
                   - /data/*/docs-*-csharp.*.corruptassembly
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4555,7 +4560,11 @@ Resources:
                     - /data/*/docs-go.*
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4570,7 +4579,11 @@ Resources:
                     - /data/*/docs-*-go.*
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4600,7 +4613,11 @@ Resources:
                     - /data/*/docs-go.*.not-supported
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4645,7 +4662,11 @@ Resources:
                     - /data/*/docs-go.*.corruptassembly
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4675,7 +4696,11 @@ Resources:
                     - /data/*/docs-*-go.*.corruptassembly
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -4747,14 +4772,7 @@ Resources:
                   - repositoryEndpoint
           Essential: true
           Image:
-            Fn::Join:
-              - ""
-              - - Ref: AWS::AccountId
-                - .dkr.ecr.
-                - Ref: AWS::Region
-                - .
-                - Ref: AWS::URLSuffix
-                - /aws-cdk/assets:12acb8ed22af9a783e940f84c51d2e803abca4d358e529890f5b30bf39a9c3b5
+            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:47e22b1f0a823a1568221faef00229fe606a4de8980e3af42eebf326cd9c4b4b
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -4807,7 +4825,8 @@ Resources:
                   - Ref: AWS::Region
                   - ":"
                   - Ref: AWS::AccountId
-                  - :repository/aws-cdk/assets
+                  - :repository/
+                  - Fn::Sub: cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}
           - Action: ecr:GetAuthorizationToken
             Effect: Allow
             Resource: "*"
@@ -5120,20 +5139,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters1cfd4acad1a32b74d13c4a3843383633d6518827d66510c9f6d82833d1ba897dS3BucketB0AC877C
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters1cfd4acad1a32b74d13c4a3843383633d6518827d66510c9f6d82833d1ba897dS3VersionKeyF4EFFF91
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters1cfd4acad1a32b74d13c4a3843383633d6518827d66510c9f6d82833d1ba897dS3VersionKeyF4EFFF91
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 1cfd4acad1a32b74d13c4a3843383633d6518827d66510c9f6d82833d1ba897d.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationRedriveServiceRoleB84EFF33
@@ -5510,20 +5517,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersd87efe52e5205d2bcb29614223e44ddb804347c7c8c83f1d30b2c94af487904eS3Bucket8E9B2516
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersd87efe52e5205d2bcb29614223e44ddb804347c7c8c83f1d30b2c94af487904eS3VersionKey6AEC5BF4
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersd87efe52e5205d2bcb29614223e44ddb804347c7c8c83f1d30b2c94af487904eS3VersionKey6AEC5BF4
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: d87efe52e5205d2bcb29614223e44ddb804347c7c8c83f1d30b2c94af487904e.zip
       Role:
         Fn::GetAtt:
           - ConstructHubReleaseNotesReleaseNotesTriggerServiceRoleD0FDE2B6
@@ -5599,7 +5594,11 @@ Resources:
               - s3:GetBucket*
               - s3:List*
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -5621,20 +5620,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters53be607ffb500c94efd366501c66475c1f248eb75f30f2074b65c9c09b6e4fccS3Bucket03E7836D
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters53be607ffb500c94efd366501c66475c1f248eb75f30f2074b65c9c09b6e4fccS3VersionKeyA7736154
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters53be607ffb500c94efd366501c66475c1f248eb75f30f2074b65c9c09b6e4fccS3VersionKeyA7736154
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 53be607ffb500c94efd366501c66475c1f248eb75f30f2074b65c9c09b6e4fcc.zip
       Role:
         Fn::GetAtt:
           - ConstructHubReleaseNotesGithubChangelogFetcherServiceRoleCAE3656D
@@ -5706,20 +5693,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters98c25e62a1f23cd5cf89b8bc1f3156372f1c441c57ff50adff92faa6adda0923S3BucketD47EFBE2
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters98c25e62a1f23cd5cf89b8bc1f3156372f1c441c57ff50adff92faa6adda0923S3VersionKeyD28192A6
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters98c25e62a1f23cd5cf89b8bc1f3156372f1c441c57ff50adff92faa6adda0923S3VersionKeyD28192A6
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 98c25e62a1f23cd5cf89b8bc1f3156372f1c441c57ff50adff92faa6adda0923.zip
       Role:
         Fn::GetAtt:
           - ConstructHubReleaseNotesReleaseNoteTasksServiceRole662376CD
@@ -6128,20 +6103,8 @@ Resources:
     Properties:
       Content:
         S3Bucket:
-          Ref: AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27S3Bucket940CB35D
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27S3VersionKey248C9936
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27S3VersionKey248C9936
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip
       Description: /opt/awscli/aws
   ConstructHubIngestionDeployIngestionConfigurationCustomResourceD7F243C1:
     Type: Custom::CDKBucketDeployment
@@ -6151,20 +6114,9 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParametersb32de5d6fb92c01b03e93e387691b3f444ac4e9800273abf834874c427c640f0S3Bucket0D334DA1
+        - Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
       SourceObjectKeys:
-        - Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersb32de5d6fb92c01b03e93e387691b3f444ac4e9800273abf834874c427c640f0S3VersionKeyB04BC588
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersb32de5d6fb92c01b03e93e387691b3f444ac4e9800273abf834874c427c640f0S3VersionKeyB04BC588
+        - b32de5d6fb92c01b03e93e387691b3f444ac4e9800273abf834874c427c640f0.zip
       DestinationBucketName:
         Ref: ConstructHubIngestionConfigBucket0F0ED0B6
       Prune: true
@@ -6213,7 +6165,11 @@ Resources:
                     - /*
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -6354,20 +6310,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters5d1bb79f77fd6d2dc0cc43915e88ee1dca2b7d8863f847e398031bab4da31d0eS3BucketD7FB0D83
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters5d1bb79f77fd6d2dc0cc43915e88ee1dca2b7d8863f847e398031bab4da31d0eS3VersionKey82CDC181
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters5d1bb79f77fd6d2dc0cc43915e88ee1dca2b7d8863f847e398031bab4da31d0eS3VersionKey82CDC181
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 6a207d61d403d9e6cb8e27e8d308cceece74ea3298d097a68dd6ac8be8b5156b.zip
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
@@ -6539,20 +6483,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersfb771b414613bc50d5683fd3494215c69c653580174bd7ba13006d2c29222671S3Bucket8B6AADD3
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersfb771b414613bc50d5683fd3494215c69c653580174bd7ba13006d2c29222671S3VersionKey41903AB4
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersfb771b414613bc50d5683fd3494215c69c653580174bd7ba13006d2c29222671S3VersionKey41903AB4
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: fb771b414613bc50d5683fd3494215c69c653580174bd7ba13006d2c29222671.zip
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionReprocessWorkflowFunctionServiceRoleA59056B1
@@ -6888,20 +6820,8 @@ Resources:
     Properties:
       Content:
         S3Bucket:
-          Ref: AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27S3Bucket940CB35D
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27S3VersionKey248C9936
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27S3VersionKey248C9936
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip
       Description: /opt/awscli/aws
   ConstructHubLicenseListCustomResource323F0FD4:
     Type: Custom::CDKBucketDeployment
@@ -6911,20 +6831,9 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParameters67e7c217b6ba727846031d77eb42a1a2bbc780507e11f9ad3192a0f98abe450aS3Bucket92298F1D
+        - Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
       SourceObjectKeys:
-        - Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters67e7c217b6ba727846031d77eb42a1a2bbc780507e11f9ad3192a0f98abe450aS3VersionKey70BCB28F
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters67e7c217b6ba727846031d77eb42a1a2bbc780507e11f9ad3192a0f98abe450aS3VersionKey70BCB28F
+        - 67e7c217b6ba727846031d77eb42a1a2bbc780507e11f9ad3192a0f98abe450a.zip
       DestinationBucketName:
         Ref: ConstructHubLicenseListBucket9334047F
       RetainOnDelete: true
@@ -7188,20 +7097,8 @@ Resources:
     Properties:
       Content:
         S3Bucket:
-          Ref: AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27S3Bucket940CB35D
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27S3VersionKey248C9936
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27S3VersionKey248C9936
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip
       Description: /opt/awscli/aws
   ConstructHubWebAppDeployWebsiteCustomResourceE6DF98C9:
     Type: Custom::CDKBucketDeployment
@@ -7211,20 +7108,9 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3BucketA2379B42
+        - Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
       SourceObjectKeys:
-        - Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3VersionKeyFA1BA673
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3VersionKeyFA1BA673
+        - dd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58b.zip
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: false
@@ -7239,20 +7125,8 @@ Resources:
     Properties:
       Content:
         S3Bucket:
-          Ref: AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27S3Bucket940CB35D
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27S3VersionKey248C9936
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27S3VersionKey248C9936
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip
       Description: /opt/awscli/aws
   ConstructHubWebAppDeployWebsiteConfigCustomResource2D18C708:
     Type: Custom::CDKBucketDeployment
@@ -7262,33 +7136,11 @@ Resources:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536
           - Arn
       SourceBucketNames:
-        - Ref: AssetParameters14e4f0139224d21210279e451b3ecaef287913006c68e6050415f640c0ef7522S3BucketF816D9C3
-        - Ref: AssetParametersd7eba45c105712349db08f8edd1c547cd768fb9c92dadc0bfd2403ecc4127f96S3BucketEBD7DE4E
+        - Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        - Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
       SourceObjectKeys:
-        - Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters14e4f0139224d21210279e451b3ecaef287913006c68e6050415f640c0ef7522S3VersionKey3819F0D7
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters14e4f0139224d21210279e451b3ecaef287913006c68e6050415f640c0ef7522S3VersionKey3819F0D7
-        - Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersd7eba45c105712349db08f8edd1c547cd768fb9c92dadc0bfd2403ecc4127f96S3VersionKey2B839AE6
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersd7eba45c105712349db08f8edd1c547cd768fb9c92dadc0bfd2403ecc4127f96S3VersionKey2B839AE6
+        - 14e4f0139224d21210279e451b3ecaef287913006c68e6050415f640c0ef7522.zip
+        - d7eba45c105712349db08f8edd1c547cd768fb9c92dadc0bfd2403ecc4127f96.zip
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: false
@@ -7426,7 +7278,11 @@ Resources:
               - s3:GetBucket*
               - s3:List*
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -7483,20 +7339,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters30a8353a2581e8f09ce9968ae28270383994693d0e8196fdb2ea4655c74b2347S3Bucket8FD3FB89
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters30a8353a2581e8f09ce9968ae28270383994693d0e8196fdb2ea4655c74b2347S3VersionKey7EF23778
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters30a8353a2581e8f09ce9968ae28270383994693d0e8196fdb2ea4655c74b2347S3VersionKey7EF23778
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 30a8353a2581e8f09ce9968ae28270383994693d0e8196fdb2ea4655c74b2347.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50
@@ -7579,7 +7423,11 @@ Resources:
               - s3:GetBucket*
               - s3:List*
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -7646,20 +7494,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters6814a4ad37fc2ba5eca5912c4758406094743a23270220c6ed221b2eaf61ce86S3Bucket1C6CCC8F
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters6814a4ad37fc2ba5eca5912c4758406094743a23270220c6ed221b2eaf61ce86S3VersionKeyA7A9EBA8
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters6814a4ad37fc2ba5eca5912c4758406094743a23270220c6ed221b2eaf61ce86S3VersionKeyA7A9EBA8
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 6814a4ad37fc2ba5eca5912c4758406094743a23270220c6ed221b2eaf61ce86.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsServiceRoleAC3F7AA6
@@ -7720,7 +7556,11 @@ Resources:
               - s3:GetBucket*
               - s3:List*
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -7745,20 +7585,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersd7ae5d02316ef1da8c643a967d4e9ac3e3aa608617b4893f0023416129edb9adS3BucketC6FF4EF7
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersd7ae5d02316ef1da8c643a967d4e9ac3e3aa608617b4893f0023416129edb9adS3VersionKey18F8BA3A
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersd7ae5d02316ef1da8c643a967d4e9ac3e3aa608617b4893f0023416129edb9adS3VersionKey18F8BA3A
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: d7ae5d02316ef1da8c643a967d4e9ac3e3aa608617b4893f0023416129edb9ad.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2
@@ -8153,7 +7981,11 @@ Resources:
                     - /*
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -8168,7 +8000,11 @@ Resources:
                     - /missing-objects/*-documentation.json
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -8183,7 +8019,11 @@ Resources:
                     - /corruptassembly-objects/*.json
           - Action:
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -8201,7 +8041,11 @@ Resources:
               - s3:GetBucket*
               - s3:List*
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -8223,20 +8067,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters6b7c863696192cc5a55d55b4c5b71ad10fd4bd199c5008a9c2dc843be933998aS3Bucket37117C86
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters6b7c863696192cc5a55d55b4c5b71ad10fd4bd199c5008a9c2dc843be933998aS3VersionKeyD87905FF
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters6b7c863696192cc5a55d55b4c5b71ad10fd4bd199c5008a9c2dc843be933998aS3VersionKeyD87905FF
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 6b7c863696192cc5a55d55b4c5b71ad10fd4bd199c5008a9c2dc843be933998a.zip
       Role:
         Fn::GetAtt:
           - ConstructHubInventoryCanaryServiceRole7684EDDE
@@ -9095,20 +8927,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8dS3BucketF0537962
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8dS3VersionKey46386A78
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8dS3VersionKey46386A78
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 39381d2c8b8ec42679de4960c24f0c83c56772cdc2b10b6fc14cd0a99aba42ed.zip
       Role:
         Fn::GetAtt:
           - AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2
@@ -9135,20 +8955,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParameters15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538S3BucketB021608E
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538S3VersionKeyC73B105A
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParameters15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538S3VersionKeyC73B105A
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 483ae06ed27ef8ca76e011264d772420593a6cfe8544759c306ef3b98c9e25be.zip
       Timeout: 900
       MemorySize: 128
       Handler: __entrypoint__.handler
@@ -9197,20 +9005,24 @@ Resources:
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters6f1f07e70de63d5afdbcab762f8f867a2aedb494b30cd360d5deb518d3914263S3Bucket55D036C4
+                    - Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
               - Fn::Join:
                   - ""
                   - - "arn:"
                     - Ref: AWS::Partition
                     - ":s3:::"
-                    - Ref: AssetParameters6f1f07e70de63d5afdbcab762f8f867a2aedb494b30cd360d5deb518d3914263S3Bucket55D036C4
+                    - Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
                     - /*
           - Action:
               - s3:GetObject*
               - s3:GetBucket*
               - s3:List*
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -9227,27 +9039,12 @@ Resources:
               - s3:GetObject*
               - s3:GetBucket*
               - s3:List*
-            Effect: Allow
-            Resource:
-              - Fn::Join:
-                  - ""
-                  - - "arn:"
-                    - Ref: AWS::Partition
-                    - ":s3:::"
-                    - Ref: AssetParametersb32de5d6fb92c01b03e93e387691b3f444ac4e9800273abf834874c427c640f0S3Bucket0D334DA1
-              - Fn::Join:
-                  - ""
-                  - - "arn:"
-                    - Ref: AWS::Partition
-                    - ":s3:::"
-                    - Ref: AssetParametersb32de5d6fb92c01b03e93e387691b3f444ac4e9800273abf834874c427c640f0S3Bucket0D334DA1
-                    - /*
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -9264,27 +9061,12 @@ Resources:
               - s3:GetObject*
               - s3:GetBucket*
               - s3:List*
-            Effect: Allow
-            Resource:
-              - Fn::Join:
-                  - ""
-                  - - "arn:"
-                    - Ref: AWS::Partition
-                    - ":s3:::"
-                    - Ref: AssetParameters67e7c217b6ba727846031d77eb42a1a2bbc780507e11f9ad3192a0f98abe450aS3Bucket92298F1D
-              - Fn::Join:
-                  - ""
-                  - - "arn:"
-                    - Ref: AWS::Partition
-                    - ":s3:::"
-                    - Ref: AssetParameters67e7c217b6ba727846031d77eb42a1a2bbc780507e11f9ad3192a0f98abe450aS3Bucket92298F1D
-                    - /*
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -9301,27 +9083,12 @@ Resources:
               - s3:GetObject*
               - s3:GetBucket*
               - s3:List*
-            Effect: Allow
-            Resource:
-              - Fn::Join:
-                  - ""
-                  - - "arn:"
-                    - Ref: AWS::Partition
-                    - ":s3:::"
-                    - Ref: AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3BucketA2379B42
-              - Fn::Join:
-                  - ""
-                  - - "arn:"
-                    - Ref: AWS::Partition
-                    - ":s3:::"
-                    - Ref: AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3BucketA2379B42
-                    - /*
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
               - s3:DeleteObject*
-              - s3:PutObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
               - s3:Abort*
             Effect: Allow
             Resource:
@@ -9339,44 +9106,6 @@ Resources:
               - cloudfront:CreateInvalidation
             Effect: Allow
             Resource: "*"
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
-            Effect: Allow
-            Resource:
-              - Fn::Join:
-                  - ""
-                  - - "arn:"
-                    - Ref: AWS::Partition
-                    - ":s3:::"
-                    - Ref: AssetParameters14e4f0139224d21210279e451b3ecaef287913006c68e6050415f640c0ef7522S3BucketF816D9C3
-              - Fn::Join:
-                  - ""
-                  - - "arn:"
-                    - Ref: AWS::Partition
-                    - ":s3:::"
-                    - Ref: AssetParameters14e4f0139224d21210279e451b3ecaef287913006c68e6050415f640c0ef7522S3BucketF816D9C3
-                    - /*
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
-            Effect: Allow
-            Resource:
-              - Fn::Join:
-                  - ""
-                  - - "arn:"
-                    - Ref: AWS::Partition
-                    - ":s3:::"
-                    - Ref: AssetParametersd7eba45c105712349db08f8edd1c547cd768fb9c92dadc0bfd2403ecc4127f96S3BucketEBD7DE4E
-              - Fn::Join:
-                  - ""
-                  - - "arn:"
-                    - Ref: AWS::Partition
-                    - ":s3:::"
-                    - Ref: AssetParametersd7eba45c105712349db08f8edd1c547cd768fb9c92dadc0bfd2403ecc4127f96S3BucketEBD7DE4E
-                    - /*
         Version: 2012-10-17
       PolicyName: CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF
       Roles:
@@ -9386,20 +9115,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersf98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711daS3BucketF23C0DE7
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersf98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711daS3VersionKey5E97B17D
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersf98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711daS3VersionKey5E97B17D
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: f98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711da.zip
       Role:
         Fn::GetAtt:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265
@@ -9601,20 +9318,8 @@ Resources:
       Runtime: nodejs14.x
       Code:
         S3Bucket:
-          Ref: AssetParametersc13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5S3Bucket51CDED69
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersc13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5S3VersionKey50C3CFF0
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersc13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5S3VersionKey50C3CFF0
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 558dc75fbdc793c8e2f64f85d2d7ed2cb820c727ec7e9b08666ad1af0103992e.zip
       Role:
         Fn::GetAtt:
           - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB
@@ -9658,20 +9363,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersde90fb3620f6ea71b82d2b50c05e8196195dce1847169e267f18694728a0e87fS3Bucket5528AE50
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersde90fb3620f6ea71b82d2b50c05e8196195dce1847169e267f18694728a0e87fS3VersionKey00F7DAA0
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersde90fb3620f6ea71b82d2b50c05e8196195dce1847169e267f18694728a0e87fS3VersionKey00F7DAA0
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: de90fb3620f6ea71b82d2b50c05e8196195dce1847169e267f18694728a0e87f.zip
       Role:
         Fn::GetAtt:
           - SQSDLQStatsWidgetHandlerfc176846044f5e56baf2c71723501885ServiceRole2F995712
@@ -9883,20 +9576,8 @@ Resources:
     Properties:
       Code:
         S3Bucket:
-          Ref: AssetParametersadabf05e79598b40966a87c8417b668c9756bf78723cc7f9945357af841915d2S3Bucket007F6DE8
-        S3Key:
-          Fn::Join:
-            - ""
-            - - Fn::Select:
-                  - 0
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersadabf05e79598b40966a87c8417b668c9756bf78723cc7f9945357af841915d2S3VersionKeyE430DF68
-              - Fn::Select:
-                  - 1
-                  - Fn::Split:
-                      - "||"
-                      - Ref: AssetParametersadabf05e79598b40966a87c8417b668c9756bf78723cc7f9945357af841915d2S3VersionKeyE430DF68
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: adabf05e79598b40966a87c8417b668c9756bf78723cc7f9945357af841915d2.zip
       Role:
         Fn::GetAtt:
           - PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfServiceRole060BA12C
@@ -9997,379 +9678,6 @@ Outputs:
           - Ref: ConstructHubInventoryCanaryScratchworkBucketC185625E
           - " s3://"
           - Ref: ConstructHubInventoryCanaryFailoverScratchworkBucketE8015DAD
-Parameters:
-  AssetParameters70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8dS3BucketF0537962:
-    Type: String
-    Description: S3 bucket for asset
-      "70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8d"
-  AssetParameters70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8dS3VersionKey46386A78:
-    Type: String
-    Description: S3 key for asset version
-      "70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8d"
-  AssetParameters70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8dArtifactHash6BDDF757:
-    Type: String
-    Description: Artifact hash for asset
-      "70893b631249dc61260989e92e90d60ae94fbbec490a1e065680d77383084d8d"
-  AssetParameters15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538S3BucketB021608E:
-    Type: String
-    Description: S3 bucket for asset
-      "15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538"
-  AssetParameters15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538S3VersionKeyC73B105A:
-    Type: String
-    Description: S3 key for asset version
-      "15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538"
-  AssetParameters15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538ArtifactHash154EE95B:
-    Type: String
-    Description: Artifact hash for asset
-      "15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538"
-  AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27S3Bucket940CB35D:
-    Type: String
-    Description: S3 bucket for asset
-      "d78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27"
-  AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27S3VersionKey248C9936:
-    Type: String
-    Description: S3 key for asset version
-      "d78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27"
-  AssetParametersd78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27ArtifactHash934284DB:
-    Type: String
-    Description: Artifact hash for asset
-      "d78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27"
-  AssetParametersf98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711daS3BucketF23C0DE7:
-    Type: String
-    Description: S3 bucket for asset
-      "f98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711da"
-  AssetParametersf98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711daS3VersionKey5E97B17D:
-    Type: String
-    Description: S3 key for asset version
-      "f98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711da"
-  AssetParametersf98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711daArtifactHashD85D28D8:
-    Type: String
-    Description: Artifact hash for asset
-      "f98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711da"
-  AssetParameters6f1f07e70de63d5afdbcab762f8f867a2aedb494b30cd360d5deb518d3914263S3Bucket55D036C4:
-    Type: String
-    Description: S3 bucket for asset
-      "6f1f07e70de63d5afdbcab762f8f867a2aedb494b30cd360d5deb518d3914263"
-  AssetParameters6f1f07e70de63d5afdbcab762f8f867a2aedb494b30cd360d5deb518d3914263S3VersionKey1CB8DF17:
-    Type: String
-    Description: S3 key for asset version
-      "6f1f07e70de63d5afdbcab762f8f867a2aedb494b30cd360d5deb518d3914263"
-  AssetParameters6f1f07e70de63d5afdbcab762f8f867a2aedb494b30cd360d5deb518d3914263ArtifactHashEC19001D:
-    Type: String
-    Description: Artifact hash for asset
-      "6f1f07e70de63d5afdbcab762f8f867a2aedb494b30cd360d5deb518d3914263"
-  AssetParameters586152c743956e1b62d226221360e44c7b3cee461e2cfc97e29c1dad99c5a01eS3BucketCE10C735:
-    Type: String
-    Description: S3 bucket for asset
-      "586152c743956e1b62d226221360e44c7b3cee461e2cfc97e29c1dad99c5a01e"
-  AssetParameters586152c743956e1b62d226221360e44c7b3cee461e2cfc97e29c1dad99c5a01eS3VersionKey51CDD84C:
-    Type: String
-    Description: S3 key for asset version
-      "586152c743956e1b62d226221360e44c7b3cee461e2cfc97e29c1dad99c5a01e"
-  AssetParameters586152c743956e1b62d226221360e44c7b3cee461e2cfc97e29c1dad99c5a01eArtifactHashC5922AD6:
-    Type: String
-    Description: Artifact hash for asset
-      "586152c743956e1b62d226221360e44c7b3cee461e2cfc97e29c1dad99c5a01e"
-  AssetParameterse418072f7d544cd4242af92741aa661776b95011d950d609265aa65eb8a30fc2S3Bucket76B4863D:
-    Type: String
-    Description: S3 bucket for asset
-      "e418072f7d544cd4242af92741aa661776b95011d950d609265aa65eb8a30fc2"
-  AssetParameterse418072f7d544cd4242af92741aa661776b95011d950d609265aa65eb8a30fc2S3VersionKey5848C736:
-    Type: String
-    Description: S3 key for asset version
-      "e418072f7d544cd4242af92741aa661776b95011d950d609265aa65eb8a30fc2"
-  AssetParameterse418072f7d544cd4242af92741aa661776b95011d950d609265aa65eb8a30fc2ArtifactHashC567A117:
-    Type: String
-    Description: Artifact hash for asset
-      "e418072f7d544cd4242af92741aa661776b95011d950d609265aa65eb8a30fc2"
-  AssetParameters122201d072c4a054743e3a327cdd620c58a2089623dfc5d1b151a07a67c80cc6S3BucketBCE57318:
-    Type: String
-    Description: S3 bucket for asset
-      "122201d072c4a054743e3a327cdd620c58a2089623dfc5d1b151a07a67c80cc6"
-  AssetParameters122201d072c4a054743e3a327cdd620c58a2089623dfc5d1b151a07a67c80cc6S3VersionKeyB688B871:
-    Type: String
-    Description: S3 key for asset version
-      "122201d072c4a054743e3a327cdd620c58a2089623dfc5d1b151a07a67c80cc6"
-  AssetParameters122201d072c4a054743e3a327cdd620c58a2089623dfc5d1b151a07a67c80cc6ArtifactHash36040CBC:
-    Type: String
-    Description: Artifact hash for asset
-      "122201d072c4a054743e3a327cdd620c58a2089623dfc5d1b151a07a67c80cc6"
-  AssetParametersc13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5S3Bucket51CDED69:
-    Type: String
-    Description: S3 bucket for asset
-      "c13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5"
-  AssetParametersc13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5S3VersionKey50C3CFF0:
-    Type: String
-    Description: S3 key for asset version
-      "c13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5"
-  AssetParametersc13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5ArtifactHashE9AE13B7:
-    Type: String
-    Description: Artifact hash for asset
-      "c13434f8f1aa2ea30fa577b2feb208a41368b11787b752e10bfc71fe8eb919d5"
-  AssetParameters71d309573226fa19ffae479b6248edf88e72aeeacf433b1ed5ee31eda5eb9513S3Bucket514B4402:
-    Type: String
-    Description: S3 bucket for asset
-      "71d309573226fa19ffae479b6248edf88e72aeeacf433b1ed5ee31eda5eb9513"
-  AssetParameters71d309573226fa19ffae479b6248edf88e72aeeacf433b1ed5ee31eda5eb9513S3VersionKey0A9F6232:
-    Type: String
-    Description: S3 key for asset version
-      "71d309573226fa19ffae479b6248edf88e72aeeacf433b1ed5ee31eda5eb9513"
-  AssetParameters71d309573226fa19ffae479b6248edf88e72aeeacf433b1ed5ee31eda5eb9513ArtifactHashBA18DB77:
-    Type: String
-    Description: Artifact hash for asset
-      "71d309573226fa19ffae479b6248edf88e72aeeacf433b1ed5ee31eda5eb9513"
-  AssetParameters361e3c8a585b288414d1d66caca2e7200b26eeb19cc55df76473ec8f12a2a835S3Bucket833D39F2:
-    Type: String
-    Description: S3 bucket for asset
-      "361e3c8a585b288414d1d66caca2e7200b26eeb19cc55df76473ec8f12a2a835"
-  AssetParameters361e3c8a585b288414d1d66caca2e7200b26eeb19cc55df76473ec8f12a2a835S3VersionKey905A3079:
-    Type: String
-    Description: S3 key for asset version
-      "361e3c8a585b288414d1d66caca2e7200b26eeb19cc55df76473ec8f12a2a835"
-  AssetParameters361e3c8a585b288414d1d66caca2e7200b26eeb19cc55df76473ec8f12a2a835ArtifactHash42D7B272:
-    Type: String
-    Description: Artifact hash for asset
-      "361e3c8a585b288414d1d66caca2e7200b26eeb19cc55df76473ec8f12a2a835"
-  AssetParameters03f652ae2efcc7d5c266ff7e0c5778bd5996835440fae375cc46123e637d4facS3BucketF16DA64A:
-    Type: String
-    Description: S3 bucket for asset
-      "03f652ae2efcc7d5c266ff7e0c5778bd5996835440fae375cc46123e637d4fac"
-  AssetParameters03f652ae2efcc7d5c266ff7e0c5778bd5996835440fae375cc46123e637d4facS3VersionKey7DCB1533:
-    Type: String
-    Description: S3 key for asset version
-      "03f652ae2efcc7d5c266ff7e0c5778bd5996835440fae375cc46123e637d4fac"
-  AssetParameters03f652ae2efcc7d5c266ff7e0c5778bd5996835440fae375cc46123e637d4facArtifactHash12208957:
-    Type: String
-    Description: Artifact hash for asset
-      "03f652ae2efcc7d5c266ff7e0c5778bd5996835440fae375cc46123e637d4fac"
-  AssetParameters661b95e18bfc22c94f2007c047a429f3634283a0cfedf284e9bffa89d9c8eff5S3Bucket512118DF:
-    Type: String
-    Description: S3 bucket for asset
-      "661b95e18bfc22c94f2007c047a429f3634283a0cfedf284e9bffa89d9c8eff5"
-  AssetParameters661b95e18bfc22c94f2007c047a429f3634283a0cfedf284e9bffa89d9c8eff5S3VersionKeyF5621332:
-    Type: String
-    Description: S3 key for asset version
-      "661b95e18bfc22c94f2007c047a429f3634283a0cfedf284e9bffa89d9c8eff5"
-  AssetParameters661b95e18bfc22c94f2007c047a429f3634283a0cfedf284e9bffa89d9c8eff5ArtifactHashF8193E61:
-    Type: String
-    Description: Artifact hash for asset
-      "661b95e18bfc22c94f2007c047a429f3634283a0cfedf284e9bffa89d9c8eff5"
-  AssetParameters1cfd4acad1a32b74d13c4a3843383633d6518827d66510c9f6d82833d1ba897dS3BucketB0AC877C:
-    Type: String
-    Description: S3 bucket for asset
-      "1cfd4acad1a32b74d13c4a3843383633d6518827d66510c9f6d82833d1ba897d"
-  AssetParameters1cfd4acad1a32b74d13c4a3843383633d6518827d66510c9f6d82833d1ba897dS3VersionKeyF4EFFF91:
-    Type: String
-    Description: S3 key for asset version
-      "1cfd4acad1a32b74d13c4a3843383633d6518827d66510c9f6d82833d1ba897d"
-  AssetParameters1cfd4acad1a32b74d13c4a3843383633d6518827d66510c9f6d82833d1ba897dArtifactHash7C1D7DB3:
-    Type: String
-    Description: Artifact hash for asset
-      "1cfd4acad1a32b74d13c4a3843383633d6518827d66510c9f6d82833d1ba897d"
-  AssetParametersde90fb3620f6ea71b82d2b50c05e8196195dce1847169e267f18694728a0e87fS3Bucket5528AE50:
-    Type: String
-    Description: S3 bucket for asset
-      "de90fb3620f6ea71b82d2b50c05e8196195dce1847169e267f18694728a0e87f"
-  AssetParametersde90fb3620f6ea71b82d2b50c05e8196195dce1847169e267f18694728a0e87fS3VersionKey00F7DAA0:
-    Type: String
-    Description: S3 key for asset version
-      "de90fb3620f6ea71b82d2b50c05e8196195dce1847169e267f18694728a0e87f"
-  AssetParametersde90fb3620f6ea71b82d2b50c05e8196195dce1847169e267f18694728a0e87fArtifactHash4C5B0711:
-    Type: String
-    Description: Artifact hash for asset
-      "de90fb3620f6ea71b82d2b50c05e8196195dce1847169e267f18694728a0e87f"
-  AssetParametersd87efe52e5205d2bcb29614223e44ddb804347c7c8c83f1d30b2c94af487904eS3Bucket8E9B2516:
-    Type: String
-    Description: S3 bucket for asset
-      "d87efe52e5205d2bcb29614223e44ddb804347c7c8c83f1d30b2c94af487904e"
-  AssetParametersd87efe52e5205d2bcb29614223e44ddb804347c7c8c83f1d30b2c94af487904eS3VersionKey6AEC5BF4:
-    Type: String
-    Description: S3 key for asset version
-      "d87efe52e5205d2bcb29614223e44ddb804347c7c8c83f1d30b2c94af487904e"
-  AssetParametersd87efe52e5205d2bcb29614223e44ddb804347c7c8c83f1d30b2c94af487904eArtifactHash3B2DD1C5:
-    Type: String
-    Description: Artifact hash for asset
-      "d87efe52e5205d2bcb29614223e44ddb804347c7c8c83f1d30b2c94af487904e"
-  AssetParameters53be607ffb500c94efd366501c66475c1f248eb75f30f2074b65c9c09b6e4fccS3Bucket03E7836D:
-    Type: String
-    Description: S3 bucket for asset
-      "53be607ffb500c94efd366501c66475c1f248eb75f30f2074b65c9c09b6e4fcc"
-  AssetParameters53be607ffb500c94efd366501c66475c1f248eb75f30f2074b65c9c09b6e4fccS3VersionKeyA7736154:
-    Type: String
-    Description: S3 key for asset version
-      "53be607ffb500c94efd366501c66475c1f248eb75f30f2074b65c9c09b6e4fcc"
-  AssetParameters53be607ffb500c94efd366501c66475c1f248eb75f30f2074b65c9c09b6e4fccArtifactHashE110966B:
-    Type: String
-    Description: Artifact hash for asset
-      "53be607ffb500c94efd366501c66475c1f248eb75f30f2074b65c9c09b6e4fcc"
-  AssetParameters98c25e62a1f23cd5cf89b8bc1f3156372f1c441c57ff50adff92faa6adda0923S3BucketD47EFBE2:
-    Type: String
-    Description: S3 bucket for asset
-      "98c25e62a1f23cd5cf89b8bc1f3156372f1c441c57ff50adff92faa6adda0923"
-  AssetParameters98c25e62a1f23cd5cf89b8bc1f3156372f1c441c57ff50adff92faa6adda0923S3VersionKeyD28192A6:
-    Type: String
-    Description: S3 key for asset version
-      "98c25e62a1f23cd5cf89b8bc1f3156372f1c441c57ff50adff92faa6adda0923"
-  AssetParameters98c25e62a1f23cd5cf89b8bc1f3156372f1c441c57ff50adff92faa6adda0923ArtifactHashB2031118:
-    Type: String
-    Description: Artifact hash for asset
-      "98c25e62a1f23cd5cf89b8bc1f3156372f1c441c57ff50adff92faa6adda0923"
-  AssetParametersb32de5d6fb92c01b03e93e387691b3f444ac4e9800273abf834874c427c640f0S3Bucket0D334DA1:
-    Type: String
-    Description: S3 bucket for asset
-      "b32de5d6fb92c01b03e93e387691b3f444ac4e9800273abf834874c427c640f0"
-  AssetParametersb32de5d6fb92c01b03e93e387691b3f444ac4e9800273abf834874c427c640f0S3VersionKeyB04BC588:
-    Type: String
-    Description: S3 key for asset version
-      "b32de5d6fb92c01b03e93e387691b3f444ac4e9800273abf834874c427c640f0"
-  AssetParametersb32de5d6fb92c01b03e93e387691b3f444ac4e9800273abf834874c427c640f0ArtifactHash6C1CDCF8:
-    Type: String
-    Description: Artifact hash for asset
-      "b32de5d6fb92c01b03e93e387691b3f444ac4e9800273abf834874c427c640f0"
-  AssetParameters5d1bb79f77fd6d2dc0cc43915e88ee1dca2b7d8863f847e398031bab4da31d0eS3BucketD7FB0D83:
-    Type: String
-    Description: S3 bucket for asset
-      "5d1bb79f77fd6d2dc0cc43915e88ee1dca2b7d8863f847e398031bab4da31d0e"
-  AssetParameters5d1bb79f77fd6d2dc0cc43915e88ee1dca2b7d8863f847e398031bab4da31d0eS3VersionKey82CDC181:
-    Type: String
-    Description: S3 key for asset version
-      "5d1bb79f77fd6d2dc0cc43915e88ee1dca2b7d8863f847e398031bab4da31d0e"
-  AssetParameters5d1bb79f77fd6d2dc0cc43915e88ee1dca2b7d8863f847e398031bab4da31d0eArtifactHash55FC75C6:
-    Type: String
-    Description: Artifact hash for asset
-      "5d1bb79f77fd6d2dc0cc43915e88ee1dca2b7d8863f847e398031bab4da31d0e"
-  AssetParametersfb771b414613bc50d5683fd3494215c69c653580174bd7ba13006d2c29222671S3Bucket8B6AADD3:
-    Type: String
-    Description: S3 bucket for asset
-      "fb771b414613bc50d5683fd3494215c69c653580174bd7ba13006d2c29222671"
-  AssetParametersfb771b414613bc50d5683fd3494215c69c653580174bd7ba13006d2c29222671S3VersionKey41903AB4:
-    Type: String
-    Description: S3 key for asset version
-      "fb771b414613bc50d5683fd3494215c69c653580174bd7ba13006d2c29222671"
-  AssetParametersfb771b414613bc50d5683fd3494215c69c653580174bd7ba13006d2c29222671ArtifactHash2C335DE0:
-    Type: String
-    Description: Artifact hash for asset
-      "fb771b414613bc50d5683fd3494215c69c653580174bd7ba13006d2c29222671"
-  AssetParameters67e7c217b6ba727846031d77eb42a1a2bbc780507e11f9ad3192a0f98abe450aS3Bucket92298F1D:
-    Type: String
-    Description: S3 bucket for asset
-      "67e7c217b6ba727846031d77eb42a1a2bbc780507e11f9ad3192a0f98abe450a"
-  AssetParameters67e7c217b6ba727846031d77eb42a1a2bbc780507e11f9ad3192a0f98abe450aS3VersionKey70BCB28F:
-    Type: String
-    Description: S3 key for asset version
-      "67e7c217b6ba727846031d77eb42a1a2bbc780507e11f9ad3192a0f98abe450a"
-  AssetParameters67e7c217b6ba727846031d77eb42a1a2bbc780507e11f9ad3192a0f98abe450aArtifactHashFCE541B3:
-    Type: String
-    Description: Artifact hash for asset
-      "67e7c217b6ba727846031d77eb42a1a2bbc780507e11f9ad3192a0f98abe450a"
-  AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3BucketA2379B42:
-    Type: String
-    Description: S3 bucket for asset
-      "dd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58b"
-  AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bS3VersionKeyFA1BA673:
-    Type: String
-    Description: S3 key for asset version
-      "dd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58b"
-  AssetParametersdd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58bArtifactHashA086BEA2:
-    Type: String
-    Description: Artifact hash for asset
-      "dd5eaab450d6e648c4a1715e8f9ab4c89411cd559f3f0bf917eed241f73fa58b"
-  AssetParameters14e4f0139224d21210279e451b3ecaef287913006c68e6050415f640c0ef7522S3BucketF816D9C3:
-    Type: String
-    Description: S3 bucket for asset
-      "14e4f0139224d21210279e451b3ecaef287913006c68e6050415f640c0ef7522"
-  AssetParameters14e4f0139224d21210279e451b3ecaef287913006c68e6050415f640c0ef7522S3VersionKey3819F0D7:
-    Type: String
-    Description: S3 key for asset version
-      "14e4f0139224d21210279e451b3ecaef287913006c68e6050415f640c0ef7522"
-  AssetParameters14e4f0139224d21210279e451b3ecaef287913006c68e6050415f640c0ef7522ArtifactHashE7F5EF1C:
-    Type: String
-    Description: Artifact hash for asset
-      "14e4f0139224d21210279e451b3ecaef287913006c68e6050415f640c0ef7522"
-  AssetParametersd7eba45c105712349db08f8edd1c547cd768fb9c92dadc0bfd2403ecc4127f96S3BucketEBD7DE4E:
-    Type: String
-    Description: S3 bucket for asset
-      "d7eba45c105712349db08f8edd1c547cd768fb9c92dadc0bfd2403ecc4127f96"
-  AssetParametersd7eba45c105712349db08f8edd1c547cd768fb9c92dadc0bfd2403ecc4127f96S3VersionKey2B839AE6:
-    Type: String
-    Description: S3 key for asset version
-      "d7eba45c105712349db08f8edd1c547cd768fb9c92dadc0bfd2403ecc4127f96"
-  AssetParametersd7eba45c105712349db08f8edd1c547cd768fb9c92dadc0bfd2403ecc4127f96ArtifactHashA9044145:
-    Type: String
-    Description: Artifact hash for asset
-      "d7eba45c105712349db08f8edd1c547cd768fb9c92dadc0bfd2403ecc4127f96"
-  AssetParameters7a3950dcfb45a45225ce95c69ab7a643cc8a9c89219b20ac4f2b48ebf6a176f0S3Bucket7B85BF5D:
-    Type: String
-    Description: S3 bucket for asset
-      "7a3950dcfb45a45225ce95c69ab7a643cc8a9c89219b20ac4f2b48ebf6a176f0"
-  AssetParameters7a3950dcfb45a45225ce95c69ab7a643cc8a9c89219b20ac4f2b48ebf6a176f0S3VersionKey1E25848B:
-    Type: String
-    Description: S3 key for asset version
-      "7a3950dcfb45a45225ce95c69ab7a643cc8a9c89219b20ac4f2b48ebf6a176f0"
-  AssetParameters7a3950dcfb45a45225ce95c69ab7a643cc8a9c89219b20ac4f2b48ebf6a176f0ArtifactHashD3E9A682:
-    Type: String
-    Description: Artifact hash for asset
-      "7a3950dcfb45a45225ce95c69ab7a643cc8a9c89219b20ac4f2b48ebf6a176f0"
-  AssetParameters30a8353a2581e8f09ce9968ae28270383994693d0e8196fdb2ea4655c74b2347S3Bucket8FD3FB89:
-    Type: String
-    Description: S3 bucket for asset
-      "30a8353a2581e8f09ce9968ae28270383994693d0e8196fdb2ea4655c74b2347"
-  AssetParameters30a8353a2581e8f09ce9968ae28270383994693d0e8196fdb2ea4655c74b2347S3VersionKey7EF23778:
-    Type: String
-    Description: S3 key for asset version
-      "30a8353a2581e8f09ce9968ae28270383994693d0e8196fdb2ea4655c74b2347"
-  AssetParameters30a8353a2581e8f09ce9968ae28270383994693d0e8196fdb2ea4655c74b2347ArtifactHash52055CE4:
-    Type: String
-    Description: Artifact hash for asset
-      "30a8353a2581e8f09ce9968ae28270383994693d0e8196fdb2ea4655c74b2347"
-  AssetParameters6814a4ad37fc2ba5eca5912c4758406094743a23270220c6ed221b2eaf61ce86S3Bucket1C6CCC8F:
-    Type: String
-    Description: S3 bucket for asset
-      "6814a4ad37fc2ba5eca5912c4758406094743a23270220c6ed221b2eaf61ce86"
-  AssetParameters6814a4ad37fc2ba5eca5912c4758406094743a23270220c6ed221b2eaf61ce86S3VersionKeyA7A9EBA8:
-    Type: String
-    Description: S3 key for asset version
-      "6814a4ad37fc2ba5eca5912c4758406094743a23270220c6ed221b2eaf61ce86"
-  AssetParameters6814a4ad37fc2ba5eca5912c4758406094743a23270220c6ed221b2eaf61ce86ArtifactHash20269976:
-    Type: String
-    Description: Artifact hash for asset
-      "6814a4ad37fc2ba5eca5912c4758406094743a23270220c6ed221b2eaf61ce86"
-  AssetParametersd7ae5d02316ef1da8c643a967d4e9ac3e3aa608617b4893f0023416129edb9adS3BucketC6FF4EF7:
-    Type: String
-    Description: S3 bucket for asset
-      "d7ae5d02316ef1da8c643a967d4e9ac3e3aa608617b4893f0023416129edb9ad"
-  AssetParametersd7ae5d02316ef1da8c643a967d4e9ac3e3aa608617b4893f0023416129edb9adS3VersionKey18F8BA3A:
-    Type: String
-    Description: S3 key for asset version
-      "d7ae5d02316ef1da8c643a967d4e9ac3e3aa608617b4893f0023416129edb9ad"
-  AssetParametersd7ae5d02316ef1da8c643a967d4e9ac3e3aa608617b4893f0023416129edb9adArtifactHashCDD8B5C6:
-    Type: String
-    Description: Artifact hash for asset
-      "d7ae5d02316ef1da8c643a967d4e9ac3e3aa608617b4893f0023416129edb9ad"
-  AssetParameters6b7c863696192cc5a55d55b4c5b71ad10fd4bd199c5008a9c2dc843be933998aS3Bucket37117C86:
-    Type: String
-    Description: S3 bucket for asset
-      "6b7c863696192cc5a55d55b4c5b71ad10fd4bd199c5008a9c2dc843be933998a"
-  AssetParameters6b7c863696192cc5a55d55b4c5b71ad10fd4bd199c5008a9c2dc843be933998aS3VersionKeyD87905FF:
-    Type: String
-    Description: S3 key for asset version
-      "6b7c863696192cc5a55d55b4c5b71ad10fd4bd199c5008a9c2dc843be933998a"
-  AssetParameters6b7c863696192cc5a55d55b4c5b71ad10fd4bd199c5008a9c2dc843be933998aArtifactHash48208D47:
-    Type: String
-    Description: Artifact hash for asset
-      "6b7c863696192cc5a55d55b4c5b71ad10fd4bd199c5008a9c2dc843be933998a"
-  AssetParametersadabf05e79598b40966a87c8417b668c9756bf78723cc7f9945357af841915d2S3Bucket007F6DE8:
-    Type: String
-    Description: S3 bucket for asset
-      "adabf05e79598b40966a87c8417b668c9756bf78723cc7f9945357af841915d2"
-  AssetParametersadabf05e79598b40966a87c8417b668c9756bf78723cc7f9945357af841915d2S3VersionKeyE430DF68:
-    Type: String
-    Description: S3 key for asset version
-      "adabf05e79598b40966a87c8417b668c9756bf78723cc7f9945357af841915d2"
-  AssetParametersadabf05e79598b40966a87c8417b668c9756bf78723cc7f9945357af841915d2ArtifactHash3E2B5C74:
-    Type: String
-    Description: Artifact hash for asset
-      "adabf05e79598b40966a87c8417b668c9756bf78723cc7f9945357af841915d2"
 Mappings:
   ServiceprincipalMap:
     af-south-1:
@@ -10432,5 +9740,25 @@ Mappings:
       states: states.us-west-1.amazonaws.com
     us-west-2:
       states: states.us-west-2.amazonaws.com
+Parameters:
+  BootstrapVersion:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /cdk-bootstrap/hnb659fds/version
+    Description: Version of the CDK Bootstrap resources in this environment,
+      automatically retrieved from SSM Parameter Store. [cdk:skip]
+Rules:
+  CheckBootstrapVersion:
+    Assertions:
+      - Assert:
+          Fn::Not:
+            - Fn::Contains:
+                - - "1"
+                  - "2"
+                  - "3"
+                  - "4"
+                  - "5"
+                - Ref: BootstrapVersion
+        AssertDescription: CDK bootstrap stack version 6 required. Please run 'cdk
+          bootstrap' with a recent version of the CDK CLI.
 
 `;

@@ -1,8 +1,9 @@
-import * as lambda from '@aws-cdk/aws-lambda';
-import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
-import * as s3 from '@aws-cdk/aws-s3';
-import * as sqs from '@aws-cdk/aws-sqs';
-import { Construct, Duration } from '@aws-cdk/core';
+import { Duration } from 'aws-cdk-lib';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
+import { Construct } from 'constructs';
 import { Monitoring } from '../../monitoring';
 import { OverviewDashboard } from '../../overview-dashboard';
 import {

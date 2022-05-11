@@ -1,5 +1,6 @@
-import * as s3 from '@aws-cdk/aws-s3';
-import { CfnOutput, Construct, Stack, Tags } from '@aws-cdk/core';
+import { CfnOutput, Stack, Tags } from 'aws-cdk-lib';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import { Construct } from 'constructs';
 
 /**
  * Properties for `S3StorageFactory`

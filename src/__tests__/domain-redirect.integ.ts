@@ -1,5 +1,5 @@
-import * as route53 from '@aws-cdk/aws-route53';
-import { App, Stack } from '@aws-cdk/core';
+import { App, Stack } from 'aws-cdk-lib';
+import * as route53 from 'aws-cdk-lib/aws-route53';
 import { DomainRedirect } from '../domain-redirect';
 
 const app = new App();

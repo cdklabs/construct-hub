@@ -4,7 +4,7 @@
 
 ### ConstructHub <a name="ConstructHub" id="construct-hub.ConstructHub"></a>
 
-- *Implements:* @aws-cdk/aws-iam.IGrantable
+- *Implements:* aws-cdk-lib.aws_iam.IGrantable
 
 Construct Hub.
 
@@ -62,7 +62,7 @@ Returns a string representation of this construct.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.ConstructHub.isConstruct">isConstruct</a></code> | Return whether the given object is a Construct. |
+| <code><a href="#construct-hub.ConstructHub.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
 
 ---
 
@@ -74,11 +74,27 @@ import { ConstructHub } from 'construct-hub'
 ConstructHub.isConstruct(x: any)
 ```
 
-Return whether the given object is a Construct.
+Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="construct-hub.ConstructHub.isConstruct.parameter.x"></a>
 
 - *Type:* any
+
+Any object.
 
 ---
 
@@ -86,21 +102,21 @@ Return whether the given object is a Construct.
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.ConstructHub.property.node">node</a></code> | <code>@aws-cdk/core.ConstructNode</code> | The construct tree node associated with this construct. |
-| <code><a href="#construct-hub.ConstructHub.property.grantPrincipal">grantPrincipal</a></code> | <code>@aws-cdk/aws-iam.IPrincipal</code> | The principal to grant permissions to. |
-| <code><a href="#construct-hub.ConstructHub.property.ingestionQueue">ingestionQueue</a></code> | <code>@aws-cdk/aws-sqs.IQueue</code> | *No description.* |
+| <code><a href="#construct-hub.ConstructHub.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#construct-hub.ConstructHub.property.grantPrincipal">grantPrincipal</a></code> | <code>aws-cdk-lib.aws_iam.IPrincipal</code> | The principal to grant permissions to. |
+| <code><a href="#construct-hub.ConstructHub.property.ingestionQueue">ingestionQueue</a></code> | <code>aws-cdk-lib.aws_sqs.IQueue</code> | *No description.* |
 
 ---
 
 ##### `node`<sup>Required</sup> <a name="node" id="construct-hub.ConstructHub.property.node"></a>
 
 ```typescript
-public readonly node: ConstructNode;
+public readonly node: Node;
 ```
 
-- *Type:* @aws-cdk/core.ConstructNode
+- *Type:* constructs.Node
 
-The construct tree node associated with this construct.
+The tree node.
 
 ---
 
@@ -110,7 +126,7 @@ The construct tree node associated with this construct.
 public readonly grantPrincipal: IPrincipal;
 ```
 
-- *Type:* @aws-cdk/aws-iam.IPrincipal
+- *Type:* aws-cdk-lib.aws_iam.IPrincipal
 
 The principal to grant permissions to.
 
@@ -122,7 +138,7 @@ The principal to grant permissions to.
 public readonly ingestionQueue: IQueue;
 ```
 
-- *Type:* @aws-cdk/aws-sqs.IQueue
+- *Type:* aws-cdk-lib.aws_sqs.IQueue
 
 ---
 
@@ -158,7 +174,7 @@ Create a new bucket in a storage config aware manner.
 
 ###### `scope`<sup>Required</sup> <a name="scope" id="construct-hub.S3StorageFactory.newBucket.parameter.scope"></a>
 
-- *Type:* @aws-cdk/core.Construct
+- *Type:* constructs.Construct
 
 ---
 
@@ -170,7 +186,7 @@ Create a new bucket in a storage config aware manner.
 
 ###### `props`<sup>Optional</sup> <a name="props" id="construct-hub.S3StorageFactory.newBucket.parameter.props"></a>
 
-- *Type:* @aws-cdk/aws-s3.BucketProps
+- *Type:* aws-cdk-lib.aws_s3.BucketProps
 
 ---
 
@@ -178,7 +194,7 @@ Create a new bucket in a storage config aware manner.
 
 | **Name** | **Description** |
 | --- | --- |
-| <code><a href="#construct-hub.S3StorageFactory.isConstruct">isConstruct</a></code> | Return whether the given object is a Construct. |
+| <code><a href="#construct-hub.S3StorageFactory.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
 | <code><a href="#construct-hub.S3StorageFactory.getOrCreate">getOrCreate</a></code> | Retrieve or create the storage factory for the current scope. |
 
 ---
@@ -191,11 +207,27 @@ import { S3StorageFactory } from 'construct-hub'
 S3StorageFactory.isConstruct(x: any)
 ```
 
-Return whether the given object is a Construct.
+Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
 
 ###### `x`<sup>Required</sup> <a name="x" id="construct-hub.S3StorageFactory.isConstruct.parameter.x"></a>
 
 - *Type:* any
+
+Any object.
 
 ---
 
@@ -213,7 +245,7 @@ This is stack singleton.
 
 ###### `scope`<sup>Required</sup> <a name="scope" id="construct-hub.S3StorageFactory.getOrCreate.parameter.scope"></a>
 
-- *Type:* @aws-cdk/core.Construct
+- *Type:* constructs.Construct
 
 ---
 
@@ -227,19 +259,19 @@ This is stack singleton.
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.S3StorageFactory.property.node">node</a></code> | <code>@aws-cdk/core.ConstructNode</code> | The construct tree node associated with this construct. |
+| <code><a href="#construct-hub.S3StorageFactory.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
 
 ---
 
 ##### `node`<sup>Required</sup> <a name="node" id="construct-hub.S3StorageFactory.property.node"></a>
 
 ```typescript
-public readonly node: ConstructNode;
+public readonly node: Node;
 ```
 
-- *Type:* @aws-cdk/core.ConstructNode
+- *Type:* constructs.Node
 
-The construct tree node associated with this construct.
+The tree node.
 
 ---
 
@@ -263,9 +295,9 @@ const alarmActions: AlarmActions = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#construct-hub.AlarmActions.property.highSeverity">highSeverity</a></code> | <code>string</code> | The ARN of the CloudWatch alarm action to take for alarms of high-severity alarms. |
-| <code><a href="#construct-hub.AlarmActions.property.highSeverityAction">highSeverityAction</a></code> | <code>@aws-cdk/aws-cloudwatch.IAlarmAction</code> | The CloudWatch alarm action to take for alarms of high-severity alarms. |
+| <code><a href="#construct-hub.AlarmActions.property.highSeverityAction">highSeverityAction</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarmAction</code> | The CloudWatch alarm action to take for alarms of high-severity alarms. |
 | <code><a href="#construct-hub.AlarmActions.property.normalSeverity">normalSeverity</a></code> | <code>string</code> | The ARN of the CloudWatch alarm action to take for alarms of normal severity. |
-| <code><a href="#construct-hub.AlarmActions.property.normalSeverityAction">normalSeverityAction</a></code> | <code>@aws-cdk/aws-cloudwatch.IAlarmAction</code> | The CloudWatch alarm action to take for alarms of normal severity. |
+| <code><a href="#construct-hub.AlarmActions.property.normalSeverityAction">normalSeverityAction</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarmAction</code> | The CloudWatch alarm action to take for alarms of normal severity. |
 
 ---
 
@@ -291,7 +323,7 @@ This must be an ARN that can be used with CloudWatch alarms.
 public readonly highSeverityAction: IAlarmAction;
 ```
 
-- *Type:* @aws-cdk/aws-cloudwatch.IAlarmAction
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarmAction
 
 The CloudWatch alarm action to take for alarms of high-severity alarms.
 
@@ -324,7 +356,7 @@ This must be an ARN that can be used with CloudWatch alarms.
 public readonly normalSeverityAction: IAlarmAction;
 ```
 
-- *Type:* @aws-cdk/aws-cloudwatch.IAlarmAction
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarmAction
 - *Default:* no actions are taken in response to alarms of normal severity
 
 The CloudWatch alarm action to take for alarms of normal severity.
@@ -450,8 +482,8 @@ const codeArtifactProps: sources.CodeArtifactProps = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.sources.CodeArtifactProps.property.repository">repository</a></code> | <code>@aws-cdk/aws-codeartifact.CfnRepository</code> | The CodeArtifact repository where packages are obtained from. |
-| <code><a href="#construct-hub.sources.CodeArtifactProps.property.bucket">bucket</a></code> | <code>@aws-cdk/aws-s3.IBucket</code> | The S3 bucket where packages will be staged. |
+| <code><a href="#construct-hub.sources.CodeArtifactProps.property.repository">repository</a></code> | <code>aws-cdk-lib.aws_codeartifact.CfnRepository</code> | The CodeArtifact repository where packages are obtained from. |
+| <code><a href="#construct-hub.sources.CodeArtifactProps.property.bucket">bucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | The S3 bucket where packages will be staged. |
 
 ---
 
@@ -461,7 +493,7 @@ const codeArtifactProps: sources.CodeArtifactProps = { ... }
 public readonly repository: CfnRepository;
 ```
 
-- *Type:* @aws-cdk/aws-codeartifact.CfnRepository
+- *Type:* aws-cdk-lib.aws_codeartifact.CfnRepository
 
 The CodeArtifact repository where packages are obtained from.
 
@@ -473,7 +505,7 @@ The CodeArtifact repository where packages are obtained from.
 public readonly bucket: IBucket;
 ```
 
-- *Type:* @aws-cdk/aws-s3.IBucket
+- *Type:* aws-cdk-lib.aws_s3.IBucket
 
 The S3 bucket where packages will be staged.
 
@@ -510,13 +542,13 @@ const constructHubProps: ConstructHubProps = { ... }
 | <code><a href="#construct-hub.ConstructHubProps.property.feedConfiguration">feedConfiguration</a></code> | <code><a href="#construct-hub.FeedConfiguration">FeedConfiguration</a></code> | Configuration for generating RSS/Atom feeds with the latest packages. |
 | <code><a href="#construct-hub.ConstructHubProps.property.fetchPackageStats">fetchPackageStats</a></code> | <code>boolean</code> | Configure whether or not the backend should periodically query NPM for the number of downloads a package has in the past week, and display download counts on the web app. |
 | <code><a href="#construct-hub.ConstructHubProps.property.isolateSensitiveTasks">isolateSensitiveTasks</a></code> | <code>boolean</code> | Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments. |
-| <code><a href="#construct-hub.ConstructHubProps.property.logRetention">logRetention</a></code> | <code>@aws-cdk/aws-logs.RetentionDays</code> | How long to retain CloudWatch logs for. |
+| <code><a href="#construct-hub.ConstructHubProps.property.logRetention">logRetention</a></code> | <code>aws-cdk-lib.aws_logs.RetentionDays</code> | How long to retain CloudWatch logs for. |
 | <code><a href="#construct-hub.ConstructHubProps.property.packageLinks">packageLinks</a></code> | <code><a href="#construct-hub.PackageLinkConfig">PackageLinkConfig</a>[]</code> | Configuration for custom package page links. |
 | <code><a href="#construct-hub.ConstructHubProps.property.packageSources">packageSources</a></code> | <code><a href="#construct-hub.IPackageSource">IPackageSource</a>[]</code> | The package sources to register with this ConstructHub instance. |
 | <code><a href="#construct-hub.ConstructHubProps.property.packageTagGroups">packageTagGroups</a></code> | <code><a href="#construct-hub.PackageTagGroup">PackageTagGroup</a>[]</code> | Optional configuration for grouping custom package tags. |
 | <code><a href="#construct-hub.ConstructHubProps.property.packageTags">packageTags</a></code> | <code><a href="#construct-hub.PackageTag">PackageTag</a>[]</code> | Configuration for custom package tags. |
 | <code><a href="#construct-hub.ConstructHubProps.property.preloadScript">preloadScript</a></code> | <code><a href="#construct-hub.PreloadFile">PreloadFile</a></code> | Javascript to run on webapp before app loads. |
-| <code><a href="#construct-hub.ConstructHubProps.property.reprocessFrequency">reprocessFrequency</a></code> | <code>@aws-cdk/core.Duration</code> | How frequently all packages should get fully reprocessed. |
+| <code><a href="#construct-hub.ConstructHubProps.property.reprocessFrequency">reprocessFrequency</a></code> | <code>aws-cdk-lib.Duration</code> | How frequently all packages should get fully reprocessed. |
 | <code><a href="#construct-hub.ConstructHubProps.property.sensitiveTaskIsolation">sensitiveTaskIsolation</a></code> | <code><a href="#construct-hub.Isolation">Isolation</a></code> | Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments. |
 
 ---
@@ -737,7 +769,7 @@ This implies the creation of additonal resources, including:
 public readonly logRetention: RetentionDays;
 ```
 
-- *Type:* @aws-cdk/aws-logs.RetentionDays
+- *Type:* aws-cdk-lib.aws_logs.RetentionDays
 
 How long to retain CloudWatch logs for.
 
@@ -811,7 +843,7 @@ Javascript to run on webapp before app loads.
 public readonly reprocessFrequency: Duration;
 ```
 
-- *Type:* @aws-cdk/core.Duration
+- *Type:* aws-cdk-lib.Duration
 - *Default:* never
 
 How frequently all packages should get fully reprocessed.
@@ -932,8 +964,8 @@ const domain: Domain = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.Domain.property.cert">cert</a></code> | <code>@aws-cdk/aws-certificatemanager.ICertificate</code> | The certificate to use for serving the Construct Hub over a custom domain. |
-| <code><a href="#construct-hub.Domain.property.zone">zone</a></code> | <code>@aws-cdk/aws-route53.IHostedZone</code> | The root domain name where this instance of Construct Hub will be served. |
+| <code><a href="#construct-hub.Domain.property.cert">cert</a></code> | <code>aws-cdk-lib.aws_certificatemanager.ICertificate</code> | The certificate to use for serving the Construct Hub over a custom domain. |
+| <code><a href="#construct-hub.Domain.property.zone">zone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | The root domain name where this instance of Construct Hub will be served. |
 | <code><a href="#construct-hub.Domain.property.monitorCertificateExpiration">monitorCertificateExpiration</a></code> | <code>boolean</code> | Whether the certificate should be monitored for expiration, meaning high severity alarms will be raised if it is due to expire in less than 45 days. |
 
 ---
@@ -944,7 +976,7 @@ const domain: Domain = { ... }
 public readonly cert: ICertificate;
 ```
 
-- *Type:* @aws-cdk/aws-certificatemanager.ICertificate
+- *Type:* aws-cdk-lib.aws_certificatemanager.ICertificate
 - *Default:* a DNS-Validated certificate will be provisioned using the   provided `hostedZone`.
 
 The certificate to use for serving the Construct Hub over a custom domain.
@@ -957,7 +989,7 @@ The certificate to use for serving the Construct Hub over a custom domain.
 public readonly zone: IHostedZone;
 ```
 
-- *Type:* @aws-cdk/aws-route53.IHostedZone
+- *Type:* aws-cdk-lib.aws_route53.IHostedZone
 
 The root domain name where this instance of Construct Hub will be served.
 
@@ -992,8 +1024,8 @@ const domainRedirectSource: DomainRedirectSource = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.DomainRedirectSource.property.hostedZone">hostedZone</a></code> | <code>@aws-cdk/aws-route53.IHostedZone</code> | The route53 zone which hosts the source domain. |
-| <code><a href="#construct-hub.DomainRedirectSource.property.certificate">certificate</a></code> | <code>@aws-cdk/aws-certificatemanager.ICertificate</code> | The ACM certificate to use for the CloudFront distribution. |
+| <code><a href="#construct-hub.DomainRedirectSource.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | The route53 zone which hosts the source domain. |
+| <code><a href="#construct-hub.DomainRedirectSource.property.certificate">certificate</a></code> | <code>aws-cdk-lib.aws_certificatemanager.ICertificate</code> | The ACM certificate to use for the CloudFront distribution. |
 
 ---
 
@@ -1003,7 +1035,7 @@ const domainRedirectSource: DomainRedirectSource = { ... }
 public readonly hostedZone: IHostedZone;
 ```
 
-- *Type:* @aws-cdk/aws-route53.IHostedZone
+- *Type:* aws-cdk-lib.aws_route53.IHostedZone
 
 The route53 zone which hosts the source domain.
 
@@ -1015,7 +1047,7 @@ The route53 zone which hosts the source domain.
 public readonly certificate: ICertificate;
 ```
 
-- *Type:* @aws-cdk/aws-certificatemanager.ICertificate
+- *Type:* aws-cdk-lib.aws_certificatemanager.ICertificate
 - *Default:* a certificate is created for this domain.
 
 The ACM certificate to use for the CloudFront distribution.
@@ -1220,7 +1252,7 @@ const feedConfiguration: FeedConfiguration = { ... }
 | --- | --- | --- |
 | <code><a href="#construct-hub.FeedConfiguration.property.feedDescription">feedDescription</a></code> | <code>string</code> | description used in the generated feed. |
 | <code><a href="#construct-hub.FeedConfiguration.property.feedTitle">feedTitle</a></code> | <code>string</code> | Title used in the generated feed. |
-| <code><a href="#construct-hub.FeedConfiguration.property.githubTokenSecret">githubTokenSecret</a></code> | <code>@aws-cdk/aws-secretsmanager.ISecret</code> | Github token for generating release notes. |
+| <code><a href="#construct-hub.FeedConfiguration.property.githubTokenSecret">githubTokenSecret</a></code> | <code>aws-cdk-lib.aws_secretsmanager.ISecret</code> | Github token for generating release notes. |
 
 ---
 
@@ -1254,7 +1286,7 @@ Title used in the generated feed.
 public readonly githubTokenSecret: ISecret;
 ```
 
-- *Type:* @aws-cdk/aws-secretsmanager.ISecret
+- *Type:* aws-cdk-lib.aws_secretsmanager.ISecret
 
 Github token for generating release notes.
 
@@ -1465,9 +1497,9 @@ const npmJsProps: sources.NpmJsProps = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#construct-hub.sources.NpmJsProps.property.canaryPackage">canaryPackage</a></code> | <code>string</code> | The package that is monitored by the package canary, if enabled by `enableCanary`. |
-| <code><a href="#construct-hub.sources.NpmJsProps.property.canarySla">canarySla</a></code> | <code>@aws-cdk/core.Duration</code> | The maximum amount of time it is supposed to take for packages to become visible in this ConstructHub instance. |
+| <code><a href="#construct-hub.sources.NpmJsProps.property.canarySla">canarySla</a></code> | <code>aws-cdk-lib.Duration</code> | The maximum amount of time it is supposed to take for packages to become visible in this ConstructHub instance. |
 | <code><a href="#construct-hub.sources.NpmJsProps.property.enableCanary">enableCanary</a></code> | <code>boolean</code> | Registers a package canary, which will track availability of a canary package in ConstructHub, and emit dedicated metrics. |
-| <code><a href="#construct-hub.sources.NpmJsProps.property.stagingBucket">stagingBucket</a></code> | <code>@aws-cdk/aws-s3.IBucket</code> | The bucket to use for staging npm packages. |
+| <code><a href="#construct-hub.sources.NpmJsProps.property.stagingBucket">stagingBucket</a></code> | <code>aws-cdk-lib.aws_s3.IBucket</code> | The bucket to use for staging npm packages. |
 
 ---
 
@@ -1490,7 +1522,7 @@ The package that is monitored by the package canary, if enabled by `enableCanary
 public readonly canarySla: Duration;
 ```
 
-- *Type:* @aws-cdk/core.Duration
+- *Type:* aws-cdk-lib.Duration
 - *Default:* Duration.minutes(5)
 
 The maximum amount of time it is supposed to take for packages to become visible in this ConstructHub instance.
@@ -1519,7 +1551,7 @@ Registers a package canary, which will track availability of a canary package in
 public readonly stagingBucket: IBucket;
 ```
 
-- *Type:* @aws-cdk/aws-s3.IBucket
+- *Type:* aws-cdk-lib.aws_s3.IBucket
 - *Default:* a new bucket will be created.
 
 The bucket to use for staging npm packages.
@@ -1614,11 +1646,11 @@ const packageSourceBindOptions: PackageSourceBindOptions = { ... }
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.baseUrl">baseUrl</a></code> | <code>string</code> | The base URL of the bound ConstructHub instance. |
-| <code><a href="#construct-hub.PackageSourceBindOptions.property.ingestion">ingestion</a></code> | <code>@aws-cdk/aws-iam.IGrantable</code> | The `IGrantable` that will process downstream messages from the bound package source. |
+| <code><a href="#construct-hub.PackageSourceBindOptions.property.ingestion">ingestion</a></code> | <code>aws-cdk-lib.aws_iam.IGrantable</code> | The `IGrantable` that will process downstream messages from the bound package source. |
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.licenseList">licenseList</a></code> | <code><a href="#construct-hub.ILicenseList">ILicenseList</a></code> | The license list applied by the bound Construct Hub instance. |
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.monitoring">monitoring</a></code> | <code><a href="#construct-hub.IMonitoring">IMonitoring</a></code> | The monitoring instance to use for registering alarms, etc. |
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.overviewDashboard">overviewDashboard</a></code> | <code><a href="#construct-hub.IOverviewDashboard">IOverviewDashboard</a></code> | The overview dashboard to add widgets to. |
-| <code><a href="#construct-hub.PackageSourceBindOptions.property.queue">queue</a></code> | <code>@aws-cdk/aws-sqs.IQueue</code> | The SQS queue to which messages should be sent. |
+| <code><a href="#construct-hub.PackageSourceBindOptions.property.queue">queue</a></code> | <code>aws-cdk-lib.aws_sqs.IQueue</code> | The SQS queue to which messages should be sent. |
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.denyList">denyList</a></code> | <code><a href="#construct-hub.IDenyList">IDenyList</a></code> | The configured `DenyList` for the bound Construct Hub instance, if any. |
 | <code><a href="#construct-hub.PackageSourceBindOptions.property.repository">repository</a></code> | <code><a href="#construct-hub.IRepository">IRepository</a></code> | The CodeArtifact repository that is internally used by ConstructHub. |
 
@@ -1642,7 +1674,7 @@ The base URL of the bound ConstructHub instance.
 public readonly ingestion: IGrantable;
 ```
 
-- *Type:* @aws-cdk/aws-iam.IGrantable
+- *Type:* aws-cdk-lib.aws_iam.IGrantable
 
 The `IGrantable` that will process downstream messages from the bound package source.
 
@@ -1697,7 +1729,7 @@ The overview dashboard to add widgets to.
 public readonly queue: IQueue;
 ```
 
-- *Type:* @aws-cdk/aws-sqs.IQueue
+- *Type:* aws-cdk-lib.aws_sqs.IQueue
 
 The SQS queue to which messages should be sent.
 
@@ -1749,7 +1781,7 @@ const packageSourceBindResult: PackageSourceBindResult = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#construct-hub.PackageSourceBindResult.property.dashboardWidgets">dashboardWidgets</a></code> | <code>@aws-cdk/aws-cloudwatch.IWidget[][]</code> | Widgets to add to the operator dashbaord for monitoring the health of the bound package source. |
+| <code><a href="#construct-hub.PackageSourceBindResult.property.dashboardWidgets">dashboardWidgets</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IWidget[][]</code> | Widgets to add to the operator dashbaord for monitoring the health of the bound package source. |
 | <code><a href="#construct-hub.PackageSourceBindResult.property.name">name</a></code> | <code>string</code> | The name of the bound package source. |
 | <code><a href="#construct-hub.PackageSourceBindResult.property.links">links</a></code> | <code><a href="#construct-hub.LinkedResource">LinkedResource</a>[]</code> | An optional list of linked resources to be displayed on the monitoring dashboard. |
 
@@ -1761,7 +1793,7 @@ const packageSourceBindResult: PackageSourceBindResult = { ... }
 public readonly dashboardWidgets: IWidget[][];
 ```
 
-- *Type:* @aws-cdk/aws-cloudwatch.IWidget[][]
+- *Type:* aws-cdk-lib.aws_cloudwatch.IWidget[][]
 
 Widgets to add to the operator dashbaord for monitoring the health of the bound package source.
 
@@ -2448,7 +2480,7 @@ Binds the package source to a scope and target queue.
 
 ###### `scope`<sup>Required</sup> <a name="scope" id="construct-hub.sources.CodeArtifact.bind.parameter.scope"></a>
 
-- *Type:* @aws-cdk/core.Construct
+- *Type:* constructs.Construct
 
 ---
 
@@ -2468,7 +2500,7 @@ The number of package versions that were deleted from CodeArtifact (those events
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.CodeArtifact.metricDeletedCount.parameter.opts"></a>
 
-- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
@@ -2482,7 +2514,7 @@ The count of package versions that were ignored due to being in the deny list.
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.CodeArtifact.metricDenyListedCount.parameter.opts"></a>
 
-- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
@@ -2496,7 +2528,7 @@ The number of package versions that were ignored due to using an ineloigible lic
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.CodeArtifact.metricIneligibleLicense.parameter.opts"></a>
 
-- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
@@ -2510,7 +2542,7 @@ The number of package versions that do not have a jsii assembly in the package.
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.CodeArtifact.metricNotJsiiEnabledCount.parameter.opts"></a>
 
-- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
@@ -2626,7 +2658,7 @@ Binds the package source to a scope and target queue.
 
 ###### `scope`<sup>Required</sup> <a name="scope" id="construct-hub.sources.NpmJs.bind.parameter.scope"></a>
 
-- *Type:* @aws-cdk/core.Construct
+- *Type:* constructs.Construct
 
 ---
 
@@ -2646,7 +2678,7 @@ The average time it took to process a changes batch.
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricBatchProcessingTime.parameter.opts"></a>
 
-- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
@@ -2660,7 +2692,7 @@ The total count of changes that were processed.
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricChangeCount.parameter.opts"></a>
 
-- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
@@ -2677,7 +2709,7 @@ discover when a sequence reset has happened in the CouchDB instance.
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricLastSeq.parameter.opts"></a>
 
-- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
@@ -2689,7 +2721,7 @@ public metricNpmJsChangeAge(opts?: MetricOptions): Metric
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricNpmJsChangeAge.parameter.opts"></a>
 
-- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
@@ -2703,7 +2735,7 @@ The age of the oldest package version that was processed.
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricPackageVersionAge.parameter.opts"></a>
 
-- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
@@ -2717,7 +2749,7 @@ The total count of package versions that were inspected.
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricPackageVersionCount.parameter.opts"></a>
 
-- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
@@ -2731,7 +2763,7 @@ The total count of package versions that were deemed relevant.
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricRelevantPackageVersions.parameter.opts"></a>
 
-- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
@@ -2745,7 +2777,7 @@ The amount of time that was remaining when the lambda returned in order to avoid
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricRemainingTime.parameter.opts"></a>
 
-- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
@@ -2759,7 +2791,7 @@ The amount of changes that were not processed due to having an invalid format.
 
 ###### `opts`<sup>Optional</sup> <a name="opts" id="construct-hub.sources.NpmJs.metricUnprocessableEntity.parameter.opts"></a>
 
-- *Type:* @aws-cdk/aws-cloudwatch.MetricOptions
+- *Type:* aws-cdk-lib.aws_cloudwatch.MetricOptions
 
 ---
 
@@ -10629,7 +10661,7 @@ Grants an AWS Lambda function permissions to read the deny list, and adds the re
 
 ###### `handler`<sup>Required</sup> <a name="handler" id="construct-hub.IDenyList.grantRead.parameter.handler"></a>
 
-- *Type:* @aws-cdk/aws-lambda.Function
+- *Type:* aws-cdk-lib.aws_lambda.Function
 
 ---
 
@@ -10656,7 +10688,7 @@ Grants an AWS Lambda function permissions to read the license allow list, and ad
 
 ###### `handler`<sup>Required</sup> <a name="handler" id="construct-hub.ILicenseList.grantRead.parameter.handler"></a>
 
-- *Type:* @aws-cdk/aws-lambda.Function
+- *Type:* aws-cdk-lib.aws_lambda.Function
 
 ---
 
@@ -10697,7 +10729,7 @@ a user-friendly title for the alarm (will be rendered on the high-severity Cloud
 
 ###### `alarm`<sup>Required</sup> <a name="alarm" id="construct-hub.IMonitoring.addHighSeverityAlarm.parameter.alarm"></a>
 
-- *Type:* @aws-cdk/aws-cloudwatch.Alarm
+- *Type:* aws-cdk-lib.aws_cloudwatch.Alarm
 
 the alarm to be added to the high-severity dashboard.
 
@@ -10724,7 +10756,7 @@ a user-friendly title for the alarm (not currently used).
 
 ###### `alarm`<sup>Required</sup> <a name="alarm" id="construct-hub.IMonitoring.addLowSeverityAlarm.parameter.alarm"></a>
 
-- *Type:* @aws-cdk/aws-cloudwatch.Alarm
+- *Type:* aws-cdk-lib.aws_cloudwatch.Alarm
 
 the alarm to be added.
 
@@ -10759,7 +10791,7 @@ used to see which function has the most impact of the service quota.
 
 ###### `fn`<sup>Required</sup> <a name="fn" id="construct-hub.IOverviewDashboard.addConcurrentExecutionMetricToDashboard.parameter.fn"></a>
 
-- *Type:* @aws-cdk/aws-lambda.IFunction
+- *Type:* aws-cdk-lib.aws_lambda.IFunction
 
 Lambda function to be monitored.
 
@@ -10789,7 +10821,7 @@ of the DLQ that will be used in the dashboard.
 
 ###### `deadLetterQueue`<sup>Required</sup> <a name="deadLetterQueue" id="construct-hub.IOverviewDashboard.addDLQMetricToDashboard.parameter.deadLetterQueue"></a>
 
-- *Type:* @aws-cdk/aws-sqs.IQueue
+- *Type:* aws-cdk-lib.aws_sqs.IQueue
 
 Dead Letter Queue to be used in the dashboard.
 
@@ -10797,7 +10829,7 @@ Dead Letter Queue to be used in the dashboard.
 
 ###### `reDriveFunction`<sup>Optional</sup> <a name="reDriveFunction" id="construct-hub.IOverviewDashboard.addDLQMetricToDashboard.parameter.reDriveFunction"></a>
 
-- *Type:* @aws-cdk/aws-lambda.IFunction
+- *Type:* aws-cdk-lib.aws_lambda.IFunction
 
 a lambda function that will be used to re-drive the DLQ.
 
@@ -10828,7 +10860,7 @@ Binds the package source to a scope and target queue.
 
 ###### `scope`<sup>Required</sup> <a name="scope" id="construct-hub.IPackageSource.bind.parameter.scope"></a>
 
-- *Type:* @aws-cdk/core.Construct
+- *Type:* constructs.Construct
 
 the construct scope in which the binding happens.
 

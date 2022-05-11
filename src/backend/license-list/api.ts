@@ -1,4 +1,4 @@
-import type * as lambda from '@aws-cdk/aws-lambda';
+import type * as lambda from 'aws-cdk-lib/aws-lambda';
 
 export interface ILicenseList {
   /**

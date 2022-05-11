@@ -1,5 +1,5 @@
-import { IFunction } from '@aws-cdk/aws-lambda';
-import { IQueue } from '@aws-cdk/aws-sqs';
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
+import { IQueue } from 'aws-cdk-lib/aws-sqs';
 
 /**
  * ConstructHub overview dashboard exposed to extension points.
