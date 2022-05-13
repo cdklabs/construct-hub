@@ -461,7 +461,7 @@ export class NpmJs implements IPackageSource {
         threshold: 1,
         treatMissingData: TreatMissingData.MISSING,
       });
-    monitoring.addHighSeverityAlarm('NpmJs/Follower Failures', failureAlarm);
+    monitoring.addLowSeverityAlarm('NpmJs/Follower Failures', failureAlarm);
 
     const notRunningAlarm = follower
       .metricInvocations({ period: FOLLOWER_RUN_RATE })
