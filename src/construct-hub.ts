@@ -1,5 +1,6 @@
 import { Application } from '@aws-cdk/aws-servicecatalogappregistry-alpha';
 import { Duration, Stack, Tags } from 'aws-cdk-lib';
+import * as cw from 'aws-cdk-lib/aws-cloudwatch';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { AnyPrincipal, Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
@@ -262,6 +263,7 @@ export interface CodeArtifactDomainProps {
  */
 export class ConstructHub extends Construct implements iam.IGrantable {
   private readonly ingestion: Ingestion;
+  private readonly monitoring: Monitoring;
 
   public constructor(
     scope: Construct,
@@ -287,7 +289,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
       failover: props.failoverStorage,
     });
 
-    const monitoring = new Monitoring(this, 'Monitoring', {
+    this.monitoring = new Monitoring(this, 'Monitoring', {
       alarmActions: props.alarmActions,
     });
 
@@ -351,7 +353,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
       rules: props.denyList ?? [],
       packageDataBucket: packageData,
       packageDataKeyPrefix: STORAGE_KEY_PREFIX,
-      monitoring: monitoring,
+      monitoring: this.monitoring,
       overviewDashboard: overviewDashboard,
     });
 
@@ -365,7 +367,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
     if (fetchPackageStats) {
       packageStats = new PackageStats(this, 'Stats', {
         bucket: packageData,
-        monitoring,
+        monitoring: this.monitoring,
         logRetention: props.logRetention,
         objectKey: statsKey,
       });
@@ -373,7 +375,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
 
     const versionTracker = new VersionTracker(this, 'VersionTracker', {
       bucket: packageData,
-      monitoring,
+      monitoring: this.monitoring,
       logRetention: props.logRetention,
     });
 
@@ -389,7 +391,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
       codeArtifact,
       denyList,
       logRetention: props.logRetention,
-      monitoring,
+      monitoring: this.monitoring,
       overviewDashboard: overviewDashboard,
       vpc,
       vpcEndpoints,
@@ -415,7 +417,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
         bucket: packageData,
         gitHubCredentialsSecret: props.feedConfiguration?.githubTokenSecret,
         feedBuilder,
-        monitoring,
+        monitoring: this.monitoring,
         overviewDashboard,
       });
     }
@@ -425,7 +427,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
       codeArtifact,
       orchestration,
       logRetention: props.logRetention,
-      monitoring,
+      monitoring: this.monitoring,
       packageLinks: props.packageLinks,
       packageTags: packageTagsSerialized,
       reprocessFrequency: props.reprocessFrequency,
@@ -447,7 +449,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
 
     const webApp = new WebApp(this, 'WebApp', {
       domain: props.domain,
-      monitoring,
+      monitoring: this.monitoring,
       packageData,
       packageLinks: props.packageLinks,
       packageTags: packageTagsSerialized,
@@ -472,7 +474,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
           denyList,
           ingestion: this.ingestion,
           licenseList,
-          monitoring,
+          monitoring: this.monitoring,
           queue: this.ingestion.queue,
           repository: codeArtifact,
           overviewDashboard: overviewDashboard,
@@ -482,7 +484,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
     const inventory = new Inventory(this, 'InventoryCanary', {
       bucket: packageData,
       logRetention: props.logRetention,
-      monitoring,
+      monitoring: this.monitoring,
       overviewDashboard: overviewDashboard,
     });
 
@@ -525,6 +527,34 @@ export class ConstructHub extends Construct implements iam.IGrantable {
       });
       application.associateStack(Stack.of(this));
     }
+  }
+
+  /**
+   * Returns a list of all high-severity alarms from this ConstructHub instance.
+   * These warrant immediate attention as they are indicative of a system health
+   * issue.
+   */
+  public get highSeverityAlarms(): cw.IAlarm[] {
+    // Note: the array is already returned by-copy by Monitoring, so not copying again.
+    return this.monitoring.highSeverityAlarms;
+  }
+
+  /**
+   * Returns a list of all low-severity alarms from this ConstructHub instance.
+   * These do not necessitate immediate attention, as they do not have direct
+   * customer-visible impact, or handling is not time-sensitive. They indicate
+   * that something unusual (not necessarily bad) is happening.
+   */
+  public get lowSeverityAlarms(): cw.IAlarm[] {
+    // Note: the array is already returned by-copy by Monitoring, so not copying again.
+    return this.monitoring.lowSeverityAlarms;
+  }
+
+  /**
+   * Returns a list of all alarms configured by this ConstructHub instance.
+   */
+  public get allAlarms(): cw.IAlarm[] {
+    return [...this.highSeverityAlarms, ...this.lowSeverityAlarms];
   }
 
   public get grantPrincipal(): iam.IPrincipal {
