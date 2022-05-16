@@ -62,19 +62,23 @@ export class CatalogClient implements ICatalogClient {
     }
 
     if (!body) {
-      throw new Error(`Catalog body is empty at ${this.bucketName}/${this.objectKey}`);
+      throw new Error(
+        `Catalog body is empty at ${this.bucketName}/${this.objectKey}`
+      );
     }
 
     const contents = body.toString('utf-8');
 
     try {
       const data = JSON.parse(contents) as CatalogModel;
-      if (typeof(data) != 'object') {
+      if (typeof data != 'object') {
         throw new Error('Invalid format in catalog file. Expecting a map');
       }
       this._packages = data.packages;
     } catch (e) {
-      throw new Error(`Unable to parse catalog file ${this.bucketName}/${this.objectKey}: ${e}`);
+      throw new Error(
+        `Unable to parse catalog file ${this.bucketName}/${this.objectKey}: ${e}`
+      );
     }
   }
 

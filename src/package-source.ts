@@ -1,11 +1,12 @@
-import { IWidget } from '@aws-cdk/aws-cloudwatch';
-import { IGrantable } from '@aws-cdk/aws-iam';
-import { IQueue } from '@aws-cdk/aws-sqs';
-import { Construct } from '@aws-cdk/core';
+import { IWidget } from 'aws-cdk-lib/aws-cloudwatch';
+import { IGrantable } from 'aws-cdk-lib/aws-iam';
+import { IQueue } from 'aws-cdk-lib/aws-sqs';
+import { Construct } from 'constructs';
 import { IDenyList } from './backend/deny-list/api';
 import { ILicenseList } from './backend/license-list/api';
 import { IRepository } from './codeartifact/api';
 import { IMonitoring } from './monitoring/api';
+import { IOverviewDashboard } from './overview-dashboard/api';
 
 /**
  * A package source for ConstructHub.
@@ -20,7 +21,10 @@ export interface IPackageSource {
    * @returns a dependable resource that can be used to create a CloudFormation
    *          dependency on the bound source.
    */
-  bind(scope: Construct, opts: PackageSourceBindOptions): PackageSourceBindResult;
+  bind(
+    scope: Construct,
+    opts: PackageSourceBindOptions
+  ): PackageSourceBindResult;
 }
 
 /**
@@ -55,6 +59,11 @@ export interface PackageSourceBindOptions {
    * The monitoring instance to use for registering alarms, etc.
    */
   readonly monitoring: IMonitoring;
+
+  /**
+   * The overview dashboard to add widgets to.
+   */
+  readonly overviewDashboard: IOverviewDashboard;
 
   /**
    * The SQS queue to which messages should be sent. Sent objects should match

@@ -1,11 +1,30 @@
-import { GatewayVpcEndpoint, InterfaceVpcEndpoint, SubnetSelection, ISecurityGroup } from '@aws-cdk/aws-ec2';
-import { ContainerDefinition, FargatePlatformVersion, FargateTaskDefinition, ICluster, LogDrivers } from '@aws-cdk/aws-ecs';
-import { Effect, PolicyStatement } from '@aws-cdk/aws-iam';
-import { ILogGroup, LogGroup, RetentionDays } from '@aws-cdk/aws-logs';
-import { IBucket } from '@aws-cdk/aws-s3';
-import { IntegrationPattern, JsonPath, TaskStateBaseProps } from '@aws-cdk/aws-stepfunctions';
-import { EcsFargateLaunchTarget, EcsRunTask } from '@aws-cdk/aws-stepfunctions-tasks';
-import { ArnFormat, Construct, Duration, Fn, Stack } from '@aws-cdk/core';
+import { ArnFormat, Duration, Fn, Stack } from 'aws-cdk-lib';
+import {
+  GatewayVpcEndpoint,
+  InterfaceVpcEndpoint,
+  SubnetSelection,
+  ISecurityGroup,
+} from 'aws-cdk-lib/aws-ec2';
+import {
+  ContainerDefinition,
+  FargatePlatformVersion,
+  FargateTaskDefinition,
+  ICluster,
+  LogDrivers,
+} from 'aws-cdk-lib/aws-ecs';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { IBucket } from 'aws-cdk-lib/aws-s3';
+import {
+  IntegrationPattern,
+  JsonPath,
+  TaskStateBaseProps,
+} from 'aws-cdk-lib/aws-stepfunctions';
+import {
+  EcsFargateLaunchTarget,
+  EcsRunTask,
+} from 'aws-cdk-lib/aws-stepfunctions-tasks';
+import { Construct } from 'constructs';
 import { Repository } from '../../codeartifact/repository';
 import { Monitoring } from '../../monitoring';
 import * as s3 from '../../s3';
@@ -93,9 +112,13 @@ export class Transliterator extends Construct {
   public constructor(scope: Construct, id: string, props: TransliteratorProps) {
     super(scope, id);
 
-    const repository = props.vpcEndpoints?.codeArtifact && props.vpcEndpoints.codeArtifactApi
-      ? props.codeArtifact?.throughVpcEndpoint(props.vpcEndpoints.codeArtifactApi, props.vpcEndpoints.codeArtifact)
-      : props.codeArtifact;
+    const repository =
+      props.vpcEndpoints?.codeArtifact && props.vpcEndpoints.codeArtifactApi
+        ? props.codeArtifact?.throughVpcEndpoint(
+            props.vpcEndpoints.codeArtifactApi,
+            props.vpcEndpoints.codeArtifact
+          )
+        : props.codeArtifact;
 
     const bucket = props.vpcEndpoints
       ? s3.throughVpcEndpoint(props.bucket, props.vpcEndpoints.s3)
@@ -112,22 +135,32 @@ export class Transliterator extends Construct {
       // Those are returned as an array of HOSTED_ZONE_ID:DNS_NAME... We care
       // only about the DNS_NAME of the first entry in that array (which is
       // the AZ-agnostic DNS name).
-      environment.CODE_ARTIFACT_API_ENDPOINT = Fn.select(1,
-        Fn.split(':',
-          Fn.select(0, props.vpcEndpoints.codeArtifactApi.vpcEndpointDnsEntries),
-        ),
+      environment.CODE_ARTIFACT_API_ENDPOINT = Fn.select(
+        1,
+        Fn.split(
+          ':',
+          Fn.select(0, props.vpcEndpoints.codeArtifactApi.vpcEndpointDnsEntries)
+        )
       );
     }
     if (props.codeArtifact) {
-      environment.CODE_ARTIFACT_DOMAIN_NAME = props.codeArtifact.repositoryDomainName;
-      environment.CODE_ARTIFACT_DOMAIN_OWNER = props.codeArtifact.repositoryDomainOwner;
-      environment.CODE_ARTIFACT_REPOSITORY_ENDPOINT = props.codeArtifact.repositoryNpmEndpoint;
+      environment.CODE_ARTIFACT_DOMAIN_NAME =
+        props.codeArtifact.repositoryDomainName;
+      environment.CODE_ARTIFACT_DOMAIN_OWNER =
+        props.codeArtifact.repositoryDomainOwner;
+      environment.CODE_ARTIFACT_REPOSITORY_ENDPOINT =
+        props.codeArtifact.repositoryNpmEndpoint;
     }
 
-    this.logGroup = new LogGroup(this, 'LogGroup', { retention: props.logRetention });
+    this.logGroup = new LogGroup(this, 'LogGroup', {
+      retention: props.logRetention,
+    });
     this.containerDefinition = new Container(this, 'Resource', {
       environment,
-      logging: LogDrivers.awsLogs({ logGroup: this.logGroup, streamPrefix: 'transliterator' }),
+      logging: LogDrivers.awsLogs({
+        logGroup: this.logGroup,
+        streamPrefix: 'transliterator',
+      }),
       taskDefinition: new FargateTaskDefinition(this, 'TaskDefinition', {
         cpu: 4_096,
         memoryLimitMiB: 8_192,
@@ -137,76 +170,179 @@ export class Transliterator extends Construct {
     repository?.grantReadFromRepository(this.taskDefinition.taskRole);
 
     // The task handler reads & writes to this bucket.
-    bucket.grantRead(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.ASSEMBLY_KEY_SUFFIX}`);
-    bucket.grantRead(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.PACKAGE_KEY_SUFFIX}`);
-    bucket.grantRead(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.UNINSTALLABLE_PACKAGE_SUFFIX}`);
-    bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.UNINSTALLABLE_PACKAGE_SUFFIX}`);
-    bucket.grantDelete(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.UNINSTALLABLE_PACKAGE_SUFFIX}`);
+    bucket.grantRead(
+      this.taskDefinition.taskRole,
+      `${constants.STORAGE_KEY_PREFIX}*${constants.ASSEMBLY_KEY_SUFFIX}`
+    );
+    bucket.grantRead(
+      this.taskDefinition.taskRole,
+      `${constants.STORAGE_KEY_PREFIX}*${constants.PACKAGE_KEY_SUFFIX}`
+    );
+    bucket.grantRead(
+      this.taskDefinition.taskRole,
+      `${constants.STORAGE_KEY_PREFIX}*${constants.UNINSTALLABLE_PACKAGE_SUFFIX}`
+    );
+    bucket.grantWrite(
+      this.taskDefinition.taskRole,
+      `${constants.STORAGE_KEY_PREFIX}*${constants.UNINSTALLABLE_PACKAGE_SUFFIX}`
+    );
+    bucket.grantDelete(
+      this.taskDefinition.taskRole,
+      `${constants.STORAGE_KEY_PREFIX}*${constants.UNINSTALLABLE_PACKAGE_SUFFIX}`
+    );
     for (const language of DocumentationLanguage.ALL) {
-      bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}`);
-      bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language, '*')}`);
-      bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}${constants.NOT_SUPPORTED_SUFFIX}`);
-      bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language, '*')}${constants.NOT_SUPPORTED_SUFFIX}`);
-      bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
-      bucket.grantWrite(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language, '*')}${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
-      bucket.grantDelete(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
-      bucket.grantDelete(this.taskDefinition.taskRole, `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language, '*')}${constants.CORRUPT_ASSEMBLY_SUFFIX}`);
+      bucket.grantWrite(
+        this.taskDefinition.taskRole,
+        `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}`
+      );
+      bucket.grantWrite(
+        this.taskDefinition.taskRole,
+        `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(
+          language,
+          '*'
+        )}`
+      );
+      bucket.grantWrite(
+        this.taskDefinition.taskRole,
+        `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}${
+          constants.NOT_SUPPORTED_SUFFIX
+        }`
+      );
+      bucket.grantRead(
+        this.taskDefinition.taskRole,
+        `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}${
+          constants.NOT_SUPPORTED_SUFFIX
+        }`
+      );
+      bucket.grantWrite(
+        this.taskDefinition.taskRole,
+        `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(
+          language,
+          '*'
+        )}${constants.NOT_SUPPORTED_SUFFIX}`
+      );
+      bucket.grantRead(
+        this.taskDefinition.taskRole,
+        `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(
+          language,
+          '*'
+        )}${constants.NOT_SUPPORTED_SUFFIX}`
+      );
+      bucket.grantRead(
+        this.taskDefinition.taskRole,
+        `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}${
+          constants.CORRUPT_ASSEMBLY_SUFFIX
+        }`
+      );
+      bucket.grantWrite(
+        this.taskDefinition.taskRole,
+        `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}${
+          constants.CORRUPT_ASSEMBLY_SUFFIX
+        }`
+      );
+      bucket.grantRead(
+        this.taskDefinition.taskRole,
+        `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(
+          language,
+          '*'
+        )}${constants.CORRUPT_ASSEMBLY_SUFFIX}`
+      );
+      bucket.grantWrite(
+        this.taskDefinition.taskRole,
+        `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(
+          language,
+          '*'
+        )}${constants.CORRUPT_ASSEMBLY_SUFFIX}`
+      );
+      bucket.grantDelete(
+        this.taskDefinition.taskRole,
+        `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(language)}${
+          constants.CORRUPT_ASSEMBLY_SUFFIX
+        }`
+      );
+      bucket.grantDelete(
+        this.taskDefinition.taskRole,
+        `${constants.STORAGE_KEY_PREFIX}*${constants.docsKeySuffix(
+          language,
+          '*'
+        )}${constants.CORRUPT_ASSEMBLY_SUFFIX}`
+      );
     }
 
     const executionRole = this.taskDefinition.obtainExecutionRole();
-    props.vpcEndpoints?.ecrApi.addToPolicy(new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: [
-        'ecr:GetAuthorizationToken',
-      ],
-      resources: ['*'], // Action does not support resource scoping
-      principals: [executionRole],
-      sid: 'Allow-ECR-ReadOnly',
-    }));
-    props.vpcEndpoints?.ecr.addToPolicy(new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: [
-        'ecr:BatchCheckLayerAvailability',
-        'ecr:GetDownloadUrlForLayer',
-        'ecr:BatchGetImage',
-      ],
-      // We cannot get the ECR repository info from an asset... So scoping down to same-account repositories instead...
-      resources: [Stack.of(this).formatArn({ service: 'ecr', resource: 'repository', arnFormat: ArnFormat.SLASH_RESOURCE_NAME, resourceName: '*' })],
-      principals: [executionRole],
-      sid: 'Allow-ECR-ReadOnly',
-    }));
+    props.vpcEndpoints?.ecrApi.addToPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['ecr:GetAuthorizationToken'],
+        resources: ['*'], // Action does not support resource scoping
+        principals: [executionRole],
+        sid: 'Allow-ECR-ReadOnly',
+      })
+    );
+    props.vpcEndpoints?.ecr.addToPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: [
+          'ecr:BatchCheckLayerAvailability',
+          'ecr:GetDownloadUrlForLayer',
+          'ecr:BatchGetImage',
+        ],
+        // We cannot get the ECR repository info from an asset... So scoping down to same-account repositories instead...
+        resources: [
+          Stack.of(this).formatArn({
+            service: 'ecr',
+            resource: 'repository',
+            arnFormat: ArnFormat.SLASH_RESOURCE_NAME,
+            resourceName: '*',
+          }),
+        ],
+        principals: [executionRole],
+        sid: 'Allow-ECR-ReadOnly',
+      })
+    );
 
-    props.vpcEndpoints?.cloudWatchLogs.addToPolicy(new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: [
-        'logs:CreateLogStream',
-        'logs:PutLogEvents',
-      ],
-      resources: [
-        Stack.of(this).formatArn({ service: 'logs', resource: 'log-group', arnFormat: ArnFormat.COLON_RESOURCE_NAME, resourceName: this.logGroup.logGroupName }),
-        Stack.of(this).formatArn({ service: 'logs', resource: 'log-group', arnFormat: ArnFormat.COLON_RESOURCE_NAME, resourceName: `${this.logGroup.logGroupName}:log-stream:*` }),
-      ],
-      principals: [executionRole],
-      sid: 'Allow-Logging',
-    }));
+    props.vpcEndpoints?.cloudWatchLogs.addToPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: ['logs:CreateLogStream', 'logs:PutLogEvents'],
+        resources: [
+          Stack.of(this).formatArn({
+            service: 'logs',
+            resource: 'log-group',
+            arnFormat: ArnFormat.COLON_RESOURCE_NAME,
+            resourceName: this.logGroup.logGroupName,
+          }),
+          Stack.of(this).formatArn({
+            service: 'logs',
+            resource: 'log-group',
+            arnFormat: ArnFormat.COLON_RESOURCE_NAME,
+            resourceName: `${this.logGroup.logGroupName}:log-stream:*`,
+          }),
+        ],
+        principals: [executionRole],
+        sid: 'Allow-Logging',
+      })
+    );
 
-    props.vpcEndpoints?.stepFunctions.addToPolicy(new PolicyStatement({
-      effect: Effect.ALLOW,
-      actions: [
-        'states:SendTaskFailure',
-        'states:SendTaskHeartbeat',
-        'states:SendTaskSuccess',
-      ],
-      resources: ['*'], // Actions don't support resource scoping
-      principals: [this.taskDefinition.taskRole],
-      sid: 'Allow-StepFunctions-Callbacks',
-    }));
+    props.vpcEndpoints?.stepFunctions.addToPolicy(
+      new PolicyStatement({
+        effect: Effect.ALLOW,
+        actions: [
+          'states:SendTaskFailure',
+          'states:SendTaskHeartbeat',
+          'states:SendTaskSuccess',
+        ],
+        resources: ['*'], // Actions don't support resource scoping
+        principals: [this.taskDefinition.taskRole],
+        sid: 'Allow-StepFunctions-Callbacks',
+      })
+    );
   }
 
   public createEcsRunTask(
     scope: Construct,
     id: string,
-    opts: CreateEcsRunTaskOpts,
+    opts: CreateEcsRunTaskOpts
   ): EcsRunTask {
     return new EcsRunTask(scope, id, {
       // The container sends heartbeats every minute, but when the runloop will
@@ -216,15 +352,17 @@ export class Transliterator extends Construct {
       // may override this liberally if they know better.
       heartbeat: Duration.minutes(5),
       ...opts,
-      containerOverrides: [{
-        containerDefinition: this.containerDefinition,
-        command: JsonPath.listAt('$'),
-        environment: [
-          { name: 'SFN_TASK_TOKEN', value: JsonPath.taskToken },
-        ],
-      }],
+      containerOverrides: [
+        {
+          containerDefinition: this.containerDefinition,
+          command: JsonPath.listAt('$'),
+          environment: [{ name: 'SFN_TASK_TOKEN', value: JsonPath.taskToken }],
+        },
+      ],
       integrationPattern: IntegrationPattern.WAIT_FOR_TASK_TOKEN,
-      launchTarget: new EcsFargateLaunchTarget({ platformVersion: FargatePlatformVersion.VERSION1_4 }),
+      launchTarget: new EcsFargateLaunchTarget({
+        platformVersion: FargatePlatformVersion.VERSION1_4,
+      }),
       subnets: opts.vpcSubnets,
       securityGroups: opts.securityGroups,
       taskDefinition: this.taskDefinition,

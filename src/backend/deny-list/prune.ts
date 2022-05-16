@@ -1,10 +1,18 @@
-import * as lambda from '@aws-cdk/aws-lambda';
-import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
-import * as s3 from '@aws-cdk/aws-s3';
-import * as sqs from '@aws-cdk/aws-sqs';
-import { Construct, Duration } from '@aws-cdk/core';
+import { Duration } from 'aws-cdk-lib';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as sqs from 'aws-cdk-lib/aws-sqs';
+import { Construct } from 'constructs';
 import { Monitoring } from '../../monitoring';
-import { ENV_DELETE_OBJECT_DATA_BUCKET_NAME, ENV_PRUNE_ON_CHANGE_FUNCTION_NAME, ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME, ENV_PRUNE_PACKAGE_DATA_KEY_PREFIX, ENV_PRUNE_QUEUE_URL } from './constants';
+import { OverviewDashboard } from '../../overview-dashboard';
+import {
+  ENV_DELETE_OBJECT_DATA_BUCKET_NAME,
+  ENV_PRUNE_ON_CHANGE_FUNCTION_NAME,
+  ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME,
+  ENV_PRUNE_PACKAGE_DATA_KEY_PREFIX,
+  ENV_PRUNE_QUEUE_URL,
+} from './constants';
 import { PruneHandler } from './prune-handler';
 import { PruneQueueHandler } from './prune-queue-handler';
 
@@ -18,14 +26,19 @@ export interface PruneProps {
   readonly packageDataBucket: s3.IBucket;
 
   /**
-    * The S3 key prefix for all package data.
-    */
+   * The S3 key prefix for all package data.
+   */
   readonly packageDataKeyPrefix: string;
 
   /**
    * The monitoring system.
    */
   readonly monitoring: Monitoring;
+
+  /**
+   * Overview dashboard
+   */
+  readonly overviewDashboard: OverviewDashboard;
 }
 
 /**
@@ -61,7 +74,8 @@ export class Prune extends Construct {
     const pruneHandler = new PruneHandler(this, 'PruneHandler', {
       timeout: Duration.minutes(15),
       environment: {
-        [ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME]: props.packageDataBucket.bucketName,
+        [ENV_PRUNE_PACKAGE_DATA_BUCKET_NAME]:
+          props.packageDataBucket.bucketName,
         [ENV_PRUNE_PACKAGE_DATA_KEY_PREFIX]: props.packageDataKeyPrefix,
         [ENV_PRUNE_QUEUE_URL]: deleteQueue.queueUrl,
       },
@@ -73,7 +87,8 @@ export class Prune extends Construct {
     const deleteHandler = new PruneQueueHandler(this, 'PruneQueueHandler', {
       timeout: Duration.minutes(1),
       environment: {
-        [ENV_DELETE_OBJECT_DATA_BUCKET_NAME]: props.packageDataBucket.bucketName,
+        [ENV_DELETE_OBJECT_DATA_BUCKET_NAME]:
+          props.packageDataBucket.bucketName,
       },
     });
     props.packageDataBucket.grantDelete(deleteHandler);
@@ -83,8 +98,22 @@ export class Prune extends Construct {
     this.queue = deleteQueue;
     this.deleteHandler = deleteHandler;
 
-    props.monitoring.watchful.watchLambdaFunction('Deny List - Prune Function', this.pruneHandler);
-    props.monitoring.watchful.watchLambdaFunction('Deny List - Prune Delete Function', this.deleteHandler);
+    props.monitoring.watchful.watchLambdaFunction(
+      'Deny List - Prune Function',
+      this.pruneHandler
+    );
+    props.monitoring.watchful.watchLambdaFunction(
+      'Deny List - Prune Delete Function',
+      this.deleteHandler
+    );
+    props.overviewDashboard.addConcurrentExecutionMetricToDashboard(
+      this.pruneHandler,
+      'PruneHandlerLambda'
+    );
+    props.overviewDashboard.addConcurrentExecutionMetricToDashboard(
+      this.deleteHandler,
+      'PruneQueueHandlerLambda'
+    );
   }
 
   /**
@@ -92,6 +121,9 @@ export class Prune extends Construct {
    */
   public onChangeInvoke(callback: lambda.IFunction) {
     callback.grantInvoke(this.pruneHandler);
-    this.pruneHandler.addEnvironment(ENV_PRUNE_ON_CHANGE_FUNCTION_NAME, callback.functionArn);
+    this.pruneHandler.addEnvironment(
+      ENV_PRUNE_ON_CHANGE_FUNCTION_NAME,
+      callback.functionArn
+    );
   }
 }

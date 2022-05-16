@@ -1,10 +1,11 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as s3 from '@aws-cdk/aws-s3';
-import * as s3deploy from '@aws-cdk/aws-s3-deployment';
-import { Construct, RemovalPolicy } from '@aws-cdk/core';
+import { RemovalPolicy } from 'aws-cdk-lib';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
+import { Construct } from 'constructs';
 import { S3StorageFactory } from '../../s3/storage';
 import { SpdxLicense } from '../../spdx-license';
 import { ILicenseList } from './api';
@@ -60,7 +61,10 @@ export class LicenseList extends Construct implements ILicenseList {
    * `LicenseListClient`.
    */
   public grantRead(handler: lambda.Function) {
-    handler.addEnvironment(EnvironmentVariables.BUCKET_NAME, this.bucket.bucketName);
+    handler.addEnvironment(
+      EnvironmentVariables.BUCKET_NAME,
+      this.bucket.bucketName
+    );
     handler.addEnvironment(EnvironmentVariables.OBJECT_KEY, this.objectKey);
     this.bucket.grantRead(handler);
     // The handler now depends on the deny-list having been uploaded
@@ -71,8 +75,12 @@ export class LicenseList extends Construct implements ILicenseList {
     const tmpdir = fs.mkdtempSync(path.join(os.tmpdir(), 'license-list-'));
     fs.writeFileSync(
       path.join(tmpdir, this.objectKey),
-      JSON.stringify(licenses.map((l) => l.id), null, 2),
-      'utf-8',
+      JSON.stringify(
+        licenses.map((l) => l.id),
+        null,
+        2
+      ),
+      'utf-8'
     );
     return s3deploy.Source.asset(tmpdir);
   }

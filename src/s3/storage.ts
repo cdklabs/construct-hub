@@ -1,5 +1,6 @@
-import * as s3 from '@aws-cdk/aws-s3';
-import { CfnOutput, Construct, Stack, Tags } from '@aws-cdk/core';
+import { CfnOutput, Stack, Tags } from 'aws-cdk-lib';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import { Construct } from 'constructs';
 
 /**
  * Properties for `S3StorageFactory`
@@ -17,13 +18,15 @@ export interface S3StorageFactoryProps {
  * Create s3 storage resources.
  */
 export class S3StorageFactory extends Construct {
-
   /**
    * Retrieve or create the storage factory for the current scope.
    *
    * This is stack singleton.
    */
-  public static getOrCreate(scope: Construct, props: S3StorageFactoryProps = {}): S3StorageFactory {
+  public static getOrCreate(
+    scope: Construct,
+    props: S3StorageFactoryProps = {}
+  ): S3StorageFactory {
     const stack = Stack.of(scope);
     const factory = stack.node.tryFindChild(S3StorageFactory.UID);
     if (!factory) {
@@ -36,18 +39,25 @@ export class S3StorageFactory extends Construct {
 
   private failoverActive: boolean;
 
-  private constructor(scope: Construct, id: string, props: S3StorageFactoryProps = {}) {
+  private constructor(
+    scope: Construct,
+    id: string,
+    props: S3StorageFactoryProps = {}
+  ) {
     super(scope, id);
     this.failoverActive = props.failover ?? false;
-  };
+  }
 
   /**
    * Create a new bucket in a storage config aware manner.
    *
    * @returns s3.Bucket
    */
-  public newBucket(scope: Construct, id: string, props?: s3.BucketProps): s3.Bucket {
-
+  public newBucket(
+    scope: Construct,
+    id: string,
+    props?: s3.BucketProps
+  ): s3.Bucket {
     function failoverFor(bucket: s3.Bucket): s3.Bucket {
       const _failover = new s3.Bucket(scope, `Failover${id}`, props);
       Tags.of(_failover).add('failover', 'true');
@@ -68,5 +78,4 @@ export class S3StorageFactory extends Construct {
 
     return this.failoverActive ? failover : primary;
   }
-
 }

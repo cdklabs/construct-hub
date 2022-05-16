@@ -20,7 +20,9 @@ beforeEach(() => {
       case EnvironmentVariables.OBJECT_KEY:
         return mockObjectKey;
       default:
-        throw new Error(`Attempted to use unexpected environment variable: ${name}`);
+        throw new Error(
+          `Attempted to use unexpected environment variable: ${name}`
+        );
     }
   });
 });
@@ -33,14 +35,18 @@ afterEach(() => {
 test('basic use', async () => {
   // GIVEN
   const mockLicense = 'MockLicense-1.0';
-  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-    try {
-      expect(req).toEqual({ Bucket: mockBucketName, Key: mockObjectKey });
-      cb(null, { Body: JSON.stringify([mockLicense]) });
-    } catch (e) {
-      cb(e);
+  AWSMock.mock(
+    'S3',
+    'getObject',
+    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      try {
+        expect(req).toEqual({ Bucket: mockBucketName, Key: mockObjectKey });
+        cb(null, { Body: JSON.stringify([mockLicense]) });
+      } catch (e) {
+        cb(e);
+      }
     }
-  });
+  );
 
   // WHEN
   const licenseList = await LicenseListClient.newClient();
@@ -52,14 +58,18 @@ test('basic use', async () => {
 
 test('empty list', async () => {
   // GIVEN
-  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-    try {
-      expect(req).toEqual({ Bucket: mockBucketName, Key: mockObjectKey });
-      cb(null, { Body: JSON.stringify([]) });
-    } catch (e) {
-      cb(e);
+  AWSMock.mock(
+    'S3',
+    'getObject',
+    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      try {
+        expect(req).toEqual({ Bucket: mockBucketName, Key: mockObjectKey });
+        cb(null, { Body: JSON.stringify([]) });
+      } catch (e) {
+        cb(e);
+      }
     }
-  });
+  );
 
   // WHEN
   const licenseList = await LicenseListClient.newClient();
@@ -70,14 +80,18 @@ test('empty list', async () => {
 
 test('absent list', async () => {
   // GIVEN
-  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-    try {
-      expect(req).toEqual({ Bucket: mockBucketName, Key: mockObjectKey });
-      cb(null, {});
-    } catch (e) {
-      cb(e);
+  AWSMock.mock(
+    'S3',
+    'getObject',
+    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      try {
+        expect(req).toEqual({ Bucket: mockBucketName, Key: mockObjectKey });
+        cb(null, {});
+      } catch (e) {
+        cb(e);
+      }
     }
-  });
+  );
 
   // WHEN
   const licenseList = await LicenseListClient.newClient();
@@ -88,17 +102,23 @@ test('absent list', async () => {
 
 test('broken list', async () => {
   // GIVEN
-  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-    try {
-      expect(req).toEqual({ Bucket: mockBucketName, Key: mockObjectKey });
-      cb(null, { Body: JSON.stringify('{}', null, 2) });
-    } catch (e) {
-      cb(e);
+  AWSMock.mock(
+    'S3',
+    'getObject',
+    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      try {
+        expect(req).toEqual({ Bucket: mockBucketName, Key: mockObjectKey });
+        cb(null, { Body: JSON.stringify('{}', null, 2) });
+      } catch (e) {
+        cb(e);
+      }
     }
-  });
+  );
 
   // THEN
-  return expect(LicenseListClient.newClient()).rejects.toThrowError(/Invalid format/);
+  return expect(LicenseListClient.newClient()).rejects.toThrowError(
+    /Invalid format/
+  );
 });
 
 type Response<T> = (err: AWS.AWSError | null, data?: T) => void;

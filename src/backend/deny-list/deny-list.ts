@@ -1,18 +1,25 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
-import * as events from '@aws-cdk/aws-events';
-import * as targets from '@aws-cdk/aws-events-targets';
-import * as lambda from '@aws-cdk/aws-lambda';
-import { S3EventSource } from '@aws-cdk/aws-lambda-event-sources';
-import * as s3 from '@aws-cdk/aws-s3';
-import * as s3deploy from '@aws-cdk/aws-s3-deployment';
-import { Construct, Duration, IConstruct, RemovalPolicy } from '@aws-cdk/core';
+import { Duration, RemovalPolicy } from 'aws-cdk-lib';
+import { Metric, MetricOptions, Statistic } from 'aws-cdk-lib/aws-cloudwatch';
+import * as events from 'aws-cdk-lib/aws-events';
+import * as targets from 'aws-cdk-lib/aws-events-targets';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import { S3EventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import * as s3 from 'aws-cdk-lib/aws-s3';
+import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
+import { Construct, IConstruct } from 'constructs';
 import { Monitoring } from '../../monitoring';
+import { OverviewDashboard } from '../../overview-dashboard';
 import { S3StorageFactory } from '../../s3/storage';
 import { DenyListRule, IDenyList } from './api';
-import { ENV_DENY_LIST_BUCKET_NAME, ENV_DENY_LIST_OBJECT_KEY, MetricName, METRICS_NAMESPACE } from './constants';
+import {
+  ENV_DENY_LIST_BUCKET_NAME,
+  ENV_DENY_LIST_OBJECT_KEY,
+  MetricName,
+  METRICS_NAMESPACE,
+} from './constants';
 import { createDenyListMap } from './create-map';
 import { Prune } from './prune';
 
@@ -58,6 +65,8 @@ export interface DenyListProps {
    * The monitoring system.
    */
   readonly monitoring: Monitoring;
+
+  readonly overviewDashboard: OverviewDashboard;
 }
 
 /**
@@ -114,6 +123,7 @@ export class DenyList extends Construct implements IDenyList {
       packageDataBucket: props.packageDataBucket,
       packageDataKeyPrefix: props.packageDataKeyPrefix,
       monitoring: props.monitoring,
+      overviewDashboard: props.overviewDashboard,
     });
 
     this.grantRead(this.prune.pruneHandler);
@@ -121,10 +131,12 @@ export class DenyList extends Construct implements IDenyList {
     // trigger prune when the deny list changes
     const pruneOnChange = props.pruneOnChange ?? true;
     if (pruneOnChange) {
-      this.prune.pruneHandler.addEventSource(new S3EventSource(this.bucket, {
-        events: [s3.EventType.OBJECT_CREATED],
-        filters: [{ prefix: this.objectKey, suffix: this.objectKey }],
-      }));
+      this.prune.pruneHandler.addEventSource(
+        new S3EventSource(this.bucket, {
+          events: [s3.EventType.OBJECT_CREATED],
+          filters: [{ prefix: this.objectKey, suffix: this.objectKey }],
+        })
+      );
 
       // Add an explicit dep between upload and the bucket notification. We are
       // not using the whole bucket scope to reduce the likelihood of a

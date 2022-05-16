@@ -1,6 +1,6 @@
-import * as cw from '@aws-cdk/aws-cloudwatch';
-import { Construct } from '@aws-cdk/core';
+import * as cw from 'aws-cdk-lib/aws-cloudwatch';
 import { Watchful } from 'cdk-watchful';
+import { Construct } from 'constructs';
 import { AlarmActions } from '../api';
 import { IMonitoring } from './api';
 import { WebCanary } from './web-canary';
@@ -26,8 +26,8 @@ export interface MonitoringProps {
  */
 export class Monitoring extends Construct implements IMonitoring {
   private alarmActions?: AlarmActions;
-  private _highSeverityAlarms: cw.Alarm[];
-  private _lowSeverityAlarms: cw.Alarm[];
+  private _highSeverityAlarms: cw.AlarmBase[];
+  private _lowSeverityAlarms: cw.AlarmBase[];
 
   /**
    * Allows adding automatic monitoring to standard resources. Note that
@@ -45,21 +45,28 @@ export class Monitoring extends Construct implements IMonitoring {
 
     this.watchful = new Watchful(this, 'Watchful', {
       // alarms that come from watchful are all considered normal severity
-      alarmActionArns: this.alarmActions?.normalSeverity ? [this.alarmActions.normalSeverity] : [],
-      alarmActions: this.alarmActions?.normalSeverityAction ? [this.alarmActions.normalSeverityAction] : [],
+      alarmActionArns: this.alarmActions?.normalSeverity
+        ? [this.alarmActions.normalSeverity]
+        : [],
+      alarmActions: this.alarmActions?.normalSeverityAction
+        ? [this.alarmActions.normalSeverityAction]
+        : [],
     });
 
     this._highSeverityAlarms = [];
     this._lowSeverityAlarms = [];
 
-    this.highSeverityDashboard = new cw.Dashboard(this, 'HighSeverityDashboard');
+    this.highSeverityDashboard = new cw.Dashboard(
+      this,
+      'HighSeverityDashboard'
+    );
   }
 
   /**
    * Adds a high-severity alarm. If this alarm goes off, the action specified in `highSeverityAlarmActionArn`
    * @param alarm
    */
-  public addHighSeverityAlarm(title: string, alarm: cw.Alarm) {
+  public addHighSeverityAlarm(title: string, alarm: cw.AlarmBase) {
     const highSeverityActionArn = this.alarmActions?.highSeverity;
     if (highSeverityActionArn) {
       alarm.addAlarmAction({
@@ -71,25 +78,29 @@ export class Monitoring extends Construct implements IMonitoring {
       alarm.addAlarmAction(highSeverityAction);
     }
 
-    this.highSeverityDashboard.addWidgets(new cw.AlarmWidget({
-      alarm,
-      title,
-      width: 24,
-    }));
+    this.highSeverityDashboard.addWidgets(
+      new cw.AlarmWidget({
+        alarm,
+        title,
+        width: 24,
+      })
+    );
 
-    this._highSeverityAlarms?.push(alarm);
+    this._highSeverityAlarms.push(alarm);
   }
 
-  public addLowSeverityAlarm(_title: string, alarm: cw.Alarm) {
+  public addLowSeverityAlarm(_title: string, alarm: cw.AlarmBase) {
     const normalSeverityActionArn = this.alarmActions?.normalSeverity;
     if (normalSeverityActionArn) {
-      alarm.addAlarmAction({ bind: () => ({ alarmActionArn: normalSeverityActionArn }) });
+      alarm.addAlarmAction({
+        bind: () => ({ alarmActionArn: normalSeverityActionArn }),
+      });
     }
     const normalSeverityAction = this.alarmActions?.normalSeverityAction;
     if (normalSeverityAction) {
       alarm.addAlarmAction(normalSeverityAction);
     }
-    this._lowSeverityAlarms?.push(alarm);
+    this._lowSeverityAlarms.push(alarm);
   }
 
   public get highSeverityAlarms() {
@@ -110,10 +121,14 @@ export class Monitoring extends Construct implements IMonitoring {
    * @param url The URL to ping
    */
   public addWebCanary(name: string, url: string) {
-    const canary = new WebCanary(this, `WebCanary${name.replace(/[^A-Z0-9]/ig, '')}`, {
-      url,
-      displayName: name,
-    });
+    const canary = new WebCanary(
+      this,
+      `WebCanary${name.replace(/[^A-Z0-9]/gi, '')}`,
+      {
+        url,
+        displayName: name,
+      }
+    );
 
     this.addHighSeverityAlarm(`${name} Canary`, canary.alarm);
   }

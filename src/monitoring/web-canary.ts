@@ -1,7 +1,8 @@
-import { Alarm, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
-import * as events from '@aws-cdk/aws-events';
-import * as targets from '@aws-cdk/aws-events-targets';
-import { Construct, Duration } from '@aws-cdk/core';
+import { Duration } from 'aws-cdk-lib';
+import { Alarm, TreatMissingData } from 'aws-cdk-lib/aws-cloudwatch';
+import * as events from 'aws-cdk-lib/aws-events';
+import * as targets from 'aws-cdk-lib/aws-events-targets';
+import { Construct } from 'constructs';
 import { HttpGetFunction } from './http-get-function';
 
 /**

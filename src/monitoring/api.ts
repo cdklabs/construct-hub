@@ -1,4 +1,4 @@
-import type { Alarm } from '@aws-cdk/aws-cloudwatch';
+import type { AlarmBase } from 'aws-cdk-lib/aws-cloudwatch';
 
 /**
  * ConstructHub monitoring features exposed to extension points.
@@ -12,7 +12,7 @@ export interface IMonitoring {
    *              high-severity CloudWatch dashboard)
    * @param alarm the alarm to be added to the high-severity dashboard.
    */
-  addHighSeverityAlarm(title: string, alarm: Alarm): void;
+  addHighSeverityAlarm(title: string, alarm: AlarmBase): void;
 
   /**
    * Adds a low-severity alarm. If this alarm goes off, the action specified in
@@ -21,5 +21,5 @@ export interface IMonitoring {
    * @param title a user-friendly title for the alarm (not currently used).
    * @param alarm the alarm to be added.
    */
-  addLowSeverityAlarm(title: string, alarm: Alarm): void;
+  addLowSeverityAlarm(title: string, alarm: AlarmBase): void;
 }

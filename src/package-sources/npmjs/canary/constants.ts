@@ -28,6 +28,14 @@ export const enum MetricName {
    * package canary execution that produced the data point.
    */
   TRACKED_VERSION_COUNT = 'TrackedVersionCount',
+
+  /**
+   * The estimated lag between the npm registry replica (replicate.npmjs.com)
+   * and the primary registry (registry.npmjs.com). This cannot be measured
+   * directly because the primary does not expose the relevant CouchDB endpoints,
+   * so we use the probe package to get a low-resolution view of this.
+   */
+  NPM_REPLICA_LAG = 'EstimatedNpmReplicaLag',
 }
 
 export const enum ObjectKey {

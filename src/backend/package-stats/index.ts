@@ -1,10 +1,17 @@
-import { ComparisonOperator, Metric, MetricOptions, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
-import * as events from '@aws-cdk/aws-events';
-import * as targets from '@aws-cdk/aws-events-targets';
-import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
-import { RetentionDays } from '@aws-cdk/aws-logs';
-import type { IBucket } from '@aws-cdk/aws-s3';
-import { Construct, Duration } from '@aws-cdk/core';
+import { Duration } from 'aws-cdk-lib';
+import {
+  ComparisonOperator,
+  Metric,
+  MetricOptions,
+  Statistic,
+  TreatMissingData,
+} from 'aws-cdk-lib/aws-cloudwatch';
+import * as events from 'aws-cdk-lib/aws-events';
+import * as targets from 'aws-cdk-lib/aws-events-targets';
+import { IFunction, Tracing } from 'aws-cdk-lib/aws-lambda';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import type { IBucket } from 'aws-cdk-lib/aws-s3';
+import { Construct } from 'constructs';
 import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { RUNBOOK_URL } from '../../runbook-url';
@@ -98,20 +105,23 @@ export class PackageStats extends Construct {
 
     this.bucket.grantReadWrite(this.handler);
 
-    const failureAlarm = this.handler.metricErrors().createAlarm(scope, 'PackageStats/Failures', {
-      alarmName: `${scope.node.path}/PackageStats/Failures`,
-      alarmDescription: [
-        'The package stats function failed!',
-        '',
-        `RunBook: ${RUNBOOK_URL}`,
-        '',
-        `Direct link to Lambda function: ${lambdaFunctionUrl(this.handler)}`,
-      ].join('\n'),
-      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-      evaluationPeriods: 1,
-      threshold: 1,
-      treatMissingData: TreatMissingData.MISSING,
-    });
+    const failureAlarm = this.handler
+      .metricErrors()
+      .createAlarm(scope, 'PackageStats/Failures', {
+        alarmName: `${scope.node.path}/PackageStats/Failures`,
+        alarmDescription: [
+          'The package stats function failed!',
+          '',
+          `RunBook: ${RUNBOOK_URL}`,
+          '',
+          `Direct link to Lambda function: ${lambdaFunctionUrl(this.handler)}`,
+        ].join('\n'),
+        comparisonOperator:
+          ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        evaluationPeriods: 1,
+        threshold: 1,
+        treatMissingData: TreatMissingData.MISSING,
+      });
     props.monitoring.addLowSeverityAlarm('PackageStats Failures', failureAlarm);
   }
 

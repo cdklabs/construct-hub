@@ -1,7 +1,12 @@
 import * as console from 'console';
 import { gunzipSync } from 'zlib';
 
-import { metricScope, Configuration, MetricsLogger, Unit } from 'aws-embedded-metrics';
+import {
+  metricScope,
+  Configuration,
+  MetricsLogger,
+  Unit,
+} from 'aws-embedded-metrics';
 import type { Context, ScheduledEvent } from 'aws-lambda';
 import { captureHTTPsGlobal } from 'aws-xray-sdk-core';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -9,13 +14,23 @@ import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
 import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
 import * as aws from '../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
-import { MetricName, MARKER_FILE_NAME, METRICS_NAMESPACE } from './constants.lambda-shared';
+import {
+  MetricName,
+  MARKER_FILE_NAME,
+  METRICS_NAMESPACE,
+} from './constants.lambda-shared';
 import { CouchChanges, DatabaseChange } from './couch-changes.lambda-shared';
 import { PackageVersion } from './stage-and-notify.lambda';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const normalizeNPMMetadata = require('normalize-registry-metadata');
 
-const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set(['cdk', 'aws-cdk', 'awscdk', 'cdk8s', 'cdktf']);
+const CONSTRUCT_KEYWORDS: ReadonlySet<string> = new Set([
+  'cdk',
+  'aws-cdk',
+  'awscdk',
+  'cdk8s',
+  'cdktf',
+]);
 const NPM_REPLICA_REGISTRY_URL = 'https://replicate.npmjs.com/';
 
 /**
@@ -56,7 +71,8 @@ export async function handler(event: ScheduledEvent, context: Context) {
 
   const npm = new CouchChanges(NPM_REPLICA_REGISTRY_URL, 'registry');
 
-  const { marker: initialMarker, knownVersions } = await loadLastTransactionMarker(stagingBucket, npm);
+  const { marker: initialMarker, knownVersions } =
+    await loadLastTransactionMarker(stagingBucket, npm);
 
   // The last written marker seq id.
   let updatedMarker = initialMarker;
@@ -94,7 +110,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
             metrics.putMetric(
               MetricName.NPMJS_CHANGE_AGE,
               startTime - modified.getTime(),
-              Unit.Milliseconds,
+              Unit.Milliseconds
             );
             if (lastModified == null || lastModified < modified) {
               lastModified = modified;
@@ -106,57 +122,96 @@ export async function handler(event: ScheduledEvent, context: Context) {
         metrics.putMetric(MetricName.CHANGE_COUNT, batch.length, Unit.Count);
 
         if (lastModified && lastModified < DAWN_OF_CONSTRUCTS) {
-          console.log(`Skipping batch as the latest modification is ${lastModified}, which is pre-Constructs`);
+          console.log(
+            `Skipping batch as the latest modification is ${lastModified}, which is pre-Constructs`
+          );
         } else if (batch.length === 0) {
           console.log('Received 0 changes, caught up to "now", exiting...');
           shouldContinue = false;
         } else {
           // Obtain the modified package version from the update event, and filter
           // out packages that are not of interest to us (not construct libraries).
-          const versionInfos = getRelevantVersionInfos(batch, metrics, denyList, licenseList, knownVersions);
-          console.log(`Identified ${versionInfos.length} relevant package version update(s)`);
-          metrics.putMetric(MetricName.RELEVANT_PACKAGE_VERSIONS, versionInfos.length, Unit.Count);
+          const versionInfos = getRelevantVersionInfos(
+            batch,
+            metrics,
+            denyList,
+            licenseList,
+            knownVersions
+          );
+          console.log(
+            `Identified ${versionInfos.length} relevant package version update(s)`
+          );
+          metrics.putMetric(
+            MetricName.RELEVANT_PACKAGE_VERSIONS,
+            versionInfos.length,
+            Unit.Count
+          );
 
           // Process all remaining updates
-          await Promise.all(versionInfos.map(async ({ infos, modified, seq }) => {
-            const invokeArgs: PackageVersion = {
-              integrity: infos.dist.shasum,
-              modified: modified.toISOString(),
-              name: infos.name,
-              seq: seq?.toString(),
-              tarballUrl: infos.dist.tarball,
-              version: infos.version,
-            };
-            // "Fire-and-forget" invocation here.
-            await aws.lambda().invokeAsync({
-              FunctionName: stagingFunction,
-              InvokeArgs: JSON.stringify(invokeArgs, null, 2),
-            }).promise();
-            // Record that this is now a "known" version (no need to re-discover)
-            knownVersions.set(`${infos.name}@${infos.version}`, modified);
-          }));
+          await Promise.all(
+            versionInfos.map(async ({ infos, modified, seq }) => {
+              const invokeArgs: PackageVersion = {
+                integrity: infos.dist.shasum,
+                modified: modified.toISOString(),
+                name: infos.name,
+                seq: seq?.toString(),
+                tarballUrl: infos.dist.tarball,
+                version: infos.version,
+              };
+              // "Fire-and-forget" invocation here.
+              await aws
+                .lambda()
+                .invokeAsync({
+                  FunctionName: stagingFunction,
+                  InvokeArgs: JSON.stringify(invokeArgs, null, 2),
+                })
+                .promise();
+              // Record that this is now a "known" version (no need to re-discover)
+              knownVersions.set(`${infos.name}@${infos.version}`, modified);
+            })
+          );
         }
 
         // Updating the S3 stored marker with the new seq id as communicated by nano.
-        await saveLastTransactionMarker(context, stagingBucket, updatedMarker, knownVersions);
-
+        await saveLastTransactionMarker(
+          context,
+          stagingBucket,
+          updatedMarker,
+          knownVersions
+        );
       } finally {
         // Markers may not always be numeric (but in practice they are now), so we protect against that...
         if (typeof updatedMarker === 'number' || /^\d+$/.test(updatedMarker)) {
-          metrics.putMetric(MetricName.LAST_SEQ, typeof updatedMarker === 'number' ? updatedMarker : parseInt(updatedMarker), Unit.None);
+          metrics.putMetric(
+            MetricName.LAST_SEQ,
+            typeof updatedMarker === 'number'
+              ? updatedMarker
+              : parseInt(updatedMarker),
+            Unit.None
+          );
         }
 
-        metrics.putMetric(MetricName.BATCH_PROCESSING_TIME, Date.now() - startTime, Unit.Milliseconds);
-        metrics.putMetric(MetricName.REMAINING_TIME, context.getRemainingTimeInMillis(), Unit.Milliseconds);
+        metrics.putMetric(
+          MetricName.BATCH_PROCESSING_TIME,
+          Date.now() - startTime,
+          Unit.Milliseconds
+        );
+        metrics.putMetric(
+          MetricName.REMAINING_TIME,
+          context.getRemainingTimeInMillis(),
+          Unit.Milliseconds
+        );
       }
     })();
-  } while (shouldContinue && context.getRemainingTimeInMillis() >= maxBatchProcessingTime);
+  } while (
+    shouldContinue &&
+    context.getRemainingTimeInMillis() >= maxBatchProcessingTime
+  );
 
   console.log('All done here, we have success!');
 
   return { initialMarker, updatedMarker };
 }
-
 
 //#region Last transaction marker
 /**
@@ -169,33 +224,33 @@ export async function handler(event: ScheduledEvent, context: Context) {
  */
 async function loadLastTransactionMarker(
   stagingBucket: string,
-  registry: CouchChanges,
+  registry: CouchChanges
 ): Promise<{ marker: string | number; knownVersions: Map<string, Date> }> {
   try {
-    const response = await aws.s3().getObject({
-      Bucket: stagingBucket,
-      Key: MARKER_FILE_NAME,
-    }).promise();
+    const response = await aws
+      .s3()
+      .getObject({
+        Bucket: stagingBucket,
+        Key: MARKER_FILE_NAME,
+      })
+      .promise();
     if (response.ContentEncoding === 'gzip') {
       response.Body = gunzipSync(Buffer.from(response.Body! as any));
     }
-    let data = JSON.parse(
-      response.Body!.toString('utf-8'),
-      (key, value) => {
-        if (key !== 'knownVersions') {
-          return value;
+    let data = JSON.parse(response.Body!.toString('utf-8'), (key, value) => {
+      if (key !== 'knownVersions') {
+        return value;
+      }
+      const map = new Map<string, Date>();
+      for (const [pkgVersion, iso] of Object.entries(value)) {
+        if (typeof iso === 'string' || typeof iso === 'number') {
+          map.set(pkgVersion, new Date(iso));
+        } else {
+          console.error(`Ignoring invalid entry: ${pkgVersion} => ${iso}`);
         }
-        const map = new Map<string, Date>();
-        for (const [pkgVersion, iso] of Object.entries(value)) {
-          if (typeof iso === 'string' || typeof iso === 'number') {
-            map.set(pkgVersion, new Date(iso));
-          } else {
-            console.error(`Ignoring invalid entry: ${pkgVersion} => ${iso}`);
-          }
-        }
-        return map;
-      },
-    );
+      }
+      return map;
+    });
     if (typeof data === 'number') {
       data = { marker: data.toFixed(), knownVersions: new Map() };
     }
@@ -203,7 +258,9 @@ async function loadLastTransactionMarker(
 
     const dbUpdateSeq = (await registry.info()).update_seq;
     if (dbUpdateSeq < data.marker) {
-      console.warn(`Current DB update_seq (${dbUpdateSeq}) is lower than marker (CouchDB instance was likely replaced), resetting to 0!`);
+      console.warn(
+        `Current DB update_seq (${dbUpdateSeq}) is lower than marker (CouchDB instance was likely replaced), resetting to 0!`
+      );
       return { marker: '0', knownVersions: data.knownVersion };
     }
 
@@ -212,7 +269,9 @@ async function loadLastTransactionMarker(
     if (error.code !== 'NoSuchKey') {
       throw error;
     }
-    console.warn(`Marker object (s3://${stagingBucket}/${MARKER_FILE_NAME}) does not exist, starting from scratch`);
+    console.warn(
+      `Marker object (s3://${stagingBucket}/${MARKER_FILE_NAME}) does not exist, starting from scratch`
+    );
     return { marker: '0', knownVersions: new Map() };
   }
 }
@@ -223,7 +282,12 @@ async function loadLastTransactionMarker(
  * @param marker the last transaction marker value
  * @param knownVersions the map of package name + version to last modified timestamp of packages that have been processed.
  */
-async function saveLastTransactionMarker(context: Context, stagingBucket: string, marker: string | number, knownVersions: Map<string, Date>) {
+async function saveLastTransactionMarker(
+  context: Context,
+  stagingBucket: string,
+  marker: string | number,
+  knownVersions: Map<string, Date>
+) {
   console.log(`Updating last transaction marker to ${marker}`);
   return putObject(
     context,
@@ -240,11 +304,11 @@ async function saveLastTransactionMarker(context: Context, stagingBucket: string
           return value;
         }
       },
-      2,
+      2
     ),
     {
       ContentType: 'application/json',
-    },
+    }
   );
 }
 //#endregion
@@ -259,19 +323,28 @@ async function saveLastTransactionMarker(context: Context, stagingBucket: string
  *
  * @returns the result of the S3 request.
  */
-function putObject(context: Context, bucket: string, key: string, body: AWS.S3.Body, opts: Omit<AWS.S3.PutObjectRequest, 'Bucket' | 'Key' | 'Body'> = {}) {
-  return aws.s3().putObject({
-    Bucket: bucket,
-    Key: key,
-    Body: body,
-    Metadata: {
-      'Lambda-Log-Group': context.logGroupName,
-      'Lambda-Log-Stream': context.logStreamName,
-      'Lambda-Run-Id': context.awsRequestId,
-      ...opts.Metadata,
-    },
-    ...opts,
-  }).promise();
+function putObject(
+  context: Context,
+  bucket: string,
+  key: string,
+  body: AWS.S3.Body,
+  opts: Omit<AWS.S3.PutObjectRequest, 'Bucket' | 'Key' | 'Body'> = {}
+) {
+  return aws
+    .s3()
+    .putObject({
+      Bucket: bucket,
+      Key: key,
+      Body: body,
+      Metadata: {
+        'Lambda-Log-Group': context.logGroupName,
+        'Lambda-Log-Stream': context.logStreamName,
+        'Lambda-Run-Id': context.awsRequestId,
+        ...opts.Metadata,
+      },
+      ...opts,
+    })
+    .promise();
 }
 //#endregion
 
@@ -291,37 +364,44 @@ function getRelevantVersionInfos(
   metrics: MetricsLogger,
   denyList: DenyListClient,
   licenseList: LicenseListClient,
-  knownVersions: Map<string, Date>,
+  knownVersions: Map<string, Date>
 ): readonly UpdatedVersion[] {
-
   const result = new Array<UpdatedVersion>();
 
   for (const change of changes) {
     // Filter out all elements that don't have a "name" in the document, as
     // these are schemas, which are not relevant to our business here.
     if (change.doc.name === undefined) {
-      console.error(`[${change.seq}] Changed document contains no 'name': ${change.id}`);
+      console.error(
+        `[${change.seq}] Changed document contains no 'name': ${change.id}`
+      );
       metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
       continue;
     }
 
     // The normalize function change the object in place, if the doc object is invalid it will return undefined
     if (normalizeNPMMetadata(change.doc) === undefined) {
-      console.error(`[${change.seq}] Changed document invalid, npm normalize returned undefined: ${change.id}`);
+      console.error(
+        `[${change.seq}] Changed document invalid, npm normalize returned undefined: ${change.id}`
+      );
       metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
       continue;
     }
 
     // Sometimes, there are no versions in the document. We skip those.
     if (change.doc.versions == null) {
-      console.error(`[${change.seq}] Changed document contains no 'versions': ${change.id}`);
+      console.error(
+        `[${change.seq}] Changed document contains no 'versions': ${change.id}`
+      );
       metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
       continue;
     }
 
     // Sometimes, there is no 'time' entry in the document. We skip those.
     if (change.doc.time == null) {
-      console.error(`[${change.seq}] Changed document contains no 'time': ${change.id}`);
+      console.error(
+        `[${change.seq}] Changed document contains no 'time': ${change.id}`
+      );
       metrics.putMetric(MetricName.UNPROCESSABLE_ENTITY, 1, Unit.Count);
       continue;
     }
@@ -332,7 +412,11 @@ function getRelevantVersionInfos(
       .filter(([key]) => key !== 'created' && key !== 'modified')
       // Parse all the dates to ensure they are comparable
       .map(([version, isoDate]) => [version, new Date(isoDate)] as const);
-    metrics.putMetric(MetricName.PACKAGE_VERSION_COUNT, packageVersionUpdates.length, Unit.Count);
+    metrics.putMetric(
+      MetricName.PACKAGE_VERSION_COUNT,
+      packageVersionUpdates.length,
+      Unit.Count
+    );
 
     for (const [version, modified] of packageVersionUpdates) {
       const knownKey = `${change.doc.name}@${version}`;
@@ -341,25 +425,43 @@ function getRelevantVersionInfos(
         const infos = change.doc.versions[version];
         if (infos == null) {
           // Could be the version in question was un-published.
-          console.log(`[${change.seq}] Could not find info for "${change.doc.name}@${version}". Was it un-published?`);
+          console.log(
+            `[${change.seq}] Could not find info for "${change.doc.name}@${version}". Was it un-published?`
+          );
         } else if (isConstructLibrary(infos)) {
-
           // skip if this package is denied
           const denied = denyList.lookup(infos.name, infos.version);
           if (denied) {
-            console.log(`[${change.seq}] Package denied: ${JSON.stringify(denied)}`);
+            console.log(
+              `[${change.seq}] Package denied: ${JSON.stringify(denied)}`
+            );
             knownVersions.set(knownKey, modified);
             metrics.putMetric(MetricName.DENY_LISTED_COUNT, 1, Unit.Count);
             continue;
           }
 
-          metrics.putMetric(MetricName.PACKAGE_VERSION_AGE, Date.now() - modified.getTime(), Unit.Milliseconds);
-          const isEligible = licenseList.lookup(infos.license ?? 'UNLICENSED') != null;
-          metrics.putMetric(MetricName.INELIGIBLE_LICENSE, isEligible ? 0 : 1, Unit.Count);
+          metrics.putMetric(
+            MetricName.PACKAGE_VERSION_AGE,
+            Date.now() - modified.getTime(),
+            Unit.Milliseconds
+          );
+          const isEligible =
+            licenseList.lookup(infos.license ?? 'UNLICENSED') != null;
+          metrics.putMetric(
+            MetricName.INELIGIBLE_LICENSE,
+            isEligible ? 0 : 1,
+            Unit.Count
+          );
           if (isEligible) {
             result.push({ infos, modified, seq: change.seq });
           } else {
-            console.log(`[${change.seq}] Package "${change.doc.name}@${version}" does not use allow-listed license: ${infos.license ?? 'UNLICENSED'}`);
+            console.log(
+              `[${change.seq}] Package "${
+                change.doc.name
+              }@${version}" does not use allow-listed license: ${
+                infos.license ?? 'UNLICENSED'
+              }`
+            );
             knownVersions.set(knownKey, modified);
           }
         }
@@ -385,13 +487,19 @@ function getRelevantVersionInfos(
       return false;
     }
     // The "constructs" package is a sign of a constructs library
-    return isConstructFrameworkPackage(infos.name)
+    return (
+      isConstructFrameworkPackage(infos.name) ||
       // Recursively apply on dependencies
-      || Object.keys(infos.dependencies ?? {}).some(isConstructFrameworkPackage)
-      || Object.keys(infos.devDependencies ?? {}).some(isConstructFrameworkPackage)
-      || Object.keys(infos.peerDependencies ?? {}).some(isConstructFrameworkPackage)
+      Object.keys(infos.dependencies ?? {}).some(isConstructFrameworkPackage) ||
+      Object.keys(infos.devDependencies ?? {}).some(
+        isConstructFrameworkPackage
+      ) ||
+      Object.keys(infos.peerDependencies ?? {}).some(
+        isConstructFrameworkPackage
+      ) ||
       // Keyword-based fallback
-      || infos.keywords?.some((kw) => CONSTRUCT_KEYWORDS.has(kw));
+      infos.keywords?.some((kw) => CONSTRUCT_KEYWORDS.has(kw))
+    );
   }
 
   /**
@@ -404,24 +512,26 @@ function getRelevantVersionInfos(
     // IMPORTANT NOTE: Prefix matching should only be used for @scope/ names.
 
     // The low-level constructs package
-    return name === 'constructs'
+    return (
+      name === 'constructs' ||
       // AWS CDK Packages
-      || name === 'aws-cdk-lib'
-      || name === 'monocdk'
-      || name.startsWith('@aws-cdk/')
+      name === 'aws-cdk-lib' ||
+      name === 'monocdk' ||
+      name.startsWith('@aws-cdk/') ||
       // CDK8s packages
-      || name === 'cdk8s'
-      || /^cdk8s-plus(?:-(?:17|20|21|22))?$/.test(name)
+      name === 'cdk8s' ||
+      /^cdk8s-plus(?:-(?:17|20|21|22))?$/.test(name) ||
       // CDKTf packages
-      || name === 'cdktf'
-      || name.startsWith('@cdktf/');
+      name === 'cdktf' ||
+      name.startsWith('@cdktf/')
+    );
   }
 }
 
 /**
-  * The scheme of a package version in the update. Includes the package.json keys, as well as some additional npm metadata
-  * @see https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md#version
-  */
+ * The scheme of a package version in the update. Includes the package.json keys, as well as some additional npm metadata
+ * @see https://github.com/npm/registry/blob/master/docs/REGISTRY-API.md#version
+ */
 interface VersionInfo {
   readonly dependencies?: { readonly [name: string]: string };
   readonly devDependencies?: { readonly [name: string]: string };
@@ -456,11 +566,10 @@ interface UpdatedVersion {
 }
 
 interface Document {
-
   /**
    * a List of all Version objects for the package
    */
-  readonly versions: { [key:string]: VersionInfo | undefined };
+  readonly versions: { [key: string]: VersionInfo | undefined };
 
   /**
    * The package's name.

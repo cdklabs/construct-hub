@@ -1,8 +1,7 @@
-import { MatchStyle } from '@aws-cdk/assert';
-import '@aws-cdk/assert/jest';
-import { InterfaceVpcEndpointAwsService, Vpc } from '@aws-cdk/aws-ec2';
-import { Role, ServicePrincipal } from '@aws-cdk/aws-iam';
-import { App, CfnOutput, Stack } from '@aws-cdk/core';
+import { App, CfnOutput, Stack } from 'aws-cdk-lib';
+import { Match, Template } from 'aws-cdk-lib/assertions';
+import { InterfaceVpcEndpointAwsService, Vpc } from 'aws-cdk-lib/aws-ec2';
+import { Role, ServicePrincipal } from 'aws-cdk-lib/aws-iam';
 import { Repository } from '../../codeartifact/repository';
 
 test('basic usage', () => {
@@ -13,29 +12,28 @@ test('basic usage', () => {
   new Repository(stack, 'Repo');
 
   // THEN
-  expect(stack).toMatchTemplate({
-    Resources: {
-      RepoDomainC79FB030: {
-        Type: 'AWS::CodeArtifact::Domain',
-        Properties: {
-          DomainName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
-        },
-      },
-      Repo: {
-        Type: 'AWS::CodeArtifact::Repository',
-        Properties: {
-          DomainName: {
-            'Fn::GetAtt': [
-              'RepoDomainC79FB030',
-              'Name',
-            ],
+  Template.fromStack(stack).templateMatches(
+    Match.objectLike({
+      Resources: {
+        RepoDomainC79FB030: {
+          Type: 'AWS::CodeArtifact::Domain',
+          Properties: {
+            DomainName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
           },
-          RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
-          Upstreams: [{ 'Fn::GetAtt': ['RepoPublishing9FE3D602', 'Name'] }],
+        },
+        Repo: {
+          Type: 'AWS::CodeArtifact::Repository',
+          Properties: {
+            DomainName: {
+              'Fn::GetAtt': ['RepoDomainC79FB030', 'Name'],
+            },
+            RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
+            Upstreams: [{ 'Fn::GetAtt': ['RepoPublishing9FE3D602', 'Name'] }],
+          },
         },
       },
-    },
-  }, MatchStyle.SUPERSET);
+    })
+  );
 });
 
 test('using upstreams', () => {
@@ -43,21 +41,27 @@ test('using upstreams', () => {
   const stack = new Stack();
 
   // WHEN
-  new Repository(stack, 'Repo', { domainExists: true, domainName: 'test-domain', upstreams: ['upstream-1', 'upstream-2'] });
+  new Repository(stack, 'Repo', {
+    domainExists: true,
+    domainName: 'test-domain',
+    upstreams: ['upstream-1', 'upstream-2'],
+  });
 
   // THEN
-  expect(stack).toMatchTemplate({
-    Resources: {
-      Repo: {
-        Type: 'AWS::CodeArtifact::Repository',
-        Properties: {
-          DomainName: 'test-domain',
-          RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
-          Upstreams: ['upstream-1', 'upstream-2'],
+  Template.fromStack(stack).templateMatches(
+    Match.objectLike({
+      Resources: {
+        Repo: {
+          Type: 'AWS::CodeArtifact::Repository',
+          Properties: {
+            DomainName: 'test-domain',
+            RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
+            Upstreams: ['upstream-1', 'upstream-2'],
+          },
         },
       },
-    },
-  }, MatchStyle.SUPERSET);
+    })
+  );
 });
 
 test('external connection', () => {
@@ -68,46 +72,42 @@ test('external connection', () => {
   new Repository(stack, 'Repo').addExternalConnection('public:npmjs');
 
   // THEN
-  expect(stack).toMatchTemplate({
-    Resources: {
-      RepoDomainC79FB030: {
-        Type: 'AWS::CodeArtifact::Domain',
-        Properties: {
-          DomainName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
+  Template.fromStack(stack).templateMatches(
+    Match.objectLike({
+      Resources: {
+        RepoDomainC79FB030: {
+          Type: 'AWS::CodeArtifact::Domain',
+          Properties: {
+            DomainName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
+          },
         },
-      },
-      Repo: {
-        Type: 'AWS::CodeArtifact::Repository',
-        Properties: {
-          DomainName: {
-            'Fn::GetAtt': [
-              'RepoDomainC79FB030',
-              'Name',
+        Repo: {
+          Type: 'AWS::CodeArtifact::Repository',
+          Properties: {
+            DomainName: {
+              'Fn::GetAtt': ['RepoDomainC79FB030', 'Name'],
+            },
+            RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
+            Upstreams: [
+              { 'Fn::GetAtt': ['RepoUpstreampublicnpmjsA8B06E28', 'Name'] },
+              { 'Fn::GetAtt': ['RepoPublishing9FE3D602', 'Name'] },
             ],
           },
-          RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
-          Upstreams: [
-            { 'Fn::GetAtt': ['RepoUpstreampublicnpmjsA8B06E28', 'Name'] },
-            { 'Fn::GetAtt': ['RepoPublishing9FE3D602', 'Name'] },
-          ],
         },
-      },
-      RepoUpstreampublicnpmjsA8B06E28: {
-        Type: 'AWS::CodeArtifact::Repository',
-        Properties: {
-          Description: 'Upstream with external connection to public:npmjs',
-          DomainName: {
-            'Fn::GetAtt': [
-              'RepoDomainC79FB030',
-              'Name',
-            ],
+        RepoUpstreampublicnpmjsA8B06E28: {
+          Type: 'AWS::CodeArtifact::Repository',
+          Properties: {
+            Description: 'Upstream with external connection to public:npmjs',
+            DomainName: {
+              'Fn::GetAtt': ['RepoDomainC79FB030', 'Name'],
+            },
+            RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907-npmjs',
+            ExternalConnections: ['public:npmjs'],
           },
-          RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907-npmjs',
-          ExternalConnections: ['public:npmjs'],
         },
       },
-    },
-  }, MatchStyle.SUPERSET);
+    })
+  );
 });
 
 test('custom domain name', () => {
@@ -118,31 +118,28 @@ test('custom domain name', () => {
   new Repository(stack, 'Repo', { domainName: 'custom-domain' });
 
   // THEN
-  expect(stack).toMatchTemplate({
-    Resources: {
-      RepoDomainC79FB030: {
-        Type: 'AWS::CodeArtifact::Domain',
-        Properties: {
-          DomainName: 'custom-domain',
-        },
-      },
-      Repo: {
-        Type: 'AWS::CodeArtifact::Repository',
-        Properties: {
-          DomainName: {
-            'Fn::GetAtt': [
-              'RepoDomainC79FB030',
-              'Name',
-            ],
+  Template.fromStack(stack).templateMatches(
+    Match.objectLike({
+      Resources: {
+        RepoDomainC79FB030: {
+          Type: 'AWS::CodeArtifact::Domain',
+          Properties: {
+            DomainName: 'custom-domain',
           },
-          RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
-          Upstreams: [
-            { 'Fn::GetAtt': ['RepoPublishing9FE3D602', 'Name'] },
-          ],
+        },
+        Repo: {
+          Type: 'AWS::CodeArtifact::Repository',
+          Properties: {
+            DomainName: {
+              'Fn::GetAtt': ['RepoDomainC79FB030', 'Name'],
+            },
+            RepositoryName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
+            Upstreams: [{ 'Fn::GetAtt': ['RepoPublishing9FE3D602', 'Name'] }],
+          },
         },
       },
-    },
-  }, MatchStyle.SUPERSET);
+    })
+  );
 });
 
 test('custom repository name', () => {
@@ -153,29 +150,28 @@ test('custom repository name', () => {
   new Repository(stack, 'Repo', { repositoryName: 'custom-repo' });
 
   // THEN
-  expect(stack).toMatchTemplate({
-    Resources: {
-      RepoDomainC79FB030: {
-        Type: 'AWS::CodeArtifact::Domain',
-        Properties: {
-          DomainName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
-        },
-      },
-      Repo: {
-        Type: 'AWS::CodeArtifact::Repository',
-        Properties: {
-          DomainName: {
-            'Fn::GetAtt': [
-              'RepoDomainC79FB030',
-              'Name',
-            ],
+  Template.fromStack(stack).templateMatches(
+    Match.objectLike({
+      Resources: {
+        RepoDomainC79FB030: {
+          Type: 'AWS::CodeArtifact::Domain',
+          Properties: {
+            DomainName: 'c8d064061d1c8680a574cd5a9f9c9c69b475d41907',
           },
-          RepositoryName: 'custom-repo',
-          Upstreams: [{ 'Fn::GetAtt': ['RepoPublishing9FE3D602', 'Name'] }],
+        },
+        Repo: {
+          Type: 'AWS::CodeArtifact::Repository',
+          Properties: {
+            DomainName: {
+              'Fn::GetAtt': ['RepoDomainC79FB030', 'Name'],
+            },
+            RepositoryName: 'custom-repo',
+            Upstreams: [{ 'Fn::GetAtt': ['RepoPublishing9FE3D602', 'Name'] }],
+          },
         },
       },
-    },
-  }, MatchStyle.SUPERSET);
+    })
+  );
 });
 
 test('custom domain & repository name', () => {
@@ -183,32 +179,34 @@ test('custom domain & repository name', () => {
   const stack = new Stack();
 
   // WHEN
-  new Repository(stack, 'Repo', { domainName: 'custom-domain', repositoryName: 'custom-repo' });
+  new Repository(stack, 'Repo', {
+    domainName: 'custom-domain',
+    repositoryName: 'custom-repo',
+  });
 
   // THEN
-  expect(stack).toMatchTemplate({
-    Resources: {
-      RepoDomainC79FB030: {
-        Type: 'AWS::CodeArtifact::Domain',
-        Properties: {
-          DomainName: 'custom-domain',
-        },
-      },
-      Repo: {
-        Type: 'AWS::CodeArtifact::Repository',
-        Properties: {
-          DomainName: {
-            'Fn::GetAtt': [
-              'RepoDomainC79FB030',
-              'Name',
-            ],
+  Template.fromStack(stack).templateMatches(
+    Match.objectLike({
+      Resources: {
+        RepoDomainC79FB030: {
+          Type: 'AWS::CodeArtifact::Domain',
+          Properties: {
+            DomainName: 'custom-domain',
           },
-          RepositoryName: 'custom-repo',
-          Upstreams: [{ 'Fn::GetAtt': ['RepoPublishing9FE3D602', 'Name'] }],
+        },
+        Repo: {
+          Type: 'AWS::CodeArtifact::Repository',
+          Properties: {
+            DomainName: {
+              'Fn::GetAtt': ['RepoDomainC79FB030', 'Name'],
+            },
+            RepositoryName: 'custom-repo',
+            Upstreams: [{ 'Fn::GetAtt': ['RepoPublishing9FE3D602', 'Name'] }],
+          },
         },
       },
-    },
-  }, MatchStyle.SUPERSET);
+    })
+  );
 });
 
 test('npm repository endpoint', () => {
@@ -218,7 +216,9 @@ test('npm repository endpoint', () => {
 
   // WHEN
   const repo = new Repository(stack, 'Repo');
-  new CfnOutput(stack, 'NpmRepositoryEndpoint', { value: repo.repositoryNpmEndpoint });
+  new CfnOutput(stack, 'NpmRepositoryEndpoint', {
+    value: repo.repositoryNpmEndpoint,
+  });
 
   // THEN
   expect(app.synth().getStackByName(stack.stackName).template).toMatchSnapshot({
@@ -269,31 +269,42 @@ test('grantReadFromRepository', () => {
   // GIVEN
   const app = new App();
   const stack = new Stack(app, 'TestStack');
-  const role = new Role(stack, 'Role', { assumedBy: new ServicePrincipal('test.service-principal') });
+  const role = new Role(stack, 'Role', {
+    assumedBy: new ServicePrincipal('test.service-principal'),
+  });
   const repo = new Repository(stack, 'Repo');
 
   // WHEN
   repo.grantReadFromRepository(role);
 
   // THEN
-  expect(stack).toHaveResource('AWS::IAM::Policy', {
+  Template.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
     PolicyDocument: {
-      Statement: [{
-        Action: 'sts:GetServiceBearerToken',
-        Condition: {
-          StringEquals: { 'sts:AWSServiceName': 'codeartifact.amazonaws.com' },
+      Statement: [
+        {
+          Action: 'sts:GetServiceBearerToken',
+          Condition: {
+            StringEquals: {
+              'sts:AWSServiceName': 'codeartifact.amazonaws.com',
+            },
+          },
+          Effect: 'Allow',
+          Resource: '*',
         },
-        Effect: 'Allow',
-        Resource: '*',
-      }, {
-        Action: ['codeartifact:GetAuthorizationToken', 'codeartifact:GetRepositoryEndpoint', 'codeartifact:ReadFromRepository'],
-        Effect: 'Allow',
-        Resource: [
-          stack.resolve(repo.repositoryDomainArn),
-          stack.resolve(repo.repositoryArn),
-          stack.resolve(repo.publishingRepositoryArn),
-        ],
-      }],
+        {
+          Action: [
+            'codeartifact:GetAuthorizationToken',
+            'codeartifact:GetRepositoryEndpoint',
+            'codeartifact:ReadFromRepository',
+          ],
+          Effect: 'Allow',
+          Resource: [
+            stack.resolve(repo.repositoryDomainArn),
+            stack.resolve(repo.repositoryArn),
+            stack.resolve(repo.publishingRepositoryArn),
+          ],
+        },
+      ],
       Version: '2012-10-17',
     },
     PolicyName: 'RoleDefaultPolicy5FFB7DAB',
@@ -313,7 +324,9 @@ test('throughVpcEndpoint', () => {
     service: new InterfaceVpcEndpointAwsService('codeartifact.repositories'),
   });
 
-  const role = new Role(stack, 'Role', { assumedBy: new ServicePrincipal('test.service-principal') });
+  const role = new Role(stack, 'Role', {
+    assumedBy: new ServicePrincipal('test.service-principal'),
+  });
   const repo = new Repository(stack, 'Repo');
   const vpcRepo = repo.throughVpcEndpoint(api, repositories);
 
@@ -323,64 +336,87 @@ test('throughVpcEndpoint', () => {
   // THEN
   expect(vpcRepo.repositoryDomainOwner).toBe(repo.repositoryDomainOwner); // Example pass-through...
 
-  expect(stack).toHaveResource('AWS::IAM::Policy', {
+  Template.fromStack(stack).hasResourceProperties('AWS::IAM::Policy', {
     PolicyDocument: {
-      Statement: [{
-        Action: 'sts:GetServiceBearerToken',
-        Condition: {
-          StringEquals: { 'sts:AWSServiceName': 'codeartifact.amazonaws.com' },
+      Statement: [
+        {
+          Action: 'sts:GetServiceBearerToken',
+          Condition: {
+            StringEquals: {
+              'sts:AWSServiceName': 'codeartifact.amazonaws.com',
+            },
+          },
+          Effect: 'Allow',
+          Resource: '*',
         },
-        Effect: 'Allow',
-        Resource: '*',
-      }, {
-        Action: ['codeartifact:GetAuthorizationToken', 'codeartifact:GetRepositoryEndpoint', 'codeartifact:ReadFromRepository'],
-        Effect: 'Allow',
-        Resource: [
-          stack.resolve(repo.repositoryDomainArn),
-          stack.resolve(repo.repositoryArn),
-          stack.resolve(repo.publishingRepositoryArn),
-        ],
-      }],
+        {
+          Action: [
+            'codeartifact:GetAuthorizationToken',
+            'codeartifact:GetRepositoryEndpoint',
+            'codeartifact:ReadFromRepository',
+          ],
+          Effect: 'Allow',
+          Resource: [
+            stack.resolve(repo.repositoryDomainArn),
+            stack.resolve(repo.repositoryArn),
+            stack.resolve(repo.publishingRepositoryArn),
+          ],
+        },
+      ],
       Version: '2012-10-17',
     },
     PolicyName: 'RoleDefaultPolicy5FFB7DAB',
     Roles: [stack.resolve(role.roleName)],
   });
 
-  expect(stack).toHaveResource('AWS::EC2::VPCEndpoint', {
+  Template.fromStack(stack).hasResourceProperties('AWS::EC2::VPCEndpoint', {
     PolicyDocument: {
-      Statement: [{
-        Action: 'sts:GetServiceBearerToken',
-        Condition: {
-          StringEquals: { 'sts:AWSServiceName': 'codeartifact.amazonaws.com' },
+      Statement: [
+        {
+          Action: 'sts:GetServiceBearerToken',
+          Condition: {
+            StringEquals: {
+              'sts:AWSServiceName': 'codeartifact.amazonaws.com',
+            },
+          },
+          Effect: 'Allow',
+          Principal: { AWS: stack.resolve(role.roleArn) },
+          Resource: '*',
         },
-        Effect: 'Allow',
-        Principal: { AWS: stack.resolve(role.roleArn) },
-        Resource: '*',
-      }, {
-        Action: ['codeartifact:GetAuthorizationToken', 'codeartifact:GetRepositoryEndpoint'],
-        Effect: 'Allow',
-        Principal: { AWS: stack.resolve(role.roleArn) },
-        Resource: [
-          stack.resolve(repo.repositoryDomainArn),
-          stack.resolve(repo.repositoryArn),
-        ],
-      }],
+        {
+          Action: [
+            'codeartifact:GetAuthorizationToken',
+            'codeartifact:GetRepositoryEndpoint',
+          ],
+          Effect: 'Allow',
+          Principal: { AWS: stack.resolve(role.roleArn) },
+          Resource: [
+            stack.resolve(repo.repositoryDomainArn),
+            stack.resolve(repo.repositoryArn),
+          ],
+        },
+      ],
       Version: '2012-10-17',
     },
-    ServiceName: stack.resolve(`com.amazonaws.${stack.region}.codeartifact.api`),
+    ServiceName: stack.resolve(
+      `com.amazonaws.${stack.region}.codeartifact.api`
+    ),
   });
 
-  expect(stack).toHaveResource('AWS::EC2::VPCEndpoint', {
+  Template.fromStack(stack).hasResourceProperties('AWS::EC2::VPCEndpoint', {
     PolicyDocument: {
-      Statement: [{
-        Action: 'codeartifact:ReadFromRepository',
-        Effect: 'Allow',
-        Principal: { AWS: stack.resolve(role.roleArn) },
-        Resource: stack.resolve(repo.repositoryArn),
-      }],
+      Statement: [
+        {
+          Action: 'codeartifact:ReadFromRepository',
+          Effect: 'Allow',
+          Principal: { AWS: stack.resolve(role.roleArn) },
+          Resource: stack.resolve(repo.repositoryArn),
+        },
+      ],
       Version: '2012-10-17',
     },
-    ServiceName: stack.resolve(`com.amazonaws.${stack.region}.codeartifact.repositories`),
+    ServiceName: stack.resolve(
+      `com.amazonaws.${stack.region}.codeartifact.repositories`
+    ),
   });
 });

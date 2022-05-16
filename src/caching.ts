@@ -1,5 +1,5 @@
-import { CacheControl } from '@aws-cdk/aws-s3-deployment';
-import { Duration } from '@aws-cdk/core';
+import { Duration } from 'aws-cdk-lib';
+import { CacheControl } from 'aws-cdk-lib/aws-s3-deployment';
 
 /**
  * Caching policies for serving data for the Construct Hub web app.
@@ -21,7 +21,7 @@ export class CacheStrategy {
   private constructor(private readonly cacheControl: CacheControl[]) {}
 
   public toString() {
-    return this.cacheControl.map(c => c.value).join(', ');
+    return this.cacheControl.map((c) => c.value).join(', ');
   }
 
   public toArray() {

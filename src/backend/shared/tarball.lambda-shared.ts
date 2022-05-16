@@ -17,7 +17,10 @@ import { extract } from 'tar-stream';
  *
  * @returns the extracted objects.
  */
-export async function extractObjects<S extends Selector>(tgz: Buffer, selector: S): Promise<Selection<S>> {
+export async function extractObjects<S extends Selector>(
+  tgz: Buffer,
+  selector: S
+): Promise<Selection<S>> {
   const tarball = await gunzip(tgz);
   return new Promise((ok, ko) => {
     const result: { [name: string]: Buffer } = {};
@@ -29,7 +32,11 @@ export async function extractObjects<S extends Selector>(tgz: Buffer, selector: 
             continue;
           }
           if (!(name in result)) {
-            const err = new Error(`Missing required entry in tarball: ${name} (${path ?? '<dynamic>'})`);
+            const err = new Error(
+              `Missing required entry in tarball: ${name} (${
+                path ?? '<dynamic>'
+              })`
+            );
             Error.captureStackTrace(err);
             ko(err);
             return;
@@ -41,7 +48,8 @@ export async function extractObjects<S extends Selector>(tgz: Buffer, selector: 
         for (const [name, config] of Object.entries(selector)) {
           if (selectorMatches(headers.name, config)) {
             const chunks = new Array<Buffer>();
-            stream.once('error', ko)
+            stream
+              .once('error', ko)
               .on('data', (chunk) => chunks.push(Buffer.from(chunk)))
               .once('end', () => {
                 result[name] = Buffer.concat(chunks);
@@ -69,7 +77,7 @@ function gunzip(gz: Buffer): Promise<Buffer> {
     const chunks = new Array<Buffer>();
     createGunzip()
       .once('error', ko)
-      .on('data', chunk => chunks.push(Buffer.from(chunk)))
+      .on('data', (chunk) => chunks.push(Buffer.from(chunk)))
       .once('end', () => ok(Buffer.concat(chunks)))
       .end(gz);
   });
@@ -85,9 +93,13 @@ function selectorMatches(path: string, config: SelectorProperty): boolean {
 interface Selector {
   readonly [name: string]: SelectorProperty;
 }
-type SelectorProperty = { readonly required?: boolean }
-& ({ readonly path: string } | { readonly path?: undefined; readonly filter: (path: string) => boolean });
+type SelectorProperty = { readonly required?: boolean } & (
+  | { readonly path: string }
+  | { readonly path?: undefined; readonly filter: (path: string) => boolean }
+);
 
 type Selection<S extends Selector> = {
-  readonly [P in keyof S]: S[P] extends { readonly required: true } ? Buffer : Buffer | undefined;
+  readonly [P in keyof S]: S[P] extends { readonly required: true }
+    ? Buffer
+    : Buffer | undefined;
 };

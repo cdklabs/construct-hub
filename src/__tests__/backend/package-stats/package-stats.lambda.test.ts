@@ -15,9 +15,11 @@ let mockStatsKey: string | undefined;
 jest.mock('got');
 
 beforeEach((done) => {
-  process.env.CATALOG_BUCKET_NAME = mockCatalogBucket = randomBytes(16).toString('base64');
+  process.env.CATALOG_BUCKET_NAME = mockCatalogBucket =
+    randomBytes(16).toString('base64');
   process.env.CATALOG_OBJECT_KEY = mockCatalogKey = 'my-catalog.json';
-  process.env.STATS_BUCKET_NAME = mockBucketName = randomBytes(16).toString('base64');
+  process.env.STATS_BUCKET_NAME = mockBucketName =
+    randomBytes(16).toString('base64');
   process.env.STATS_OBJECT_KEY = mockStatsKey = 'my-stats.json';
   AWSMock.setSDKInstance(AWS);
   done();
@@ -49,86 +51,98 @@ const initialNameV2 = {
   version: '2.0.0-pre.10',
 };
 const initialCatalog = {
-  packages: [
-    initialScopePackageV2,
-    initialNameV1,
-    initialNameV2,
-  ],
+  packages: [initialScopePackageV2, initialNameV1, initialNameV2],
   updatedAt: new Date().toISOString(),
 };
 
 test('full build', () => {
   // GIVEN
-  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-    try {
-      expect(req.Bucket).toBe(mockCatalogBucket);
-    } catch (e) {
-      return cb(e as AWSError);
-    }
+  AWSMock.mock(
+    'S3',
+    'getObject',
+    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      try {
+        expect(req.Bucket).toBe(mockCatalogBucket);
+      } catch (e) {
+        return cb(e as AWSError);
+      }
 
-    if (req.Key === mockCatalogKey) {
-      return cb(null, { Body: JSON.stringify(initialCatalog) });
-    } else if (req.Key === mockStatsKey) {
-      // suppose we are building for the first time
-      return cb(new NoSuchKeyError());
-    } else {
-      return cb(new NoSuchKeyError());
+      if (req.Key === mockCatalogKey) {
+        return cb(null, { Body: JSON.stringify(initialCatalog) });
+      } else if (req.Key === mockStatsKey) {
+        // suppose we are building for the first time
+        return cb(new NoSuchKeyError());
+      } else {
+        return cb(new NoSuchKeyError());
+      }
     }
-  });
+  );
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockGot = require('got') as jest.MockedFunction<Got>;
   // two API calls to NPM downloads API since one of the packages is scoped
   // so the bulk API can't be used
-  mockGot.mockImplementationOnce(() => Promise.resolve({
-    body: JSON.stringify({
-      downloads: 1000,
-      package: '@scope/package',
-      start: 'start-date',
-      end: 'end-date',
-    }),
-  }) as any);
-  mockGot.mockImplementationOnce(() => Promise.resolve({
-    body: JSON.stringify({
-      downloads: 2000,
-      package: 'name',
-      start: 'start-date',
-      end: 'end-date',
-    }),
-  }) as any);
+  mockGot.mockImplementationOnce(
+    () =>
+      Promise.resolve({
+        body: JSON.stringify({
+          downloads: 1000,
+          package: '@scope/package',
+          start: 'start-date',
+          end: 'end-date',
+        }),
+      }) as any
+  );
+  mockGot.mockImplementationOnce(
+    () =>
+      Promise.resolve({
+        body: JSON.stringify({
+          downloads: 2000,
+          package: 'name',
+          start: 'start-date',
+          end: 'end-date',
+        }),
+      }) as any
+  );
 
   const mockPutObjectResult: AWS.S3.PutObjectOutput = {};
-  AWSMock.mock('S3', 'putObject', (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-    try {
-      expect(req.Bucket).toBe(mockBucketName);
-      expect(req.Key).toBe(mockStatsKey);
-      expect(req.ContentType).toBe('application/json');
-      expect(req.Metadata).toHaveProperty('Package-Stats-Count', '2');
-      const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
-      expect(body).toEqual({
-        packages: {
-          '@scope/package': {
-            downloads: {
-              npm: 1000,
+  AWSMock.mock(
+    'S3',
+    'putObject',
+    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
+      try {
+        expect(req.Bucket).toBe(mockBucketName);
+        expect(req.Key).toBe(mockStatsKey);
+        expect(req.ContentType).toBe('application/json');
+        expect(req.Metadata).toHaveProperty('Package-Stats-Count', '2');
+        const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
+        expect(body).toEqual({
+          packages: {
+            '@scope/package': {
+              downloads: {
+                npm: 1000,
+              },
+            },
+            name: {
+              downloads: {
+                npm: 2000,
+              },
             },
           },
-          'name': {
-            downloads: {
-              npm: 2000,
-            },
-          },
-        },
-        updated: expect.anything(),
-      });
-      expect(Date.parse(body.updated)).toBeDefined();
-    } catch (e) {
-      return cb(e as AWSError);
+          updated: expect.anything(),
+        });
+        expect(Date.parse(body.updated)).toBeDefined();
+      } catch (e) {
+        return cb(e as AWSError);
+      }
+      return cb(null, mockPutObjectResult);
     }
-    return cb(null, mockPutObjectResult);
-  });
+  );
 
   // WHEN
-  const result = handler({}, { /* context */ } as any);
+  const result = handler({}, {
+    /* context */
+  } as any);
 
   // THEN
   return expect(result).resolves.toBe(mockPutObjectResult);
@@ -136,18 +150,26 @@ test('full build', () => {
 
 test('errors if no catalog found', async () => {
   // GIVEN
-  AWSMock.mock('S3', 'getObject', (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-    try {
-      expect(req.Bucket).toBe(mockCatalogBucket);
-      expect(req.Key).toBe(mockCatalogKey);
-      return cb(new NoSuchKeyError());
-    } catch (e) {
-      return cb(e as AWSError);
+  AWSMock.mock(
+    'S3',
+    'getObject',
+    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      try {
+        expect(req.Bucket).toBe(mockCatalogBucket);
+        expect(req.Key).toBe(mockCatalogKey);
+        return cb(new NoSuchKeyError());
+      } catch (e) {
+        return cb(e as AWSError);
+      }
     }
-  });
+  );
 
   // THEN
-  return expect(handler({}, { /* context */ } as any)).rejects.toThrow(/No catalog was found/);
+  return expect(
+    handler({}, {
+      /* context */
+    } as any)
+  ).rejects.toThrow(/No catalog was found/);
 });
 
 type Response<T> = (err: AWS.AWSError | null, data?: T) => void;

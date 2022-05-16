@@ -1,11 +1,11 @@
-import { CfnRepository } from '@aws-cdk/aws-codeartifact';
-import { ICluster } from '@aws-cdk/aws-ecs';
-import { IFunction } from '@aws-cdk/aws-lambda';
-import { ILogGroup } from '@aws-cdk/aws-logs';
-import { IBucket } from '@aws-cdk/aws-s3';
-import { IQueue } from '@aws-cdk/aws-sqs';
-import { IStateMachine } from '@aws-cdk/aws-stepfunctions';
-import { Fn, Stack } from '@aws-cdk/core';
+import { Fn, Stack } from 'aws-cdk-lib';
+import { CfnRepository } from 'aws-cdk-lib/aws-codeartifact';
+import { ICluster } from 'aws-cdk-lib/aws-ecs';
+import { IFunction } from 'aws-cdk-lib/aws-lambda';
+import { ILogGroup } from 'aws-cdk-lib/aws-logs';
+import { IBucket } from 'aws-cdk-lib/aws-s3';
+import { IQueue } from 'aws-cdk-lib/aws-sqs';
+import { IStateMachine } from 'aws-cdk-lib/aws-stepfunctions';
 
 export function codeArtifactRepositoryUrl(repository: CfnRepository) {
   return `/codesuite/codeartifact/d/${repository.attrDomainOwner}/${repository.attrDomainName}/r/${repository.attrName}`;
@@ -24,7 +24,10 @@ export function lambdaSearchLogGroupUrl(lambda: IFunction): string {
 }
 
 export function logGroupUrl(logGroup: ILogGroup): string {
-  return `/cloudwatch/home#logsV2:log-groups/log-group/${Fn.join('%252', Fn.split('/', logGroup.logGroupName))}`;
+  return `/cloudwatch/home#logsV2:log-groups/log-group/${Fn.join(
+    '%252',
+    Fn.split('/', logGroup.logGroupName)
+  )}`;
 }
 
 export function s3ObjectUrl(bucket: IBucket, objectKey?: string): string {

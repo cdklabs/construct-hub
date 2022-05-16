@@ -1,10 +1,10 @@
-import * as acm from '@aws-cdk/aws-certificatemanager';
-import * as cf from '@aws-cdk/aws-cloudfront';
-import * as origins from '@aws-cdk/aws-cloudfront-origins';
-import * as route53 from '@aws-cdk/aws-route53';
-import * as route53_targets from '@aws-cdk/aws-route53-targets';
-import * as s3 from '@aws-cdk/aws-s3';
-import { Construct as CoreConstruct, Stack } from '@aws-cdk/core';
+import { Stack } from 'aws-cdk-lib';
+import * as acm from 'aws-cdk-lib/aws-certificatemanager';
+import * as cf from 'aws-cdk-lib/aws-cloudfront';
+import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
+import * as route53 from 'aws-cdk-lib/aws-route53';
+import * as route53_targets from 'aws-cdk-lib/aws-route53-targets';
+import * as s3 from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 
 /**
@@ -25,7 +25,7 @@ export interface DomainRedirectProps {
 /**
  * Redirects one domain to another domain using S3 and CloudFront.
  */
-export class DomainRedirect extends CoreConstruct {
+export class DomainRedirect extends Construct {
   constructor(scope: Construct, id: string, props: DomainRedirectProps) {
     super(scope, id);
 
@@ -33,10 +33,12 @@ export class DomainRedirect extends CoreConstruct {
 
     const sourceDomainName = props.source.hostedZone.zoneName;
 
-    const cert = props.source.certificate ?? new acm.DnsValidatedCertificate(this, 'Certificate', {
-      domainName: sourceDomainName,
-      hostedZone: props.source.hostedZone,
-    });
+    const cert =
+      props.source.certificate ??
+      new acm.DnsValidatedCertificate(this, 'Certificate', {
+        domainName: sourceDomainName,
+        hostedZone: props.source.hostedZone,
+      });
 
     const dist = new cf.Distribution(this, 'Distribution', {
       domainNames: [sourceDomainName],
@@ -48,14 +50,18 @@ export class DomainRedirect extends CoreConstruct {
     // IPv4
     new route53.ARecord(this, 'ARecord', {
       zone: props.source.hostedZone,
-      target: route53.RecordTarget.fromAlias(new route53_targets.CloudFrontTarget(dist)),
+      target: route53.RecordTarget.fromAlias(
+        new route53_targets.CloudFrontTarget(dist)
+      ),
       comment: 'Created by the AWS CDK',
     });
 
     // IPv6
     new route53.AaaaRecord(this, 'AaaaRecord', {
       zone: props.source.hostedZone,
-      target: route53.RecordTarget.fromAlias(new route53_targets.CloudFrontTarget(dist)),
+      target: route53.RecordTarget.fromAlias(
+        new route53_targets.CloudFrontTarget(dist)
+      ),
       comment: 'Created by the AWS CDK',
     });
   }
@@ -69,11 +75,14 @@ export class DomainRedirect extends CoreConstruct {
   private getOrCreateBucket(domainName: string): s3.Bucket {
     const buckets = this.getOrCreateBucketsScope();
     const id = `RedirectBucket-${domainName}`;
-    return buckets.node.tryFindChild(id) as s3.Bucket | undefined ?? new s3.Bucket(buckets, id, {
-      websiteRedirect: {
-        hostName: domainName,
-      },
-    });
+    return (
+      (buckets.node.tryFindChild(id) as s3.Bucket | undefined) ??
+      new s3.Bucket(buckets, id, {
+        websiteRedirect: {
+          hostName: domainName,
+        },
+      })
+    );
   }
 
   /**
@@ -82,10 +91,13 @@ export class DomainRedirect extends CoreConstruct {
    *
    * @returns A construct
    */
-  private getOrCreateBucketsScope(): CoreConstruct {
+  private getOrCreateBucketsScope(): Construct {
     const stack = Stack.of(this);
     const scopeId = 'DomainRedirectBucketsA177hj';
-    return stack.node.tryFindChild(scopeId) as CoreConstruct | undefined ?? new CoreConstruct(stack, scopeId);
+    return (
+      (stack.node.tryFindChild(scopeId) as Construct | undefined) ??
+      new Construct(stack, scopeId)
+    );
   }
 }
 

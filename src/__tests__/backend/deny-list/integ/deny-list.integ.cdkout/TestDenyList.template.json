@@ -128,7 +128,7 @@
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": "15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538.zip"
+          "S3Key": "483ae06ed27ef8ca76e011264d772420593a6cfe8544759c306ef3b98c9e25be.zip"
         },
         "Timeout": 900,
         "MemorySize": 128,
@@ -158,7 +158,7 @@
       ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler",
-        "aws:asset:path": "asset.15684a15d07860e99d2a8079150ad33dd2cb743677fcd7016dd07345e1b69538",
+        "aws:asset:path": "asset.483ae06ed27ef8ca76e011264d772420593a6cfe8544759c306ef3b98c9e25be",
         "aws:asset:property": "Code"
       }
     },
@@ -169,13 +169,13 @@
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": "d78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27.zip"
+          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip"
         },
         "Description": "/opt/awscli/aws"
       },
       "Metadata": {
         "aws:cdk:path": "TestDenyList/MockData/AwsCliLayer/Resource",
-        "aws:asset:path": "asset.d78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27.zip",
+        "aws:asset:path": "asset.55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
         "aws:asset:is-bundled": false,
         "aws:asset:property": "Content"
       }
@@ -294,7 +294,11 @@
                 "s3:GetBucket*",
                 "s3:List*",
                 "s3:DeleteObject*",
-                "s3:PutObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
                 "s3:Abort*"
               ],
               "Effect": "Allow",
@@ -327,7 +331,11 @@
                 "s3:GetBucket*",
                 "s3:List*",
                 "s3:DeleteObject*",
-                "s3:PutObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
                 "s3:Abort*"
               ],
               "Effect": "Allow",
@@ -694,6 +702,71 @@
       },
       "Metadata": {
         "aws:cdk:path": "TestDenyList/Monitoring/HighSeverityDashboard/Resource"
+      }
+    },
+    "OverviewDashboardOverviewdashboard17E450B5": {
+      "Type": "AWS::CloudWatch::Dashboard",
+      "Properties": {
+        "DashboardBody": {
+          "Fn::Join": [
+            "",
+            [
+              "{\"widgets\":[{\"type\":\"metric\",\"width\":12,\"height\":8,\"x\":0,\"y\":0,\"properties\":{\"view\":\"timeSeries\",\"title\":\"Lambda concurrent execution quota\",\"region\":\"",
+              {
+                "Ref": "AWS::Region"
+              },
+              "\",\"metrics\":[[{\"label\":\"Concurrent executions quota usage %\",\"expression\":\"mLambdaUsage / mLambdaQuota * 100\",\"yAxis\":\"right\"}],[\"AWS/Lambda\",\"ConcurrentExecutions\",{\"stat\":\"Maximum\",\"visible\":false,\"id\":\"mLambdaUsage\"}],[{\"expression\":\"SERVICE_QUOTA(mLambdaUsage)\",\"visible\":false,\"id\":\"mLambdaQuota\"}],[{\"label\":\"PruneHandlerLambda quota usage %\",\"expression\":\"m1 / mLambdaQuota * 100\",\"yAxis\":\"right\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
+              {
+                "Ref": "DenyListPrunePruneHandler5F946B07"
+              },
+              "\",{\"label\":\"PruneHandlerLambda\",\"stat\":\"Maximum\",\"visible\":false,\"id\":\"m1\"}],[{\"expression\":\"SERVICE_QUOTA(mLambdaUsage)\",\"visible\":false,\"id\":\"lambdaQuotaLimit\"}],[{\"label\":\"PruneQueueHandlerLambda quota usage %\",\"expression\":\"m2 / mLambdaQuota * 100\",\"yAxis\":\"right\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"",
+              {
+                "Ref": "DenyListPrunePruneQueueHandler087D6B50"
+              },
+              "\",{\"label\":\"PruneQueueHandlerLambda\",\"stat\":\"Maximum\",\"visible\":false,\"id\":\"m2\"}]],\"annotations\":{\"horizontal\":[{\"value\":70,\"yAxis\":\"right\"}]},\"yAxis\":{\"right\":{\"label\":\"Quota Percent\",\"min\":0,\"max\":100}}}}]}"
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/OverviewDashboard/Overview dashboard/Resource"
+      }
+    },
+    "OverviewDashboardOverviewDashboardlambdaServiceQuotaAA204E67": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "ComparisonOperator": "GreaterThanThreshold",
+        "EvaluationPeriods": 5,
+        "AlarmDescription": "Lambda concurrent execution exceeded 70% of SERVICE_QUOTA\n\nRunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md\n\nRequest a service quota increase for lambda functions",
+        "Metrics": [
+          {
+            "Expression": "mLambdaUsage / mLambdaQuota * 100",
+            "Id": "expr_1",
+            "Label": "Concurrent executions quota usage %"
+          },
+          {
+            "Id": "mLambdaUsage",
+            "MetricStat": {
+              "Metric": {
+                "MetricName": "ConcurrentExecutions",
+                "Namespace": "AWS/Lambda"
+              },
+              "Period": 300,
+              "Stat": "Maximum"
+            },
+            "ReturnData": false
+          },
+          {
+            "Expression": "SERVICE_QUOTA(mLambdaUsage)",
+            "Id": "mLambdaQuota",
+            "ReturnData": false
+          }
+        ],
+        "Threshold": 70,
+        "TreatMissingData": "missing"
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/OverviewDashboard/OverviewDashboard--lambdaServiceQuota/Resource"
       }
     },
     "DenyListBucketC1C9D3D9": {
@@ -1074,13 +1147,13 @@
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": "d78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27.zip"
+          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip"
         },
         "Description": "/opt/awscli/aws"
       },
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/BucketDeployment/AwsCliLayer/Resource",
-        "aws:asset:path": "asset.d78148e12051f01bfd7332d83ccd5c159c8106d3b878d178f7eb093fabafab27.zip",
+        "aws:asset:path": "asset.55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
         "aws:asset:is-bundled": false,
         "aws:asset:property": "Content"
       }
@@ -1288,7 +1361,7 @@
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": "f619f24346a72f8faee2f35ae0ef65513506df1c91bf6ffb8e5ccd6e952df7ad.zip"
+          "S3Key": "586152c743956e1b62d226221360e44c7b3cee461e2cfc97e29c1dad99c5a01e.zip"
         },
         "Role": {
           "Fn::GetAtt": [
@@ -1328,7 +1401,7 @@
       ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneHandler/Resource",
-        "aws:asset:path": "asset.f619f24346a72f8faee2f35ae0ef65513506df1c91bf6ffb8e5ccd6e952df7ad.bundle",
+        "aws:asset:path": "asset.586152c743956e1b62d226221360e44c7b3cee461e2cfc97e29c1dad99c5a01e.bundle",
         "aws:asset:is-bundled": false,
         "aws:asset:property": "Code"
       }
@@ -1427,7 +1500,7 @@
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": "131923f414bf62ed2624c8877698a9b4a926cbf71e6096a20d7071ef39b8442d.zip"
+          "S3Key": "e418072f7d544cd4242af92741aa661776b95011d950d609265aa65eb8a30fc2.zip"
         },
         "Role": {
           "Fn::GetAtt": [
@@ -1453,7 +1526,7 @@
       ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneQueueHandler/Resource",
-        "aws:asset:path": "asset.131923f414bf62ed2624c8877698a9b4a926cbf71e6096a20d7071ef39b8442d.bundle",
+        "aws:asset:path": "asset.e418072f7d544cd4242af92741aa661776b95011d950d609265aa65eb8a30fc2.bundle",
         "aws:asset:is-bundled": false,
         "aws:asset:property": "Code"
       }
@@ -1642,7 +1715,7 @@
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": "dcb0208ae8cffcba95b58eb208117d2d29cc2e6f2561230aadf9bbbfd7298823.zip"
+          "S3Key": "57faca5b92d127876be120f81a41659485b953b40f22fa7c12c4a819403adf0b.zip"
         },
         "Role": {
           "Fn::GetAtt": [
@@ -1659,7 +1732,7 @@
       ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/CatalogBuilderMock/Resource",
-        "aws:asset:path": "asset.dcb0208ae8cffcba95b58eb208117d2d29cc2e6f2561230aadf9bbbfd7298823.bundle",
+        "aws:asset:path": "asset.57faca5b92d127876be120f81a41659485b953b40f22fa7c12c4a819403adf0b.bundle",
         "aws:asset:is-bundled": false,
         "aws:asset:property": "Code"
       }
@@ -1754,7 +1827,7 @@
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": "ebe28b0d6dd3bf9e8a58e01cf772f2d69fb859cb47b4c84dcda11bde2f11bf42.zip"
+          "S3Key": "3e47f8408ec7f2cc9f9d29a7d4bf3008ccad20b13c2009121140af5c1ff8b0d7.zip"
         },
         "Role": {
           "Fn::GetAtt": [
@@ -1784,12 +1857,12 @@
       ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/ClientTest/Resource",
-        "aws:asset:path": "asset.ebe28b0d6dd3bf9e8a58e01cf772f2d69fb859cb47b4c84dcda11bde2f11bf42.bundle",
+        "aws:asset:path": "asset.3e47f8408ec7f2cc9f9d29a7d4bf3008ccad20b13c2009121140af5c1ff8b0d7.bundle",
         "aws:asset:is-bundled": false,
         "aws:asset:property": "Code"
       }
     },
-    "ClientTestTrigger260D1687": {
+    "ClientTestTriggerE52E42D1": {
       "Type": "Custom::Trigger",
       "Properties": {
         "ServiceToken": {
@@ -1799,7 +1872,7 @@
           ]
         },
         "HandlerArn": {
-          "Ref": "ClientTestCurrentVersionAB7E7F6519ec58c5d858c4ade95c9ee60248c955"
+          "Ref": "ClientTestCurrentVersionAB7E7F65d0945f4af40fe06a35aa8ade9f673eaa"
         }
       },
       "DependsOn": [
@@ -1827,10 +1900,10 @@
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete",
       "Metadata": {
-        "aws:cdk:path": "TestDenyList/ClientTest/Trigger/Resource/Default"
+        "aws:cdk:path": "TestDenyList/ClientTest/Trigger/Default/Default"
       }
     },
-    "ClientTestCurrentVersionAB7E7F6519ec58c5d858c4ade95c9ee60248c955": {
+    "ClientTestCurrentVersionAB7E7F65d0945f4af40fe06a35aa8ade9f673eaa": {
       "Type": "AWS::Lambda::Version",
       "Properties": {
         "FunctionName": {
@@ -1839,6 +1912,66 @@
       },
       "Metadata": {
         "aws:cdk:path": "TestDenyList/ClientTest/CurrentVersion/Resource"
+      }
+    },
+    "ClientTestPolicy7C5CF4ED": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "ClientTestBE4CEC14",
+                        "Arn"
+                      ]
+                    },
+                    "*"
+                  ]
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "ClientTestPolicy7C5CF4ED",
+        "Roles": [
+          {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::GetAtt": [
+                              "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A",
+                              "Arn"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/ClientTest/Policy/Resource"
       }
     },
     "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A": {
@@ -1873,7 +2006,9 @@
                     "lambda:InvokeFunction"
                   ],
                   "Resource": [
-                    "*"
+                    {
+                      "Ref": "ClientTestCurrentVersionAB7E7F65d0945f4af40fe06a35aa8ade9f673eaa"
+                    }
                   ]
                 }
               ]
@@ -1892,7 +2027,7 @@
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": "ca530133551e24ed5b697763cd2423c8ed2b0ec9b98ce029dcf09cea69c4af9c.zip"
+          "S3Key": "e122ad78b3037b937d706a22dac624e1069e91918dcdc37db79101aecf7a9c9a.zip"
         },
         "Timeout": 900,
         "MemorySize": 128,
@@ -1910,7 +2045,7 @@
       ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider/Handler",
-        "aws:asset:path": "asset.ca530133551e24ed5b697763cd2423c8ed2b0ec9b98ce029dcf09cea69c4af9c",
+        "aws:asset:path": "asset.e122ad78b3037b937d706a22dac624e1069e91918dcdc37db79101aecf7a9c9a",
         "aws:asset:property": "Code"
       }
     },
@@ -2004,7 +2139,7 @@
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
           },
-          "S3Key": "62c1221a70dd458cd2199aad2c2de7161a0080a9a51ea2bbcf6e642bb4120d10.zip"
+          "S3Key": "8672faa3cfd24b125751e86ac8379ef5ab4cc8058f610fd628e5615e86447b7a.zip"
         },
         "Role": {
           "Fn::GetAtt": [
@@ -2032,12 +2167,12 @@
       ],
       "Metadata": {
         "aws:cdk:path": "TestDenyList/PruneTest/Resource",
-        "aws:asset:path": "asset.62c1221a70dd458cd2199aad2c2de7161a0080a9a51ea2bbcf6e642bb4120d10.bundle",
+        "aws:asset:path": "asset.8672faa3cfd24b125751e86ac8379ef5ab4cc8058f610fd628e5615e86447b7a.bundle",
         "aws:asset:is-bundled": false,
         "aws:asset:property": "Code"
       }
     },
-    "PruneTestTrigger1ECEFB65": {
+    "PruneTestTriggerF2CD183D": {
       "Type": "Custom::Trigger",
       "Properties": {
         "ServiceToken": {
@@ -2047,7 +2182,7 @@
           ]
         },
         "HandlerArn": {
-          "Ref": "PruneTestCurrentVersion332993F844791299f8dae3aedc5b3173b4461c11"
+          "Ref": "PruneTestCurrentVersion332993F81feaeeb84191a2f1139eac060b388ee7"
         }
       },
       "DependsOn": [
@@ -2075,10 +2210,10 @@
       "UpdateReplacePolicy": "Delete",
       "DeletionPolicy": "Delete",
       "Metadata": {
-        "aws:cdk:path": "TestDenyList/PruneTest/Trigger/Resource/Default"
+        "aws:cdk:path": "TestDenyList/PruneTest/Trigger/Default/Default"
       }
     },
-    "PruneTestCurrentVersion332993F844791299f8dae3aedc5b3173b4461c11": {
+    "PruneTestCurrentVersion332993F81feaeeb84191a2f1139eac060b388ee7": {
       "Type": "AWS::Lambda::Version",
       "Properties": {
         "FunctionName": {
@@ -2087,6 +2222,66 @@
       },
       "Metadata": {
         "aws:cdk:path": "TestDenyList/PruneTest/CurrentVersion/Resource"
+      }
+    },
+    "PruneTestPolicyA887E151": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "PruneTest66C7D9FC",
+                        "Arn"
+                      ]
+                    },
+                    "*"
+                  ]
+                ]
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "PruneTestPolicyA887E151",
+        "Roles": [
+          {
+            "Fn::Select": [
+              1,
+              {
+                "Fn::Split": [
+                  "/",
+                  {
+                    "Fn::Select": [
+                      5,
+                      {
+                        "Fn::Split": [
+                          ":",
+                          {
+                            "Fn::GetAtt": [
+                              "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A",
+                              "Arn"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "TestDenyList/PruneTest/Policy/Resource"
       }
     }
   },

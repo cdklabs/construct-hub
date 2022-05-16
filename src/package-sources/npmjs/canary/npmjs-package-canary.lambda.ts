@@ -7,7 +7,12 @@ import * as JSONStream from 'JSONStream';
 import { CatalogModel } from '../../../backend';
 import * as aws from '../../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../../backend/shared/env.lambda-shared';
-import { METRICS_NAMESPACE, MetricName, Environment, ObjectKey } from './constants';
+import {
+  METRICS_NAMESPACE,
+  MetricName,
+  Environment,
+  ObjectKey,
+} from './constants';
 
 Configuration.namespace = METRICS_NAMESPACE;
 
@@ -28,7 +33,6 @@ Configuration.namespace = METRICS_NAMESPACE;
  * will receive one sample per tracked version.
  */
 export async function handler(event: unknown): Promise<void> {
-
   console.log(`Event: ${JSON.stringify(event, null, 2)}`);
 
   const packageName = requireEnv(Environment.PACKAGE_NAME);
@@ -39,21 +43,20 @@ export async function handler(event: unknown): Promise<void> {
   const constructHub = new ConstructHub(constructHubEndpoint);
 
   const latest = await stateService.latest(packageName);
-  const state: CanaryState = await stateService.load(packageName)
+  const state: CanaryState = (await stateService.load(packageName)) ?? {
     // If we did not have any state, we'll bootstrap using the current latest version.
-    ?? {
-      latest: {
-        ...latest,
-        // If that latest version is ALREADY in catalog, pretend it was
-        // "instantaneously" there, so we avoid possibly reporting an breach of
-        // SLA alarm, when we really just observed presence of the package in
-        // catalog too late, for example on first deployment of the canary.
-        availableAt: await constructHub.isInCatalog(packageName, latest.version)
-          ? latest.publishedAt
-          : undefined,
-      },
-      pending: {},
-    };
+    latest: {
+      ...latest,
+      // If that latest version is ALREADY in catalog, pretend it was
+      // "instantaneously" there, so we avoid possibly reporting an breach of
+      // SLA alarm, when we really just observed presence of the package in
+      // catalog too late, for example on first deployment of the canary.
+      availableAt: (await constructHub.isInCatalog(packageName, latest.version))
+        ? latest.publishedAt
+        : undefined,
+    },
+    pending: {},
+  };
 
   console.log(`Initial state: ${JSON.stringify(state, null, 2)}`);
 
@@ -61,31 +64,59 @@ export async function handler(event: unknown): Promise<void> {
   updateLatestIfNeeded(state, latest);
 
   try {
-    await metricScope((metrics) => () => {
+    await metricScope((metrics) => async () => {
       // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
       metrics.setDimensions();
-      metrics.putMetric(MetricName.TRACKED_VERSION_COUNT, Object.keys(state.pending).length + 1, Unit.Count);
+      metrics.putMetric(
+        MetricName.TRACKED_VERSION_COUNT,
+        Object.keys(state.pending).length + 1,
+        Unit.Count
+      );
+      metrics.putMetric(
+        MetricName.NPM_REPLICA_LAG,
+        await stateService.npmReplicaLagSeconds(packageName),
+        Unit.Seconds
+      );
     })();
 
-    for (const versionState of [state.latest, ...Object.values(state.pending ?? {})]) {
-      console.log(`Checking state of ${versionState.version}, current: ${JSON.stringify(versionState, null, 2)}`);
+    for (const versionState of [
+      state.latest,
+      ...Object.values(state.pending ?? {}),
+    ]) {
+      console.log(
+        `Checking state of ${versionState.version}, current: ${JSON.stringify(
+          versionState,
+          null,
+          2
+        )}`
+      );
 
       await metricScope((metrics) => async () => {
         // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
         metrics.setDimensions();
         metrics.setProperty('PackageName', packageName);
         metrics.setProperty('PackageVersion', versionState.version);
-        metrics.setProperty('IsLatest', state.latest.version === versionState.version);
+        metrics.setProperty(
+          'IsLatest',
+          state.latest.version === versionState.version
+        );
 
         if (!versionState.availableAt) {
           if (versionState.version === state.latest.version) {
-            if (await constructHub.isInCatalog(packageName, versionState.version)) {
+            if (
+              await constructHub.isInCatalog(packageName, versionState.version)
+            ) {
               versionState.availableAt = new Date();
             }
           } else {
             // Non-current versions will probably never make it to catalog (they're older than the
             // current version), so instead, we check whether they have TypeScript documentation.
-            if (await constructHub.hasTypeScriptDocumentation(packageName, versionState.version)) {
+            if (
+              await constructHub.hasTypeScriptDocumentation(
+                packageName,
+                versionState.version
+              )
+            ) {
               versionState.availableAt = new Date();
             }
           }
@@ -95,8 +126,10 @@ export async function handler(event: unknown): Promise<void> {
           // Tells us how long it's taken for the package to make it to catalog after it was published.
           metrics.putMetric(
             MetricName.TIME_TO_CATALOG,
-            (versionState.availableAt.getTime() - versionState.publishedAt.getTime()) / 1_000,
-            Unit.Seconds,
+            (versionState.availableAt.getTime() -
+              versionState.publishedAt.getTime()) /
+              1_000,
+            Unit.Seconds
           );
 
           // Stop tracking that version, as it's now available.
@@ -108,7 +141,7 @@ export async function handler(event: unknown): Promise<void> {
           metrics.putMetric(
             MetricName.DWELL_TIME,
             (Date.now() - versionState.publishedAt.getTime()) / 1_000,
-            Unit.Seconds,
+            Unit.Seconds
           );
         }
       })();
@@ -132,13 +165,19 @@ class ConstructHub {
    *
    * @returns `true` IIF the exact package version is found in the catalog.
    */
-  public async isInCatalog(packageName: string, packageVersion: string): Promise<boolean> {
-
+  public async isInCatalog(
+    packageName: string,
+    packageVersion: string
+  ): Promise<boolean> {
     const catalog = await this.getCatalog();
-    const filtered = catalog.packages.filter((p: any) => p.name === packageName && p.version === packageVersion);
+    const filtered = catalog.packages.filter(
+      (p: any) => p.name === packageName && p.version === packageVersion
+    );
 
     if (filtered.length > 1) {
-      throw new Error(`Found multiple entries for ${packageName}@${packageVersion} in catalog`);
+      throw new Error(
+        `Found multiple entries for ${packageName}@${packageVersion} in catalog`
+      );
     }
 
     return filtered.length === 1;
@@ -154,23 +193,28 @@ class ConstructHub {
    * @returns `true` IIF the `docs-typescript.md` document exists for the
    *          specified package.
    */
-  public async hasTypeScriptDocumentation(packageName: string, packageVersion: string): Promise<boolean> {
+  public async hasTypeScriptDocumentation(
+    packageName: string,
+    packageVersion: string
+  ): Promise<boolean> {
     return new Promise((ok, ko) => {
       const url = `${this.baseUrl}/data/${packageName}/v${packageVersion}/docs-typescript.md`;
-      https.request(
-        url,
-        { method: 'HEAD' },
-        (res) => {
+      https
+        .request(url, { method: 'HEAD' }, (res) => {
           if (res.statusCode === 200) {
             // This returns HTTP 200 with text/html if it's a 404, due to how
             // we configured CloudFront behaviors.
-            return ok(!!res.headers['content-type']?.startsWith('text/markdown'));
+            return ok(
+              !!res.headers['content-type']?.startsWith('text/markdown')
+            );
           }
-          const err = new Error(`HEAD ${url} -- HTTP ${res.statusCode} (${res.statusMessage})`);
+          const err = new Error(
+            `HEAD ${url} -- HTTP ${res.statusCode} (${res.statusMessage})`
+          );
           Error.captureStackTrace(err);
           ko(err);
-        },
-      ).end();
+        })
+        .end();
     });
   }
 
@@ -178,46 +222,52 @@ class ConstructHub {
     if (this.#catalog) {
       return this.#catalog;
     }
-    return this.#catalog = await getJSON(`${this.baseUrl}/catalog.json`);
+    return (this.#catalog = await getJSON(`${this.baseUrl}/catalog.json`));
   }
 }
 
-class CanaryStateService {
-
+export class CanaryStateService {
   constructor(private readonly bucketName: string) {}
 
   /**
    * Save the state to the bucket.
    */
   public async save(packageName: string, state: CanaryState) {
-
     const url = this.url(packageName);
 
     console.log(`Saving to ${url}: ${JSON.stringify(state, null, 2)}`);
-    await aws.s3().putObject({
-      Bucket: this.bucketName,
-      Key: this.key(packageName),
-      Body: JSON.stringify(state, null, 2),
-      ContentType: 'application/json',
-    }).promise();
-
+    await aws
+      .s3()
+      .putObject({
+        Bucket: this.bucketName,
+        Key: this.key(packageName),
+        Body: JSON.stringify(state, null, 2),
+        ContentType: 'application/json',
+      })
+      .promise();
   }
 
   /**
    * Load the state file for this package from the bucket.
    */
   public async load(packageName: string): Promise<CanaryState | undefined> {
-
     console.log(`Loading state for package '${packageName}'`);
 
     const objectKey = this.key(packageName);
     const url = this.url(packageName);
 
     console.log(`Fetching: ${url}`);
-    const data = await aws.s3().getObject({ Bucket: this.bucketName, Key: objectKey }).promise()
-      .catch((err: AWSError) => err.code !== 'NoSuchKey'
-        ? Promise.reject(err)
-        : Promise.resolve({ /* no data */ } as S3.GetObjectOutput));
+    const data = await aws
+      .s3()
+      .getObject({ Bucket: this.bucketName, Key: objectKey })
+      .promise()
+      .catch((err: AWSError) =>
+        err.code !== 'NoSuchKey'
+          ? Promise.reject(err)
+          : Promise.resolve({
+              /* no data */
+            } as S3.GetObjectOutput)
+      );
 
     if (!data?.Body) {
       console.log(`Not found: ${url}`);
@@ -237,14 +287,53 @@ class CanaryStateService {
    * Create a state from the latest version of the package.
    */
   public async latest(packageName: string): Promise<CanaryState['latest']> {
-
     console.log(`Fetching latest version information from NPM: ${packageName}`);
-    const version = await getJSON(`https://registry.npmjs.org/${encodeURIComponent(packageName)}/latest`, ['version']);
-    const publishedAt = await getJSON(`https://registry.npmjs.org/${encodeURIComponent(packageName)}`, ['time', version]);
+    const version = await getJSON(
+      `https://registry.npmjs.org/${encodeURIComponent(packageName)}/latest`,
+      ['version']
+    );
+    const publishedAt = await getJSON(
+      `https://registry.npmjs.org/${encodeURIComponent(packageName)}`,
+      ['time', version]
+    );
 
-    console.log(`Package: ${packageName} | Version : ${version} | Published At: ${publishedAt}`);
+    console.log(
+      `Package: ${packageName} | Version : ${version} | Published At: ${publishedAt}`
+    );
 
     return { version, publishedAt: new Date(publishedAt) };
+  }
+
+  public async npmReplicaLagSeconds(packageName: string): Promise<number> {
+    const encodedPackageName = encodeURIComponent(packageName);
+
+    console.log(`Measuring NPM replica lag using ${packageName}...`);
+
+    const [primaryDate, replicaDate] = await Promise.all([
+      getModifiedTimestamp(`registry.npmjs.org`),
+      getModifiedTimestamp(`replicate.npmjs.com/registry`),
+    ]);
+    const deltaMs = primaryDate.getTime() - replicaDate.getTime();
+
+    console.log(`Timestamp on primary: ${primaryDate.toISOString()}`);
+    console.log(
+      `Timestamp on replica: ${replicaDate.toISOString()} (${
+        deltaMs / 3_600_000
+      } hours behind)`
+    );
+
+    // We return in seconds... The millisecond resolution is silly here since the probe package is
+    // only published approximately once every three hours. We use seconds only because this is the
+    // largest available time unit in CloudWatch.
+    return deltaMs / 1_000;
+
+    async function getModifiedTimestamp(baseUrl: string) {
+      const isoDate = await getJSON(
+        `https://${baseUrl}/${encodedPackageName}`,
+        ['time', 'modified']
+      );
+      return new Date(isoDate);
+    }
   }
 
   private key(packageName: string): string {
@@ -254,8 +343,6 @@ class CanaryStateService {
   private url(packageName: string) {
     return `s3://${this.bucketName}/${this.key(packageName)}`;
   }
-
-
 }
 
 interface CanaryState {
@@ -311,22 +398,31 @@ interface CanaryState {
  */
 function getJSON(url: string, jsonPath?: string[]): Promise<any> {
   return new Promise((ok, ko) => {
-    https.get(url, { headers: { 'Accept': 'application/json', 'Accept-Encoding': 'identity' } }, (res) => {
-      if (res.statusCode !== 200) {
-        const error = new Error(`GET ${url} - HTTP ${res.statusCode} (${res.statusMessage})`);
-        Error.captureStackTrace(error);
-        return ko(error);
+    https.get(
+      url,
+      {
+        headers: { Accept: 'application/json', 'Accept-Encoding': 'identity' },
+      },
+      (res) => {
+        if (res.statusCode !== 200) {
+          const error = new Error(
+            `GET ${url} - HTTP ${res.statusCode} (${res.statusMessage})`
+          );
+          Error.captureStackTrace(error);
+          return ko(error);
+        }
+
+        res.once('error', ko);
+
+        const json = JSONStream.parse(jsonPath);
+        json.once('data', ok);
+        json.once('error', ko);
+
+        const plainPayload =
+          res.headers['content-encoding'] === 'gzip' ? gunzip(res) : res;
+        plainPayload.pipe(json, { end: true });
       }
-
-      res.once('error', ko);
-
-      const json = JSONStream.parse(jsonPath);
-      json.once('data', ok);
-      json.once('error', ko);
-
-      const plainPayload = res.headers['content-encoding'] === 'gzip' ? gunzip(res) : res;
-      plainPayload.pipe(json, { end: true });
-    });
+    );
   });
 }
 
@@ -340,7 +436,10 @@ function getJSON(url: string, jsonPath?: string[]): Promise<any> {
  * @param state  the state to be updated.
  * @param latest the current "latest" version of the tracked package.
  */
-function updateLatestIfNeeded(state: CanaryState, latest: CanaryState['latest']): void {
+function updateLatestIfNeeded(
+  state: CanaryState,
+  latest: CanaryState['latest']
+): void {
   if (state.latest.version === latest.version) {
     return;
   }
@@ -349,7 +448,10 @@ function updateLatestIfNeeded(state: CanaryState, latest: CanaryState['latest'])
   if (state.latest.availableAt == null) {
     // The TypeScript version of jsii doesn't do control flow analysis well enough here to
     // determine that the`if` branch guarantees `availableAt` is undefined here.
-    state.pending[state.latest.version] = { ...state.latest, availableAt: undefined };
+    state.pending[state.latest.version] = {
+      ...state.latest,
+      availableAt: undefined,
+    };
   }
 
   state.latest = latest;

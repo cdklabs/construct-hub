@@ -1,15 +1,24 @@
-import { ComparisonOperator, MathExpression, Metric, MetricOptions, Statistic } from '@aws-cdk/aws-cloudwatch';
-import { Effect, PolicyStatement } from '@aws-cdk/aws-iam';
-import { IFunction, Tracing } from '@aws-cdk/aws-lambda';
-import { RetentionDays } from '@aws-cdk/aws-logs';
-import { IBucket } from '@aws-cdk/aws-s3';
-import { ArnFormat, Construct, Duration, Stack } from '@aws-cdk/core';
 import type { AssemblyTargets } from '@jsii/spec';
+import { ArnFormat, Duration, Stack } from 'aws-cdk-lib';
+import {
+  ComparisonOperator,
+  MathExpression,
+  Metric,
+  MetricOptions,
+  Statistic,
+} from 'aws-cdk-lib/aws-cloudwatch';
+import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
+import { IFunction, Tracing } from 'aws-cdk-lib/aws-lambda';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { IBucket } from 'aws-cdk-lib/aws-s3';
+import { Construct } from 'constructs';
 import { lambdaFunctionUrl, s3ObjectUrl } from '../../deep-link';
 
 import { Monitoring } from '../../monitoring';
+import { OverviewDashboard } from '../../overview-dashboard';
 import { RUNBOOK_URL } from '../../runbook-url';
 import { DenyList } from '../deny-list';
+import { FeedBuilder } from '../feed-builder';
 import type { ConstructFramework } from '../ingestion/framework-detection.lambda-shared';
 import { CatalogBuilder as Handler } from './catalog-builder';
 import { MetricName, METRICS_NAMESPACE } from './constants';
@@ -29,6 +38,11 @@ export interface CatalogBuilderProps {
   readonly monitoring: Monitoring;
 
   /**
+   * The overview dashboard to add widgets to.
+   */
+  readonly overviewDashboard: OverviewDashboard;
+
+  /**
    * How long should execution logs be retained?
    *
    * @default RetentionDays.TEN_YEARS
@@ -39,6 +53,11 @@ export interface CatalogBuilderProps {
    * The deny list construct.
    */
   readonly denyList: DenyList;
+
+  /**
+   * Construct that generates RSS/ATOM feed after catalog is updated
+   */
+  readonly feedBuilder: FeedBuilder;
 }
 
 /**
@@ -55,6 +74,8 @@ export class CatalogBuilder extends Construct {
       environment: {
         BUCKET_NAME: props.bucket.bucketName,
         AWS_EMF_ENVIRONMENT: 'Local',
+        FEED_BUILDER_FUNCTION_NAME:
+          props.feedBuilder.updateFeedFunction.functionName,
       },
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 10_240, // Currently the maximum possible setting
@@ -63,21 +84,39 @@ export class CatalogBuilder extends Construct {
       tracing: Tracing.PASS_THROUGH,
     });
     this.function = handler;
+    props.overviewDashboard.addConcurrentExecutionMetricToDashboard(
+      handler,
+      'CatalogBuilderLambda'
+    );
 
     // This function may invoke itself in case it needs to continue it's work in
     // a "child" invocation. We must hence allow it to invoke itself. We cannot
     // use grantInvoke as this would (naturally) cause a circular reference
     // (Function -> Role -> Function).
-    handler.addToRolePolicy(new PolicyStatement({
-      actions: ['lambda:InvokeFunction'],
-      effect: Effect.ALLOW,
-      resources: [Stack.of(this).formatArn({
-        arnFormat: ArnFormat.COLON_RESOURCE_NAME,
-        service: 'lambda',
-        resource: 'function',
-        resourceName: '*',
-      })],
-    }));
+    handler.addToRolePolicy(
+      new PolicyStatement({
+        actions: ['lambda:InvokeFunction'],
+        effect: Effect.ALLOW,
+        resources: [
+          Stack.of(this).formatArn({
+            arnFormat: ArnFormat.COLON_RESOURCE_NAME,
+            service: 'lambda',
+            resource: 'function',
+            resourceName: '*',
+          }),
+        ],
+      })
+    );
+
+    // using handler.grantInvoke(props.feedBuilder.updateFeedFunction)
+    // causes circular dependency error
+    handler.addToRolePolicy(
+      new PolicyStatement({
+        actions: ['lambda:InvokeFunction'],
+        effect: Effect.ALLOW,
+        resources: [props.feedBuilder.updateFeedFunction.functionArn],
+      })
+    );
 
     // allow the catalog builder to use the client.
     props.denyList.grantRead(handler);
@@ -94,23 +133,34 @@ export class CatalogBuilder extends Construct {
       period: Duration.minutes(15),
       usingMetrics: { m1: this.metricRegisteredPackageMajorVersions() },
     });
-    const alarmShrinkingCatalog = catalogSizeChange.createAlarm(this, 'ShrinkingCatalogAlarm', {
-      alarmName: `${this.node.path}/ShrinkingCatalog`,
-      alarmDescription: [
-        'The number of packages registered in the catalog.json object has shrunk by more than 5',
-        'elements. There might be a mass extinction event going on. This should be investigated',
-        'as soon as possible.',
-        '',
-        `Catalog.json: ${s3ObjectUrl(props.bucket, 'catalog.json')}`,
-        `Catalog Builder: ${lambdaFunctionUrl(handler)}`,
-        '',
-        `RUNBOOK: ${RUNBOOK_URL}`,
-      ].join('\n'),
-      comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
-      evaluationPeriods: 1,
-      threshold: -5,
-    });
-    props.monitoring.addHighSeverityAlarm('Catalog Size Shrunk', alarmShrinkingCatalog);
+    const alarmShrinkingCatalog = catalogSizeChange.createAlarm(
+      this,
+      'ShrinkingCatalogAlarm',
+      {
+        alarmName: `${this.node.path}/ShrinkingCatalog`,
+        alarmDescription: [
+          'The number of packages registered in the catalog.json object has shrunk by more than 5',
+          'elements. There might be a mass extinction event going on. This should be investigated',
+          'as soon as possible.',
+          '',
+          `Catalog.json: ${s3ObjectUrl(props.bucket, 'catalog.json')}`,
+          `Catalog Builder: ${lambdaFunctionUrl(handler)}`,
+          '',
+          `RUNBOOK: ${RUNBOOK_URL}`,
+        ].join('\n'),
+        comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+        evaluationPeriods: 1,
+        threshold: -5,
+      }
+    );
+    // This is a high-severity alarm because it is indicative of a possible mass-extinction event
+    // in the catalog. This should definitely prompt immediate investigation, although it can also
+    // be caused by the recent addition of enough packages in the deny-list to cause the alarm to
+    // trigger.
+    props.monitoring.addHighSeverityAlarm(
+      'Catalog Size Shrunk',
+      alarmShrinkingCatalog
+    );
   }
 
   public metricMissingConstructFrameworkCount(opts?: MetricOptions): Metric {
@@ -123,7 +173,9 @@ export class CatalogBuilder extends Construct {
     });
   }
 
-  public metricMissingConstructFrameworkVersionCount(opts?: MetricOptions): Metric {
+  public metricMissingConstructFrameworkVersionCount(
+    opts?: MetricOptions
+  ): Metric {
     return new Metric({
       period: Duration.minutes(15),
       statistic: Statistic.MAXIMUM,
@@ -225,4 +277,3 @@ export interface PackageInfo {
    */
   readonly description?: string;
 }
-

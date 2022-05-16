@@ -2,47 +2,20 @@ const fs = require('fs');
 const { basename, join, dirname, relative } = require('path');
 const Case = require('case');
 const glob = require('glob');
-const { SourceCode, FileBase, JsonFile, cdk, github } = require('projen');
+const { SourceCode, JsonFile, cdk, github } = require('projen');
 const spdx = require('spdx-license-list');
 const uuid = require('uuid');
 
 const BUNDLE_DIR_ENV = 'BUNDLE_DIR';
 
 const peerDeps = [
-  '@aws-cdk/aws-servicecatalogappregistry',
-  '@aws-cdk/aws-certificatemanager',
-  '@aws-cdk/aws-cloudfront-origins',
-  '@aws-cdk/aws-cloudfront',
-  '@aws-cdk/aws-cloudwatch-actions',
-  '@aws-cdk/aws-cloudwatch',
-  '@aws-cdk/aws-codeartifact',
-  '@aws-cdk/aws-ec2',
-  '@aws-cdk/aws-ecs',
-  '@aws-cdk/aws-events',
-  '@aws-cdk/aws-events-targets',
-  '@aws-cdk/assets',
-  '@aws-cdk/aws-iam',
-  '@aws-cdk/aws-lambda-event-sources',
-  '@aws-cdk/aws-lambda',
-  '@aws-cdk/aws-logs',
-  '@aws-cdk/aws-route53-targets',
-  '@aws-cdk/aws-route53',
-  '@aws-cdk/aws-s3-deployment',
-  '@aws-cdk/aws-s3',
-  '@aws-cdk/aws-s3-notifications',
-  '@aws-cdk/aws-sns',
-  '@aws-cdk/aws-sqs',
-  '@aws-cdk/aws-stepfunctions',
-  '@aws-cdk/aws-stepfunctions-tasks',
-  '@aws-cdk/core',
-  '@aws-cdk/custom-resources',
-  '@aws-cdk/cx-api',
+  '@aws-cdk/aws-servicecatalogappregistry-alpha',
+  'aws-cdk-lib',
   'cdk-watchful',
   'constructs',
 ];
 
-const cdkAssert = '@aws-cdk/assert';
-const cdkCli = 'aws-cdk';
+const cdkCli = 'aws-cdk@^2';
 
 const project = new cdk.JsiiProject({
   name: 'construct-hub',
@@ -60,7 +33,6 @@ const project = new cdk.JsiiProject({
   authorOrganization: true,
 
   devDeps: [
-    cdkAssert,
     ...peerDeps,
     '@jsii/spec',
     '@types/fs-extra',
@@ -68,6 +40,7 @@ const project = new cdk.JsiiProject({
     '@types/tar-stream',
     cdkCli,
     'aws-embedded-metrics',
+    'dotenv',
     // 5.6.1 introduces a type literal signature that is not compatible with
     // the version of TypeScript currently used by jsii, causing builds to fail
     'aws-sdk-mock@5.6.0',
@@ -75,6 +48,7 @@ const project = new cdk.JsiiProject({
     'aws-xray-sdk-core',
     'case',
     'esbuild',
+    'feed',
     'fs-extra',
     'got',
     'JSONStream',
@@ -84,6 +58,13 @@ const project = new cdk.JsiiProject({
     'uuid',
     'yaml',
     'normalize-registry-metadata',
+    '@octokit/rest',
+    'markdown-it',
+    'markdown-it-emoji',
+    'changelog-filename-regex',
+    '@types/markdown-it',
+    '@types/markdown-it-emoji',
+    '@types/changelog-filename-regex',
   ],
   // exclude all the lambda assets from JSII compilation
   peerDeps: peerDeps,
@@ -101,7 +82,7 @@ const project = new cdk.JsiiProject({
 
   releaseToNpm: true,
 
-  //publishToGo: {
+  // publishToGo: {
   //  moduleName: 'github.com/cdklabs/construct-hub-go',
   //},
 
@@ -133,6 +114,7 @@ const project = new cdk.JsiiProject({
     '**/*.lambda.ts',
     '**/*.lambda-shared.ts',
   ],
+
   autoApproveOptions: {
     allowedUsernames: ['cdklabs-automation'],
     secret: 'GITHUB_TOKEN',
@@ -140,19 +122,11 @@ const project = new cdk.JsiiProject({
   autoApproveUpgrades: true,
 
   depsUpgradeOptions: {
-    exclude: [
-      ...peerDeps,
-      cdkAssert,
-      cdkCli,
-      'cdk-triggers', // can be removed once Construct Hub uses CDK v2
-    ],
+    exclude: [...peerDeps, cdkCli],
     ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve'],
       secret: 'PROJEN_GITHUB_TOKEN',
-      container: {
-        image: 'jsii/superchain',
-      },
     },
   },
 
@@ -163,6 +137,12 @@ const project = new cdk.JsiiProject({
       moduleNameMapper: {
         '../package.json': '<rootDir>/__mocks__/package.json',
       },
+    },
+  },
+  prettier: true,
+  prettierOptions: {
+    settings: {
+      singleQuote: true,
     },
   },
 });
@@ -178,14 +158,15 @@ project.package.addField('resolutions', {
   '@types/eslint': '8.2.1',
 
   // https://github.com/aws/aws-cdk/issues/18322
-  'colors': '1.4.0',
+  colors: '1.4.0',
 });
 
 function addVpcAllowListManagement() {
   const workflow = project.github.addWorkflow('update-vpc-acl-allow-lists');
 
   const prTitle = 'chore: upgrade network ACL allow-lists';
-  const prBody = 'Updated the network ACL allow-lists from authoritative sources.';
+  const prBody =
+    'Updated the network ACL allow-lists from authoritative sources.';
 
   workflow.addJobs({
     update: {
@@ -228,11 +209,15 @@ function addVpcAllowListManagement() {
           name: 'Make Pull Request',
           uses: 'peter-evans/create-pull-request@v3',
           with: {
-            'branch': `automation/${workflow.name}`,
+            token: project.github.projenCredentials.tokenRef,
+            branch: `automation/${workflow.name}`,
             'commit-message': `${prTitle}\n\n${prBody}`,
-            'title': prTitle,
-            'body': prBody,
+            title: prTitle,
+            body: prBody,
             'team-reviewers': 'construct-ecosystem-team',
+            author: 'github-actions <github-actions@github.com>',
+            committer: 'github-actions <github-actions@github.com>',
+            signoff: true,
           },
         },
       ],
@@ -263,6 +248,7 @@ function addDevApp() {
   });
 
   project.gitignore.addPatterns(`${devapp}/cdk.out`);
+  project.gitignore.addPatterns('.env');
 
   new JsonFile(project, `${devapp}/cdk.json`, {
     obj: {
@@ -270,13 +256,10 @@ function addDevApp() {
       context: {
         '@aws-cdk/core:newStyleStackSynthesis': true,
         '@aws-cdk/aws-apigateway:usagePlanKeyOrderInsensitiveId': true,
-        '@aws-cdk/core:enableStackNameDuplicates': 'true',
         'aws-cdk:enableDiffNoFail': 'true',
         '@aws-cdk/core:stackRelativeExports': 'true',
-        '@aws-cdk/aws-ecr-assets:dockerIgnoreSupport': true,
         '@aws-cdk/aws-secretsmanager:parseOwnedSecretName': true,
         '@aws-cdk/aws-kms:defaultKeyPolicies': true,
-        '@aws-cdk/aws-s3:grantWriteWithoutAcl': true,
         '@aws-cdk/aws-ecs-patterns:removeDefaultDesiredCount': true,
         '@aws-cdk/aws-rds:lowercaseDbIdentifier': true,
         '@aws-cdk/aws-efs:defaultEncryptionAtRest': true,
@@ -319,7 +302,9 @@ function discoverIntegrationTests() {
     });
 
     deploy.exec(`rm -fr ${deploydir}`);
-    deploy.exec(`cdk deploy ${options} --require-approval=never -o ${deploydir}`);
+    deploy.exec(
+      `cdk deploy ${options} --require-approval=never -o ${deploydir}`
+    );
 
     // if deployment was successful, copy the deploy dir to the expected dir
     deploy.exec(`rm -fr ${snapshotdir}`);
@@ -336,10 +321,20 @@ function discoverIntegrationTests() {
       description: `synthesize integration test ${entry}`,
     });
 
-    const exclude = ['asset.*', 'cdk.out', 'manifest.json', 'tree.json', '.cache'];
+    const exclude = [
+      'asset.*',
+      'cdk.out',
+      'manifest.json',
+      'tree.json',
+      '.cache',
+    ];
 
     assert.exec(`cdk synth ${options} -o ${actualdir} > /dev/null`);
-    assert.exec(`diff -r ${exclude.map(x => `-x ${x}`).join(' ')} ${snapshotdir}/ ${actualdir}/`);
+    assert.exec(
+      `diff -r ${exclude
+        .map((x) => `-x ${x}`)
+        .join(' ')} ${snapshotdir}/ ${actualdir}/`
+    );
 
     project.addTask(`integ:${name}:snapshot`, {
       description: `update snapshot for integration test ${entry}`,
@@ -367,7 +362,9 @@ function discoverIntegrationTests() {
   }
 }
 
-const bundleTask = project.addTask('bundle', { description: 'Bundle all lambda and ECS functions' });
+const bundleTask = project.addTask('bundle', {
+  description: 'Bundle all lambda and ECS functions',
+});
 
 /**
  * Generates a construct for a pre-bundled AWS Lambda function:
@@ -395,7 +392,9 @@ function newLambdaHandler(entrypoint, trigger) {
 
   // We identify singleton functions by a "/// @singleton [purpose]" comment in the handler source.
   const [isSingleton, singletonPurpose] =
-    /^[/]{3}[ \t]*@singleton(?:[ \t]+(.*?))?[ \t]*$/m.exec(fs.readFileSync(entrypoint, 'utf-8')) || [];
+    /^[/]{3}[ \t]*@singleton(?:[ \t]+(.*?))?[ \t]*$/m.exec(
+      fs.readFileSync(entrypoint, 'utf-8')
+    ) || [];
 
   entrypoint = relative(project.srcdir, entrypoint);
 
@@ -410,25 +409,35 @@ function newLambdaHandler(entrypoint, trigger) {
 
   const ts = new SourceCode(project, infra);
   ts.line(`// ${ts.marker}`);
-  ts.line('import * as path from \'path\';');
-  ts.line('import * as lambda from \'@aws-cdk/aws-lambda\';');
-  ts.line('import { Construct } from \'@aws-cdk/core\';');
+  ts.line("import * as path from 'path';");
   if (trigger) {
-    ts.line('import { AfterCreate } from \'cdk-triggers\';');
+    ts.line("import { CustomResourceProvider, Stack } from 'aws-cdk-lib';");
+    ts.line("import * as iam from 'aws-cdk-lib/aws-iam';");
   }
+  ts.line("import * as lambda from 'aws-cdk-lib/aws-lambda';");
+  if (trigger) {
+    ts.line("import { Trigger } from 'aws-cdk-lib/triggers';");
+  }
+  ts.line("import { Construct } from 'constructs';");
 
   ts.line();
   ts.open(`export interface ${propsName} extends lambda.FunctionOptions {`);
   if (trigger) {
     ts.line('/**');
     ts.line(' * Trigger this handler after these constructs were deployed.');
-    ts.line(' * @default - trigger this handler after all implicit dependencies have been created');
+    ts.line(
+      ' * @default - trigger this handler after all implicit dependencies have been created'
+    );
     ts.line(' */');
-    ts.line('readonly invokeAfter?: Construct[];');
+    ts.line('readonly executeAfter?: Construct[];');
   }
   ts.close('}');
   ts.line();
-  ts.open(`export class ${className} extends lambda.${isSingleton ? 'SingletonFunction' : 'Function'} {`);
+  ts.open(
+    `export class ${className} extends lambda.${
+      isSingleton ? 'SingletonFunction' : 'Function'
+    } {`
+  );
   // NOTE: unlike the array splat (`[...arr]`), the object splat (`{...obj}`) is
   //       `undefined`-safe. We can hence save an unnecessary object allocation
   //       by not specifying a default value for the `props` argument here.
@@ -440,19 +449,40 @@ function newLambdaHandler(entrypoint, trigger) {
     const SINGLETON_NAMESPACE = '0E7DE892-DDD6-42B0-9709-07C5B8E0965E';
     ts.line(`uuid: '${uuid.v5(entrypoint, SINGLETON_NAMESPACE)}',`);
     if (singletonPurpose) {
-      ts.line(`lambdaPurpose: '${singletonPurpose.replace(/([\\'])/g, '\\$1')}',`);
+      ts.line(
+        `lambdaPurpose: '${singletonPurpose.replace(/([\\'])/g, '\\$1')}',`
+      );
     }
   }
   ts.line('runtime: lambda.Runtime.NODEJS_14_X,');
-  ts.line('handler: \'index.handler\',');
-  ts.line(`code: lambda.Code.fromAsset(path.join(__dirname, '/${basename(outdir)}')),`);
+  ts.line("handler: 'index.handler',");
+  ts.line(
+    `code: lambda.Code.fromAsset(path.join(__dirname, '/${basename(outdir)}')),`
+  );
   ts.close('});');
   if (trigger) {
     ts.line();
-    ts.open('new AfterCreate(this, \'Trigger\', {');
+    ts.open("new Trigger(this, 'Trigger', {");
     ts.line('handler: this,');
-    ts.line('resources: props?.invokeAfter,');
+    ts.line('executeAfter: props?.executeAfter,');
     ts.close('});');
+    ts.line();
+    // hacky workaround for https://github.com/aws/aws-cdk/issues/19272
+    ts.line(
+      "const provider = Stack.of(scope).node.tryFindChild('AWSCDK.TriggerCustomResourceProviderCustomResourceProvider') as CustomResourceProvider;"
+    );
+    ts.line('');
+    ts.line("new iam.Policy(this, 'Policy', {");
+    ts.line('  force: true,');
+    ts.line("  roles: [iam.Role.fromRoleArn(this, 'Role', provider.roleArn)],");
+    ts.line('  statements: [');
+    ts.line('    new iam.PolicyStatement({');
+    ts.line('      effect: iam.Effect.ALLOW,');
+    ts.line("      actions: ['lambda:InvokeFunction'],");
+    ts.line('      resources: [`${this.functionArn}*`],');
+    ts.line('    }),');
+    ts.line('  ],');
+    ts.line('});');
   }
   ts.close('}');
   ts.close('}');
@@ -466,6 +496,7 @@ function newLambdaHandler(entrypoint, trigger) {
     `--outfile="${outfile}"`,
     '--external:aws-sdk',
     '--sourcemap',
+    '--tsconfig=tsconfig.dev.json',
   ];
   const bundle = project.addTask(`bundle:${base}`, {
     description: `Create an AWS Lambda bundle from ${entry}`,
@@ -510,30 +541,40 @@ function newEcsTask(entrypoint) {
 
   const ts = new SourceCode(project, infra);
   ts.line(`// ${ts.marker}`);
-  ts.line('import * as path from \'path\';');
-  ts.line('import * as ecs from \'@aws-cdk/aws-ecs\';');
-  ts.line('import * as iam from \'@aws-cdk/aws-iam\';');
-  ts.line('import { Construct } from \'@aws-cdk/core\';');
+  ts.line("import * as path from 'path';");
+  ts.line("import * as ecs from 'aws-cdk-lib/aws-ecs';");
+  ts.line("import * as iam from 'aws-cdk-lib/aws-iam';");
+  ts.line("import { Construct } from 'constructs';");
   ts.line();
-  ts.open(`export interface ${propsName} extends Omit<ecs.ContainerDefinitionOptions, 'image'> {`);
+  ts.open(
+    `export interface ${propsName} extends Omit<ecs.ContainerDefinitionOptions, 'image'> {`
+  );
   ts.line('readonly taskDefinition: ecs.FargateTaskDefinition;');
   ts.close('}');
   ts.line();
   ts.open(`export class ${className} extends ecs.ContainerDefinition {`);
-  ts.open(`public constructor(scope: Construct, id: string, props: ${propsName}) {`);
+  ts.open(
+    `public constructor(scope: Construct, id: string, props: ${propsName}) {`
+  );
   ts.open('super(scope, id, {');
   ts.line('...props,');
-  ts.line(`image: ecs.ContainerImage.fromAsset(path.join(__dirname, '${basename(outdir)}')),`);
+  ts.line(
+    `image: ecs.ContainerImage.fromAsset(path.join(__dirname, '${basename(
+      outdir
+    )}')),`
+  );
   ts.close('});');
   ts.line();
-  ts.open('props.taskDefinition.taskRole.addToPrincipalPolicy(new iam.PolicyStatement({');
+  ts.open(
+    'props.taskDefinition.taskRole.addToPrincipalPolicy(new iam.PolicyStatement({'
+  );
   ts.line('effect: iam.Effect.ALLOW,');
   ts.open('actions: [');
-  ts.line('\'states:SendTaskFailure\',');
-  ts.line('\'states:SendTaskHeartbeat\',');
-  ts.line('\'states:SendTaskSuccess\',');
+  ts.line("'states:SendTaskFailure',");
+  ts.line("'states:SendTaskHeartbeat',");
+  ts.line("'states:SendTaskSuccess',");
   ts.close('],');
-  ts.line('resources: [\'*\'],');
+  ts.line("resources: ['*'],");
   ts.close('}));');
   ts.close('}');
   ts.close('}');
@@ -545,9 +586,11 @@ function newEcsTask(entrypoint) {
   main.line('#!/usr/bin/env node');
   main.line(`// ${main.marker}`);
   main.line();
-  main.line('import * as os from \'os\';');
-  main.line('import { argv, env, exit } from \'process\';');
-  main.line('import { SendTaskFailureCommand, SendTaskHeartbeatCommand, SendTaskSuccessCommand, SFNClient } from \'@aws-sdk/client-sfn\';');
+  main.line("import * as os from 'os';");
+  main.line("import { argv, env, exit } from 'process';");
+  main.line(
+    "import { SendTaskFailureCommand, SendTaskHeartbeatCommand, SendTaskSuccessCommand, SFNClient } from '@aws-sdk/client-sfn';"
+  );
   main.line(`import { handler } from './${basename(entrypoint, '.ts')}';`);
   main.line();
   main.line('const sfn = new SFNClient({});');
@@ -563,12 +606,12 @@ function newEcsTask(entrypoint) {
   // We don't return the promise as it is fully handled within the call. This prevents eslint from declaring a false
   // positive unhandled promise on call sites.
   main.open('sfn.send(new SendTaskHeartbeatCommand({ taskToken })).then(');
-  main.line('() => console.log(\'Successfully sent task heartbeat!\'),');
+  main.line("() => console.log('Successfully sent task heartbeat!'),");
   main.open('(reason) => {');
-  main.line('console.error(\'Failed to send task heartbeat:\', reason);');
+  main.line("console.error('Failed to send task heartbeat:', reason);");
   // If this failed on TaskTimedOut, we will exit the VM right away, as the requesting StepFunctions execution is no longer
   // interested in the result of this run. This avoids keeping left-over tasks lying around "forever".
-  main.open('if (reason.code === \'TaskTimedOut\') {');
+  main.open("if (reason.code === 'TaskTimedOut') {");
   main.line('exit(-(os.constants.errno.ETIMEDOUT || 1));');
   main.close('}');
   main.close('},');
@@ -583,18 +626,26 @@ function newEcsTask(entrypoint) {
   main.line('try {');
   // Deserialize the input, which ECS provides as a sequence of JSON objects. We skip the first 2 values (argv[0] is the
   // node binary, and argv[1] is this JS file).
-  main.line('  const input: readonly any[] = argv.slice(2).map((text) => JSON.parse(text));');
+  main.line(
+    '  const input: readonly any[] = argv.slice(2).map((text) => JSON.parse(text));'
+  );
   // Casting as opaque function so we evade the type-checking of the handler (can't generalize that)
-  main.line('  const result = await (handler as (...args: any[]) => unknown)(...input);');
-  main.line('  console.log(\'Task result:\', result);');
-  main.line('  await sfn.send(new SendTaskSuccessCommand({ output: JSON.stringify(result), taskToken }));');
+  main.line(
+    '  const result = await (handler as (...args: any[]) => unknown)(...input);'
+  );
+  main.line("  console.log('Task result:', result);");
+  main.line(
+    '  await sfn.send(new SendTaskSuccessCommand({ output: JSON.stringify(result), taskToken }));'
+  );
   main.line('} catch (err) {');
-  main.line('  console.log(\'Task failed:\', err);');
+  main.line("  console.log('Task failed:', err);");
   main.line('  process.exitCode = 1;');
   main.open('  await sfn.send(new SendTaskFailureCommand({');
   // Note: JSON.stringify(some Error) returns '{}', which is not super helpful...
-  main.line('  cause: JSON.stringify(err instanceof Error ? { message: err.message, name: err.name, stack: err.stack } : err),');
-  main.line('  error: err.name ?? err.constructor.name ?? \'Error\',');
+  main.line(
+    '  cause: JSON.stringify(err instanceof Error ? { message: err.message, name: err.name, stack: err.stack } : err),'
+  );
+  main.line("  error: err.name ?? err.constructor.name ?? 'Error',");
   main.line('  taskToken,');
   main.close('  }));');
   main.line('} finally {');
@@ -603,7 +654,7 @@ function newEcsTask(entrypoint) {
   main.close('}');
   main.line();
   main.open('main().catch((cause) => {');
-  main.line('console.log(\'Unexpected error:\', cause);');
+  main.line("console.log('Unexpected error:', cause);");
   main.line('exit(-1);');
   main.close('});');
 
@@ -690,14 +741,19 @@ function discoverLambdas() {
       '--external:aws-sdk',
       '--sourcemap',
       '--watch',
+      '--tsconfig=tsconfig.dev.json',
     ].join(' '),
   });
 
   // Add the AWS Lambda type definitions, and ignore that it never resolves
   project.addDevDeps('@types/aws-lambda');
-  const noUnresolvedRule = project.eslint && project.eslint.rules['import/no-unresolved'];
+  const noUnresolvedRule =
+    project.eslint && project.eslint.rules['import/no-unresolved'];
   if (noUnresolvedRule != null) {
-    noUnresolvedRule[1] = { ...noUnresolvedRule[1] || {}, ignore: [...(noUnresolvedRule[1] || {}).ignore || [], 'aws-lambda'] };
+    noUnresolvedRule[1] = {
+      ...(noUnresolvedRule[1] || {}),
+      ignore: [...((noUnresolvedRule[1] || {}).ignore || []), 'aws-lambda'],
+    };
   }
 }
 
@@ -718,7 +774,9 @@ function discoverEcsTasks() {
     exec: [
       'esbuild',
       '--bundle',
-      ...entrypoints.map((file) => file.replace('ecstask.ts', 'ecs-entrypoint.ts')),
+      ...entrypoints.map((file) =>
+        file.replace('ecstask.ts', 'ecs-entrypoint.ts')
+      ),
       '--target="node16"',
       '--platform="node"',
       `--outbase="${project.srcdir}"`,
@@ -755,12 +813,14 @@ function generateSpdxLicenseEnum() {
     ts.line(' *');
     ts.line(` * @see ${url}`);
     ts.line(' */');
-    ts.line(`public static readonly ${slugify(id)} = new SpdxLicense('${id}');`);
+    ts.line(
+      `public static readonly ${slugify(id)} = new SpdxLicense('${id}');`
+    );
     ts.line();
   }
 
   ts.line('/** Packages that have not been licensed */');
-  ts.line('public static readonly UNLICENSED = new SpdxLicense(\'UNLICENSED\');');
+  ts.line("public static readonly UNLICENSED = new SpdxLicense('UNLICENSED');");
   ts.line('//#endregion');
 
   ts.line();
@@ -777,7 +837,9 @@ function generateSpdxLicenseEnum() {
   ts.open('public static osiApproved(): SpdxLicense[] {');
   ts.open('return [');
   for (const [id, { osiApproved }] of Object.entries(spdx)) {
-    if (!osiApproved) { continue; };
+    if (!osiApproved) {
+      continue;
+    }
     ts.line(`SpdxLicense.${slugify(id)},`);
   }
   ts.close('];');
@@ -836,7 +898,12 @@ function generateSpdxLicenseEnum() {
   ts.open('public static mit(): SpdxLicense[] {');
   ts.open('return [');
   for (const id of Object.keys(spdx)) {
-    if (id === 'AML' || id === 'MIT' || id === 'MITNFA' || id.startsWith('MIT-')) {
+    if (
+      id === 'AML' ||
+      id === 'MIT' ||
+      id === 'MITNFA' ||
+      id.startsWith('MIT-')
+    ) {
       ts.line(`SpdxLicense.${slugify(id)},`);
     }
   }
@@ -871,24 +938,36 @@ function generateSpdxLicenseEnum() {
     // Applying twice - some values don't re-constantize cleanly, and `jsii`
     // will actually check the case by re-constantizing those... This is silly,
     // but fixing that is likely going to be a breaking change T_T.
-    return Case.constant(Case.constant(
-      id.replace(/\+$/, '_Plus')
-        .replace(/^(\d)/, (digit) => {
+    return Case.constant(
+      Case.constant(
+        id.replace(/\+$/, '_Plus').replace(/^(\d)/, (digit) => {
           switch (digit) {
-            case '0': return 'Zero_';
-            case '1': return 'One_';
-            case '2': return 'Two_';
-            case '3': return 'Three_';
-            case '4': return 'Four_';
-            case '5': return 'Five_';
-            case '6': return 'Six_';
-            case '7': return 'Seven_';
-            case '8': return 'Eight_';
-            case '9': return 'Nine_';
-            default: return digit;
+            case '0':
+              return 'Zero_';
+            case '1':
+              return 'One_';
+            case '2':
+              return 'Two_';
+            case '3':
+              return 'Three_';
+            case '4':
+              return 'Four_';
+            case '5':
+              return 'Five_';
+            case '6':
+              return 'Six_';
+            case '7':
+              return 'Seven_';
+            case '8':
+              return 'Eight_';
+            case '9':
+              return 'Nine_';
+            default:
+              return digit;
           }
-        }),
-    ));
+        })
+      )
+    );
   }
 }
 
@@ -896,9 +975,10 @@ function generateSpdxLicenseEnum() {
 // and bundle it with this library. this way, we are only taking a
 // dev-dependency on the webapp instead of a normal/bundled dependency.
 project.addDevDeps('construct-hub-webapp');
-project.addDevDeps('cdk-triggers@0.0.x'); // can be unpinned once Construct Hub uses CDK v2
 
-project.compileTask.prependExec('cp -r ./node_modules/construct-hub-webapp/build ./website');
+project.compileTask.prependExec(
+  'cp -r ./node_modules/construct-hub-webapp/build ./website'
+);
 project.compileTask.prependExec('rm -rf ./website');
 project.npmignore.addPatterns('!/website'); // <-- include in tarball
 project.gitignore.addPatterns('/website'); // <-- don't commit
@@ -914,9 +994,11 @@ discoverEcsTasks();
 discoverIntegrationTests();
 
 // see https://github.com/aws/jsii/issues/3311
-const bundleWorkerPool = `esbuild --bundle node_modules/jsii-rosetta/lib/translate_all_worker.js --target="node16" --platform="node" --outfile="$${BUNDLE_DIR_ENV}/translate_all_worker.js" --sourcemap`;
+const bundleWorkerPool = `esbuild --bundle node_modules/jsii-rosetta/lib/translate_all_worker.js --target="node16" --platform="node" --outfile="$${BUNDLE_DIR_ENV}/translate_all_worker.js" --sourcemap  --tsconfig=tsconfig.dev.json`;
 project.tasks.tryFind('bundle:transliterator').exec(bundleWorkerPool);
-project.tasks.tryFind('bundle:transliterator:watch').prependExec(bundleWorkerPool);
+project.tasks
+  .tryFind('bundle:transliterator:watch')
+  .prependExec(bundleWorkerPool);
 
 generateSpdxLicenseEnum();
 

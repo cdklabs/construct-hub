@@ -27,24 +27,40 @@ export const METADATA_KEY_SUFFIX = '/metadata.json';
 export const ASSEMBLY_KEY_SUFFIX = '/assembly.json';
 
 /**
+ * The key suffix release notes file
+ */
+export const PACKAGE_RELEASE_NOTES_KEY_SUFFIX = '/release-notes.md';
+
+/**
  * The key suffix for a TypeScript doc artifact (root module).
  */
-export const DOCS_KEY_SUFFIX_TYPESCRIPT = docsKeySuffix(DocumentationLanguage.TYPESCRIPT);
+export const DOCS_KEY_SUFFIX_TYPESCRIPT = docsKeySuffix(
+  DocumentationLanguage.TYPESCRIPT
+);
 
 /**
  * The key suffix for a Python doc artifact (root module).
  */
-export const DOCS_KEY_SUFFIX_PYTHON = docsKeySuffix(DocumentationLanguage.PYTHON);
+export const DOCS_KEY_SUFFIX_PYTHON = docsKeySuffix(
+  DocumentationLanguage.PYTHON
+);
 
 /**
- * The key suffix for a Python doc artifact (root module).
+ * The key suffix for a Java doc artifact (root module).
  */
 export const DOCS_KEY_SUFFIX_JAVA = docsKeySuffix(DocumentationLanguage.JAVA);
 
 /**
- * The key suffix for a Python doc artifact (root module).
+ * The key suffix for a Dotnet doc artifact (root module).
  */
-export const DOCS_KEY_SUFFIX_CSHARP = docsKeySuffix(DocumentationLanguage.CSHARP);
+export const DOCS_KEY_SUFFIX_CSHARP = docsKeySuffix(
+  DocumentationLanguage.CSHARP
+);
+
+/**
+ * The key suffix for a Go doc artifact (root module).
+ */
+export const DOCS_KEY_SUFFIX_GO = docsKeySuffix(DocumentationLanguage.GO);
 
 /**
  * The key suffix matching any documentation artifact.
@@ -52,11 +68,33 @@ export const DOCS_KEY_SUFFIX_CSHARP = docsKeySuffix(DocumentationLanguage.CSHARP
 export const DOCS_KEY_SUFFIX_ANY = docsKeySuffix('*');
 
 /**
+ * Key for RSS document
+ */
+export const FEED_RSS_KEY = 'rss';
+
+/**
+ * Key for RSS document
+ */
+export const FEED_ATOM_KEY = 'atom';
+
+/**
+ * Env variable name used to set construct hub url for RSS/ATOM feed
+ */
+export const CONSTRUCT_HUB_URL_ENV_VAR_NAME = 'CONSTRUCT_HUB_URL';
+
+export const CONSTRUCT_HUB_FEED_TITLE = 'CONSTRUCT_HUB_FEED_TITLE';
+
+export const CONSTRUCT_HUB_FEED_DESCRIPTION = 'CONSTRUCT_HUB_FEED_DESCRIPTION';
+
+/**
  * Return the S3 object key prefix for a specific package name and optionally a
  * version. Note that the prefix does not end with a "/" so you will likely want
  * to add that if you want to match a specific set of objects.
  */
-export function getObjectKeyPrefix(packageName: string, packageVersion?: string) {
+export function getObjectKeyPrefix(
+  packageName: string,
+  packageVersion?: string
+) {
   let key = `${STORAGE_KEY_PREFIX}${packageName}`;
   if (packageVersion) {
     key += `/v${packageVersion}`;
@@ -74,27 +112,40 @@ export function getObjectKeys(packageName: string, packageVersion: string) {
     assemblyKey: `${prefix}${ASSEMBLY_KEY_SUFFIX}`,
     packageKey: `${prefix}${PACKAGE_KEY_SUFFIX}`,
     metadataKey: `${prefix}${METADATA_KEY_SUFFIX}`,
+    releaseNotesKey: `${prefix}${PACKAGE_RELEASE_NOTES_KEY_SUFFIX}`,
   };
 }
 
 /**
  * The key suffix for documentation artifacts by language and submodule.
  */
-export function docsKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string, fileExt?: string) {
+export function docsKeySuffix(
+  lang?: DocumentationLanguage | '*',
+  submodule?: string,
+  fileExt?: string
+) {
   return `/docs-${submodule ? `${submodule}-` : ''}${lang}.${fileExt ?? '*'}`;
 }
 
 /**
  * The key suffix for a corrupted assembly marker by language and submodule.
  */
-export function corruptAssemblyKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string, fileExt?: string) {
+export function corruptAssemblyKeySuffix(
+  lang?: DocumentationLanguage | '*',
+  submodule?: string,
+  fileExt?: string
+) {
   return `${docsKeySuffix(lang, submodule, fileExt)}${CORRUPT_ASSEMBLY_SUFFIX}`;
 }
 
 /**
  * The key suffix for a not supported marker by language and submodule.
  */
-export function notSupportedKeySuffix(lang?: DocumentationLanguage | '*', submodule?: string, fileExt?: string) {
+export function notSupportedKeySuffix(
+  lang?: DocumentationLanguage | '*',
+  submodule?: string,
+  fileExt?: string
+) {
   return `${docsKeySuffix(lang, submodule, fileExt)}${NOT_SUPPORTED_SUFFIX}`;
 }
 
@@ -126,6 +177,9 @@ export const UNPROCESSABLE_PACKAGE_ERROR_NAME = 'UnprocessablePackageError';
  */
 export const CATALOG_KEY = 'catalog.json';
 
+/** Key for feed metadata document*/
+export const FEED_METADATA_KEY = 'feed-metadata.json';
+
 /**
  * The key for the version tracking document.
  */
@@ -136,7 +190,9 @@ export const VERSION_TRACKER_KEY = 'all-versions.json';
  *
  * @param language the language for which missing documentation is requested.
  */
-export function missingDocumentationReport(language: DocumentationLanguage): string {
+export function missingDocumentationReport(
+  language: DocumentationLanguage
+): string {
   return `missing-objects/${language.name}-documentation.json`;
 }
 
@@ -157,7 +213,8 @@ export const UNINSTALLABLE_PACKAGES_REPORT = 'uninstallable-objects/data.json';
 /**
  * The key pattern for objects containing missing documentation lists.
  */
-export const MISSING_DOCUMENTATION_REPORT_PATTERN = 'missing-objects/*-documentation.json';
+export const MISSING_DOCUMENTATION_REPORT_PATTERN =
+  'missing-objects/*-documentation.json';
 
 /**
  * The key pattern for objects containing unprocessable assembly lists.
@@ -167,5 +224,7 @@ export const CORRUPT_ASSEMBLY_REPORT_PATTERN = 'corruptassembly-objects/*.json';
 /**
  * A regular expression that can be used to parse out a storage key.
  */
-export const STORAGE_KEY_FORMAT_REGEX = new RegExp(`^${STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`);
+export const STORAGE_KEY_FORMAT_REGEX = new RegExp(
+  `^${STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)/.*$`
+);
 // Capture groups:                                                        ┗━━━━━━━━1━━━━━━━━┛  ┗━━2━━┛

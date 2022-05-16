@@ -1,19 +1,43 @@
-import { ComparisonOperator, MathExpression, Metric, MetricOptions, Statistic, TreatMissingData } from '@aws-cdk/aws-cloudwatch';
-import { Rule, RuleTargetInput, Schedule } from '@aws-cdk/aws-events';
-import { SfnStateMachine } from '@aws-cdk/aws-events-targets';
-import { IGrantable, IPrincipal } from '@aws-cdk/aws-iam';
-import { FunctionProps, IFunction, Tracing } from '@aws-cdk/aws-lambda';
-import { SqsEventSource } from '@aws-cdk/aws-lambda-event-sources';
-import { RetentionDays } from '@aws-cdk/aws-logs';
-import { BlockPublicAccess, IBucket } from '@aws-cdk/aws-s3';
-import { BucketDeployment, Source } from '@aws-cdk/aws-s3-deployment';
-import { IQueue, Queue, QueueEncryption } from '@aws-cdk/aws-sqs';
-import { StateMachine, JsonPath, Choice, Succeed, Condition, Map, TaskInput, IntegrationPattern, Wait, WaitTime } from '@aws-cdk/aws-stepfunctions';
-import { CallAwsService, LambdaInvoke, StepFunctionsStartExecution } from '@aws-cdk/aws-stepfunctions-tasks';
-import { Construct, Duration, Stack, ArnFormat } from '@aws-cdk/core';
+import { Duration, Stack, ArnFormat } from 'aws-cdk-lib';
+import {
+  ComparisonOperator,
+  MathExpression,
+  Metric,
+  MetricOptions,
+  Statistic,
+  TreatMissingData,
+} from 'aws-cdk-lib/aws-cloudwatch';
+import { Rule, RuleTargetInput, Schedule } from 'aws-cdk-lib/aws-events';
+import { SfnStateMachine } from 'aws-cdk-lib/aws-events-targets';
+import { IGrantable, IPrincipal } from 'aws-cdk-lib/aws-iam';
+import { FunctionProps, IFunction, Tracing } from 'aws-cdk-lib/aws-lambda';
+import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import { RetentionDays } from 'aws-cdk-lib/aws-logs';
+import { BlockPublicAccess, IBucket } from 'aws-cdk-lib/aws-s3';
+import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import { IQueue, Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
+import {
+  StateMachine,
+  JsonPath,
+  Choice,
+  Succeed,
+  Condition,
+  Map,
+  TaskInput,
+  IntegrationPattern,
+  Wait,
+  WaitTime,
+} from 'aws-cdk-lib/aws-stepfunctions';
+import {
+  CallAwsService,
+  LambdaInvoke,
+  StepFunctionsStartExecution,
+} from 'aws-cdk-lib/aws-stepfunctions-tasks';
+import { Construct } from 'constructs';
 import { Repository } from '../../codeartifact/repository';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
+import { OverviewDashboard } from '../../overview-dashboard';
 import { PackageTagConfig } from '../../package-tag';
 import { RUNBOOK_URL } from '../../runbook-url';
 import { S3StorageFactory } from '../../s3/storage';
@@ -21,7 +45,11 @@ import { TempFile } from '../../temp-file';
 import type { PackageLinkConfig } from '../../webapp';
 import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 import { Orchestration } from '../orchestration';
-import { STORAGE_KEY_PREFIX, METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX } from '../shared/constants';
+import {
+  STORAGE_KEY_PREFIX,
+  METADATA_KEY_SUFFIX,
+  PACKAGE_KEY_SUFFIX,
+} from '../shared/constants';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { Ingestion as Handler } from './ingestion';
 import { ReIngest } from './re-ingest';
@@ -49,6 +77,8 @@ export interface IngestionProps {
    */
   readonly orchestration: Orchestration;
 
+  readonly overviewDashboard: OverviewDashboard;
+
   /**
    * How long to retain the CloudWatch logs.
    *
@@ -75,6 +105,11 @@ export interface IngestionProps {
    * @default - never
    */
   readonly reprocessFrequency?: Duration;
+
+  /**
+   * The SQS queue where new package will be added to fetch release notes.
+   */
+  readonly releaseNotesFetchQueue?: IQueue;
 }
 
 /**
@@ -123,10 +158,13 @@ export class Ingestion extends Construct implements IGrantable {
     });
 
     const configFilename = 'config.json';
-    const config = new TempFile(configFilename, JSON.stringify({
-      packageLinks: props.packageLinks ?? [],
-      packageTags: props.packageTags ?? [],
-    }));
+    const config = new TempFile(
+      configFilename,
+      JSON.stringify({
+        packageLinks: props.packageLinks ?? [],
+        packageTags: props.packageTags ?? [],
+      })
+    );
 
     const storageFactory = S3StorageFactory.getOrCreate(this);
     const configBucket = storageFactory.newBucket(this, 'ConfigBucket', {
@@ -149,13 +187,22 @@ export class Ingestion extends Construct implements IGrantable {
     };
 
     if (props.codeArtifact) {
-      environment.CODE_ARTIFACT_REPOSITORY_ENDPOINT = props.codeArtifact.publishingRepositoryNpmEndpoint;
-      environment.CODE_ARTIFACT_DOMAIN_NAME = props.codeArtifact.repositoryDomainName;
-      environment.CODE_ARTIFACT_DOMAIN_OWNER = props.codeArtifact.repositoryDomainOwner;
+      environment.CODE_ARTIFACT_REPOSITORY_ENDPOINT =
+        props.codeArtifact.publishingRepositoryNpmEndpoint;
+      environment.CODE_ARTIFACT_DOMAIN_NAME =
+        props.codeArtifact.repositoryDomainName;
+      environment.CODE_ARTIFACT_DOMAIN_OWNER =
+        props.codeArtifact.repositoryDomainOwner;
+    }
+
+    if (props.releaseNotesFetchQueue) {
+      environment.RELEASE_NOTES_FETCH_QUEUE_URL =
+        props.releaseNotesFetchQueue.queueUrl;
     }
 
     const handler = new Handler(this, 'Default', {
-      description: '[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub',
+      description:
+        '[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub',
       environment,
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 10_240, // Currently the maximum possible setting
@@ -169,10 +216,17 @@ export class Ingestion extends Construct implements IGrantable {
     props.codeArtifact?.grantPublishToRepository(handler);
     props.orchestration.stateMachine.grantStartExecution(this.function);
 
-    this.function.addEventSource(new SqsEventSource(this.queue, { batchSize: 1 }));
+    this.function.addEventSource(
+      new SqsEventSource(this.queue, { batchSize: 1 })
+    );
     // This event source is disabled, and can be used to re-process dead-letter-queue messages
-    this.function.addEventSource(new SqsEventSource(this.deadLetterQueue, { batchSize: 1, enabled: false }));
+    this.function.addEventSource(
+      new SqsEventSource(this.deadLetterQueue, { batchSize: 1, enabled: false })
+    );
 
+    if (props.releaseNotesFetchQueue) {
+      props.releaseNotesFetchQueue.grantSendMessages(this.function);
+    }
 
     // Reprocess workflow
     const reprocessQueue = new Queue(this, 'ReprocessQueue', {
@@ -185,9 +239,18 @@ export class Ingestion extends Construct implements IGrantable {
       // Visibility timeout of 15 minutes matches the Lambda maximum execution time.
       visibilityTimeout: Duration.minutes(15),
     });
-    props.bucket.grantRead(this.function, `${STORAGE_KEY_PREFIX}*${PACKAGE_KEY_SUFFIX}`);
-    this.function.addEventSource(new SqsEventSource(reprocessQueue, { batchSize: 1 }));
-    const reprocessWorkflow = new ReprocessIngestionWorkflow(this, 'ReprocessWorkflow', { bucket: props.bucket, queue: reprocessQueue });
+    props.bucket.grantRead(
+      this.function,
+      `${STORAGE_KEY_PREFIX}*${PACKAGE_KEY_SUFFIX}`
+    );
+    this.function.addEventSource(
+      new SqsEventSource(reprocessQueue, { batchSize: 1 })
+    );
+    const reprocessWorkflow = new ReprocessIngestionWorkflow(
+      this,
+      'ReprocessWorkflow',
+      { bucket: props.bucket, queue: reprocessQueue }
+    );
 
     // Run reprocess workflow on a daily basis
     const updatePeriod = props.reprocessFrequency;
@@ -196,11 +259,13 @@ export class Ingestion extends Construct implements IGrantable {
         schedule: Schedule.rate(updatePeriod),
         description: 'Periodically reprocess all packages',
       });
-      rule.addTarget(new SfnStateMachine(reprocessWorkflow.stateMachine, {
-        input: RuleTargetInput.fromObject({
-          comment: 'Scheduled reprocessing event from cron job.',
-        }),
-      }));
+      rule.addTarget(
+        new SfnStateMachine(reprocessWorkflow.stateMachine, {
+          input: RuleTargetInput.fromObject({
+            comment: 'Scheduled reprocessing event from cron job.',
+          }),
+        })
+      );
     }
 
     this.grantPrincipal = this.function.grantPrincipal;
@@ -210,8 +275,12 @@ export class Ingestion extends Construct implements IGrantable {
       new MathExpression({
         expression: 'm1 + m2',
         usingMetrics: {
-          m1: this.deadLetterQueue.metricApproximateNumberOfMessagesVisible({ period: Duration.minutes(1) }),
-          m2: this.deadLetterQueue.metricApproximateNumberOfMessagesNotVisible({ period: Duration.minutes(1) }),
+          m1: this.deadLetterQueue.metricApproximateNumberOfMessagesVisible({
+            period: Duration.minutes(1),
+          }),
+          m2: this.deadLetterQueue.metricApproximateNumberOfMessagesNotVisible({
+            period: Duration.minutes(1),
+          }),
         },
       }).createAlarm(this, 'DLQAlarm', {
         alarmName: `${this.node.path}/DLQNotEmpty`,
@@ -223,12 +292,18 @@ export class Ingestion extends Construct implements IGrantable {
           `Direct link to the queue: ${sqsQueueUrl(this.deadLetterQueue)}`,
           `Direct link to the function: ${lambdaFunctionUrl(this.function)}`,
         ].join('\n'),
-        comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        comparisonOperator:
+          ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
         evaluationPeriods: 1,
         threshold: 1,
         // SQS does not emit metrics if the queue has been empty for a while, which is GOOD.
         treatMissingData: TreatMissingData.NOT_BREACHING,
-      }),
+      })
+    );
+
+    props.overviewDashboard.addDLQMetricToDashboard(
+      'Ingestion DLQ',
+      this.deadLetterQueue
     );
     props.monitoring.addHighSeverityAlarm(
       'Ingestion failures',
@@ -241,12 +316,18 @@ export class Ingestion extends Construct implements IGrantable {
           '',
           `Direct link to the function: ${lambdaFunctionUrl(this.function)}`,
         ].join('\n'),
-        comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        comparisonOperator:
+          ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
         evaluationPeriods: 2,
         threshold: 1,
         // Lambda only emits metrics when the function is invoked. No invokation => no errors.
         treatMissingData: TreatMissingData.NOT_BREACHING,
-      }),
+      })
+    );
+
+    props.overviewDashboard.addConcurrentExecutionMetricToDashboard(
+      handler,
+      'IngestionLambda'
     );
   }
 
@@ -322,27 +403,42 @@ interface ReprocessIngestionWorkflowProps {
 class ReprocessIngestionWorkflow extends Construct {
   public readonly stateMachine: StateMachine;
 
-  public constructor(scope: Construct, id: string, props: ReprocessIngestionWorkflowProps) {
+  public constructor(
+    scope: Construct,
+    id: string,
+    props: ReprocessIngestionWorkflowProps
+  ) {
     super(scope, id);
 
     const lambdaFunction = new ReIngest(this, 'Function', {
       architecture: gravitonLambdaIfAvailable(this),
-      description: '[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion',
-      environment: { BUCKET_NAME: props.bucket.bucketName, QUEUE_URL: props.queue.queueUrl },
+      description:
+        '[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion',
+      environment: {
+        BUCKET_NAME: props.bucket.bucketName,
+        QUEUE_URL: props.queue.queueUrl,
+      },
       memorySize: 10_240,
       tracing: Tracing.ACTIVE,
       timeout: Duration.minutes(3),
     });
 
     props.queue.grantSendMessages(lambdaFunction);
-    props.bucket.grantRead(lambdaFunction, `${STORAGE_KEY_PREFIX}*${METADATA_KEY_SUFFIX}`);
-    props.bucket.grantRead(lambdaFunction, `${STORAGE_KEY_PREFIX}*${PACKAGE_KEY_SUFFIX}`);
+    props.bucket.grantRead(
+      lambdaFunction,
+      `${STORAGE_KEY_PREFIX}*${METADATA_KEY_SUFFIX}`
+    );
+    props.bucket.grantRead(
+      lambdaFunction,
+      `${STORAGE_KEY_PREFIX}*${PACKAGE_KEY_SUFFIX}`
+    );
 
     // Need to physical-name the state machine so it can self-invoke.
     const stateMachineName = stateMachineNameFrom(this.node.path);
 
     const listBucket = new Choice(this, 'Has a ContinuationToken?')
-      .when(Condition.isPresent('$.ContinuationToken'),
+      .when(
+        Condition.isPresent('$.ContinuationToken'),
         new CallAwsService(this, 'S3.ListObjectsV2(NextPage)', {
           service: 's3',
           action: 'listObjectsV2',
@@ -354,18 +450,22 @@ class ReprocessIngestionWorkflow extends Construct {
             Prefix: STORAGE_KEY_PREFIX,
           },
           resultPath: '$.response',
-        }).addRetry({ errors: ['S3.SdkClientException'] }))
-      .otherwise(new CallAwsService(this, 'S3.ListObjectsV2(FirstPage)', {
-        service: 's3',
-        action: 'listObjectsV2',
-        iamAction: 's3:ListBucket',
-        iamResources: [props.bucket.bucketArn],
-        parameters: {
-          Bucket: props.bucket.bucketName,
-          Prefix: STORAGE_KEY_PREFIX,
-        },
-        resultPath: '$.response',
-      }).addRetry({ errors: ['S3.SdkClientException'] })).afterwards();
+        }).addRetry({ errors: ['S3.SdkClientException'] })
+      )
+      .otherwise(
+        new CallAwsService(this, 'S3.ListObjectsV2(FirstPage)', {
+          service: 's3',
+          action: 'listObjectsV2',
+          iamAction: 's3:ListBucket',
+          iamResources: [props.bucket.bucketArn],
+          parameters: {
+            Bucket: props.bucket.bucketName,
+            Prefix: STORAGE_KEY_PREFIX,
+          },
+          resultPath: '$.response',
+        }).addRetry({ errors: ['S3.SdkClientException'] })
+      )
+      .afterwards();
 
     const process = new Map(this, 'Process Result', {
       itemsPath: '$.response.Contents',
@@ -376,11 +476,15 @@ class ReprocessIngestionWorkflow extends Construct {
           Condition.stringMatches('$.Key', `*${METADATA_KEY_SUFFIX}`),
           new LambdaInvoke(this, 'Send for reprocessing', { lambdaFunction })
             // Ample retries here... We should never fail because of throttling....
-            .addRetry({ errors: ['Lambda.TooManyRequestsException'], backoffRate: 1.1, interval: Duration.minutes(1), maxAttempts: 30 }),
+            .addRetry({
+              errors: ['Lambda.TooManyRequestsException'],
+              backoffRate: 1.1,
+              interval: Duration.minutes(1),
+              maxAttempts: 30,
+            })
         )
-        .otherwise(new Succeed(this, 'Nothing to do')),
+        .otherwise(new Succeed(this, 'Nothing to do'))
     );
-
 
     listBucket.next(
       new Choice(this, 'Is there more?')
@@ -392,20 +496,31 @@ class ReprocessIngestionWorkflow extends Construct {
             // pool for handling on-demand work. If we don't do this, 60k items will be queued at
             // once and live updates from NPM will struggle to get in in a reasonable time.
             time: WaitTime.duration(waitTimeBetweenReprocessBatches()),
-          }).next(new StepFunctionsStartExecution(this, 'Continue as new', {
-            associateWithParent: true,
-            stateMachine: StateMachine.fromStateMachineArn(this, 'ThisStateMachine', Stack.of(this).formatArn({
-              arnFormat: ArnFormat.COLON_RESOURCE_NAME,
-              service: 'states',
-              resource: 'stateMachine',
-              resourceName: stateMachineName,
-            })),
-            input: TaskInput.fromObject({ ContinuationToken: JsonPath.stringAt('$.response.NextContinuationToken') }),
-            integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
-            resultPath: JsonPath.DISCARD,
-          }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })),
-        ).afterwards({ includeOtherwise: true })
-        .next(process),
+          }).next(
+            new StepFunctionsStartExecution(this, 'Continue as new', {
+              associateWithParent: true,
+              stateMachine: StateMachine.fromStateMachineArn(
+                this,
+                'ThisStateMachine',
+                Stack.of(this).formatArn({
+                  arnFormat: ArnFormat.COLON_RESOURCE_NAME,
+                  service: 'states',
+                  resource: 'stateMachine',
+                  resourceName: stateMachineName,
+                })
+              ),
+              input: TaskInput.fromObject({
+                ContinuationToken: JsonPath.stringAt(
+                  '$.response.NextContinuationToken'
+                ),
+              }),
+              integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
+              resultPath: JsonPath.DISCARD,
+            }).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
+          )
+        )
+        .afterwards({ includeOtherwise: true })
+        .next(process)
     );
 
     this.stateMachine = new StateMachine(this, 'StateMachine', {
@@ -455,6 +570,8 @@ function waitTimeBetweenReprocessBatches() {
   // work, while reprocessing.
   const marginFrac = 0.2;
 
-  const seconds = (avgTimePerTask.toSeconds() * sfnStaggerFactor / (1 - marginFrac)) * (batchSize / workers);
+  const seconds =
+    ((avgTimePerTask.toSeconds() * sfnStaggerFactor) / (1 - marginFrac)) *
+    (batchSize / workers);
   return Duration.seconds(Math.floor(seconds));
 }

@@ -1,13 +1,14 @@
 // this file includes types that are part of the library's public API
 
-import * as certificatemanager from '@aws-cdk/aws-certificatemanager';
-import { IAlarmAction } from '@aws-cdk/aws-cloudwatch';
-import * as route53 from '@aws-cdk/aws-route53';
+import * as certificatemanager from 'aws-cdk-lib/aws-certificatemanager';
+import { IAlarmAction } from 'aws-cdk-lib/aws-cloudwatch';
+import * as route53 from 'aws-cdk-lib/aws-route53';
 
 export * from './backend/deny-list/api';
 export * from './backend/license-list/api';
 export * from './codeartifact/api';
 export * from './monitoring/api';
+export * from './overview-dashboard/api';
 
 /**
  * Domain configuration for the website.
@@ -19,11 +20,11 @@ export interface Domain {
   readonly zone: route53.IHostedZone;
 
   /**
-    * The certificate to use for serving the Construct Hub over a custom domain.
-    *
-    * @default - a DNS-Validated certificate will be provisioned using the
-    *            provided `hostedZone`.
-    */
+   * The certificate to use for serving the Construct Hub over a custom domain.
+   *
+   * @default - a DNS-Validated certificate will be provisioned using the
+   *            provided `hostedZone`.
+   */
   readonly cert: certificatemanager.ICertificate;
 
   /**

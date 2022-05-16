@@ -23,10 +23,12 @@ export function s3(): AWS.S3 {
  * Checks whether an object exists in S3 at the provided bucket and key.
  */
 export function s3ObjectExists(bucket: string, key: string): Promise<boolean> {
-  return s3().headObject({
-    Bucket: bucket,
-    Key: key,
-  }).promise()
+  return s3()
+    .headObject({
+      Bucket: bucket,
+      Key: key,
+    })
+    .promise()
     .then(
       () => true,
       (cause) => {
@@ -34,7 +36,7 @@ export function s3ObjectExists(bucket: string, key: string): Promise<boolean> {
           return false;
         }
         return Promise.reject(cause);
-      },
+      }
     );
 }
 

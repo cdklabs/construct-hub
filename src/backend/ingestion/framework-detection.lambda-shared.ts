@@ -4,7 +4,6 @@ import assert = require('assert');
 import { Assembly } from '@jsii/spec';
 import { minVersion } from 'semver';
 
-
 export const enum ConstructFrameworkName {
   AWS_CDK = 'aws-cdk',
   CDK8S = 'cdk8s',
@@ -28,9 +27,16 @@ export interface ConstructFramework {
  * Predicates that determine whether a package is indicative of the CDK
  * framework someone is using.
  */
-const FRAMEWORK_MATCHERS: Record<ConstructFrameworkName, (name: string) => boolean> = {
-  [ConstructFrameworkName.AWS_CDK]: (name: string) => name.startsWith('@aws-cdk/') || name === 'aws-cdk-lib' || name === 'monocdk',
-  [ConstructFrameworkName.CDK8S]: (name: string) => name === 'cdk8s' || /^cdk8s-plus(?:-(?:17|20|21|22))?$/.test(name),
+const FRAMEWORK_MATCHERS: Record<
+  ConstructFrameworkName,
+  (name: string) => boolean
+> = {
+  [ConstructFrameworkName.AWS_CDK]: (name: string) =>
+    name.startsWith('@aws-cdk/') ||
+    name === 'aws-cdk-lib' ||
+    name === 'monocdk',
+  [ConstructFrameworkName.CDK8S]: (name: string) =>
+    name === 'cdk8s' || /^cdk8s-plus(?:-(?:17|20|21|22))?$/.test(name),
   // cdktf providers dependencies ("@cdktf/provider-xxx") are major versioned
   // differently than the core library, so do not take them into account
   [ConstructFrameworkName.CDKTF]: (name: string) => name === 'cdktf',
@@ -44,12 +50,16 @@ const FRAMEWORK_MATCHERS: Record<ConstructFrameworkName, (name: string) => boole
  *
  * @returns a construct framework if one could be identified.
  */
-export function detectConstructFrameworks(assembly: Assembly): ConstructFramework[] {
+export function detectConstructFrameworks(
+  assembly: Assembly
+): ConstructFramework[] {
   // "not-sure" means we haven't seen a major version for the framework yet,
   // e.g. in the case of a transitive dependency where the info isn't provided
   // "ambiguous" means we have seen multiple major versions so it's impossible
   // to resolve a single number
-  const detectedFrameworks: { [P in ConstructFrameworkName]?: number | 'no-data' | 'ambiguous' } = {};
+  const detectedFrameworks: {
+    [P in ConstructFrameworkName]?: number | 'no-data' | 'ambiguous';
+  } = {};
 
   detectConstructFrameworkPackage(assembly.name, assembly.version);
   for (const depName of Object.keys(assembly.dependencyClosure ?? {})) {
@@ -57,7 +67,9 @@ export function detectConstructFrameworks(assembly: Assembly): ConstructFramewor
   }
 
   const frameworks = new Array<ConstructFramework>();
-  for (const [frameworkName, majorVersion] of Object.entries(detectedFrameworks)) {
+  for (const [frameworkName, majorVersion] of Object.entries(
+    detectedFrameworks
+  )) {
     const name = frameworkName as ConstructFrameworkName;
     if (majorVersion === undefined) {
       continue;
@@ -74,8 +86,15 @@ export function detectConstructFrameworks(assembly: Assembly): ConstructFramewor
    * Analyses the package name and version range, and updates
    * `detectedFrameworks` from the parent scope appropriately
    */
-  function detectConstructFrameworkPackage(packageName: string, versionRange = assembly.dependencies?.[packageName]): void {
-    for (const frameworkName of [ConstructFrameworkName.AWS_CDK, ConstructFrameworkName.CDK8S, ConstructFrameworkName.CDKTF]) {
+  function detectConstructFrameworkPackage(
+    packageName: string,
+    versionRange = assembly.dependencies?.[packageName]
+  ): void {
+    for (const frameworkName of [
+      ConstructFrameworkName.AWS_CDK,
+      ConstructFrameworkName.CDK8S,
+      ConstructFrameworkName.CDKTF,
+    ]) {
       const matchesFramework = FRAMEWORK_MATCHERS[frameworkName];
       if (matchesFramework(packageName)) {
         const frameworkVersion = detectedFrameworks[frameworkName];
@@ -86,7 +105,9 @@ export function detectConstructFrameworks(assembly: Assembly): ConstructFramewor
           return;
         }
 
-        const packageMajor = (versionRange ? minVersion(versionRange)?.major : undefined) ?? 'no-data';
+        const packageMajor =
+          (versionRange ? minVersion(versionRange)?.major : undefined) ??
+          'no-data';
 
         if (frameworkVersion === undefined) {
           // It's the first time seeing this major version, so we record
