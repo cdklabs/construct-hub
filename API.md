@@ -10711,7 +10711,7 @@ ConstructHub monitoring features exposed to extension points.
 ##### `addHighSeverityAlarm` <a name="addHighSeverityAlarm" id="construct-hub.IMonitoring.addHighSeverityAlarm"></a>
 
 ```typescript
-public addHighSeverityAlarm(title: string, alarm: Alarm): void
+public addHighSeverityAlarm(title: string, alarm: AlarmBase): void
 ```
 
 Adds a high-severity alarm.
@@ -10729,7 +10729,7 @@ a user-friendly title for the alarm (will be rendered on the high-severity Cloud
 
 ###### `alarm`<sup>Required</sup> <a name="alarm" id="construct-hub.IMonitoring.addHighSeverityAlarm.parameter.alarm"></a>
 
-- *Type:* aws-cdk-lib.aws_cloudwatch.Alarm
+- *Type:* aws-cdk-lib.aws_cloudwatch.AlarmBase
 
 the alarm to be added to the high-severity dashboard.
 
@@ -10738,7 +10738,7 @@ the alarm to be added to the high-severity dashboard.
 ##### `addLowSeverityAlarm` <a name="addLowSeverityAlarm" id="construct-hub.IMonitoring.addLowSeverityAlarm"></a>
 
 ```typescript
-public addLowSeverityAlarm(title: string, alarm: Alarm): void
+public addLowSeverityAlarm(title: string, alarm: AlarmBase): void
 ```
 
 Adds a low-severity alarm.
@@ -10756,7 +10756,7 @@ a user-friendly title for the alarm (not currently used).
 
 ###### `alarm`<sup>Required</sup> <a name="alarm" id="construct-hub.IMonitoring.addLowSeverityAlarm.parameter.alarm"></a>
 
-- *Type:* aws-cdk-lib.aws_cloudwatch.Alarm
+- *Type:* aws-cdk-lib.aws_cloudwatch.AlarmBase
 
 the alarm to be added.
 

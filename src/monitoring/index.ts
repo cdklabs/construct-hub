@@ -26,8 +26,8 @@ export interface MonitoringProps {
  */
 export class Monitoring extends Construct implements IMonitoring {
   private alarmActions?: AlarmActions;
-  private _highSeverityAlarms: cw.Alarm[];
-  private _lowSeverityAlarms: cw.Alarm[];
+  private _highSeverityAlarms: cw.AlarmBase[];
+  private _lowSeverityAlarms: cw.AlarmBase[];
 
   /**
    * Allows adding automatic monitoring to standard resources. Note that
@@ -66,7 +66,7 @@ export class Monitoring extends Construct implements IMonitoring {
    * Adds a high-severity alarm. If this alarm goes off, the action specified in `highSeverityAlarmActionArn`
    * @param alarm
    */
-  public addHighSeverityAlarm(title: string, alarm: cw.Alarm) {
+  public addHighSeverityAlarm(title: string, alarm: cw.AlarmBase) {
     const highSeverityActionArn = this.alarmActions?.highSeverity;
     if (highSeverityActionArn) {
       alarm.addAlarmAction({
@@ -86,10 +86,10 @@ export class Monitoring extends Construct implements IMonitoring {
       })
     );
 
-    this._highSeverityAlarms?.push(alarm);
+    this._highSeverityAlarms.push(alarm);
   }
 
-  public addLowSeverityAlarm(_title: string, alarm: cw.Alarm) {
+  public addLowSeverityAlarm(_title: string, alarm: cw.AlarmBase) {
     const normalSeverityActionArn = this.alarmActions?.normalSeverity;
     if (normalSeverityActionArn) {
       alarm.addAlarmAction({
@@ -100,7 +100,7 @@ export class Monitoring extends Construct implements IMonitoring {
     if (normalSeverityAction) {
       alarm.addAlarmAction(normalSeverityAction);
     }
-    this._lowSeverityAlarms?.push(alarm);
+    this._lowSeverityAlarms.push(alarm);
   }
 
   public get highSeverityAlarms() {

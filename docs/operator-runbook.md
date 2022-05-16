@@ -666,6 +666,38 @@ If there is a reason why a tracked version cannot possibly be ingested, the S3
 object backing the canary state can be deleted, which will effectively
 re-initialize the canary to track only the latest available version.
 
+### `ConstructHub/Sources/NpmJs/Canary/NotRunningOrFailing`
+
+#### Description
+
+This alarm is only provisioned in case the [NpmJs package canary][package-canary]
+was configured. It triggers when the canary is not running as expected, or is
+reporting failures.
+
+When the [NpmJs package canary][package-canary] does not successfully run, the
+`ConstructHub/Sources/NpmJs/Canary/SLA-Breached` alarm cannot be triggered due
+to lack of data. This may hence hide customer-visible problems.
+
+#### Investigation
+
+In the AWS Console, verify whether the alarm triggered due to
+`ConstructHub/Sources/NpmJs/Canary/Failing` or
+`ConstructHub/Sources/NpmJs/Canary/NotRunning`.
+
+If the canary is not running, verify that the scheduled trigger for the [NpmJs
+package canary][package-canary] is correctly enabled. If it is, and the canary
+is not running, the account might have run out of available AWS Lambda
+concurrency, and a limit increase request might be necessary. When that is the
+case, the function will report this via the `Throttled` metric.
+
+Otherwise, [dive into the Lambda logs][#lambda-log-dive] of the Canary function
+to determine what is happening and resolve the problem.
+
+#### Resolution
+
+Once the canary starts unning normally again, the alarm will clear itself
+without requiring any further intervention.
+
 ## :information_source: General Recommendations
 
 ### Diving into Lambda Function logs in CloudWatch Logs

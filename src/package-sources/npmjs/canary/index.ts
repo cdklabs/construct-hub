@@ -20,6 +20,8 @@ export interface NpmJsPackageCanaryProps {
 }
 
 export class NpmJsPackageCanary extends Construct {
+  private readonly handler: Handler;
+
   public constructor(
     scope: Construct,
     id: string,
@@ -27,7 +29,7 @@ export class NpmJsPackageCanary extends Construct {
   ) {
     super(scope, id);
 
-    const handler = new Handler(this, 'Resource', {
+    this.handler = new Handler(this, 'Resource', {
       architecture: gravitonLambdaIfAvailable(this),
       description: `[${scope.node.path}/PackageCanary] Monitors ${props.packageName} versions availability`,
       environment: {
@@ -40,14 +42,14 @@ export class NpmJsPackageCanary extends Construct {
       timeout: Duration.minutes(1),
     });
     const grant = props.bucket.grantReadWrite(
-      handler,
+      this.handler,
       `${ObjectKey.STATE_PREFIX}*${ObjectKey.STATE_SUFFIX}`
     );
 
     const schedule = new Rule(this, 'Schedule', {
       description: 'Scheduled executions of the NpmJS package canary',
       schedule: Schedule.rate(Duration.minutes(1)),
-      targets: [new LambdaFunction(handler)],
+      targets: [new LambdaFunction(this.handler)],
     });
     // Ensure we don't attempt to run before permissions have been granted.
     schedule.node.addDependency(grant);
@@ -81,5 +83,41 @@ export class NpmJsPackageCanary extends Construct {
       metricName: MetricName.TRACKED_VERSION_COUNT,
       namespace: METRICS_NAMESPACE,
     });
+  }
+
+  /**
+   * The estimated lag between the npm registry replica (replcate.npmjs.com) and
+   * the primary registry (registry.npmjs.com).
+   *
+   * IMPORTANT NOTE: This is based on the difference in modified timestamps for
+   * the probe package between the two and hence has a granularly no better than
+   * the publishing interval of this. Since the construct-hub-probe package is
+   * only published every 3 hours approximately, this metric has a resolution
+   * that is strictly worse than 3 hours.
+   */
+  public metricEstimatedNpmReplicaLag(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(1),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      metricName: MetricName.NPM_REPLICA_LAG,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  public metricErrors(opts?: MetricOptions): Metric {
+    return this.handler.metricErrors(opts);
+  }
+
+  public metricInvocations(opts?: MetricOptions): Metric {
+    return this.handler.metricInvocations(opts);
+  }
+
+  public metricThrottles(opts?: MetricOptions): Metric {
+    return this.handler.metricThrottles(opts);
+  }
+
+  public metricDuration(opts?: MetricOptions): Metric {
+    return this.handler.metricDuration(opts);
   }
 }
