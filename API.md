@@ -103,8 +103,11 @@ Any object.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#construct-hub.ConstructHub.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#construct-hub.ConstructHub.property.allAlarms">allAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | Returns a list of all alarms configured by this ConstructHub instance. |
 | <code><a href="#construct-hub.ConstructHub.property.grantPrincipal">grantPrincipal</a></code> | <code>aws-cdk-lib.aws_iam.IPrincipal</code> | The principal to grant permissions to. |
+| <code><a href="#construct-hub.ConstructHub.property.highSeverityAlarms">highSeverityAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | Returns a list of all high-severity alarms from this ConstructHub instance. |
 | <code><a href="#construct-hub.ConstructHub.property.ingestionQueue">ingestionQueue</a></code> | <code>aws-cdk-lib.aws_sqs.IQueue</code> | *No description.* |
+| <code><a href="#construct-hub.ConstructHub.property.lowSeverityAlarms">lowSeverityAlarms</a></code> | <code>aws-cdk-lib.aws_cloudwatch.IAlarm[]</code> | Returns a list of all low-severity alarms from this ConstructHub instance. |
 
 ---
 
@@ -120,6 +123,18 @@ The tree node.
 
 ---
 
+##### `allAlarms`<sup>Required</sup> <a name="allAlarms" id="construct-hub.ConstructHub.property.allAlarms"></a>
+
+```typescript
+public readonly allAlarms: IAlarm[];
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm[]
+
+Returns a list of all alarms configured by this ConstructHub instance.
+
+---
+
 ##### `grantPrincipal`<sup>Required</sup> <a name="grantPrincipal" id="construct-hub.ConstructHub.property.grantPrincipal"></a>
 
 ```typescript
@@ -132,6 +147,21 @@ The principal to grant permissions to.
 
 ---
 
+##### `highSeverityAlarms`<sup>Required</sup> <a name="highSeverityAlarms" id="construct-hub.ConstructHub.property.highSeverityAlarms"></a>
+
+```typescript
+public readonly highSeverityAlarms: IAlarm[];
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm[]
+
+Returns a list of all high-severity alarms from this ConstructHub instance.
+
+These warrant immediate attention as they are indicative of a system health
+issue.
+
+---
+
 ##### `ingestionQueue`<sup>Required</sup> <a name="ingestionQueue" id="construct-hub.ConstructHub.property.ingestionQueue"></a>
 
 ```typescript
@@ -139,6 +169,22 @@ public readonly ingestionQueue: IQueue;
 ```
 
 - *Type:* aws-cdk-lib.aws_sqs.IQueue
+
+---
+
+##### `lowSeverityAlarms`<sup>Required</sup> <a name="lowSeverityAlarms" id="construct-hub.ConstructHub.property.lowSeverityAlarms"></a>
+
+```typescript
+public readonly lowSeverityAlarms: IAlarm[];
+```
+
+- *Type:* aws-cdk-lib.aws_cloudwatch.IAlarm[]
+
+Returns a list of all low-severity alarms from this ConstructHub instance.
+
+These do not necessitate immediate attention, as they do not have direct
+customer-visible impact, or handling is not time-sensitive. They indicate
+that something unusual (not necessarily bad) is happening.
 
 ---
 
