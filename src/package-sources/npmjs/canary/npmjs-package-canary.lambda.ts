@@ -64,13 +64,18 @@ export async function handler(event: unknown): Promise<void> {
   updateLatestIfNeeded(state, latest);
 
   try {
-    await metricScope((metrics) => () => {
+    await metricScope((metrics) => async () => {
       // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
       metrics.setDimensions();
       metrics.putMetric(
         MetricName.TRACKED_VERSION_COUNT,
         Object.keys(state.pending).length + 1,
         Unit.Count
+      );
+      metrics.putMetric(
+        MetricName.NPM_REPLICA_LAG,
+        await stateService.npmReplicaLagSeconds(packageName),
+        Unit.Seconds
       );
     })();
 
@@ -221,7 +226,7 @@ class ConstructHub {
   }
 }
 
-class CanaryStateService {
+export class CanaryStateService {
   constructor(private readonly bucketName: string) {}
 
   /**
@@ -297,6 +302,38 @@ class CanaryStateService {
     );
 
     return { version, publishedAt: new Date(publishedAt) };
+  }
+
+  public async npmReplicaLagSeconds(packageName: string): Promise<number> {
+    const encodedPackageName = encodeURIComponent(packageName);
+
+    console.log(`Measuring NPM replica lag using ${packageName}...`);
+
+    const [primaryDate, replicaDate] = await Promise.all([
+      getModifiedTimestamp(`registry.npmjs.org`),
+      getModifiedTimestamp(`replicate.npmjs.com/registry`),
+    ]);
+    const deltaMs = primaryDate.getTime() - replicaDate.getTime();
+
+    console.log(`Timestamp on primary: ${primaryDate.toISOString()}`);
+    console.log(
+      `Timestamp on replica: ${replicaDate.toISOString()} (${
+        deltaMs / 3_600_000
+      } hours behind)`
+    );
+
+    // We return in seconds... The millisecond resolution is silly here since the probe package is
+    // only published approximately once every three hours. We use seconds only because this is the
+    // largest available time unit in CloudWatch.
+    return deltaMs / 1_000;
+
+    async function getModifiedTimestamp(baseUrl: string) {
+      const isoDate = await getJSON(
+        `https://${baseUrl}/${encodedPackageName}`,
+        ['time', 'modified']
+      );
+      return new Date(isoDate);
+    }
   }
 
   private key(packageName: string): string {
