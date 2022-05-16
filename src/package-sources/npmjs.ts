@@ -1,13 +1,15 @@
 import { Duration } from 'aws-cdk-lib';
 import {
+  AlarmRule,
   ComparisonOperator,
+  CompositeAlarm,
   GraphWidget,
+  IWidget,
   MathExpression,
   Metric,
   MetricOptions,
   Statistic,
   TreatMissingData,
-  IWidget,
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
@@ -565,12 +567,22 @@ export class NpmJs implements IPackageSource {
       packageName,
     });
 
+    const period = Duration.minutes(1);
     const alarm = new MathExpression({
-      expression: 'MAX([mDwell, mTTC])',
-      period: Duration.minutes(1),
+      // When the npm replica is sufficiently behind the primary, the package source will not be
+      // able to register new canary package versions within the SLA. In such cases, there is
+      // nothing that can be done except for waiting until the replica has finally caught up. We
+      // hence suppress the alarm if the replica lag is getting within 3 evaluation periods of the
+      // visbility SLA.
+      expression: `IF(FILL(mLag, 0) < ${Math.max(
+        visibilitySla.toSeconds() - 3 * period.toSeconds(),
+        3 * period.toSeconds()
+      )}, MAX([mDwell, mTTC]))`,
+      period,
       usingMetrics: {
         mDwell: canary.metricDwellTime(),
         mTTC: canary.metricTimeToCatalog(),
+        mLag: canary.metricEstimatedNpmReplicaLag(),
       },
     }).createAlarm(canary, 'Alarm', {
       alarmName: `${canary.node.path}/SLA-Breached`,
@@ -580,13 +592,51 @@ export class NpmJs implements IPackageSource {
       ].join('\n'),
       comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
       evaluationPeriods: 2,
-      // If there is no data, the canary might not be running, so... *Chuckles* we're in danger!
-      treatMissingData: TreatMissingData.BREACHING,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
       threshold: visibilitySla.toSeconds(),
     });
-    monitoring.addHighSeverityAlarm(
+    // This is deemed low severity, because the npm registry replica (replicate.npmjs.com) can
+    // occasionally lag several hours behind the primary (registry.npmjs.com), and we cannot easily
+    // tell about that. Someone should have a look, but in virtually all cases we have seen so far,
+    // there is nothing that can be done from our end, besides waiting for the replica to be all
+    // caught up.
+    monitoring.addLowSeverityAlarm(
       'New version visibility SLA breached',
       alarm
+    );
+
+    const notRunningOrFailingAlarm = new CompositeAlarm(
+      canary,
+      'NotRunningOrFailing',
+      {
+        alarmRule: AlarmRule.anyOf(
+          canary.metricErrors({ period, statistic: Statistic.SUM }).createAlarm(canary, 'Failing', {
+            alarmName: `${canary.node.path}/Failing`,
+            comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+            evaluationPeriods: 2,
+            threshold: 0,
+            treatMissingData: TreatMissingData.BREACHING,
+          }),
+          canary.metricInvocations({ period, statistic: Statistic.SUM }).createAlarm(canary, 'NotRunning', {
+            alarmName: `${canary.node.path}/NotRunning`,
+            comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+            evaluationPeriods: 2,
+            threshold: 1,
+            treatMissingData: TreatMissingData.BREACHING,
+          }),
+        ),
+        alarmDescription: [
+          'The NpmJs package canary is not running or is failing. This prevents alarming when this instance of',
+          'ConstructHub falls out of SLA for new package ingestion!',
+          '',
+          `Runbook: ${RUNBOOK_URL}`,
+        ].join('\n'),
+        compositeAlarmName: `${canary.node.path}/NotRunningOrFailing`,
+      }
+    );
+    monitoring.addHighSeverityAlarm(
+      'NpmJs Follower Canary is not running or fails',
+      notRunningOrFailingAlarm
     );
 
     return [
@@ -610,6 +660,24 @@ export class NpmJs implements IPackageSource {
           canary.metricTrackedVersionCount({ label: 'Tracked Version Count' }),
         ],
         rightYAxis: { min: 0 },
+      }),
+      new GraphWidget({
+        height: 6,
+        width: 12,
+        title: 'Observed lag of replicate.npmjs.com',
+        left: [
+          canary.metricEstimatedNpmReplicaLag({
+            label: `Replica lag (${packageName})`,
+          }),
+        ],
+        leftAnnotations: [
+          {
+            color: '#ffa500',
+            label: visibilitySla.toHumanString(),
+            value: visibilitySla.toSeconds(),
+          },
+        ],
+        leftYAxis: { min: 0 },
       }),
     ];
   }

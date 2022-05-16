@@ -153,6 +153,10 @@ export class CatalogBuilder extends Construct {
         threshold: -5,
       }
     );
+    // This is a high-severity alarm because it is indicative of a possible mass-extinction event
+    // in the catalog. This should definitely prompt immediate investigation, although it can also
+    // be caused by the recent addition of enough packages in the deny-list to cause the alarm to
+    // trigger.
     props.monitoring.addHighSeverityAlarm(
       'Catalog Size Shrunk',
       alarmShrinkingCatalog
