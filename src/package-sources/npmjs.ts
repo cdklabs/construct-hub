@@ -610,20 +610,24 @@ export class NpmJs implements IPackageSource {
       'NotRunningOrFailing',
       {
         alarmRule: AlarmRule.anyOf(
-          canary.metricErrors({ period, statistic: Statistic.SUM }).createAlarm(canary, 'Failing', {
-            alarmName: `${canary.node.path}/Failing`,
-            comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
-            evaluationPeriods: 2,
-            threshold: 0,
-            treatMissingData: TreatMissingData.BREACHING,
-          }),
-          canary.metricInvocations({ period, statistic: Statistic.SUM }).createAlarm(canary, 'NotRunning', {
-            alarmName: `${canary.node.path}/NotRunning`,
-            comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
-            evaluationPeriods: 2,
-            threshold: 1,
-            treatMissingData: TreatMissingData.BREACHING,
-          }),
+          canary
+            .metricErrors({ period, statistic: Statistic.SUM })
+            .createAlarm(canary, 'Failing', {
+              alarmName: `${canary.node.path}/Failing`,
+              comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+              evaluationPeriods: 2,
+              threshold: 0,
+              treatMissingData: TreatMissingData.BREACHING,
+            }),
+          canary
+            .metricInvocations({ period, statistic: Statistic.SUM })
+            .createAlarm(canary, 'NotRunning', {
+              alarmName: `${canary.node.path}/NotRunning`,
+              comparisonOperator: ComparisonOperator.LESS_THAN_THRESHOLD,
+              evaluationPeriods: 2,
+              threshold: 1,
+              treatMissingData: TreatMissingData.BREACHING,
+            })
         ),
         alarmDescription: [
           'The NpmJs package canary is not running or is failing. This prevents alarming when this instance of',

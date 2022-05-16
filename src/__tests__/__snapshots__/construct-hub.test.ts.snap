@@ -4135,6 +4135,17 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs Follower Canary is not running or fails\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesNpmJsCanaryNotRunningOrFailing62A8E2F6",
+                  "Arn",
+                ],
+              },
               "\\"]},\\"yAxis\\":{}}}]}",
             ],
           ],
@@ -9048,7 +9059,7 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "EvaluationPeriods": 2,
         "Metrics": Array [
           Object {
-            "Expression": "IF(FILL(mLag, 0) < 120, MAX([mDwell, mTTC]))",
+            "Expression": "IF(FILL(mLag, 0) < 180, MAX([mDwell, mTTC]))",
             "Id": "expr_1",
           },
           Object {
@@ -9092,6 +9103,97 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanaryFailingE338711F": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/Failing",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "FunctionName",
+            "Value": Object {
+              "Ref": "ConstructHubSourcesNpmJsCanary5558FC45",
+            },
+          },
+        ],
+        "EvaluationPeriods": 2,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Period": 60,
+        "Statistic": "Sum",
+        "Threshold": 0,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanaryNotRunningFCFBD0E6": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/NotRunning",
+        "ComparisonOperator": "LessThanThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "FunctionName",
+            "Value": Object {
+              "Ref": "ConstructHubSourcesNpmJsCanary5558FC45",
+            },
+          },
+        ],
+        "EvaluationPeriods": 2,
+        "MetricName": "Invocations",
+        "Namespace": "AWS/Lambda",
+        "Period": 60,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanaryNotRunningOrFailing62A8E2F6": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmActions": Array [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
+        "AlarmDescription": "The NpmJs package canary is not running or is failing. This prevents alarming when this instance of
+ConstructHub falls out of SLA for new package ingestion!
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/NotRunningOrFailing",
+        "AlarmRule": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "(ALARM(\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesNpmJsCanaryFailingE338711F",
+                  "Arn",
+                ],
+              },
+              "\\") OR ALARM(\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesNpmJsCanaryNotRunningFCFBD0E6",
+                  "Arn",
+                ],
+              },
+              "\\"))",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::CloudWatch::CompositeAlarm",
     },
     "ConstructHubSourcesNpmJsCanarySchedule4D94219F": Object {
       "DependsOn": Array [
@@ -16408,6 +16510,17 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs Follower Canary is not running or fails\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesNpmJsCanaryNotRunningOrFailing62A8E2F6",
+                  "Arn",
+                ],
+              },
               "\\"]},\\"yAxis\\":{}}}]}",
             ],
           ],
@@ -21394,7 +21507,7 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "EvaluationPeriods": 2,
         "Metrics": Array [
           Object {
-            "Expression": "IF(FILL(mLag, 0) < 120, MAX([mDwell, mTTC]))",
+            "Expression": "IF(FILL(mLag, 0) < 180, MAX([mDwell, mTTC]))",
             "Id": "expr_1",
           },
           Object {
@@ -21438,6 +21551,97 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanaryFailingE338711F": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/Failing",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "FunctionName",
+            "Value": Object {
+              "Ref": "ConstructHubSourcesNpmJsCanary5558FC45",
+            },
+          },
+        ],
+        "EvaluationPeriods": 2,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Period": 60,
+        "Statistic": "Sum",
+        "Threshold": 0,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanaryNotRunningFCFBD0E6": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/NotRunning",
+        "ComparisonOperator": "LessThanThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "FunctionName",
+            "Value": Object {
+              "Ref": "ConstructHubSourcesNpmJsCanary5558FC45",
+            },
+          },
+        ],
+        "EvaluationPeriods": 2,
+        "MetricName": "Invocations",
+        "Namespace": "AWS/Lambda",
+        "Period": 60,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanaryNotRunningOrFailing62A8E2F6": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmActions": Array [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
+        "AlarmDescription": "The NpmJs package canary is not running or is failing. This prevents alarming when this instance of
+ConstructHub falls out of SLA for new package ingestion!
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/NotRunningOrFailing",
+        "AlarmRule": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "(ALARM(\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesNpmJsCanaryFailingE338711F",
+                  "Arn",
+                ],
+              },
+              "\\") OR ALARM(\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesNpmJsCanaryNotRunningFCFBD0E6",
+                  "Arn",
+                ],
+              },
+              "\\"))",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::CloudWatch::CompositeAlarm",
     },
     "ConstructHubSourcesNpmJsCanarySchedule4D94219F": Object {
       "DependsOn": Array [
@@ -28399,6 +28603,17 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs Follower Canary is not running or fails\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesNpmJsCanaryNotRunningOrFailing62A8E2F6",
+                  "Arn",
+                ],
+              },
               "\\"]},\\"yAxis\\":{}}}]}",
             ],
           ],
@@ -33312,7 +33527,7 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "EvaluationPeriods": 2,
         "Metrics": Array [
           Object {
-            "Expression": "IF(FILL(mLag, 0) < 120, MAX([mDwell, mTTC]))",
+            "Expression": "IF(FILL(mLag, 0) < 180, MAX([mDwell, mTTC]))",
             "Id": "expr_1",
           },
           Object {
@@ -33356,6 +33571,97 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanaryFailingE338711F": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/Failing",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "FunctionName",
+            "Value": Object {
+              "Ref": "ConstructHubSourcesNpmJsCanary5558FC45",
+            },
+          },
+        ],
+        "EvaluationPeriods": 2,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Period": 60,
+        "Statistic": "Sum",
+        "Threshold": 0,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanaryNotRunningFCFBD0E6": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/NotRunning",
+        "ComparisonOperator": "LessThanThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "FunctionName",
+            "Value": Object {
+              "Ref": "ConstructHubSourcesNpmJsCanary5558FC45",
+            },
+          },
+        ],
+        "EvaluationPeriods": 2,
+        "MetricName": "Invocations",
+        "Namespace": "AWS/Lambda",
+        "Period": 60,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanaryNotRunningOrFailing62A8E2F6": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmActions": Array [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
+        "AlarmDescription": "The NpmJs package canary is not running or is failing. This prevents alarming when this instance of
+ConstructHub falls out of SLA for new package ingestion!
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/NotRunningOrFailing",
+        "AlarmRule": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "(ALARM(\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesNpmJsCanaryFailingE338711F",
+                  "Arn",
+                ],
+              },
+              "\\") OR ALARM(\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesNpmJsCanaryNotRunningFCFBD0E6",
+                  "Arn",
+                ],
+              },
+              "\\"))",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::CloudWatch::CompositeAlarm",
     },
     "ConstructHubSourcesNpmJsCanarySchedule4D94219F": Object {
       "DependsOn": Array [
@@ -40451,6 +40757,17 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":42,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs Follower Canary is not running or fails\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesNpmJsCanaryNotRunningOrFailing62A8E2F6",
+                  "Arn",
+                ],
+              },
               "\\"]},\\"yAxis\\":{}}}]}",
             ],
           ],
@@ -45351,7 +45668,7 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "EvaluationPeriods": 2,
         "Metrics": Array [
           Object {
-            "Expression": "IF(FILL(mLag, 0) < 120, MAX([mDwell, mTTC]))",
+            "Expression": "IF(FILL(mLag, 0) < 180, MAX([mDwell, mTTC]))",
             "Id": "expr_1",
           },
           Object {
@@ -45395,6 +45712,97 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanaryFailingE338711F": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/Failing",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "FunctionName",
+            "Value": Object {
+              "Ref": "ConstructHubSourcesNpmJsCanary5558FC45",
+            },
+          },
+        ],
+        "EvaluationPeriods": 2,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Period": 60,
+        "Statistic": "Sum",
+        "Threshold": 0,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanaryNotRunningFCFBD0E6": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/NotRunning",
+        "ComparisonOperator": "LessThanThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "FunctionName",
+            "Value": Object {
+              "Ref": "ConstructHubSourcesNpmJsCanary5558FC45",
+            },
+          },
+        ],
+        "EvaluationPeriods": 2,
+        "MetricName": "Invocations",
+        "Namespace": "AWS/Lambda",
+        "Period": 60,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanaryNotRunningOrFailing62A8E2F6": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmActions": Array [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
+        "AlarmDescription": "The NpmJs package canary is not running or is failing. This prevents alarming when this instance of
+ConstructHub falls out of SLA for new package ingestion!
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/NotRunningOrFailing",
+        "AlarmRule": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "(ALARM(\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesNpmJsCanaryFailingE338711F",
+                  "Arn",
+                ],
+              },
+              "\\") OR ALARM(\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesNpmJsCanaryNotRunningFCFBD0E6",
+                  "Arn",
+                ],
+              },
+              "\\"))",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::CloudWatch::CompositeAlarm",
     },
     "ConstructHubSourcesNpmJsCanarySchedule4D94219F": Object {
       "DependsOn": Array [
@@ -52806,6 +53214,17 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
+              "\\"]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":24,\\"height\\":6,\\"x\\":0,\\"y\\":30,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"NpmJs Follower Canary is not running or fails\\",\\"region\\":\\"",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              "\\",\\"annotations\\":{\\"alarms\\":[\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesNpmJsCanaryNotRunningOrFailing62A8E2F6",
+                  "Arn",
+                ],
+              },
               "\\"]},\\"yAxis\\":{}}}]}",
             ],
           ],
@@ -57417,7 +57836,7 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "EvaluationPeriods": 2,
         "Metrics": Array [
           Object {
-            "Expression": "IF(FILL(mLag, 0) < 120, MAX([mDwell, mTTC]))",
+            "Expression": "IF(FILL(mLag, 0) < 180, MAX([mDwell, mTTC]))",
             "Id": "expr_1",
           },
           Object {
@@ -57461,6 +57880,97 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "TreatMissingData": "notBreaching",
       },
       "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanaryFailingE338711F": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/Failing",
+        "ComparisonOperator": "GreaterThanThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "FunctionName",
+            "Value": Object {
+              "Ref": "ConstructHubSourcesNpmJsCanary5558FC45",
+            },
+          },
+        ],
+        "EvaluationPeriods": 2,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Period": 60,
+        "Statistic": "Sum",
+        "Threshold": 0,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanaryNotRunningFCFBD0E6": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/NotRunning",
+        "ComparisonOperator": "LessThanThreshold",
+        "Dimensions": Array [
+          Object {
+            "Name": "FunctionName",
+            "Value": Object {
+              "Ref": "ConstructHubSourcesNpmJsCanary5558FC45",
+            },
+          },
+        ],
+        "EvaluationPeriods": 2,
+        "MetricName": "Invocations",
+        "Namespace": "AWS/Lambda",
+        "Period": 60,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "breaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
+    "ConstructHubSourcesNpmJsCanaryNotRunningOrFailing62A8E2F6": Object {
+      "DependsOn": Array [
+        "ConstructHubLicenseListAwsCliLayer59592811",
+        "ConstructHubLicenseListCustomResource323F0FD4",
+      ],
+      "Properties": Object {
+        "AlarmActions": Array [
+          "arn:aws:sns:us-east-1:123456789012:mystack-mytopic-NZJ5JSMVGFIE",
+        ],
+        "AlarmDescription": "The NpmJs package canary is not running or is failing. This prevents alarming when this instance of
+ConstructHub falls out of SLA for new package ingestion!
+
+Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md",
+        "AlarmName": "Test/ConstructHub/Sources/NpmJs/Canary/NotRunningOrFailing",
+        "AlarmRule": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "(ALARM(\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesNpmJsCanaryFailingE338711F",
+                  "Arn",
+                ],
+              },
+              "\\") OR ALARM(\\"",
+              Object {
+                "Fn::GetAtt": Array [
+                  "ConstructHubSourcesNpmJsCanaryNotRunningFCFBD0E6",
+                  "Arn",
+                ],
+              },
+              "\\"))",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::CloudWatch::CompositeAlarm",
     },
     "ConstructHubSourcesNpmJsCanarySchedule4D94219F": Object {
       "DependsOn": Array [
