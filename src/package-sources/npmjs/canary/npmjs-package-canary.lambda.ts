@@ -77,6 +77,11 @@ export async function handler(event: unknown): Promise<void> {
         await stateService.npmReplicaLagSeconds(packageName),
         Unit.Seconds
       );
+      metrics.putMetric(
+        MetricName.NPM_REPLICA_DOWN,
+        (await stateService.isNpmReplicaDown()) ? 1 : 0,
+        Unit.None
+      );
     })();
 
     for (const versionState of [
@@ -302,6 +307,15 @@ export class CanaryStateService {
     );
 
     return { version, publishedAt: new Date(publishedAt) };
+  }
+
+  public async isNpmReplicaDown(): Promise<boolean> {
+    try {
+      await getJSON('https://replicate.npmjs.com/');
+      return false;
+    } catch (e) {
+      return true;
+    }
   }
 
   public async npmReplicaLagSeconds(packageName: string): Promise<number> {

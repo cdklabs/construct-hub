@@ -105,6 +105,21 @@ export class NpmJsPackageCanary extends Construct {
     });
   }
 
+  /**
+   * A metric tracking whether the npm registry replica (replicate.npmjs.com)
+   * is down. The value is 1 when the replica is detected to be down, and 0
+   * when the replica is detected to be up.
+   */
+  public metricNpmReplicaIsDown(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(1),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      metricName: MetricName.NPM_REPLICA_DOWN,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
   public metricErrors(opts?: MetricOptions): Metric {
     return this.handler.metricErrors(opts);
   }

@@ -9007,7 +9007,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "34dff6f44de35b1c8efed081f774e0d2f7402826e3287041c4b095bf9e9f1933.zip",
+          "S3Key": "690a69f41b4de2e39da000f8425ac7e6140ede848bd6c1d1451c59e9a6a54d08.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": Object {
@@ -9059,7 +9059,7 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "EvaluationPeriods": 2,
         "Metrics": Array [
           Object {
-            "Expression": "IF(FILL(mLag, 0) < 180, MAX([mDwell, mTTC]))",
+            "Expression": "IF((FILL(mLag, 0) < 180 AND mIsReplicaDown == 0), MAX([mDwell, mTTC]))",
             "Id": "expr_1",
           },
           Object {
@@ -9091,6 +9091,18 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
             "MetricStat": Object {
               "Metric": Object {
                 "MetricName": "EstimatedNpmReplicaLag",
+                "Namespace": "ConstructHub/PackageCanary",
+              },
+              "Period": 60,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+          Object {
+            "Id": "mIsReplicaDown",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "NpmReplicaIsDown",
                 "Namespace": "ConstructHub/PackageCanary",
               },
               "Period": 60,
@@ -21455,7 +21467,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "34dff6f44de35b1c8efed081f774e0d2f7402826e3287041c4b095bf9e9f1933.zip",
+          "S3Key": "690a69f41b4de2e39da000f8425ac7e6140ede848bd6c1d1451c59e9a6a54d08.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": Object {
@@ -21507,7 +21519,7 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "EvaluationPeriods": 2,
         "Metrics": Array [
           Object {
-            "Expression": "IF(FILL(mLag, 0) < 180, MAX([mDwell, mTTC]))",
+            "Expression": "IF((FILL(mLag, 0) < 180 AND mIsReplicaDown == 0), MAX([mDwell, mTTC]))",
             "Id": "expr_1",
           },
           Object {
@@ -21539,6 +21551,18 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
             "MetricStat": Object {
               "Metric": Object {
                 "MetricName": "EstimatedNpmReplicaLag",
+                "Namespace": "ConstructHub/PackageCanary",
+              },
+              "Period": 60,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+          Object {
+            "Id": "mIsReplicaDown",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "NpmReplicaIsDown",
                 "Namespace": "ConstructHub/PackageCanary",
               },
               "Period": 60,
@@ -33475,7 +33499,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "34dff6f44de35b1c8efed081f774e0d2f7402826e3287041c4b095bf9e9f1933.zip",
+          "S3Key": "690a69f41b4de2e39da000f8425ac7e6140ede848bd6c1d1451c59e9a6a54d08.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": Object {
@@ -33527,7 +33551,7 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "EvaluationPeriods": 2,
         "Metrics": Array [
           Object {
-            "Expression": "IF(FILL(mLag, 0) < 180, MAX([mDwell, mTTC]))",
+            "Expression": "IF((FILL(mLag, 0) < 180 AND mIsReplicaDown == 0), MAX([mDwell, mTTC]))",
             "Id": "expr_1",
           },
           Object {
@@ -33559,6 +33583,18 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
             "MetricStat": Object {
               "Metric": Object {
                 "MetricName": "EstimatedNpmReplicaLag",
+                "Namespace": "ConstructHub/PackageCanary",
+              },
+              "Period": 60,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+          Object {
+            "Id": "mIsReplicaDown",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "NpmReplicaIsDown",
                 "Namespace": "ConstructHub/PackageCanary",
               },
               "Period": 60,
@@ -45629,7 +45665,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "34dff6f44de35b1c8efed081f774e0d2f7402826e3287041c4b095bf9e9f1933.zip",
+          "S3Key": "690a69f41b4de2e39da000f8425ac7e6140ede848bd6c1d1451c59e9a6a54d08.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": Object {
@@ -45668,7 +45704,7 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "EvaluationPeriods": 2,
         "Metrics": Array [
           Object {
-            "Expression": "IF(FILL(mLag, 0) < 180, MAX([mDwell, mTTC]))",
+            "Expression": "IF((FILL(mLag, 0) < 180 AND mIsReplicaDown == 0), MAX([mDwell, mTTC]))",
             "Id": "expr_1",
           },
           Object {
@@ -45700,6 +45736,18 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
             "MetricStat": Object {
               "Metric": Object {
                 "MetricName": "EstimatedNpmReplicaLag",
+                "Namespace": "ConstructHub/PackageCanary",
+              },
+              "Period": 60,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+          Object {
+            "Id": "mIsReplicaDown",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "NpmReplicaIsDown",
                 "Namespace": "ConstructHub/PackageCanary",
               },
               "Period": 60,
@@ -57784,7 +57832,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "34dff6f44de35b1c8efed081f774e0d2f7402826e3287041c4b095bf9e9f1933.zip",
+          "S3Key": "690a69f41b4de2e39da000f8425ac7e6140ede848bd6c1d1451c59e9a6a54d08.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": Object {
@@ -57836,7 +57884,7 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
         "EvaluationPeriods": 2,
         "Metrics": Array [
           Object {
-            "Expression": "IF(FILL(mLag, 0) < 180, MAX([mDwell, mTTC]))",
+            "Expression": "IF((FILL(mLag, 0) < 180 AND mIsReplicaDown == 0), MAX([mDwell, mTTC]))",
             "Id": "expr_1",
           },
           Object {
@@ -57868,6 +57916,18 @@ Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
             "MetricStat": Object {
               "Metric": Object {
                 "MetricName": "EstimatedNpmReplicaLag",
+                "Namespace": "ConstructHub/PackageCanary",
+              },
+              "Period": 60,
+              "Stat": "Maximum",
+            },
+            "ReturnData": false,
+          },
+          Object {
+            "Id": "mIsReplicaDown",
+            "MetricStat": Object {
+              "Metric": Object {
+                "MetricName": "NpmReplicaIsDown",
                 "Namespace": "ConstructHub/PackageCanary",
               },
               "Period": 60,
