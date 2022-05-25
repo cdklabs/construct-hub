@@ -7653,7 +7653,7 @@ Resources:
         Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
       AlarmName: dev/ConstructHub/Sources/NpmJs/Canary/SLA-Breached
       Metrics:
-        - Expression: IF(FILL(mLag, 0) < 180, MAX([mDwell, mTTC]))
+        - Expression: IF(FILL(mLag, REPEAT) < 180, MAX([mDwell, mTTC]))
           Id: expr_1
         - Id: mDwell
           MetricStat:
