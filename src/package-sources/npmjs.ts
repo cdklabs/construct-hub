@@ -578,7 +578,7 @@ export class NpmJs implements IPackageSource {
       // nothing that can be done except for waiting until the replica has finally caught up. We
       // hence suppress the alarm if the replica lag is getting within 3 evaluation periods of the
       // visbility SLA.
-      expression: `IF(FILL(mLag, 0) < ${Math.max(
+      expression: `IF(FILL(mLag, REPEAT) < ${Math.max(
         visibilitySla.toSeconds() - 3 * period.toSeconds(),
         3 * period.toSeconds()
       )}, MAX([mDwell, mTTC]))`,
