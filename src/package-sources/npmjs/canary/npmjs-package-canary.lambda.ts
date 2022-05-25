@@ -63,6 +63,8 @@ export async function handler(event: unknown): Promise<void> {
   // If the current "latest" isn't the one from state, it needs updating.
   updateLatestIfNeeded(state, latest);
 
+  const replicaLag = await stateService.npmReplicaLagSeconds(packageName);
+
   try {
     await metricScope((metrics) => async () => {
       // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
@@ -73,15 +75,16 @@ export async function handler(event: unknown): Promise<void> {
         Unit.Count
       );
       metrics.putMetric(
-        MetricName.NPM_REPLICA_LAG,
-        await stateService.npmReplicaLagSeconds(packageName),
-        Unit.Seconds
-      );
-      metrics.putMetric(
         MetricName.NPM_REPLICA_DOWN,
         (await stateService.isNpmReplicaDown()) ? 1 : 0,
         Unit.None
       );
+
+      // If we weren't able to calculate the replica's lag, then simply
+      // don't report the metric.
+      if (replicaLag !== undefined) {
+        metrics.putMetric(MetricName.NPM_REPLICA_LAG, replicaLag, Unit.Seconds);
+      }
     })();
 
     for (const versionState of [
@@ -318,15 +321,34 @@ export class CanaryStateService {
     }
   }
 
-  public async npmReplicaLagSeconds(packageName: string): Promise<number> {
+  /**
+   * Estimate how far behind the NPM replica is compared to the live NPM
+   * registry. If the NPM replica is down, return undefined.
+   */
+  public async npmReplicaLagSeconds(
+    packageName: string
+  ): Promise<number | undefined> {
     const encodedPackageName = encodeURIComponent(packageName);
 
     console.log(`Measuring NPM replica lag using ${packageName}...`);
 
-    const [primaryDate, replicaDate] = await Promise.all([
-      getModifiedTimestamp(`registry.npmjs.org`),
-      getModifiedTimestamp(`replicate.npmjs.com/registry`),
-    ]);
+    const primaryDate = await getModifiedTimestamp(`registry.npmjs.org`);
+
+    let replicaDate;
+    try {
+      replicaDate = await getModifiedTimestamp(`replicate.npmjs.com/registry`);
+    } catch (e) {
+      if (e instanceof Error && e.message.includes('HTTP 504')) {
+        console.log(
+          `Warning: error fetching replicate.npmjs.com: ${e.toString()}`
+        );
+        // There is no value to report
+        return undefined;
+      } else {
+        throw e;
+      }
+    }
+
     const deltaMs = primaryDate.getTime() - replicaDate.getTime();
 
     console.log(`Timestamp on primary: ${primaryDate.toISOString()}`);

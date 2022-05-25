@@ -572,23 +572,21 @@ export class NpmJs implements IPackageSource {
 
     const period = Duration.minutes(1);
 
-    const visibilityThreshold = Math.max(
-      visibilitySla.toSeconds() - 3 * period.toSeconds(),
-      3 * period.toSeconds()
-    );
     const alarm = new MathExpression({
       // When the npm replica is sufficiently behind the primary, the package source will not be
       // able to register new canary package versions within the SLA. In such cases, there is
       // nothing that can be done except for waiting until the replica has finally caught up. We
       // hence suppress the alarm if the replica lag is getting within 3 evaluation periods of the
       // visbility SLA.
-      expression: `IF((FILL(mLag, 0) < ${visibilityThreshold} AND mIsReplicaDown == 0), MAX([mDwell, mTTC]))`,
+      expression: `IF(FILL(mLag, 0) < ${Math.max(
+        visibilitySla.toSeconds() - 3 * period.toSeconds(),
+        3 * period.toSeconds()
+      )}, MAX([mDwell, mTTC]))`,
       period,
       usingMetrics: {
         mDwell: canary.metricDwellTime(),
         mTTC: canary.metricTimeToCatalog(),
         mLag: canary.metricEstimatedNpmReplicaLag(),
-        mIsReplicaDown: canary.metricNpmReplicaIsDown(),
       },
     }).createAlarm(canary, 'Alarm', {
       alarmName: `${canary.node.path}/SLA-Breached`,
