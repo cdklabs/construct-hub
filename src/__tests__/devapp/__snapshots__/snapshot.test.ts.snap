@@ -7579,7 +7579,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 34dff6f44de35b1c8efed081f774e0d2f7402826e3287041c4b095bf9e9f1933.zip
+        S3Key: 52b2c3211afba07666b6cef7f079b82715be5fc763159d6fdf1da008f7be7ad0.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2
@@ -7653,7 +7653,7 @@ Resources:
         Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
       AlarmName: dev/ConstructHub/Sources/NpmJs/Canary/SLA-Breached
       Metrics:
-        - Expression: IF(FILL(mLag, 0) < 180, MAX([mDwell, mTTC]))
+        - Expression: IF(FILL(mLag, REPEAT) < 180, MAX([mDwell, mTTC]))
           Id: expr_1
         - Id: mDwell
           MetricStat:
