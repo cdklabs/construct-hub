@@ -36,6 +36,13 @@ export const enum MetricName {
    * so we use the probe package to get a low-resolution view of this.
    */
   NPM_REPLICA_LAG = 'EstimatedNpmReplicaLag',
+
+  /**
+   * A metric tracking whether the npm registry replica (replicate.npmjs.com)
+   * is down. The value is 1 when the replica is detected to be down, and 0
+   * when the replica is detected to be up.
+   */
+  NPM_REPLICA_DOWN = 'NpmReplicaIsDown',
 }
 
 export const enum ObjectKey {

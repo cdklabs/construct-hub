@@ -556,6 +556,9 @@ export class NpmJs implements IPackageSource {
   private registerCanary(
     scope: Construct,
     packageName: string,
+    // A duration specifying how long we expect the probe package to appear on
+    // Construct Hub after it gets published to npm, assuming the npm replica
+    // is up to date etc.
     visibilitySla: Duration,
     bucket: IBucket,
     constructHubBaseUrl: string,
@@ -568,13 +571,14 @@ export class NpmJs implements IPackageSource {
     });
 
     const period = Duration.minutes(1);
+
     const alarm = new MathExpression({
       // When the npm replica is sufficiently behind the primary, the package source will not be
       // able to register new canary package versions within the SLA. In such cases, there is
       // nothing that can be done except for waiting until the replica has finally caught up. We
       // hence suppress the alarm if the replica lag is getting within 3 evaluation periods of the
       // visbility SLA.
-      expression: `IF(FILL(mLag, 0) < ${Math.max(
+      expression: `IF(FILL(mLag, REPEAT) < ${Math.max(
         visibilitySla.toSeconds() - 3 * period.toSeconds(),
         3 * period.toSeconds()
       )}, MAX([mDwell, mTTC]))`,
