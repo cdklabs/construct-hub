@@ -63,9 +63,9 @@ export async function handler(event: unknown): Promise<void> {
   // If the current "latest" isn't the one from state, it needs updating.
   updateLatestIfNeeded(state, latest);
 
-  const replicaLag = await stateService.npmReplicaLagSeconds(packageName);
-
   try {
+    const replicaLag = await stateService.npmReplicaLagSeconds(packageName);
+
     await metricScope((metrics) => async () => {
       // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
       metrics.setDimensions();
