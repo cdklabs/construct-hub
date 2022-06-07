@@ -43,6 +43,13 @@ export const enum MetricName {
    * when the replica is detected to be up.
    */
   NPM_REPLICA_DOWN = 'NpmReplicaIsDown',
+
+  /**
+   * A metric tracking HTTP 502 and HTTP 504 errors received while processing.
+   * Those are often encountered when the npm servers are overloaded, or
+   * otherwise impaired, and could cause alarms we cannot do anything about.
+   */
+  HTTP_GATEWAY_ERRORS = 'HttpGatewayErrors',
 }
 
 export const enum ObjectKey {

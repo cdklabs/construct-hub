@@ -120,6 +120,21 @@ export class NpmJsPackageCanary extends Construct {
     });
   }
 
+  /**
+   * A metric tracking HTTP Gateway errors experienced while the canary is
+   * running. Those are typically caused by the npm registry servers being
+   * overloaded or otherwise impaired, and would cause false alarms.
+   */
+  public metricHttpGatewayErrors(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(1),
+      statistic: Statistic.SUM,
+      ...opts,
+      metricName: MetricName.HTTP_GATEWAY_ERRORS,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
   public metricErrors(opts?: MetricOptions): Metric {
     return this.handler.metricErrors(opts);
   }
