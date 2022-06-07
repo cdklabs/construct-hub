@@ -647,6 +647,25 @@ export class NpmJs implements IPackageSource {
       notRunningOrFailingAlarm
     );
 
+    // Using MIN statistic, so if a run is successful (and hence emits a 0), this alarm will not trigger.
+    const gatewayErrorsAlarm = canary.metricHttpGatewayErrors({ period, statistic: Statistic.MINIMUM })
+      .createAlarm(canary, 'GatewayErrors', {
+        alarmDescription: [
+          'The NpmJs package canary has been encountering consistent HTTP gateway errors when contacting npmjs servers',
+          'for an hour or more. This means the canary has been unable to evaluate SLA compliance for that much time.',
+          'It is probable that nothing can be done except for waiting for npm servers to come back online, but the',
+          'situation should be checked to make sure there is not another problem.',
+          '',
+          `Runbook: ${RUNBOOK_URL}`,
+        ].join('\n'),
+        alarmName: `${canary.node.path}/GatewayErrors`,
+        comparisonOperator: ComparisonOperator.GREATER_THAN_THRESHOLD,
+        evaluationPeriods: 60,
+        threshold: 0,
+        treatMissingData: TreatMissingData.BREACHING,
+      });
+    monitoring.addLowSeverityAlarm('NpmJs Follower Canary is experiencing HTTP Gateway errors', gatewayErrorsAlarm);
+
     return [
       new GraphWidget({
         height: 6,

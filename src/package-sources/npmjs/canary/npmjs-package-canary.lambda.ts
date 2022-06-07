@@ -42,120 +42,158 @@ export async function handler(event: unknown): Promise<void> {
   const stateService = new CanaryStateService(stateBucket);
   const constructHub = new ConstructHub(constructHubEndpoint);
 
-  const latest = await stateService.latest(packageName);
-  const state: CanaryState = (await stateService.load(packageName)) ?? {
-    // If we did not have any state, we'll bootstrap using the current latest version.
-    latest: {
-      ...latest,
-      // If that latest version is ALREADY in catalog, pretend it was
-      // "instantaneously" there, so we avoid possibly reporting an breach of
-      // SLA alarm, when we really just observed presence of the package in
-      // catalog too late, for example on first deployment of the canary.
-      availableAt: (await constructHub.isInCatalog(packageName, latest.version))
-        ? latest.publishedAt
-        : undefined,
-    },
-    pending: {},
-  };
-
-  console.log(`Initial state: ${JSON.stringify(state, null, 2)}`);
-
-  // If the current "latest" isn't the one from state, it needs updating.
-  updateLatestIfNeeded(state, latest);
-
   try {
-    const replicaLag = await stateService.npmReplicaLagSeconds(packageName);
+    const latest = await stateService.latest(packageName);
+    const state: CanaryState = (await stateService.load(packageName)) ?? {
+      // If we did not have any state, we'll bootstrap using the current latest version.
+      latest: {
+        ...latest,
+        // If that latest version is ALREADY in catalog, pretend it was
+        // "instantaneously" there, so we avoid possibly reporting an breach of
+        // SLA alarm, when we really just observed presence of the package in
+        // catalog too late, for example on first deployment of the canary.
+        availableAt: (await constructHub.isInCatalog(
+          packageName,
+          latest.version
+        ))
+          ? latest.publishedAt
+          : undefined,
+      },
+      pending: {},
+    };
 
-    await metricScope((metrics) => async () => {
-      // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
-      metrics.setDimensions();
-      metrics.putMetric(
-        MetricName.TRACKED_VERSION_COUNT,
-        Object.keys(state.pending).length + 1,
-        Unit.Count
-      );
-      metrics.putMetric(
-        MetricName.NPM_REPLICA_DOWN,
-        (await stateService.isNpmReplicaDown()) ? 1 : 0,
-        Unit.None
-      );
+    console.log(`Initial state: ${JSON.stringify(state, null, 2)}`);
 
-      // If we weren't able to calculate the replica's lag, then simply
-      // don't report the metric.
-      if (replicaLag !== undefined) {
-        metrics.putMetric(MetricName.NPM_REPLICA_LAG, replicaLag, Unit.Seconds);
-      }
-    })();
+    // If the current "latest" isn't the one from state, it needs updating.
+    updateLatestIfNeeded(state, latest);
 
-    for (const versionState of [
-      state.latest,
-      ...Object.values(state.pending ?? {}),
-    ]) {
-      console.log(
-        `Checking state of ${versionState.version}, current: ${JSON.stringify(
-          versionState,
-          null,
-          2
-        )}`
-      );
+    try {
+      const replicaLag = await stateService.npmReplicaLagSeconds(packageName);
 
       await metricScope((metrics) => async () => {
         // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
         metrics.setDimensions();
-        metrics.setProperty('PackageName', packageName);
-        metrics.setProperty('PackageVersion', versionState.version);
-        metrics.setProperty(
-          'IsLatest',
-          state.latest.version === versionState.version
+        metrics.putMetric(
+          MetricName.TRACKED_VERSION_COUNT,
+          Object.keys(state.pending).length + 1,
+          Unit.Count
+        );
+        metrics.putMetric(
+          MetricName.NPM_REPLICA_DOWN,
+          (await stateService.isNpmReplicaDown()) ? 1 : 0,
+          Unit.None
         );
 
-        if (!versionState.availableAt) {
-          if (versionState.version === state.latest.version) {
-            if (
-              await constructHub.isInCatalog(packageName, versionState.version)
-            ) {
-              versionState.availableAt = new Date();
-            }
-          } else {
-            // Non-current versions will probably never make it to catalog (they're older than the
-            // current version), so instead, we check whether they have TypeScript documentation.
-            if (
-              await constructHub.hasTypeScriptDocumentation(
-                packageName,
-                versionState.version
-              )
-            ) {
-              versionState.availableAt = new Date();
-            }
-          }
-        }
-
-        if (versionState.availableAt) {
-          // Tells us how long it's taken for the package to make it to catalog after it was published.
+        // If we weren't able to calculate the replica's lag, then simply
+        // don't report the metric.
+        if (replicaLag !== undefined) {
           metrics.putMetric(
-            MetricName.TIME_TO_CATALOG,
-            (versionState.availableAt.getTime() -
-              versionState.publishedAt.getTime()) /
-              1_000,
-            Unit.Seconds
-          );
-
-          // Stop tracking that version, as it's now available.
-          if (versionState.version in state.pending) {
-            delete state.pending[versionState.version];
-          }
-        } else {
-          // Tells us how long we've been waiting for this version to show up, so far.
-          metrics.putMetric(
-            MetricName.DWELL_TIME,
-            (Date.now() - versionState.publishedAt.getTime()) / 1_000,
+            MetricName.NPM_REPLICA_LAG,
+            replicaLag,
             Unit.Seconds
           );
         }
       })();
+
+      for (const versionState of [
+        state.latest,
+        ...Object.values(state.pending ?? {}),
+      ]) {
+        console.log(
+          `Checking state of ${versionState.version}, current: ${JSON.stringify(
+            versionState,
+            null,
+            2
+          )}`
+        );
+
+        await metricScope((metrics) => async () => {
+          // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
+          metrics.setDimensions();
+          metrics.setProperty('PackageName', packageName);
+          metrics.setProperty('PackageVersion', versionState.version);
+          metrics.setProperty(
+            'IsLatest',
+            state.latest.version === versionState.version
+          );
+
+          if (!versionState.availableAt) {
+            if (versionState.version === state.latest.version) {
+              if (
+                await constructHub.isInCatalog(
+                  packageName,
+                  versionState.version
+                )
+              ) {
+                versionState.availableAt = new Date();
+              }
+            } else {
+              // Non-current versions will probably never make it to catalog (they're older than the
+              // current version), so instead, we check whether they have TypeScript documentation.
+              if (
+                await constructHub.hasTypeScriptDocumentation(
+                  packageName,
+                  versionState.version
+                )
+              ) {
+                versionState.availableAt = new Date();
+              }
+            }
+          }
+
+          if (versionState.availableAt) {
+            // Tells us how long it's taken for the package to make it to catalog after it was published.
+            metrics.putMetric(
+              MetricName.TIME_TO_CATALOG,
+              (versionState.availableAt.getTime() -
+                versionState.publishedAt.getTime()) /
+                1_000,
+              Unit.Seconds
+            );
+
+            // Stop tracking that version, as it's now available.
+            if (versionState.version in state.pending) {
+              delete state.pending[versionState.version];
+            }
+          } else {
+            // Tells us how long we've been waiting for this version to show up, so far.
+            metrics.putMetric(
+              MetricName.DWELL_TIME,
+              (Date.now() - versionState.publishedAt.getTime()) / 1_000,
+              Unit.Seconds
+            );
+          }
+
+          // Noting that we did not enocunter a gateway error, so the metric has a nice and clean 0
+          // value instead of having to treat missing data as not breaching.
+          metrics.putMetric(MetricName.HTTP_GATEWAY_ERRORS, 0, Unit.Count);
+        })();
+      }
+    } finally {
+      await stateService.save(packageName, state);
     }
-  } finally {
-    await stateService.save(packageName, state);
+  } catch (error) {
+    if (
+      error instanceof HTTPError &&
+      (error.httpStatusCode === 502 || error.httpStatusCode === 504)
+    ) {
+      // This is an HTTP 5XX from a dependency, so we'll log this out, and pretend it did not fail...
+      console.error(
+        'HTTP 5XX from a dependency, assuming this is transient:',
+        error
+      );
+      await metricScope((metrics) => async () => {
+        // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
+        metrics.setDimensions();
+        metrics.setProperty('ErrorCode', error.httpStatusCode);
+        metrics.setProperty('ErrorMessage', error.message);
+
+        metrics.putMetric(MetricName.HTTP_GATEWAY_ERRORS, 1, Unit.Count);
+      })();
+    } else {
+      // This not an HTTP 5XX from a dependency, so we'll just rethrow and fail...
+      throw error;
+    }
   }
 }
 
@@ -216,7 +254,8 @@ class ConstructHub {
               !!res.headers['content-type']?.startsWith('text/markdown')
             );
           }
-          const err = new Error(
+          const err = new HTTPError(
+            res.statusCode,
             `HEAD ${url} -- HTTP ${res.statusCode} (${res.statusMessage})`
           );
           Error.captureStackTrace(err);
@@ -381,6 +420,16 @@ export class CanaryStateService {
   }
 }
 
+export class HTTPError extends Error {
+  public constructor(
+    public readonly httpStatusCode: number | undefined,
+    message: string
+  ) {
+    super(message);
+    Error.captureStackTrace(this, HTTPError);
+  }
+}
+
 interface CanaryState {
   /**
    * The latest package version, as of the last execution of the canary.
@@ -441,7 +490,8 @@ function getJSON(url: string, jsonPath?: string[]): Promise<any> {
       },
       (res) => {
         if (res.statusCode !== 200) {
-          const error = new Error(
+          const error = new HTTPError(
+            res.statusCode,
             `GET ${url} - HTTP ${res.statusCode} (${res.statusMessage})`
           );
           Error.captureStackTrace(error);
