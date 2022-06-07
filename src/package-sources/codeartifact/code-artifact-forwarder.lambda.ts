@@ -153,7 +153,6 @@ export const handler = metricScope(
             },
           },
           MessageBody: JSON.stringify(message),
-          MessageDeduplicationId: event.detail.eventDeduplicationId,
           QueueUrl: queueUrl,
         })
         .promise();

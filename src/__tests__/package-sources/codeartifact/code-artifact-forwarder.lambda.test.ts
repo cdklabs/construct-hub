@@ -88,7 +88,6 @@ const detail = safeMock<RequestType['detail']>('request.detail', {
   packageVersion: '1.2.3-dev.1337',
   packageFormat: 'npm',
   packageVersionRevision: pseudoRandomBytes(10).toString('base64'),
-  eventDeduplicationId: pseudoRandomBytes(10).toString('base64'),
 });
 
 test('happy path', async () => {
@@ -219,7 +218,6 @@ test('happy path', async () => {
               Buffer.from(mockGetPackageVersionAssetResult.asset! as any)
             )
           ),
-          MessageDeduplicationId: detail.eventDeduplicationId,
           QueueUrl: mockQueueUrl,
         });
         cb(null, mockSendMessageResult);
