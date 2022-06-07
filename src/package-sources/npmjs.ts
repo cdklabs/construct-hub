@@ -648,7 +648,8 @@ export class NpmJs implements IPackageSource {
     );
 
     // Using MIN statistic, so if a run is successful (and hence emits a 0), this alarm will not trigger.
-    const gatewayErrorsAlarm = canary.metricHttpGatewayErrors({ period, statistic: Statistic.MINIMUM })
+    const gatewayErrorsAlarm = canary
+      .metricHttpGatewayErrors({ period, statistic: Statistic.MINIMUM })
       .createAlarm(canary, 'GatewayErrors', {
         alarmDescription: [
           'The NpmJs package canary has been encountering consistent HTTP gateway errors when contacting npmjs servers',
@@ -664,7 +665,10 @@ export class NpmJs implements IPackageSource {
         threshold: 0,
         treatMissingData: TreatMissingData.BREACHING,
       });
-    monitoring.addLowSeverityAlarm('NpmJs Follower Canary is experiencing HTTP Gateway errors', gatewayErrorsAlarm);
+    monitoring.addLowSeverityAlarm(
+      'NpmJs Follower Canary is experiencing HTTP Gateway errors',
+      gatewayErrorsAlarm
+    );
 
     return [
       new GraphWidget({
