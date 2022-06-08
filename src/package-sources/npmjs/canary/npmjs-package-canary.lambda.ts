@@ -190,6 +190,22 @@ export async function handler(event: unknown): Promise<void> {
 
         metrics.putMetric(MetricName.HTTP_GATEWAY_ERRORS, 1, Unit.Count);
       })();
+    } else if (error instanceof TimeoutError) {
+      console.error(
+        `Request timeout from a dependency, assuming this is transient:`,
+        error
+      );
+      await metricScope((metrics) => async () => {
+        // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
+        metrics.setDimensions();
+        metrics.setProperty('ErrorCode', 'REQUEST_TIMEOUT');
+        metrics.setProperty('ErrorMessage', error.message);
+
+        // This is sligthly abusive, but... HTTP 504 (Gateway Timeout) from the npm replica are
+        // returned after more than 30 seconds has passed and this is way too long... so we
+        // approximate a bit here...
+        metrics.putMetric(MetricName .HTTP_GATEWAY_ERRORS, 1, Unit.Count);
+      })();
     } else {
       // This not an HTTP 5XX from a dependency, so we'll just rethrow and fail...
       throw error;
@@ -337,11 +353,11 @@ export class CanaryStateService {
     console.log(`Fetching latest version information from NPM: ${packageName}`);
     const version = await getJSON(
       `https://registry.npmjs.org/${encodeURIComponent(packageName)}/latest`,
-      ['version']
+      { jsonPath: ['version'] }
     );
     const publishedAt = await getJSON(
       `https://registry.npmjs.org/${encodeURIComponent(packageName)}`,
-      ['time', version]
+      { jsonPath: ['time', version] }
     );
 
     console.log(
@@ -353,7 +369,7 @@ export class CanaryStateService {
 
   public async isNpmReplicaDown(): Promise<boolean> {
     try {
-      await getJSON('https://replicate.npmjs.com/');
+      await getJSON('https://replicate.npmjs.com/', { timeoutMillis: 5_000 });
       return false;
     } catch (e) {
       return true;
@@ -375,7 +391,10 @@ export class CanaryStateService {
 
     let replicaDate;
     try {
-      replicaDate = await getModifiedTimestamp(`replicate.npmjs.com/registry`);
+      replicaDate = await getModifiedTimestamp(
+        `replicate.npmjs.com/registry`,
+        5_000
+      );
     } catch (e) {
       if (e instanceof Error && e.message.includes('HTTP 504')) {
         console.log(
@@ -402,10 +421,13 @@ export class CanaryStateService {
     // largest available time unit in CloudWatch.
     return deltaMs / 1_000;
 
-    async function getModifiedTimestamp(baseUrl: string) {
+    async function getModifiedTimestamp(
+      baseUrl: string,
+      timeoutMillis?: number
+    ) {
       const isoDate = await getJSON(
         `https://${baseUrl}/${encodedPackageName}`,
-        ['time', 'modified']
+        { jsonPath: ['time', 'modified'], timeoutMillis }
       );
       return new Date(isoDate);
     }
@@ -427,6 +449,13 @@ export class HTTPError extends Error {
   ) {
     super(message);
     Error.captureStackTrace(this, HTTPError);
+  }
+}
+
+export class TimeoutError extends Error {
+  public constructor(message: string) {
+    super(message);
+    Error.captureStackTrace(this, TimeoutError);
   }
 }
 
@@ -480,35 +509,64 @@ interface CanaryState {
  *
  * @param url the URL to get.
  * @param jsonPath a JSON path to extract only a subset of the object.
+ * @param timeoutMillis the socket timeout, in milliseconds.
  */
-function getJSON(url: string, jsonPath?: string[]): Promise<any> {
+function getJSON(
+  url: string,
+  {
+    jsonPath,
+    timeoutMillis,
+  }: { jsonPath?: string[]; timeoutMillis?: number } = {}
+): Promise<any> {
   return new Promise((ok, ko) => {
-    https.get(
-      url,
-      {
-        headers: { Accept: 'application/json', 'Accept-Encoding': 'identity' },
-      },
-      (res) => {
-        if (res.statusCode !== 200) {
-          const error = new HTTPError(
-            res.statusCode,
-            `GET ${url} - HTTP ${res.statusCode} (${res.statusMessage})`
-          );
-          Error.captureStackTrace(error);
-          return ko(error);
+    https
+      .get(
+        url,
+        {
+          headers: {
+            Accept: 'application/json',
+            'Accept-Encoding': 'identity',
+          },
+          timeout: timeoutMillis,
+        },
+        (res) => {
+          if (res.statusCode !== 200) {
+            const error = new HTTPError(
+              res.statusCode,
+              `GET ${url} - HTTP ${res.statusCode} (${res.statusMessage})`
+            );
+            Error.captureStackTrace(error);
+            return ko(error);
+          }
+
+          res.once('error', ko);
+
+          res.once('timeout', () => {
+            // Upon socket timeout, fail with a TimeoutError
+            ko(
+              new TimeoutError(
+                `Request timed out (after ${timeoutMillis ?? 'N/A'} ms): GET ${url}`
+              )
+            );
+          });
+
+          const json = JSONStream.parse(jsonPath);
+          json.once('data', ok);
+          json.once('error', ko);
+
+          const plainPayload =
+            res.headers['content-encoding'] === 'gzip' ? gunzip(res) : res;
+          plainPayload.pipe(json, { end: true });
         }
-
-        res.once('error', ko);
-
-        const json = JSONStream.parse(jsonPath);
-        json.once('data', ok);
-        json.once('error', ko);
-
-        const plainPayload =
-          res.headers['content-encoding'] === 'gzip' ? gunzip(res) : res;
-        plainPayload.pipe(json, { end: true });
-      }
-    );
+      )
+      .once('timeout', () => {
+        // Upon socket timeout, fail with a TimeoutError
+        ko(
+          new TimeoutError(
+            `Request timed out (after ${timeoutMillis ?? 'N/A'} ms): GET ${url}`
+          )
+        );
+      });
   });
 }
 

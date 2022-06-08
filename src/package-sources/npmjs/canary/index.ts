@@ -39,12 +39,7 @@ export class NpmJsPackageCanary extends Construct {
         [Environment.PACKAGE_NAME]: props.packageName,
       },
       memorySize: 10_024,
-      // Runs every minute, but we don't want to timeout if/when the npm replica
-      // is overloaded & extremely slow. HTTP 504 take upstream of 30 seconds to
-      // be returned... There wouldn't normally be more than 5 (maybe 6)
-      // concurrent executions of this, which should be okay to avoid causing a
-      // load storm that contributes to the problem.
-      timeout: Duration.minutes(5),
+      timeout: Duration.minutes(1),
     });
     const grant = props.bucket.grantReadWrite(
       this.handler,
