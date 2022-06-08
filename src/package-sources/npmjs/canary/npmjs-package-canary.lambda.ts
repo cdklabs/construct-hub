@@ -204,7 +204,7 @@ export async function handler(event: unknown): Promise<void> {
         // This is sligthly abusive, but... HTTP 504 (Gateway Timeout) from the npm replica are
         // returned after more than 30 seconds has passed and this is way too long... so we
         // approximate a bit here...
-        metrics.putMetric(MetricName .HTTP_GATEWAY_ERRORS, 1, Unit.Count);
+        metrics.putMetric(MetricName.HTTP_GATEWAY_ERRORS, 1, Unit.Count);
       })();
     } else {
       // This not an HTTP 5XX from a dependency, so we'll just rethrow and fail...
@@ -545,7 +545,9 @@ function getJSON(
             // Upon socket timeout, fail with a TimeoutError
             ko(
               new TimeoutError(
-                `Request timed out (after ${timeoutMillis ?? 'N/A'} ms): GET ${url}`
+                `Request timed out (after ${
+                  timeoutMillis ?? 'N/A'
+                } ms): GET ${url}`
               )
             );
           });
