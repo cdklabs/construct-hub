@@ -371,7 +371,9 @@ export class CanaryStateService {
 
   public async isNpmReplicaDown(): Promise<boolean> {
     try {
-      await getJSON('https://replicate.npmjs.com/', { timeoutMillis: REPLICA_REQUEST_TIMEOUT_MS });
+      await getJSON('https://replicate.npmjs.com/', {
+        timeoutMillis: REPLICA_REQUEST_TIMEOUT_MS,
+      });
       return false;
     } catch (e) {
       return true;

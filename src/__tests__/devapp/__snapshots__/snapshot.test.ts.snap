@@ -7579,7 +7579,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 2f6d23b44d97091ae58e6994752c204e4468107968d35f77da226df0bf4a4575.zip
+        S3Key: 99581757d7bd4d436e79e76fb3e2a3d97cb5b50e3f2d1248733523128857ea52.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2
@@ -7602,7 +7602,7 @@ Resources:
       Handler: index.handler
       MemorySize: 10024
       Runtime: nodejs14.x
-      Timeout: 60
+      Timeout: 300
     DependsOn:
       - ConstructHubLicenseListAwsCliLayer59592811
       - ConstructHubLicenseListCustomResource323F0FD4
@@ -7612,7 +7612,7 @@ Resources:
     Type: AWS::Events::Rule
     Properties:
       Description: Scheduled executions of the NpmJS package canary
-      ScheduleExpression: rate(1 minute)
+      ScheduleExpression: rate(5 minutes)
       State: ENABLED
       Targets:
         - Arn:
@@ -7653,14 +7653,14 @@ Resources:
         Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
       AlarmName: dev/ConstructHub/Sources/NpmJs/Canary/SLA-Breached
       Metrics:
-        - Expression: IF(FILL(mLag, REPEAT) < 180, MAX([mDwell, mTTC]))
+        - Expression: IF(FILL(mLag, REPEAT) < 900, MAX([mDwell, mTTC]))
           Id: expr_1
         - Id: mDwell
           MetricStat:
             Metric:
               MetricName: DwellTime
               Namespace: ConstructHub/PackageCanary
-            Period: 60
+            Period: 300
             Stat: Maximum
           ReturnData: false
         - Id: mTTC
@@ -7668,7 +7668,7 @@ Resources:
             Metric:
               MetricName: TimeToCatalog
               Namespace: ConstructHub/PackageCanary
-            Period: 60
+            Period: 300
             Stat: Maximum
           ReturnData: false
         - Id: mLag
@@ -7676,7 +7676,7 @@ Resources:
             Metric:
               MetricName: EstimatedNpmReplicaLag
               Namespace: ConstructHub/PackageCanary
-            Period: 60
+            Period: 300
             Stat: Maximum
           ReturnData: false
       Threshold: 300
@@ -7696,7 +7696,7 @@ Resources:
             Ref: ConstructHubSourcesNpmJsCanary5558FC45
       MetricName: Errors
       Namespace: AWS/Lambda
-      Period: 60
+      Period: 300
       Statistic: Sum
       Threshold: 0
       TreatMissingData: breaching
@@ -7715,7 +7715,7 @@ Resources:
             Ref: ConstructHubSourcesNpmJsCanary5558FC45
       MetricName: Invocations
       Namespace: AWS/Lambda
-      Period: 60
+      Period: 300
       Statistic: Sum
       Threshold: 1
       TreatMissingData: breaching
@@ -7769,7 +7769,7 @@ Resources:
       AlarmName: dev/ConstructHub/Sources/NpmJs/Canary/GatewayErrors
       MetricName: HttpGatewayErrors
       Namespace: ConstructHub/PackageCanary
-      Period: 60
+      Period: 300
       Statistic: Minimum
       Threshold: 0
       TreatMissingData: breaching
@@ -8699,18 +8699,18 @@ Resources:
               Canary","region":"'
             - Ref: AWS::Region
             - '","metrics":[["ConstructHub/PackageCanary","DwellTime",{"label":"Dwell
-              Time","period":60,"stat":"Maximum"}],["ConstructHub/PackageCanary","TimeToCatalog",{"label":"Time
+              Time","stat":"Maximum"}],["ConstructHub/PackageCanary","TimeToCatalog",{"label":"Time
               to
-              Catalog","period":60,"stat":"Maximum"}],["ConstructHub/PackageCanary","TrackedVersionCount",{"label":"Tracked
+              Catalog","stat":"Maximum"}],["ConstructHub/PackageCanary","TrackedVersionCount",{"label":"Tracked
               Version
-              Count","period":60,"stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"SLA
+              Count","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"SLA
               (5
               minutes)","value":300,"yAxis":"left"}]},"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":0,"y":71,"properties":{"view":"timeSeries","title":"Observed
               lag of replicate.npmjs.com","region":"'
             - Ref: AWS::Region
             - '","metrics":[["ConstructHub/PackageCanary","EstimatedNpmReplicaLag",{"label":"Replica
               lag
-              (construct-hub-probe)","period":60,"stat":"Maximum"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"5
+              (construct-hub-probe)","stat":"Maximum"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"5
               minutes","value":300,"yAxis":"left"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":77,"properties":{"markdown":"#
               Ingestion Function\\n\\n[button:Ingestion
               Function](/lambda/home#/functions/'
