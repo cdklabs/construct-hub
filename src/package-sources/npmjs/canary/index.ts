@@ -39,7 +39,7 @@ export class NpmJsPackageCanary extends Construct {
         [Environment.PACKAGE_NAME]: props.packageName,
       },
       memorySize: 10_024,
-      timeout: Duration.minutes(1),
+      timeout: Duration.minutes(5),
     });
     const grant = props.bucket.grantReadWrite(
       this.handler,
@@ -48,7 +48,7 @@ export class NpmJsPackageCanary extends Construct {
 
     const schedule = new Rule(this, 'Schedule', {
       description: 'Scheduled executions of the NpmJS package canary',
-      schedule: Schedule.rate(Duration.minutes(1)),
+      schedule: Schedule.rate(Duration.minutes(5)),
       targets: [new LambdaFunction(this.handler)],
     });
     // Ensure we don't attempt to run before permissions have been granted.
@@ -57,7 +57,7 @@ export class NpmJsPackageCanary extends Construct {
 
   public metricDwellTime(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(1),
+      period: Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.DWELL_TIME,
@@ -67,7 +67,7 @@ export class NpmJsPackageCanary extends Construct {
 
   public metricTimeToCatalog(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(1),
+      period: Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.TIME_TO_CATALOG,
@@ -77,7 +77,7 @@ export class NpmJsPackageCanary extends Construct {
 
   public metricTrackedVersionCount(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(1),
+      period: Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.TRACKED_VERSION_COUNT,
@@ -97,7 +97,7 @@ export class NpmJsPackageCanary extends Construct {
    */
   public metricEstimatedNpmReplicaLag(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(1),
+      period: Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.NPM_REPLICA_LAG,
@@ -112,7 +112,7 @@ export class NpmJsPackageCanary extends Construct {
    */
   public metricNpmReplicaIsDown(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(1),
+      period: Duration.minutes(5),
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.NPM_REPLICA_DOWN,
@@ -127,7 +127,7 @@ export class NpmJsPackageCanary extends Construct {
    */
   public metricHttpGatewayErrors(opts?: MetricOptions): Metric {
     return new Metric({
-      period: Duration.minutes(1),
+      period: Duration.minutes(5),
       statistic: Statistic.SUM,
       ...opts,
       metricName: MetricName.HTTP_GATEWAY_ERRORS,
