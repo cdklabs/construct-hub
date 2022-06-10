@@ -570,7 +570,7 @@ export class NpmJs implements IPackageSource {
       packageName,
     });
 
-    const period = Duration.minutes(1);
+    const period = Duration.minutes(5);
 
     const alarm = new MathExpression({
       // When the npm replica is sufficiently behind the primary, the package source will not be
