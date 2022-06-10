@@ -16,6 +16,8 @@ import {
 
 Configuration.namespace = METRICS_NAMESPACE;
 
+const REPLICA_REQUEST_TIMEOUT_MS = 30_000;
+
 /**
  * This package canary monitors the availability of the versions of a specified
  * package in the ConstructHub catalog. It publishes metrics that help
@@ -369,7 +371,7 @@ export class CanaryStateService {
 
   public async isNpmReplicaDown(): Promise<boolean> {
     try {
-      await getJSON('https://replicate.npmjs.com/', { timeoutMillis: 5_000 });
+      await getJSON('https://replicate.npmjs.com/', { timeoutMillis: REPLICA_REQUEST_TIMEOUT_MS });
       return false;
     } catch (e) {
       return true;
@@ -393,7 +395,7 @@ export class CanaryStateService {
     try {
       replicaDate = await getModifiedTimestamp(
         `replicate.npmjs.com/registry`,
-        5_000
+        REPLICA_REQUEST_TIMEOUT_MS
       );
     } catch (e) {
       if (e instanceof Error && e.message.includes('HTTP 504')) {
