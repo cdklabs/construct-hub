@@ -3293,7 +3293,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 8e6478d13edcf261970d22e31d3bd9d852097295a21cae8eaf2e31726ec966cc.zip
+        S3Key: 58ba99dd238a9dabdd83743188430b1f1f256ebf4ceea1a905e40bca34a4bea8.zip
       Role:
         Fn::GetAtt:
           - ConstructHubFeedBuilderReleaseNotesUpdateFeedServiceRoleC857E364
@@ -3480,7 +3480,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: d08431b0f9cbf4146d58ce121dac9bb0cb9b92dde1c9884da2a0c62562075e08.zip
+        S3Key: 887f1e4e9224baa5e454a4836d4ed3e47a13e353b4b4874139698205b3e120c0.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
@@ -3609,7 +3609,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: d0f34c6328fb9950d0db0fb01ad14ac87674cd59770f709aabe3372b1120e12e.zip
+        S3Key: f3fed176d4705cddcd3acdf66289778ddd1453f6ec9050aa775da805d05846d2.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationNeedsCatalogUpdateServiceRoleE6BF31C3
@@ -4765,7 +4765,7 @@ Resources:
                   - repositoryEndpoint
           Essential: true
           Image:
-            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:e3ec186a466fda464a69b71a42d43c61315c7a2039dcb541d62ee3c95e366f8e
+            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:f34833b0e108fb47c5bb1586d57fbd92812289a4ad6f8034d73bcd9944adc2ac
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -6304,7 +6304,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 121cad201007d35a1b42f380d679fe836a3d4e208df7f8529f04b525d37bb75a.zip
+        S3Key: 34a1b582d04933a57eae622d42173e33a043bc46dc65f85b90a53313f2eddaca.zip
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
@@ -6477,7 +6477,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: fb771b414613bc50d5683fd3494215c69c653580174bd7ba13006d2c29222671.zip
+        S3Key: 664c5efb5a2e951c612abe9c60c3535ede1ddb526f86a33eb154e4dedef388a8.zip
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionReprocessWorkflowFunctionServiceRoleA59056B1
@@ -6933,6 +6933,8 @@ Resources:
       FunctionCode: >-
         "use strict";
 
+        // @ts-ignore
+
         function handler(event) {
             var response = event.response;
             var headers = response.headers;
@@ -6972,7 +6974,7 @@ Resources:
             return response;
         }
 
-        //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxTQUFTLE9BQU8sQ0FBQyxLQUF5QjtJQUN4QyxJQUFJLFFBQVEsR0FBRyxLQUFLLENBQUMsUUFBUSxDQUFDO0lBQzlCLElBQUksT0FBTyxHQUFHLFFBQVEsQ0FBQyxPQUFPLENBQUM7SUFFL0IsT0FBTyxDQUFDLGlCQUFpQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsTUFBTSxFQUFFLENBQUM7SUFDL0MsT0FBTyxDQUFDLGtCQUFrQixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsZUFBZSxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLHdCQUF3QixDQUFDLEdBQUcsRUFBRSxLQUFLLEVBQUUsU0FBUyxFQUFFLENBQUM7SUFDekQsT0FBTyxDQUFDLDJCQUEyQixDQUFDLEdBQUc7UUFDckMsS0FBSyxFQUFFLHFDQUFxQztLQUM3QyxDQUFDO0lBQ0YsT0FBTyxDQUFDLHlCQUF5QixDQUFDLEdBQUc7UUFDbkMsS0FBSyxFQUFFO1lBQ0wsNkRBQTZEO1lBQzdEO2dCQUNFLGFBQWE7Z0JBQ2IsUUFBUTtnQkFDUiw2Q0FBNkM7Z0JBQzdDLGlDQUFpQztnQkFDakMsNENBQTRDO2dCQUM1QyxnQ0FBZ0M7Z0JBQ2hDLDZDQUE2QztnQkFDN0MsaUNBQWlDO2dCQUNqQywyQkFBMkI7Z0JBQzNCLDRCQUE0QjtnQkFDNUIsOEJBQThCO2dCQUM5QiwyQkFBMkI7Z0JBQzNCLDRDQUE0QztnQkFDNUMsd0JBQXdCO2dCQUN4Qix3QkFBd0I7Z0JBQ3hCLDZCQUE2QjthQUM5QixDQUFDLElBQUksQ0FBQyxHQUFHLENBQUM7WUFDWCwwREFBMEQ7WUFDMUQseUtBQXlLO1lBQ3pLLG9CQUFvQjtZQUNwQixtQ0FBbUM7U0FDcEMsQ0FBQyxJQUFJLENBQUMsR0FBRyxDQUFDO0tBQ1osQ0FBQztJQUVGLE9BQU8sUUFBUSxDQUFDO0FBQ2xCLENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyJpbnRlcmZhY2UgQ2xvdWRGcm9udFJlc3BvbnNlIHtcbiAgcmVzcG9uc2U6IGFueTtcbiAgaGVhZGVyczoge1xuICAgIFtrZXk6IHN0cmluZ106IHtcbiAgICAgIHZhbHVlOiBzdHJpbmc7XG4gICAgfTtcbiAgfTtcbn1cblxuZnVuY3Rpb24gaGFuZGxlcihldmVudDogQ2xvdWRGcm9udFJlc3BvbnNlKSB7XG4gIHZhciByZXNwb25zZSA9IGV2ZW50LnJlc3BvbnNlO1xuICB2YXIgaGVhZGVycyA9IHJlc3BvbnNlLmhlYWRlcnM7XG5cbiAgaGVhZGVyc1sneC1mcmFtZS1vcHRpb25zJ10gPSB7IHZhbHVlOiAnZGVueScgfTtcbiAgaGVhZGVyc1sneC14c3MtcHJvdGVjdGlvbiddID0geyB2YWx1ZTogJzE7IG1vZGU9YmxvY2snIH07XG4gIGhlYWRlcnNbJ3gtY29udGVudC10eXBlLW9wdGlvbnMnXSA9IHsgdmFsdWU6ICdub3NuaWZmJyB9O1xuICBoZWFkZXJzWydzdHJpY3QtdHJhbnNwb3J0LXNlY3VyaXR5J10gPSB7XG4gICAgdmFsdWU6ICdtYXgtYWdlPTQ3MzA0MDAwOyBpbmNsdWRlU3ViRG9tYWlucycsXG4gIH07XG4gIGhlYWRlcnNbJ2NvbnRlbnQtc2VjdXJpdHktcG9saWN5J10gPSB7XG4gICAgdmFsdWU6IFtcbiAgICAgIFwiZGVmYXVsdC1zcmMgJ3NlbGYnICd1bnNhZmUtaW5saW5lJyBodHRwczovLyouYXdzc3RhdGljLmNvbTtcIixcbiAgICAgIFtcbiAgICAgICAgJ2Nvbm5lY3Qtc3JjJyxcbiAgICAgICAgXCInc2VsZidcIixcbiAgICAgICAgJ2h0dHBzOi8vZDJjLWFscGhhLmRzZS5tYXJrZXRpbmcuYXdzLmEyei5jb20nLFxuICAgICAgICAnaHR0cHM6Ly92cy1hbHBoYS5hd3MuYW1hem9uLmNvbScsXG4gICAgICAgICdodHRwczovL2QyYy1iZXRhLmRzZS5tYXJrZXRpbmcuYXdzLmEyei5jb20nLFxuICAgICAgICAnaHR0cHM6Ly92cy1iZXRhLmF3cy5hbWF6b24uY29tJyxcbiAgICAgICAgJ2h0dHBzOi8vZDJjLWdhbW1hLmRzZS5tYXJrZXRpbmcuYXdzLmEyei5jb20nLFxuICAgICAgICAnaHR0cHM6Ly92cy1nYW1tYS5hd3MuYW1hem9uLmNvbScsXG4gICAgICAgICdodHRwczovL3ZzLmF3cy5hbWF6b24uY29tJyxcbiAgICAgICAgJ2h0dHBzOi8vZDJjLmF3cy5hbWF6b24uY29tJyxcbiAgICAgICAgJ2h0dHBzOi8vKi5zaG9ydGJyZWFkLmF3cy5kZXYnLFxuICAgICAgICAnaHR0cHM6Ly9hMC5hd3NzdGF0aWMuY29tLycsXG4gICAgICAgICdodHRwczovL2FtYXpvbndlYnNlcnZpY2VzLmQyLnNjLm9tdHJkYy5uZXQnLFxuICAgICAgICAnaHR0cHM6Ly9hd3MuZGVtZGV4Lm5ldCcsXG4gICAgICAgICdodHRwczovL2RwbS5kZW1kZXgubmV0JyxcbiAgICAgICAgJ2h0dHBzOi8vY20uZXZlcmVzdHRlY2gubmV0OycsXG4gICAgICBdLmpvaW4oJyAnKSxcbiAgICAgICdmcmFtZS1zcmMgaHR0cHM6Ly9hd3MuZGVtZGV4Lm5ldCBodHRwczovL2RwbS5kZW1kZXgubmV0OycsXG4gICAgICBcImltZy1zcmMgJ3NlbGYnIGh0dHBzOi8vKiBodHRwczovL2EwLmF3c3N0YXRpYy5jb20vIGh0dHBzOi8vYW1hem9ud2Vic2VydmljZXMuZDIuc2Mub210cmRjLm5ldCBodHRwczovL2F3cy5kZW1kZXgubmV0IGh0dHBzOi8vZHBtLmRlbWRleC5uZXQgaHR0cHM6Ly9jbS5ldmVyZXN0dGVjaC5uZXQ7XCIsXG4gICAgICBcIm9iamVjdC1zcmMgJ25vbmUnO1wiLFxuICAgICAgXCJzdHlsZS1zcmMgJ3NlbGYnICd1bnNhZmUtaW5saW5lJztcIixcbiAgICBdLmpvaW4oJyAnKSxcbiAgfTtcblxuICByZXR1cm4gcmVzcG9uc2U7XG59XG4iXX0=
+        //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVzcG9uc2UtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL3Jlc3BvbnNlLWZ1bmN0aW9uL3Jlc3BvbnNlLWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFTQSxhQUFhO0FBQ2IsU0FBUyxPQUFPLENBQUMsS0FBeUI7SUFDeEMsSUFBSSxRQUFRLEdBQUcsS0FBSyxDQUFDLFFBQVEsQ0FBQztJQUM5QixJQUFJLE9BQU8sR0FBRyxRQUFRLENBQUMsT0FBTyxDQUFDO0lBRS9CLE9BQU8sQ0FBQyxpQkFBaUIsQ0FBQyxHQUFHLEVBQUUsS0FBSyxFQUFFLE1BQU0sRUFBRSxDQUFDO0lBQy9DLE9BQU8sQ0FBQyxrQkFBa0IsQ0FBQyxHQUFHLEVBQUUsS0FBSyxFQUFFLGVBQWUsRUFBRSxDQUFDO0lBQ3pELE9BQU8sQ0FBQyx3QkFBd0IsQ0FBQyxHQUFHLEVBQUUsS0FBSyxFQUFFLFNBQVMsRUFBRSxDQUFDO0lBQ3pELE9BQU8sQ0FBQywyQkFBMkIsQ0FBQyxHQUFHO1FBQ3JDLEtBQUssRUFBRSxxQ0FBcUM7S0FDN0MsQ0FBQztJQUNGLE9BQU8sQ0FBQyx5QkFBeUIsQ0FBQyxHQUFHO1FBQ25DLEtBQUssRUFBRTtZQUNMLDZEQUE2RDtZQUM3RDtnQkFDRSxhQUFhO2dCQUNiLFFBQVE7Z0JBQ1IsNkNBQTZDO2dCQUM3QyxpQ0FBaUM7Z0JBQ2pDLDRDQUE0QztnQkFDNUMsZ0NBQWdDO2dCQUNoQyw2Q0FBNkM7Z0JBQzdDLGlDQUFpQztnQkFDakMsMkJBQTJCO2dCQUMzQiw0QkFBNEI7Z0JBQzVCLDhCQUE4QjtnQkFDOUIsMkJBQTJCO2dCQUMzQiw0Q0FBNEM7Z0JBQzVDLHdCQUF3QjtnQkFDeEIsd0JBQXdCO2dCQUN4Qiw2QkFBNkI7YUFDOUIsQ0FBQyxJQUFJLENBQUMsR0FBRyxDQUFDO1lBQ1gsMERBQTBEO1lBQzFELHlLQUF5SztZQUN6SyxvQkFBb0I7WUFDcEIsbUNBQW1DO1NBQ3BDLENBQUMsSUFBSSxDQUFDLEdBQUcsQ0FBQztLQUNaLENBQUM7SUFFRixPQUFPLFFBQVEsQ0FBQztBQUNsQixDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiaW50ZXJmYWNlIENsb3VkRnJvbnRSZXNwb25zZSB7XG4gIHJlc3BvbnNlOiBhbnk7XG4gIGhlYWRlcnM6IHtcbiAgICBba2V5OiBzdHJpbmddOiB7XG4gICAgICB2YWx1ZTogc3RyaW5nO1xuICAgIH07XG4gIH07XG59XG5cbi8vIEB0cy1pZ25vcmVcbmZ1bmN0aW9uIGhhbmRsZXIoZXZlbnQ6IENsb3VkRnJvbnRSZXNwb25zZSkge1xuICB2YXIgcmVzcG9uc2UgPSBldmVudC5yZXNwb25zZTtcbiAgdmFyIGhlYWRlcnMgPSByZXNwb25zZS5oZWFkZXJzO1xuXG4gIGhlYWRlcnNbJ3gtZnJhbWUtb3B0aW9ucyddID0geyB2YWx1ZTogJ2RlbnknIH07XG4gIGhlYWRlcnNbJ3gteHNzLXByb3RlY3Rpb24nXSA9IHsgdmFsdWU6ICcxOyBtb2RlPWJsb2NrJyB9O1xuICBoZWFkZXJzWyd4LWNvbnRlbnQtdHlwZS1vcHRpb25zJ10gPSB7IHZhbHVlOiAnbm9zbmlmZicgfTtcbiAgaGVhZGVyc1snc3RyaWN0LXRyYW5zcG9ydC1zZWN1cml0eSddID0ge1xuICAgIHZhbHVlOiAnbWF4LWFnZT00NzMwNDAwMDsgaW5jbHVkZVN1YkRvbWFpbnMnLFxuICB9O1xuICBoZWFkZXJzWydjb250ZW50LXNlY3VyaXR5LXBvbGljeSddID0ge1xuICAgIHZhbHVlOiBbXG4gICAgICBcImRlZmF1bHQtc3JjICdzZWxmJyAndW5zYWZlLWlubGluZScgaHR0cHM6Ly8qLmF3c3N0YXRpYy5jb207XCIsXG4gICAgICBbXG4gICAgICAgICdjb25uZWN0LXNyYycsXG4gICAgICAgIFwiJ3NlbGYnXCIsXG4gICAgICAgICdodHRwczovL2QyYy1hbHBoYS5kc2UubWFya2V0aW5nLmF3cy5hMnouY29tJyxcbiAgICAgICAgJ2h0dHBzOi8vdnMtYWxwaGEuYXdzLmFtYXpvbi5jb20nLFxuICAgICAgICAnaHR0cHM6Ly9kMmMtYmV0YS5kc2UubWFya2V0aW5nLmF3cy5hMnouY29tJyxcbiAgICAgICAgJ2h0dHBzOi8vdnMtYmV0YS5hd3MuYW1hem9uLmNvbScsXG4gICAgICAgICdodHRwczovL2QyYy1nYW1tYS5kc2UubWFya2V0aW5nLmF3cy5hMnouY29tJyxcbiAgICAgICAgJ2h0dHBzOi8vdnMtZ2FtbWEuYXdzLmFtYXpvbi5jb20nLFxuICAgICAgICAnaHR0cHM6Ly92cy5hd3MuYW1hem9uLmNvbScsXG4gICAgICAgICdodHRwczovL2QyYy5hd3MuYW1hem9uLmNvbScsXG4gICAgICAgICdodHRwczovLyouc2hvcnRicmVhZC5hd3MuZGV2JyxcbiAgICAgICAgJ2h0dHBzOi8vYTAuYXdzc3RhdGljLmNvbS8nLFxuICAgICAgICAnaHR0cHM6Ly9hbWF6b253ZWJzZXJ2aWNlcy5kMi5zYy5vbXRyZGMubmV0JyxcbiAgICAgICAgJ2h0dHBzOi8vYXdzLmRlbWRleC5uZXQnLFxuICAgICAgICAnaHR0cHM6Ly9kcG0uZGVtZGV4Lm5ldCcsXG4gICAgICAgICdodHRwczovL2NtLmV2ZXJlc3R0ZWNoLm5ldDsnLFxuICAgICAgXS5qb2luKCcgJyksXG4gICAgICAnZnJhbWUtc3JjIGh0dHBzOi8vYXdzLmRlbWRleC5uZXQgaHR0cHM6Ly9kcG0uZGVtZGV4Lm5ldDsnLFxuICAgICAgXCJpbWctc3JjICdzZWxmJyBodHRwczovLyogaHR0cHM6Ly9hMC5hd3NzdGF0aWMuY29tLyBodHRwczovL2FtYXpvbndlYnNlcnZpY2VzLmQyLnNjLm9tdHJkYy5uZXQgaHR0cHM6Ly9hd3MuZGVtZGV4Lm5ldCBodHRwczovL2RwbS5kZW1kZXgubmV0IGh0dHBzOi8vY20uZXZlcmVzdHRlY2gubmV0O1wiLFxuICAgICAgXCJvYmplY3Qtc3JjICdub25lJztcIixcbiAgICAgIFwic3R5bGUtc3JjICdzZWxmJyAndW5zYWZlLWlubGluZSc7XCIsXG4gICAgXS5qb2luKCcgJyksXG4gIH07XG5cbiAgcmV0dXJuIHJlc3BvbnNlO1xufVxuIl19
       FunctionConfig:
         Comment: AddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
         Runtime: cloudfront-js-1.0
@@ -7018,6 +7020,17 @@ Resources:
                     - FunctionARN
             PathPattern: /all-versions.json
             TargetOriginId: devConstructHubWebAppDistributionOrigin2A726FD66
+            ViewerProtocolPolicy: allow-all
+          - CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+            Compress: true
+            FunctionAssociations:
+              - EventType: viewer-request
+                FunctionARN:
+                  Fn::GetAtt:
+                    - ConstructHubWebAppBadgeRedirectFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7DAA75A6
+                    - FunctionARN
+            PathPattern: //badge
+            TargetOriginId: devConstructHubWebAppDistributionOrigin1FBBA04AE
             ViewerProtocolPolicy: allow-all
           - CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
             Compress: true
@@ -7102,6 +7115,38 @@ Resources:
     Properties:
       CloudFrontOriginAccessIdentityConfig:
         Comment: Identity for devConstructHubWebAppDistributionOrigin2A726FD66
+  ConstructHubWebAppBadgeRedirectFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7DAA75A6:
+    Type: AWS::CloudFront::Function
+    Properties:
+      Name: BadgeRedirectFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
+      AutoPublish: true
+      FunctionCode: >-
+        "use strict";
+
+        // @ts-ignore
+
+        function handler(event) {
+            var request = event.request;
+            if (request.querystring.darkMode) {
+                return {
+                    statusCode: 302,
+                    statusDescription: 'Found',
+                    headers: { location: { value: '/badge-dark.svg' } },
+                };
+            }
+            else {
+                return {
+                    statusCode: 302,
+                    statusDescription: 'Found',
+                    headers: { location: { value: '/badge.svg' } },
+                };
+            }
+        }
+
+        //# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVkaXJlY3QtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL2JhZGdlLXJlZGlyZWN0LWZ1bmN0aW9uL3JlZGlyZWN0LWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFBQSxhQUFhO0FBQ2IsU0FBUyxPQUFPLENBQUMsS0FBVTtJQUN6QixJQUFJLE9BQU8sR0FBRyxLQUFLLENBQUMsT0FBTyxDQUFDO0lBRTVCLElBQUksT0FBTyxDQUFDLFdBQVcsQ0FBQyxRQUFRLEVBQUU7UUFDaEMsT0FBTztZQUNMLFVBQVUsRUFBRSxHQUFHO1lBQ2YsaUJBQWlCLEVBQUUsT0FBTztZQUMxQixPQUFPLEVBQUUsRUFBRSxRQUFRLEVBQUUsRUFBRSxLQUFLLEVBQUUsaUJBQWlCLEVBQUUsRUFBRTtTQUNwRCxDQUFDO0tBQ0g7U0FBTTtRQUNMLE9BQU87WUFDTCxVQUFVLEVBQUUsR0FBRztZQUNmLGlCQUFpQixFQUFFLE9BQU87WUFDMUIsT0FBTyxFQUFFLEVBQUUsUUFBUSxFQUFFLEVBQUUsS0FBSyxFQUFFLFlBQVksRUFBRSxFQUFFO1NBQy9DLENBQUM7S0FDSDtBQUNILENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyIvLyBAdHMtaWdub3JlXG5mdW5jdGlvbiBoYW5kbGVyKGV2ZW50OiBhbnkpIHtcbiAgdmFyIHJlcXVlc3QgPSBldmVudC5yZXF1ZXN0O1xuXG4gIGlmIChyZXF1ZXN0LnF1ZXJ5c3RyaW5nLmRhcmtNb2RlKSB7XG4gICAgcmV0dXJuIHtcbiAgICAgIHN0YXR1c0NvZGU6IDMwMixcbiAgICAgIHN0YXR1c0Rlc2NyaXB0aW9uOiAnRm91bmQnLFxuICAgICAgaGVhZGVyczogeyBsb2NhdGlvbjogeyB2YWx1ZTogJy9iYWRnZS1kYXJrLnN2ZycgfSB9LFxuICAgIH07XG4gIH0gZWxzZSB7XG4gICAgcmV0dXJuIHtcbiAgICAgIHN0YXR1c0NvZGU6IDMwMixcbiAgICAgIHN0YXR1c0Rlc2NyaXB0aW9uOiAnRm91bmQnLFxuICAgICAgaGVhZGVyczogeyBsb2NhdGlvbjogeyB2YWx1ZTogJy9iYWRnZS5zdmcnIH0gfSxcbiAgICB9O1xuICB9XG59XG4iXX0=
+      FunctionConfig:
+        Comment: BadgeRedirectFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
+        Runtime: cloudfront-js-1.0
   ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1:
     Type: AWS::Lambda::LayerVersion
     Properties:
@@ -7120,7 +7165,7 @@ Resources:
       SourceBucketNames:
         - Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
       SourceObjectKeys:
-        - 5395b4b2a28d89c0766166b6b17a74153c6e638ef664639a11c8a382d93700e6.zip
+        - 905150cce6cf9aba5bbc463808ded2041c5ecde49631d6ee7681f0348d7f6d2a.zip
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: false
@@ -8178,7 +8223,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: d936bc1cf9c67e2aafae519d26f9710c10fc58790eb12aff39b3996cfa6cc5a6.zip
+        S3Key: 48026c023976f1d681b2166894db689f17395c7f17c5ac1863b18a9343a26c43.zip
       Role:
         Fn::GetAtt:
           - ConstructHubInventoryCanaryServiceRole7684EDDE
