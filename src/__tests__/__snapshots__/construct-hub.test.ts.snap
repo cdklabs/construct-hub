@@ -10653,23 +10653,13 @@ function handler(event) {
         "FunctionCode": "\\"use strict\\";
 // @ts-ignore
 function handler(event) {
-    var request = event.request;
-    if (request.querystring.darkMode) {
-        return {
-            statusCode: 302,
-            statusDescription: 'Found',
-            headers: { location: { value: '/badge-dark.svg' } },
-        };
-    }
-    else {
-        return {
-            statusCode: 302,
-            statusDescription: 'Found',
-            headers: { location: { value: '/badge.svg' } },
-        };
-    }
+    return {
+        statusCode: 302,
+        statusDescription: 'Found',
+        headers: { location: { value: '/badge-dynamic.svg' } },
+    };
 }
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVkaXJlY3QtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL2JhZGdlLXJlZGlyZWN0LWZ1bmN0aW9uL3JlZGlyZWN0LWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFBQSxhQUFhO0FBQ2IsU0FBUyxPQUFPLENBQUMsS0FBVTtJQUN6QixJQUFJLE9BQU8sR0FBRyxLQUFLLENBQUMsT0FBTyxDQUFDO0lBRTVCLElBQUksT0FBTyxDQUFDLFdBQVcsQ0FBQyxRQUFRLEVBQUU7UUFDaEMsT0FBTztZQUNMLFVBQVUsRUFBRSxHQUFHO1lBQ2YsaUJBQWlCLEVBQUUsT0FBTztZQUMxQixPQUFPLEVBQUUsRUFBRSxRQUFRLEVBQUUsRUFBRSxLQUFLLEVBQUUsaUJBQWlCLEVBQUUsRUFBRTtTQUNwRCxDQUFDO0tBQ0g7U0FBTTtRQUNMLE9BQU87WUFDTCxVQUFVLEVBQUUsR0FBRztZQUNmLGlCQUFpQixFQUFFLE9BQU87WUFDMUIsT0FBTyxFQUFFLEVBQUUsUUFBUSxFQUFFLEVBQUUsS0FBSyxFQUFFLFlBQVksRUFBRSxFQUFFO1NBQy9DLENBQUM7S0FDSDtBQUNILENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyIvLyBAdHMtaWdub3JlXG5mdW5jdGlvbiBoYW5kbGVyKGV2ZW50OiBhbnkpIHtcbiAgdmFyIHJlcXVlc3QgPSBldmVudC5yZXF1ZXN0O1xuXG4gIGlmIChyZXF1ZXN0LnF1ZXJ5c3RyaW5nLmRhcmtNb2RlKSB7XG4gICAgcmV0dXJuIHtcbiAgICAgIHN0YXR1c0NvZGU6IDMwMixcbiAgICAgIHN0YXR1c0Rlc2NyaXB0aW9uOiAnRm91bmQnLFxuICAgICAgaGVhZGVyczogeyBsb2NhdGlvbjogeyB2YWx1ZTogJy9iYWRnZS1kYXJrLnN2ZycgfSB9LFxuICAgIH07XG4gIH0gZWxzZSB7XG4gICAgcmV0dXJuIHtcbiAgICAgIHN0YXR1c0NvZGU6IDMwMixcbiAgICAgIHN0YXR1c0Rlc2NyaXB0aW9uOiAnRm91bmQnLFxuICAgICAgaGVhZGVyczogeyBsb2NhdGlvbjogeyB2YWx1ZTogJy9iYWRnZS5zdmcnIH0gfSxcbiAgICB9O1xuICB9XG59XG4iXX0=",
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVkaXJlY3QtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL2JhZGdlLXJlZGlyZWN0LWZ1bmN0aW9uL3JlZGlyZWN0LWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFBQSxhQUFhO0FBQ2IsU0FBUyxPQUFPLENBQUMsS0FBVTtJQUN6QixPQUFPO1FBQ0wsVUFBVSxFQUFFLEdBQUc7UUFDZixpQkFBaUIsRUFBRSxPQUFPO1FBQzFCLE9BQU8sRUFBRSxFQUFFLFFBQVEsRUFBRSxFQUFFLEtBQUssRUFBRSxvQkFBb0IsRUFBRSxFQUFFO0tBQ3ZELENBQUM7QUFDSixDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiLy8gQHRzLWlnbm9yZVxuZnVuY3Rpb24gaGFuZGxlcihldmVudDogYW55KSB7XG4gIHJldHVybiB7XG4gICAgc3RhdHVzQ29kZTogMzAyLFxuICAgIHN0YXR1c0Rlc2NyaXB0aW9uOiAnRm91bmQnLFxuICAgIGhlYWRlcnM6IHsgbG9jYXRpb246IHsgdmFsdWU6ICcvYmFkZ2UtZHluYW1pYy5zdmcnIH0gfSxcbiAgfTtcbn1cbiJdfQ==",
         "FunctionConfig": Object {
           "Comment": "BadgeRedirectFunctionc857063c4ca4479335a883023351cba0df589f79c9",
           "Runtime": "cloudfront-js-1.0",
@@ -23192,23 +23182,13 @@ function handler(event) {
         "FunctionCode": "\\"use strict\\";
 // @ts-ignore
 function handler(event) {
-    var request = event.request;
-    if (request.querystring.darkMode) {
-        return {
-            statusCode: 302,
-            statusDescription: 'Found',
-            headers: { location: { value: '/badge-dark.svg' } },
-        };
-    }
-    else {
-        return {
-            statusCode: 302,
-            statusDescription: 'Found',
-            headers: { location: { value: '/badge.svg' } },
-        };
-    }
+    return {
+        statusCode: 302,
+        statusDescription: 'Found',
+        headers: { location: { value: '/badge-dynamic.svg' } },
+    };
 }
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVkaXJlY3QtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL2JhZGdlLXJlZGlyZWN0LWZ1bmN0aW9uL3JlZGlyZWN0LWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFBQSxhQUFhO0FBQ2IsU0FBUyxPQUFPLENBQUMsS0FBVTtJQUN6QixJQUFJLE9BQU8sR0FBRyxLQUFLLENBQUMsT0FBTyxDQUFDO0lBRTVCLElBQUksT0FBTyxDQUFDLFdBQVcsQ0FBQyxRQUFRLEVBQUU7UUFDaEMsT0FBTztZQUNMLFVBQVUsRUFBRSxHQUFHO1lBQ2YsaUJBQWlCLEVBQUUsT0FBTztZQUMxQixPQUFPLEVBQUUsRUFBRSxRQUFRLEVBQUUsRUFBRSxLQUFLLEVBQUUsaUJBQWlCLEVBQUUsRUFBRTtTQUNwRCxDQUFDO0tBQ0g7U0FBTTtRQUNMLE9BQU87WUFDTCxVQUFVLEVBQUUsR0FBRztZQUNmLGlCQUFpQixFQUFFLE9BQU87WUFDMUIsT0FBTyxFQUFFLEVBQUUsUUFBUSxFQUFFLEVBQUUsS0FBSyxFQUFFLFlBQVksRUFBRSxFQUFFO1NBQy9DLENBQUM7S0FDSDtBQUNILENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyIvLyBAdHMtaWdub3JlXG5mdW5jdGlvbiBoYW5kbGVyKGV2ZW50OiBhbnkpIHtcbiAgdmFyIHJlcXVlc3QgPSBldmVudC5yZXF1ZXN0O1xuXG4gIGlmIChyZXF1ZXN0LnF1ZXJ5c3RyaW5nLmRhcmtNb2RlKSB7XG4gICAgcmV0dXJuIHtcbiAgICAgIHN0YXR1c0NvZGU6IDMwMixcbiAgICAgIHN0YXR1c0Rlc2NyaXB0aW9uOiAnRm91bmQnLFxuICAgICAgaGVhZGVyczogeyBsb2NhdGlvbjogeyB2YWx1ZTogJy9iYWRnZS1kYXJrLnN2ZycgfSB9LFxuICAgIH07XG4gIH0gZWxzZSB7XG4gICAgcmV0dXJuIHtcbiAgICAgIHN0YXR1c0NvZGU6IDMwMixcbiAgICAgIHN0YXR1c0Rlc2NyaXB0aW9uOiAnRm91bmQnLFxuICAgICAgaGVhZGVyczogeyBsb2NhdGlvbjogeyB2YWx1ZTogJy9iYWRnZS5zdmcnIH0gfSxcbiAgICB9O1xuICB9XG59XG4iXX0=",
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVkaXJlY3QtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL2JhZGdlLXJlZGlyZWN0LWZ1bmN0aW9uL3JlZGlyZWN0LWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFBQSxhQUFhO0FBQ2IsU0FBUyxPQUFPLENBQUMsS0FBVTtJQUN6QixPQUFPO1FBQ0wsVUFBVSxFQUFFLEdBQUc7UUFDZixpQkFBaUIsRUFBRSxPQUFPO1FBQzFCLE9BQU8sRUFBRSxFQUFFLFFBQVEsRUFBRSxFQUFFLEtBQUssRUFBRSxvQkFBb0IsRUFBRSxFQUFFO0tBQ3ZELENBQUM7QUFDSixDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiLy8gQHRzLWlnbm9yZVxuZnVuY3Rpb24gaGFuZGxlcihldmVudDogYW55KSB7XG4gIHJldHVybiB7XG4gICAgc3RhdHVzQ29kZTogMzAyLFxuICAgIHN0YXR1c0Rlc2NyaXB0aW9uOiAnRm91bmQnLFxuICAgIGhlYWRlcnM6IHsgbG9jYXRpb246IHsgdmFsdWU6ICcvYmFkZ2UtZHluYW1pYy5zdmcnIH0gfSxcbiAgfTtcbn1cbiJdfQ==",
         "FunctionConfig": Object {
           "Comment": "BadgeRedirectFunctionc857063c4ca4479335a883023351cba0df589f79c9",
           "Runtime": "cloudfront-js-1.0",
@@ -35303,23 +35283,13 @@ function handler(event) {
         "FunctionCode": "\\"use strict\\";
 // @ts-ignore
 function handler(event) {
-    var request = event.request;
-    if (request.querystring.darkMode) {
-        return {
-            statusCode: 302,
-            statusDescription: 'Found',
-            headers: { location: { value: '/badge-dark.svg' } },
-        };
-    }
-    else {
-        return {
-            statusCode: 302,
-            statusDescription: 'Found',
-            headers: { location: { value: '/badge.svg' } },
-        };
-    }
+    return {
+        statusCode: 302,
+        statusDescription: 'Found',
+        headers: { location: { value: '/badge-dynamic.svg' } },
+    };
 }
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVkaXJlY3QtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL2JhZGdlLXJlZGlyZWN0LWZ1bmN0aW9uL3JlZGlyZWN0LWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFBQSxhQUFhO0FBQ2IsU0FBUyxPQUFPLENBQUMsS0FBVTtJQUN6QixJQUFJLE9BQU8sR0FBRyxLQUFLLENBQUMsT0FBTyxDQUFDO0lBRTVCLElBQUksT0FBTyxDQUFDLFdBQVcsQ0FBQyxRQUFRLEVBQUU7UUFDaEMsT0FBTztZQUNMLFVBQVUsRUFBRSxHQUFHO1lBQ2YsaUJBQWlCLEVBQUUsT0FBTztZQUMxQixPQUFPLEVBQUUsRUFBRSxRQUFRLEVBQUUsRUFBRSxLQUFLLEVBQUUsaUJBQWlCLEVBQUUsRUFBRTtTQUNwRCxDQUFDO0tBQ0g7U0FBTTtRQUNMLE9BQU87WUFDTCxVQUFVLEVBQUUsR0FBRztZQUNmLGlCQUFpQixFQUFFLE9BQU87WUFDMUIsT0FBTyxFQUFFLEVBQUUsUUFBUSxFQUFFLEVBQUUsS0FBSyxFQUFFLFlBQVksRUFBRSxFQUFFO1NBQy9DLENBQUM7S0FDSDtBQUNILENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyIvLyBAdHMtaWdub3JlXG5mdW5jdGlvbiBoYW5kbGVyKGV2ZW50OiBhbnkpIHtcbiAgdmFyIHJlcXVlc3QgPSBldmVudC5yZXF1ZXN0O1xuXG4gIGlmIChyZXF1ZXN0LnF1ZXJ5c3RyaW5nLmRhcmtNb2RlKSB7XG4gICAgcmV0dXJuIHtcbiAgICAgIHN0YXR1c0NvZGU6IDMwMixcbiAgICAgIHN0YXR1c0Rlc2NyaXB0aW9uOiAnRm91bmQnLFxuICAgICAgaGVhZGVyczogeyBsb2NhdGlvbjogeyB2YWx1ZTogJy9iYWRnZS1kYXJrLnN2ZycgfSB9LFxuICAgIH07XG4gIH0gZWxzZSB7XG4gICAgcmV0dXJuIHtcbiAgICAgIHN0YXR1c0NvZGU6IDMwMixcbiAgICAgIHN0YXR1c0Rlc2NyaXB0aW9uOiAnRm91bmQnLFxuICAgICAgaGVhZGVyczogeyBsb2NhdGlvbjogeyB2YWx1ZTogJy9iYWRnZS5zdmcnIH0gfSxcbiAgICB9O1xuICB9XG59XG4iXX0=",
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVkaXJlY3QtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL2JhZGdlLXJlZGlyZWN0LWZ1bmN0aW9uL3JlZGlyZWN0LWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFBQSxhQUFhO0FBQ2IsU0FBUyxPQUFPLENBQUMsS0FBVTtJQUN6QixPQUFPO1FBQ0wsVUFBVSxFQUFFLEdBQUc7UUFDZixpQkFBaUIsRUFBRSxPQUFPO1FBQzFCLE9BQU8sRUFBRSxFQUFFLFFBQVEsRUFBRSxFQUFFLEtBQUssRUFBRSxvQkFBb0IsRUFBRSxFQUFFO0tBQ3ZELENBQUM7QUFDSixDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiLy8gQHRzLWlnbm9yZVxuZnVuY3Rpb24gaGFuZGxlcihldmVudDogYW55KSB7XG4gIHJldHVybiB7XG4gICAgc3RhdHVzQ29kZTogMzAyLFxuICAgIHN0YXR1c0Rlc2NyaXB0aW9uOiAnRm91bmQnLFxuICAgIGhlYWRlcnM6IHsgbG9jYXRpb246IHsgdmFsdWU6ICcvYmFkZ2UtZHluYW1pYy5zdmcnIH0gfSxcbiAgfTtcbn1cbiJdfQ==",
         "FunctionConfig": Object {
           "Comment": "BadgeRedirectFunctionc857063c4ca4479335a883023351cba0df589f79c9",
           "Runtime": "cloudfront-js-1.0",
@@ -47587,23 +47557,13 @@ function handler(event) {
         "FunctionCode": "\\"use strict\\";
 // @ts-ignore
 function handler(event) {
-    var request = event.request;
-    if (request.querystring.darkMode) {
-        return {
-            statusCode: 302,
-            statusDescription: 'Found',
-            headers: { location: { value: '/badge-dark.svg' } },
-        };
-    }
-    else {
-        return {
-            statusCode: 302,
-            statusDescription: 'Found',
-            headers: { location: { value: '/badge.svg' } },
-        };
-    }
+    return {
+        statusCode: 302,
+        statusDescription: 'Found',
+        headers: { location: { value: '/badge-dynamic.svg' } },
+    };
 }
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVkaXJlY3QtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL2JhZGdlLXJlZGlyZWN0LWZ1bmN0aW9uL3JlZGlyZWN0LWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFBQSxhQUFhO0FBQ2IsU0FBUyxPQUFPLENBQUMsS0FBVTtJQUN6QixJQUFJLE9BQU8sR0FBRyxLQUFLLENBQUMsT0FBTyxDQUFDO0lBRTVCLElBQUksT0FBTyxDQUFDLFdBQVcsQ0FBQyxRQUFRLEVBQUU7UUFDaEMsT0FBTztZQUNMLFVBQVUsRUFBRSxHQUFHO1lBQ2YsaUJBQWlCLEVBQUUsT0FBTztZQUMxQixPQUFPLEVBQUUsRUFBRSxRQUFRLEVBQUUsRUFBRSxLQUFLLEVBQUUsaUJBQWlCLEVBQUUsRUFBRTtTQUNwRCxDQUFDO0tBQ0g7U0FBTTtRQUNMLE9BQU87WUFDTCxVQUFVLEVBQUUsR0FBRztZQUNmLGlCQUFpQixFQUFFLE9BQU87WUFDMUIsT0FBTyxFQUFFLEVBQUUsUUFBUSxFQUFFLEVBQUUsS0FBSyxFQUFFLFlBQVksRUFBRSxFQUFFO1NBQy9DLENBQUM7S0FDSDtBQUNILENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyIvLyBAdHMtaWdub3JlXG5mdW5jdGlvbiBoYW5kbGVyKGV2ZW50OiBhbnkpIHtcbiAgdmFyIHJlcXVlc3QgPSBldmVudC5yZXF1ZXN0O1xuXG4gIGlmIChyZXF1ZXN0LnF1ZXJ5c3RyaW5nLmRhcmtNb2RlKSB7XG4gICAgcmV0dXJuIHtcbiAgICAgIHN0YXR1c0NvZGU6IDMwMixcbiAgICAgIHN0YXR1c0Rlc2NyaXB0aW9uOiAnRm91bmQnLFxuICAgICAgaGVhZGVyczogeyBsb2NhdGlvbjogeyB2YWx1ZTogJy9iYWRnZS1kYXJrLnN2ZycgfSB9LFxuICAgIH07XG4gIH0gZWxzZSB7XG4gICAgcmV0dXJuIHtcbiAgICAgIHN0YXR1c0NvZGU6IDMwMixcbiAgICAgIHN0YXR1c0Rlc2NyaXB0aW9uOiAnRm91bmQnLFxuICAgICAgaGVhZGVyczogeyBsb2NhdGlvbjogeyB2YWx1ZTogJy9iYWRnZS5zdmcnIH0gfSxcbiAgICB9O1xuICB9XG59XG4iXX0=",
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVkaXJlY3QtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL2JhZGdlLXJlZGlyZWN0LWZ1bmN0aW9uL3JlZGlyZWN0LWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFBQSxhQUFhO0FBQ2IsU0FBUyxPQUFPLENBQUMsS0FBVTtJQUN6QixPQUFPO1FBQ0wsVUFBVSxFQUFFLEdBQUc7UUFDZixpQkFBaUIsRUFBRSxPQUFPO1FBQzFCLE9BQU8sRUFBRSxFQUFFLFFBQVEsRUFBRSxFQUFFLEtBQUssRUFBRSxvQkFBb0IsRUFBRSxFQUFFO0tBQ3ZELENBQUM7QUFDSixDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiLy8gQHRzLWlnbm9yZVxuZnVuY3Rpb24gaGFuZGxlcihldmVudDogYW55KSB7XG4gIHJldHVybiB7XG4gICAgc3RhdHVzQ29kZTogMzAyLFxuICAgIHN0YXR1c0Rlc2NyaXB0aW9uOiAnRm91bmQnLFxuICAgIGhlYWRlcnM6IHsgbG9jYXRpb246IHsgdmFsdWU6ICcvYmFkZ2UtZHluYW1pYy5zdmcnIH0gfSxcbiAgfTtcbn1cbiJdfQ==",
         "FunctionConfig": Object {
           "Comment": "BadgeRedirectFunctionc857063c4ca4479335a883023351cba0df589f79c9",
           "Runtime": "cloudfront-js-1.0",
@@ -62646,23 +62606,13 @@ function handler(event) {
         "FunctionCode": "\\"use strict\\";
 // @ts-ignore
 function handler(event) {
-    var request = event.request;
-    if (request.querystring.darkMode) {
-        return {
-            statusCode: 302,
-            statusDescription: 'Found',
-            headers: { location: { value: '/badge-dark.svg' } },
-        };
-    }
-    else {
-        return {
-            statusCode: 302,
-            statusDescription: 'Found',
-            headers: { location: { value: '/badge.svg' } },
-        };
-    }
+    return {
+        statusCode: 302,
+        statusDescription: 'Found',
+        headers: { location: { value: '/badge-dynamic.svg' } },
+    };
 }
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVkaXJlY3QtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL2JhZGdlLXJlZGlyZWN0LWZ1bmN0aW9uL3JlZGlyZWN0LWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFBQSxhQUFhO0FBQ2IsU0FBUyxPQUFPLENBQUMsS0FBVTtJQUN6QixJQUFJLE9BQU8sR0FBRyxLQUFLLENBQUMsT0FBTyxDQUFDO0lBRTVCLElBQUksT0FBTyxDQUFDLFdBQVcsQ0FBQyxRQUFRLEVBQUU7UUFDaEMsT0FBTztZQUNMLFVBQVUsRUFBRSxHQUFHO1lBQ2YsaUJBQWlCLEVBQUUsT0FBTztZQUMxQixPQUFPLEVBQUUsRUFBRSxRQUFRLEVBQUUsRUFBRSxLQUFLLEVBQUUsaUJBQWlCLEVBQUUsRUFBRTtTQUNwRCxDQUFDO0tBQ0g7U0FBTTtRQUNMLE9BQU87WUFDTCxVQUFVLEVBQUUsR0FBRztZQUNmLGlCQUFpQixFQUFFLE9BQU87WUFDMUIsT0FBTyxFQUFFLEVBQUUsUUFBUSxFQUFFLEVBQUUsS0FBSyxFQUFFLFlBQVksRUFBRSxFQUFFO1NBQy9DLENBQUM7S0FDSDtBQUNILENBQUMiLCJzb3VyY2VzQ29udGVudCI6WyIvLyBAdHMtaWdub3JlXG5mdW5jdGlvbiBoYW5kbGVyKGV2ZW50OiBhbnkpIHtcbiAgdmFyIHJlcXVlc3QgPSBldmVudC5yZXF1ZXN0O1xuXG4gIGlmIChyZXF1ZXN0LnF1ZXJ5c3RyaW5nLmRhcmtNb2RlKSB7XG4gICAgcmV0dXJuIHtcbiAgICAgIHN0YXR1c0NvZGU6IDMwMixcbiAgICAgIHN0YXR1c0Rlc2NyaXB0aW9uOiAnRm91bmQnLFxuICAgICAgaGVhZGVyczogeyBsb2NhdGlvbjogeyB2YWx1ZTogJy9iYWRnZS1kYXJrLnN2ZycgfSB9LFxuICAgIH07XG4gIH0gZWxzZSB7XG4gICAgcmV0dXJuIHtcbiAgICAgIHN0YXR1c0NvZGU6IDMwMixcbiAgICAgIHN0YXR1c0Rlc2NyaXB0aW9uOiAnRm91bmQnLFxuICAgICAgaGVhZGVyczogeyBsb2NhdGlvbjogeyB2YWx1ZTogJy9iYWRnZS5zdmcnIH0gfSxcbiAgICB9O1xuICB9XG59XG4iXX0=",
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicmVkaXJlY3QtZnVuY3Rpb24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi8uLi9zcmMvd2ViYXBwL2JhZGdlLXJlZGlyZWN0LWZ1bmN0aW9uL3JlZGlyZWN0LWZ1bmN0aW9uLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFBQSxhQUFhO0FBQ2IsU0FBUyxPQUFPLENBQUMsS0FBVTtJQUN6QixPQUFPO1FBQ0wsVUFBVSxFQUFFLEdBQUc7UUFDZixpQkFBaUIsRUFBRSxPQUFPO1FBQzFCLE9BQU8sRUFBRSxFQUFFLFFBQVEsRUFBRSxFQUFFLEtBQUssRUFBRSxvQkFBb0IsRUFBRSxFQUFFO0tBQ3ZELENBQUM7QUFDSixDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiLy8gQHRzLWlnbm9yZVxuZnVuY3Rpb24gaGFuZGxlcihldmVudDogYW55KSB7XG4gIHJldHVybiB7XG4gICAgc3RhdHVzQ29kZTogMzAyLFxuICAgIHN0YXR1c0Rlc2NyaXB0aW9uOiAnRm91bmQnLFxuICAgIGhlYWRlcnM6IHsgbG9jYXRpb246IHsgdmFsdWU6ICcvYmFkZ2UtZHluYW1pYy5zdmcnIH0gfSxcbiAgfTtcbn1cbiJdfQ==",
         "FunctionConfig": Object {
           "Comment": "BadgeRedirectFunctionc857063c4ca4479335a883023351cba0df589f79c9",
           "Runtime": "cloudfront-js-1.0",
