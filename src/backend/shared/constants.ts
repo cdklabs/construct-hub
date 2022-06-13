@@ -80,7 +80,7 @@ export const FEED_ATOM_KEY = 'atom';
 /**
  * Key for badge image endpoint.
  */
-export const BADGE_KEY = '/badge';
+export const BADGE_KEY = 'badge';
 
 /**
  * Env variable name used to set construct hub url for RSS/ATOM feed
