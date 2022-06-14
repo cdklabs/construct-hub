@@ -14,6 +14,7 @@ import {
   VERSION_TRACKER_KEY,
   FEED_RSS_KEY,
   FEED_ATOM_KEY,
+  BADGE_KEY,
 } from '../backend/shared/constants';
 import { CacheStrategy } from '../caching';
 import { MonitoredCertificate } from '../monitored-certificate';
@@ -22,6 +23,7 @@ import { OverviewDashboard } from '../overview-dashboard';
 import { PreloadFile } from '../preload-file';
 import { S3StorageFactory } from '../s3/storage';
 import { TempFile } from '../temp-file';
+import { BadgeRedirectFunction } from './badge-redirect-function';
 import { WebappConfig, WebappConfigProps } from './config';
 import { ResponseFunction } from './response-function';
 
@@ -179,11 +181,12 @@ export class WebApp extends Construct {
       enforceSSL: true,
     });
 
-    // generate a stable unique id for the cloudfront function and use it
+    // generate a stable unique id for the cloudfront functions and use it
     // both for the function name and the logical id of the function so if
     // it is changed the function will be recreated.
     // see https://github.com/aws/aws-cdk/issues/15523
     const functionId = `AddHeadersFunction${this.node.addr}`;
+    const badgeRedirectId = `BadgeRedirectFunction${this.node.addr}`;
 
     const behaviorOptions: cloudfront.AddBehaviorOptions = {
       compress: true,
@@ -198,9 +201,10 @@ export class WebApp extends Construct {
       ],
     };
 
+    const websiteOrigin = new origins.S3Origin(this.bucket);
     this.distribution = new cloudfront.Distribution(this, 'Distribution', {
       defaultBehavior: {
-        origin: new origins.S3Origin(this.bucket),
+        origin: websiteOrigin,
         ...behaviorOptions,
       },
       domainNames: props.domain ? [props.domain.zone.zoneName] : undefined,
@@ -236,6 +240,19 @@ export class WebApp extends Construct {
       jsiiObjOrigin,
       behaviorOptions
     );
+
+    this.distribution.addBehavior(`/${BADGE_KEY}`, websiteOrigin, {
+      compress: true,
+      cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+      functionAssociations: [
+        {
+          function: new BadgeRedirectFunction(this, badgeRedirectId, {
+            functionName: badgeRedirectId,
+          }),
+          eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
+        },
+      ],
+    });
 
     if (props.includeFeedLink) {
       this.distribution.addBehavior(

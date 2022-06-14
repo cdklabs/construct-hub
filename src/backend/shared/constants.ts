@@ -78,6 +78,11 @@ export const FEED_RSS_KEY = 'rss';
 export const FEED_ATOM_KEY = 'atom';
 
 /**
+ * Key for badge image endpoint.
+ */
+export const BADGE_KEY = 'badge';
+
+/**
  * Env variable name used to set construct hub url for RSS/ATOM feed
  */
 export const CONSTRUCT_HUB_URL_ENV_VAR_NAME = 'CONSTRUCT_HUB_URL';
