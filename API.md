@@ -3180,13 +3180,16 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.APSL_1_1">APSL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Apple Public Source License 1.1. |
 | <code><a href="#construct-hub.SpdxLicense.property.APSL_1_2">APSL_1_2</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Apple Public Source License 1.2. |
 | <code><a href="#construct-hub.SpdxLicense.property.APSL_2_0">APSL_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Apple Public Source License 2.0. |
+| <code><a href="#construct-hub.SpdxLicense.property.ARPHIC_1999">ARPHIC_1999</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Arphic Public License. |
 | <code><a href="#construct-hub.SpdxLicense.property.ARTISTIC_1_0">ARTISTIC_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Artistic License 1.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.ARTISTIC_1_0_CL8">ARTISTIC_1_0_CL8</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Artistic License 1.0 w/clause 8. |
 | <code><a href="#construct-hub.SpdxLicense.property.ARTISTIC_1_0_PERL">ARTISTIC_1_0_PERL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Artistic License 1.0 (Perl). |
 | <code><a href="#construct-hub.SpdxLicense.property.ARTISTIC_2_0">ARTISTIC_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Artistic License 2.0. |
+| <code><a href="#construct-hub.SpdxLicense.property.BAEKMUK">BAEKMUK</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Baekmuk License. |
 | <code><a href="#construct-hub.SpdxLicense.property.BAHYPH">BAHYPH</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Bahyph License. |
 | <code><a href="#construct-hub.SpdxLicense.property.BARR">BARR</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Barr License. |
 | <code><a href="#construct-hub.SpdxLicense.property.BEERWARE">BEERWARE</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Beerware License. |
+| <code><a href="#construct-hub.SpdxLicense.property.BITSTREAM_VERA">BITSTREAM_VERA</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Bitstream Vera Font License. |
 | <code><a href="#construct-hub.SpdxLicense.property.BITTORRENT_1_0">BITTORRENT_1_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BitTorrent Open Source License v1.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.BITTORRENT_1_1">BITTORRENT_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | BitTorrent Open Source License v1.1. |
 | <code><a href="#construct-hub.SpdxLicense.property.BLESSING">BLESSING</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | SQLite Blessing. |
@@ -3410,6 +3413,7 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.JASPER_2_0">JASPER_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | JasPer License. |
 | <code><a href="#construct-hub.SpdxLicense.property.JPNIC">JPNIC</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Japan Network Information Center License. |
 | <code><a href="#construct-hub.SpdxLicense.property.JSON">JSON</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | JSON License. |
+| <code><a href="#construct-hub.SpdxLicense.property.KICAD_LIBRARIES_EXCEPTION">KICAD_LIBRARIES_EXCEPTION</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | KiCad Libraries Exception. |
 | <code><a href="#construct-hub.SpdxLicense.property.LAL_1_2">LAL_1_2</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Licence Art Libre 1.2. |
 | <code><a href="#construct-hub.SpdxLicense.property.LAL_1_3">LAL_1_3</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Licence Art Libre 1.3. |
 | <code><a href="#construct-hub.SpdxLicense.property.LATEX2_E">LATEX2_E</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Latex2e License. |
@@ -3460,6 +3464,7 @@ public readonly id: string;
 | <code><a href="#construct-hub.SpdxLicense.property.MPL_1_1">MPL_1_1</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Mozilla Public License 1.1. |
 | <code><a href="#construct-hub.SpdxLicense.property.MPL_2_0">MPL_2_0</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Mozilla Public License 2.0. |
 | <code><a href="#construct-hub.SpdxLicense.property.MPL_2_0_NO_COPYLEFT_EXCEPTION">MPL_2_0_NO_COPYLEFT_EXCEPTION</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Mozilla Public License 2.0 (no copyleft exception). |
+| <code><a href="#construct-hub.SpdxLicense.property.MPLUS">MPLUS</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | mplus Font License. |
 | <code><a href="#construct-hub.SpdxLicense.property.MS_PL">MS_PL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Microsoft Public License. |
 | <code><a href="#construct-hub.SpdxLicense.property.MS_RL">MS_RL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Microsoft Reciprocal License. |
 | <code><a href="#construct-hub.SpdxLicense.property.MTLL">MTLL</a></code> | <code><a href="#construct-hub.SpdxLicense">SpdxLicense</a></code> | Matrix Template Library License. |
@@ -4097,6 +4102,20 @@ Apple Public Source License 2.0.
 
 ---
 
+##### `ARPHIC_1999`<sup>Required</sup> <a name="ARPHIC_1999" id="construct-hub.SpdxLicense.property.ARPHIC_1999"></a>
+
+```typescript
+public readonly ARPHIC_1999: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Arphic Public License.
+
+> [http://ftp.gnu.org/gnu/non-gnu/chinese-fonts-truetype/LICENSE](http://ftp.gnu.org/gnu/non-gnu/chinese-fonts-truetype/LICENSE)
+
+---
+
 ##### `ARTISTIC_1_0`<sup>Required</sup> <a name="ARTISTIC_1_0" id="construct-hub.SpdxLicense.property.ARTISTIC_1_0"></a>
 
 ```typescript
@@ -4153,6 +4172,20 @@ Artistic License 2.0.
 
 ---
 
+##### `BAEKMUK`<sup>Required</sup> <a name="BAEKMUK" id="construct-hub.SpdxLicense.property.BAEKMUK"></a>
+
+```typescript
+public readonly BAEKMUK: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Baekmuk License.
+
+> [https://fedoraproject.org/wiki/Licensing:Baekmuk?rd=Licensing/Baekmuk](https://fedoraproject.org/wiki/Licensing:Baekmuk?rd=Licensing/Baekmuk)
+
+---
+
 ##### `BAHYPH`<sup>Required</sup> <a name="BAHYPH" id="construct-hub.SpdxLicense.property.BAHYPH"></a>
 
 ```typescript
@@ -4192,6 +4225,20 @@ public readonly BEERWARE: SpdxLicense;
 Beerware License.
 
 > [https://fedoraproject.org/wiki/Licensing/Beerware](https://fedoraproject.org/wiki/Licensing/Beerware)
+
+---
+
+##### `BITSTREAM_VERA`<sup>Required</sup> <a name="BITSTREAM_VERA" id="construct-hub.SpdxLicense.property.BITSTREAM_VERA"></a>
+
+```typescript
+public readonly BITSTREAM_VERA: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+Bitstream Vera Font License.
+
+> [https://web.archive.org/web/20080207013128/http://www.gnome.org/fonts/](https://web.archive.org/web/20080207013128/http://www.gnome.org/fonts/)
 
 ---
 
@@ -7317,6 +7364,20 @@ JSON License.
 
 ---
 
+##### `KICAD_LIBRARIES_EXCEPTION`<sup>Required</sup> <a name="KICAD_LIBRARIES_EXCEPTION" id="construct-hub.SpdxLicense.property.KICAD_LIBRARIES_EXCEPTION"></a>
+
+```typescript
+public readonly KICAD_LIBRARIES_EXCEPTION: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+KiCad Libraries Exception.
+
+> [https://www.kicad.org/libraries/license/](https://www.kicad.org/libraries/license/)
+
+---
+
 ##### `LAL_1_2`<sup>Required</sup> <a name="LAL_1_2" id="construct-hub.SpdxLicense.property.LAL_1_2"></a>
 
 ```typescript
@@ -8014,6 +8075,20 @@ public readonly MPL_2_0_NO_COPYLEFT_EXCEPTION: SpdxLicense;
 Mozilla Public License 2.0 (no copyleft exception).
 
 > [https://www.mozilla.org/MPL/2.0/](https://www.mozilla.org/MPL/2.0/)
+
+---
+
+##### `MPLUS`<sup>Required</sup> <a name="MPLUS" id="construct-hub.SpdxLicense.property.MPLUS"></a>
+
+```typescript
+public readonly MPLUS: SpdxLicense;
+```
+
+- *Type:* <a href="#construct-hub.SpdxLicense">SpdxLicense</a>
+
+mplus Font License.
+
+> [https://fedoraproject.org/wiki/Licensing:Mplus?rd=Licensing/mplus](https://fedoraproject.org/wiki/Licensing:Mplus?rd=Licensing/mplus)
 
 ---
 
