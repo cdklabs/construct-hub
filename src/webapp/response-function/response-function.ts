@@ -7,6 +7,7 @@ interface CloudFrontResponse {
   };
 }
 
+// @ts-ignore
 function handler(event: CloudFrontResponse) {
   var response = event.response;
   var headers = response.headers;
