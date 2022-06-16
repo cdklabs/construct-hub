@@ -168,10 +168,7 @@ export class CouchChanges extends EventEmitter {
           const plainPayload =
             res.headers['content-encoding'] === 'gzip' ? gunzip(res) : res;
           plainPayload.pipe(json, { end: true });
-<<<<<<< HEAD
           plainPayload.once('error', onError);
-=======
->>>>>>> main
         }
       );
       req.end(body && JSON.stringify(body, null, 2));
