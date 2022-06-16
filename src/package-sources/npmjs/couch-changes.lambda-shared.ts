@@ -153,6 +153,8 @@ export class CouchChanges extends EventEmitter {
               );
               retry();
             } else {
+              Error.captureStackTrace(err);
+              console.log('[NON-RETRYABLE]', err);
               ko(err);
             }
           };
@@ -166,6 +168,7 @@ export class CouchChanges extends EventEmitter {
           const plainPayload =
             res.headers['content-encoding'] === 'gzip' ? gunzip(res) : res;
           plainPayload.pipe(json, { end: true });
+          plainPayload.once('error', onError);
         }
       );
       req.end(body && JSON.stringify(body, null, 2));
