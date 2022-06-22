@@ -47,6 +47,7 @@ const project = new cdk.JsiiProject({
     'aws-sdk',
     'aws-xray-sdk-core',
     'case',
+    'cdk-dia',
     'esbuild',
     'feed',
     'fs-extra',
@@ -142,6 +143,9 @@ const project = new cdk.JsiiProject({
     },
   },
 });
+
+// update component diagram when synth
+project.setScript('dia','yarn dev:synth && cd lib/__tests__/devapp && npx cdk-dia && mv diagram.png ../../../diagrams/diagram.png');
 
 project.package.addField('resolutions', {
   // this is coming from construct-hub-webapp, and has no affect on us what s oever
