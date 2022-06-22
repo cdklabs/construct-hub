@@ -144,7 +144,7 @@ const project = new cdk.JsiiProject({
   },
 });
 
-// update component diagram when synth
+// create component diagram
 project.setScript('dia','yarn dev:synth && cd lib/__tests__/devapp && npx cdk-dia && mv diagram.png ../../../diagrams/diagram.png');
 
 project.package.addField('resolutions', {
