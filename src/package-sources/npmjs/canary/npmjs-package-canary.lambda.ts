@@ -177,7 +177,7 @@ export async function handler(event: unknown): Promise<void> {
   } catch (error) {
     if (
       error instanceof HTTPError &&
-      (error.httpStatusCode === 502 || error.httpStatusCode === 504)
+      (error.httpStatusCode === 502 || error.httpStatusCode === 503 || error.httpStatusCode === 504)
     ) {
       // This is an HTTP 5XX from a dependency, so we'll log this out, and pretend it did not fail...
       console.error(
