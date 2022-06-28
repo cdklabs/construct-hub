@@ -374,7 +374,7 @@ export class Ingestion extends Construct implements IGrantable {
   /**
    * This metrics is the total count of packages that were rejected due to
    * mismatched identity (name, version, license) between the `package.json`
-   * file and te `.jsii` attribute.
+   * file and the `.jsii` attribute.
    */
   public metricMismatchedIdentityRejections(opts?: MetricOptions): Metric {
     return new Metric({

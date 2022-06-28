@@ -8,6 +8,7 @@ import {
   SchemaVersion,
   Stability,
   TypeKind,
+  SPEC_FILE_NAME,
 } from '@jsii/spec';
 import type { metricScope, MetricsLogger } from 'aws-embedded-metrics';
 import { Context, SQSEvent } from 'aws-lambda';
@@ -147,7 +148,7 @@ test('basic happy case', async () => {
   mockExtract.mockImplementation(
     () =>
       new FakeExtract(fakeTar, {
-        'package/.jsii': fakeDotJsii,
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
         'package/index.js': '// Ignore me!',
         'package/package.json': JSON.stringify({
           name: packageName,
@@ -374,7 +375,7 @@ test('basic happy case with license file', async () => {
   mockExtract.mockImplementation(
     () =>
       new FakeExtract(fakeTar, {
-        'package/.jsii': fakeDotJsii,
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
         'package/LICENSE.md': fakeLicense,
         'package/index.js': '// Ignore me!',
         'package/package.json': JSON.stringify({
@@ -617,7 +618,7 @@ test('basic happy case with custom package links', async () => {
   mockExtract.mockImplementation(
     () =>
       new FakeExtract(fakeTar, {
-        'package/.jsii': fakeDotJsii,
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
         'package/index.js': '// Ignore me!',
         'package/package.json': JSON.stringify({
           name: packageName,
@@ -887,7 +888,7 @@ test('basic happy case with custom tags', async () => {
   mockExtract.mockImplementation(
     () =>
       new FakeExtract(fakeTar, {
-        'package/.jsii': fakeDotJsii,
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
         'package/index.js': '// Ignore me!',
         'package/package.json': JSON.stringify({
           name: packageName,
@@ -1123,7 +1124,7 @@ for (const [frameworkName, frameworkPackage] of [
     mockExtract.mockImplementation(
       () =>
         new FakeExtract(fakeTar, {
-          'package/.jsii': fakeDotJsii,
+          [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
           'package/index.js': '// Ignore me!',
           'package/package.json': JSON.stringify({
             name: packageName,
@@ -1342,7 +1343,7 @@ for (const [frameworkName, frameworkPackage] of [
     mockExtract.mockImplementation(
       () =>
         new FakeExtract(fakeTar, {
-          'package/.jsii': fakeDotJsii,
+          [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
           'package/index.js': '// Ignore me!',
           'package/package.json': JSON.stringify({
             name: frameworkPackage,
@@ -1569,7 +1570,7 @@ for (const [frameworkName, frameworkPackage] of [
     mockExtract.mockImplementation(
       () =>
         new FakeExtract(fakeTar, {
-          'package/.jsii': fakeDotJsii,
+          [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
           'package/index.js': '// Ignore me!',
           'package/package.json': JSON.stringify({
             name: packageName,
@@ -1790,7 +1791,7 @@ test('mismatched package name', async () => {
   mockExtract.mockImplementation(
     () =>
       new FakeExtract(fakeTar, {
-        'package/.jsii': fakeDotJsii,
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
         'package/LICENSE.md': fakeLicense,
         'package/index.js': '// Ignore me!',
         'package/package.json': JSON.stringify({
@@ -1928,7 +1929,7 @@ test('mismatched package version', async () => {
   mockExtract.mockImplementation(
     () =>
       new FakeExtract(fakeTar, {
-        'package/.jsii': fakeDotJsii,
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
         'package/LICENSE.md': fakeLicense,
         'package/index.js': '// Ignore me!',
         'package/package.json': JSON.stringify({
@@ -2066,7 +2067,7 @@ test('mismatched package license', async () => {
   mockExtract.mockImplementation(
     () =>
       new FakeExtract(fakeTar, {
-        'package/.jsii': fakeDotJsii,
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
         'package/LICENSE.md': fakeLicense,
         'package/index.js': '// Ignore me!',
         'package/package.json': JSON.stringify({
@@ -2332,7 +2333,7 @@ test('missing package.json file', async () => {
   mockExtract.mockImplementation(
     () =>
       new FakeExtract(fakeTar, {
-        'package/.jsii': fakeDotJsii,
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
         'package/LICENSE.md': fakeLicense,
         'package/index.js': '// Ignore me!',
       }) as any

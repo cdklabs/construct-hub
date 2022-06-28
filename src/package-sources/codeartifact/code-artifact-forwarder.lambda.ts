@@ -1,3 +1,4 @@
+import { SPEC_FILE_NAME } from '@jsii/spec';
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context, EventBridgeEvent } from 'aws-lambda';
 
@@ -75,7 +76,7 @@ export const handler = metricScope(
       const tarball = Buffer.from(asset! as any);
 
       const { assemblyJson, packageJson } = await extractObjects(tarball, {
-        assemblyJson: { path: 'package/.jsii' },
+        assemblyJson: { path: `package/${SPEC_FILE_NAME}` },
         packageJson: { path: 'package/package.json', required: true },
       });
       metrics.putMetric(
@@ -85,7 +86,7 @@ export const handler = metricScope(
       );
       if (assemblyJson == null) {
         console.log(
-          `Package "${packageName}@${event.detail.packageVersion}" does not contain a .jsii assembly`
+          `Package "${packageName}@${event.detail.packageVersion}" does not contain a ${SPEC_FILE_NAME} assembly`
         );
         return;
       }

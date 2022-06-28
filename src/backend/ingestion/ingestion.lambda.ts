@@ -2,7 +2,7 @@ import { createHash } from 'crypto';
 import { basename, extname } from 'path';
 import { URL } from 'url';
 
-import { Assembly, validateAssembly } from '@jsii/spec';
+import { SPEC_FILE_NAME, Assembly, validateAssembly } from '@jsii/spec';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { Context, SQSEvent } from 'aws-lambda';
 import { CacheStrategy } from '../../caching';
@@ -94,7 +94,7 @@ export const handler = metricScope(
         ({ dotJsii, packageJson, licenseText } = await extractObjects(
           Buffer.from(tarball.Body! as any),
           {
-            dotJsii: { path: 'package/.jsii', required: true },
+            dotJsii: { path: `package/${SPEC_FILE_NAME}`, required: true },
             packageJson: { path: 'package/package.json', required: true },
             licenseText: { filter: isLicenseFile },
           }
