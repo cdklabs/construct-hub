@@ -92,6 +92,9 @@ export const handler = metricScope(
         );
       }
 
+      const dotJsiiFile = `package/${SPEC_FILE_NAME}`;
+      const compDotJsiiFile = `package/${SPEC_FILE_NAME_COMPRESSED}`;
+
       let dotJsii: Buffer;
       let compDotJsii: Buffer | undefined;
       let packageJson: Buffer;
@@ -99,8 +102,8 @@ export const handler = metricScope(
       try {
         ({ dotJsii, compDotJsii, packageJson, licenseText } =
           await extractObjects(Buffer.from(tarball.Body! as any), {
-            dotJsii: { path: `package/${SPEC_FILE_NAME}`, required: true },
-            compDotJsii: { path: `package/${SPEC_FILE_NAME_COMPRESSED}` },
+            dotJsii: { path: dotJsiiFile, required: true },
+            compDotJsii: { path: compDotJsiiFile },
             packageJson: { path: 'package/package.json', required: true },
             licenseText: { filter: isLicenseFile },
           }));
@@ -117,7 +120,20 @@ export const handler = metricScope(
       let packageVersion: string;
       let packageReadme: string;
       try {
-        parsedAssembly = loadAssemblyFromBuffer(dotJsii, compDotJsii);
+        parsedAssembly = loadAssemblyFromBuffer(
+          dotJsii,
+          compDotJsii
+            ? {
+                pathToAssembly: dotJsiiFile,
+                compressedAssemblyCb: (filename: string) => {
+                  if (filename !== compDotJsiiFile) {
+                    throw new Error('');
+                  }
+                  return compDotJsii!;
+                },
+              }
+            : undefined
+        );
 
         // needs `dependencyClosure`
         constructFrameworks = detectConstructFrameworks(parsedAssembly);
