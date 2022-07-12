@@ -799,7 +799,7 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "githubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378fea": Object {
+    "githubapiIPv4772e3923aab7bdea2b156896c3c78fcc18b76a6e": Object {
       "Properties": Object {
         "AddressFamily": "IPv4",
         "Entries": Array [
@@ -846,6 +846,9 @@ Object {
             "Cidr": "20.205.243.168/32",
           },
           Object {
+            "Cidr": "20.248.137.49/32",
+          },
+          Object {
             "Cidr": "52.63.231.178/32",
           },
           Object {
@@ -855,12 +858,12 @@ Object {
             "Cidr": "54.180.75.25/32",
           },
         ],
-        "MaxEntries": 17,
+        "MaxEntries": 18,
         "PrefixListName": "github.api.IPv4",
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "githubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378feaFFACB27C": Object {
+    "githubapiIPv4772e3923aab7bdea2b156896c3c78fcc18b76a6eB71A3447": Object {
       "Properties": Object {
         "GroupDescription": "TestStack/github.api-IPv4",
         "Tags": Array [
@@ -875,19 +878,19 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "githubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378featoTestStackgithubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378fea4436583C814": Object {
+    "githubapiIPv4772e3923aab7bdea2b156896c3c78fcc18b76a6etoTestStackgithubapiIPv4772e3923aab7bdea2b156896c3c78fcc18b76a6e44320563FFB": Object {
       "Properties": Object {
         "Description": "to github.api (IPv4)",
         "DestinationPrefixListId": Object {
           "Fn::GetAtt": Array [
-            "githubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378fea",
+            "githubapiIPv4772e3923aab7bdea2b156896c3c78fcc18b76a6e",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "githubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378feaFFACB27C",
+            "githubapiIPv4772e3923aab7bdea2b156896c3c78fcc18b76a6eB71A3447",
             "GroupId",
           ],
         },
@@ -896,7 +899,7 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "githubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6d": Object {
+    "githubgitIPv40fa65a8cb6038228f07e96a283bd10be140881d7": Object {
       "Properties": Object {
         "AddressFamily": "IPv4",
         "Entries": Array [
@@ -955,6 +958,12 @@ Object {
             "Cidr": "20.205.243.166/32",
           },
           Object {
+            "Cidr": "20.248.137.48/32",
+          },
+          Object {
+            "Cidr": "20.248.137.50/32",
+          },
+          Object {
             "Cidr": "3.105.147.174/32",
           },
           Object {
@@ -991,12 +1000,12 @@ Object {
             "Cidr": "54.238.117.237/32",
           },
         ],
-        "MaxEntries": 30,
+        "MaxEntries": 32,
         "PrefixListName": "github.git.IPv4",
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "githubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6dA1E32585": Object {
+    "githubgitIPv40fa65a8cb6038228f07e96a283bd10be140881d76640ADA8": Object {
       "Properties": Object {
         "GroupDescription": "TestStack/github.git-IPv4",
         "Tags": Array [
@@ -1011,19 +1020,19 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "githubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6dtoTestStackgithubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6d4435A75B4DA": Object {
+    "githubgitIPv40fa65a8cb6038228f07e96a283bd10be140881d7toTestStackgithubgitIPv40fa65a8cb6038228f07e96a283bd10be140881d744333A29CA3": Object {
       "Properties": Object {
         "Description": "to github.git (IPv4)",
         "DestinationPrefixListId": Object {
           "Fn::GetAtt": Array [
-            "githubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6d",
+            "githubgitIPv40fa65a8cb6038228f07e96a283bd10be140881d7",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "githubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6dA1E32585",
+            "githubgitIPv40fa65a8cb6038228f07e96a283bd10be140881d76640ADA8",
             "GroupId",
           ],
         },
@@ -1032,7 +1041,7 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "githubwebIPv49b292faed277d68adffe79e317cbcff49762581a": Object {
+    "githubwebIPv44c87ac0761e36cd1d344e591ddf2c5831b46f289": Object {
       "Properties": Object {
         "AddressFamily": "IPv4",
         "Entries": Array [
@@ -1076,6 +1085,9 @@ Object {
             "Cidr": "20.205.243.166/32",
           },
           Object {
+            "Cidr": "20.248.137.48/32",
+          },
+          Object {
             "Cidr": "52.192.72.89/32",
           },
           Object {
@@ -1088,12 +1100,12 @@ Object {
             "Cidr": "52.78.231.108/32",
           },
         ],
-        "MaxEntries": 17,
+        "MaxEntries": 18,
         "PrefixListName": "github.web.IPv4",
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "githubwebIPv49b292faed277d68adffe79e317cbcff49762581aED35DB49": Object {
+    "githubwebIPv44c87ac0761e36cd1d344e591ddf2c5831b46f289EE3D98AC": Object {
       "Properties": Object {
         "GroupDescription": "TestStack/github.web-IPv4",
         "Tags": Array [
@@ -1108,19 +1120,19 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "githubwebIPv49b292faed277d68adffe79e317cbcff49762581atoTestStackgithubwebIPv49b292faed277d68adffe79e317cbcff49762581a44397D88D6F": Object {
+    "githubwebIPv44c87ac0761e36cd1d344e591ddf2c5831b46f289toTestStackgithubwebIPv44c87ac0761e36cd1d344e591ddf2c5831b46f289443613F75E8": Object {
       "Properties": Object {
         "Description": "to github.web (IPv4)",
         "DestinationPrefixListId": Object {
           "Fn::GetAtt": Array [
-            "githubwebIPv49b292faed277d68adffe79e317cbcff49762581a",
+            "githubwebIPv44c87ac0761e36cd1d344e591ddf2c5831b46f289",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "githubwebIPv49b292faed277d68adffe79e317cbcff49762581aED35DB49",
+            "githubwebIPv44c87ac0761e36cd1d344e591ddf2c5831b46f289EE3D98AC",
             "GroupId",
           ],
         },
