@@ -534,6 +534,36 @@ export class ReleaseNoteFetcher extends Construct {
       namespace: metricConst.METRICS_NAMESPACE,
     });
   }
+
+  public metricGhRateLimitRemaining(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: cdk.Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      metricName: metricConst.GhRateLimitsRemaining,
+      namespace: metricConst.METRICS_NAMESPACE,
+    });
+  }
+
+  public metricGhRateLimitUsed(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: cdk.Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      metricName: metricConst.GhLimitsUsed,
+      namespace: metricConst.METRICS_NAMESPACE,
+    });
+  }
+
+  public metricGhRateLimitLimit(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: cdk.Duration.minutes(5),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      metricName: metricConst.GhLimitsLimit,
+      namespace: metricConst.METRICS_NAMESPACE,
+    });
+  }
 }
 
 function stateMachineNameFrom(nodePath: string): string {

@@ -866,5 +866,28 @@ function renderReleaseNotesWidgets(
         ],
       }),
     ],
+    [
+      new GraphWidget({
+        height: 6,
+        width: 12,
+        title: 'GitHub API Rate Limits',
+        left: [
+          fillMetric(
+            releaseNotes.metricGhRateLimitLimit({ label: 'Limit' }),
+            'REPEAT'
+          ),
+          fillMetric(
+            releaseNotes.metricGhRateLimitUsed({ label: 'Used' }),
+            'REPEAT'
+          ),
+          fillMetric(
+            releaseNotes.metricGhRateLimitRemaining({
+              label: 'Remaining',
+            }),
+            'REPEAT'
+          ),
+        ],
+      }),
+    ],
   ];
 }
