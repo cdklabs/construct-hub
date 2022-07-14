@@ -123,14 +123,11 @@ export const handler = metricScope(
         parsedAssembly = loadAssemblyFromBuffer(
           dotJsii,
           compDotJsii
-            ? {
-                pathToAssembly: dotJsiiFile,
-                compressedAssemblyCb: (filename: string) => {
-                  if (filename !== compDotJsiiFile) {
-                    throw new Error('');
-                  }
-                  return compDotJsii!;
-                },
+            ? (filename: string) => {
+                if (filename !== compDotJsiiFile) {
+                  throw new Error('');
+                }
+                return compDotJsii!;
               }
             : undefined
         );
