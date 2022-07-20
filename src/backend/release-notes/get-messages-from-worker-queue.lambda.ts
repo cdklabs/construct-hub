@@ -40,9 +40,30 @@ type ExecutionResult = {
  * @returns ExecutionResult | ServiceLimit
  */
 export const handler = async (): Promise<ExecutionResult | ServiceLimit> => {
-  let serviceLimit;
+  let serviceLimit: {
+    limit: number;
+    remaining: number;
+    used: number;
+    reset: number;
+  };
   try {
     serviceLimit = await getServiceLimits();
+    await metricScope((metrics) => async () => {
+      metrics.setNamespace(constants.METRICS_NAMESPACE);
+      metrics.setDimensions();
+      metrics.putMetric(
+        constants.GhRateLimitsRemaining,
+        serviceLimit!.remaining,
+        Unit.Count
+      );
+      metrics.putMetric(constants.GhLimitsUsed, serviceLimit!.used, Unit.Count);
+
+      metrics.putMetric(
+        constants.GhLimitsLimit,
+        serviceLimit!.limit,
+        Unit.Count
+      );
+    })();
   } catch (e) {
     if ((e as any).status == 401) {
       await metricScope((metrics) => async () => {
