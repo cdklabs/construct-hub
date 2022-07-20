@@ -40,9 +40,12 @@ type ExecutionResult = {
  * @returns ExecutionResult | ServiceLimit
  */
 export const handler = async (): Promise<ExecutionResult | ServiceLimit> => {
-  let serviceLimit:
-    | { limit: number; remaining: number; used: number; reset: number }
-    | undefined;
+  let serviceLimit: {
+    limit: number;
+    remaining: number;
+    used: number;
+    reset: number;
+  };
   try {
     serviceLimit = await getServiceLimits();
     await metricScope((metrics) => async () => {

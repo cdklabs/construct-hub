@@ -268,7 +268,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 689ae79134f3e3e4ac6c9b58542ea0f213f5640683be495e977788380261bea9.zip
+        S3Key: 058dd0ab16a4815b1b7d38794b1f79f7d68771c14c644e483c6625cbf0f78054.zip
       Role:
         Fn::GetAtt:
           - ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionServiceRole9AAAD93C
@@ -2917,7 +2917,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 01be012667c88d0baeec673e3dbe283c863a94ad6f1b34972ca8357537cb8cf1.zip
+        S3Key: cbf06236aaca539e2e38a1a9c3bbf9f6f0fa85752b7613e041d09d10e7fe3f34.zip
       Role:
         Fn::GetAtt:
           - ConstructHubStatsServiceRole48DCA379
@@ -5687,7 +5687,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: b691ce181998e457d322557b87d55df7d76e1cc1008b9de4c31868d229964309.zip
+        S3Key: fa5df7519d1dcefbe29e8bedea71221f320c84e9afaf3f8c9152e981e146a517.zip
       Role:
         Fn::GetAtt:
           - ConstructHubReleaseNotesReleaseNoteTasksServiceRole662376CD
@@ -5971,6 +5971,42 @@ Resources:
       Period: 300
       Statistic: Sum
       Threshold: 1
+      TreatMissingData: notBreaching
+  ConstructHubReleaseNotesReleaseNotesGithubratelimitE863B9F0:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      EvaluationPeriods: 2
+      AlarmDescription: >-
+        Release notes generation is nearing the GitHub rate limit!
+
+
+        RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
+
+        Consider either using GitHub application.
+      AlarmName: dev/ConstructHub/ReleaseNotes / Github Rate Limit
+      Metrics:
+        - Expression: 100 * rateLimitUsed / rateLimitLimit
+          Id: expr_1
+          Label: GHT Rate limit Percent Used
+        - Id: rateLimitUsed
+          MetricStat:
+            Metric:
+              MetricName: GhLimitsUsed
+              Namespace: ConstructHub/ReleaseNotes
+            Period: 300
+            Stat: Maximum
+          ReturnData: false
+        - Id: rateLimitLimit
+          MetricStat:
+            Metric:
+              MetricName: GhLimitsLimit
+              Namespace: ConstructHub/ReleaseNotes
+            Period: 300
+            Stat: Maximum
+          ReturnData: false
+      Threshold: 80
       TreatMissingData: notBreaching
   ConstructHubReleaseNotesReleaseNotesInvalidGitHubCredentialsE84D7534:
     Type: AWS::CloudWatch::Alarm
@@ -9047,7 +9083,7 @@ Resources:
             - '","metrics":[[{"label":"Limit","expression":"FILL(mcf810098fa7b0359cfa64484e165026013fa6611de36e48a68984a9615f7599d,
               REPEAT)"}],["ConstructHub/ReleaseNotes","GhLimitsLimit",{"label":"Limit","stat":"Maximum","visible":false,"id":"mcf810098fa7b0359cfa64484e165026013fa6611de36e48a68984a9615f7599d"}],[{"label":"Used","expression":"FILL(mc54991399581cec857a3c1773e2649cbfb65cef7ea4e459f2ada3ee31c60782e,
               REPEAT)"}],["ConstructHub/ReleaseNotes","GhLimitsUsed",{"label":"Used","stat":"Maximum","visible":false,"id":"mc54991399581cec857a3c1773e2649cbfb65cef7ea4e459f2ada3ee31c60782e"}],[{"label":"Remaining","expression":"FILL(m3c4202dbd25b40c6524935352f9d34858b3374ed5079dbd6aea164767195d54a,
-              REPEAT)"}],["ConstructHub/ReleaseNotes","GhRateLimitsRemaining",{"label":"Remaining","stat":"Maximum","visible":false,"id":"m3c4202dbd25b40c6524935352f9d34858b3374ed5079dbd6aea164767195d54a"}]],"yAxis":{}}}]}'
+              REPEAT)"}],["ConstructHub/ReleaseNotes","GhRateLimitsRemaining",{"label":"Remaining","stat":"Minimum","visible":false,"id":"m3c4202dbd25b40c6524935352f9d34858b3374ed5079dbd6aea164767195d54a"}]],"yAxis":{}}}]}'
       DashboardName: construct-hub-backend-graphs
   ConstructHubApplication64E14E14:
     Type: AWS::ServiceCatalogAppRegistry::Application

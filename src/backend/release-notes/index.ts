@@ -1,6 +1,8 @@
 import * as cdk from 'aws-cdk-lib';
 import {
+  Alarm,
   ComparisonOperator,
+  MathExpression,
   Metric,
   MetricOptions,
   Statistic,
@@ -432,6 +434,11 @@ export class ReleaseNoteFetcher extends Construct {
         })
     );
 
+    props.monitoring.addLowSeverityAlarm(
+      'Github rate limit',
+      this.generateGithubRateLimitAlarm()
+    );
+
     props.monitoring.addHighSeverityAlarm(
       'ReleaseNotes Github credential invalid',
       this.metricInvalidCredentials().createAlarm(
@@ -538,7 +545,7 @@ export class ReleaseNoteFetcher extends Construct {
   public metricGhRateLimitRemaining(opts?: MetricOptions): Metric {
     return new Metric({
       period: cdk.Duration.minutes(5),
-      statistic: Statistic.MAXIMUM,
+      statistic: Statistic.MINIMUM,
       ...opts,
       metricName: metricConst.GhRateLimitsRemaining,
       namespace: metricConst.METRICS_NAMESPACE,
@@ -562,6 +569,32 @@ export class ReleaseNoteFetcher extends Construct {
       ...opts,
       metricName: metricConst.GhLimitsLimit,
       namespace: metricConst.METRICS_NAMESPACE,
+    });
+  }
+
+  private generateGithubRateLimitAlarm(threshold: number = 80): Alarm {
+    const percentUsed = new MathExpression({
+      expression: '100 * rateLimitUsed / rateLimitLimit',
+      label: 'GHT Rate limit Percent Used',
+      usingMetrics: {
+        rateLimitUsed: this.metricGhRateLimitUsed(),
+        rateLimitLimit: this.metricGhRateLimitLimit(),
+      },
+    });
+
+    return percentUsed.createAlarm(this, 'ReleaseNotes Github rate limit', {
+      alarmName: `${this.node.path} / Github Rate Limit`,
+      alarmDescription: [
+        'Release notes generation is nearing the GitHub rate limit!',
+        '',
+        `RunBook: ${RUNBOOK_URL}`,
+        '',
+        `Consider either using GitHub application.`,
+      ].join('\n'),
+      comparisonOperator: ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+      evaluationPeriods: 2,
+      threshold,
+      treatMissingData: TreatMissingData.NOT_BREACHING,
     });
   }
 }
