@@ -1,4 +1,5 @@
 import { pseudoRandomBytes } from 'crypto';
+import { SPEC_FILE_NAME } from '@jsii/spec';
 import type { Context } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
@@ -142,7 +143,9 @@ test('happy path', async () => {
     expect(tgz).toEqual(
       Buffer.from(mockGetPackageVersionAssetResult.asset! as any)
     );
-    expect(selector).toHaveProperty('assemblyJson', { path: 'package/.jsii' });
+    expect(selector).toHaveProperty('assemblyJson', {
+      path: `package/${SPEC_FILE_NAME}`,
+    });
     expect(selector).toHaveProperty('packageJson', {
       path: 'package/package.json',
       required: true,
@@ -295,7 +298,9 @@ test('no license (i.e: UNLICENSED)', async () => {
     expect(tgz).toEqual(
       Buffer.from(mockGetPackageVersionAssetResult.asset! as any)
     );
-    expect(selector).toHaveProperty('assemblyJson', { path: 'package/.jsii' });
+    expect(selector).toHaveProperty('assemblyJson', {
+      path: `package/${SPEC_FILE_NAME}`,
+    });
     expect(selector).toHaveProperty('packageJson', {
       path: 'package/package.json',
       required: true,
@@ -370,7 +375,9 @@ test('ineligible license', async () => {
     expect(tgz).toEqual(
       Buffer.from(mockGetPackageVersionAssetResult.asset! as any)
     );
-    expect(selector).toHaveProperty('assemblyJson', { path: 'package/.jsii' });
+    expect(selector).toHaveProperty('assemblyJson', {
+      path: `package/${SPEC_FILE_NAME}`,
+    });
     expect(selector).toHaveProperty('packageJson', {
       path: 'package/package.json',
       required: true,
@@ -444,7 +451,9 @@ test('not a jsii package', async () => {
     expect(tgz).toEqual(
       Buffer.from(mockGetPackageVersionAssetResult.asset! as any)
     );
-    expect(selector).toHaveProperty('assemblyJson', { path: 'package/.jsii' });
+    expect(selector).toHaveProperty('assemblyJson', {
+      path: `package/${SPEC_FILE_NAME}`,
+    });
     expect(selector).toHaveProperty('packageJson', {
       path: 'package/package.json',
       required: true,

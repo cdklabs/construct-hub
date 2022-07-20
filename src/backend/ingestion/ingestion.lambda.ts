@@ -2,7 +2,12 @@ import { createHash } from 'crypto';
 import { basename, extname } from 'path';
 import { URL } from 'url';
 
-import { Assembly, validateAssembly } from '@jsii/spec';
+import {
+  SPEC_FILE_NAME,
+  Assembly,
+  loadAssemblyFromBuffer,
+  SPEC_FILE_NAME_COMPRESSED,
+} from '@jsii/spec';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { Context, SQSEvent } from 'aws-lambda';
 import { CacheStrategy } from '../../caching';
@@ -87,18 +92,21 @@ export const handler = metricScope(
         );
       }
 
+      const dotJsiiFile = `package/${SPEC_FILE_NAME}`;
+      const compDotJsiiFile = `package/${SPEC_FILE_NAME_COMPRESSED}`;
+
       let dotJsii: Buffer;
+      let compDotJsii: Buffer | undefined;
       let packageJson: Buffer;
       let licenseText: Buffer | undefined;
       try {
-        ({ dotJsii, packageJson, licenseText } = await extractObjects(
-          Buffer.from(tarball.Body! as any),
-          {
-            dotJsii: { path: 'package/.jsii', required: true },
+        ({ dotJsii, compDotJsii, packageJson, licenseText } =
+          await extractObjects(Buffer.from(tarball.Body! as any), {
+            dotJsii: { path: dotJsiiFile, required: true },
+            compDotJsii: { path: compDotJsiiFile },
             packageJson: { path: 'package/package.json', required: true },
             licenseText: { filter: isLicenseFile },
-          }
-        ));
+          }));
       } catch (err) {
         console.error(`Invalid tarball content: ${err}`);
         metrics.putMetric(MetricName.INVALID_TARBALL, 1, Unit.Count);
@@ -112,8 +120,16 @@ export const handler = metricScope(
       let packageVersion: string;
       let packageReadme: string;
       try {
-        parsedAssembly = validateAssembly(
-          JSON.parse(dotJsii.toString('utf-8'))
+        parsedAssembly = loadAssemblyFromBuffer(
+          dotJsii,
+          compDotJsii
+            ? (filename: string) => {
+                if (filename !== compDotJsiiFile) {
+                  throw new Error('');
+                }
+                return compDotJsii!;
+              }
+            : undefined
         );
 
         // needs `dependencyClosure`
