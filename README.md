@@ -82,13 +82,13 @@ const app = new App();
 const stack = new Stack(app, 'StackName', { /* ... */ });
 
 // Now to business!
-const registry = new codeartifact.CfnRegistry(stack, 'Registry', {
+const repository = new codeartifact.CfnRepository(stack, 'Repository', {
   // ....
 });
 new ConstructHub(stack, 'ConstructHub', {
   packageSources: [
     new sources.NpmJs(), // Remove if you do NOT want npmjs.com packages
-    new sources.CodeArtifact({ registry }),
+    new sources.CodeArtifact({ repository }),
   ],
 });
 ```
