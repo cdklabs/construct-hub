@@ -373,6 +373,7 @@ test('basic happy case with compressed assembly', async () => {
     () => new FakeGunzip(fakeTarGz, fakeTar) as any
   );
 
+  // mock gunzipSync as that is what is used in loadAssemblyFromBuffer to uncompress assemblies
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockGunzipSync = require('zlib').gunzipSync as jest.MockedFunction<
     typeof gunzipSync
@@ -387,7 +388,8 @@ test('basic happy case with compressed assembly', async () => {
     () =>
       new FakeExtract(fakeTar, {
         [`package/${SPEC_FILE_NAME}`]: fakeDotJsiiRedirect,
-        [`package/${SPEC_FILE_NAME_COMPRESSED}`]: fakeDotJsii,
+        [`package/${SPEC_FILE_NAME_COMPRESSED}`]:
+          '// Mocks a file existing with this name',
         'package/index.js': '// Ignore me!',
         'package/package.json': JSON.stringify({
           name: packageName,
