@@ -124,8 +124,12 @@ export const handler = metricScope(
           dotJsii,
           compDotJsii
             ? (filename: string) => {
-                if (filename !== compDotJsiiFile) {
-                  throw new Error('');
+                if (filename !== basename(compDotJsiiFile)) {
+                  throw new Error(
+                    `Invalid filename: expected ${basename(
+                      compDotJsiiFile
+                    )} but received ${filename}`
+                  );
                 }
                 return compDotJsii!;
               }
@@ -134,6 +138,7 @@ export const handler = metricScope(
 
         // needs `dependencyClosure`
         constructFrameworks = detectConstructFrameworks(parsedAssembly);
+
         const { license, name, version, readme } = parsedAssembly;
         packageLicense = license;
         packageName = name;
