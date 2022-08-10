@@ -274,45 +274,42 @@ import urllib.request
 
 s3 = boto3.client(\\"s3\\")
 
+EVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'
+
 CONFIGURATION_TYPES = [\\"TopicConfigurations\\", \\"QueueConfigurations\\", \\"LambdaFunctionConfigurations\\"]
 
 def handler(event: dict, context):
-    response_status = \\"SUCCESS\\"
-    error_message = \\"\\"
-    try:
-        props = event[\\"ResourceProperties\\"]
-        bucket = props[\\"BucketName\\"]
-        notification_configuration = props[\\"NotificationConfiguration\\"]
-        request_type = event[\\"RequestType\\"]
-        managed = props.get('Managed', 'true').lower() == 'true'
-        stack_id = event['StackId']
+  response_status = \\"SUCCESS\\"
+  error_message = \\"\\"
+  try:
+    props = event[\\"ResourceProperties\\"]
+    bucket = props[\\"BucketName\\"]
+    notification_configuration = props[\\"NotificationConfiguration\\"]
+    request_type = event[\\"RequestType\\"]
+    managed = props.get('Managed', 'true').lower() == 'true'
+    stack_id = event['StackId']
 
-        if managed:
-          config = handle_managed(request_type, notification_configuration)
-        else:
-          config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
+    if managed:
+      config = handle_managed(request_type, notification_configuration)
+    else:
+      config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
 
-        put_bucket_notification_configuration(bucket, config)
-    except Exception as e:
-        logging.exception(\\"Failed to put bucket notification configuration\\")
-        response_status = \\"FAILED\\"
-        error_message = f\\"Error: {str(e)}. \\"
-    finally:
-        submit_response(event, context, response_status, error_message)
-
+    put_bucket_notification_configuration(bucket, config)
+  except Exception as e:
+    logging.exception(\\"Failed to put bucket notification configuration\\")
+    response_status = \\"FAILED\\"
+    error_message = f\\"Error: {str(e)}. \\"
+  finally:
+    submit_response(event, context, response_status, error_message)
 
 def handle_managed(request_type, notification_configuration):
   if request_type == 'Delete':
     return {}
   return notification_configuration
 
-
 def handle_unmanaged(bucket, stack_id, request_type, notification_configuration):
-
-  # find external notifications
   external_notifications = find_external_notifications(bucket, stack_id)
 
-  # if delete, that's all we need
   if request_type == 'Delete':
     return external_notifications
 
@@ -320,54 +317,56 @@ def handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
     notification['Id'] = f\\"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}\\"
     return notification
 
-  # otherwise, merge external with incoming config and augment with id
   notifications = {}
   for t in CONFIGURATION_TYPES:
     external = external_notifications.get(t, [])
     incoming = [with_id(n) for n in notification_configuration.get(t, [])]
     notifications[t] = external + incoming
-  return notifications
 
+  if EVENTBRIDGE_CONFIGURATION in notification_configuration:
+    notifications[EVENTBRIDGE_CONFIGURATION] = notification_configuration[EVENTBRIDGE_CONFIGURATION]
+  elif EVENTBRIDGE_CONFIGURATION in external_notifications:
+    notifications[EVENTBRIDGE_CONFIGURATION] = external_notifications[EVENTBRIDGE_CONFIGURATION]
+
+  return notifications
 
 def find_external_notifications(bucket, stack_id):
   existing_notifications = get_bucket_notification_configuration(bucket)
   external_notifications = {}
   for t in CONFIGURATION_TYPES:
-    # if the notification was created by us, we know what id to expect
-    # so we can filter by it.
     external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f\\"{stack_id}-\\")]
 
-  return external_notifications
+  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
+    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
 
+  return external_notifications
 
 def get_bucket_notification_configuration(bucket):
   return s3.get_bucket_notification_configuration(Bucket=bucket)
 
-
 def put_bucket_notification_configuration(bucket, notification_configuration):
   s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)
 
-
 def submit_response(event: dict, context, response_status: str, error_message: str):
-    response_body = json.dumps(
-        {
-            \\"Status\\": response_status,
-            \\"Reason\\": f\\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\\",
-            \\"PhysicalResourceId\\": event.get(\\"PhysicalResourceId\\") or event[\\"LogicalResourceId\\"],
-            \\"StackId\\": event[\\"StackId\\"],
-            \\"RequestId\\": event[\\"RequestId\\"],
-            \\"LogicalResourceId\\": event[\\"LogicalResourceId\\"],
-            \\"NoEcho\\": False,
-        }
-    ).encode(\\"utf-8\\")
-    headers = {\\"content-type\\": \\"\\", \\"content-length\\": str(len(response_body))}
-    try:
-        req = urllib.request.Request(url=event[\\"ResponseURL\\"], headers=headers, data=response_body, method=\\"PUT\\")
-        with urllib.request.urlopen(req) as response:
-            print(response.read().decode(\\"utf-8\\"))
-        print(\\"Status code: \\" + response.reason)
-    except Exception as e:
-        print(\\"send(..) failed executing request.urlopen(..): \\" + str(e))
+  response_body = json.dumps(
+    {
+      \\"Status\\": response_status,
+      \\"Reason\\": f\\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\\",
+      \\"PhysicalResourceId\\": event.get(\\"PhysicalResourceId\\") or event[\\"LogicalResourceId\\"],
+      \\"StackId\\": event[\\"StackId\\"],
+      \\"RequestId\\": event[\\"RequestId\\"],
+      \\"LogicalResourceId\\": event[\\"LogicalResourceId\\"],
+      \\"NoEcho\\": False,
+    }
+  ).encode(\\"utf-8\\")
+  headers = {\\"content-type\\": \\"\\", \\"content-length\\": str(len(response_body))}
+  try:
+    req = urllib.request.Request(url=event[\\"ResponseURL\\"], headers=headers, data=response_body, method=\\"PUT\\")
+    with urllib.request.urlopen(req) as response:
+      print(response.read().decode(\\"utf-8\\"))
+    print(\\"Status code: \\" + response.reason)
+  except Exception as e:
+      print(\\"send(..) failed executing request.urlopen(..): \\" + str(e))
 ",
         },
         "Description": "AWS CloudFormation handler for \\"Custom::S3BucketNotifications\\" resources (@aws-cdk/aws-s3)",
@@ -1132,7 +1131,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -1493,7 +1492,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e08c0cb9d1a9d05096eb37e3890950b190a31ba6611e13032edafe16fc78c510.zip",
+          "S3Key": "61d60f028bc599a2c9ab132cbcfb8bf445ced12bd395226e9bd519c184ac8a12.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": Object {
@@ -1524,7 +1523,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -1703,7 +1702,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
       },
       "Type": "AWS::Lambda::Function",
@@ -1834,11 +1833,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             Object {
               "ExpiredObjectDeleteMarker": true,
-              "NoncurrentVersionExpirationInDays": 90,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 90,
+              },
               "Status": "Enabled",
             },
             Object {
-              "NoncurrentVersionExpirationInDays": 7,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 7,
+              },
               "Prefix": "catalog.json",
               "Status": "Enabled",
             },
@@ -1920,7 +1923,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "0145275b3b965add1bc57d0bc932372228c7e6f6342c579945ab10c53d676cd5.zip",
+          "S3Key": "510f17c968b07a87751d07c5627493bdefdfb01f4e392f24dd0e74f939424384.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": Object {
@@ -1954,7 +1957,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
       },
       "Type": "AWS::Lambda::Function",
@@ -2144,7 +2147,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9b7fda00c17df0c47e27052089a5e46eeba2bd87974084ee4bad975412180a63.zip",
+          "S3Key": "e5a7a9419dccf725422407254bc878452552e45fa8bfa7668a3fefe101279bfc.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": Object {
@@ -2170,7 +2173,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -2356,7 +2359,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -2588,7 +2591,7 @@ Direct link to the function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 180,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -3227,7 +3230,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e94492e048ef7c736bc8bb1e40df2190c6cb6cebd937887fe558441a090ed3aa.zip",
+          "S3Key": "558690119024db785aba234a72bfd0ffddd07489f471a1fbd32f26024dd400f3.zip",
         },
         "Description": "[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages",
         "Environment": Object {
@@ -3249,7 +3252,7 @@ Direct link to the function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -3886,7 +3889,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -4531,7 +4534,7 @@ Direct link to function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -4692,7 +4695,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "c96826c1d068c5795f20a5424b8dfbad26862a56968d67a5e4eaba99c162f0a2.zip",
+          "S3Key": "dffd491c222d20060a9208e77edc4d8014852e5168097a227acf92947ae815cf.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -4729,7 +4732,7 @@ Direct link to function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "PassThrough",
@@ -5521,7 +5524,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
       },
       "Type": "AWS::Lambda::Function",
@@ -5675,7 +5678,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -6433,7 +6436,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": Object {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:01a0d1dd4f783f872c259befa49d8181e8a5962c8f80f19e6f4e4b8d564bf439",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:862c9e3a325c329cc0e67e01b918fc843a01618437d6122a84679ba6ca80e418",
             },
             "LogConfiguration": Object {
               "LogDriver": "awslogs",
@@ -7283,134 +7286,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
             },
             Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-python.*.corruptassembly",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-python.*.corruptassembly",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*-python.*.corruptassembly",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*-python.*.corruptassembly",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
               "Action": "s3:DeleteObject*",
               "Effect": "Allow",
               "Resource": Object {
@@ -7427,6 +7302,152 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   ],
                 ],
               },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleDefaultPolicyE0EED0F8",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy1698632DE": Object {
+      "Properties": Object {
+        "Description": "Part of the policies for Test/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole",
+        "Path": "/",
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
             },
             Object {
               "Action": "s3:DeleteObject*",
@@ -7707,6 +7728,41 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
             },
             Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-java.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy2BC794386": Object {
+      "Properties": Object {
+        "Description": "Part of the policies for Test/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole",
+        "Path": "/",
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
               "Action": Array [
                 "s3:GetObject*",
                 "s3:GetBucket*",
@@ -7769,24 +7825,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   ],
                 },
               ],
-            },
-            Object {
-              "Action": "s3:DeleteObject*",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubPackageDataDC5EF35E",
-                        "Arn",
-                      ],
-                    },
-                    "/data/*/docs-java.*.corruptassembly",
-                  ],
-                ],
-              },
             },
             Object {
               "Action": "s3:DeleteObject*",
@@ -8148,6 +8186,23 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                 ],
               },
             },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy33EB40C3E": Object {
+      "Properties": Object {
+        "Description": "Part of the policies for Test/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole",
+        "Path": "/",
+        "PolicyDocument": Object {
+          "Statement": Array [
             Object {
               "Action": "s3:DeleteObject*",
               "Effect": "Allow",
@@ -8529,14 +8584,13 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleDefaultPolicyE0EED0F8",
         "Roles": Array [
           Object {
             "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
           },
         ],
       },
-      "Type": "AWS::IAM::Policy",
+      "Type": "AWS::IAM::ManagedPolicy",
     },
     "ConstructHubOverviewDashboardOverviewDashboardlambdaServiceQuota29721FC0": Object {
       "Properties": Object {
@@ -8736,11 +8790,15 @@ Request a service quota increase for lambda functions",
             },
             Object {
               "ExpiredObjectDeleteMarker": true,
-              "NoncurrentVersionExpirationInDays": 90,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 90,
+              },
               "Status": "Enabled",
             },
             Object {
-              "NoncurrentVersionExpirationInDays": 7,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 7,
+              },
               "Prefix": "catalog.json",
               "Status": "Enabled",
             },
@@ -8956,7 +9014,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a0d5f8dd0b321ff150993ff52161b4e587f92c37c0f339fe452e3d3f8ba4d2e1.zip",
+          "S3Key": "e8f63c571593466b98c8417b71efc5391da2e4551752544a232b15149e18c8fa.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": Object {
@@ -8987,7 +9045,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 300,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -9007,7 +9065,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "8279815573918a05a20675dd80b934d33ce33a4320e92d14829e3b96d3195a68.zip",
+          "S3Key": "fd4db3b79e1d941f51ea9eac37e2e5545b18aae99b03b270cc578ad7c86fd367.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": Object {
@@ -9041,7 +9099,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 300,
       },
       "Type": "AWS::Lambda::Function",
@@ -9743,7 +9801,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 300,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -10117,7 +10175,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "cd86fe109a6131d92af62de9d0a2df1d1bb3c28c3a93ac37855ade090beb73b7.zip",
+          "S3Key": "4edac9a32c5fa60da5cafe31cda0e1f159379b9e5a34ce716c4874402b3a8ce4.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -10151,7 +10209,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "PassThrough",
@@ -10321,7 +10379,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "eff6d29049503f68b2a61f077c12e9cfe5778eb36a065284a0c2bf8c9706bbb2.zip",
+          "S3Key": "310fb96e23069e3344b25360737415eb794d352027d341295e239fc15b4d8d03.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -10355,7 +10413,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -10674,7 +10732,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -10686,7 +10744,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -11174,7 +11232,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "python3.7",
+        "Runtime": "python3.9",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -11432,7 +11490,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "483ae06ed27ef8ca76e011264d772420593a6cfe8544759c306ef3b98c9e25be.zip",
+          "S3Key": "e57c1acaa363d7d2b81736776007a7091bc73dff4aeb8135627c4511a51e7dca.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -11454,7 +11512,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs12.x",
+        "Runtime": "nodejs14.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -11491,7 +11549,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "558dc75fbdc793c8e2f64f85d2d7ed2cb820c727ec7e9b08666ad1af0103992e.zip",
+          "S3Key": "eb5b005c858404ea0c8f68098ed5dcdf5340e02461f149751d10f59c210d5ef8.zip",
         },
         "Handler": "index.handler",
         "Role": Object {
@@ -11588,7 +11646,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Tags": Array [
           Object {
             "Key": "function-purpose",
@@ -12002,7 +12060,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Tags": Array [
           Object {
             "Key": "function-purpose",
@@ -12370,7 +12428,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "39381d2c8b8ec42679de4960c24f0c83c56772cdc2b10b6fc14cd0a99aba42ed.zip",
+          "S3Key": "6dbd112fe448437b3438da4382c72fccbb7d2ee1543db222620d7447fffebc50.zip",
         },
         "Handler": "index.handler",
         "Role": Object {
@@ -12379,7 +12437,7 @@ Object {
             "Arn",
           ],
         },
-        "Runtime": "nodejs12.x",
+        "Runtime": "nodejs14.x",
         "Timeout": 120,
       },
       "Type": "AWS::Lambda::Function",
@@ -12429,45 +12487,42 @@ import urllib.request
 
 s3 = boto3.client(\\"s3\\")
 
+EVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'
+
 CONFIGURATION_TYPES = [\\"TopicConfigurations\\", \\"QueueConfigurations\\", \\"LambdaFunctionConfigurations\\"]
 
 def handler(event: dict, context):
-    response_status = \\"SUCCESS\\"
-    error_message = \\"\\"
-    try:
-        props = event[\\"ResourceProperties\\"]
-        bucket = props[\\"BucketName\\"]
-        notification_configuration = props[\\"NotificationConfiguration\\"]
-        request_type = event[\\"RequestType\\"]
-        managed = props.get('Managed', 'true').lower() == 'true'
-        stack_id = event['StackId']
+  response_status = \\"SUCCESS\\"
+  error_message = \\"\\"
+  try:
+    props = event[\\"ResourceProperties\\"]
+    bucket = props[\\"BucketName\\"]
+    notification_configuration = props[\\"NotificationConfiguration\\"]
+    request_type = event[\\"RequestType\\"]
+    managed = props.get('Managed', 'true').lower() == 'true'
+    stack_id = event['StackId']
 
-        if managed:
-          config = handle_managed(request_type, notification_configuration)
-        else:
-          config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
+    if managed:
+      config = handle_managed(request_type, notification_configuration)
+    else:
+      config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
 
-        put_bucket_notification_configuration(bucket, config)
-    except Exception as e:
-        logging.exception(\\"Failed to put bucket notification configuration\\")
-        response_status = \\"FAILED\\"
-        error_message = f\\"Error: {str(e)}. \\"
-    finally:
-        submit_response(event, context, response_status, error_message)
-
+    put_bucket_notification_configuration(bucket, config)
+  except Exception as e:
+    logging.exception(\\"Failed to put bucket notification configuration\\")
+    response_status = \\"FAILED\\"
+    error_message = f\\"Error: {str(e)}. \\"
+  finally:
+    submit_response(event, context, response_status, error_message)
 
 def handle_managed(request_type, notification_configuration):
   if request_type == 'Delete':
     return {}
   return notification_configuration
 
-
 def handle_unmanaged(bucket, stack_id, request_type, notification_configuration):
-
-  # find external notifications
   external_notifications = find_external_notifications(bucket, stack_id)
 
-  # if delete, that's all we need
   if request_type == 'Delete':
     return external_notifications
 
@@ -12475,54 +12530,56 @@ def handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
     notification['Id'] = f\\"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}\\"
     return notification
 
-  # otherwise, merge external with incoming config and augment with id
   notifications = {}
   for t in CONFIGURATION_TYPES:
     external = external_notifications.get(t, [])
     incoming = [with_id(n) for n in notification_configuration.get(t, [])]
     notifications[t] = external + incoming
-  return notifications
 
+  if EVENTBRIDGE_CONFIGURATION in notification_configuration:
+    notifications[EVENTBRIDGE_CONFIGURATION] = notification_configuration[EVENTBRIDGE_CONFIGURATION]
+  elif EVENTBRIDGE_CONFIGURATION in external_notifications:
+    notifications[EVENTBRIDGE_CONFIGURATION] = external_notifications[EVENTBRIDGE_CONFIGURATION]
+
+  return notifications
 
 def find_external_notifications(bucket, stack_id):
   existing_notifications = get_bucket_notification_configuration(bucket)
   external_notifications = {}
   for t in CONFIGURATION_TYPES:
-    # if the notification was created by us, we know what id to expect
-    # so we can filter by it.
     external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f\\"{stack_id}-\\")]
 
-  return external_notifications
+  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
+    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
 
+  return external_notifications
 
 def get_bucket_notification_configuration(bucket):
   return s3.get_bucket_notification_configuration(Bucket=bucket)
 
-
 def put_bucket_notification_configuration(bucket, notification_configuration):
   s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)
 
-
 def submit_response(event: dict, context, response_status: str, error_message: str):
-    response_body = json.dumps(
-        {
-            \\"Status\\": response_status,
-            \\"Reason\\": f\\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\\",
-            \\"PhysicalResourceId\\": event.get(\\"PhysicalResourceId\\") or event[\\"LogicalResourceId\\"],
-            \\"StackId\\": event[\\"StackId\\"],
-            \\"RequestId\\": event[\\"RequestId\\"],
-            \\"LogicalResourceId\\": event[\\"LogicalResourceId\\"],
-            \\"NoEcho\\": False,
-        }
-    ).encode(\\"utf-8\\")
-    headers = {\\"content-type\\": \\"\\", \\"content-length\\": str(len(response_body))}
-    try:
-        req = urllib.request.Request(url=event[\\"ResponseURL\\"], headers=headers, data=response_body, method=\\"PUT\\")
-        with urllib.request.urlopen(req) as response:
-            print(response.read().decode(\\"utf-8\\"))
-        print(\\"Status code: \\" + response.reason)
-    except Exception as e:
-        print(\\"send(..) failed executing request.urlopen(..): \\" + str(e))
+  response_body = json.dumps(
+    {
+      \\"Status\\": response_status,
+      \\"Reason\\": f\\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\\",
+      \\"PhysicalResourceId\\": event.get(\\"PhysicalResourceId\\") or event[\\"LogicalResourceId\\"],
+      \\"StackId\\": event[\\"StackId\\"],
+      \\"RequestId\\": event[\\"RequestId\\"],
+      \\"LogicalResourceId\\": event[\\"LogicalResourceId\\"],
+      \\"NoEcho\\": False,
+    }
+  ).encode(\\"utf-8\\")
+  headers = {\\"content-type\\": \\"\\", \\"content-length\\": str(len(response_body))}
+  try:
+    req = urllib.request.Request(url=event[\\"ResponseURL\\"], headers=headers, data=response_body, method=\\"PUT\\")
+    with urllib.request.urlopen(req) as response:
+      print(response.read().decode(\\"utf-8\\"))
+    print(\\"Status code: \\" + response.reason)
+  except Exception as e:
+      print(\\"send(..) failed executing request.urlopen(..): \\" + str(e))
 ",
         },
         "Description": "AWS CloudFormation handler for \\"Custom::S3BucketNotifications\\" resources (@aws-cdk/aws-s3)",
@@ -13490,7 +13547,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -13851,7 +13908,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e08c0cb9d1a9d05096eb37e3890950b190a31ba6611e13032edafe16fc78c510.zip",
+          "S3Key": "61d60f028bc599a2c9ab132cbcfb8bf445ced12bd395226e9bd519c184ac8a12.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": Object {
@@ -13882,7 +13939,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -14061,7 +14118,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
       },
       "Type": "AWS::Lambda::Function",
@@ -14192,11 +14249,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             Object {
               "ExpiredObjectDeleteMarker": true,
-              "NoncurrentVersionExpirationInDays": 90,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 90,
+              },
               "Status": "Enabled",
             },
             Object {
-              "NoncurrentVersionExpirationInDays": 7,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 7,
+              },
               "Prefix": "catalog.json",
               "Status": "Enabled",
             },
@@ -14278,7 +14339,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "0145275b3b965add1bc57d0bc932372228c7e6f6342c579945ab10c53d676cd5.zip",
+          "S3Key": "510f17c968b07a87751d07c5627493bdefdfb01f4e392f24dd0e74f939424384.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": Object {
@@ -14312,7 +14373,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
       },
       "Type": "AWS::Lambda::Function",
@@ -14502,7 +14563,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9b7fda00c17df0c47e27052089a5e46eeba2bd87974084ee4bad975412180a63.zip",
+          "S3Key": "e5a7a9419dccf725422407254bc878452552e45fa8bfa7668a3fefe101279bfc.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": Object {
@@ -14546,7 +14607,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -14732,7 +14793,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -14964,7 +15025,7 @@ Direct link to the function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 180,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -15683,7 +15744,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e94492e048ef7c736bc8bb1e40df2190c6cb6cebd937887fe558441a090ed3aa.zip",
+          "S3Key": "558690119024db785aba234a72bfd0ffddd07489f471a1fbd32f26024dd400f3.zip",
         },
         "Description": "[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages",
         "Environment": Object {
@@ -15705,7 +15766,7 @@ Direct link to the function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -16342,7 +16403,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -16987,7 +17048,7 @@ Direct link to function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -17148,7 +17209,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "c96826c1d068c5795f20a5424b8dfbad26862a56968d67a5e4eaba99c162f0a2.zip",
+          "S3Key": "dffd491c222d20060a9208e77edc4d8014852e5168097a227acf92947ae815cf.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -17185,7 +17246,7 @@ Direct link to function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "PassThrough",
@@ -17977,7 +18038,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
       },
       "Type": "AWS::Lambda::Function",
@@ -18131,7 +18192,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -18916,7 +18977,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": Object {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:01a0d1dd4f783f872c259befa49d8181e8a5962c8f80f19e6f4e4b8d564bf439",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:862c9e3a325c329cc0e67e01b918fc843a01618437d6122a84679ba6ca80e418",
             },
             "LogConfiguration": Object {
               "LogDriver": "awslogs",
@@ -19781,6 +19842,24 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                 },
               ],
             },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleDefaultPolicyE0EED0F8",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy1698632DE": Object {
+      "Properties": Object {
+        "Description": "Part of the policies for Test/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole",
+        "Path": "/",
+        "PolicyDocument": Object {
+          "Statement": Array [
             Object {
               "Action": Array [
                 "s3:GetObject*",
@@ -20202,6 +20281,41 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
             },
             Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-java.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy2BC794386": Object {
+      "Properties": Object {
+        "Description": "Part of the policies for Test/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole",
+        "Path": "/",
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
               "Action": Array [
                 "s3:DeleteObject*",
                 "s3:PutObject",
@@ -20298,24 +20412,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   ],
                 },
               ],
-            },
-            Object {
-              "Action": "s3:DeleteObject*",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubPackageDataDC5EF35E",
-                        "Arn",
-                      ],
-                    },
-                    "/data/*/docs-java.*.corruptassembly",
-                  ],
-                ],
-              },
             },
             Object {
               "Action": "s3:DeleteObject*",
@@ -20626,6 +20722,41 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
             },
             Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-csharp.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy33EB40C3E": Object {
+      "Properties": Object {
+        "Description": "Part of the policies for Test/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole",
+        "Path": "/",
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
               "Action": Array [
                 "s3:DeleteObject*",
                 "s3:PutObject",
@@ -20658,24 +20789,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   ],
                 },
               ],
-            },
-            Object {
-              "Action": "s3:DeleteObject*",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubPackageDataDC5EF35E",
-                        "Arn",
-                      ],
-                    },
-                    "/data/*/docs-csharp.*.corruptassembly",
-                  ],
-                ],
-              },
             },
             Object {
               "Action": "s3:DeleteObject*",
@@ -21058,14 +21171,13 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleDefaultPolicyE0EED0F8",
         "Roles": Array [
           Object {
             "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
           },
         ],
       },
-      "Type": "AWS::IAM::Policy",
+      "Type": "AWS::IAM::ManagedPolicy",
     },
     "ConstructHubOverviewDashboardOverviewDashboardlambdaServiceQuota29721FC0": Object {
       "Properties": Object {
@@ -21265,11 +21377,15 @@ Request a service quota increase for lambda functions",
             },
             Object {
               "ExpiredObjectDeleteMarker": true,
-              "NoncurrentVersionExpirationInDays": 90,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 90,
+              },
               "Status": "Enabled",
             },
             Object {
-              "NoncurrentVersionExpirationInDays": 7,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 7,
+              },
               "Prefix": "catalog.json",
               "Status": "Enabled",
             },
@@ -21485,7 +21601,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a0d5f8dd0b321ff150993ff52161b4e587f92c37c0f339fe452e3d3f8ba4d2e1.zip",
+          "S3Key": "e8f63c571593466b98c8417b71efc5391da2e4551752544a232b15149e18c8fa.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": Object {
@@ -21516,7 +21632,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 300,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -21536,7 +21652,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "8279815573918a05a20675dd80b934d33ce33a4320e92d14829e3b96d3195a68.zip",
+          "S3Key": "fd4db3b79e1d941f51ea9eac37e2e5545b18aae99b03b270cc578ad7c86fd367.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": Object {
@@ -21570,7 +21686,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 300,
       },
       "Type": "AWS::Lambda::Function",
@@ -22272,7 +22388,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 300,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -22646,7 +22762,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "cd86fe109a6131d92af62de9d0a2df1d1bb3c28c3a93ac37855ade090beb73b7.zip",
+          "S3Key": "4edac9a32c5fa60da5cafe31cda0e1f159379b9e5a34ce716c4874402b3a8ce4.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -22680,7 +22796,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "PassThrough",
@@ -22850,7 +22966,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "eff6d29049503f68b2a61f077c12e9cfe5778eb36a065284a0c2bf8c9706bbb2.zip",
+          "S3Key": "310fb96e23069e3344b25360737415eb794d352027d341295e239fc15b4d8d03.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -22884,7 +23000,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -23203,7 +23319,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -23215,7 +23331,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -23703,7 +23819,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "python3.7",
+        "Runtime": "python3.9",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -23961,7 +24077,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "483ae06ed27ef8ca76e011264d772420593a6cfe8544759c306ef3b98c9e25be.zip",
+          "S3Key": "e57c1acaa363d7d2b81736776007a7091bc73dff4aeb8135627c4511a51e7dca.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -23983,7 +24099,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs12.x",
+        "Runtime": "nodejs14.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -24020,7 +24136,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "558dc75fbdc793c8e2f64f85d2d7ed2cb820c727ec7e9b08666ad1af0103992e.zip",
+          "S3Key": "eb5b005c858404ea0c8f68098ed5dcdf5340e02461f149751d10f59c210d5ef8.zip",
         },
         "Handler": "index.handler",
         "Role": Object {
@@ -24117,7 +24233,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Tags": Array [
           Object {
             "Key": "function-purpose",
@@ -24531,7 +24647,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Tags": Array [
           Object {
             "Key": "function-purpose",
@@ -24904,45 +25020,42 @@ import urllib.request
 
 s3 = boto3.client(\\"s3\\")
 
+EVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'
+
 CONFIGURATION_TYPES = [\\"TopicConfigurations\\", \\"QueueConfigurations\\", \\"LambdaFunctionConfigurations\\"]
 
 def handler(event: dict, context):
-    response_status = \\"SUCCESS\\"
-    error_message = \\"\\"
-    try:
-        props = event[\\"ResourceProperties\\"]
-        bucket = props[\\"BucketName\\"]
-        notification_configuration = props[\\"NotificationConfiguration\\"]
-        request_type = event[\\"RequestType\\"]
-        managed = props.get('Managed', 'true').lower() == 'true'
-        stack_id = event['StackId']
+  response_status = \\"SUCCESS\\"
+  error_message = \\"\\"
+  try:
+    props = event[\\"ResourceProperties\\"]
+    bucket = props[\\"BucketName\\"]
+    notification_configuration = props[\\"NotificationConfiguration\\"]
+    request_type = event[\\"RequestType\\"]
+    managed = props.get('Managed', 'true').lower() == 'true'
+    stack_id = event['StackId']
 
-        if managed:
-          config = handle_managed(request_type, notification_configuration)
-        else:
-          config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
+    if managed:
+      config = handle_managed(request_type, notification_configuration)
+    else:
+      config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
 
-        put_bucket_notification_configuration(bucket, config)
-    except Exception as e:
-        logging.exception(\\"Failed to put bucket notification configuration\\")
-        response_status = \\"FAILED\\"
-        error_message = f\\"Error: {str(e)}. \\"
-    finally:
-        submit_response(event, context, response_status, error_message)
-
+    put_bucket_notification_configuration(bucket, config)
+  except Exception as e:
+    logging.exception(\\"Failed to put bucket notification configuration\\")
+    response_status = \\"FAILED\\"
+    error_message = f\\"Error: {str(e)}. \\"
+  finally:
+    submit_response(event, context, response_status, error_message)
 
 def handle_managed(request_type, notification_configuration):
   if request_type == 'Delete':
     return {}
   return notification_configuration
 
-
 def handle_unmanaged(bucket, stack_id, request_type, notification_configuration):
-
-  # find external notifications
   external_notifications = find_external_notifications(bucket, stack_id)
 
-  # if delete, that's all we need
   if request_type == 'Delete':
     return external_notifications
 
@@ -24950,54 +25063,56 @@ def handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
     notification['Id'] = f\\"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}\\"
     return notification
 
-  # otherwise, merge external with incoming config and augment with id
   notifications = {}
   for t in CONFIGURATION_TYPES:
     external = external_notifications.get(t, [])
     incoming = [with_id(n) for n in notification_configuration.get(t, [])]
     notifications[t] = external + incoming
-  return notifications
 
+  if EVENTBRIDGE_CONFIGURATION in notification_configuration:
+    notifications[EVENTBRIDGE_CONFIGURATION] = notification_configuration[EVENTBRIDGE_CONFIGURATION]
+  elif EVENTBRIDGE_CONFIGURATION in external_notifications:
+    notifications[EVENTBRIDGE_CONFIGURATION] = external_notifications[EVENTBRIDGE_CONFIGURATION]
+
+  return notifications
 
 def find_external_notifications(bucket, stack_id):
   existing_notifications = get_bucket_notification_configuration(bucket)
   external_notifications = {}
   for t in CONFIGURATION_TYPES:
-    # if the notification was created by us, we know what id to expect
-    # so we can filter by it.
     external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f\\"{stack_id}-\\")]
 
-  return external_notifications
+  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
+    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
 
+  return external_notifications
 
 def get_bucket_notification_configuration(bucket):
   return s3.get_bucket_notification_configuration(Bucket=bucket)
 
-
 def put_bucket_notification_configuration(bucket, notification_configuration):
   s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)
 
-
 def submit_response(event: dict, context, response_status: str, error_message: str):
-    response_body = json.dumps(
-        {
-            \\"Status\\": response_status,
-            \\"Reason\\": f\\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\\",
-            \\"PhysicalResourceId\\": event.get(\\"PhysicalResourceId\\") or event[\\"LogicalResourceId\\"],
-            \\"StackId\\": event[\\"StackId\\"],
-            \\"RequestId\\": event[\\"RequestId\\"],
-            \\"LogicalResourceId\\": event[\\"LogicalResourceId\\"],
-            \\"NoEcho\\": False,
-        }
-    ).encode(\\"utf-8\\")
-    headers = {\\"content-type\\": \\"\\", \\"content-length\\": str(len(response_body))}
-    try:
-        req = urllib.request.Request(url=event[\\"ResponseURL\\"], headers=headers, data=response_body, method=\\"PUT\\")
-        with urllib.request.urlopen(req) as response:
-            print(response.read().decode(\\"utf-8\\"))
-        print(\\"Status code: \\" + response.reason)
-    except Exception as e:
-        print(\\"send(..) failed executing request.urlopen(..): \\" + str(e))
+  response_body = json.dumps(
+    {
+      \\"Status\\": response_status,
+      \\"Reason\\": f\\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\\",
+      \\"PhysicalResourceId\\": event.get(\\"PhysicalResourceId\\") or event[\\"LogicalResourceId\\"],
+      \\"StackId\\": event[\\"StackId\\"],
+      \\"RequestId\\": event[\\"RequestId\\"],
+      \\"LogicalResourceId\\": event[\\"LogicalResourceId\\"],
+      \\"NoEcho\\": False,
+    }
+  ).encode(\\"utf-8\\")
+  headers = {\\"content-type\\": \\"\\", \\"content-length\\": str(len(response_body))}
+  try:
+    req = urllib.request.Request(url=event[\\"ResponseURL\\"], headers=headers, data=response_body, method=\\"PUT\\")
+    with urllib.request.urlopen(req) as response:
+      print(response.read().decode(\\"utf-8\\"))
+    print(\\"Status code: \\" + response.reason)
+  except Exception as e:
+      print(\\"send(..) failed executing request.urlopen(..): \\" + str(e))
 ",
         },
         "Description": "AWS CloudFormation handler for \\"Custom::S3BucketNotifications\\" resources (@aws-cdk/aws-s3)",
@@ -25762,7 +25877,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -26123,7 +26238,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e08c0cb9d1a9d05096eb37e3890950b190a31ba6611e13032edafe16fc78c510.zip",
+          "S3Key": "61d60f028bc599a2c9ab132cbcfb8bf445ced12bd395226e9bd519c184ac8a12.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": Object {
@@ -26154,7 +26269,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -26333,7 +26448,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
       },
       "Type": "AWS::Lambda::Function",
@@ -26464,11 +26579,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             Object {
               "ExpiredObjectDeleteMarker": true,
-              "NoncurrentVersionExpirationInDays": 90,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 90,
+              },
               "Status": "Enabled",
             },
             Object {
-              "NoncurrentVersionExpirationInDays": 7,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 7,
+              },
               "Prefix": "catalog.json",
               "Status": "Enabled",
             },
@@ -26550,7 +26669,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "0145275b3b965add1bc57d0bc932372228c7e6f6342c579945ab10c53d676cd5.zip",
+          "S3Key": "510f17c968b07a87751d07c5627493bdefdfb01f4e392f24dd0e74f939424384.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": Object {
@@ -26584,7 +26703,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
       },
       "Type": "AWS::Lambda::Function",
@@ -26774,7 +26893,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9b7fda00c17df0c47e27052089a5e46eeba2bd87974084ee4bad975412180a63.zip",
+          "S3Key": "e5a7a9419dccf725422407254bc878452552e45fa8bfa7668a3fefe101279bfc.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": Object {
@@ -26800,7 +26919,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -26986,7 +27105,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -27218,7 +27337,7 @@ Direct link to the function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 180,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -27857,7 +27976,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e94492e048ef7c736bc8bb1e40df2190c6cb6cebd937887fe558441a090ed3aa.zip",
+          "S3Key": "558690119024db785aba234a72bfd0ffddd07489f471a1fbd32f26024dd400f3.zip",
         },
         "Description": "[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages",
         "Environment": Object {
@@ -27879,7 +27998,7 @@ Direct link to the function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -28516,7 +28635,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -29161,7 +29280,7 @@ Direct link to function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -29322,7 +29441,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "c96826c1d068c5795f20a5424b8dfbad26862a56968d67a5e4eaba99c162f0a2.zip",
+          "S3Key": "dffd491c222d20060a9208e77edc4d8014852e5168097a227acf92947ae815cf.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -29359,7 +29478,7 @@ Direct link to function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "PassThrough",
@@ -30151,7 +30270,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
       },
       "Type": "AWS::Lambda::Function",
@@ -30305,7 +30424,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -31063,7 +31182,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": Object {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:01a0d1dd4f783f872c259befa49d8181e8a5962c8f80f19e6f4e4b8d564bf439",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:862c9e3a325c329cc0e67e01b918fc843a01618437d6122a84679ba6ca80e418",
             },
             "LogConfiguration": Object {
               "LogDriver": "awslogs",
@@ -31913,134 +32032,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
             },
             Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-python.*.corruptassembly",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-python.*.corruptassembly",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*-python.*.corruptassembly",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*-python.*.corruptassembly",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
               "Action": "s3:DeleteObject*",
               "Effect": "Allow",
               "Resource": Object {
@@ -32057,6 +32048,152 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   ],
                 ],
               },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleDefaultPolicyE0EED0F8",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy1698632DE": Object {
+      "Properties": Object {
+        "Description": "Part of the policies for Test/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole",
+        "Path": "/",
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
             },
             Object {
               "Action": "s3:DeleteObject*",
@@ -32337,6 +32474,41 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
             },
             Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-java.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy2BC794386": Object {
+      "Properties": Object {
+        "Description": "Part of the policies for Test/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole",
+        "Path": "/",
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
               "Action": Array [
                 "s3:GetObject*",
                 "s3:GetBucket*",
@@ -32399,24 +32571,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   ],
                 },
               ],
-            },
-            Object {
-              "Action": "s3:DeleteObject*",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubPackageDataDC5EF35E",
-                        "Arn",
-                      ],
-                    },
-                    "/data/*/docs-java.*.corruptassembly",
-                  ],
-                ],
-              },
             },
             Object {
               "Action": "s3:DeleteObject*",
@@ -32778,6 +32932,23 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                 ],
               },
             },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy33EB40C3E": Object {
+      "Properties": Object {
+        "Description": "Part of the policies for Test/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole",
+        "Path": "/",
+        "PolicyDocument": Object {
+          "Statement": Array [
             Object {
               "Action": "s3:DeleteObject*",
               "Effect": "Allow",
@@ -33159,14 +33330,13 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleDefaultPolicyE0EED0F8",
         "Roles": Array [
           Object {
             "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
           },
         ],
       },
-      "Type": "AWS::IAM::Policy",
+      "Type": "AWS::IAM::ManagedPolicy",
     },
     "ConstructHubOverviewDashboardOverviewDashboardlambdaServiceQuota29721FC0": Object {
       "Properties": Object {
@@ -33366,11 +33536,15 @@ Request a service quota increase for lambda functions",
             },
             Object {
               "ExpiredObjectDeleteMarker": true,
-              "NoncurrentVersionExpirationInDays": 90,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 90,
+              },
               "Status": "Enabled",
             },
             Object {
-              "NoncurrentVersionExpirationInDays": 7,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 7,
+              },
               "Prefix": "catalog.json",
               "Status": "Enabled",
             },
@@ -33586,7 +33760,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a0d5f8dd0b321ff150993ff52161b4e587f92c37c0f339fe452e3d3f8ba4d2e1.zip",
+          "S3Key": "e8f63c571593466b98c8417b71efc5391da2e4551752544a232b15149e18c8fa.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": Object {
@@ -33617,7 +33791,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 300,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -33637,7 +33811,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "8279815573918a05a20675dd80b934d33ce33a4320e92d14829e3b96d3195a68.zip",
+          "S3Key": "fd4db3b79e1d941f51ea9eac37e2e5545b18aae99b03b270cc578ad7c86fd367.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": Object {
@@ -33671,7 +33845,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 300,
       },
       "Type": "AWS::Lambda::Function",
@@ -34373,7 +34547,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 300,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -34747,7 +34921,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "cd86fe109a6131d92af62de9d0a2df1d1bb3c28c3a93ac37855ade090beb73b7.zip",
+          "S3Key": "4edac9a32c5fa60da5cafe31cda0e1f159379b9e5a34ce716c4874402b3a8ce4.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -34781,7 +34955,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "PassThrough",
@@ -34951,7 +35125,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "eff6d29049503f68b2a61f077c12e9cfe5778eb36a065284a0c2bf8c9706bbb2.zip",
+          "S3Key": "310fb96e23069e3344b25360737415eb794d352027d341295e239fc15b4d8d03.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -34985,7 +35159,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -35304,7 +35478,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -35316,7 +35490,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -35804,7 +35978,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "python3.7",
+        "Runtime": "python3.9",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -36062,7 +36236,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "483ae06ed27ef8ca76e011264d772420593a6cfe8544759c306ef3b98c9e25be.zip",
+          "S3Key": "e57c1acaa363d7d2b81736776007a7091bc73dff4aeb8135627c4511a51e7dca.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -36084,7 +36258,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs12.x",
+        "Runtime": "nodejs14.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -36121,7 +36295,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "558dc75fbdc793c8e2f64f85d2d7ed2cb820c727ec7e9b08666ad1af0103992e.zip",
+          "S3Key": "eb5b005c858404ea0c8f68098ed5dcdf5340e02461f149751d10f59c210d5ef8.zip",
         },
         "Handler": "index.handler",
         "Role": Object {
@@ -36218,7 +36392,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Tags": Array [
           Object {
             "Key": "function-purpose",
@@ -36632,7 +36806,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Tags": Array [
           Object {
             "Key": "function-purpose",
@@ -37013,45 +37187,42 @@ import urllib.request
 
 s3 = boto3.client(\\"s3\\")
 
+EVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'
+
 CONFIGURATION_TYPES = [\\"TopicConfigurations\\", \\"QueueConfigurations\\", \\"LambdaFunctionConfigurations\\"]
 
 def handler(event: dict, context):
-    response_status = \\"SUCCESS\\"
-    error_message = \\"\\"
-    try:
-        props = event[\\"ResourceProperties\\"]
-        bucket = props[\\"BucketName\\"]
-        notification_configuration = props[\\"NotificationConfiguration\\"]
-        request_type = event[\\"RequestType\\"]
-        managed = props.get('Managed', 'true').lower() == 'true'
-        stack_id = event['StackId']
+  response_status = \\"SUCCESS\\"
+  error_message = \\"\\"
+  try:
+    props = event[\\"ResourceProperties\\"]
+    bucket = props[\\"BucketName\\"]
+    notification_configuration = props[\\"NotificationConfiguration\\"]
+    request_type = event[\\"RequestType\\"]
+    managed = props.get('Managed', 'true').lower() == 'true'
+    stack_id = event['StackId']
 
-        if managed:
-          config = handle_managed(request_type, notification_configuration)
-        else:
-          config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
+    if managed:
+      config = handle_managed(request_type, notification_configuration)
+    else:
+      config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
 
-        put_bucket_notification_configuration(bucket, config)
-    except Exception as e:
-        logging.exception(\\"Failed to put bucket notification configuration\\")
-        response_status = \\"FAILED\\"
-        error_message = f\\"Error: {str(e)}. \\"
-    finally:
-        submit_response(event, context, response_status, error_message)
-
+    put_bucket_notification_configuration(bucket, config)
+  except Exception as e:
+    logging.exception(\\"Failed to put bucket notification configuration\\")
+    response_status = \\"FAILED\\"
+    error_message = f\\"Error: {str(e)}. \\"
+  finally:
+    submit_response(event, context, response_status, error_message)
 
 def handle_managed(request_type, notification_configuration):
   if request_type == 'Delete':
     return {}
   return notification_configuration
 
-
 def handle_unmanaged(bucket, stack_id, request_type, notification_configuration):
-
-  # find external notifications
   external_notifications = find_external_notifications(bucket, stack_id)
 
-  # if delete, that's all we need
   if request_type == 'Delete':
     return external_notifications
 
@@ -37059,54 +37230,56 @@ def handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
     notification['Id'] = f\\"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}\\"
     return notification
 
-  # otherwise, merge external with incoming config and augment with id
   notifications = {}
   for t in CONFIGURATION_TYPES:
     external = external_notifications.get(t, [])
     incoming = [with_id(n) for n in notification_configuration.get(t, [])]
     notifications[t] = external + incoming
-  return notifications
 
+  if EVENTBRIDGE_CONFIGURATION in notification_configuration:
+    notifications[EVENTBRIDGE_CONFIGURATION] = notification_configuration[EVENTBRIDGE_CONFIGURATION]
+  elif EVENTBRIDGE_CONFIGURATION in external_notifications:
+    notifications[EVENTBRIDGE_CONFIGURATION] = external_notifications[EVENTBRIDGE_CONFIGURATION]
+
+  return notifications
 
 def find_external_notifications(bucket, stack_id):
   existing_notifications = get_bucket_notification_configuration(bucket)
   external_notifications = {}
   for t in CONFIGURATION_TYPES:
-    # if the notification was created by us, we know what id to expect
-    # so we can filter by it.
     external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f\\"{stack_id}-\\")]
 
-  return external_notifications
+  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
+    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
 
+  return external_notifications
 
 def get_bucket_notification_configuration(bucket):
   return s3.get_bucket_notification_configuration(Bucket=bucket)
 
-
 def put_bucket_notification_configuration(bucket, notification_configuration):
   s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)
 
-
 def submit_response(event: dict, context, response_status: str, error_message: str):
-    response_body = json.dumps(
-        {
-            \\"Status\\": response_status,
-            \\"Reason\\": f\\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\\",
-            \\"PhysicalResourceId\\": event.get(\\"PhysicalResourceId\\") or event[\\"LogicalResourceId\\"],
-            \\"StackId\\": event[\\"StackId\\"],
-            \\"RequestId\\": event[\\"RequestId\\"],
-            \\"LogicalResourceId\\": event[\\"LogicalResourceId\\"],
-            \\"NoEcho\\": False,
-        }
-    ).encode(\\"utf-8\\")
-    headers = {\\"content-type\\": \\"\\", \\"content-length\\": str(len(response_body))}
-    try:
-        req = urllib.request.Request(url=event[\\"ResponseURL\\"], headers=headers, data=response_body, method=\\"PUT\\")
-        with urllib.request.urlopen(req) as response:
-            print(response.read().decode(\\"utf-8\\"))
-        print(\\"Status code: \\" + response.reason)
-    except Exception as e:
-        print(\\"send(..) failed executing request.urlopen(..): \\" + str(e))
+  response_body = json.dumps(
+    {
+      \\"Status\\": response_status,
+      \\"Reason\\": f\\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\\",
+      \\"PhysicalResourceId\\": event.get(\\"PhysicalResourceId\\") or event[\\"LogicalResourceId\\"],
+      \\"StackId\\": event[\\"StackId\\"],
+      \\"RequestId\\": event[\\"RequestId\\"],
+      \\"LogicalResourceId\\": event[\\"LogicalResourceId\\"],
+      \\"NoEcho\\": False,
+    }
+  ).encode(\\"utf-8\\")
+  headers = {\\"content-type\\": \\"\\", \\"content-length\\": str(len(response_body))}
+  try:
+    req = urllib.request.Request(url=event[\\"ResponseURL\\"], headers=headers, data=response_body, method=\\"PUT\\")
+    with urllib.request.urlopen(req) as response:
+      print(response.read().decode(\\"utf-8\\"))
+    print(\\"Status code: \\" + response.reason)
+  except Exception as e:
+      print(\\"send(..) failed executing request.urlopen(..): \\" + str(e))
 ",
         },
         "Description": "AWS CloudFormation handler for \\"Custom::S3BucketNotifications\\" resources (@aws-cdk/aws-s3)",
@@ -37184,7 +37357,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "cdedd6632172f845dffdcb60b0ef32d70710bab092ddc86547f614bf0f5c873f.zip",
+          "S3Key": "8ddf29ab619460567d3cda58de2ff1bf0f6e95d8822ff630ec58a4d52ed1fa67.zip",
         },
         "Handler": "index.certificateRequestHandler",
         "Role": Object {
@@ -37193,7 +37366,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs12.x",
+        "Runtime": "nodejs14.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -37988,7 +38161,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -38349,7 +38522,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e08c0cb9d1a9d05096eb37e3890950b190a31ba6611e13032edafe16fc78c510.zip",
+          "S3Key": "61d60f028bc599a2c9ab132cbcfb8bf445ced12bd395226e9bd519c184ac8a12.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": Object {
@@ -38380,7 +38553,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -38559,7 +38732,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
       },
       "Type": "AWS::Lambda::Function",
@@ -38690,11 +38863,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             Object {
               "ExpiredObjectDeleteMarker": true,
-              "NoncurrentVersionExpirationInDays": 90,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 90,
+              },
               "Status": "Enabled",
             },
             Object {
-              "NoncurrentVersionExpirationInDays": 7,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 7,
+              },
               "Prefix": "catalog.json",
               "Status": "Enabled",
             },
@@ -38776,7 +38953,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "0145275b3b965add1bc57d0bc932372228c7e6f6342c579945ab10c53d676cd5.zip",
+          "S3Key": "510f17c968b07a87751d07c5627493bdefdfb01f4e392f24dd0e74f939424384.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": Object {
@@ -38797,7 +38974,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
       },
       "Type": "AWS::Lambda::Function",
@@ -38987,7 +39164,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9b7fda00c17df0c47e27052089a5e46eeba2bd87974084ee4bad975412180a63.zip",
+          "S3Key": "e5a7a9419dccf725422407254bc878452552e45fa8bfa7668a3fefe101279bfc.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": Object {
@@ -39013,7 +39190,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -39199,7 +39376,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -39431,7 +39608,7 @@ Direct link to the function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 180,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -40070,7 +40247,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e94492e048ef7c736bc8bb1e40df2190c6cb6cebd937887fe558441a090ed3aa.zip",
+          "S3Key": "558690119024db785aba234a72bfd0ffddd07489f471a1fbd32f26024dd400f3.zip",
         },
         "Description": "[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages",
         "Environment": Object {
@@ -40092,7 +40269,7 @@ Direct link to the function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -40729,7 +40906,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -41396,7 +41573,7 @@ Direct link to function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -41557,7 +41734,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "c96826c1d068c5795f20a5424b8dfbad26862a56968d67a5e4eaba99c162f0a2.zip",
+          "S3Key": "dffd491c222d20060a9208e77edc4d8014852e5168097a227acf92947ae815cf.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -41594,7 +41771,7 @@ Direct link to function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "PassThrough",
@@ -42386,7 +42563,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
       },
       "Type": "AWS::Lambda::Function",
@@ -42540,7 +42717,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -43298,7 +43475,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": Object {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:01a0d1dd4f783f872c259befa49d8181e8a5962c8f80f19e6f4e4b8d564bf439",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:862c9e3a325c329cc0e67e01b918fc843a01618437d6122a84679ba6ca80e418",
             },
             "LogConfiguration": Object {
               "LogDriver": "awslogs",
@@ -44148,134 +44325,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
             },
             Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-python.*.corruptassembly",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-python.*.corruptassembly",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*-python.*.corruptassembly",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*-python.*.corruptassembly",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
               "Action": "s3:DeleteObject*",
               "Effect": "Allow",
               "Resource": Object {
@@ -44292,6 +44341,152 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   ],
                 ],
               },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleDefaultPolicyE0EED0F8",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy1698632DE": Object {
+      "Properties": Object {
+        "Description": "Part of the policies for Test/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole",
+        "Path": "/",
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
             },
             Object {
               "Action": "s3:DeleteObject*",
@@ -44572,6 +44767,41 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
             },
             Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-java.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy2BC794386": Object {
+      "Properties": Object {
+        "Description": "Part of the policies for Test/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole",
+        "Path": "/",
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
               "Action": Array [
                 "s3:GetObject*",
                 "s3:GetBucket*",
@@ -44634,24 +44864,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   ],
                 },
               ],
-            },
-            Object {
-              "Action": "s3:DeleteObject*",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubPackageDataDC5EF35E",
-                        "Arn",
-                      ],
-                    },
-                    "/data/*/docs-java.*.corruptassembly",
-                  ],
-                ],
-              },
             },
             Object {
               "Action": "s3:DeleteObject*",
@@ -45013,6 +45225,23 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                 ],
               },
             },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy33EB40C3E": Object {
+      "Properties": Object {
+        "Description": "Part of the policies for Test/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole",
+        "Path": "/",
+        "PolicyDocument": Object {
+          "Statement": Array [
             Object {
               "Action": "s3:DeleteObject*",
               "Effect": "Allow",
@@ -45394,14 +45623,13 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleDefaultPolicyE0EED0F8",
         "Roles": Array [
           Object {
             "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
           },
         ],
       },
-      "Type": "AWS::IAM::Policy",
+      "Type": "AWS::IAM::ManagedPolicy",
     },
     "ConstructHubOverviewDashboardOverviewDashboardlambdaServiceQuota29721FC0": Object {
       "Properties": Object {
@@ -45601,11 +45829,15 @@ Request a service quota increase for lambda functions",
             },
             Object {
               "ExpiredObjectDeleteMarker": true,
-              "NoncurrentVersionExpirationInDays": 90,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 90,
+              },
               "Status": "Enabled",
             },
             Object {
-              "NoncurrentVersionExpirationInDays": 7,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 7,
+              },
               "Prefix": "catalog.json",
               "Status": "Enabled",
             },
@@ -45821,7 +46053,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a0d5f8dd0b321ff150993ff52161b4e587f92c37c0f339fe452e3d3f8ba4d2e1.zip",
+          "S3Key": "e8f63c571593466b98c8417b71efc5391da2e4551752544a232b15149e18c8fa.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": Object {
@@ -45852,7 +46084,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 300,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -45872,7 +46104,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "8279815573918a05a20675dd80b934d33ce33a4320e92d14829e3b96d3195a68.zip",
+          "S3Key": "fd4db3b79e1d941f51ea9eac37e2e5545b18aae99b03b270cc578ad7c86fd367.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": Object {
@@ -45893,7 +46125,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 300,
       },
       "Type": "AWS::Lambda::Function",
@@ -46595,7 +46827,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 300,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -46969,7 +47201,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "cd86fe109a6131d92af62de9d0a2df1d1bb3c28c3a93ac37855ade090beb73b7.zip",
+          "S3Key": "4edac9a32c5fa60da5cafe31cda0e1f159379b9e5a34ce716c4874402b3a8ce4.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -47003,7 +47235,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "PassThrough",
@@ -47173,7 +47405,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "eff6d29049503f68b2a61f077c12e9cfe5778eb36a065284a0c2bf8c9706bbb2.zip",
+          "S3Key": "310fb96e23069e3344b25360737415eb794d352027d341295e239fc15b4d8d03.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -47207,7 +47439,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -47578,7 +47810,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -47590,7 +47822,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -47956,7 +48188,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "b0508d6af6a7ef7bccd3108d1e2e85e8846630b614dd2a548f467bb21f22f9d9.zip",
+          "S3Key": "b791d39b3da3c063c761ea642d2d5eefab0e26a0b8f6cc67ba137a46a84ff7d4.zip",
         },
         "Description": "Monitors the days to expiry of the certificate used to serve my.construct.hub",
         "Environment": Object {
@@ -47975,7 +48207,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 300,
       },
       "Type": "AWS::Lambda::Function",
@@ -48273,7 +48505,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "python3.7",
+        "Runtime": "python3.9",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -48531,7 +48763,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "483ae06ed27ef8ca76e011264d772420593a6cfe8544759c306ef3b98c9e25be.zip",
+          "S3Key": "e57c1acaa363d7d2b81736776007a7091bc73dff4aeb8135627c4511a51e7dca.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -48553,7 +48785,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs12.x",
+        "Runtime": "nodejs14.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -48590,7 +48822,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "558dc75fbdc793c8e2f64f85d2d7ed2cb820c727ec7e9b08666ad1af0103992e.zip",
+          "S3Key": "eb5b005c858404ea0c8f68098ed5dcdf5340e02461f149751d10f59c210d5ef8.zip",
         },
         "Handler": "index.handler",
         "Role": Object {
@@ -48687,7 +48919,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Tags": Array [
           Object {
             "Key": "function-purpose",
@@ -49101,7 +49333,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Tags": Array [
           Object {
             "Key": "function-purpose",
@@ -49469,7 +49701,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "39381d2c8b8ec42679de4960c24f0c83c56772cdc2b10b6fc14cd0a99aba42ed.zip",
+          "S3Key": "6dbd112fe448437b3438da4382c72fccbb7d2ee1543db222620d7447fffebc50.zip",
         },
         "Handler": "index.handler",
         "Role": Object {
@@ -49478,7 +49710,7 @@ Object {
             "Arn",
           ],
         },
-        "Runtime": "nodejs12.x",
+        "Runtime": "nodejs14.x",
         "Timeout": 120,
       },
       "Type": "AWS::Lambda::Function",
@@ -49551,45 +49783,42 @@ import urllib.request
 
 s3 = boto3.client(\\"s3\\")
 
+EVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'
+
 CONFIGURATION_TYPES = [\\"TopicConfigurations\\", \\"QueueConfigurations\\", \\"LambdaFunctionConfigurations\\"]
 
 def handler(event: dict, context):
-    response_status = \\"SUCCESS\\"
-    error_message = \\"\\"
-    try:
-        props = event[\\"ResourceProperties\\"]
-        bucket = props[\\"BucketName\\"]
-        notification_configuration = props[\\"NotificationConfiguration\\"]
-        request_type = event[\\"RequestType\\"]
-        managed = props.get('Managed', 'true').lower() == 'true'
-        stack_id = event['StackId']
+  response_status = \\"SUCCESS\\"
+  error_message = \\"\\"
+  try:
+    props = event[\\"ResourceProperties\\"]
+    bucket = props[\\"BucketName\\"]
+    notification_configuration = props[\\"NotificationConfiguration\\"]
+    request_type = event[\\"RequestType\\"]
+    managed = props.get('Managed', 'true').lower() == 'true'
+    stack_id = event['StackId']
 
-        if managed:
-          config = handle_managed(request_type, notification_configuration)
-        else:
-          config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
+    if managed:
+      config = handle_managed(request_type, notification_configuration)
+    else:
+      config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
 
-        put_bucket_notification_configuration(bucket, config)
-    except Exception as e:
-        logging.exception(\\"Failed to put bucket notification configuration\\")
-        response_status = \\"FAILED\\"
-        error_message = f\\"Error: {str(e)}. \\"
-    finally:
-        submit_response(event, context, response_status, error_message)
-
+    put_bucket_notification_configuration(bucket, config)
+  except Exception as e:
+    logging.exception(\\"Failed to put bucket notification configuration\\")
+    response_status = \\"FAILED\\"
+    error_message = f\\"Error: {str(e)}. \\"
+  finally:
+    submit_response(event, context, response_status, error_message)
 
 def handle_managed(request_type, notification_configuration):
   if request_type == 'Delete':
     return {}
   return notification_configuration
 
-
 def handle_unmanaged(bucket, stack_id, request_type, notification_configuration):
-
-  # find external notifications
   external_notifications = find_external_notifications(bucket, stack_id)
 
-  # if delete, that's all we need
   if request_type == 'Delete':
     return external_notifications
 
@@ -49597,54 +49826,56 @@ def handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
     notification['Id'] = f\\"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}\\"
     return notification
 
-  # otherwise, merge external with incoming config and augment with id
   notifications = {}
   for t in CONFIGURATION_TYPES:
     external = external_notifications.get(t, [])
     incoming = [with_id(n) for n in notification_configuration.get(t, [])]
     notifications[t] = external + incoming
-  return notifications
 
+  if EVENTBRIDGE_CONFIGURATION in notification_configuration:
+    notifications[EVENTBRIDGE_CONFIGURATION] = notification_configuration[EVENTBRIDGE_CONFIGURATION]
+  elif EVENTBRIDGE_CONFIGURATION in external_notifications:
+    notifications[EVENTBRIDGE_CONFIGURATION] = external_notifications[EVENTBRIDGE_CONFIGURATION]
+
+  return notifications
 
 def find_external_notifications(bucket, stack_id):
   existing_notifications = get_bucket_notification_configuration(bucket)
   external_notifications = {}
   for t in CONFIGURATION_TYPES:
-    # if the notification was created by us, we know what id to expect
-    # so we can filter by it.
     external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f\\"{stack_id}-\\")]
 
-  return external_notifications
+  if EVENTBRIDGE_CONFIGURATION in existing_notifications:
+    external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
 
+  return external_notifications
 
 def get_bucket_notification_configuration(bucket):
   return s3.get_bucket_notification_configuration(Bucket=bucket)
 
-
 def put_bucket_notification_configuration(bucket, notification_configuration):
   s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)
 
-
 def submit_response(event: dict, context, response_status: str, error_message: str):
-    response_body = json.dumps(
-        {
-            \\"Status\\": response_status,
-            \\"Reason\\": f\\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\\",
-            \\"PhysicalResourceId\\": event.get(\\"PhysicalResourceId\\") or event[\\"LogicalResourceId\\"],
-            \\"StackId\\": event[\\"StackId\\"],
-            \\"RequestId\\": event[\\"RequestId\\"],
-            \\"LogicalResourceId\\": event[\\"LogicalResourceId\\"],
-            \\"NoEcho\\": False,
-        }
-    ).encode(\\"utf-8\\")
-    headers = {\\"content-type\\": \\"\\", \\"content-length\\": str(len(response_body))}
-    try:
-        req = urllib.request.Request(url=event[\\"ResponseURL\\"], headers=headers, data=response_body, method=\\"PUT\\")
-        with urllib.request.urlopen(req) as response:
-            print(response.read().decode(\\"utf-8\\"))
-        print(\\"Status code: \\" + response.reason)
-    except Exception as e:
-        print(\\"send(..) failed executing request.urlopen(..): \\" + str(e))
+  response_body = json.dumps(
+    {
+      \\"Status\\": response_status,
+      \\"Reason\\": f\\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\\",
+      \\"PhysicalResourceId\\": event.get(\\"PhysicalResourceId\\") or event[\\"LogicalResourceId\\"],
+      \\"StackId\\": event[\\"StackId\\"],
+      \\"RequestId\\": event[\\"RequestId\\"],
+      \\"LogicalResourceId\\": event[\\"LogicalResourceId\\"],
+      \\"NoEcho\\": False,
+    }
+  ).encode(\\"utf-8\\")
+  headers = {\\"content-type\\": \\"\\", \\"content-length\\": str(len(response_body))}
+  try:
+    req = urllib.request.Request(url=event[\\"ResponseURL\\"], headers=headers, data=response_body, method=\\"PUT\\")
+    with urllib.request.urlopen(req) as response:
+      print(response.read().decode(\\"utf-8\\"))
+    print(\\"Status code: \\" + response.reason)
+  except Exception as e:
+      print(\\"send(..) failed executing request.urlopen(..): \\" + str(e))
 ",
         },
         "Description": "AWS CloudFormation handler for \\"Custom::S3BucketNotifications\\" resources (@aws-cdk/aws-s3)",
@@ -50409,7 +50640,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -50770,7 +51001,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e08c0cb9d1a9d05096eb37e3890950b190a31ba6611e13032edafe16fc78c510.zip",
+          "S3Key": "61d60f028bc599a2c9ab132cbcfb8bf445ced12bd395226e9bd519c184ac8a12.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
         "Environment": Object {
@@ -50801,7 +51032,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -50980,7 +51211,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
       },
       "Type": "AWS::Lambda::Function",
@@ -51111,11 +51342,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
             Object {
               "ExpiredObjectDeleteMarker": true,
-              "NoncurrentVersionExpirationInDays": 90,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 90,
+              },
               "Status": "Enabled",
             },
             Object {
-              "NoncurrentVersionExpirationInDays": 7,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 7,
+              },
               "Prefix": "catalog.json",
               "Status": "Enabled",
             },
@@ -51197,7 +51432,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "0145275b3b965add1bc57d0bc932372228c7e6f6342c579945ab10c53d676cd5.zip",
+          "S3Key": "510f17c968b07a87751d07c5627493bdefdfb01f4e392f24dd0e74f939424384.zip",
         },
         "Description": "Release note RSS feed updater",
         "Environment": Object {
@@ -51231,7 +51466,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
       },
       "Type": "AWS::Lambda::Function",
@@ -51421,7 +51656,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "9b7fda00c17df0c47e27052089a5e46eeba2bd87974084ee4bad975412180a63.zip",
+          "S3Key": "e5a7a9419dccf725422407254bc878452552e45fa8bfa7668a3fefe101279bfc.zip",
         },
         "Description": "[ConstructHub/Ingestion] Ingests new package versions into the Construct Hub",
         "Environment": Object {
@@ -51447,7 +51682,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -51633,7 +51868,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -51865,7 +52100,7 @@ Direct link to the function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 180,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -52630,7 +52865,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "e94492e048ef7c736bc8bb1e40df2190c6cb6cebd937887fe558441a090ed3aa.zip",
+          "S3Key": "558690119024db785aba234a72bfd0ffddd07489f471a1fbd32f26024dd400f3.zip",
         },
         "Description": "[ConstructHub/Inventory] A canary that periodically inspects the list of indexed packages",
         "Environment": Object {
@@ -52652,7 +52887,7 @@ Direct link to the function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -53289,7 +53524,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -53934,7 +54169,7 @@ Direct link to function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -54053,21 +54288,21 @@ Direct link to function: /lambda/home#/functions/",
               "\\",\\"",
               Object {
                 "Fn::GetAtt": Array [
-                  "ConstructHubgithubapiIPv4b329fb2c3d88ce25186dad86c65ae3ebccc0fedbE8C3B43D",
+                  "ConstructHubgithubapiIPv47bf644ecefa3f06e328f099cfb0c172c99168aa07DEBC88C",
                   "GroupId",
                 ],
               },
               "\\",\\"",
               Object {
                 "Fn::GetAtt": Array [
-                  "ConstructHubgithubgitIPv43068194822e4b525de9230295f591441007087c8D7C9563C",
+                  "ConstructHubgithubgitIPv46f700734c160c675520663a2d3cf490bbff20c1c3EF9C824",
                   "GroupId",
                 ],
               },
               "\\",\\"",
               Object {
                 "Fn::GetAtt": Array [
-                  "ConstructHubgithubwebIPv474d216e6cc28d247952d0a0b02170d23a5f54ebe315392A1",
+                  "ConstructHubgithubwebIPv4730051a6f3b44c9b9c49da982a1cf5b7444a0c45A131E55F",
                   "GroupId",
                 ],
               },
@@ -54124,7 +54359,7 @@ Direct link to function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "c96826c1d068c5795f20a5424b8dfbad26862a56968d67a5e4eaba99c162f0a2.zip",
+          "S3Key": "dffd491c222d20060a9208e77edc4d8014852e5168097a227acf92947ae815cf.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -54161,7 +54396,7 @@ Direct link to function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "PassThrough",
@@ -54554,7 +54789,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
       },
       "Type": "AWS::Lambda::Function",
@@ -54708,7 +54943,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -55472,7 +55707,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
             ],
             "Essential": true,
             "Image": Object {
-              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:01a0d1dd4f783f872c259befa49d8181e8a5962c8f80f19e6f4e4b8d564bf439",
+              "Fn::Sub": "\${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:862c9e3a325c329cc0e67e01b918fc843a01618437d6122a84679ba6ca80e418",
             },
             "LogConfiguration": Object {
               "LogDriver": "awslogs",
@@ -56322,134 +56557,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
             },
             Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-python.*.corruptassembly",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-python.*.corruptassembly",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*-python.*.corruptassembly",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
-              "Action": Array [
-                "s3:DeleteObject*",
-                "s3:PutObject",
-                "s3:PutObjectLegalHold",
-                "s3:PutObjectRetention",
-                "s3:PutObjectTagging",
-                "s3:PutObjectVersionTagging",
-                "s3:Abort*",
-              ],
-              "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "ConstructHubPackageDataDC5EF35E",
-                    "Arn",
-                  ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "ConstructHubPackageDataDC5EF35E",
-                          "Arn",
-                        ],
-                      },
-                      "/data/*/docs-*-python.*.corruptassembly",
-                    ],
-                  ],
-                },
-              ],
-            },
-            Object {
               "Action": "s3:DeleteObject*",
               "Effect": "Allow",
               "Resource": Object {
@@ -56466,6 +56573,152 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   ],
                 ],
               },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleDefaultPolicyE0EED0F8",
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy1698632DE": Object {
+      "Properties": Object {
+        "Description": "Part of the policies for Test/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole",
+        "Path": "/",
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:DeleteObject*",
+                "s3:PutObject",
+                "s3:PutObjectLegalHold",
+                "s3:PutObjectRetention",
+                "s3:PutObjectTagging",
+                "s3:PutObjectVersionTagging",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "ConstructHubPackageDataDC5EF35E",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "ConstructHubPackageDataDC5EF35E",
+                          "Arn",
+                        ],
+                      },
+                      "/data/*/docs-*-python.*.corruptassembly",
+                    ],
+                  ],
+                },
+              ],
             },
             Object {
               "Action": "s3:DeleteObject*",
@@ -56746,6 +56999,41 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               ],
             },
             Object {
+              "Action": "s3:DeleteObject*",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "ConstructHubPackageDataDC5EF35E",
+                        "Arn",
+                      ],
+                    },
+                    "/data/*/docs-java.*.corruptassembly",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy2BC794386": Object {
+      "Properties": Object {
+        "Description": "Part of the policies for Test/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole",
+        "Path": "/",
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
               "Action": Array [
                 "s3:GetObject*",
                 "s3:GetBucket*",
@@ -56808,24 +57096,6 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                   ],
                 },
               ],
-            },
-            Object {
-              "Action": "s3:DeleteObject*",
-              "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "ConstructHubPackageDataDC5EF35E",
-                        "Arn",
-                      ],
-                    },
-                    "/data/*/docs-java.*.corruptassembly",
-                  ],
-                ],
-              },
             },
             Object {
               "Action": "s3:DeleteObject*",
@@ -57187,6 +57457,23 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
                 ],
               },
             },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": Array [
+          Object {
+            "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy33EB40C3E": Object {
+      "Properties": Object {
+        "Description": "Part of the policies for Test/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole",
+        "Path": "/",
+        "PolicyDocument": Object {
+          "Statement": Array [
             Object {
               "Action": "s3:DeleteObject*",
               "Effect": "Allow",
@@ -57568,14 +57855,13 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           ],
           "Version": "2012-10-17",
         },
-        "PolicyName": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleDefaultPolicyE0EED0F8",
         "Roles": Array [
           Object {
             "Ref": "ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A",
           },
         ],
       },
-      "Type": "AWS::IAM::Policy",
+      "Type": "AWS::IAM::ManagedPolicy",
     },
     "ConstructHubOverviewDashboardOverviewDashboardlambdaServiceQuota29721FC0": Object {
       "Properties": Object {
@@ -57775,11 +58061,15 @@ Request a service quota increase for lambda functions",
             },
             Object {
               "ExpiredObjectDeleteMarker": true,
-              "NoncurrentVersionExpirationInDays": 90,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 90,
+              },
               "Status": "Enabled",
             },
             Object {
-              "NoncurrentVersionExpirationInDays": 7,
+              "NoncurrentVersionExpiration": Object {
+                "NoncurrentDays": 7,
+              },
               "Prefix": "catalog.json",
               "Status": "Enabled",
             },
@@ -58057,7 +58347,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "a0d5f8dd0b321ff150993ff52161b4e587f92c37c0f339fe452e3d3f8ba4d2e1.zip",
+          "S3Key": "e8f63c571593466b98c8417b71efc5391da2e4551752544a232b15149e18c8fa.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs] Periodically query npmjs.com index for new packages",
         "Environment": Object {
@@ -58088,7 +58378,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 300,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -58108,7 +58398,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "8279815573918a05a20675dd80b934d33ce33a4320e92d14829e3b96d3195a68.zip",
+          "S3Key": "fd4db3b79e1d941f51ea9eac37e2e5545b18aae99b03b270cc578ad7c86fd367.zip",
         },
         "Description": "[Test/ConstructHub/Sources/NpmJs/PackageCanary] Monitors construct-hub-probe versions availability",
         "Environment": Object {
@@ -58142,7 +58432,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 300,
       },
       "Type": "AWS::Lambda::Function",
@@ -58844,7 +59134,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 300,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -59218,7 +59508,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "cd86fe109a6131d92af62de9d0a2df1d1bb3c28c3a93ac37855ade090beb73b7.zip",
+          "S3Key": "4edac9a32c5fa60da5cafe31cda0e1f159379b9e5a34ce716c4874402b3a8ce4.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -59252,7 +59542,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 900,
         "TracingConfig": Object {
           "Mode": "PassThrough",
@@ -59515,19 +59805,19 @@ Direct link to Lambda function: /lambda/home#/functions/",
           },
           Object {
             "Fn::GetAtt": Array [
-              "ConstructHubgithubapiIPv4b329fb2c3d88ce25186dad86c65ae3ebccc0fedbE8C3B43D",
+              "ConstructHubgithubapiIPv47bf644ecefa3f06e328f099cfb0c172c99168aa07DEBC88C",
               "GroupId",
             ],
           },
           Object {
             "Fn::GetAtt": Array [
-              "ConstructHubgithubgitIPv43068194822e4b525de9230295f591441007087c8D7C9563C",
+              "ConstructHubgithubgitIPv46f700734c160c675520663a2d3cf490bbff20c1c3EF9C824",
               "GroupId",
             ],
           },
           Object {
             "Fn::GetAtt": Array [
-              "ConstructHubgithubwebIPv474d216e6cc28d247952d0a0b02170d23a5f54ebe315392A1",
+              "ConstructHubgithubwebIPv4730051a6f3b44c9b9c49da982a1cf5b7444a0c45A131E55F",
               "GroupId",
             ],
           },
@@ -59596,19 +59886,19 @@ Direct link to Lambda function: /lambda/home#/functions/",
           },
           Object {
             "Fn::GetAtt": Array [
-              "ConstructHubgithubapiIPv4b329fb2c3d88ce25186dad86c65ae3ebccc0fedbE8C3B43D",
+              "ConstructHubgithubapiIPv47bf644ecefa3f06e328f099cfb0c172c99168aa07DEBC88C",
               "GroupId",
             ],
           },
           Object {
             "Fn::GetAtt": Array [
-              "ConstructHubgithubgitIPv43068194822e4b525de9230295f591441007087c8D7C9563C",
+              "ConstructHubgithubgitIPv46f700734c160c675520663a2d3cf490bbff20c1c3EF9C824",
               "GroupId",
             ],
           },
           Object {
             "Fn::GetAtt": Array [
-              "ConstructHubgithubwebIPv474d216e6cc28d247952d0a0b02170d23a5f54ebe315392A1",
+              "ConstructHubgithubwebIPv4730051a6f3b44c9b9c49da982a1cf5b7444a0c45A131E55F",
               "GroupId",
             ],
           },
@@ -59700,19 +59990,19 @@ Direct link to Lambda function: /lambda/home#/functions/",
           },
           Object {
             "Fn::GetAtt": Array [
-              "ConstructHubgithubapiIPv4b329fb2c3d88ce25186dad86c65ae3ebccc0fedbE8C3B43D",
+              "ConstructHubgithubapiIPv47bf644ecefa3f06e328f099cfb0c172c99168aa07DEBC88C",
               "GroupId",
             ],
           },
           Object {
             "Fn::GetAtt": Array [
-              "ConstructHubgithubgitIPv43068194822e4b525de9230295f591441007087c8D7C9563C",
+              "ConstructHubgithubgitIPv46f700734c160c675520663a2d3cf490bbff20c1c3EF9C824",
               "GroupId",
             ],
           },
           Object {
             "Fn::GetAtt": Array [
-              "ConstructHubgithubwebIPv474d216e6cc28d247952d0a0b02170d23a5f54ebe315392A1",
+              "ConstructHubgithubwebIPv4730051a6f3b44c9b9c49da982a1cf5b7444a0c45A131E55F",
               "GroupId",
             ],
           },
@@ -62209,19 +62499,19 @@ Direct link to Lambda function: /lambda/home#/functions/",
           },
           Object {
             "Fn::GetAtt": Array [
-              "ConstructHubgithubapiIPv4b329fb2c3d88ce25186dad86c65ae3ebccc0fedbE8C3B43D",
+              "ConstructHubgithubapiIPv47bf644ecefa3f06e328f099cfb0c172c99168aa07DEBC88C",
               "GroupId",
             ],
           },
           Object {
             "Fn::GetAtt": Array [
-              "ConstructHubgithubgitIPv43068194822e4b525de9230295f591441007087c8D7C9563C",
+              "ConstructHubgithubgitIPv46f700734c160c675520663a2d3cf490bbff20c1c3EF9C824",
               "GroupId",
             ],
           },
           Object {
             "Fn::GetAtt": Array [
-              "ConstructHubgithubwebIPv474d216e6cc28d247952d0a0b02170d23a5f54ebe315392A1",
+              "ConstructHubgithubwebIPv4730051a6f3b44c9b9c49da982a1cf5b7444a0c45A131E55F",
               "GroupId",
             ],
           },
@@ -62274,7 +62564,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "eff6d29049503f68b2a61f077c12e9cfe5778eb36a065284a0c2bf8c9706bbb2.zip",
+          "S3Key": "310fb96e23069e3344b25360737415eb794d352027d341295e239fc15b4d8d03.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -62308,7 +62598,7 @@ Direct link to Lambda function: /lambda/home#/functions/",
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Timeout": 60,
         "TracingConfig": Object {
           "Mode": "Active",
@@ -62627,7 +62917,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -62639,7 +62929,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip",
+          "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
         },
         "Description": "/opt/awscli/aws",
       },
@@ -63222,7 +63512,7 @@ function handler(event) {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "ConstructHubgithubapiIPv4b329fb2c3d88ce25186dad86c65ae3ebccc0fedbAE4ED50D": Object {
+    "ConstructHubgithubapiIPv47bf644ecefa3f06e328f099cfb0c172c99168aa041AC861E": Object {
       "Properties": Object {
         "AddressFamily": "IPv4",
         "Entries": Array [
@@ -63257,13 +63547,22 @@ function handler(event) {
             "Cidr": "192.30.252.0/22",
           },
           Object {
+            "Cidr": "20.200.245.245/32",
+          },
+          Object {
             "Cidr": "20.201.28.148/32",
           },
           Object {
             "Cidr": "20.205.243.168/32",
           },
           Object {
+            "Cidr": "20.207.73.85/32",
+          },
+          Object {
             "Cidr": "20.248.137.49/32",
+          },
+          Object {
+            "Cidr": "20.27.177.116/32",
           },
           Object {
             "Cidr": "52.69.239.207/32",
@@ -63272,12 +63571,12 @@ function handler(event) {
             "Cidr": "54.180.75.25/32",
           },
         ],
-        "MaxEntries": 15,
+        "MaxEntries": 18,
         "PrefixListName": "github.api.IPv4",
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "ConstructHubgithubapiIPv4b329fb2c3d88ce25186dad86c65ae3ebccc0fedbE8C3B43D": Object {
+    "ConstructHubgithubapiIPv47bf644ecefa3f06e328f099cfb0c172c99168aa07DEBC88C": Object {
       "Properties": Object {
         "GroupDescription": "Test/ConstructHub/github.api-IPv4",
         "SecurityGroupIngress": Array [
@@ -63320,19 +63619,19 @@ function handler(event) {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "ConstructHubgithubapiIPv4b329fb2c3d88ce25186dad86c65ae3ebccc0fedbtoTestConstructHubgithubapiIPv4b329fb2c3d88ce25186dad86c65ae3ebccc0fedb4432ECE8F50": Object {
+    "ConstructHubgithubapiIPv47bf644ecefa3f06e328f099cfb0c172c99168aa0toTestConstructHubgithubapiIPv47bf644ecefa3f06e328f099cfb0c172c99168aa04434D77D10F": Object {
       "Properties": Object {
         "Description": "to github.api (IPv4)",
         "DestinationPrefixListId": Object {
           "Fn::GetAtt": Array [
-            "ConstructHubgithubapiIPv4b329fb2c3d88ce25186dad86c65ae3ebccc0fedbAE4ED50D",
+            "ConstructHubgithubapiIPv47bf644ecefa3f06e328f099cfb0c172c99168aa041AC861E",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "ConstructHubgithubapiIPv4b329fb2c3d88ce25186dad86c65ae3ebccc0fedbE8C3B43D",
+            "ConstructHubgithubapiIPv47bf644ecefa3f06e328f099cfb0c172c99168aa07DEBC88C",
             "GroupId",
           ],
         },
@@ -63341,95 +63640,7 @@ function handler(event) {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "ConstructHubgithubgitIPv43068194822e4b525de9230295f591441007087c81094FBB5": Object {
-      "Properties": Object {
-        "AddressFamily": "IPv4",
-        "Entries": Array [
-          Object {
-            "Cidr": "102.133.202.242/32",
-          },
-          Object {
-            "Cidr": "102.133.202.246/32",
-          },
-          Object {
-            "Cidr": "13.114.40.48/32",
-          },
-          Object {
-            "Cidr": "13.125.114.27/32",
-          },
-          Object {
-            "Cidr": "13.234.176.102/32",
-          },
-          Object {
-            "Cidr": "13.234.210.38/32",
-          },
-          Object {
-            "Cidr": "140.82.112.0/20",
-          },
-          Object {
-            "Cidr": "143.55.64.0/20",
-          },
-          Object {
-            "Cidr": "15.164.81.167/32",
-          },
-          Object {
-            "Cidr": "18.181.13.223/32",
-          },
-          Object {
-            "Cidr": "185.199.108.0/22",
-          },
-          Object {
-            "Cidr": "192.30.252.0/22",
-          },
-          Object {
-            "Cidr": "20.201.28.151/32",
-          },
-          Object {
-            "Cidr": "20.201.28.152/32",
-          },
-          Object {
-            "Cidr": "20.205.243.160/32",
-          },
-          Object {
-            "Cidr": "20.205.243.166/32",
-          },
-          Object {
-            "Cidr": "20.248.137.48/32",
-          },
-          Object {
-            "Cidr": "20.248.137.50/32",
-          },
-          Object {
-            "Cidr": "3.34.26.58/32",
-          },
-          Object {
-            "Cidr": "3.6.106.81/32",
-          },
-          Object {
-            "Cidr": "3.7.2.84/32",
-          },
-          Object {
-            "Cidr": "52.192.72.89/32",
-          },
-          Object {
-            "Cidr": "52.69.186.44/32",
-          },
-          Object {
-            "Cidr": "52.78.231.108/32",
-          },
-          Object {
-            "Cidr": "54.168.17.15/32",
-          },
-          Object {
-            "Cidr": "54.238.117.237/32",
-          },
-        ],
-        "MaxEntries": 26,
-        "PrefixListName": "github.git.IPv4",
-      },
-      "Type": "AWS::EC2::PrefixList",
-    },
-    "ConstructHubgithubgitIPv43068194822e4b525de9230295f591441007087c8D7C9563C": Object {
+    "ConstructHubgithubgitIPv46f700734c160c675520663a2d3cf490bbff20c1c3EF9C824": Object {
       "Properties": Object {
         "GroupDescription": "Test/ConstructHub/github.git-IPv4",
         "SecurityGroupIngress": Array [
@@ -63472,19 +63683,125 @@ function handler(event) {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "ConstructHubgithubgitIPv43068194822e4b525de9230295f591441007087c8toTestConstructHubgithubgitIPv43068194822e4b525de9230295f591441007087c8443667FCB94": Object {
+    "ConstructHubgithubgitIPv46f700734c160c675520663a2d3cf490bbff20c1c8863D97D": Object {
+      "Properties": Object {
+        "AddressFamily": "IPv4",
+        "Entries": Array [
+          Object {
+            "Cidr": "102.133.202.242/32",
+          },
+          Object {
+            "Cidr": "102.133.202.246/32",
+          },
+          Object {
+            "Cidr": "13.114.40.48/32",
+          },
+          Object {
+            "Cidr": "13.125.114.27/32",
+          },
+          Object {
+            "Cidr": "13.234.176.102/32",
+          },
+          Object {
+            "Cidr": "13.234.210.38/32",
+          },
+          Object {
+            "Cidr": "140.82.112.0/20",
+          },
+          Object {
+            "Cidr": "143.55.64.0/20",
+          },
+          Object {
+            "Cidr": "15.164.81.167/32",
+          },
+          Object {
+            "Cidr": "18.181.13.223/32",
+          },
+          Object {
+            "Cidr": "185.199.108.0/22",
+          },
+          Object {
+            "Cidr": "192.30.252.0/22",
+          },
+          Object {
+            "Cidr": "20.200.245.247/32",
+          },
+          Object {
+            "Cidr": "20.200.245.248/32",
+          },
+          Object {
+            "Cidr": "20.201.28.151/32",
+          },
+          Object {
+            "Cidr": "20.201.28.152/32",
+          },
+          Object {
+            "Cidr": "20.205.243.160/32",
+          },
+          Object {
+            "Cidr": "20.205.243.166/32",
+          },
+          Object {
+            "Cidr": "20.207.73.82/32",
+          },
+          Object {
+            "Cidr": "20.207.73.83/32",
+          },
+          Object {
+            "Cidr": "20.248.137.48/32",
+          },
+          Object {
+            "Cidr": "20.248.137.50/32",
+          },
+          Object {
+            "Cidr": "20.27.177.113/32",
+          },
+          Object {
+            "Cidr": "20.27.177.118/32",
+          },
+          Object {
+            "Cidr": "3.34.26.58/32",
+          },
+          Object {
+            "Cidr": "3.6.106.81/32",
+          },
+          Object {
+            "Cidr": "3.7.2.84/32",
+          },
+          Object {
+            "Cidr": "52.192.72.89/32",
+          },
+          Object {
+            "Cidr": "52.69.186.44/32",
+          },
+          Object {
+            "Cidr": "52.78.231.108/32",
+          },
+          Object {
+            "Cidr": "54.168.17.15/32",
+          },
+          Object {
+            "Cidr": "54.238.117.237/32",
+          },
+        ],
+        "MaxEntries": 32,
+        "PrefixListName": "github.git.IPv4",
+      },
+      "Type": "AWS::EC2::PrefixList",
+    },
+    "ConstructHubgithubgitIPv46f700734c160c675520663a2d3cf490bbff20c1ctoTestConstructHubgithubgitIPv46f700734c160c675520663a2d3cf490bbff20c1c443734A5C34": Object {
       "Properties": Object {
         "Description": "to github.git (IPv4)",
         "DestinationPrefixListId": Object {
           "Fn::GetAtt": Array [
-            "ConstructHubgithubgitIPv43068194822e4b525de9230295f591441007087c81094FBB5",
+            "ConstructHubgithubgitIPv46f700734c160c675520663a2d3cf490bbff20c1c8863D97D",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "ConstructHubgithubgitIPv43068194822e4b525de9230295f591441007087c8D7C9563C",
+            "ConstructHubgithubgitIPv46f700734c160c675520663a2d3cf490bbff20c1c3EF9C824",
             "GroupId",
           ],
         },
@@ -63493,7 +63810,71 @@ function handler(event) {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "ConstructHubgithubwebIPv474d216e6cc28d247952d0a0b02170d23a5f54ebe315392A1": Object {
+    "ConstructHubgithubwebIPv4730051a6f3b44c9b9c49da982a1cf5b7444a0c454E234EE4": Object {
+      "Properties": Object {
+        "AddressFamily": "IPv4",
+        "Entries": Array [
+          Object {
+            "Cidr": "102.133.202.242/32",
+          },
+          Object {
+            "Cidr": "13.114.40.48/32",
+          },
+          Object {
+            "Cidr": "13.234.176.102/32",
+          },
+          Object {
+            "Cidr": "13.234.210.38/32",
+          },
+          Object {
+            "Cidr": "140.82.112.0/20",
+          },
+          Object {
+            "Cidr": "143.55.64.0/20",
+          },
+          Object {
+            "Cidr": "15.164.81.167/32",
+          },
+          Object {
+            "Cidr": "185.199.108.0/22",
+          },
+          Object {
+            "Cidr": "192.30.252.0/22",
+          },
+          Object {
+            "Cidr": "20.200.245.247/32",
+          },
+          Object {
+            "Cidr": "20.201.28.151/32",
+          },
+          Object {
+            "Cidr": "20.205.243.166/32",
+          },
+          Object {
+            "Cidr": "20.207.73.82/32",
+          },
+          Object {
+            "Cidr": "20.248.137.48/32",
+          },
+          Object {
+            "Cidr": "20.27.177.113/32",
+          },
+          Object {
+            "Cidr": "52.192.72.89/32",
+          },
+          Object {
+            "Cidr": "52.69.186.44/32",
+          },
+          Object {
+            "Cidr": "52.78.231.108/32",
+          },
+        ],
+        "MaxEntries": 18,
+        "PrefixListName": "github.web.IPv4",
+      },
+      "Type": "AWS::EC2::PrefixList",
+    },
+    "ConstructHubgithubwebIPv4730051a6f3b44c9b9c49da982a1cf5b7444a0c45A131E55F": Object {
       "Properties": Object {
         "GroupDescription": "Test/ConstructHub/github.web-IPv4",
         "SecurityGroupIngress": Array [
@@ -63536,74 +63917,19 @@ function handler(event) {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "ConstructHubgithubwebIPv474d216e6cc28d247952d0a0b02170d23a5f54ebe4DFDDBA0": Object {
-      "Properties": Object {
-        "AddressFamily": "IPv4",
-        "Entries": Array [
-          Object {
-            "Cidr": "102.133.202.242/32",
-          },
-          Object {
-            "Cidr": "13.114.40.48/32",
-          },
-          Object {
-            "Cidr": "13.234.176.102/32",
-          },
-          Object {
-            "Cidr": "13.234.210.38/32",
-          },
-          Object {
-            "Cidr": "140.82.112.0/20",
-          },
-          Object {
-            "Cidr": "143.55.64.0/20",
-          },
-          Object {
-            "Cidr": "15.164.81.167/32",
-          },
-          Object {
-            "Cidr": "185.199.108.0/22",
-          },
-          Object {
-            "Cidr": "192.30.252.0/22",
-          },
-          Object {
-            "Cidr": "20.201.28.151/32",
-          },
-          Object {
-            "Cidr": "20.205.243.166/32",
-          },
-          Object {
-            "Cidr": "20.248.137.48/32",
-          },
-          Object {
-            "Cidr": "52.192.72.89/32",
-          },
-          Object {
-            "Cidr": "52.69.186.44/32",
-          },
-          Object {
-            "Cidr": "52.78.231.108/32",
-          },
-        ],
-        "MaxEntries": 15,
-        "PrefixListName": "github.web.IPv4",
-      },
-      "Type": "AWS::EC2::PrefixList",
-    },
-    "ConstructHubgithubwebIPv474d216e6cc28d247952d0a0b02170d23a5f54ebetoTestConstructHubgithubwebIPv474d216e6cc28d247952d0a0b02170d23a5f54ebe4435749EC5B": Object {
+    "ConstructHubgithubwebIPv4730051a6f3b44c9b9c49da982a1cf5b7444a0c45toTestConstructHubgithubwebIPv4730051a6f3b44c9b9c49da982a1cf5b7444a0c4544389CEE3C9": Object {
       "Properties": Object {
         "Description": "to github.web (IPv4)",
         "DestinationPrefixListId": Object {
           "Fn::GetAtt": Array [
-            "ConstructHubgithubwebIPv474d216e6cc28d247952d0a0b02170d23a5f54ebe4DFDDBA0",
+            "ConstructHubgithubwebIPv4730051a6f3b44c9b9c49da982a1cf5b7444a0c454E234EE4",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "ConstructHubgithubwebIPv474d216e6cc28d247952d0a0b02170d23a5f54ebe315392A1",
+            "ConstructHubgithubwebIPv4730051a6f3b44c9b9c49da982a1cf5b7444a0c45A131E55F",
             "GroupId",
           ],
         },
@@ -63636,7 +63962,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "python3.7",
+        "Runtime": "python3.9",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -63894,7 +64220,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "483ae06ed27ef8ca76e011264d772420593a6cfe8544759c306ef3b98c9e25be.zip",
+          "S3Key": "e57c1acaa363d7d2b81736776007a7091bc73dff4aeb8135627c4511a51e7dca.zip",
         },
         "Description": Object {
           "Fn::Join": Array [
@@ -63916,7 +64242,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs12.x",
+        "Runtime": "nodejs14.x",
         "Timeout": 900,
       },
       "Type": "AWS::Lambda::Function",
@@ -63953,7 +64279,7 @@ function handler(event) {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "558dc75fbdc793c8e2f64f85d2d7ed2cb820c727ec7e9b08666ad1af0103992e.zip",
+          "S3Key": "eb5b005c858404ea0c8f68098ed5dcdf5340e02461f149751d10f59c210d5ef8.zip",
         },
         "Handler": "index.handler",
         "Role": Object {
@@ -64050,7 +64376,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Tags": Array [
           Object {
             "Key": "function-purpose",
@@ -64464,7 +64790,7 @@ function handler(event) {
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": "nodejs16.x",
         "Tags": Array [
           Object {
             "Key": "function-purpose",

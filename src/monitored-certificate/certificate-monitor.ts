@@ -11,7 +11,7 @@ export class CertificateMonitor extends lambda.Function {
     super(scope, id, {
       description: 'monitored-certificate/certificate-monitor.lambda.ts',
       ...props,
-      runtime: lambda.Runtime.NODEJS_14_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/certificate-monitor.lambda.bundle')),
     });

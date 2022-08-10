@@ -291,7 +291,7 @@ Resources:
                     - ConstructHubWebAppDistribution1F181DC9
                     - DomainName
       Handler: index.handler
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
     DependsOn:
       - ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionServiceRole9AAAD93C
   ConstructHubMonitoringWebCanaryHomePageRuleE14F9F4E:
@@ -522,9 +522,11 @@ Resources:
                 TransitionInDays: 31
             Status: Enabled
           - ExpiredObjectDeleteMarker: true
-            NoncurrentVersionExpirationInDays: 90
+            NoncurrentVersionExpiration:
+              NoncurrentDays: 90
             Status: Enabled
-          - NoncurrentVersionExpirationInDays: 7
+          - NoncurrentVersionExpiration:
+              NoncurrentDays: 7
             Prefix: catalog.json
             Status: Enabled
       PublicAccessBlockConfiguration:
@@ -592,9 +594,11 @@ Resources:
                 TransitionInDays: 31
             Status: Enabled
           - ExpiredObjectDeleteMarker: true
-            NoncurrentVersionExpirationInDays: 90
+            NoncurrentVersionExpiration:
+              NoncurrentDays: 90
             Status: Enabled
-          - NoncurrentVersionExpirationInDays: 7
+          - NoncurrentVersionExpiration:
+              NoncurrentDays: 7
             Prefix: catalog.json
             Status: Enabled
       PublicAccessBlockConfiguration:
@@ -663,21 +667,6 @@ Resources:
         - Fn::GetAtt:
             - ConstructHubCodeArtifactPublishing143CC07C
             - Name
-  ConstructHubCodeArtifactDescribeDomainCustomResourcePolicy1A93C60C:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyDocument:
-        Statement:
-          - Action: codeartifact:DescribeDomain
-            Effect: Allow
-            Resource:
-              Fn::GetAtt:
-                - ConstructHubCodeArtifactDomainFC30B796
-                - Arn
-        Version: 2012-10-17
-      PolicyName: ConstructHubCodeArtifactDescribeDomainCustomResourcePolicy1A93C60C
-      Roles:
-        - Ref: AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2
   ConstructHubCodeArtifactDescribeDomain6ABCBF4B:
     Type: Custom::CoreArtifactDomainDescription
     Properties:
@@ -702,19 +691,19 @@ Resources:
       - ConstructHubCodeArtifactDescribeDomainCustomResourcePolicy1A93C60C
     UpdateReplacePolicy: Delete
     DeletionPolicy: Delete
-  ConstructHubCodeArtifactGetEndpointCustomResourcePolicy4FC951E9:
+  ConstructHubCodeArtifactDescribeDomainCustomResourcePolicy1A93C60C:
     Type: AWS::IAM::Policy
     Properties:
       PolicyDocument:
         Statement:
-          - Action: codeartifact:GetRepositoryEndpoint
+          - Action: codeartifact:DescribeDomain
             Effect: Allow
             Resource:
               Fn::GetAtt:
-                - ConstructHubCodeArtifact1188409E
+                - ConstructHubCodeArtifactDomainFC30B796
                 - Arn
         Version: 2012-10-17
-      PolicyName: ConstructHubCodeArtifactGetEndpointCustomResourcePolicy4FC951E9
+      PolicyName: ConstructHubCodeArtifactDescribeDomainCustomResourcePolicy1A93C60C
       Roles:
         - Ref: AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2
   ConstructHubCodeArtifactGetEndpoint9A458FEF:
@@ -761,7 +750,7 @@ Resources:
       - ConstructHubCodeArtifactGetEndpointCustomResourcePolicy4FC951E9
     UpdateReplacePolicy: Delete
     DeletionPolicy: Delete
-  ConstructHubCodeArtifactGetPublishingEndpointCustomResourcePolicyE039B00F:
+  ConstructHubCodeArtifactGetEndpointCustomResourcePolicy4FC951E9:
     Type: AWS::IAM::Policy
     Properties:
       PolicyDocument:
@@ -770,10 +759,10 @@ Resources:
             Effect: Allow
             Resource:
               Fn::GetAtt:
-                - ConstructHubCodeArtifactPublishing143CC07C
+                - ConstructHubCodeArtifact1188409E
                 - Arn
         Version: 2012-10-17
-      PolicyName: ConstructHubCodeArtifactGetPublishingEndpointCustomResourcePolicyE039B00F
+      PolicyName: ConstructHubCodeArtifactGetEndpointCustomResourcePolicy4FC951E9
       Roles:
         - Ref: AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2
   ConstructHubCodeArtifactGetPublishingEndpoint6394DEF7:
@@ -820,6 +809,21 @@ Resources:
       - ConstructHubCodeArtifactGetPublishingEndpointCustomResourcePolicyE039B00F
     UpdateReplacePolicy: Delete
     DeletionPolicy: Delete
+  ConstructHubCodeArtifactGetPublishingEndpointCustomResourcePolicyE039B00F:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action: codeartifact:GetRepositoryEndpoint
+            Effect: Allow
+            Resource:
+              Fn::GetAtt:
+                - ConstructHubCodeArtifactPublishing143CC07C
+                - Arn
+        Version: 2012-10-17
+      PolicyName: ConstructHubCodeArtifactGetPublishingEndpointCustomResourcePolicyE039B00F
+      Roles:
+        - Ref: AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2
   ConstructHubCodeArtifactUpstreampublicnpmjs5122981E:
     Type: AWS::CodeArtifact::Repository
     Properties:
@@ -2624,7 +2628,7 @@ Resources:
       Content:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip
+        S3Key: 2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip
       Description: /opt/awscli/aws
   ConstructHubDenyListBucketDeploymentCustomResourceF835956B:
     Type: Custom::CDKBucketDeployment
@@ -2733,7 +2737,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: e08c0cb9d1a9d05096eb37e3890950b190a31ba6611e13032edafe16fc78c510.zip
+        S3Key: 61d60f028bc599a2c9ab132cbcfb8bf445ced12bd395226e9bd519c184ac8a12.zip
       Role:
         Fn::GetAtt:
           - ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE
@@ -2754,7 +2758,7 @@ Resources:
               - ConstructHubOrchestrationCatalogBuilder7C964951
               - Arn
       Handler: index.handler
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 900
     DependsOn:
       - ConstructHubDenyListPrunePruneHandlerServiceRoleDefaultPolicy416BC8DA
@@ -2821,7 +2825,7 @@ Resources:
           PACKAGE_DATA_BUCKET_NAME:
             Ref: ConstructHubPackageDataDC5EF35E
       Handler: index.handler
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 60
     DependsOn:
       - ConstructHubDenyListPrunePruneQueueHandlerServiceRoleDefaultPolicy8AA78393
@@ -2917,7 +2921,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: cd86fe109a6131d92af62de9d0a2df1d1bb3c28c3a93ac37855ade090beb73b7.zip
+        S3Key: 4edac9a32c5fa60da5cafe31cda0e1f159379b9e5a34ce716c4874402b3a8ce4.zip
       Role:
         Fn::GetAtt:
           - ConstructHubStatsServiceRole48DCA379
@@ -2938,7 +2942,7 @@ Resources:
       Handler: index.handler
       MemorySize: 256
       ReservedConcurrentExecutions: 1
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 900
       TracingConfig:
         Mode: PassThrough
@@ -3068,7 +3072,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: eff6d29049503f68b2a61f077c12e9cfe5778eb36a065284a0c2bf8c9706bbb2.zip
+        S3Key: 310fb96e23069e3344b25360737415eb794d352027d341295e239fc15b4d8d03.zip
       Role:
         Fn::GetAtt:
           - ConstructHubVersionTrackerServiceRole721EE863
@@ -3090,7 +3094,7 @@ Resources:
       Handler: index.handler
       MemorySize: 10240
       ReservedConcurrentExecutions: 1
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 60
       TracingConfig:
         Mode: Active
@@ -3293,7 +3297,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 0145275b3b965add1bc57d0bc932372228c7e6f6342c579945ab10c53d676cd5.zip
+        S3Key: 510f17c968b07a87751d07c5627493bdefdfb01f4e392f24dd0e74f939424384.zip
       Role:
         Fn::GetAtt:
           - ConstructHubFeedBuilderReleaseNotesUpdateFeedServiceRoleC857E364
@@ -3316,7 +3320,7 @@ Resources:
                     - DomainName
       Handler: index.handler
       ReservedConcurrentExecutions: 1
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 60
     DependsOn:
       - ConstructHubFeedBuilderReleaseNotesUpdateFeedServiceRoleDefaultPolicy5190869A
@@ -3480,7 +3484,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: c96826c1d068c5795f20a5424b8dfbad26862a56968d67a5e4eaba99c162f0a2.zip
+        S3Key: dffd491c222d20060a9208e77edc4d8014852e5168097a227acf92947ae815cf.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
@@ -3503,7 +3507,7 @@ Resources:
       Handler: index.handler
       MemorySize: 10240
       ReservedConcurrentExecutions: 1
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 900
       TracingConfig:
         Mode: PassThrough
@@ -3623,7 +3627,7 @@ Resources:
           CATALOG_OBJECT_KEY: catalog.json
       Handler: index.handler
       MemorySize: 1024
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 60
     DependsOn:
       - ConstructHubOrchestrationNeedsCatalogUpdateServiceRoleDefaultPolicy4B4DEDD9
@@ -4028,108 +4032,6 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/docs-python.*.not-supported
-          - Action:
-              - s3:DeleteObject*
-              - s3:PutObject
-              - s3:PutObjectLegalHold
-              - s3:PutObjectRetention
-              - s3:PutObjectTagging
-              - s3:PutObjectVersionTagging
-              - s3:Abort*
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-*-python.*.not-supported
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-*-python.*.not-supported
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-python.*.corruptassembly
-          - Action:
-              - s3:DeleteObject*
-              - s3:PutObject
-              - s3:PutObjectLegalHold
-              - s3:PutObjectRetention
-              - s3:PutObjectTagging
-              - s3:PutObjectVersionTagging
-              - s3:Abort*
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-python.*.corruptassembly
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-*-python.*.corruptassembly
-          - Action:
-              - s3:DeleteObject*
-              - s3:PutObject
-              - s3:PutObjectLegalHold
-              - s3:PutObjectRetention
-              - s3:PutObjectTagging
-              - s3:PutObjectVersionTagging
-              - s3:Abort*
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-*-python.*.corruptassembly
           - Action: s3:DeleteObject*
             Effect: Allow
             Resource:
@@ -4139,6 +4041,117 @@ Resources:
                       - ConstructHubPackageDataDC5EF35E
                       - Arn
                   - /data/*/docs-python.*.corruptassembly
+        Version: 2012-10-17
+      PolicyName: ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleDefaultPolicyE0EED0F8
+      Roles:
+        - Ref: ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A
+  ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy1698632DE:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:DeleteObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-*-python.*.not-supported
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-*-python.*.not-supported
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-python.*.corruptassembly
+          - Action:
+              - s3:DeleteObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-python.*.corruptassembly
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-*-python.*.corruptassembly
+          - Action:
+              - s3:DeleteObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-*-python.*.corruptassembly
           - Action: s3:DeleteObject*
             Effect: Allow
             Resource:
@@ -4254,74 +4267,6 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/docs-*-java.*.not-supported
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-java.*.corruptassembly
-          - Action:
-              - s3:DeleteObject*
-              - s3:PutObject
-              - s3:PutObjectLegalHold
-              - s3:PutObjectRetention
-              - s3:PutObjectTagging
-              - s3:PutObjectVersionTagging
-              - s3:Abort*
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-java.*.corruptassembly
-          - Action:
-              - s3:GetObject*
-              - s3:GetBucket*
-              - s3:List*
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-*-java.*.corruptassembly
-          - Action:
-              - s3:DeleteObject*
-              - s3:PutObject
-              - s3:PutObjectLegalHold
-              - s3:PutObjectRetention
-              - s3:PutObjectTagging
-              - s3:PutObjectVersionTagging
-              - s3:Abort*
-            Effect: Allow
-            Resource:
-              - Fn::GetAtt:
-                  - ConstructHubPackageDataDC5EF35E
-                  - Arn
-              - Fn::Join:
-                  - ""
-                  - - Fn::GetAtt:
-                        - ConstructHubPackageDataDC5EF35E
-                        - Arn
-                    - /data/*/docs-*-java.*.corruptassembly
           - Action: s3:DeleteObject*
             Effect: Allow
             Resource:
@@ -4331,6 +4276,85 @@ Resources:
                       - ConstructHubPackageDataDC5EF35E
                       - Arn
                   - /data/*/docs-java.*.corruptassembly
+        Version: 2012-10-17
+      Description: Part of the policies for
+        dev/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole
+      Path: /
+      Roles:
+        - Ref: ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A
+  ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy2BC794386:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-java.*.corruptassembly
+          - Action:
+              - s3:DeleteObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-java.*.corruptassembly
+          - Action:
+              - s3:GetObject*
+              - s3:GetBucket*
+              - s3:List*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-*-java.*.corruptassembly
+          - Action:
+              - s3:DeleteObject*
+              - s3:PutObject
+              - s3:PutObjectLegalHold
+              - s3:PutObjectRetention
+              - s3:PutObjectTagging
+              - s3:PutObjectVersionTagging
+              - s3:Abort*
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - ConstructHubPackageDataDC5EF35E
+                  - Arn
+              - Fn::Join:
+                  - ""
+                  - - Fn::GetAtt:
+                        - ConstructHubPackageDataDC5EF35E
+                        - Arn
+                    - /data/*/docs-*-java.*.corruptassembly
           - Action: s3:DeleteObject*
             Effect: Allow
             Resource:
@@ -4480,6 +4504,26 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/docs-csharp.*.corruptassembly
+          - Action: s3:DeleteObject*
+            Effect: Allow
+            Resource:
+              Fn::Join:
+                - ""
+                - - Fn::GetAtt:
+                      - ConstructHubPackageDataDC5EF35E
+                      - Arn
+                  - /data/*/docs-csharp.*.corruptassembly
+        Version: 2012-10-17
+      Description: Part of the policies for
+        dev/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole
+      Path: /
+      Roles:
+        - Ref: ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A
+  ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy33EB40C3E:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Statement:
           - Action:
               - s3:GetObject*
               - s3:GetBucket*
@@ -4514,15 +4558,6 @@ Resources:
                         - ConstructHubPackageDataDC5EF35E
                         - Arn
                     - /data/*/docs-*-csharp.*.corruptassembly
-          - Action: s3:DeleteObject*
-            Effect: Allow
-            Resource:
-              Fn::Join:
-                - ""
-                - - Fn::GetAtt:
-                      - ConstructHubPackageDataDC5EF35E
-                      - Arn
-                  - /data/*/docs-csharp.*.corruptassembly
           - Action: s3:DeleteObject*
             Effect: Allow
             Resource:
@@ -4715,6 +4750,17 @@ Resources:
                       - ConstructHubPackageDataDC5EF35E
                       - Arn
                   - /data/*/docs-go.*.corruptassembly
+        Version: 2012-10-17
+      Description: Part of the policies for
+        dev/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole
+      Path: /
+      Roles:
+        - Ref: ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A
+  ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleOverflowPolicy41E18C6C9:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Statement:
           - Action: s3:DeleteObject*
             Effect: Allow
             Resource:
@@ -4725,7 +4771,9 @@ Resources:
                       - Arn
                   - /data/*/docs-*-go.*.corruptassembly
         Version: 2012-10-17
-      PolicyName: ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleDefaultPolicyE0EED0F8
+      Description: Part of the policies for
+        dev/ConstructHub/Orchestration/Transliterator/TaskDefinition/TaskRole
+      Path: /
       Roles:
         - Ref: ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A
   ConstructHubOrchestrationTransliteratorTaskDefinition45CDA566:
@@ -4765,7 +4813,7 @@ Resources:
                   - repositoryEndpoint
           Essential: true
           Image:
-            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:01a0d1dd4f783f872c259befa49d8181e8a5962c8f80f19e6f4e4b8d564bf439
+            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:862c9e3a325c329cc0e67e01b918fc843a01618437d6122a84679ba6ca80e418
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -5148,7 +5196,7 @@ Resources:
             Ref: ConstructHubOrchestrationDLQ9C6D9BD4
       Handler: index.handler
       MemorySize: 1024
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 900
       TracingConfig:
         Mode: Active
@@ -5532,7 +5580,7 @@ Resources:
           WORKER_QUEUE_URL:
             Ref: ConstructHubReleaseNotesReleaseNotesFetchWorkerQueueCACEC29F
       Handler: index.handler
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 60
     DependsOn:
       - ConstructHubReleaseNotesReleaseNotesTriggerServiceRoleDefaultPolicyB1F7B1F5
@@ -5614,7 +5662,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 94143850e203eadbb539feab1efd5610c1b324168804c1c65107dccc086e3ca1.zip
+        S3Key: 09116b0401b48e640dbbbca952ea846dd49f947118f1959a1d151d9132c7b837.zip
       Role:
         Fn::GetAtt:
           - ConstructHubReleaseNotesGithubChangelogFetcherServiceRoleCAE3656D
@@ -5628,7 +5676,7 @@ Resources:
             Ref: ConstructHubPackageDataDC5EF35E
       Handler: index.handler
       MemorySize: 1024
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 600
     DependsOn:
       - ConstructHubReleaseNotesGithubChangelogFetcherServiceRoleDefaultPolicy6C70D043
@@ -5687,7 +5735,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 130dcd50fe8cb5281d29fdced86431ad5b787ed3e1e41a22b666fbf3e646a8bd.zip
+        S3Key: a421566db93dac7c5334e622e309946921f638a7e75a972b4c5782009175c512.zip
       Role:
         Fn::GetAtt:
           - ConstructHubReleaseNotesReleaseNoteTasksServiceRole662376CD
@@ -5710,7 +5758,7 @@ Resources:
                 - Ref: AWS::AccountId
                 - :stateMachine:dev.ConstructHub.ReleaseNotes
       Handler: index.handler
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 300
     DependsOn:
       - ConstructHubReleaseNotesReleaseNoteTasksServiceRoleDefaultPolicyC788504D
@@ -6014,7 +6062,8 @@ Resources:
       ComparisonOperator: GreaterThanOrEqualToThreshold
       EvaluationPeriods: 2
       AlarmDescription: >
-        Release notes generation is failing due to Invalid GitHub token
+        Release notes generation is failing due to Invalid GitHub
+        token
 
 
         RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
@@ -6133,7 +6182,7 @@ Resources:
       Content:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip
+        S3Key: 2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip
       Description: /opt/awscli/aws
   ConstructHubIngestionDeployIngestionConfigurationCustomResourceD7F243C1:
     Type: Custom::CDKBucketDeployment
@@ -6340,7 +6389,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 9b7fda00c17df0c47e27052089a5e46eeba2bd87974084ee4bad975412180a63.zip
+        S3Key: e5a7a9419dccf725422407254bc878452552e45fa8bfa7668a3fefe101279bfc.zip
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
@@ -6373,7 +6422,7 @@ Resources:
             Ref: ConstructHubReleaseNotesChangeLogFetchQueue2D5BA633
       Handler: index.handler
       MemorySize: 10240
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 900
       TracingConfig:
         Mode: Active
@@ -6528,7 +6577,7 @@ Resources:
             Ref: ConstructHubIngestionReprocessQueueADCE803E
       Handler: index.handler
       MemorySize: 10240
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 180
       TracingConfig:
         Mode: Active
@@ -6850,7 +6899,7 @@ Resources:
       Content:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip
+        S3Key: 2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip
       Description: /opt/awscli/aws
   ConstructHubLicenseListCustomResource323F0FD4:
     Type: Custom::CDKBucketDeployment
@@ -7179,7 +7228,7 @@ Resources:
       Content:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip
+        S3Key: 2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip
       Description: /opt/awscli/aws
   ConstructHubWebAppDeployWebsiteCustomResourceE6DF98C9:
     Type: Custom::CDKBucketDeployment
@@ -7207,7 +7256,7 @@ Resources:
       Content:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 55f133baccc1d0e4666b88328d51a8c2ff354c919b8e0fa9f045123a19df1b4e.zip
+        S3Key: 2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip
       Description: /opt/awscli/aws
   ConstructHubWebAppDeployWebsiteConfigCustomResource2D18C708:
     Type: Custom::CDKBucketDeployment
@@ -7445,7 +7494,7 @@ Resources:
           DENY_LIST_OBJECT_KEY: deny-list.json
       Handler: index.handler
       MemorySize: 10024
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 300
       TracingConfig:
         Mode: Active
@@ -7576,7 +7625,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: a0d5f8dd0b321ff150993ff52161b4e587f92c37c0f339fe452e3d3f8ba4d2e1.zip
+        S3Key: e8f63c571593466b98c8417b71efc5391da2e4551752544a232b15149e18c8fa.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsServiceRoleAC3F7AA6
@@ -7599,7 +7648,7 @@ Resources:
       Handler: index.handler
       MemorySize: 10024
       ReservedConcurrentExecutions: 1
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 300
       TracingConfig:
         Mode: Active
@@ -7667,7 +7716,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 8279815573918a05a20675dd80b934d33ce33a4320e92d14829e3b96d3195a68.zip
+        S3Key: fd4db3b79e1d941f51ea9eac37e2e5545b18aae99b03b270cc578ad7c86fd367.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2
@@ -7689,7 +7738,7 @@ Resources:
           PACKAGE_NAME: construct-hub-probe
       Handler: index.handler
       MemorySize: 10024
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 300
     DependsOn:
       - ConstructHubLicenseListAwsCliLayer59592811
@@ -7735,8 +7784,8 @@ Resources:
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 2
       AlarmDescription: >-
-        New versions of construct-hub-probe have been published over 5 minutes
-        ago and are still not visible in construct hub
+        New versions of construct-hub-probe have been published over 5
+        minutes ago and are still not visible in construct hub
 
         Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
       AlarmName: dev/ConstructHub/Sources/NpmJs/Canary/SLA-Breached
@@ -7827,8 +7876,8 @@ Resources:
                 - Arn
             - '"))'
       AlarmDescription: >-
-        The NpmJs package canary is not running or is failing. This prevents
-        alarming when this instance of
+        The NpmJs package canary is not running or is failing. This
+        prevents alarming when this instance of
 
         ConstructHub falls out of SLA for new package ingestion!
 
@@ -7843,8 +7892,8 @@ Resources:
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 60
       AlarmDescription: >-
-        The NpmJs package canary has been encountering consistent HTTP gateway
-        errors when contacting npmjs servers
+        The NpmJs package canary has been encountering consistent HTTP
+        gateway errors when contacting npmjs servers
 
         for an hour or more. This means the canary has been unable to evaluate SLA compliance for that much time.
 
@@ -8249,7 +8298,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: e94492e048ef7c736bc8bb1e40df2190c6cb6cebd937887fe558441a090ed3aa.zip
+        S3Key: 558690119024db785aba234a72bfd0ffddd07489f471a1fbd32f26024dd400f3.zip
       Role:
         Fn::GetAtt:
           - ConstructHubInventoryCanaryServiceRole7684EDDE
@@ -8265,7 +8314,7 @@ Resources:
             Ref: ConstructHubInventoryCanaryScratchworkBucketC185625E
       Handler: index.handler
       MemorySize: 10240
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Timeout: 900
     DependsOn:
       - ConstructHubInventoryCanaryServiceRoleDefaultPolicy144783F1
@@ -9121,13 +9170,13 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 39381d2c8b8ec42679de4960c24f0c83c56772cdc2b10b6fc14cd0a99aba42ed.zip
+        S3Key: 6dbd112fe448437b3438da4382c72fccbb7d2ee1543db222620d7447fffebc50.zip
       Role:
         Fn::GetAtt:
           - AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2
           - Arn
       Handler: index.handler
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Timeout: 120
     DependsOn:
       - AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2
@@ -9149,7 +9198,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 483ae06ed27ef8ca76e011264d772420593a6cfe8544759c306ef3b98c9e25be.zip
+        S3Key: e57c1acaa363d7d2b81736776007a7091bc73dff4aeb8135627c4511a51e7dca.zip
       Timeout: 900
       MemorySize: 128
       Handler: __entrypoint__.handler
@@ -9157,7 +9206,7 @@ Resources:
         Fn::GetAtt:
           - CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092
           - Arn
-      Runtime: nodejs12.x
+      Runtime: nodejs14.x
       Description:
         Fn::Join:
           - ""
@@ -9317,7 +9366,7 @@ Resources:
       Handler: index.handler
       Layers:
         - Ref: ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
-      Runtime: python3.7
+      Runtime: python3.9
       Timeout: 900
     DependsOn:
       - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF
@@ -9369,46 +9418,44 @@ Resources:
           s3 = boto3.client("s3")
 
 
+          EVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'
+
+
           CONFIGURATION_TYPES = ["TopicConfigurations", "QueueConfigurations", "LambdaFunctionConfigurations"]
 
 
           def handler(event: dict, context):
-              response_status = "SUCCESS"
-              error_message = ""
-              try:
-                  props = event["ResourceProperties"]
-                  bucket = props["BucketName"]
-                  notification_configuration = props["NotificationConfiguration"]
-                  request_type = event["RequestType"]
-                  managed = props.get('Managed', 'true').lower() == 'true'
-                  stack_id = event['StackId']
+            response_status = "SUCCESS"
+            error_message = ""
+            try:
+              props = event["ResourceProperties"]
+              bucket = props["BucketName"]
+              notification_configuration = props["NotificationConfiguration"]
+              request_type = event["RequestType"]
+              managed = props.get('Managed', 'true').lower() == 'true'
+              stack_id = event['StackId']
 
-                  if managed:
-                    config = handle_managed(request_type, notification_configuration)
-                  else:
-                    config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
+              if managed:
+                config = handle_managed(request_type, notification_configuration)
+              else:
+                config = handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
 
-                  put_bucket_notification_configuration(bucket, config)
-              except Exception as e:
-                  logging.exception("Failed to put bucket notification configuration")
-                  response_status = "FAILED"
-                  error_message = f"Error: {str(e)}. "
-              finally:
-                  submit_response(event, context, response_status, error_message)
-
+              put_bucket_notification_configuration(bucket, config)
+            except Exception as e:
+              logging.exception("Failed to put bucket notification configuration")
+              response_status = "FAILED"
+              error_message = f"Error: {str(e)}. "
+            finally:
+              submit_response(event, context, response_status, error_message)
 
           def handle_managed(request_type, notification_configuration):
             if request_type == 'Delete':
               return {}
             return notification_configuration
 
-
           def handle_unmanaged(bucket, stack_id, request_type, notification_configuration):
-
-            # find external notifications
             external_notifications = find_external_notifications(bucket, stack_id)
 
-            # if delete, that's all we need
             if request_type == 'Delete':
               return external_notifications
 
@@ -9416,54 +9463,56 @@ Resources:
               notification['Id'] = f"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}"
               return notification
 
-            # otherwise, merge external with incoming config and augment with id
             notifications = {}
             for t in CONFIGURATION_TYPES:
               external = external_notifications.get(t, [])
               incoming = [with_id(n) for n in notification_configuration.get(t, [])]
               notifications[t] = external + incoming
-            return notifications
 
+            if EVENTBRIDGE_CONFIGURATION in notification_configuration:
+              notifications[EVENTBRIDGE_CONFIGURATION] = notification_configuration[EVENTBRIDGE_CONFIGURATION]
+            elif EVENTBRIDGE_CONFIGURATION in external_notifications:
+              notifications[EVENTBRIDGE_CONFIGURATION] = external_notifications[EVENTBRIDGE_CONFIGURATION]
+
+            return notifications
 
           def find_external_notifications(bucket, stack_id):
             existing_notifications = get_bucket_notification_configuration(bucket)
             external_notifications = {}
             for t in CONFIGURATION_TYPES:
-              # if the notification was created by us, we know what id to expect
-              # so we can filter by it.
               external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f"{stack_id}-")]
 
-            return external_notifications
+            if EVENTBRIDGE_CONFIGURATION in existing_notifications:
+              external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
 
+            return external_notifications
 
           def get_bucket_notification_configuration(bucket):
             return s3.get_bucket_notification_configuration(Bucket=bucket)
 
-
           def put_bucket_notification_configuration(bucket, notification_configuration):
             s3.put_bucket_notification_configuration(Bucket=bucket, NotificationConfiguration=notification_configuration)
 
-
           def submit_response(event: dict, context, response_status: str, error_message: str):
-              response_body = json.dumps(
-                  {
-                      "Status": response_status,
-                      "Reason": f"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}",
-                      "PhysicalResourceId": event.get("PhysicalResourceId") or event["LogicalResourceId"],
-                      "StackId": event["StackId"],
-                      "RequestId": event["RequestId"],
-                      "LogicalResourceId": event["LogicalResourceId"],
-                      "NoEcho": False,
-                  }
-              ).encode("utf-8")
-              headers = {"content-type": "", "content-length": str(len(response_body))}
-              try:
-                  req = urllib.request.Request(url=event["ResponseURL"], headers=headers, data=response_body, method="PUT")
-                  with urllib.request.urlopen(req) as response:
-                      print(response.read().decode("utf-8"))
-                  print("Status code: " + response.reason)
-              except Exception as e:
-                  print("send(..) failed executing request.urlopen(..): " + str(e))
+            response_body = json.dumps(
+              {
+                "Status": response_status,
+                "Reason": f"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}",
+                "PhysicalResourceId": event.get("PhysicalResourceId") or event["LogicalResourceId"],
+                "StackId": event["StackId"],
+                "RequestId": event["RequestId"],
+                "LogicalResourceId": event["LogicalResourceId"],
+                "NoEcho": False,
+              }
+            ).encode("utf-8")
+            headers = {"content-type": "", "content-length": str(len(response_body))}
+            try:
+              req = urllib.request.Request(url=event["ResponseURL"], headers=headers, data=response_body, method="PUT")
+              with urllib.request.urlopen(req) as response:
+                print(response.read().decode("utf-8"))
+              print("Status code: " + response.reason)
+            except Exception as e:
+                print("send(..) failed executing request.urlopen(..): " + str(e))
       Handler: index.handler
       Role:
         Fn::GetAtt:
@@ -9512,7 +9561,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 558dc75fbdc793c8e2f64f85d2d7ed2cb820c727ec7e9b08666ad1af0103992e.zip
+        S3Key: eb5b005c858404ea0c8f68098ed5dcdf5340e02461f149751d10f59c210d5ef8.zip
       Role:
         Fn::GetAtt:
           - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB
@@ -9564,7 +9613,7 @@ Resources:
           - Arn
       Description: "[ConstructHub/SQSDLQWidget] Is a custom CloudWatch widget handler"
       Handler: index.handler
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Tags:
         - Key: function-purpose
           Value: cloudwatch-custom-widget
@@ -9784,7 +9833,7 @@ Resources:
           OBJECT_KEY: uninstallable-objects/data.json
       Handler: index.handler
       MemorySize: 1024
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Tags:
         - Key: function-purpose
           Value: cloudwatch-custom-widget

@@ -13,7 +13,7 @@ export class SqsDlqStatsWidgetFunction extends lambda.SingletonFunction {
       ...props,
       uuid: 'fc176846-044f-5e56-baf2-c71723501885',
       lambdaPurpose: 'SQSDLQStatsWidget-Handler',
-      runtime: lambda.Runtime.NODEJS_14_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/sqs-dlq-stats-widget-function.lambda.bundle')),
     });

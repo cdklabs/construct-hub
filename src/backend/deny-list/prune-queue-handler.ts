@@ -11,7 +11,7 @@ export class PruneQueueHandler extends lambda.Function {
     super(scope, id, {
       description: 'backend/deny-list/prune-queue-handler.lambda.ts',
       ...props,
-      runtime: lambda.Runtime.NODEJS_14_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/prune-queue-handler.lambda.bundle')),
     });

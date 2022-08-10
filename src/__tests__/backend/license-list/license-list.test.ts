@@ -9,7 +9,7 @@ test('empty set', () => {
   const stack = new Stack(app, 'TestStack');
   const lambda = new Function(stack, 'Function', {
     code: Code.fromInline('/* ... */'),
-    runtime: Runtime.NODEJS_12_X,
+    runtime: Runtime.NODEJS_16_X,
     handler: 'index.handler',
   });
 
@@ -28,7 +28,7 @@ test('Apache licenses only', () => {
   const stack = new Stack(app, 'TestStack');
   const lambda = new Function(stack, 'Function', {
     code: Code.fromInline('/* ... */'),
-    runtime: Runtime.NODEJS_12_X,
+    runtime: Runtime.NODEJS_16_X,
     handler: 'index.handler',
   });
 
@@ -49,7 +49,7 @@ test('BSD licenses only', () => {
   const stack = new Stack(app, 'TestStack');
   const lambda = new Function(stack, 'Function', {
     code: Code.fromInline('/* ... */'),
-    runtime: Runtime.NODEJS_12_X,
+    runtime: Runtime.NODEJS_16_X,
     handler: 'index.handler',
   });
 
@@ -70,7 +70,7 @@ test('MIT licenses only', () => {
   const stack = new Stack(app, 'TestStack');
   const lambda = new Function(stack, 'Function', {
     code: Code.fromInline('/* ... */'),
-    runtime: Runtime.NODEJS_12_X,
+    runtime: Runtime.NODEJS_16_X,
     handler: 'index.handler',
   });
 
@@ -91,7 +91,7 @@ test('OSI-Approved licenses only', () => {
   const stack = new Stack(app, 'TestStack');
   const lambda = new Function(stack, 'Function', {
     code: Code.fromInline('/* ... */'),
-    runtime: Runtime.NODEJS_12_X,
+    runtime: Runtime.NODEJS_16_X,
     handler: 'index.handler',
   });
 
@@ -112,7 +112,7 @@ test('All licenses', () => {
   const stack = new Stack(app, 'TestStack');
   const lambda = new Function(stack, 'Function', {
     code: Code.fromInline('/* ... */'),
-    runtime: Runtime.NODEJS_12_X,
+    runtime: Runtime.NODEJS_16_X,
     handler: 'index.handler',
   });
 
