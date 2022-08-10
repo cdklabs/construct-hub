@@ -13,7 +13,7 @@ export class PackageVersionsTableWidgetFunction extends lambda.SingletonFunction
       ...props,
       uuid: '5fa84825-9c1d-5e38-8c0d-f69f05c016df',
       lambdaPurpose: 'PackageVersionsTableWidget-Handler',
-      runtime: lambda.Runtime.NODEJS_14_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/package-versions-table-widget-function.lambda.bundle')),
     });

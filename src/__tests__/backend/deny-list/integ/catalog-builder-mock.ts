@@ -11,7 +11,7 @@ export class CatalogBuilderMock extends lambda.Function {
     super(scope, id, {
       description: '__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts',
       ...props,
-      runtime: lambda.Runtime.NODEJS_14_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/catalog-builder-mock.lambda.bundle')),
     });

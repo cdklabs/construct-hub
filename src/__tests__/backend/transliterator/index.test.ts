@@ -91,7 +91,7 @@ test('VPC Endpoints', () => {
   });
   const vpc = new Vpc(stack, 'VPC', {
     subnetConfiguration: [
-      { name: 'Isolated', subnetType: SubnetType.ISOLATED },
+      { name: 'Isolated', subnetType: SubnetType.PRIVATE_ISOLATED },
     ],
   });
   const cloudWatchLogs = vpc.addInterfaceEndpoint('CloudWatch.Logs', {
@@ -166,7 +166,7 @@ test('VPC Endpoints and CodeArtifact repository', () => {
   });
   const vpc = new Vpc(stack, 'VPC', {
     subnetConfiguration: [
-      { name: 'Isolated', subnetType: SubnetType.ISOLATED },
+      { name: 'Isolated', subnetType: SubnetType.PRIVATE_ISOLATED },
     ],
   });
   const codeArtifactApi = vpc.addInterfaceEndpoint('CodeArtifact.API', {

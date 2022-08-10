@@ -453,7 +453,7 @@ function newLambdaHandler(entrypoint, trigger) {
       );
     }
   }
-  ts.line('runtime: lambda.Runtime.NODEJS_14_X,');
+  ts.line('runtime: lambda.Runtime.NODEJS_16_X,');
   ts.line("handler: 'index.handler',");
   ts.line(
     `code: lambda.Code.fromAsset(path.join(__dirname, '/${basename(outdir)}')),`
@@ -490,7 +490,7 @@ function newLambdaHandler(entrypoint, trigger) {
     'esbuild',
     '--bundle',
     entry,
-    '--target="node14"',
+    '--target="node16"',
     '--platform="node"',
     `--outfile="${outfile}"`,
     '--external:aws-sdk',
@@ -663,7 +663,7 @@ function newEcsTask(entrypoint) {
   df.line('FROM public.ecr.aws/amazonlinux/amazonlinux:2');
   df.line();
   // Install node the regular way...
-  df.line('RUN curl -sL https://rpm.nodesource.com/setup_16.x | bash - \\');
+  df.line('RUN curl -sL https://rpm.nodesource.com/setup_18.x | bash - \\');
   df.line(' && yum update -y \\');
   df.line(' && yum install -y git nodejs \\');
   // Clean up the yum cache in the interest of image size
@@ -687,7 +687,7 @@ function newEcsTask(entrypoint) {
     'esbuild',
     '--bundle',
     ecsMain,
-    '--target="node16"',
+    '--target="node18"',
     '--platform="node"',
     `--outfile="$${BUNDLE_DIR_ENV}/${dockerEntry}"`,
     '--sourcemap',

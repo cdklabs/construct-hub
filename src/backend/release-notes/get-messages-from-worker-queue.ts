@@ -11,7 +11,7 @@ export class GetMessagesFromWorkerQueue extends lambda.Function {
     super(scope, id, {
       description: 'backend/release-notes/get-messages-from-worker-queue.lambda.ts',
       ...props,
-      runtime: lambda.Runtime.NODEJS_14_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/get-messages-from-worker-queue.lambda.bundle')),
     });

@@ -11,7 +11,7 @@ export class RedriveStateMachine extends lambda.Function {
     super(scope, id, {
       description: 'backend/orchestration/redrive-state-machine.lambda.ts',
       ...props,
-      runtime: lambda.Runtime.NODEJS_14_X,
+      runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/redrive-state-machine.lambda.bundle')),
     });
