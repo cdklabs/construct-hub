@@ -434,7 +434,7 @@ function newLambdaHandler(entrypoint, trigger) {
   ts.line();
   ts.open(
     `export class ${className} extends lambda.${
-      isSingleton ? 'SingletonFunction' : 'Function'
+    isSingleton ? 'SingletonFunction' : 'Function'
     } {`
   );
   // NOTE: unlike the array splat (`[...arr]`), the object splat (`{...obj}`) is
@@ -665,6 +665,7 @@ function newEcsTask(entrypoint) {
   // Install node the regular way...
   df.line('RUN curl -fsSL https://rpm.nodesource.com/setup_16.x | bash - \\');
   df.line(' && yum update -y \\');
+  df.line(' && yum upgrade -y \\');
   df.line(' && yum install -y git nodejs \\');
   // Clean up the yum cache in the interest of image size
   df.line(' && yum clean all \\');
