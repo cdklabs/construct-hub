@@ -69,7 +69,7 @@ const project = new cdk.JsiiProject({
 
   peerDeps: peerDeps,
 
-  minNodeVersion: '14.17.0',
+  minNodeVersion: '14.18.0',
 
   pullRequestTemplateContents: [
     '',
@@ -434,7 +434,7 @@ function newLambdaHandler(entrypoint, trigger) {
   ts.line();
   ts.open(
     `export class ${className} extends lambda.${
-      isSingleton ? 'SingletonFunction' : 'Function'
+    isSingleton ? 'SingletonFunction' : 'Function'
     } {`
   );
   // NOTE: unlike the array splat (`[...arr]`), the object splat (`{...obj}`) is
