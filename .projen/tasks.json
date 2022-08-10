@@ -529,7 +529,7 @@
       },
       "steps": [
         {
-          "exec": "esbuild --bundle src/backend/transliterator/transliterator.ecs-entrypoint.ts --target=\"node18\" --platform=\"node\" --outfile=\"$BUNDLE_DIR/index.js\" --sourcemap"
+          "exec": "esbuild --bundle src/backend/transliterator/transliterator.ecs-entrypoint.ts --target=\"node16\" --platform=\"node\" --outfile=\"$BUNDLE_DIR/index.js\" --sourcemap"
         },
         {
           "exec": "esbuild --bundle node_modules/jsii-rosetta/lib/translate_all_worker.js --target=\"node16\" --platform=\"node\" --outfile=\"$BUNDLE_DIR/translate_all_worker.js\" --sourcemap  --tsconfig=tsconfig.dev.json"
@@ -547,7 +547,7 @@
           "exec": "esbuild --bundle node_modules/jsii-rosetta/lib/translate_all_worker.js --target=\"node16\" --platform=\"node\" --outfile=\"$BUNDLE_DIR/translate_all_worker.js\" --sourcemap  --tsconfig=tsconfig.dev.json"
         },
         {
-          "exec": "esbuild --bundle src/backend/transliterator/transliterator.ecs-entrypoint.ts --target=\"node18\" --platform=\"node\" --outfile=\"$BUNDLE_DIR/index.js\" --sourcemap --watch"
+          "exec": "esbuild --bundle src/backend/transliterator/transliterator.ecs-entrypoint.ts --target=\"node16\" --platform=\"node\" --outfile=\"$BUNDLE_DIR/index.js\" --sourcemap --watch"
         }
       ]
     },

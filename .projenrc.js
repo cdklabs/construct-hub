@@ -663,8 +663,9 @@ function newEcsTask(entrypoint) {
   df.line('FROM public.ecr.aws/amazonlinux/amazonlinux:2');
   df.line();
   // Install node the regular way...
-  df.line('RUN curl -sL https://rpm.nodesource.com/setup_18.x | bash - \\');
+  df.line('RUN curl -fsSL https://rpm.nodesource.com/setup_16.x | bash - \\');
   df.line(' && yum update -y \\');
+  df.line(' && yum upgrade -y \\');
   df.line(' && yum install -y git nodejs \\');
   // Clean up the yum cache in the interest of image size
   df.line(' && yum clean all \\');
@@ -687,7 +688,7 @@ function newEcsTask(entrypoint) {
     'esbuild',
     '--bundle',
     ecsMain,
-    '--target="node18"',
+    '--target="node16"',
     '--platform="node"',
     `--outfile="$${BUNDLE_DIR_ENV}/${dockerEntry}"`,
     '--sourcemap',
