@@ -2737,7 +2737,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 61d60f028bc599a2c9ab132cbcfb8bf445ced12bd395226e9bd519c184ac8a12.zip
+        S3Key: 548eb578125b5be51c85b48c0a1f3f3575f8b607662961efc0bd64e4f8d9e6fa.zip
       Role:
         Fn::GetAtt:
           - ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE
@@ -2921,7 +2921,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 4edac9a32c5fa60da5cafe31cda0e1f159379b9e5a34ce716c4874402b3a8ce4.zip
+        S3Key: bb9e63835682ffaeb86074f1ee1fff4c75969bac0dab44c62cc897f710475be1.zip
       Role:
         Fn::GetAtt:
           - ConstructHubStatsServiceRole48DCA379
@@ -3072,7 +3072,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 310fb96e23069e3344b25360737415eb794d352027d341295e239fc15b4d8d03.zip
+        S3Key: d6e987049ddb1313cc3dcc312e9bad9285f88b67007f6e3acfe18e0e8afe4fbb.zip
       Role:
         Fn::GetAtt:
           - ConstructHubVersionTrackerServiceRole721EE863
@@ -3297,7 +3297,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 510f17c968b07a87751d07c5627493bdefdfb01f4e392f24dd0e74f939424384.zip
+        S3Key: 495695a6d325354b59cc52c86843d310e64adc659fdef203bda6647c29f2d5cc.zip
       Role:
         Fn::GetAtt:
           - ConstructHubFeedBuilderReleaseNotesUpdateFeedServiceRoleC857E364
@@ -3484,7 +3484,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: dffd491c222d20060a9208e77edc4d8014852e5168097a227acf92947ae815cf.zip
+        S3Key: 9797e5559cb1840dd7e0e78db420ca9a43e9215a65dd39302e057be74e5e7c52.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
@@ -3613,7 +3613,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: ba501b4122c94d588ede7fba020f1ffa1d6da7b26f010b9d9cb362669276afdc.zip
+        S3Key: 344f00ca1c9cd5c57b67332a838240cbfc4ce680583b9ec0b29d6be377a8718d.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationNeedsCatalogUpdateServiceRoleE6BF31C3
@@ -3638,6 +3638,113 @@ Resources:
       ClusterSettings:
         - Name: containerInsights
           Value: enabled
+  ConstructHubOrchestrationClusterMonitorServiceRoleA4055F89:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  ConstructHubOrchestrationClusterMonitorServiceRoleDefaultPolicy258B6050:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - ecs:ListTasks
+              - ecs:DescribeTasks
+              - ecs:StopTask
+            Condition:
+              ArnEquals:
+                ecs:cluster:
+                  Fn::GetAtt:
+                    - ConstructHubOrchestrationCluster3D6F0081
+                    - Arn
+            Effect: Allow
+            Resource:
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - ":ecs:"
+                    - Ref: AWS::Region
+                    - ":"
+                    - Ref: AWS::AccountId
+                    - :container-instance/
+                    - Ref: ConstructHubOrchestrationCluster3D6F0081
+                    - /*
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - ":ecs:"
+                    - Ref: AWS::Region
+                    - ":"
+                    - Ref: AWS::AccountId
+                    - :task/
+                    - Ref: ConstructHubOrchestrationCluster3D6F0081
+                    - /*
+        Version: 2012-10-17
+      PolicyName: ConstructHubOrchestrationClusterMonitorServiceRoleDefaultPolicy258B6050
+      Roles:
+        - Ref: ConstructHubOrchestrationClusterMonitorServiceRoleA4055F89
+  ConstructHubOrchestrationClusterMonitorB0D4B645:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: 231e8badedcca80f6fe42837d7aa73505a6ca08eced142b61853a0ae197509f3.zip
+      Role:
+        Fn::GetAtt:
+          - ConstructHubOrchestrationClusterMonitorServiceRoleA4055F89
+          - Arn
+      Description: backend/ecs-task-monitor/monitor.lambda.ts
+      Environment:
+        Variables:
+          CLUSTER_NAME:
+            Ref: ConstructHubOrchestrationCluster3D6F0081
+          TIMEOUT_MILLIS: "7800000"
+      Handler: index.handler
+      Runtime: nodejs16.x
+    DependsOn:
+      - ConstructHubOrchestrationClusterMonitorServiceRoleDefaultPolicy258B6050
+      - ConstructHubOrchestrationClusterMonitorServiceRoleA4055F89
+  ConstructHubOrchestrationClusterMonitorSchedule4950645D:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Periodically runs the ECS Task Monitor
+        (dev/ConstructHub/Orchestration/Cluster/Monitor)
+      ScheduleExpression: rate(15 minutes)
+      State: ENABLED
+      Targets:
+        - Arn:
+            Fn::GetAtt:
+              - ConstructHubOrchestrationClusterMonitorB0D4B645
+              - Arn
+          Id: Target0
+  ConstructHubOrchestrationClusterMonitorScheduleAllowEventRuledevConstructHubOrchestrationClusterMonitor4990E760DBA143C5:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - ConstructHubOrchestrationClusterMonitorB0D4B645
+          - Arn
+      Principal: events.amazonaws.com
+      SourceArn:
+        Fn::GetAtt:
+          - ConstructHubOrchestrationClusterMonitorSchedule4950645D
+          - Arn
   ConstructHubOrchestrationCluster4C9C8AA6:
     Type: AWS::ECS::ClusterCapacityProviderAssociations
     Properties:
@@ -4813,7 +4920,7 @@ Resources:
                   - repositoryEndpoint
           Essential: true
           Image:
-            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:1a512d5e5e91e2fde33a5cc894ccda0c938bf556083c28bcfeb821f8169844a4
+            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:467cb6998e907a829915a047a96162f3fca8a2d1a845692369b2f53c9d19510b
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -5181,7 +5288,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 1779a26603bcdbea6c748201ba29143fa32ba3698670b992da4f5d778d82107b.zip
+        S3Key: 8770de58708d788aa1ec5c8a8e787b95d632d92324d5caf0c36331c73f020360.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationRedriveServiceRoleB84EFF33
@@ -6389,7 +6496,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: e5a7a9419dccf725422407254bc878452552e45fa8bfa7668a3fefe101279bfc.zip
+        S3Key: 014a5875186a1efc727dea69e046b4fe817ecfacaf729b031618e1a5746abc42.zip
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
@@ -6562,7 +6669,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: ef52b78c15934ba11a2decc680868d031c113272ecd7c663f81f3db6bc25512d.zip
+        S3Key: bdf80c2c89a51ea6a00bf8e918bb3e6d539d90ad3042c4b37915c2277d68481b.zip
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionReprocessWorkflowFunctionServiceRoleA59056B1
@@ -7470,7 +7577,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 4f69d9b5f9f03592053ce6d5aa9a170e89662a722bbb00a2258c03167b46c80a.zip
+        S3Key: f7f3e4c9a60d8696dba84cf51c44382ff56dd78960bbb3be5bebd11442dbf6b1.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50
@@ -7625,7 +7732,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: e8f63c571593466b98c8417b71efc5391da2e4551752544a232b15149e18c8fa.zip
+        S3Key: 55fd8c5eaf71b986bd379c182180fc94917b514361aeb127db95ef1b1ec92774.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsServiceRoleAC3F7AA6
@@ -7716,7 +7823,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: fd4db3b79e1d941f51ea9eac37e2e5545b18aae99b03b270cc578ad7c86fd367.zip
+        S3Key: 81871d01744762ccc30b7a0a4903bffeaf62bff048debe52a37725ba03e0e69d.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2
@@ -8298,7 +8405,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 558690119024db785aba234a72bfd0ffddd07489f471a1fbd32f26024dd400f3.zip
+        S3Key: 13db77aba611283be89907d27eabe69b2d4d735fc40245e533e82f43d6087ed5.zip
       Role:
         Fn::GetAtt:
           - ConstructHubInventoryCanaryServiceRole7684EDDE
@@ -9819,7 +9926,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: b278376fd974928ea4cf898520305fcfa487e8466b37ae900e52b0444e476c23.zip
+        S3Key: 86f7698453f70833efe284198c8e076b9fb2e21f6f0d9913c04d9c50c51ced1a.zip
       Role:
         Fn::GetAtt:
           - PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfServiceRole060BA12C

@@ -35,6 +35,7 @@ import { RUNBOOK_URL } from '../../runbook-url';
 import { gravitonLambdaIfAvailable } from '../_lambda-architecture';
 import { CatalogBuilder } from '../catalog-builder';
 import { DenyList } from '../deny-list';
+import { EcsTaskMonitor } from '../ecs-task-monitor';
 import { FeedBuilder } from '../feed-builder';
 import {
   ASSEMBLY_KEY_SUFFIX,
@@ -335,6 +336,10 @@ export class Orchestration extends Construct {
       containerInsights: true,
       enableFargateCapacityProviders: true,
       vpc: props.vpc,
+    });
+    new EcsTaskMonitor(this.ecsCluster, 'Monitor', {
+      cluster: this.ecsCluster,
+      timeout: Duration.minutes(130), // 2 hours and 10 minutes, to have buffer...
     });
 
     this.transliterator = new Transliterator(this, 'Transliterator', props);
