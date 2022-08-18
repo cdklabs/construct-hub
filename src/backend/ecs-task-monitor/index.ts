@@ -30,12 +30,14 @@ export interface EcsTaskMonitorProps {
  * running for longer than a specified timeout.
  */
 export class EcsTaskMonitor extends Construct {
+  private readonly period = Duration.minutes(15);
+
   public constructor(scope: Construct, id: string, props: EcsTaskMonitorProps) {
     super(scope, id);
 
-    if (props.timeout.toMinutes({ integral: false }) < 15) {
+    if (props.timeout.toMinutes({ integral: false }) < this.period.toMinutes({ integral: false})) {
       throw new Error(
-        `The ECS task monitor timeout must be at least 15 minutes (received ${props.timeout}).`
+        `The ECS task monitor timeout must be at least ${this.period} (received ${props.timeout}).`
       );
     }
 
@@ -90,7 +92,7 @@ export class EcsTaskMonitor extends Construct {
     new aws_events.Rule(this, 'Schedule', {
       description: `Periodically runs the ECS Task Monitor (${this.node.path})`,
       enabled: true,
-      schedule: aws_events.Schedule.rate(Duration.minutes(15)),
+      schedule: aws_events.Schedule.rate(this.period),
       targets: [new aws_events_targets.LambdaFunction(resource)],
     });
   }
@@ -102,6 +104,7 @@ export class EcsTaskMonitor extends Construct {
     opts?: aws_cloudwatch.MetricOptions
   ): aws_cloudwatch.Metric {
     return new aws_cloudwatch.Metric({
+      period: this.period,
       statistic: aws_cloudwatch.Statistic.MAXIMUM,
       ...opts,
       namespace: METRICS_NAMESPACE,
@@ -116,6 +119,7 @@ export class EcsTaskMonitor extends Construct {
     opts?: aws_cloudwatch.MetricOptions
   ): aws_cloudwatch.Metric {
     return new aws_cloudwatch.Metric({
+      period: this.period,
       statistic: aws_cloudwatch.Statistic.AVERAGE,
       ...opts,
       namespace: METRICS_NAMESPACE,
@@ -130,6 +134,7 @@ export class EcsTaskMonitor extends Construct {
     opts?: aws_cloudwatch.MetricOptions
   ): aws_cloudwatch.Metric {
     return new aws_cloudwatch.Metric({
+      period: this.period,
       statistic: aws_cloudwatch.Statistic.MAXIMUM,
       ...opts,
       namespace: METRICS_NAMESPACE,
