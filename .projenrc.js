@@ -1002,9 +1002,11 @@ project.tasks
 
 generateSpdxLicenseEnum();
 
+// Escape hatch to fix "JavaScript heap out of memory" in GitHub Actions
 const buildWorkflow = project.tryFindObjectFile('.github/workflows/build.yml');
 buildWorkflow.addOverride(
   'jobs.build.steps.3.env.NODE_OPTIONS',
-  '--max-old-space-size=8192'
+  '--max-old-space-size=8192' // 8GB
 );
+
 project.synth();
