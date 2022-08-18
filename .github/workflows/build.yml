@@ -27,6 +27,8 @@ jobs:
         run: yarn install --check-files
       - name: build
         run: npx projen build
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
       - id: self_mutation
         name: Find mutations
         run: |-

@@ -2,7 +2,7 @@ const fs = require('fs');
 const { basename, join, dirname, relative } = require('path');
 const Case = require('case');
 const glob = require('glob');
-const { SourceCode, JsonFile, cdk, github } = require('projen');
+const { SourceCode, JsonFile, JsonPatch, cdk, github } = require('projen');
 const spdx = require('spdx-license-list');
 const uuid = require('uuid');
 
@@ -1001,5 +1001,12 @@ project.tasks
   .prependExec(bundleWorkerPool);
 
 generateSpdxLicenseEnum();
+
+// Escape hatch to fix "JavaScript heap out of memory" in GitHub Actions
+const buildWorkflow = project.tryFindObjectFile('.github/workflows/build.yml');
+buildWorkflow.addOverride(
+  'jobs.build.steps.3.env.NODE_OPTIONS',
+  '--max-old-space-size=8192' // 8GB
+);
 
 project.synth();
