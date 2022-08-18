@@ -2921,7 +2921,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 4ce37763e45db902ac398e64c30159941bbbee6f4fe01893e068e0d351ca5c31.zip
+        S3Key: 0420ab92d208fa9c5a1e0415846eab948e9fb61acc067b44d446017251f60fdd.zip
       Role:
         Fn::GetAtt:
           - ConstructHubStatsServiceRole48DCA379
@@ -3072,7 +3072,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 874e241c7479180b31cad3cc9a3d4384255aa0a7e5e684e8b331b8846e6da63a.zip
+        S3Key: 7cea797046ecff56dfe76dc012d6f57a6f44b67cf25c6ab2ab45398d15f97da4.zip
       Role:
         Fn::GetAtt:
           - ConstructHubVersionTrackerServiceRole721EE863
@@ -3297,7 +3297,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 510f17c968b07a87751d07c5627493bdefdfb01f4e392f24dd0e74f939424384.zip
+        S3Key: 926625945e0e943199ca4886b6c111b494fa88324adb0d365d1955072a0bfda1.zip
       Role:
         Fn::GetAtt:
           - ConstructHubFeedBuilderReleaseNotesUpdateFeedServiceRoleC857E364
@@ -3357,7 +3357,7 @@ Resources:
                 - ConstructHubOrchestrationDLQ9C6D9BD4
                 - QueueName
             - >-
-
+              
               Warning: State Machines executions that sent messages to the DLQ will not show as "failed".
       AlarmName: dev/ConstructHub/Orchestration/DLQ/NotEmpty
       Metrics:
@@ -3484,7 +3484,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 66f081eb1d3b5566cfeae325a9a799ad88876c1c099fb14bb57642d8c57fa61b.zip
+        S3Key: 2d4953b83fc357c621daa6253075b90e1f70793e68e18026c21afcc4bdb99641.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
@@ -3551,7 +3551,7 @@ Resources:
               Catalog Builder: /lambda/home#/functions/
             - Ref: ConstructHubOrchestrationCatalogBuilder7C964951
             - >-
-
+              
 
               RUNBOOK: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
       AlarmName: dev/ConstructHub/Orchestration/CatalogBuilder/ShrinkingCatalog
@@ -4813,7 +4813,7 @@ Resources:
                   - repositoryEndpoint
           Essential: true
           Image:
-            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:357785b7974b67fbca87c5f946a42ddd4faa204c43ac543f6aaf7dc2a8c5cf16
+            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:c1529a50302bfbc638c28d820a81e23418f4bd0b994405424f062ca1d8d114f1
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -5118,7 +5118,7 @@ Resources:
               Direct link to state machine: /states/home#/statemachines/view/
             - Ref: ConstructHubOrchestration39161A46
             - >-
-
+              
               Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!
       AlarmName: dev/ConstructHub/Orchestration/Resource/ExecutionsFailed
       Dimensions:
@@ -6389,7 +6389,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 802507369722f551af083e8dea4e0087832758ab9752e47f4889e70b1cd4e9ca.zip
+        S3Key: 61703c04f06e73de51fec3ce0d44a4b4aea723ec83198bd4cf1b5185ca3ea078.zip
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
@@ -6740,7 +6740,7 @@ Resources:
                 - ConstructHubIngestionDLQ3E96A5F2
                 - QueueName
             - |-
-
+              
               Direct link to the function: /lambda/home#/functions/
             - Ref: ConstructHubIngestion407909CE
       AlarmName: dev/ConstructHub/Ingestion/DLQNotEmpty
