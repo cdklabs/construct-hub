@@ -10,7 +10,7 @@ import {
 } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { Environment, METRICS_NAMESPACE, MetricName } from './constants';
-import { Monitor } from './monitor';
+import { Monitor as Handler } from './monitor';
 
 export interface EcsTaskMonitorProps {
   /**
@@ -35,17 +35,32 @@ export class EcsTaskMonitor extends Construct {
 
     if (props.timeout.toMinutes({ integral: false }) < 15) {
       throw new Error(
-        'The ECS task monitor timeout must be at least 15 minutes.'
+        `The ECS task monitor timeout must be at least 15 minutes (received ${props.timeout}).`
       );
     }
 
-    const resource = new Monitor(this, 'Resource', {
+    const resource = new Handler(this, 'Resource', {
+      description: `[${this.node.path}] Monitors tasks on the ECS cluster ${props.cluster.clusterName}`,
       environment: {
         [Environment.CLUSTER_NAME]: props.cluster.clusterName,
         [Environment.TIMEOUT_MILLIS]: props.timeout.toMilliseconds().toFixed(),
       },
+      reservedConcurrentExecutions: 1,
+      timeout: Duration.minutes(15),
     });
 
+    /**
+     * These permissions might look surprising... Here's the TL;DR:
+     *
+     * - ListTasks operates on a container-instance
+     * - DescribeTasks and StopTask operates on tasks
+     *
+     * The ARN formats follow:
+     * - Container Instance ARN: arn:${Partition}:ecs:${Region}:${Account}:container-instance/${ClusterName}/${ContainerInstanceId}
+     * - Task ARN:               arn:${Partition}:ecs:${Region}:${Account}:task/${ClusterName}/${TaskId}
+     *
+     * @see https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelasticcontainerservice.html
+     */
     resource.addToRolePolicy(
       new aws_iam.PolicyStatement({
         actions: ['ecs:ListTasks', 'ecs:DescribeTasks', 'ecs:StopTask'],
@@ -83,28 +98,28 @@ export class EcsTaskMonitor extends Construct {
   /**
    * The age of all active tasks on the monitored ECS cluster.
    */
-  public metricTaskAge(
+  public metricActiveTaskAge(
     opts?: aws_cloudwatch.MetricOptions
   ): aws_cloudwatch.Metric {
     return new aws_cloudwatch.Metric({
       statistic: aws_cloudwatch.Statistic.MAXIMUM,
       ...opts,
       namespace: METRICS_NAMESPACE,
-      metricName: MetricName.TASK_AGE,
+      metricName: MetricName.ACTIVE_TASK_AGE,
     });
   }
 
   /**
    * The count of active tasks on the monitored ECS cluster.
    */
-  public metricTaskCount(
+  public metricActiveTaskCount(
     opts?: aws_cloudwatch.MetricOptions
   ): aws_cloudwatch.Metric {
     return new aws_cloudwatch.Metric({
       statistic: aws_cloudwatch.Statistic.AVERAGE,
       ...opts,
       namespace: METRICS_NAMESPACE,
-      metricName: MetricName.TASK_COUNT,
+      metricName: MetricName.ACTIVE_TASK_COUNT,
     });
   }
 

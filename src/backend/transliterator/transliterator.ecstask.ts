@@ -102,6 +102,9 @@ export function handler(
     const submodules = Object.keys(assembly.submodules ?? {}).map(
       (s) => s.split('.')[1]
     );
+    console.log(
+      `Assembly ${assembly.name} has ${submodules.length} submodules.`
+    );
 
     console.log(`Fetching package: ${event.package.key}`);
     const tarballExists = await aws.s3ObjectExists(
@@ -161,6 +164,8 @@ export function handler(
       // if the package used to not be installable, remove the marker for it.
       await unmarkPackage(constants.UNINSTALLABLE_PACKAGE_SUFFIX);
       for (const language of DocumentationLanguage.ALL) {
+        debugger;
+
         if (event.languages && !event.languages[language.toString()]) {
           console.log(`Skipping language ${language} as it was not requested!`);
           continue;
@@ -444,3 +449,47 @@ interface S3Object {
   readonly key: string;
   readonly versionId?: string;
 }
+
+async function main() {
+  const message = {
+    bucket: 'constructhub-prod-constructhubpackagedatadc5ef35e-rkjascvjo8m5',
+    assembly: {
+      key: 'data/aws-cdk-lib/v2.19.0/assembly.json',
+      versionId: 'aE4NBT9QYVdJg0XEtaUDBJzcMlRQrPmc',
+    },
+    package: {
+      key: 'data/aws-cdk-lib/v2.19.0/package.tgz',
+      versionId: '7nZhlixz2rTBX6rVTfovEjar4MT.447c',
+    },
+    metadata: {
+      key: 'data/aws-cdk-lib/v2.19.0/metadata.json',
+      versionId: 'NtMJtUBj5x9HsU5.AUyPhnganlShnDYi',
+    },
+    $TaskExecution: {
+      StartTime: '2022-08-16T21:13:41.176Z',
+      Id: 'arn:aws:states:us-east-1:573688003310:execution:ConstructHub-Prod.ConstructHub.Orchestration:0a372bbf-e798-4e4f-babf-923bc34d5831',
+      RoleArn:
+        'arn:aws:iam::573688003310:role/ConstructHub-Prod-ConstructHubOrchestrationRoleF4C-H0XHAEH2C72E',
+      Name: '0a372bbf-e798-4e4f-babf-923bc34d5831',
+    },
+    error: { Error: 'States.Timeout', Cause: '' },
+    _redrive: {
+      lambdaRequestId: '277a4652-8b1c-4d41-9f6c-ccd73bf3097a',
+      lambdaLogGroupName:
+        '/aws/lambda/ConstructHub-Prod-ConstructHubOrchestrationRedrive-NL2duBKlSiL9',
+      lambdaLogStreamName:
+        '2022/08/16/[$LATEST]c58469c1c44b4cd2a30b69f0f1c9c1b4',
+    },
+    docGen: {
+      command: [
+        '{"bucket":"constructhub-prod-constructhubpackagedatadc5ef35e-rkjascvjo8m5","assembly":{"key":"data/aws-cdk-lib/v2.19.0/assembly.json","versionId":"aE4NBT9QYVdJg0XEtaUDBJzcMlRQrPmc"},"package":{"key":"data/aws-cdk-lib/v2.19.0/package.tgz","versionId":"7nZhlixz2rTBX6rVTfovEjar4MT.447c"},"metadata":{"key":"data/aws-cdk-lib/v2.19.0/metadata.json","versionId":"NtMJtUBj5x9HsU5.AUyPhnganlShnDYi"},"$TaskExecution":{"StartTime":"2022-08-16T21:13:41.176Z","Id":"arn:aws:states:us-east-1:573688003310:execution:ConstructHub-Prod.ConstructHub.Orchestration:0a372bbf-e798-4e4f-babf-923bc34d5831","RoleArn":"arn:aws:iam::573688003310:role/ConstructHub-Prod-ConstructHubOrchestrationRoleF4C-H0XHAEH2C72E","Name":"0a372bbf-e798-4e4f-babf-923bc34d5831"},"error":{"Error":"States.Timeout","Cause":""},"_redrive":{"lambdaRequestId":"277a4652-8b1c-4d41-9f6c-ccd73bf3097a","lambdaLogGroupName":"/aws/lambda/ConstructHub-Prod-ConstructHubOrchestrationRedrive-NL2duBKlSiL9","lambdaLogStreamName":"2022/08/16/[$LATEST]c58469c1c44b4cd2a30b69f0f1c9c1b4"}}',
+      ],
+    },
+  };
+  return handler({ ...message, languages: { java: true } });
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

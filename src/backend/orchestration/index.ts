@@ -194,6 +194,11 @@ export class Orchestration extends Construct {
   public readonly ecsCluster: ICluster;
 
   /**
+   * The ECS task monitor that watches over the `ecsCluster`.
+   */
+  public readonly ecsTaskMonitor: EcsTaskMonitor;
+
+  /**
    * The transliterator used by this orchestration workflow.
    */
   public readonly transliterator: Transliterator;
@@ -332,14 +337,16 @@ export class Orchestration extends Construct {
           .otherwise(new Succeed(this, 'Done'))
       );
 
+    const transliteratorTimeout = Duration.hours(2);
+
     this.ecsCluster = new Cluster(this, 'Cluster', {
       containerInsights: true,
       enableFargateCapacityProviders: true,
       vpc: props.vpc,
     });
-    new EcsTaskMonitor(this.ecsCluster, 'Monitor', {
+    this.ecsTaskMonitor = new EcsTaskMonitor(this.ecsCluster, 'Monitor', {
       cluster: this.ecsCluster,
-      timeout: Duration.minutes(130), // 2 hours and 10 minutes, to have buffer...
+      timeout: transliteratorTimeout.plus(Duration.minutes(10)),
     });
 
     this.transliterator = new Transliterator(this, 'Transliterator', props);
@@ -368,7 +375,7 @@ export class Orchestration extends Construct {
             resultPath: '$.docGenOutput',
             // aws-cdk-lib succeeds in roughly 1 hour, so this should give us
             // enough of a buffer and prorably account for all other libraries out there.
-            timeout: Duration.hours(2),
+            timeout: transliteratorTimeout,
             vpcSubnets: props.vpcSubnets,
             securityGroups: props.vpcSecurityGroups,
             // The task code sends a heartbeat back every minute, but in rare

@@ -1,8 +1,8 @@
 export const METRICS_NAMESPACE = 'ConstructHub/EcsTaskMonitor';
 
 export const enum MetricName {
-  TASK_AGE = 'TaskAge',
-  TASK_COUNT = 'TaskCount',
+  ACTIVE_TASK_AGE = 'ActiveTaskAge',
+  ACTIVE_TASK_COUNT = 'ActiveTaskCount',
   KILLED_TASK_COUNT = 'KilledTaskCount',
 }
 

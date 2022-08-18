@@ -598,6 +598,35 @@ export class BackendDashboard extends Construct {
         ],
         rightYAxis: { min: 0 },
       }),
+      new GraphWidget({
+        height: 6,
+        width: 12,
+        title: 'ECS Task Monitor',
+        left: [
+          orchestration.ecsTaskMonitor.metricActiveTaskCount({
+            label: 'Active Task Count',
+          }),
+          orchestration.ecsTaskMonitor.metricKilledTaskCount({
+            label: 'Killed Task Count',
+          }),
+        ],
+        leftYAxis: { min: 0 },
+        right: [
+          orchestration.ecsTaskMonitor.metricActiveTaskAge({
+            label: 'Active Task Age (Max)',
+            statistic: Statistic.MAXIMUM,
+          }),
+          orchestration.ecsTaskMonitor.metricActiveTaskAge({
+            label: 'Active Task Age (Avg)',
+            statistic: Statistic.AVERAGE,
+          }),
+          orchestration.ecsTaskMonitor.metricActiveTaskAge({
+            label: 'Active Task Age (Min)',
+            statistic: Statistic.MINIMUM,
+          }),
+        ],
+        rightYAxis: { min: 0 },
+      }),
     ];
 
     for (const language of DocumentationLanguage.ALL) {
