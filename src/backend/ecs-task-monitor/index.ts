@@ -35,7 +35,10 @@ export class EcsTaskMonitor extends Construct {
   public constructor(scope: Construct, id: string, props: EcsTaskMonitorProps) {
     super(scope, id);
 
-    if (props.timeout.toMinutes({ integral: false }) < this.period.toMinutes({ integral: false})) {
+    if (
+      props.timeout.toMinutes({ integral: false }) <
+      this.period.toMinutes({ integral: false })
+    ) {
       throw new Error(
         `The ECS task monitor timeout must be at least ${this.period} (received ${props.timeout}).`
       );
