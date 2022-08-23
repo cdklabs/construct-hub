@@ -4813,7 +4813,7 @@ Resources:
                   - repositoryEndpoint
           Essential: true
           Image:
-            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:8bacc7a88100771d37feb8af56ec24c4edd3374df54e98f3dc00d80896611d88
+            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:674a7319eca8e5125209392ceb2ca80a17bb50a79b32d60617624e00b3338aea
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -4823,6 +4823,10 @@ Resources:
               awslogs-region:
                 Ref: AWS::Region
           Name: Resource
+          Ulimits:
+            - HardLimit: 16384
+              Name: nofile
+              SoftLimit: 1024
       Cpu: "4096"
       ExecutionRoleArn:
         Fn::GetAtt:
