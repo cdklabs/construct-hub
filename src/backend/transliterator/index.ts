@@ -175,7 +175,7 @@ export class Transliterator extends Construct {
     // same EMFILE error. I reason that we are somehow opening between 8192 and 16384
     // files at the same time.
     // For ECS ulimit documentation see: https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_Ulimit.html
-    // For construct hub tracking issue see: tba
+    // For construct hub tracking issue see: https://github.com/cdklabs/construct-hub/issues/982
     this.containerDefinition.addUlimits({
       name: UlimitName.NOFILE, // file descriptors
       softLimit: 1024,
