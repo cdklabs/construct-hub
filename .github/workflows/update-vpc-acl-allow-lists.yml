@@ -23,7 +23,7 @@ jobs:
       - name: Update GitHub IP lists
         run: node ./update-github-ip-allowlist.js
       - name: Make Pull Request
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.PROJEN_GITHUB_TOKEN }}
           branch: automation/update-vpc-acl-allow-lists
