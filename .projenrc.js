@@ -206,7 +206,7 @@ function addVpcAllowListManagement() {
         // And now make a PR if necessary
         {
           name: 'Make Pull Request',
-          uses: 'peter-evans/create-pull-request@v4',
+          uses: 'peter-evans/create-pull-request@v3',
           with: {
             token: project.github.projenCredentials.tokenRef,
             branch: `automation/${workflow.name}`,
