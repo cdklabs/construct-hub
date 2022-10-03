@@ -204,7 +204,7 @@ function addVpcAllowListManagement() {
             'commit-message': `${prTitle}\n\n${prBody}`,
             title: prTitle,
             body: prBody,
-            'team-reviewers': 'construct-ecosystem-team',
+            labels: 'auto-approve',
             author: 'github-actions <github-actions@github.com>',
             committer: 'github-actions <github-actions@github.com>',
             signoff: true,
