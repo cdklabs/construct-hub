@@ -144,20 +144,11 @@ const project = new cdk.JsiiProject({
 });
 
 project.package.addField('resolutions', {
-  // this is coming from construct-hub-webapp, and has no affect on us what s oever
-  // since we consume the already built static assets.
-  // see https://github.com/cdklabs/construct-hub-webapp/blob/main/.projenrc.js#L91
-  'nth-check': '2.0.1',
-
-  // otherwise, two major versions of this exist, which fails typescript compilation
-  // due to duplicate declarations.
-  '@types/eslint': '8.2.1',
-
-  // https://github.com/aws/aws-cdk/issues/18322
-  colors: '1.4.0',
-
   // https://github.com/aws/aws-cdk/issues/20319
   '@types/prettier': '2.6.0',
+
+  // Potential solution to a types problem, got it from https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/62277
+  '@types/express-serve-static-core': '4.17.6',
 });
 
 function addVpcAllowListManagement() {

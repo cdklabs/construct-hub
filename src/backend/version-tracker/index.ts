@@ -87,7 +87,7 @@ export class VersionTracker extends Construct {
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 10_240, // Currently the maximum possible setting
       reservedConcurrentExecutions: 1,
-      timeout: Duration.minutes(1),
+      timeout: Duration.minutes(5),
       tracing: Tracing.ACTIVE,
     });
 
