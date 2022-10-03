@@ -1031,7 +1031,7 @@
       "description": "Run tests",
       "steps": [
         {
-          "exec": "jest --passWithNoTests --all --updateSnapshot --coverageProvider=v8"
+          "exec": "jest --passWithNoTests --all --coverageProvider=v8 --updateSnapshot"
         },
         {
           "spawn": "eslint"
@@ -1041,15 +1041,6 @@
         },
         {
           "spawn": "integ:domain-redirect:assert"
-        }
-      ]
-    },
-    "test:update": {
-      "name": "test:update",
-      "description": "Update jest snapshots",
-      "steps": [
-        {
-          "exec": "jest --updateSnapshot"
         }
       ]
     },
