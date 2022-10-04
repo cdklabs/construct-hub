@@ -50,10 +50,15 @@ const FOLLOWER_RUN_RATE = Duration.minutes(5);
  * Alarm if we haven't seen changes over this time
  *
  * The CouchDB leader occasionally just starts tossing out timeouts and they
- * may last for a good while. We need to be conservative with our alarms
- * otherwise we're just going to be too spammy.
+ * may last for a good while.
+ *
+ * - On 2022-09-29 it was slow for 12 hours.
+ * - On 2022-10-04 it was slow for 2 hours.
+ *
+ * This is leading to extreme alarm fatigue, and also this alarm is non-actionable.
+ * Let's be very very conservative here.
  */
-const NO_CHANGES_ALARM_DURATION = Duration.hours(1);
+const NO_CHANGES_ALARM_DURATION = Duration.hours(24);
 
 export interface NpmJsProps {
   /**
