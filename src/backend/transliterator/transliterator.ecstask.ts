@@ -8,7 +8,7 @@ import * as docgen from 'jsii-docgen';
 import { MarkdownRenderer } from 'jsii-docgen/lib/docgen/render/markdown-render';
 import { JsiiEntity } from 'jsii-docgen/lib/docgen/schema';
 import { CacheStrategy } from '../../caching';
-import type { TransliteratorInput } from '../payload-schema';
+import type { S3ObjectVersion, TransliteratorInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
 import { logInWithCodeArtifact } from '../shared/code-artifact.lambda-shared';
 import { compressContent } from '../shared/compress-content.lambda-shared';
@@ -102,6 +102,8 @@ export function handler(
     const submodules = Object.keys(assembly.submodules ?? {}).map(
       (s) => s.split('.')[1]
     );
+
+    restrictSubmoduleCountToReturnable(event, submodules);
 
     console.log(`Fetching package: ${event.package.key}`);
     const tarballExists = await aws.s3ObjectExists(
@@ -199,9 +201,11 @@ export function handler(
                   Unit.Bytes
                 );
 
-                const jsonKey = event.assembly.key.replace(
-                  /\/[^/]+$/,
-                  constants.docsKeySuffix(lang, submodule, 'json')
+                const jsonKey = formatArtifactKey(
+                  event.assembly,
+                  lang,
+                  submodule,
+                  'json'
                 );
                 console.log(`Uploading ${jsonKey}`);
                 const jsonUpload = uploadFile(
@@ -231,9 +235,11 @@ export function handler(
                   Unit.Bytes
                 );
 
-                const key = event.assembly.key.replace(
-                  /\/[^/]+$/,
-                  constants.docsKeySuffix(lang, submodule, 'md')
+                const key = formatArtifactKey(
+                  event.assembly,
+                  lang,
+                  submodule,
+                  'md'
                 );
                 console.log(`Uploading ${key}`);
                 const upload = uploadFile(
@@ -399,6 +405,18 @@ function anchorFormatter(type: JsiiEntity) {
   }
 }
 
+function formatArtifactKey(
+  assemblyObject: S3ObjectVersion,
+  lang: DocumentationLanguage,
+  submodule: string | undefined,
+  extension: string
+) {
+  return assemblyObject.key.replace(
+    /\/[^/]+$/,
+    constants.docsKeySuffix(lang, submodule, extension)
+  );
+}
+
 function linkFormatter(lang: docgen.Language) {
   const formatter = (type: JsiiEntity) => {
     const name = getAssemblyRelativeName(type); // BucketProps.Initializer.parameter.accessControl
@@ -443,4 +461,63 @@ interface S3Object {
   readonly bucket: string;
   readonly key: string;
   readonly versionId?: string;
+}
+
+/**
+ * This script returns all files uploaded as a result of translation.
+ *
+ * It is (2 files for every language) for the (assembly + each submodule).
+ *
+ * This may exceed the maximum size of the Step Functions return value when
+ * there are very many submodules, such as a pathological case of
+ * `@dschmidt/google-provider@0.0.1` has (there are more than 600 submodules,
+ * probably because of a configuration mistake).
+ *
+ * We could deal with this by changing the protocol (large scale changes and
+ * many tests necessary). Given that it's probably an accident, we'll just limit
+ * how many submodules we will translate.
+ *
+ * We could hardcode to a fixed number, but that could still blow up given long
+ * enough names. So instead we'll estimate the payload size added by each submodule
+ * and use that to cap.
+ */
+function restrictSubmoduleCountToReturnable(
+  event: TransliteratorInput,
+  submodules: string[]
+) {
+  const MAX_PAYLOAD = 250_000; // A little less than the actual size to catch extra separators
+
+  let cumSize = estimateSize(undefined); // Assembly level docs
+  for (let i = 0; i < submodules.length; i++) {
+    cumSize += estimateSize(submodules[i]);
+    if (cumSize > MAX_PAYLOAD) {
+      // submodule 'i' doesn't fit anymore
+      console.log(
+        `Not all submodules fit in response. Documenting only ${i} out of ${submodules.length} submodules.`
+      );
+      submodules.splice(i, submodules.length - i);
+      return;
+    }
+  }
+
+  /**
+   * Estimate the size added to the return array by adding this submodule
+   */
+  function estimateSize(submodule: string | undefined) {
+    const quotesAndComma = 3;
+
+    return (
+      DocumentationLanguage.ALL
+        // For each requested language
+        .filter((l) => event?.languages?.[l.toString()])
+        // A .json and .md file plus their quotes and a comma
+        .map(
+          (l) =>
+            formatArtifactKey(event.assembly, l, submodule, 'json').length +
+            formatArtifactKey(event.assembly, l, submodule, 'md').length +
+            2 * quotesAndComma
+        )
+        .reduce((x, a) => x + a, 0)
+    );
+  }
 }
