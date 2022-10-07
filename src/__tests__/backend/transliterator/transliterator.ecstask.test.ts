@@ -23,7 +23,7 @@ import { handler } from '../../../backend/transliterator/transliterator.ecstask'
 import { writeFile } from '../../../backend/transliterator/util';
 
 // looks like we are just over the default limit now
-jest.setTimeout(6000);
+jest.setTimeout(60_000);
 
 jest.mock('jsii-docgen/lib/docgen/render/markdown-render');
 jest.mock('jsii-docgen/lib/docgen/view/documentation');
@@ -451,6 +451,55 @@ test('uploads a file per submodule (unscoped package)', async () => {
   ]);
 });
 
+test('will not translate more submodules than fit in a response', async () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const forPackage = require('jsii-docgen').Documentation
+    .forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
+  forPackage.mockImplementation(async (target: string) => {
+    return new MockDocumentation(target) as unknown as Documentation;
+  });
+
+  // GIVEN
+  const packageName = '@scope/package-with-a-pretty-long-name';
+  const packageVersion = '1.2.3-dev.4';
+  const event: TransliteratorInput = {
+    bucket: 'dummy-bucket',
+    assembly: {
+      key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
+      versionId: 'VersionId',
+    },
+    package: {
+      key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`,
+      versionId: 'VersionId',
+    },
+    languages: { typescript: true },
+  };
+
+  const assembly: spec.Assembly = {
+    targets: { python: {} },
+    submodules: Object.fromEntries(
+      range(10000).map((i) => [`${packageName}.sub${i}`, {}])
+    ),
+  } as any;
+
+  // mock the s3ObjectExists call
+  mockHeadRequest('package.tgz');
+
+  // mock the assembly and tarball requests
+  mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
+
+  // mock the file uploads
+  const writtenKeys = mockPutRequestCollectAll();
+
+  // WHEN
+  const { created } = await handler(event);
+
+  // THEN: We didn't write and return all of the requested submodules
+  expect(JSON.stringify({ created }).length).toBeLessThan(260_000);
+  expect(writtenKeys.length).toBeLessThan(3000);
+  expect(created.length).toEqual(writtenKeys.length);
+});
+
 describe('markers for un-supported languages', () => {
   test('uploads ".not-supported" markers as relevant', async () => {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -589,6 +638,22 @@ function mockPutRequest(...suffixes: string[]) {
   );
 }
 
+function mockPutRequestCollectAll() {
+  const ret = new Array();
+  AWSMock.mock(
+    'S3',
+    'putObject',
+    (
+      request: AWS.S3.PutObjectRequest,
+      callback: Response<AWS.S3.PutObjectOutput>
+    ) => {
+      ret.push(request.Key);
+      callback(null, { VersionId: `versionId-${request.Key}` });
+    }
+  );
+  return ret;
+}
+
 function mockDeleteRequest(...suffixes: string[]) {
   AWSMock.mock(
     'S3',
@@ -604,4 +669,12 @@ function mockDeleteRequest(...suffixes: string[]) {
       }
     }
   );
+}
+
+function range(n: number): number[] {
+  const ret = new Array<number>();
+  for (let i = 0; i < n; i++) {
+    ret.push(i);
+  }
+  return ret;
 }
