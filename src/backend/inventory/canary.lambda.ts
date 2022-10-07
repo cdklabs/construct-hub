@@ -131,7 +131,7 @@ export async function handler(event: InventoryCanaryEvent, context: Context) {
   }
 
   /**
-   * The time margin when we need to stop working through S3 keys when we're nearing the end of the Lambda time sliace.
+   * The time margin when we need to stop working through S3 keys when we're nearing the end of the Lambda time slice.
    *
    * Needs to account for the time taken to do both:
    *
