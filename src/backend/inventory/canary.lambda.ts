@@ -130,9 +130,18 @@ export async function handler(event: InventoryCanaryEvent, context: Context) {
     };
   }
 
-  // The maximum time the handler needs to create metrics and upload
-  // reports once it's done processing all S3 object keys.
-  const maxMetricProcessingTime = 60_000;
+  /**
+   * The time margin when we need to stop working through S3 keys when we're nearing the end of the Lambda time slice.
+   *
+   * Needs to account for the time taken to do both:
+   *
+   * - Going through the list+process loop one more time
+   * - Creating metrics and uploading reports
+   *
+   * When we used to have this at 1 minute, we hit ~1 timeout a day. So set the margin
+   * a bit wider than that.
+   */
+  const maxMetricProcessingTime = 120_000;
 
   const packageDataBucket = requireEnv('PACKAGE_DATA_BUCKET_NAME');
 
@@ -140,6 +149,7 @@ export async function handler(event: InventoryCanaryEvent, context: Context) {
     packageDataBucket,
     continuationToken
   )) {
+    console.log(`Got a page of ${keys.length} keys`);
     for (const key of keys) {
       const [, name, version] = constants.STORAGE_KEY_FORMAT_REGEX.exec(key)!;
 
