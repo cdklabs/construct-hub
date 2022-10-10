@@ -508,8 +508,8 @@ function restrictSubmoduleCountToReturnable(
 
     return (
       DocumentationLanguage.ALL
-        // For each requested language
-        .filter((l) => event?.languages?.[l.toString()])
+        // For each requested language (field missing = all languages)
+        .filter((l) => !event?.languages || event.languages[l.toString()])
         // A .json and .md file plus their quotes and a comma
         .map(
           (l) =>
