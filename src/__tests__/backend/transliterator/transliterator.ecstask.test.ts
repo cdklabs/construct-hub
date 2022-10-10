@@ -451,54 +451,64 @@ test('uploads a file per submodule (unscoped package)', async () => {
   ]);
 });
 
-test('will not translate more submodules than fit in a response', async () => {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const forPackage = require('jsii-docgen').Documentation
-    .forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
-  forPackage.mockImplementation(async (target: string) => {
-    return new MockDocumentation(target) as unknown as Documentation;
-  });
+test.each([true, false])(
+  'will not translate more submodules than fit in a response: %p',
+  async (explicitLanguages) => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const forPackage = require('jsii-docgen').Documentation
+      .forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
+    forPackage.mockImplementation(async (target: string) => {
+      return new MockDocumentation(target) as unknown as Documentation;
+    });
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const fromSchema = require('jsii-docgen').MarkdownRenderer
+      .fromSchema as jest.MockedFunction<typeof MarkdownRenderer.fromSchema>;
+    fromSchema.mockImplementation((_schema, _options) => {
+      return new MarkdownDocument();
+    });
 
-  // GIVEN
-  const packageName = '@scope/package-with-a-pretty-long-name';
-  const packageVersion = '1.2.3-dev.4';
-  const event: TransliteratorInput = {
-    bucket: 'dummy-bucket',
-    assembly: {
-      key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
-      versionId: 'VersionId',
-    },
-    package: {
-      key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`,
-      versionId: 'VersionId',
-    },
-    languages: { typescript: true },
-  };
+    // GIVEN
+    const packageName = '@scope/package-with-a-pretty-long-name';
+    const packageVersion = '1.2.3-dev.4';
+    const event: TransliteratorInput = {
+      bucket: 'dummy-bucket',
+      assembly: {
+        key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.ASSEMBLY_KEY_SUFFIX}`,
+        versionId: 'VersionId',
+      },
+      package: {
+        key: `${constants.STORAGE_KEY_PREFIX}${packageName}/v${packageVersion}${constants.PACKAGE_KEY_SUFFIX}`,
+        versionId: 'VersionId',
+      },
+      ...(explicitLanguages ? { languages: { typescript: true } } : {}),
+    };
 
-  const assembly: spec.Assembly = {
-    targets: { python: {} },
-    submodules: Object.fromEntries(
-      range(10000).map((i) => [`${packageName}.sub${i}`, {}])
-    ),
-  } as any;
+    const assembly: spec.Assembly = {
+      targets: { python: {} },
+      submodules: Object.fromEntries(
+        range(1000).map((i) => [`${packageName}.sub${i}`, {}])
+      ),
+    } as any;
 
-  // mock the s3ObjectExists call
-  mockHeadRequest('package.tgz');
+    // mock the s3ObjectExists call
+    mockHeadRequest('package.tgz');
 
-  // mock the assembly and tarball requests
-  mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
+    // mock the assembly and tarball requests
+    mockFetchRequests(assembly, Buffer.from('fake-tarball', 'utf8'));
 
-  // mock the file uploads
-  const writtenKeys = mockPutRequestCollectAll();
+    // mock the file uploads
+    const writtenKeys = mockPutRequestCollectAll();
 
-  // WHEN
-  const { created } = await handler(event);
+    // WHEN
+    const { created } = await handler(event);
 
-  // THEN: We didn't write and return all of the requested submodules
-  expect(JSON.stringify({ created }).length).toBeLessThan(260_000);
-  expect(writtenKeys.length).toBeLessThan(3000);
-  expect(created.length).toEqual(writtenKeys.length);
-});
+    // THEN: We didn't write and return all of the requested submodules
+    console.log('Uploaded', writtenKeys);
+    expect(JSON.stringify({ created }).length).toBeLessThan(260_000);
+    expect(writtenKeys.length).toBeLessThan(3000);
+    expect(created.length).toEqual(writtenKeys.length);
+  }
+);
 
 describe('markers for un-supported languages', () => {
   test('uploads ".not-supported" markers as relevant', async () => {
