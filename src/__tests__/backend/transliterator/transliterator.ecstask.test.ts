@@ -460,6 +460,12 @@ test.each([true, false])(
     forPackage.mockImplementation(async (target: string) => {
       return new MockDocumentation(target) as unknown as Documentation;
     });
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const fromSchema = require('jsii-docgen').MarkdownRenderer
+      .fromSchema as jest.MockedFunction<typeof MarkdownRenderer.fromSchema>;
+    fromSchema.mockImplementation((_schema, _options) => {
+      return new MarkdownDocument();
+    });
 
     // GIVEN
     const packageName = '@scope/package-with-a-pretty-long-name';
@@ -480,7 +486,7 @@ test.each([true, false])(
     const assembly: spec.Assembly = {
       targets: { python: {} },
       submodules: Object.fromEntries(
-        range(10000).map((i) => [`${packageName}.sub${i}`, {}])
+        range(1000).map((i) => [`${packageName}.sub${i}`, {}])
       ),
     } as any;
 
@@ -497,6 +503,7 @@ test.each([true, false])(
     const { created } = await handler(event);
 
     // THEN: We didn't write and return all of the requested submodules
+    console.log('Uploaded', writtenKeys);
     expect(JSON.stringify({ created }).length).toBeLessThan(260_000);
     expect(writtenKeys.length).toBeLessThan(3000);
     expect(created.length).toEqual(writtenKeys.length);

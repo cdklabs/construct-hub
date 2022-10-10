@@ -1,5 +1,6 @@
 import * as os from 'os';
 import * as path from 'path';
+import { Assembly } from '@jsii/spec';
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { PromiseResult } from 'aws-sdk/lib/request';
 import * as fs from 'fs-extra';
@@ -98,7 +99,9 @@ export function handler(
       );
     }
 
-    const assembly = JSON.parse(assemblyResponse.Body.toString('utf-8'));
+    const assembly = JSON.parse(
+      assemblyResponse.Body.toString('utf-8')
+    ) as Assembly;
     const submodules = Object.keys(assembly.submodules ?? {}).map(
       (s) => s.split('.')[1]
     );
@@ -217,6 +220,7 @@ export function handler(
                 );
                 uploads.set(jsonKey, jsonUpload);
 
+                debugger;
                 const markdown = MarkdownRenderer.fromSchema(json.content, {
                   anchorFormatter,
                   linkFormatter: linkFormatter(docgenLang),
@@ -493,7 +497,7 @@ function restrictSubmoduleCountToReturnable(
     if (cumSize > MAX_PAYLOAD) {
       // submodule 'i' doesn't fit anymore
       console.log(
-        `Not all submodules fit in response. Documenting only ${i} out of ${submodules.length} submodules.`
+        `Not all submodules fit in response. Documenting only ${i} out of ${submodules.length} submodules`
       );
       submodules.splice(i, submodules.length - i);
       return;
@@ -505,17 +509,22 @@ function restrictSubmoduleCountToReturnable(
    */
   function estimateSize(submodule: string | undefined) {
     const quotesAndComma = 3;
+    const statusExt = Math.max(
+      constants.NOT_SUPPORTED_SUFFIX.length,
+      constants.CORRUPT_ASSEMBLY_SUFFIX.length
+    );
 
     return (
       DocumentationLanguage.ALL
-        // For each requested language (field missing = all languages)
-        .filter((l) => !event?.languages || event.languages[l.toString()])
-        // A .json and .md file plus their quotes and a comma
+        // A .json and .md file plus their quotes and a comma plus potentially the 'not-supported'/'corruptassembly' extensions
         .map(
           (l) =>
             formatArtifactKey(event.assembly, l, submodule, 'json').length +
+            statusExt +
+            quotesAndComma +
             formatArtifactKey(event.assembly, l, submodule, 'md').length +
-            2 * quotesAndComma
+            statusExt +
+            quotesAndComma
         )
         .reduce((x, a) => x + a, 0)
     );
