@@ -147,6 +147,9 @@ project.package.addField('resolutions', {
   // https://github.com/aws/aws-cdk/issues/20319
   '@types/prettier': '2.6.0',
 
+  // copying this from construct-hub-webapp https://cs.github.com/cdklabs/construct-hub-webapp/blob/bbe2e9ad73ce9b5ddee1b618667fb123274e5635/.projenrc.js#L96
+  'nth-check': '2.0.1',
+
   // Potential solution to a types problem, got it from https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/62277
   '@types/express-serve-static-core': '4.17.6',
 });
