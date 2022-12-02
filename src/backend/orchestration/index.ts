@@ -362,7 +362,7 @@ export class Orchestration extends Construct {
             inputPath: '$.docGen.command',
             resultPath: '$.docGenOutput',
             // aws-cdk-lib succeeds in roughly 1 hour, so this should give us
-            // enough of a buffer and prorably account for all other libraries out there.
+            // enough of a buffer and probably account for all other libraries out there.
             timeout: Duration.hours(2),
             vpcSubnets: props.vpcSubnets,
             securityGroups: props.vpcSecurityGroups,
