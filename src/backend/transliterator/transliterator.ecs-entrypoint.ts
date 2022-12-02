@@ -16,7 +16,7 @@ function sendHeartbeat(): void {
     () => console.log('Successfully sent task heartbeat!'),
     (reason) => {
       console.error('Failed to send task heartbeat:', reason);
-      if (reason.code === 'TaskTimedOut') {
+      if (reason.$metadata.httpStatusCode === 400) {
         exit(-(os.constants.errno.ETIMEDOUT || 1));
       }
     },
@@ -24,7 +24,7 @@ function sendHeartbeat(): void {
 }
 
 sendHeartbeat();
-const heartbeat = setInterval(sendHeartbeat, 60_000);
+const heartbeat = setInterval(sendHeartbeat, 180_000);
 
 async function main(): Promise<void> {
   try {
