@@ -602,9 +602,11 @@ function newEcsTask(entrypoint) {
   main.line("() => console.log('Successfully sent task heartbeat!'),");
   main.open('(reason) => {');
   main.line("console.error('Failed to send task heartbeat:', reason);");
-  // If this failed on TaskTimedOut, we will exit the VM right away, as the requesting StepFunctions execution is no longer
+  // If the heartbeat fails with a 400 (InvalidToken, TaskDoesNotExist, TaskTimedOut),
+  // we will exit the VM right away, as the requesting StepFunctions execution is no longer
   // interested in the result of this run. This avoids keeping left-over tasks lying around "forever".
-  main.open("if (reason.code === 'TaskTimedOut') {");
+  // See: https://docs.aws.amazon.com/step-functions/latest/apireference/API_SendTaskHeartbeat.html#API_SendTaskHeartbeat_Errors
+  main.open('if (reason.$metadata.httpStatusCode === 400) {');
   main.line('exit(-(os.constants.errno.ETIMEDOUT || 1));');
   main.close('}');
   main.close('},');
@@ -612,7 +614,7 @@ function newEcsTask(entrypoint) {
   main.close('}');
   main.line();
   main.line('sendHeartbeat();');
-  main.line('const heartbeat = setInterval(sendHeartbeat, 60_000);');
+  main.line('const heartbeat = setInterval(sendHeartbeat, 180_000);'); // Heartbeat is only expected every 10min
   main.line();
 
   main.open('async function main(): Promise<void> {');

@@ -39,7 +39,7 @@ const ASSEMBLY_KEY_REGEX = new RegExp(
 export function handler(
   event: TransliteratorInput
 ): Promise<{ created: string[]; deleted: string[] }> {
-  console.log(`Event: ${JSON.stringify(event, null, 2)}`);
+  console.log('Event:', JSON.stringify(event));
   // We'll need a writable $HOME directory, or this won't work well, because
   // npm will try to write stuff like the `.npmrc` or package caches in there
   // and that'll bail out on EROFS if that fails.
