@@ -598,8 +598,6 @@ function newEcsTask(entrypoint) {
 
   // A heartbeat is sent every minute to StepFunctions.
   main.open('function sendHeartbeat(): void {');
-  // Output heap space statistics, for information...
-  main.line('console.log(JSON.stringify(getHeapSpaceStatistics(), null, 2));');
   // We don't return the promise as it is fully handled within the call. This prevents eslint from declaring a false
   // positive unhandled promise on call sites.
   main.open('sfn.send(new SendTaskHeartbeatCommand({ taskToken })).then(');
