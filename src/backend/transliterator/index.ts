@@ -168,18 +168,15 @@ export class Transliterator extends Construct {
         memoryLimitMiB: 8_192,
       }),
     });
-
     // Encountered an error of "EMFILE: too many open files" in ECS.
-    // Default nofile ulimit is 1024/4096. This quadruples the hard limit to 16384.
-    // I got this number by doubling the hard limit and testing it; 8192 threw the
-    // same EMFILE error. I reason that we are somehow opening between 8192 and 16384
-    // files at the same time.
+    // Default nofile ulimit is 1024/4096.
+    //
     // For ECS ulimit documentation see: https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_Ulimit.html
     // For construct hub tracking issue see: https://github.com/cdklabs/construct-hub/issues/982
     this.containerDefinition.addUlimits({
       name: UlimitName.NOFILE, // file descriptors
-      softLimit: 1024,
-      hardLimit: 16384,
+      softLimit: 4_096,
+      hardLimit: 65_535,
     });
 
     repository?.grantReadFromRepository(this.taskDefinition.taskRole);
