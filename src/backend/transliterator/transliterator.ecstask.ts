@@ -1,6 +1,7 @@
 import * as os from 'os';
 import * as path from 'path';
 import { Assembly } from '@jsii/spec';
+import { Sema } from 'async-sema';
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { PromiseResult } from 'aws-sdk/lib/request';
 import * as fs from 'fs-extra';
@@ -23,7 +24,11 @@ import { writeFile } from './util';
 const ASSEMBLY_KEY_REGEX = new RegExp(
   `^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)${constants.ASSEMBLY_KEY_SUFFIX}$`
 );
-// Capture groups:                                                     ┗━━━━━━━━━1━━━━━━━┛  ┗━━2━━┛
+
+// A semaphore aimed at ensuring we don't open an uncontrolled amount of sockets concurrently, and run out of FDs.
+const S3_SEMAPHORE = new Sema(
+  parseInt(process.env.MAX_CONCURRENT_S3_REQUESTS ?? '16', 10)
+);
 
 /**
  * This function receives an S3 event, and for each record, proceeds to download
@@ -177,10 +182,10 @@ export function handler(
             metrics.setNamespace(METRICS_NAMESPACE);
 
             async function renderAndDispatch(submodule?: string) {
+              const label = `Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`;
               try {
-                console.log(
-                  `Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`
-                );
+                console.log(label);
+                console.time(label);
 
                 const docgenLang = docgen.Language.fromString(lang.name);
                 const json = await docs.toJson({
@@ -220,7 +225,6 @@ export function handler(
                 );
                 uploads.set(jsonKey, jsonUpload);
 
-                debugger;
                 const markdown = MarkdownRenderer.fromSchema(json.content, {
                   anchorFormatter,
                   linkFormatter: linkFormatter(docgenLang),
@@ -290,6 +294,8 @@ export function handler(
                 } else {
                   throw e;
                 }
+              } finally {
+                console.timeEnd(label);
               }
             }
             await renderAndDispatch();
@@ -298,7 +304,10 @@ export function handler(
             }
           }
         );
+        const label = `Generating documentation for ${packageFqn} in ${language}`;
+        console.time(label);
         await generateDocs(language);
+        console.timeEnd(label);
       }
     } catch (error) {
       if (error instanceof docgen.UnInstallablePackageError) {
@@ -373,6 +382,8 @@ function uploadFile(
     : key.endsWith('.json')
     ? 'application/json; charset=UTF-8'
     : 'application/octet-stream';
+
+  const token = S3_SEMAPHORE.acquire();
   return aws
     .s3()
     .putObject({
@@ -386,7 +397,8 @@ function uploadFile(
         'Origin-Version-Id': sourceVersionId ?? 'N/A',
       },
     })
-    .promise();
+    .promise()
+    .finally(() => S3_SEMAPHORE.release(token));
 }
 
 function deleteFile(bucket: string, key: string) {
