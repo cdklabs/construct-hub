@@ -175,7 +175,7 @@ export class Transliterator extends Construct {
     // For construct hub tracking issue see: https://github.com/cdklabs/construct-hub/issues/982
     this.containerDefinition.addUlimits({
       name: UlimitName.NOFILE, // file descriptors
-      softLimit: 4_096,
+      softLimit: 16_384,
       hardLimit: 65_535,
     });
 
