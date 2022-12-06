@@ -616,12 +616,16 @@ function newEcsTask(entrypoint) {
   main.close('},');
   main.close(');');
   // Output heap space statistics, for information...
-  main.line('const heapStats = Object.fromEntries(getHeapSpaceStatistics().filter(({ space_size }) => space_size > 0).map(');
+  main.line(
+    'const heapStats = Object.fromEntries(getHeapSpaceStatistics().filter(({ space_size }) => space_size > 0).map('
+  );
   main.line('  (space) => [');
   main.line('    space.space_name,');
   main.line('    {');
   main.line('      size: space.space_size,');
-  main.line('      utilization: 100 * space.space_used_size / space.space_size,');
+  main.line(
+    '      utilization: 100 * space.space_used_size / space.space_size,'
+  );
   main.line('    }');
   main.line('  ]');
   main.line('));');

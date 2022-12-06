@@ -13,6 +13,7 @@ const taskToken = env.SFN_TASK_TOKEN!;
 delete env.SFN_TASK_TOKEN;
 
 function sendHeartbeat(): void {
+  console.log(JSON.stringify(getHeapSpaceStatistics(), null, 2));
   sfn.send(new SendTaskHeartbeatCommand({ taskToken })).then(
     () => console.log('Successfully sent task heartbeat!'),
     (reason) => {
