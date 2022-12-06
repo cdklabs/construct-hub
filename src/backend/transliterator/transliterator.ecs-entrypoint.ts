@@ -3,6 +3,7 @@
 
 import * as os from 'os';
 import { argv, env, exit } from 'process';
+import { getHeapSpaceStatistics } from 'v8';
 import { SendTaskFailureCommand, SendTaskHeartbeatCommand, SendTaskSuccessCommand, SFNClient } from '@aws-sdk/client-sfn';
 import { handler } from './transliterator.ecstask';
 
@@ -12,6 +13,7 @@ const taskToken = env.SFN_TASK_TOKEN!;
 delete env.SFN_TASK_TOKEN;
 
 function sendHeartbeat(): void {
+  console.log(JSON.stringify(getHeapSpaceStatistics(), null, 2));
   sfn.send(new SendTaskHeartbeatCommand({ taskToken })).then(
     () => console.log('Successfully sent task heartbeat!'),
     (reason) => {
@@ -21,6 +23,16 @@ function sendHeartbeat(): void {
       }
     },
   );
+  const heapStats = Object.fromEntries(getHeapSpaceStatistics().filter(({ space_size }) => space_size > 0).map(
+    (space) => [
+      space.space_name,
+      {
+        size: space.space_size,
+        utilization: 100 * space.space_used_size / space.space_size,
+      }
+    ]
+  ));
+  console.log(JSON.stringify(heapStats));
 }
 
 sendHeartbeat();

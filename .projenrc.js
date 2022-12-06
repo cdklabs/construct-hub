@@ -582,6 +582,7 @@ function newEcsTask(entrypoint) {
   main.line();
   main.line("import * as os from 'os';");
   main.line("import { argv, env, exit } from 'process';");
+  main.line("import { getHeapSpaceStatistics } from 'v8';");
   main.line(
     "import { SendTaskFailureCommand, SendTaskHeartbeatCommand, SendTaskSuccessCommand, SFNClient } from '@aws-sdk/client-sfn';"
   );
@@ -597,6 +598,8 @@ function newEcsTask(entrypoint) {
 
   // A heartbeat is sent every minute to StepFunctions.
   main.open('function sendHeartbeat(): void {');
+  // Output heap space statistics, for information...
+  main.line('console.log(JSON.stringify(getHeapSpaceStatistics(), null, 2));');
   // We don't return the promise as it is fully handled within the call. This prevents eslint from declaring a false
   // positive unhandled promise on call sites.
   main.open('sfn.send(new SendTaskHeartbeatCommand({ taskToken })).then(');
@@ -612,6 +615,21 @@ function newEcsTask(entrypoint) {
   main.close('}');
   main.close('},');
   main.close(');');
+  // Output heap space statistics, for information...
+  main.line(
+    'const heapStats = Object.fromEntries(getHeapSpaceStatistics().filter(({ space_size }) => space_size > 0).map('
+  );
+  main.line('  (space) => [');
+  main.line('    space.space_name,');
+  main.line('    {');
+  main.line('      size: space.space_size,');
+  main.line(
+    '      utilization: 100 * space.space_used_size / space.space_size,'
+  );
+  main.line('    }');
+  main.line('  ]');
+  main.line('));');
+  main.line('console.log(JSON.stringify(heapStats));');
   main.close('}');
   main.line();
   main.line('sendHeartbeat();');
