@@ -41,6 +41,7 @@ const project = new cdk.JsiiProject({
     cdkCli,
     'aws-embedded-metrics',
     'dotenv',
+    'async-sema',
     // 5.6.1 introduces a type literal signature that is not compatible with
     // the version of TypeScript currently used by jsii, causing builds to fail
     'aws-sdk-mock@5.6.0',
