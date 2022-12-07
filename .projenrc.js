@@ -580,9 +580,10 @@ function newEcsTask(entrypoint) {
   main.line('#!/usr/bin/env node');
   main.line(`// ${main.marker}`);
   main.line();
-  main.line("import * as os from 'os';");
-  main.line("import { argv, env, exit } from 'process';");
-  main.line("import { getHeapSpaceStatistics } from 'v8';");
+  main.line("import { spawnSync } from 'node:child_process';");
+  main.line("import * as os from 'node:os';");
+  main.line("import { argv, env, exit } from 'node:process';");
+  main.line("import { getHeapSpaceStatistics } from 'node:v8';");
   main.line(
     "import { SendTaskFailureCommand, SendTaskHeartbeatCommand, SendTaskSuccessCommand, SFNClient } from '@aws-sdk/client-sfn';"
   );
@@ -614,33 +615,55 @@ function newEcsTask(entrypoint) {
   main.close('},');
   main.close(');');
   // Output heap space statistics, for information...
-  main.line(
+  main.open(
     'const heapStats = Object.fromEntries(getHeapSpaceStatistics().filter(({ space_size }) => space_size > 0).map('
   );
-  main.line('  (space) => [');
-  main.line('    space.space_name,');
-  main.line('    {');
-  main.line('      size: space.space_size,');
-  main.line(
-    '      utilization: 100 * space.space_used_size / space.space_size,'
-  );
-  main.line('    }');
-  main.line('  ]');
-  main.line('));');
-  main.line('console.log(JSON.stringify(heapStats));');
+  main.open('(space) => [');
+  main.line('space.space_name,');
+  main.open('{');
+  main.line('size: space.space_size,');
+  main.line('utilization: 100 * space.space_used_size / space.space_size,');
   main.close('}');
-  main.line();
-  main.line('sendHeartbeat();');
-  main.line('const heartbeat = setInterval(sendHeartbeat, 180_000);'); // Heartbeat is only expected every 10min
+  main.close(']');
+  main.close('));');
+  main.line('console.log(JSON.stringify(heapStats));');
+  // Run lsof to output the list of open file descriptors, for information... but only if $RUN_LSOF_ON_HEARTBEAT is et
+  main.open('if (env.RUN_LSOF_ON_HEARTBEAT) {');
+  main.line(
+    "spawnSync('/usr/sbin/lsof', ['-g', '-n', '-P', '-R'], { stdio: 'inherit' });"
+  );
+  main.close('}');
+  main.close('}');
   main.line();
 
   main.open('async function main(): Promise<void> {');
+  main.line('const heartbeat = setInterval(sendHeartbeat, 180_000);'); // Heartbeat is only expected every 10min
   main.line('try {');
   // Deserialize the input, which ECS provides as a sequence of JSON objects. We skip the first 2 values (argv[0] is the
   // node binary, and argv[1] is this JS file).
   main.line(
     '  const input: readonly any[] = argv.slice(2).map((text) => JSON.parse(text));'
   );
+  main.line();
+  // If any object argument includes a string-typed env.RUN_LSOF_ON_HEARTBEAT property, set this as the
+  // RUN_LSOF_ON_HEARTBEAT environment variable before proceeding.
+  main.open(
+    '  const envArg: { env: { RUN_LSOF_ON_HEARTBEAT: string } } | undefined = input.find('
+  );
+  main.line('  (arg) =>');
+  main.line("    typeof arg === 'object'");
+  main.line("    && typeof arg?.env === 'object'");
+  main.line("    && typeof arg?.env?.RUN_LSOF_ON_HEARTBEAT === 'string'");
+  main.close('  );');
+  main.open('  if (envArg != null) {');
+  main.line('  env.RUN_LSOF_ON_HEARTBEAT = envArg.env.RUN_LSOF_ON_HEARTBEAT;');
+  main.close('  }');
+  main.line();
+
+  // Make sure a heartbeat is sent now that we have an input and are ready to go...
+  main.line('  sendHeartbeat();');
+  main.line();
+
   // Casting as opaque function so we evade the type-checking of the handler (can't generalize that)
   main.line(
     '  const result = await (handler as (...args: any[]) => unknown)(...input);'
@@ -679,7 +702,7 @@ function newEcsTask(entrypoint) {
   df.line('RUN curl -fsSL https://rpm.nodesource.com/setup_16.x | bash - \\');
   df.line(' && yum update -y \\');
   df.line(' && yum upgrade -y \\');
-  df.line(' && yum install -y git nodejs \\');
+  df.line(' && yum install -y git lsof nodejs \\');
   // Clean up the yum cache in the interest of image size
   df.line(' && yum clean all \\');
   df.line(' && rm -rf /var/cache/yum');
