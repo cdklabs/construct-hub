@@ -368,7 +368,11 @@ export class Transliterator extends Construct {
         {
           containerDefinition: this.containerDefinition,
           command: JsonPath.listAt('$'),
-          environment: [{ name: 'SFN_TASK_TOKEN', value: JsonPath.taskToken }],
+          environment: [
+            { name: 'SFN_TASK_TOKEN', value: JsonPath.taskToken },
+            // PLACEHOLDER: Set this to something non-empty to enable lsof running...
+            { name: 'RUN_LSOF_ON_HEARTBEAT', value: '' },
+          ],
         },
       ],
       integrationPattern: IntegrationPattern.WAIT_FOR_TASK_TOKEN,

@@ -580,9 +580,10 @@ function newEcsTask(entrypoint) {
   main.line('#!/usr/bin/env node');
   main.line(`// ${main.marker}`);
   main.line();
-  main.line("import * as os from 'os';");
-  main.line("import { argv, env, exit } from 'process';");
-  main.line("import { getHeapSpaceStatistics } from 'v8';");
+  main.line("import { spawnSync } from 'node:child_process';");
+  main.line("import * as os from 'node:os';");
+  main.line("import { argv, env, exit } from 'node:process';");
+  main.line("import { getHeapSpaceStatistics } from 'node:v8';");
   main.line(
     "import { SendTaskFailureCommand, SendTaskHeartbeatCommand, SendTaskSuccessCommand, SFNClient } from '@aws-sdk/client-sfn';"
   );
@@ -614,20 +615,24 @@ function newEcsTask(entrypoint) {
   main.close('},');
   main.close(');');
   // Output heap space statistics, for information...
-  main.line(
+  main.open(
     'const heapStats = Object.fromEntries(getHeapSpaceStatistics().filter(({ space_size }) => space_size > 0).map('
   );
-  main.line('  (space) => [');
-  main.line('    space.space_name,');
-  main.line('    {');
-  main.line('      size: space.space_size,');
-  main.line(
-    '      utilization: 100 * space.space_used_size / space.space_size,'
-  );
-  main.line('    }');
-  main.line('  ]');
-  main.line('));');
+  main.open('(space) => [');
+  main.line('space.space_name,');
+  main.open('{');
+  main.line('size: space.space_size,');
+  main.line('utilization: 100 * space.space_used_size / space.space_size,');
+  main.close('}');
+  main.close(']');
+  main.close('));');
   main.line('console.log(JSON.stringify(heapStats));');
+  // Run lsof to output the list of open file descriptors, for information... but only if $RUN_LSOF_ON_HEARTBEAT is et
+  main.open('if (env.RUN_LSOF_ON_HEARTBEAT) {');
+  main.line(
+    "spawnSync('/usr/sbin/lsof', ['-g', '-n', '-P', '-R'], { stdio: 'inherit' });"
+  );
+  main.close('}');
   main.close('}');
   main.line();
   main.line('sendHeartbeat();');
@@ -679,7 +684,7 @@ function newEcsTask(entrypoint) {
   df.line('RUN curl -fsSL https://rpm.nodesource.com/setup_16.x | bash - \\');
   df.line(' && yum update -y \\');
   df.line(' && yum upgrade -y \\');
-  df.line(' && yum install -y git nodejs \\');
+  df.line(' && yum install -y git lsof nodejs \\');
   // Clean up the yum cache in the interest of image size
   df.line(' && yum clean all \\');
   df.line(' && rm -rf /var/cache/yum');
