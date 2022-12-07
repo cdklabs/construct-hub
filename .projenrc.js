@@ -635,17 +635,16 @@ function newEcsTask(entrypoint) {
   main.close('}');
   main.close('}');
   main.line();
-  main.line('sendHeartbeat();');
-  main.line('const heartbeat = setInterval(sendHeartbeat, 180_000);'); // Heartbeat is only expected every 10min
-  main.line();
 
   main.open('async function main(): Promise<void> {');
+  main.line('const heartbeat = setInterval(sendHeartbeat, 180_000);'); // Heartbeat is only expected every 10min
   main.line('try {');
   // Deserialize the input, which ECS provides as a sequence of JSON objects. We skip the first 2 values (argv[0] is the
   // node binary, and argv[1] is this JS file).
   main.line(
     '  const input: readonly any[] = argv.slice(2).map((text) => JSON.parse(text));'
   );
+  main.line();
   // If any object argument includes a string-typed env.RUN_LSOF_ON_HEARTBEAT property, set this as the
   // RUN_LSOF_ON_HEARTBEAT environment variable before proceeding.
   main.open(
@@ -659,6 +658,12 @@ function newEcsTask(entrypoint) {
   main.open('  if (envArg != null) {');
   main.line('  env.RUN_LSOF_ON_HEARTBEAT = envArg.env.RUN_LSOF_ON_HEARTBEAT;');
   main.close('  }');
+  main.line();
+
+  // Make sure a heartbeat is sent now that we have an input and are ready to go...
+  main.line('  sendHeartbeat();');
+  main.line();
+
   // Casting as opaque function so we evade the type-checking of the handler (can't generalize that)
   main.line(
     '  const result = await (handler as (...args: any[]) => unknown)(...input);'

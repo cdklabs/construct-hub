@@ -38,12 +38,11 @@ function sendHeartbeat(): void {
   }
 }
 
-sendHeartbeat();
-const heartbeat = setInterval(sendHeartbeat, 180_000);
-
 async function main(): Promise<void> {
+  const heartbeat = setInterval(sendHeartbeat, 180_000);
   try {
     const input: readonly any[] = argv.slice(2).map((text) => JSON.parse(text));
+
     const envArg: { env: { RUN_LSOF_ON_HEARTBEAT: string } } | undefined = input.find(
       (arg) =>
         typeof arg === 'object'
@@ -53,6 +52,9 @@ async function main(): Promise<void> {
     if (envArg != null) {
       env.RUN_LSOF_ON_HEARTBEAT = envArg.env.RUN_LSOF_ON_HEARTBEAT;
     }
+
+    sendHeartbeat();
+
     const result = await (handler as (...args: any[]) => unknown)(...input);
     console.log('Task result:', result);
     await sfn.send(new SendTaskSuccessCommand({ output: JSON.stringify(result), taskToken }));
