@@ -4813,7 +4813,7 @@ Resources:
                   - repositoryEndpoint
           Essential: true
           Image:
-            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:653927c15f5d6614153d9207e0c106df39c2d25e2897cd9f6708e5d9e504a055
+            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:ea21d01beab4d406e387c76624029f342eb3d934c6ea984e2a55cc4b0747ff06
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -5061,7 +5061,7 @@ Resources:
             - Fn::GetAtt:
                 - ConstructHubOrchestrationGeneratedocsSecurityGroupC584DAC2
                 - GroupId
-            - '"]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"Check
+            - '"]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"},{"Name":"RUN_LSOF_ON_HEARTBEAT","Value":""}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"Check
               whether catalog needs udpating":{"Next":"Is catalog update
               needed?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"ResultPath":"$.error","Next":"Send
               to Dead Letter
