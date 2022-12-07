@@ -44,6 +44,15 @@ const heartbeat = setInterval(sendHeartbeat, 180_000);
 async function main(): Promise<void> {
   try {
     const input: readonly any[] = argv.slice(2).map((text) => JSON.parse(text));
+    const envArg: { env: { RUN_LSOF_ON_HEARTBEAT: string } } | undefined = input.find(
+      (arg) =>
+        typeof arg === 'object'
+        && typeof arg?.env === 'object'
+        && typeof arg?.env?.RUN_LSOF_ON_HEARTBEAT === 'string'
+    );
+    if (envArg != null) {
+      env.RUN_LSOF_ON_HEARTBEAT = envArg.env.RUN_LSOF_ON_HEARTBEAT;
+    }
     const result = await (handler as (...args: any[]) => unknown)(...input);
     console.log('Task result:', result);
     await sfn.send(new SendTaskSuccessCommand({ output: JSON.stringify(result), taskToken }));

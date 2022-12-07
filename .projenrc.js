@@ -646,6 +646,17 @@ function newEcsTask(entrypoint) {
   main.line(
     '  const input: readonly any[] = argv.slice(2).map((text) => JSON.parse(text));'
   );
+  // If any object argument includes a string-typed env.RUN_LSOF_ON_HEARTBEAT property, set this as the
+  // RUN_LSOF_ON_HEARTBEAT environment variable before proceeding.
+  main.open("  const envArg: { env: { RUN_LSOF_ON_HEARTBEAT: string } } | undefined = input.find(");
+  main.line("  (arg) =>");
+  main.line("    typeof arg === 'object'");
+  main.line("    && typeof arg?.env === 'object'");
+  main.line("    && typeof arg?.env?.RUN_LSOF_ON_HEARTBEAT === 'string'");
+  main.close('  );');
+  main.open('  if (envArg != null) {');
+  main.line('  env.RUN_LSOF_ON_HEARTBEAT = envArg.env.RUN_LSOF_ON_HEARTBEAT;');
+  main.close('  }');
   // Casting as opaque function so we evade the type-checking of the handler (can't generalize that)
   main.line(
     '  const result = await (handler as (...args: any[]) => unknown)(...input);'
