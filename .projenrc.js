@@ -648,8 +648,10 @@ function newEcsTask(entrypoint) {
   );
   // If any object argument includes a string-typed env.RUN_LSOF_ON_HEARTBEAT property, set this as the
   // RUN_LSOF_ON_HEARTBEAT environment variable before proceeding.
-  main.open("  const envArg: { env: { RUN_LSOF_ON_HEARTBEAT: string } } | undefined = input.find(");
-  main.line("  (arg) =>");
+  main.open(
+    '  const envArg: { env: { RUN_LSOF_ON_HEARTBEAT: string } } | undefined = input.find('
+  );
+  main.line('  (arg) =>');
   main.line("    typeof arg === 'object'");
   main.line("    && typeof arg?.env === 'object'");
   main.line("    && typeof arg?.env?.RUN_LSOF_ON_HEARTBEAT === 'string'");
