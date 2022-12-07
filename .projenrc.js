@@ -580,7 +580,7 @@ function newEcsTask(entrypoint) {
   main.line('#!/usr/bin/env node');
   main.line(`// ${main.marker}`);
   main.line();
-  main.line("import { spawnSync } from 'node:child_process';");
+  main.line("import { execFileSync } from 'node:child_process';");
   main.line("import * as os from 'node:os';");
   main.line("import { argv, env, exit } from 'node:process';");
   main.line("import { getHeapSpaceStatistics } from 'node:v8';");
@@ -630,7 +630,7 @@ function newEcsTask(entrypoint) {
   // Run lsof to output the list of open file descriptors, for information... but only if $RUN_LSOF_ON_HEARTBEAT is et
   main.open('if (env.RUN_LSOF_ON_HEARTBEAT) {');
   main.line(
-    "spawnSync('/usr/sbin/lsof', ['-g', '-n', '-P', '-R'], { stdio: 'inherit' });"
+    "execFileSync('/usr/sbin/lsof', ['-g', '-n', '-P', '-R'], { stdio: 'inherit' });"
   );
   main.close('}');
   main.close('}');
