@@ -21,7 +21,7 @@ export async function handler(event: unknown, context: Context): Promise<void> {
         input: JSON.stringify({
           ...input,
           // Remove unnecessary fields that would bloat the input size
-          '$TaskExecution': undefined,
+          $TaskExecution: undefined,
           catalogNeedsUpdating: undefined,
           docGen: undefined,
           docGenOutput: undefined,
