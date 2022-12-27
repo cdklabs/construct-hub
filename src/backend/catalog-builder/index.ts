@@ -194,6 +194,16 @@ export class CatalogBuilder extends Construct {
       namespace: METRICS_NAMESPACE,
     });
   }
+
+  public metricRegisteredPackages(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(15),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      metricName: MetricName.REGISTERED_PACKAGES,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
 }
 
 /**
