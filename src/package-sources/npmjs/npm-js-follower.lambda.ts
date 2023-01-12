@@ -10,10 +10,6 @@ import {
 import type { Context, ScheduledEvent } from 'aws-lambda';
 import { captureHTTPsGlobal } from 'aws-xray-sdk-core';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
-import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
-import * as aws from '../../backend/shared/aws.lambda-shared';
-import { requireEnv } from '../../backend/shared/env.lambda-shared';
 import {
   MetricName,
   MARKER_FILE_NAME,
@@ -21,6 +17,10 @@ import {
 } from './constants.lambda-shared';
 import { CouchChanges, DatabaseChange } from './couch-changes.lambda-shared';
 import { PackageVersion } from './stage-and-notify.lambda';
+import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
+import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
+import * as aws from '../../backend/shared/aws.lambda-shared';
+import { requireEnv } from '../../backend/shared/env.lambda-shared';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const normalizeNPMMetadata = require('normalize-registry-metadata');
 

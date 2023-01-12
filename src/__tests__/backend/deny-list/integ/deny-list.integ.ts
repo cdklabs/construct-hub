@@ -2,13 +2,13 @@ import { join } from 'path';
 import { App, Duration, RemovalPolicy, Stack } from 'aws-cdk-lib';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { BucketDeployment, Source } from 'aws-cdk-lib/aws-s3-deployment';
+import { CatalogBuilderMock } from './catalog-builder-mock';
+import { TriggerClientTest } from './trigger.client-test';
+import { TriggerPruneTest } from './trigger.prune-test';
 import { DenyList } from '../../../../backend';
 import { STORAGE_KEY_PREFIX } from '../../../../backend/shared/constants';
 import { Monitoring } from '../../../../monitoring';
 import { OverviewDashboard } from '../../../../overview-dashboard';
-import { CatalogBuilderMock } from './catalog-builder-mock';
-import { TriggerClientTest } from './trigger.client-test';
-import { TriggerPruneTest } from './trigger.prune-test';
 
 // we need to pull mock package data from `src/` because we execute in `lib/`
 const mockPackageDataDir = join(
