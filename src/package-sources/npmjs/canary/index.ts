@@ -4,7 +4,6 @@ import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
-import { gravitonLambdaIfAvailable } from '../../../backend/_lambda-architecture';
 import {
   Environment,
   ObjectKey,
@@ -12,6 +11,7 @@ import {
   MetricName,
 } from './constants';
 import { NpmjsPackageCanary as Handler } from './npmjs-package-canary';
+import { gravitonLambdaIfAvailable } from '../../../backend/_lambda-architecture';
 
 export interface NpmJsPackageCanaryProps {
   readonly bucket: IBucket;

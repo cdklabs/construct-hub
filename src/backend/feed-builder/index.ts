@@ -3,6 +3,7 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 
+import { UpdateFeed } from './update-feed';
 import { OverviewDashboard } from '../../overview-dashboard';
 import {
   STORAGE_KEY_PREFIX,
@@ -14,7 +15,6 @@ import {
   FEED_RSS_KEY,
   CONSTRUCT_HUB_URL_ENV_VAR_NAME,
 } from '../shared/constants';
-import { UpdateFeed } from './update-feed';
 
 export interface FeedBuilderProps {
   /**

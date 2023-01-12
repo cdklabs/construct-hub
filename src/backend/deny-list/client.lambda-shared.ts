@@ -1,11 +1,11 @@
 import * as AWS from 'aws-sdk';
-import { s3 } from '../shared/aws.lambda-shared';
-import { requireEnv } from '../shared/env.lambda-shared';
 import { DenyListMap, DenyListRule } from './api';
 import {
   ENV_DENY_LIST_BUCKET_NAME,
   ENV_DENY_LIST_OBJECT_KEY,
 } from './constants';
+import { s3 } from '../shared/aws.lambda-shared';
+import { requireEnv } from '../shared/env.lambda-shared';
 
 /**
  * A client for working with the deny list.

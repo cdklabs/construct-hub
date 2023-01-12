@@ -1,6 +1,6 @@
 import * as AWS from 'aws-sdk';
-import { requireEnv } from '../shared/env.lambda-shared';
 import { ENV_DELETE_OBJECT_DATA_BUCKET_NAME } from './constants';
+import { requireEnv } from '../shared/env.lambda-shared';
 
 const s3 = new AWS.S3();
 

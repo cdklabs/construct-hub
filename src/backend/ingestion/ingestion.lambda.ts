@@ -10,6 +10,11 @@ import {
 } from '@jsii/spec';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { Context, SQSEvent } from 'aws-lambda';
+import { MetricName, METRICS_NAMESPACE } from './constants';
+import {
+  ConstructFramework,
+  detectConstructFrameworks,
+} from './framework-detection.lambda-shared';
 import { CacheStrategy } from '../../caching';
 import type { PackageTagConfig } from '../../package-tag';
 import type { PackageLinkConfig } from '../../webapp';
@@ -25,11 +30,6 @@ import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
 import { isTagApplicable } from '../shared/tags';
 import { extractObjects } from '../shared/tarball.lambda-shared';
-import { MetricName, METRICS_NAMESPACE } from './constants';
-import {
-  ConstructFramework,
-  detectConstructFrameworks,
-} from './framework-detection.lambda-shared';
 
 Configuration.namespace = METRICS_NAMESPACE;
 

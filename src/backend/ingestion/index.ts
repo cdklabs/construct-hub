@@ -34,6 +34,9 @@ import {
   StepFunctionsStartExecution,
 } from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
+import { MetricName, METRICS_NAMESPACE } from './constants';
+import { Ingestion as Handler } from './ingestion';
+import { ReIngest } from './re-ingest';
 import { Repository } from '../../codeartifact/repository';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
@@ -50,9 +53,6 @@ import {
   METADATA_KEY_SUFFIX,
   PACKAGE_KEY_SUFFIX,
 } from '../shared/constants';
-import { MetricName, METRICS_NAMESPACE } from './constants';
-import { Ingestion as Handler } from './ingestion';
-import { ReIngest } from './re-ingest';
 
 export interface IngestionProps {
   /**

@@ -1,9 +1,9 @@
 import * as cw from 'aws-cdk-lib/aws-cloudwatch';
 import { Watchful } from 'cdk-watchful';
 import { Construct } from 'constructs';
-import { AlarmActions } from '../api';
 import { IMonitoring } from './api';
 import { WebCanary } from './web-canary';
+import { AlarmActions } from '../api';
 
 /**
  * Props for the monitoring construct.

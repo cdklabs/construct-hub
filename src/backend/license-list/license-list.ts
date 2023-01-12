@@ -6,10 +6,10 @@ import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
 import { Construct } from 'constructs';
-import { S3StorageFactory } from '../../s3/storage';
-import { SpdxLicense } from '../../spdx-license';
 import { ILicenseList } from './api';
 import { EnvironmentVariables } from './constants';
+import { S3StorageFactory } from '../../s3/storage';
+import { SpdxLicense } from '../../spdx-license';
 
 export interface LicenseListProps {
   /**

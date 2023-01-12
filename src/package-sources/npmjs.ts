@@ -18,6 +18,15 @@ import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { BlockPublicAccess, IBucket } from 'aws-cdk-lib/aws-s3';
 import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
+import { NpmJsPackageCanary } from './npmjs/canary';
+import {
+  MARKER_FILE_NAME,
+  METRICS_NAMESPACE,
+  MetricName,
+  S3KeyPrefix,
+} from './npmjs/constants.lambda-shared';
+import { NpmJsFollower } from './npmjs/npm-js-follower';
+import { StageAndNotify } from './npmjs/stage-and-notify';
 import { lambdaFunctionUrl, s3ObjectUrl, sqsQueueUrl } from '../deep-link';
 import { fillMetric } from '../metric-utils';
 import { IMonitoring } from '../monitoring/api';
@@ -28,16 +37,6 @@ import type {
 } from '../package-source';
 import { RUNBOOK_URL } from '../runbook-url';
 import { S3StorageFactory } from '../s3/storage';
-import { NpmJsPackageCanary } from './npmjs/canary';
-import {
-  MARKER_FILE_NAME,
-  METRICS_NAMESPACE,
-  MetricName,
-  S3KeyPrefix,
-} from './npmjs/constants.lambda-shared';
-
-import { NpmJsFollower } from './npmjs/npm-js-follower';
-import { StageAndNotify } from './npmjs/stage-and-notify';
 
 /**
  * The periodicity at which the NpmJs follower will run. This MUST be a valid

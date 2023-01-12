@@ -13,6 +13,8 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
+import { Canary } from './canary';
+import { METRICS_NAMESPACE, MetricName, LANGUAGE_DIMENSION } from './constants';
 import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { OverviewDashboard } from '../../overview-dashboard';
@@ -24,8 +26,6 @@ import {
   CORRUPT_ASSEMBLY_REPORT_PATTERN,
 } from '../shared/constants';
 import { DocumentationLanguage } from '../shared/language';
-import { Canary } from './canary';
-import { METRICS_NAMESPACE, MetricName, LANGUAGE_DIMENSION } from './constants';
 
 export interface InventoryProps {
   /**
