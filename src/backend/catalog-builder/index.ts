@@ -131,7 +131,7 @@ export class CatalogBuilder extends Construct {
     const catalogSizeChange = new MathExpression({
       expression: 'DIFF(FILL(m1, REPEAT))',
       period: Duration.minutes(15),
-      usingMetrics: { m1: this.metricRegisteredPackageMajorVersions() },
+      usingMetrics: { m1: this.metricRegisteredPackages() },
     });
     const alarmShrinkingCatalog = catalogSizeChange.createAlarm(
       this,
