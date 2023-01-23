@@ -12,6 +12,8 @@ import { IFunction, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
+import { CatalogBuilder as Handler } from './catalog-builder';
+import { MetricName, METRICS_NAMESPACE } from './constants';
 import { lambdaFunctionUrl, s3ObjectUrl } from '../../deep-link';
 
 import { Monitoring } from '../../monitoring';
@@ -20,8 +22,6 @@ import { RUNBOOK_URL } from '../../runbook-url';
 import { DenyList } from '../deny-list';
 import { FeedBuilder } from '../feed-builder';
 import type { ConstructFramework } from '../ingestion/framework-detection.lambda-shared';
-import { CatalogBuilder as Handler } from './catalog-builder';
-import { MetricName, METRICS_NAMESPACE } from './constants';
 
 /**
  * Props for `CatalogBuilder`.

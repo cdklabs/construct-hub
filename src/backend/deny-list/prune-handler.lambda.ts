@@ -1,7 +1,5 @@
 import { Configuration, metricScope, Unit } from 'aws-embedded-metrics';
 import * as AWS from 'aws-sdk';
-import * as clients from '../shared/aws.lambda-shared';
-import { requireEnv } from '../shared/env.lambda-shared';
 import { DenyListClient } from './client.lambda-shared';
 import {
   ENV_PRUNE_ON_CHANGE_FUNCTION_NAME,
@@ -11,6 +9,8 @@ import {
   MetricName,
   METRICS_NAMESPACE,
 } from './constants';
+import * as clients from '../shared/aws.lambda-shared';
+import { requireEnv } from '../shared/env.lambda-shared';
 
 const s3 = clients.s3();
 const sqs = clients.sqs();

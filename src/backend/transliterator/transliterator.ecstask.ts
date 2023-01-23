@@ -9,6 +9,8 @@ import * as docgen from 'jsii-docgen';
 
 import { MarkdownRenderer } from 'jsii-docgen/lib/docgen/render/markdown-render';
 import { JsiiEntity } from 'jsii-docgen/lib/docgen/schema';
+import { MetricName, METRICS_NAMESPACE } from './constants';
+import { writeFile } from './util';
 import { CacheStrategy } from '../../caching';
 import type { S3ObjectVersion, TransliteratorInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
@@ -18,8 +20,6 @@ import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DocumentationLanguage } from '../shared/language';
 import { shellOut } from '../shared/shell-out.lambda-shared';
-import { MetricName, METRICS_NAMESPACE } from './constants';
-import { writeFile } from './util';
 
 const ASSEMBLY_KEY_REGEX = new RegExp(
   `^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)${constants.ASSEMBLY_KEY_SUFFIX}$`

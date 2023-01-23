@@ -26,12 +26,12 @@ import {
   EcsRunTask,
 } from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
+import { Transliterator as Container } from './transliterator';
 import { Repository } from '../../codeartifact/repository';
 import { Monitoring } from '../../monitoring';
 import * as s3 from '../../s3';
 import * as constants from '../shared/constants';
 import { DocumentationLanguage } from '../shared/language';
-import { Transliterator as Container } from './transliterator';
 
 export interface TransliteratorProps {
   /**

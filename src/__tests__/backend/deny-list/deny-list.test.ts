@@ -1,11 +1,11 @@
 import { Duration, Stack } from 'aws-cdk-lib';
 import { Template } from 'aws-cdk-lib/assertions';
 import * as s3 from 'aws-cdk-lib/aws-s3';
+import { CatalogBuilderMock } from './integ/catalog-builder-mock';
 import { DenyList, DenyListRule } from '../../../backend';
 import { createDenyListMap } from '../../../backend/deny-list/create-map';
 import { Monitoring } from '../../../monitoring';
 import { OverviewDashboard } from '../../../overview-dashboard';
-import { CatalogBuilderMock } from './integ/catalog-builder-mock';
 
 test('defaults - empty deny list', () => {
   const stack = new Stack();

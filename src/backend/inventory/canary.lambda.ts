@@ -3,12 +3,12 @@ import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
 import { PromiseResult } from 'aws-sdk/lib/request';
 import { SemVer } from 'semver';
+import { METRICS_NAMESPACE, MetricName, LANGUAGE_DIMENSION } from './constants';
 import * as aws from '../shared/aws.lambda-shared';
 import { compressContent } from '../shared/compress-content.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DocumentationLanguage } from '../shared/language';
-import { METRICS_NAMESPACE, MetricName, LANGUAGE_DIMENSION } from './constants';
 
 Configuration.namespace = METRICS_NAMESPACE;
 

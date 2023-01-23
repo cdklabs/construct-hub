@@ -1,11 +1,11 @@
 import * as https from 'https';
 import { URL } from 'url';
 import type { Context, SQSEvent } from 'aws-lambda';
+import { S3KeyPrefix } from './constants.lambda-shared';
 import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
 import { s3, sqs } from '../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
 import { integrity } from '../../backend/shared/integrity.lambda-shared';
-import { S3KeyPrefix } from './constants.lambda-shared';
 
 /**
  * This function is invoked by the `npm-js-follower.lambda`  with a `PackageVersion` object, or by

@@ -10,9 +10,6 @@ import { S3EventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment';
 import { Construct, IConstruct } from 'constructs';
-import { Monitoring } from '../../monitoring';
-import { OverviewDashboard } from '../../overview-dashboard';
-import { S3StorageFactory } from '../../s3/storage';
 import { DenyListRule, IDenyList } from './api';
 import {
   ENV_DENY_LIST_BUCKET_NAME,
@@ -22,6 +19,9 @@ import {
 } from './constants';
 import { createDenyListMap } from './create-map';
 import { Prune } from './prune';
+import { Monitoring } from '../../monitoring';
+import { OverviewDashboard } from '../../overview-dashboard';
+import { S3StorageFactory } from '../../s3/storage';
 
 /**
  * Props for `DenyList`.

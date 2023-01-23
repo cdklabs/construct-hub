@@ -16,6 +16,14 @@ import { Tracing } from 'aws-cdk-lib/aws-lambda';
 import { BlockPublicAccess, IBucket } from 'aws-cdk-lib/aws-s3';
 import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
+import { CodeArtifactForwarder } from './codeartifact/code-artifact-forwarder';
+import {
+  METRICS_NAMESPACE,
+  MetricName,
+  DOMAIN_NAME_DIMENSION,
+  DOMAIN_OWNER_DIMENSION,
+  REPOSITORY_NAME_DIMENSION,
+} from './codeartifact/constants.lambda-shared';
 import {
   codeArtifactRepositoryUrl,
   lambdaFunctionUrl,
@@ -29,14 +37,6 @@ import type {
   PackageSourceBindResult,
 } from '../package-source';
 import { S3StorageFactory } from '../s3/storage';
-import { CodeArtifactForwarder } from './codeartifact/code-artifact-forwarder';
-import {
-  METRICS_NAMESPACE,
-  MetricName,
-  DOMAIN_NAME_DIMENSION,
-  DOMAIN_OWNER_DIMENSION,
-  REPOSITORY_NAME_DIMENSION,
-} from './codeartifact/constants.lambda-shared';
 
 export interface CodeArtifactProps {
   /**
