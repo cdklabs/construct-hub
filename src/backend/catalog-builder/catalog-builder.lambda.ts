@@ -144,6 +144,11 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
       Unit.Count
     );
     metrics.putMetric(
+      MetricName.REGISTERED_PACKAGES,
+      new Set(catalog.packages.map((p) => p.name)).size,
+      Unit.Count
+    );
+    metrics.putMetric(
       MetricName.MISSING_CONSTRUCT_FRAMEWORK_COUNT,
       catalog.packages.filter((pkg) => pkg.constructFramework == null).length,
       Unit.Count

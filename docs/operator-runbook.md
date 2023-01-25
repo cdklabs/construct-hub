@@ -281,7 +281,7 @@ steps again.
 
 #### Description
 
-This alarm goes off if the count of entries in the `catalog.json` object, which
+This alarm goes off if the count of packages in the `catalog.json` object, which
 backs the search experience of ConstructHub, reduces by more than 5 items,
 meaning packages are no longer accessible for search.
 
