@@ -64,6 +64,8 @@ export const handler = metricScope(
 
     const result = new Array<string>();
 
+    const packagesSeen = new Set<string>();
+
     for (const record of event.Records ?? []) {
       const payload = JSON.parse(record.body) as IngestionInput;
 
@@ -144,6 +146,13 @@ export const handler = metricScope(
         packageName = name;
         packageVersion = version;
         packageReadme = readme?.markdown ?? '';
+
+        const packageId = `${packageName}@${packageVersion}`;
+        if (packagesSeen.has(packageId)) {
+          console.log(`Skipping duplicate package: ${packageId}`);
+          continue;
+        }
+        packagesSeen.add(packageId);
 
         // Delete some fields not used by the client to reduce the size of the assembly.
         // See https://github.com/cdklabs/construct-hub-webapp/issues/691
