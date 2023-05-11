@@ -153,6 +153,9 @@ project.package.addField('resolutions', {
 
   // Potential solution to a types problem, got it from https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/62277
   '@types/express-serve-static-core': '4.17.6',
+
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/64924
+  '@types/lodash': '4.14.192',
 });
 
 function addVpcAllowListManagement() {
