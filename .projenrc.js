@@ -70,7 +70,7 @@ const project = new cdk.JsiiProject({
 
   peerDeps: peerDeps,
 
-  minNodeVersion: '14.18.0',
+  minNodeVersion: '16.16.0',
 
   pullRequestTemplateContents: [
     '',
