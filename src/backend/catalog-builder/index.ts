@@ -12,6 +12,8 @@ import { IFunction, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import { IBucket } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
+import { CatalogBuilder as Handler } from './catalog-builder';
+import { MetricName, METRICS_NAMESPACE } from './constants';
 import { lambdaFunctionUrl, s3ObjectUrl } from '../../deep-link';
 
 import { Monitoring } from '../../monitoring';
@@ -20,8 +22,6 @@ import { RUNBOOK_URL } from '../../runbook-url';
 import { DenyList } from '../deny-list';
 import { FeedBuilder } from '../feed-builder';
 import type { ConstructFramework } from '../ingestion/framework-detection.lambda-shared';
-import { CatalogBuilder as Handler } from './catalog-builder';
-import { MetricName, METRICS_NAMESPACE } from './constants';
 
 /**
  * Props for `CatalogBuilder`.
@@ -131,7 +131,7 @@ export class CatalogBuilder extends Construct {
     const catalogSizeChange = new MathExpression({
       expression: 'DIFF(FILL(m1, REPEAT))',
       period: Duration.minutes(15),
-      usingMetrics: { m1: this.metricRegisteredPackageMajorVersions() },
+      usingMetrics: { m1: this.metricRegisteredPackages() },
     });
     const alarmShrinkingCatalog = catalogSizeChange.createAlarm(
       this,
@@ -191,6 +191,16 @@ export class CatalogBuilder extends Construct {
       statistic: Statistic.MAXIMUM,
       ...opts,
       metricName: MetricName.REGISTERED_PACKAGES_MAJOR_VERSION,
+      namespace: METRICS_NAMESPACE,
+    });
+  }
+
+  public metricRegisteredPackages(opts?: MetricOptions): Metric {
+    return new Metric({
+      period: Duration.minutes(15),
+      statistic: Statistic.MAXIMUM,
+      ...opts,
+      metricName: MetricName.REGISTERED_PACKAGES,
       namespace: METRICS_NAMESPACE,
     });
   }

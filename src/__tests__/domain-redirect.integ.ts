@@ -6,7 +6,6 @@ const app = new App();
 
 const stack = new Stack(app, 'DomainRedirectIntegrationTest', {
   env: {
-    account: process.env.CDK_DEFAULT_ACCOUNT,
     region: 'us-east-1',
   },
 });

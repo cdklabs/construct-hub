@@ -10,6 +10,11 @@ import {
 } from '@jsii/spec';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { Context, SQSEvent } from 'aws-lambda';
+import { MetricName, METRICS_NAMESPACE } from './constants';
+import {
+  ConstructFramework,
+  detectConstructFrameworks,
+} from './framework-detection.lambda-shared';
 import { CacheStrategy } from '../../caching';
 import type { PackageTagConfig } from '../../package-tag';
 import type { PackageLinkConfig } from '../../webapp';
@@ -25,11 +30,6 @@ import { IngestionInput } from '../shared/ingestion-input.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
 import { isTagApplicable } from '../shared/tags';
 import { extractObjects } from '../shared/tarball.lambda-shared';
-import { MetricName, METRICS_NAMESPACE } from './constants';
-import {
-  ConstructFramework,
-  detectConstructFrameworks,
-} from './framework-detection.lambda-shared';
 
 Configuration.namespace = METRICS_NAMESPACE;
 
@@ -63,6 +63,8 @@ export const handler = metricScope(
     })();
 
     const result = new Array<string>();
+
+    const packagesSeen = new Set<string>();
 
     for (const record of event.Records ?? []) {
       const payload = JSON.parse(record.body) as IngestionInput;
@@ -144,6 +146,13 @@ export const handler = metricScope(
         packageName = name;
         packageVersion = version;
         packageReadme = readme?.markdown ?? '';
+
+        const packageId = `${packageName}@${packageVersion}`;
+        if (packagesSeen.has(packageId)) {
+          console.log(`Skipping duplicate package: ${packageId}`);
+          continue;
+        }
+        packagesSeen.add(packageId);
 
         // Delete some fields not used by the client to reduce the size of the assembly.
         // See https://github.com/cdklabs/construct-hub-webapp/issues/691

@@ -19,6 +19,10 @@ import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
 import { JsonPath } from 'aws-cdk-lib/aws-stepfunctions';
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
+import * as metricConst from './constants';
+import { GenerateReleaseNotes } from './generate-release-notes';
+import { GetMessagesFromWorkerQueue } from './get-messages-from-worker-queue';
+import { ReleaseNotesTrigger } from './release-notes-trigger';
 import { stateMachineUrl, lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { OverviewDashboard } from '../../overview-dashboard';
@@ -29,12 +33,6 @@ import {
   STORAGE_KEY_PREFIX,
   PACKAGE_RELEASE_NOTES_KEY_SUFFIX,
 } from '../shared/constants';
-
-import * as metricConst from './constants';
-
-import { GenerateReleaseNotes } from './generate-release-notes';
-import { GetMessagesFromWorkerQueue } from './get-messages-from-worker-queue';
-import { ReleaseNotesTrigger } from './release-notes-trigger';
 
 /**
  * Properties for ReleaseNoteFetcher.

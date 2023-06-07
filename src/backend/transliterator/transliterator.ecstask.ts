@@ -1,5 +1,7 @@
 import * as os from 'os';
 import * as path from 'path';
+import { Assembly } from '@jsii/spec';
+import { Sema } from 'async-sema';
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { PromiseResult } from 'aws-sdk/lib/request';
 import * as fs from 'fs-extra';
@@ -7,8 +9,10 @@ import * as docgen from 'jsii-docgen';
 
 import { MarkdownRenderer } from 'jsii-docgen/lib/docgen/render/markdown-render';
 import { JsiiEntity } from 'jsii-docgen/lib/docgen/schema';
+import { MetricName, METRICS_NAMESPACE } from './constants';
+import { writeFile } from './util';
 import { CacheStrategy } from '../../caching';
-import type { TransliteratorInput } from '../payload-schema';
+import type { S3ObjectVersion, TransliteratorInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
 import { logInWithCodeArtifact } from '../shared/code-artifact.lambda-shared';
 import { compressContent } from '../shared/compress-content.lambda-shared';
@@ -16,13 +20,15 @@ import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { DocumentationLanguage } from '../shared/language';
 import { shellOut } from '../shared/shell-out.lambda-shared';
-import { MetricName, METRICS_NAMESPACE } from './constants';
-import { writeFile } from './util';
 
 const ASSEMBLY_KEY_REGEX = new RegExp(
   `^${constants.STORAGE_KEY_PREFIX}((?:@[^/]+/)?[^/]+)/v([^/]+)${constants.ASSEMBLY_KEY_SUFFIX}$`
 );
-// Capture groups:                                                     ┗━━━━━━━━━1━━━━━━━┛  ┗━━2━━┛
+
+// A semaphore aimed at ensuring we don't open an uncontrolled amount of sockets concurrently, and run out of FDs.
+const S3_SEMAPHORE = new Sema(
+  parseInt(process.env.MAX_CONCURRENT_S3_REQUESTS ?? '16', 10)
+);
 
 /**
  * This function receives an S3 event, and for each record, proceeds to download
@@ -38,7 +44,7 @@ const ASSEMBLY_KEY_REGEX = new RegExp(
 export function handler(
   event: TransliteratorInput
 ): Promise<{ created: string[]; deleted: string[] }> {
-  console.log(`Event: ${JSON.stringify(event, null, 2)}`);
+  console.log('Event:', JSON.stringify(event));
   // We'll need a writable $HOME directory, or this won't work well, because
   // npm will try to write stuff like the `.npmrc` or package caches in there
   // and that'll bail out on EROFS if that fails.
@@ -98,13 +104,17 @@ export function handler(
       );
     }
 
-    const assembly = JSON.parse(assemblyResponse.Body.toString('utf-8'));
+    const assembly = JSON.parse(
+      assemblyResponse.Body.toString('utf-8')
+    ) as Assembly;
     const submodules = Object.keys(assembly.submodules ?? {}).map(
       (s) => s.split('.')[1]
     );
     console.log(
       `Assembly ${assembly.name} has ${submodules.length} submodules.`
     );
+
+    restrictSubmoduleCountToReturnable(event, submodules);
 
     console.log(`Fetching package: ${event.package.key}`);
     const tarballExists = await aws.s3ObjectExists(
@@ -177,10 +187,10 @@ export function handler(
             metrics.setNamespace(METRICS_NAMESPACE);
 
             async function renderAndDispatch(submodule?: string) {
+              const label = `Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`;
               try {
-                console.log(
-                  `Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`
-                );
+                console.log(label);
+                console.time(label);
 
                 const docgenLang = docgen.Language.fromString(lang.name);
                 const json = await docs.toJson({
@@ -204,9 +214,11 @@ export function handler(
                   Unit.Bytes
                 );
 
-                const jsonKey = event.assembly.key.replace(
-                  /\/[^/]+$/,
-                  constants.docsKeySuffix(lang, submodule, 'json')
+                const jsonKey = formatArtifactKey(
+                  event.assembly,
+                  lang,
+                  submodule,
+                  'json'
                 );
                 console.log(`Uploading ${jsonKey}`);
                 const jsonUpload = uploadFile(
@@ -236,9 +248,11 @@ export function handler(
                   Unit.Bytes
                 );
 
-                const key = event.assembly.key.replace(
-                  /\/[^/]+$/,
-                  constants.docsKeySuffix(lang, submodule, 'md')
+                const key = formatArtifactKey(
+                  event.assembly,
+                  lang,
+                  submodule,
+                  'md'
                 );
                 console.log(`Uploading ${key}`);
                 const upload = uploadFile(
@@ -285,6 +299,8 @@ export function handler(
                 } else {
                   throw e;
                 }
+              } finally {
+                console.timeEnd(label);
               }
             }
             await renderAndDispatch();
@@ -293,7 +309,10 @@ export function handler(
             }
           }
         );
+        const label = `Generating documentation for ${packageFqn} in ${language}`;
+        console.time(label);
         await generateDocs(language);
+        console.timeEnd(label);
       }
     } catch (error) {
       if (error instanceof docgen.UnInstallablePackageError) {
@@ -368,6 +387,8 @@ function uploadFile(
     : key.endsWith('.json')
     ? 'application/json; charset=UTF-8'
     : 'application/octet-stream';
+
+  const token = S3_SEMAPHORE.acquire();
   return aws
     .s3()
     .putObject({
@@ -381,7 +402,8 @@ function uploadFile(
         'Origin-Version-Id': sourceVersionId ?? 'N/A',
       },
     })
-    .promise();
+    .promise()
+    .finally(() => S3_SEMAPHORE.release(token));
 }
 
 function deleteFile(bucket: string, key: string) {
@@ -402,6 +424,18 @@ function anchorFormatter(type: JsiiEntity) {
   } else {
     return sanitize(base);
   }
+}
+
+function formatArtifactKey(
+  assemblyObject: S3ObjectVersion,
+  lang: DocumentationLanguage,
+  submodule: string | undefined,
+  extension: string
+) {
+  return assemblyObject.key.replace(
+    /\/[^/]+$/,
+    constants.docsKeySuffix(lang, submodule, extension)
+  );
 }
 
 function linkFormatter(lang: docgen.Language) {
@@ -450,46 +484,66 @@ interface S3Object {
   readonly versionId?: string;
 }
 
-async function main() {
-  const message = {
-    bucket: 'constructhub-prod-constructhubpackagedatadc5ef35e-rkjascvjo8m5',
-    assembly: {
-      key: 'data/aws-cdk-lib/v2.19.0/assembly.json',
-      versionId: 'aE4NBT9QYVdJg0XEtaUDBJzcMlRQrPmc',
-    },
-    package: {
-      key: 'data/aws-cdk-lib/v2.19.0/package.tgz',
-      versionId: '7nZhlixz2rTBX6rVTfovEjar4MT.447c',
-    },
-    metadata: {
-      key: 'data/aws-cdk-lib/v2.19.0/metadata.json',
-      versionId: 'NtMJtUBj5x9HsU5.AUyPhnganlShnDYi',
-    },
-    $TaskExecution: {
-      StartTime: '2022-08-16T21:13:41.176Z',
-      Id: 'arn:aws:states:us-east-1:573688003310:execution:ConstructHub-Prod.ConstructHub.Orchestration:0a372bbf-e798-4e4f-babf-923bc34d5831',
-      RoleArn:
-        'arn:aws:iam::573688003310:role/ConstructHub-Prod-ConstructHubOrchestrationRoleF4C-H0XHAEH2C72E',
-      Name: '0a372bbf-e798-4e4f-babf-923bc34d5831',
-    },
-    error: { Error: 'States.Timeout', Cause: '' },
-    _redrive: {
-      lambdaRequestId: '277a4652-8b1c-4d41-9f6c-ccd73bf3097a',
-      lambdaLogGroupName:
-        '/aws/lambda/ConstructHub-Prod-ConstructHubOrchestrationRedrive-NL2duBKlSiL9',
-      lambdaLogStreamName:
-        '2022/08/16/[$LATEST]c58469c1c44b4cd2a30b69f0f1c9c1b4',
-    },
-    docGen: {
-      command: [
-        '{"bucket":"constructhub-prod-constructhubpackagedatadc5ef35e-rkjascvjo8m5","assembly":{"key":"data/aws-cdk-lib/v2.19.0/assembly.json","versionId":"aE4NBT9QYVdJg0XEtaUDBJzcMlRQrPmc"},"package":{"key":"data/aws-cdk-lib/v2.19.0/package.tgz","versionId":"7nZhlixz2rTBX6rVTfovEjar4MT.447c"},"metadata":{"key":"data/aws-cdk-lib/v2.19.0/metadata.json","versionId":"NtMJtUBj5x9HsU5.AUyPhnganlShnDYi"},"$TaskExecution":{"StartTime":"2022-08-16T21:13:41.176Z","Id":"arn:aws:states:us-east-1:573688003310:execution:ConstructHub-Prod.ConstructHub.Orchestration:0a372bbf-e798-4e4f-babf-923bc34d5831","RoleArn":"arn:aws:iam::573688003310:role/ConstructHub-Prod-ConstructHubOrchestrationRoleF4C-H0XHAEH2C72E","Name":"0a372bbf-e798-4e4f-babf-923bc34d5831"},"error":{"Error":"States.Timeout","Cause":""},"_redrive":{"lambdaRequestId":"277a4652-8b1c-4d41-9f6c-ccd73bf3097a","lambdaLogGroupName":"/aws/lambda/ConstructHub-Prod-ConstructHubOrchestrationRedrive-NL2duBKlSiL9","lambdaLogStreamName":"2022/08/16/[$LATEST]c58469c1c44b4cd2a30b69f0f1c9c1b4"}}',
-      ],
-    },
-  };
-  return handler({ ...message, languages: { java: true } });
-}
+/**
+ * This script returns all files uploaded as a result of translation.
+ *
+ * It is (2 files for every language) for the (assembly + each submodule).
+ *
+ * This may exceed the maximum size of the Step Functions return value when
+ * there are very many submodules, such as a pathological case of
+ * `@dschmidt/google-provider@0.0.1` has (there are more than 600 submodules,
+ * probably because of a configuration mistake).
+ *
+ * We could deal with this by changing the protocol (large scale changes and
+ * many tests necessary). Given that it's probably an accident, we'll just limit
+ * how many submodules we will translate.
+ *
+ * We could hardcode to a fixed number, but that could still blow up given long
+ * enough names. So instead we'll estimate the payload size added by each submodule
+ * and use that to cap.
+ */
+function restrictSubmoduleCountToReturnable(
+  event: TransliteratorInput,
+  submodules: string[]
+) {
+  const MAX_PAYLOAD = 250_000; // A little less than the actual size to catch extra separators
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+  let cumSize = estimateSize(undefined); // Assembly level docs
+  for (let i = 0; i < submodules.length; i++) {
+    cumSize += estimateSize(submodules[i]);
+    if (cumSize > MAX_PAYLOAD) {
+      // submodule 'i' doesn't fit anymore
+      console.log(
+        `Not all submodules fit in response. Documenting only ${i} out of ${submodules.length} submodules`
+      );
+      submodules.splice(i, submodules.length - i);
+      return;
+    }
+  }
+
+  /**
+   * Estimate the size added to the return array by adding this submodule
+   */
+  function estimateSize(submodule: string | undefined) {
+    const quotesAndComma = 3;
+    const statusExt = Math.max(
+      constants.NOT_SUPPORTED_SUFFIX.length,
+      constants.CORRUPT_ASSEMBLY_SUFFIX.length
+    );
+
+    return (
+      DocumentationLanguage.ALL
+        // A .json and .md file plus their quotes and a comma plus potentially the 'not-supported'/'corruptassembly' extensions
+        .map(
+          (l) =>
+            formatArtifactKey(event.assembly, l, submodule, 'json').length +
+            statusExt +
+            quotesAndComma +
+            formatArtifactKey(event.assembly, l, submodule, 'md').length +
+            statusExt +
+            quotesAndComma
+        )
+        .reduce((x, a) => x + a, 0)
+    );
+  }
+}

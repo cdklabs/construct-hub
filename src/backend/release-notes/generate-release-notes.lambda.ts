@@ -1,10 +1,10 @@
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
 import * as aws from 'aws-sdk';
-import { requireEnv } from '../shared/env.lambda-shared';
-import { extractObjects } from '../shared/tarball.lambda-shared';
 import * as constants from './constants';
 import { generateReleaseNotes } from './shared/github-changelog-fetcher.lambda-shared';
+import { requireEnv } from '../shared/env.lambda-shared';
+import { extractObjects } from '../shared/tarball.lambda-shared';
 
 export type ReleaseNotesGenerateEvent = { tarballUri: string };
 

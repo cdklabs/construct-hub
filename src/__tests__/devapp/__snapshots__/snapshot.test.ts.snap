@@ -268,7 +268,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 2da8a34546574f78939f1f8a3890e11776173a510566fbdce39b227d26f7c45f.zip
+        S3Key: d288c5bb5de1e9d8cbaae4caa9c7fd487129b96c984531a81d898f470e7bb4d9.zip
       Role:
         Fn::GetAtt:
           - ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionServiceRole9AAAD93C
@@ -2737,7 +2737,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 548eb578125b5be51c85b48c0a1f3f3575f8b607662961efc0bd64e4f8d9e6fa.zip
+        S3Key: ad02379a79551cb3ad59d28602245d4f0a2296271fa8dc982da7370c3aae9c01.zip
       Role:
         Fn::GetAtt:
           - ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE
@@ -2814,7 +2814,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: d58507a220bd04eb806981f9b45aacdac4ba8cf250c6a36f5d42e0f13362cdba.zip
+        S3Key: 3789abe60e0767a5822211c7c6115a725d4c1cd50ec828b6653e0c10c3e57727.zip
       Role:
         Fn::GetAtt:
           - ConstructHubDenyListPrunePruneQueueHandlerServiceRoleC10AC418
@@ -2921,7 +2921,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: bb9e63835682ffaeb86074f1ee1fff4c75969bac0dab44c62cc897f710475be1.zip
+        S3Key: 955afa81836791c588d9a0c7d4f68616471c1dfd725f2cf52fb673a08bf722ed.zip
       Role:
         Fn::GetAtt:
           - ConstructHubStatsServiceRole48DCA379
@@ -3072,7 +3072,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: d6e987049ddb1313cc3dcc312e9bad9285f88b67007f6e3acfe18e0e8afe4fbb.zip
+        S3Key: 97fad5e0d65b8dfaa7dc1e2b7cbf5d08cc11856cd48cc4a616e5bd2d600ca2a8.zip
       Role:
         Fn::GetAtt:
           - ConstructHubVersionTrackerServiceRole721EE863
@@ -3095,7 +3095,7 @@ Resources:
       MemorySize: 10240
       ReservedConcurrentExecutions: 1
       Runtime: nodejs16.x
-      Timeout: 60
+      Timeout: 300
       TracingConfig:
         Mode: Active
     DependsOn:
@@ -3297,7 +3297,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 495695a6d325354b59cc52c86843d310e64adc659fdef203bda6647c29f2d5cc.zip
+        S3Key: 3e6a9c66fa078720fb3ae4c3c0d6f41dc45b1c84a27ebcb0d1849b21980863d1.zip
       Role:
         Fn::GetAtt:
           - ConstructHubFeedBuilderReleaseNotesUpdateFeedServiceRoleC857E364
@@ -3484,7 +3484,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 9797e5559cb1840dd7e0e78db420ca9a43e9215a65dd39302e057be74e5e7c52.zip
+        S3Key: 3249fb1572e870955a3a92be1657e268f2eedef724387145505dee9e52f96704.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
@@ -3561,7 +3561,7 @@ Resources:
         - Id: m1
           MetricStat:
             Metric:
-              MetricName: RegisteredPackagesMajorVersion
+              MetricName: RegisteredPackages
               Namespace: ConstructHub/CatalogBuilder
             Period: 900
             Stat: Maximum
@@ -3613,7 +3613,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 344f00ca1c9cd5c57b67332a838240cbfc4ce680583b9ec0b29d6be377a8718d.zip
+        S3Key: 52ac1e131f64849ae27e69be4d71272b1bcc47a8b26ae6a29c04087309676229.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationNeedsCatalogUpdateServiceRoleE6BF31C3
@@ -3703,7 +3703,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 74544377867f33d45148a6b1c0617b8376259c105c5dc6611931fdcf9a0014a2.zip
+        S3Key: 136a00fdce1ebc3d18f42996b55baad67555e8347e8d108110f61d423100cf3b.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationClusterMonitorServiceRoleA4055F89
@@ -4927,7 +4927,7 @@ Resources:
                   - repositoryEndpoint
           Essential: true
           Image:
-            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:cd4e93635792fa5ad0d0e73ce77b4758905fabbd88d07cb0cd1f589bae5b91ce
+            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:dc68080fa5da929bc84f6715a0adcf16e4e863c7fbe894a142bc45832b86e93c
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -4937,6 +4937,10 @@ Resources:
               awslogs-region:
                 Ref: AWS::Region
           Name: Resource
+          Ulimits:
+            - HardLimit: 65535
+              Name: nofile
+              SoftLimit: 16384
       Cpu: "4096"
       ExecutionRoleArn:
         Fn::GetAtt:
@@ -5171,7 +5175,7 @@ Resources:
             - Fn::GetAtt:
                 - ConstructHubOrchestrationGeneratedocsSecurityGroupC584DAC2
                 - GroupId
-            - '"]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"Check
+            - '"]}},"Overrides":{"ContainerOverrides":[{"Name":"Resource","Command.$":"$","Environment":[{"Name":"SFN_TASK_TOKEN","Value.$":"$$.Task.Token"},{"Name":"RUN_LSOF_ON_HEARTBEAT","Value":""}]}]},"LaunchType":"FARGATE","PlatformVersion":"1.4.0"}},"Check
               whether catalog needs udpating":{"Next":"Is catalog update
               needed?","Retry":[{"ErrorEquals":["Lambda.ServiceException","Lambda.AWSLambdaException","Lambda.SdkClientException"],"IntervalSeconds":2,"MaxAttempts":6,"BackoffRate":2},{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"IntervalSeconds":60,"MaxAttempts":30,"BackoffRate":1.1}],"Catch":[{"ErrorEquals":["Lambda.TooManyRequestsException","Lambda.Unknown"],"ResultPath":"$.error","Next":"Send
               to Dead Letter
@@ -5295,7 +5299,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 8770de58708d788aa1ec5c8a8e787b95d632d92324d5caf0c36331c73f020360.zip
+        S3Key: fbb1c24eaad63b8977db5944f8d71822aaea8bd6147a3dd2e511269e380d9788.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationRedriveServiceRoleB84EFF33
@@ -5673,7 +5677,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 8ff84ecfaf5da41ea86655da88ccc3be1fd860a274551b4c277847a489a4e8d3.zip
+        S3Key: 6f8b4f699eca070a30ff30c6432ce9e24cdf846b7bde0efb6c8c1280c04a9f73.zip
       Role:
         Fn::GetAtt:
           - ConstructHubReleaseNotesReleaseNotesTriggerServiceRoleD0FDE2B6
@@ -5776,7 +5780,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 09116b0401b48e640dbbbca952ea846dd49f947118f1959a1d151d9132c7b837.zip
+        S3Key: e8ff0780c69b5f9cef4661621b6883ad6f2e10316156b81964ef5da4d38a31ba.zip
       Role:
         Fn::GetAtt:
           - ConstructHubReleaseNotesGithubChangelogFetcherServiceRoleCAE3656D
@@ -5849,7 +5853,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: a421566db93dac7c5334e622e309946921f638a7e75a972b4c5782009175c512.zip
+        S3Key: 320f8ef20c18ac039c1cef16364765fdf6184deb5075ab676b517b19432e0993.zip
       Role:
         Fn::GetAtt:
           - ConstructHubReleaseNotesReleaseNoteTasksServiceRole662376CD
@@ -6176,8 +6180,7 @@ Resources:
       ComparisonOperator: GreaterThanOrEqualToThreshold
       EvaluationPeriods: 2
       AlarmDescription: >
-        Release notes generation is failing due to Invalid GitHub
-        token
+        Release notes generation is failing due to Invalid GitHub token
 
 
         RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
@@ -6503,7 +6506,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: d3ebddce8fb98cd228da006b572e65fd922cace0cd70bdbd4c11ea642cce3c0f.zip
+        S3Key: 5cbb39032eceac5b0489e6447ed2049f4d843534fac6730aff3a64f2841c46e5.zip
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
@@ -6676,7 +6679,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: bdf80c2c89a51ea6a00bf8e918bb3e6d539d90ad3042c4b37915c2277d68481b.zip
+        S3Key: 2b6e7c1edd35aa8ce914e9f94c3987008c693300e0b0ef038911e91aba1b687e.zip
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionReprocessWorkflowFunctionServiceRoleA59056B1
@@ -7354,7 +7357,7 @@ Resources:
       SourceBucketNames:
         - Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
       SourceObjectKeys:
-        - 2cb9f2197076997e337b3401f03978e2de26e9c431647c397d62831f45d5f573.zip
+        - 21a0651e8e5e696d9b73ad58a2d8ab7603eca144732b7ba5f9b9d70bd61e4298.zip
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: false
@@ -7584,7 +7587,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: f7f3e4c9a60d8696dba84cf51c44382ff56dd78960bbb3be5bebd11442dbf6b1.zip
+        S3Key: e260fcea302d4031ae46f8851e6b8ddb337aea66f6fc1001d5ed5dbec916d151.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50
@@ -7739,7 +7742,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 55fd8c5eaf71b986bd379c182180fc94917b514361aeb127db95ef1b1ec92774.zip
+        S3Key: 19c1e9710e80106b22c236b5c4695c24fe4267459ca8cb00657dc68044b45a5a.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsServiceRoleAC3F7AA6
@@ -7830,7 +7833,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 81871d01744762ccc30b7a0a4903bffeaf62bff048debe52a37725ba03e0e69d.zip
+        S3Key: 8be3a095102301804d42e4635a3e25fd27e2fdd31d8a73fc429f48f8b3b10aaf.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2
@@ -7898,8 +7901,8 @@ Resources:
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 2
       AlarmDescription: >-
-        New versions of construct-hub-probe have been published over 5
-        minutes ago and are still not visible in construct hub
+        New versions of construct-hub-probe have been published over 5 minutes
+        ago and are still not visible in construct hub
 
         Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
       AlarmName: dev/ConstructHub/Sources/NpmJs/Canary/SLA-Breached
@@ -7990,8 +7993,8 @@ Resources:
                 - Arn
             - '"))'
       AlarmDescription: >-
-        The NpmJs package canary is not running or is failing. This
-        prevents alarming when this instance of
+        The NpmJs package canary is not running or is failing. This prevents
+        alarming when this instance of
 
         ConstructHub falls out of SLA for new package ingestion!
 
@@ -8006,8 +8009,8 @@ Resources:
       ComparisonOperator: GreaterThanThreshold
       EvaluationPeriods: 60
       AlarmDescription: >-
-        The NpmJs package canary has been encountering consistent HTTP
-        gateway errors when contacting npmjs servers
+        The NpmJs package canary has been encountering consistent HTTP gateway
+        errors when contacting npmjs servers
 
         for an hour or more. This means the canary has been unable to evaluate SLA compliance for that much time.
 
@@ -8119,7 +8122,7 @@ Resources:
     Type: AWS::CloudWatch::Alarm
     Properties:
       ComparisonOperator: LessThanThreshold
-      EvaluationPeriods: 12
+      EvaluationPeriods: 288
       AlarmDescription:
         Fn::Join:
           - ""
@@ -8412,7 +8415,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 13db77aba611283be89907d27eabe69b2d4d735fc40245e533e82f43d6087ed5.zip
+        S3Key: e0c4284b3c601ac244ec37fa29a1b9fd76b1402d147a223eddc1ace8198cf9f6.zip
       Role:
         Fn::GetAtt:
           - ConstructHubInventoryCanaryServiceRole7684EDDE
@@ -8777,10 +8780,10 @@ Resources:
             - /tasks)"}},{"type":"metric","width":12,"height":6,"x":0,"y":10,"properties":{"view":"timeSeries","title":"Fargate
               Resources","region":"
             - Ref: AWS::Region
-            - '","metrics":[["AWS/Usage","ResourceCount","Class","None","Resource","OnDemand","Service","Fargate","Type","Resource",{"label":"Fargate
-              Usage
+            - '","metrics":[["AWS/Usage","ResourceCount","Class","Standard/OnDemand","Resource","vCPU","Service","Fargate","Type","Resource",{"label":"Fargate
+              vCPU Usage
               (On-Demand)","stat":"Maximum","id":"mFargateUsage"}],[{"label":"Fargate
-              Quota
+              vCPU Quota
               (On-Demand)","expression":"SERVICE_QUOTA(mFargateUsage)"}],[{"label":"CPU
               Utilization","expression":"100 * FILL(mCpuUtilized, 0) /
               FILL(mCpuReserved,
@@ -9733,7 +9736,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 918f7351589da5874e9c468ecf9c85437ce93cdc06b048235bf9654805cf12a9.zip
+        S3Key: afd5dc8476b3e24eca741cb941d8da066983d9da0f85530dbc9ddc1fb64f91fd.zip
       Role:
         Fn::GetAtt:
           - SQSDLQStatsWidgetHandlerfc176846044f5e56baf2c71723501885ServiceRole2F995712
@@ -9946,7 +9949,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 86f7698453f70833efe284198c8e076b9fb2e21f6f0d9913c04d9c50c51ced1a.zip
+        S3Key: 9f72bbbc0faf036d1cb1fb187d73ec950da3b9d8ed5802f730d555b1593ecc7d.zip
       Role:
         Fn::GetAtt:
           - PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfServiceRole060BA12C

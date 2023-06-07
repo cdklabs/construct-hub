@@ -4,15 +4,15 @@ import { createGunzip } from 'zlib';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { AWSError, S3 } from 'aws-sdk';
 import * as JSONStream from 'JSONStream';
-import { CatalogModel } from '../../../backend';
-import * as aws from '../../../backend/shared/aws.lambda-shared';
-import { requireEnv } from '../../../backend/shared/env.lambda-shared';
 import {
   METRICS_NAMESPACE,
   MetricName,
   Environment,
   ObjectKey,
 } from './constants';
+import { CatalogModel } from '../../../backend';
+import * as aws from '../../../backend/shared/aws.lambda-shared';
+import { requireEnv } from '../../../backend/shared/env.lambda-shared';
 
 Configuration.namespace = METRICS_NAMESPACE;
 

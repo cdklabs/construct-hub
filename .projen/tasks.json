@@ -880,6 +880,24 @@
         }
       ]
     },
+    "install": {
+      "name": "install",
+      "description": "Install project dependencies and update lockfile (non-frozen)",
+      "steps": [
+        {
+          "exec": "yarn install --check-files"
+        }
+      ]
+    },
+    "install:ci": {
+      "name": "install:ci",
+      "description": "Install project dependencies using frozen lockfile",
+      "steps": [
+        {
+          "exec": "yarn install --check-files --frozen-lockfile"
+        }
+      ]
+    },
     "integ:deny-list:assert": {
       "name": "integ:deny-list:assert",
       "description": "synthesize integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
@@ -1055,7 +1073,8 @@
       "description": "Run tests",
       "steps": [
         {
-          "exec": "jest --passWithNoTests --all --updateSnapshot --coverageProvider=v8"
+          "exec": "jest --passWithNoTests --coverageProvider=v8 --updateSnapshot",
+          "receiveArgs": true
         },
         {
           "spawn": "eslint"
@@ -1065,15 +1084,6 @@
         },
         {
           "spawn": "integ:domain-redirect:assert"
-        }
-      ]
-    },
-    "test:update": {
-      "name": "test:update",
-      "description": "Update jest snapshots",
-      "steps": [
-        {
-          "exec": "jest --updateSnapshot"
         }
       ]
     },
@@ -1113,25 +1123,25 @@
           "exec": "yarn upgrade npm-check-updates"
         },
         {
-          "exec": "npm-check-updates --dep dev --upgrade --target=minor --reject='aws-sdk-mock,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
+          "exec": "npm-check-updates --dep dev --upgrade --target=minor --reject='aws-sdk-mock,jsii,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
         },
         {
-          "exec": "npm-check-updates --dep optional --upgrade --target=minor --reject='aws-sdk-mock,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
+          "exec": "npm-check-updates --dep optional --upgrade --target=minor --reject='aws-sdk-mock,jsii,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
         },
         {
-          "exec": "npm-check-updates --dep peer --upgrade --target=minor --reject='aws-sdk-mock,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
+          "exec": "npm-check-updates --dep peer --upgrade --target=minor --reject='aws-sdk-mock,jsii,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
         },
         {
-          "exec": "npm-check-updates --dep prod --upgrade --target=minor --reject='aws-sdk-mock,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
+          "exec": "npm-check-updates --dep prod --upgrade --target=minor --reject='aws-sdk-mock,jsii,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
         },
         {
-          "exec": "npm-check-updates --dep bundle --upgrade --target=minor --reject='aws-sdk-mock,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
+          "exec": "npm-check-updates --dep bundle --upgrade --target=minor --reject='aws-sdk-mock,jsii,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @aws-sdk/client-sfn @jsii/spec @octokit/rest @types/aws-lambda @types/changelog-filename-regex @types/fs-extra @types/jest @types/markdown-it @types/markdown-it-emoji @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case changelog-filename-regex construct-hub-webapp dotenv esbuild eslint-config-prettier eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint feed fs-extra glob got jest-junit jest jsii jsii-diff jsii-docgen jsii-pacmak json-schema JSONStream markdown-it markdown-it-emoji normalize-registry-metadata npm-check-updates prettier projen semver spdx-license-list standard-version tar-stream typescript uuid yaml"
+          "exec": "yarn upgrade @aws-sdk/client-sfn @jsii/spec @octokit/rest @types/aws-lambda @types/changelog-filename-regex @types/fs-extra @types/jest @types/markdown-it @types/markdown-it-emoji @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser async-sema aws-cdk aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case changelog-filename-regex construct-hub-webapp dotenv esbuild eslint-config-prettier eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint feed fs-extra glob got jest-junit jest jsii-diff jsii-docgen jsii-pacmak jsii JSONStream markdown-it markdown-it-emoji normalize-registry-metadata npm-check-updates prettier projen semver spdx-license-list standard-version tar-stream typescript uuid yaml"
         },
         {
           "exec": "npx projen"

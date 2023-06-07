@@ -546,8 +546,8 @@ export class BackendDashboard extends Construct {
     ];
     const mFargateUsage = new Metric({
       dimensionsMap: {
-        Class: 'None',
-        Resource: 'OnDemand',
+        Class: 'Standard/OnDemand',
+        Resource: 'vCPU',
         Service: 'Fargate',
         Type: 'Resource',
       },
@@ -562,10 +562,10 @@ export class BackendDashboard extends Construct {
         width: 12,
         title: 'Fargate Resources',
         left: [
-          mFargateUsage.with({ label: 'Fargate Usage (On-Demand)' }),
+          mFargateUsage.with({ label: 'Fargate vCPU Usage (On-Demand)' }),
           new MathExpression({
             expression: 'SERVICE_QUOTA(mFargateUsage)',
-            label: 'Fargate Quota (On-Demand)',
+            label: 'Fargate vCPU Quota (On-Demand)',
             usingMetrics: { mFargateUsage },
           }),
         ],

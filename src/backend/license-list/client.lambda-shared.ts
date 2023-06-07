@@ -1,6 +1,6 @@
+import { EnvironmentVariables } from './constants';
 import { s3 } from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
-import { EnvironmentVariables } from './constants';
 
 /**
  * A client for working with the license list.

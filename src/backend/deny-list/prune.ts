@@ -4,8 +4,6 @@ import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as sqs from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
-import { Monitoring } from '../../monitoring';
-import { OverviewDashboard } from '../../overview-dashboard';
 import {
   ENV_DELETE_OBJECT_DATA_BUCKET_NAME,
   ENV_PRUNE_ON_CHANGE_FUNCTION_NAME,
@@ -15,6 +13,8 @@ import {
 } from './constants';
 import { PruneHandler } from './prune-handler';
 import { PruneQueueHandler } from './prune-queue-handler';
+import { Monitoring } from '../../monitoring';
+import { OverviewDashboard } from '../../overview-dashboard';
 
 /**
  * Props from `Prune`.

@@ -281,7 +281,7 @@ steps again.
 
 #### Description
 
-This alarm goes off if the count of entries in the `catalog.json` object, which
+This alarm goes off if the count of packages in the `catalog.json` object, which
 backs the search experience of ConstructHub, reduces by more than 5 items,
 meaning packages are no longer accessible for search.
 
@@ -749,3 +749,30 @@ appropriate IAM permissions for.
 If you see this error, try checking that IAM permissions are configured
 correctly for the respective backend component (including policies on VPC
 resources if Construct Hub is running in a VPC, etc.).
+
+### Running out of file descriptors (`ENOFILE`)
+
+The Transliterator task in particular has been susceptible to running out of
+file descriptors in the past, making the task extremely slow, or causing it to
+fail or time out (sending the StepFunctions heart beat requires opening a
+network connection, which requires at least 1 available file descriptor).
+
+In order to determine where file descriptors are going, tasks can be configured
+to have `lsof` run on each heartbeat tick, which will display the list of all
+open files to `STDOUT`, which will be visible in the task's log.
+
+To enable this feature, the task input must contain an
+`env.RUN_LSOF_ON_HEARTBEAT` key with a string value (the value is arbitrary, but
+must be truthy for Javascript - so non-empty - for the logging to be enabled).
+
+In the case of the Transliterator task, the command includes the entire state
+machine's input object, so one can simply re-run the state machine after having
+merged the following into the state machine input object:
+
+```json
+{
+  "env": {
+    "RUN_LSOF_ON_HEARTBEAT": "YES"
+  }
+}
+```

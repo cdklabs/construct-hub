@@ -5,4 +5,5 @@ export const enum MetricName {
   MISSING_CONSTRUCT_FRAMEWORK_COUNT = 'MissingConstructFrameworkCount',
   MISSING_CONSTRUCT_FRAMEWORK_VERSION_COUNT = 'MissingConstructFrameworkVersionCount',
   REGISTERED_PACKAGES_MAJOR_VERSION = 'RegisteredPackagesMajorVersion',
+  REGISTERED_PACKAGES = 'RegisteredPackages',
 }

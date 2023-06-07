@@ -6,13 +6,13 @@ import { AWSError, S3 } from 'aws-sdk';
 import { SemVer } from 'semver';
 import { extract } from 'tar-stream';
 import { CatalogModel, PackageInfo } from '.';
+import { MetricName, METRICS_NAMESPACE } from './constants';
 import { CacheStrategy } from '../../caching';
 import { DenyListClient } from '../deny-list/client.lambda-shared';
 import type { CatalogBuilderInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
 import * as constants from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
-import { MetricName, METRICS_NAMESPACE } from './constants';
 
 Configuration.namespace = METRICS_NAMESPACE;
 
@@ -141,6 +141,11 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     metrics.putMetric(
       MetricName.REGISTERED_PACKAGES_MAJOR_VERSION,
       catalog.packages.length,
+      Unit.Count
+    );
+    metrics.putMetric(
+      MetricName.REGISTERED_PACKAGES,
+      new Set(catalog.packages.map((p) => p.name)).size,
       Unit.Count
     );
     metrics.putMetric(

@@ -12,10 +12,6 @@ import { IFunction, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import type { IBucket } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
-import { lambdaFunctionUrl } from '../../deep-link';
-import { Monitoring } from '../../monitoring';
-import { RUNBOOK_URL } from '../../runbook-url';
-import { STORAGE_KEY_PREFIX, VERSION_TRACKER_KEY } from '../shared/constants';
 import {
   ENV_PACKAGE_DATA_BUCKET_NAME,
   ENV_PACKAGE_DATA_KEY_PREFIX,
@@ -25,6 +21,10 @@ import {
   METRICS_NAMESPACE,
 } from './constants';
 import { VersionTracker as Handler } from './version-tracker';
+import { lambdaFunctionUrl } from '../../deep-link';
+import { Monitoring } from '../../monitoring';
+import { RUNBOOK_URL } from '../../runbook-url';
+import { STORAGE_KEY_PREFIX, VERSION_TRACKER_KEY } from '../shared/constants';
 
 /**
  * Props for `VersionTracker`.
@@ -87,7 +87,7 @@ export class VersionTracker extends Construct {
       logRetention: props.logRetention ?? RetentionDays.TEN_YEARS,
       memorySize: 10_240, // Currently the maximum possible setting
       reservedConcurrentExecutions: 1,
-      timeout: Duration.minutes(1),
+      timeout: Duration.minutes(5),
       tracing: Tracing.ACTIVE,
     });
 

@@ -27,6 +27,8 @@ import {
 } from 'aws-cdk-lib/aws-stepfunctions';
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
+import { NeedsCatalogUpdate } from './needs-catalog-update';
+import { RedriveStateMachine } from './redrive-state-machine';
 import { Repository } from '../../codeartifact/repository';
 import { sqsQueueUrl, stateMachineUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
@@ -46,8 +48,6 @@ import {
   UNPROCESSABLE_PACKAGE_ERROR_NAME,
 } from '../shared/constants';
 import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
-import { NeedsCatalogUpdate } from './needs-catalog-update';
-import { RedriveStateMachine } from './redrive-state-machine';
 
 /**
  * This retry policy is used for all items in the state machine and allows ample

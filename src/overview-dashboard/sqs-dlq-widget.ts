@@ -4,8 +4,8 @@ import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { IQueue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
-import { gravitonLambdaIfAvailable } from '../backend/_lambda-architecture';
 import { SqsDlqStatsWidgetFunction } from './sqs-dlq-stats-widget-function';
+import { gravitonLambdaIfAvailable } from '../backend/_lambda-architecture';
 
 type QueueWidgetDetails = {
   name: string;

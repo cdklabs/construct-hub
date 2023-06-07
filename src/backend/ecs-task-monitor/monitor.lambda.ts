@@ -1,8 +1,8 @@
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import { Context, ScheduledEvent } from 'aws-lambda';
+import { Environment, METRICS_NAMESPACE, MetricName } from './constants';
 import * as aws from '../shared/aws.lambda-shared';
 import { requireEnv } from '../shared/env.lambda-shared';
-import { Environment, METRICS_NAMESPACE, MetricName } from './constants';
 
 Configuration.namespace = METRICS_NAMESPACE;
 

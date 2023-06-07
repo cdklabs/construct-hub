@@ -2,7 +2,7 @@ const fs = require('fs');
 const { basename, join, dirname, relative } = require('path');
 const Case = require('case');
 const glob = require('glob');
-const { SourceCode, JsonFile, cdk, github } = require('projen');
+const { SourceCode, JsonFile, JsonPatch, cdk, github } = require('projen');
 const spdx = require('spdx-license-list');
 const uuid = require('uuid');
 
@@ -41,6 +41,7 @@ const project = new cdk.JsiiProject({
     cdkCli,
     'aws-embedded-metrics',
     'dotenv',
+    'async-sema',
     // 5.6.1 introduces a type literal signature that is not compatible with
     // the version of TypeScript currently used by jsii, causing builds to fail
     'aws-sdk-mock@5.6.0',
@@ -69,7 +70,7 @@ const project = new cdk.JsiiProject({
 
   peerDeps: peerDeps,
 
-  minNodeVersion: '14.18.0',
+  minNodeVersion: '16.16.0',
 
   pullRequestTemplateContents: [
     '',
@@ -144,20 +145,17 @@ const project = new cdk.JsiiProject({
 });
 
 project.package.addField('resolutions', {
-  // this is coming from construct-hub-webapp, and has no affect on us what s oever
-  // since we consume the already built static assets.
-  // see https://github.com/cdklabs/construct-hub-webapp/blob/main/.projenrc.js#L91
-  'nth-check': '2.0.1',
-
-  // otherwise, two major versions of this exist, which fails typescript compilation
-  // due to duplicate declarations.
-  '@types/eslint': '8.2.1',
-
-  // https://github.com/aws/aws-cdk/issues/18322
-  colors: '1.4.0',
-
   // https://github.com/aws/aws-cdk/issues/20319
   '@types/prettier': '2.6.0',
+
+  // copying this from construct-hub-webapp https://cs.github.com/cdklabs/construct-hub-webapp/blob/bbe2e9ad73ce9b5ddee1b618667fb123274e5635/.projenrc.js#L96
+  'nth-check': '2.0.1',
+
+  // Potential solution to a types problem, got it from https://github.com/DefinitelyTyped/DefinitelyTyped/discussions/62277
+  '@types/express-serve-static-core': '4.17.6',
+
+  // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/64924
+  '@types/lodash': '4.14.192',
 });
 
 function addVpcAllowListManagement() {
@@ -206,14 +204,14 @@ function addVpcAllowListManagement() {
         // And now make a PR if necessary
         {
           name: 'Make Pull Request',
-          uses: 'peter-evans/create-pull-request@v4',
+          uses: 'peter-evans/create-pull-request@v3',
           with: {
             token: project.github.projenCredentials.tokenRef,
             branch: `automation/${workflow.name}`,
             'commit-message': `${prTitle}\n\n${prBody}`,
             title: prTitle,
             body: prBody,
-            'team-reviewers': 'construct-ecosystem-team',
+            labels: 'auto-approve',
             author: 'github-actions <github-actions@github.com>',
             committer: 'github-actions <github-actions@github.com>',
             signoff: true,
@@ -585,8 +583,10 @@ function newEcsTask(entrypoint) {
   main.line('#!/usr/bin/env node');
   main.line(`// ${main.marker}`);
   main.line();
-  main.line("import * as os from 'os';");
-  main.line("import { argv, env, exit } from 'process';");
+  main.line("import { execFileSync } from 'node:child_process';");
+  main.line("import * as os from 'node:os';");
+  main.line("import { argv, env, exit } from 'node:process';");
+  main.line("import { getHeapSpaceStatistics } from 'node:v8';");
   main.line(
     "import { SendTaskFailureCommand, SendTaskHeartbeatCommand, SendTaskSuccessCommand, SFNClient } from '@aws-sdk/client-sfn';"
   );
@@ -608,26 +608,65 @@ function newEcsTask(entrypoint) {
   main.line("() => console.log('Successfully sent task heartbeat!'),");
   main.open('(reason) => {');
   main.line("console.error('Failed to send task heartbeat:', reason);");
-  // If this failed on TaskTimedOut, we will exit the VM right away, as the requesting StepFunctions execution is no longer
+  // If the heartbeat fails with a 400 (InvalidToken, TaskDoesNotExist, TaskTimedOut),
+  // we will exit the VM right away, as the requesting StepFunctions execution is no longer
   // interested in the result of this run. This avoids keeping left-over tasks lying around "forever".
-  main.open("if (reason.code === 'TaskTimedOut') {");
+  // See: https://docs.aws.amazon.com/step-functions/latest/apireference/API_SendTaskHeartbeat.html#API_SendTaskHeartbeat_Errors
+  main.open('if (reason.$metadata.httpStatusCode === 400) {');
   main.line('exit(-(os.constants.errno.ETIMEDOUT || 1));');
   main.close('}');
   main.close('},');
   main.close(');');
+  // Output heap space statistics, for information...
+  main.open(
+    'const heapStats = Object.fromEntries(getHeapSpaceStatistics().filter(({ space_size }) => space_size > 0).map('
+  );
+  main.open('(space) => [');
+  main.line('space.space_name,');
+  main.open('{');
+  main.line('size: space.space_size,');
+  main.line('utilization: 100 * space.space_used_size / space.space_size,');
   main.close('}');
-  main.line();
-  main.line('sendHeartbeat();');
-  main.line('const heartbeat = setInterval(sendHeartbeat, 60_000);');
+  main.close(']');
+  main.close('));');
+  main.line('console.log(JSON.stringify(heapStats));');
+  // Run lsof to output the list of open file descriptors, for information... but only if $RUN_LSOF_ON_HEARTBEAT is et
+  main.open('if (env.RUN_LSOF_ON_HEARTBEAT) {');
+  main.line(
+    "execFileSync('/usr/sbin/lsof', ['-g', '-n', '-P', '-R'], { stdio: 'inherit' });"
+  );
+  main.close('}');
+  main.close('}');
   main.line();
 
   main.open('async function main(): Promise<void> {');
+  main.line('const heartbeat = setInterval(sendHeartbeat, 180_000);'); // Heartbeat is only expected every 10min
   main.line('try {');
   // Deserialize the input, which ECS provides as a sequence of JSON objects. We skip the first 2 values (argv[0] is the
   // node binary, and argv[1] is this JS file).
   main.line(
     '  const input: readonly any[] = argv.slice(2).map((text) => JSON.parse(text));'
   );
+  main.line();
+  // If any object argument includes a string-typed env.RUN_LSOF_ON_HEARTBEAT property, set this as the
+  // RUN_LSOF_ON_HEARTBEAT environment variable before proceeding.
+  main.open(
+    '  const envArg: { env: { RUN_LSOF_ON_HEARTBEAT: string } } | undefined = input.find('
+  );
+  main.line('  (arg) =>');
+  main.line("    typeof arg === 'object'");
+  main.line("    && typeof arg?.env === 'object'");
+  main.line("    && typeof arg?.env?.RUN_LSOF_ON_HEARTBEAT === 'string'");
+  main.close('  );');
+  main.open('  if (envArg != null) {');
+  main.line('  env.RUN_LSOF_ON_HEARTBEAT = envArg.env.RUN_LSOF_ON_HEARTBEAT;');
+  main.close('  }');
+  main.line();
+
+  // Make sure a heartbeat is sent now that we have an input and are ready to go...
+  main.line('  sendHeartbeat();');
+  main.line();
+
   // Casting as opaque function so we evade the type-checking of the handler (can't generalize that)
   main.line(
     '  const result = await (handler as (...args: any[]) => unknown)(...input);'
@@ -666,7 +705,7 @@ function newEcsTask(entrypoint) {
   df.line('RUN curl -fsSL https://rpm.nodesource.com/setup_16.x | bash - \\');
   df.line(' && yum update -y \\');
   df.line(' && yum upgrade -y \\');
-  df.line(' && yum install -y git nodejs \\');
+  df.line(' && yum install -y git lsof nodejs \\');
   // Clean up the yum cache in the interest of image size
   df.line(' && yum clean all \\');
   df.line(' && rm -rf /var/cache/yum');
@@ -1001,5 +1040,12 @@ project.tasks
   .prependExec(bundleWorkerPool);
 
 generateSpdxLicenseEnum();
+
+// Escape hatch to fix "JavaScript heap out of memory" in GitHub Actions
+const buildWorkflow = project.tryFindObjectFile('.github/workflows/build.yml');
+buildWorkflow.addOverride(
+  'jobs.build.steps.3.env.NODE_OPTIONS',
+  '--max-old-space-size=8192' // 8GB
+);
 
 project.synth();
