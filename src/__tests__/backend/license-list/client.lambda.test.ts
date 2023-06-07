@@ -42,7 +42,7 @@ test('basic use', async () => {
       try {
         expect(req).toEqual({ Bucket: mockBucketName, Key: mockObjectKey });
         cb(null, { Body: JSON.stringify([mockLicense]) });
-      } catch (e) {
+      } catch (e: any) {
         cb(e);
       }
     }
@@ -65,7 +65,7 @@ test('empty list', async () => {
       try {
         expect(req).toEqual({ Bucket: mockBucketName, Key: mockObjectKey });
         cb(null, { Body: JSON.stringify([]) });
-      } catch (e) {
+      } catch (e: any) {
         cb(e);
       }
     }
@@ -87,7 +87,7 @@ test('absent list', async () => {
       try {
         expect(req).toEqual({ Bucket: mockBucketName, Key: mockObjectKey });
         cb(null, {});
-      } catch (e) {
+      } catch (e: any) {
         cb(e);
       }
     }
@@ -109,7 +109,7 @@ test('broken list', async () => {
       try {
         expect(req).toEqual({ Bucket: mockBucketName, Key: mockObjectKey });
         cb(null, { Body: JSON.stringify('{}', null, 2) });
-      } catch (e) {
+      } catch (e: any) {
         cb(e);
       }
     }

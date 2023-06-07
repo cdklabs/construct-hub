@@ -26,12 +26,7 @@ export interface DenyListRule {
 /**
  * The contents of the deny list file in S3.
  */
-export interface DenyListMap {
-  /**
-   * A map from "name@version" to deny list rule.
-   */
-  readonly [key: string]: DenyListRule;
-}
+export type DenyListMap = Record<string, DenyListRule>;
 
 /**
  * DenyList features exposed to extension points.

@@ -174,7 +174,7 @@ export async function handler(event: unknown): Promise<void> {
     } finally {
       await stateService.save(packageName, state);
     }
-  } catch (error) {
+  } catch (error: any) {
     if (
       error instanceof HTTPError &&
       error.httpStatusCode &&

@@ -268,7 +268,7 @@ async function loadLastTransactionMarker(
     }
 
     return data;
-  } catch (error) {
+  } catch (error: any) {
     if (error.code !== 'NoSuchKey') {
       throw error;
     }

@@ -129,7 +129,7 @@ test('happy path', async () => {
           packageVersion: detail.packageVersion,
         });
         cb(null, mockGetPackageVersionAssetResult);
-      } catch (e) {
+      } catch (e: any) {
         cb(e);
       }
     }
@@ -177,7 +177,7 @@ test('happy path', async () => {
           },
         });
         cb(null, safeMock<AWS.S3.PutObjectOutput>('mockS3PutObjectOutput', {}));
-      } catch (e) {
+      } catch (e: any) {
         cb(e);
       }
     }
@@ -224,7 +224,7 @@ test('happy path', async () => {
           QueueUrl: mockQueueUrl,
         });
         cb(null, mockSendMessageResult);
-      } catch (e) {
+      } catch (e: any) {
         cb(e);
       }
     }
@@ -286,7 +286,7 @@ test('no license (i.e: UNLICENSED)', async () => {
           packageVersion: detail.packageVersion,
         });
         cb(null, mockGetPackageVersionAssetResult);
-      } catch (e) {
+      } catch (e: any) {
         cb(e);
       }
     }
@@ -361,7 +361,7 @@ test('ineligible license', async () => {
           packageVersion: detail.packageVersion,
         });
         cb(null, mockGetPackageVersionAssetResult);
-      } catch (e) {
+      } catch (e: any) {
         cb(e);
       }
     }
@@ -438,7 +438,7 @@ test('not a jsii package', async () => {
           packageVersion: detail.packageVersion,
         });
         cb(null, mockGetPackageVersionAssetResult);
-      } catch (e) {
+      } catch (e: any) {
         cb(e);
       }
     }

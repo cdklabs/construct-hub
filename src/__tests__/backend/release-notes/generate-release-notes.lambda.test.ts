@@ -354,7 +354,7 @@ const setupPkgTarS3GetObjectMock = () => {
       try {
         expect(req.Bucket).toBe(MOCK_BUCKET_NAME);
         expect(req.Key).toBe(PACKAGE_TGZ);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, spy());
