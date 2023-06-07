@@ -110,7 +110,7 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     }
 
     await metricScope((metrics) => async () => {
-      metrics.setDimensions();
+      metrics.setDimensions({});
       const failedCount = Object.keys(failures).length;
       console.log(`Marking ${failedCount} failed packages`);
       metrics.putMetric(
@@ -137,7 +137,7 @@ export async function handler(event: CatalogBuilderInput, context: Context) {
     `There are now ${catalog.packages.length} registered package major versions`
   );
   await metricScope((metrics) => async () => {
-    metrics.setDimensions();
+    metrics.setDimensions({});
     metrics.putMetric(
       MetricName.REGISTERED_PACKAGES_MAJOR_VERSION,
       catalog.packages.length,

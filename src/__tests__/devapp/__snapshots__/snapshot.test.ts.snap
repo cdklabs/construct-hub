@@ -2628,7 +2628,7 @@ Resources:
       Content:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip
+        S3Key: 88b83f5f61fe6f85ffcd0a37a09a8f3be90e7c090964b0b62b062eb8a5a1a3a7.zip
       Description: /opt/awscli/aws
   ConstructHubDenyListBucketDeploymentCustomResourceF835956B:
     Type: Custom::CDKBucketDeployment
@@ -2737,7 +2737,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: ad02379a79551cb3ad59d28602245d4f0a2296271fa8dc982da7370c3aae9c01.zip
+        S3Key: 11e0f053d1a31a93dc8ecaffcdd1128541b4ce95028e6df7793e20e097e70143.zip
       Role:
         Fn::GetAtt:
           - ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE
@@ -2921,7 +2921,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 955afa81836791c588d9a0c7d4f68616471c1dfd725f2cf52fb673a08bf722ed.zip
+        S3Key: 0e9e8bd9ad3e646c95f5ff798206641e34df1ec1837f4f3bb38796a334305abb.zip
       Role:
         Fn::GetAtt:
           - ConstructHubStatsServiceRole48DCA379
@@ -3072,7 +3072,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 97fad5e0d65b8dfaa7dc1e2b7cbf5d08cc11856cd48cc4a616e5bd2d600ca2a8.zip
+        S3Key: c253902b6254619085a69717d14e1a1e44e6cfbd29a028ab85bbd3d67d1d0172.zip
       Role:
         Fn::GetAtt:
           - ConstructHubVersionTrackerServiceRole721EE863
@@ -3297,7 +3297,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 3e6a9c66fa078720fb3ae4c3c0d6f41dc45b1c84a27ebcb0d1849b21980863d1.zip
+        S3Key: 7ed4c75404d9c05db502e0d3e0d9d7d1bfd2176bb7eed0c95af8d4a54f674996.zip
       Role:
         Fn::GetAtt:
           - ConstructHubFeedBuilderReleaseNotesUpdateFeedServiceRoleC857E364
@@ -3484,7 +3484,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 3249fb1572e870955a3a92be1657e268f2eedef724387145505dee9e52f96704.zip
+        S3Key: 9ea680f51399db3f0ea334eb58696390fe527303f70620cee2cf14fba604a10e.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
@@ -3613,7 +3613,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 52ac1e131f64849ae27e69be4d71272b1bcc47a8b26ae6a29c04087309676229.zip
+        S3Key: 2b2c609da880d1ded848ea65f086ec3374f8044ae6b380054d637129208c81ea.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationNeedsCatalogUpdateServiceRoleE6BF31C3
@@ -3703,7 +3703,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 93f2c5ba38082cb43b45fd4ae5fa10e6544d6a70c8ff5daecf9d0083cef9b391.zip
+        S3Key: ffbbce445e223599839c33fcf04fe4bcdfff03a4d96a6946cb6a8276e1d04b99.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationClusterMonitorServiceRoleA4055F89
@@ -4927,7 +4927,7 @@ Resources:
                   - repositoryEndpoint
           Essential: true
           Image:
-            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:dc68080fa5da929bc84f6715a0adcf16e4e863c7fbe894a142bc45832b86e93c
+            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:758c8e1372a21e459ba35b79c6d9acde5a9037ea7a9236c825f7d78b604dc04d
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -5218,6 +5218,8 @@ Resources:
       - ConstructHubOrchestrationRoleDefaultPolicyEACD181F
       - ConstructHubOrchestrationRoleF4CF6987
       - ConstructHubVPCIGW935F4C28
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
   ConstructHubOrchestrationOrchestrationFailed5AF50838:
     Type: AWS::CloudWatch::Alarm
     Properties:
@@ -5299,7 +5301,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: fbb1c24eaad63b8977db5944f8d71822aaea8bd6147a3dd2e511269e380d9788.zip
+        S3Key: b8dbccb5a7de8cdf19210b512a45c6c02bb38d579ef55d8389c7ab12c1fc0430.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationRedriveServiceRoleB84EFF33
@@ -5425,6 +5427,8 @@ Resources:
     DependsOn:
       - ConstructHubOrchestrationRegenerateAllDocumentationPerPackageRoleDefaultPolicy001A4726
       - ConstructHubOrchestrationRegenerateAllDocumentationPerPackageRoleD7CCFA73
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
   ConstructHubOrchestrationRegenerateAllDocumentationRole1C7D3B5F:
     Type: AWS::IAM::Role
     Properties:
@@ -5584,6 +5588,8 @@ Resources:
     DependsOn:
       - ConstructHubOrchestrationRegenerateAllDocumentationRoleDefaultPolicy2F4FBD86
       - ConstructHubOrchestrationRegenerateAllDocumentationRole1C7D3B5F
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
   ConstructHubReleaseNotesReleaseNotesFetchWorkerQueueDLQ56BF53F1:
     Type: AWS::SQS::Queue
     Properties:
@@ -5780,7 +5786,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: e8ff0780c69b5f9cef4661621b6883ad6f2e10316156b81964ef5da4d38a31ba.zip
+        S3Key: 7da0fcad8c4c5cfc4557935e9793c7b2d208fe48e20c5116f380c51bd0281d8b.zip
       Role:
         Fn::GetAtt:
           - ConstructHubReleaseNotesGithubChangelogFetcherServiceRoleCAE3656D
@@ -5853,7 +5859,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 320f8ef20c18ac039c1cef16364765fdf6184deb5075ab676b517b19432e0993.zip
+        S3Key: 9d40168780374de2bcc0aa31eac3fd144d715adcef9f3392a58a9fafaab49146.zip
       Role:
         Fn::GetAtt:
           - ConstructHubReleaseNotesReleaseNoteTasksServiceRole662376CD
@@ -6082,6 +6088,8 @@ Resources:
     DependsOn:
       - ConstructHubReleaseNotesStateMachineRoleDefaultPolicy425D1E83
       - ConstructHubReleaseNotesStateMachineRole0322C9EF
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
   ConstructHubReleaseNotesReleaseNotesGenerationFailure04ABD01D:
     Type: AWS::CloudWatch::Alarm
     Properties:
@@ -6299,7 +6307,7 @@ Resources:
       Content:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip
+        S3Key: 88b83f5f61fe6f85ffcd0a37a09a8f3be90e7c090964b0b62b062eb8a5a1a3a7.zip
       Description: /opt/awscli/aws
   ConstructHubIngestionDeployIngestionConfigurationCustomResourceD7F243C1:
     Type: Custom::CDKBucketDeployment
@@ -6506,7 +6514,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 5cbb39032eceac5b0489e6447ed2049f4d843534fac6730aff3a64f2841c46e5.zip
+        S3Key: 3bd0dfa9360ac407538246b78bebc2f8aee3f1ce7cf52a2e876311cc6f04a75b.zip
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
@@ -6679,7 +6687,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 2b6e7c1edd35aa8ce914e9f94c3987008c693300e0b0ef038911e91aba1b687e.zip
+        S3Key: 48bab6a27a21e3babd1d9a3ed788c14a79caee163ec72753b7e4bbed07835d6c.zip
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionReprocessWorkflowFunctionServiceRoleA59056B1
@@ -6833,6 +6841,8 @@ Resources:
     DependsOn:
       - ConstructHubIngestionReprocessWorkflowStateMachineRoleDefaultPolicy3A21E747
       - ConstructHubIngestionReprocessWorkflowStateMachineRoleA07E1479
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
   ConstructHubIngestionDLQAlarm83BD1903:
     Type: AWS::CloudWatch::Alarm
     Properties:
@@ -7016,7 +7026,7 @@ Resources:
       Content:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip
+        S3Key: 88b83f5f61fe6f85ffcd0a37a09a8f3be90e7c090964b0b62b062eb8a5a1a3a7.zip
       Description: /opt/awscli/aws
   ConstructHubLicenseListCustomResource323F0FD4:
     Type: Custom::CDKBucketDeployment
@@ -7130,8 +7140,6 @@ Resources:
   ConstructHubWebAppAddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7E9FDB69:
     Type: AWS::CloudFront::Function
     Properties:
-      Name: AddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
-      AutoPublish: true
       FunctionCode: >-
         "use strict";
 
@@ -7180,6 +7188,8 @@ Resources:
       FunctionConfig:
         Comment: AddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
         Runtime: cloudfront-js-1.0
+      Name: AddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
+      AutoPublish: true
   ConstructHubWebAppDistributionOrigin1S3Origin694AF937:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
@@ -7320,8 +7330,6 @@ Resources:
   ConstructHubWebAppBadgeRedirectFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7DAA75A6:
     Type: AWS::CloudFront::Function
     Properties:
-      Name: BadgeRedirectFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
-      AutoPublish: true
       FunctionCode: >-
         "use strict";
 
@@ -7339,13 +7347,15 @@ Resources:
       FunctionConfig:
         Comment: BadgeRedirectFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
         Runtime: cloudfront-js-1.0
+      Name: BadgeRedirectFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
+      AutoPublish: true
   ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1:
     Type: AWS::Lambda::LayerVersion
     Properties:
       Content:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip
+        S3Key: 88b83f5f61fe6f85ffcd0a37a09a8f3be90e7c090964b0b62b062eb8a5a1a3a7.zip
       Description: /opt/awscli/aws
   ConstructHubWebAppDeployWebsiteCustomResourceE6DF98C9:
     Type: Custom::CDKBucketDeployment
@@ -7357,7 +7367,7 @@ Resources:
       SourceBucketNames:
         - Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
       SourceObjectKeys:
-        - 21a0651e8e5e696d9b73ad58a2d8ab7603eca144732b7ba5f9b9d70bd61e4298.zip
+        - 7f85d5733c221e01ebfbb5723a4276a8b4e0e51579b8142a7ff14457176f38a3.zip
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: false
@@ -7373,7 +7383,7 @@ Resources:
       Content:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip
+        S3Key: 88b83f5f61fe6f85ffcd0a37a09a8f3be90e7c090964b0b62b062eb8a5a1a3a7.zip
       Description: /opt/awscli/aws
   ConstructHubWebAppDeployWebsiteConfigCustomResource2D18C708:
     Type: Custom::CDKBucketDeployment
@@ -7388,6 +7398,9 @@ Resources:
       SourceObjectKeys:
         - 14e4f0139224d21210279e451b3ecaef287913006c68e6050415f640c0ef7522.zip
         - d7eba45c105712349db08f8edd1c547cd768fb9c92dadc0bfd2403ecc4127f96.zip
+      SourceMarkers:
+        - {}
+        - {}
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: false
@@ -7587,7 +7600,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: e260fcea302d4031ae46f8851e6b8ddb337aea66f6fc1001d5ed5dbec916d151.zip
+        S3Key: 24402ee2527a953f73afe877c2f068935faa2e085be104cacfd43c1882c80828.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50
@@ -7742,7 +7755,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 19c1e9710e80106b22c236b5c4695c24fe4267459ca8cb00657dc68044b45a5a.zip
+        S3Key: 3d43095ae12cd4d3b752e44a92a85f6de3a2d404e24e7206fe1ed51232e8d06e.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsServiceRoleAC3F7AA6
@@ -7833,7 +7846,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 8be3a095102301804d42e4635a3e25fd27e2fdd31d8a73fc429f48f8b3b10aaf.zip
+        S3Key: 463acfe385c6cb63391801e77c5014c0bf49b35b116fd0b42e5bc921ac939052.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2
@@ -7979,7 +7992,6 @@ Resources:
   ConstructHubSourcesNpmJsCanaryNotRunningOrFailing62A8E2F6:
     Type: AWS::CloudWatch::CompositeAlarm
     Properties:
-      AlarmName: dev/ConstructHub/Sources/NpmJs/Canary/NotRunningOrFailing
       AlarmRule:
         Fn::Join:
           - ""
@@ -8000,6 +8012,7 @@ Resources:
 
 
         Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+      AlarmName: dev/ConstructHub/Sources/NpmJs/Canary/NotRunningOrFailing
     DependsOn:
       - ConstructHubLicenseListAwsCliLayer59592811
       - ConstructHubLicenseListCustomResource323F0FD4
@@ -8415,7 +8428,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: e0c4284b3c601ac244ec37fa29a1b9fd76b1402d147a223eddc1ace8198cf9f6.zip
+        S3Key: 35318f96d5bd1fa499137702d694a41c0da02926a533ea3bdd0792788affc34a.zip
       Role:
         Fn::GetAtt:
           - ConstructHubInventoryCanaryServiceRole7684EDDE
@@ -8516,6 +8529,8 @@ Resources:
     DependsOn:
       - ConstructHubInventoryCanaryStateMachineRoleDefaultPolicy6F9D94C1
       - ConstructHubInventoryCanaryStateMachineRole9D5D502F
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
   ConstructHubInventoryCanaryStateMachineEventsRole8AD19655:
     Type: AWS::IAM::Role
     Properties:
@@ -9300,13 +9315,17 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 6dbd112fe448437b3438da4382c72fccbb7d2ee1543db222620d7447fffebc50.zip
+        S3Key: bb459fac5f6b4b052aac9803443226d161a5cfe96f4648b21f9e4912c698bf30.zip
       Role:
         Fn::GetAtt:
           - AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2
           - Arn
       Handler: index.handler
-      Runtime: nodejs14.x
+      Runtime:
+        Fn::FindInMap:
+          - DefaultCrNodeVersionMap
+          - Ref: AWS::Region
+          - value
       Timeout: 120
     DependsOn:
       - AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2
@@ -9328,7 +9347,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: e57c1acaa363d7d2b81736776007a7091bc73dff4aeb8135627c4511a51e7dca.zip
+        S3Key: 350185a1069fa20a23a583e20c77f6844218bd73097902362dc94f1a108f5d89.zip
       Timeout: 900
       MemorySize: 128
       Handler: __entrypoint__.handler
@@ -9336,7 +9355,7 @@ Resources:
         Fn::GetAtt:
           - CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092
           - Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Description:
         Fn::Join:
           - ""
@@ -9488,11 +9507,14 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: f98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711da.zip
+        S3Key: 9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd.zip
       Role:
         Fn::GetAtt:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265
           - Arn
+      Environment:
+        Variables:
+          AWS_CA_BUNDLE: /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
       Handler: index.handler
       Layers:
         - Ref: ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
@@ -9648,7 +9670,7 @@ Resources:
         Fn::GetAtt:
           - BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC
           - Arn
-      Runtime: python3.7
+      Runtime: python3.9
       Timeout: 300
     DependsOn:
       - BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36
@@ -9687,11 +9709,15 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Handler: index.handler
-      Runtime: nodejs14.x
+      Runtime:
+        Fn::FindInMap:
+          - DefaultCrNodeVersionMap
+          - Ref: AWS::Region
+          - value
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: eb5b005c858404ea0c8f68098ed5dcdf5340e02461f149751d10f59c210d5ef8.zip
+        S3Key: 5fa1330271b8967d9254ba2d4a07144f8acefe8b77e6d6bba38261373a50d5f8.zip
       Role:
         Fn::GetAtt:
           - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB
@@ -9949,7 +9975,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 9f72bbbc0faf036d1cb1fb187d73ec950da3b9d8ed5802f730d555b1593ecc7d.zip
+        S3Key: b9dcf90c28bebd45a702aadc8723a9db8c03a2df3c7233073fadbee9a0ebed9a.zip
       Role:
         Fn::GetAtt:
           - PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfServiceRole060BA12C
@@ -10051,6 +10077,73 @@ Outputs:
           - " s3://"
           - Ref: ConstructHubInventoryCanaryFailoverScratchworkBucketE8015DAD
 Mappings:
+  DefaultCrNodeVersionMap:
+    af-south-1:
+      value: nodejs16.x
+    ap-east-1:
+      value: nodejs16.x
+    ap-northeast-1:
+      value: nodejs16.x
+    ap-northeast-2:
+      value: nodejs16.x
+    ap-northeast-3:
+      value: nodejs16.x
+    ap-south-1:
+      value: nodejs16.x
+    ap-south-2:
+      value: nodejs16.x
+    ap-southeast-1:
+      value: nodejs16.x
+    ap-southeast-2:
+      value: nodejs16.x
+    ap-southeast-3:
+      value: nodejs16.x
+    ca-central-1:
+      value: nodejs16.x
+    cn-north-1:
+      value: nodejs16.x
+    cn-northwest-1:
+      value: nodejs16.x
+    eu-central-1:
+      value: nodejs16.x
+    eu-central-2:
+      value: nodejs16.x
+    eu-north-1:
+      value: nodejs16.x
+    eu-south-1:
+      value: nodejs16.x
+    eu-south-2:
+      value: nodejs16.x
+    eu-west-1:
+      value: nodejs16.x
+    eu-west-2:
+      value: nodejs16.x
+    eu-west-3:
+      value: nodejs16.x
+    me-central-1:
+      value: nodejs16.x
+    me-south-1:
+      value: nodejs16.x
+    sa-east-1:
+      value: nodejs16.x
+    us-east-1:
+      value: nodejs16.x
+    us-east-2:
+      value: nodejs16.x
+    us-gov-east-1:
+      value: nodejs16.x
+    us-gov-west-1:
+      value: nodejs16.x
+    us-iso-east-1:
+      value: nodejs14.x
+    us-iso-west-1:
+      value: nodejs14.x
+    us-isob-east-1:
+      value: nodejs14.x
+    us-west-1:
+      value: nodejs16.x
+    us-west-2:
+      value: nodejs16.x
   ServiceprincipalMap:
     af-south-1:
       states: states.af-south-1.amazonaws.com
@@ -10064,6 +10157,8 @@ Mappings:
       states: states.ap-northeast-3.amazonaws.com
     ap-south-1:
       states: states.ap-south-1.amazonaws.com
+    ap-south-2:
+      states: states.ap-south-2.amazonaws.com
     ap-southeast-1:
       states: states.ap-southeast-1.amazonaws.com
     ap-southeast-2:
@@ -10078,6 +10173,8 @@ Mappings:
       states: states.cn-northwest-1.amazonaws.com
     eu-central-1:
       states: states.eu-central-1.amazonaws.com
+    eu-central-2:
+      states: states.eu-central-2.amazonaws.com
     eu-north-1:
       states: states.eu-north-1.amazonaws.com
     eu-south-1:
@@ -10090,6 +10187,8 @@ Mappings:
       states: states.eu-west-2.amazonaws.com
     eu-west-3:
       states: states.eu-west-3.amazonaws.com
+    me-central-1:
+      states: states.me-central-1.amazonaws.com
     me-south-1:
       states: states.me-south-1.amazonaws.com
     sa-east-1:

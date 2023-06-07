@@ -61,7 +61,7 @@ export async function handler(event: any, context: Context) {
   console.log(`There are now ${statsCount} packages with NPM stats stored.`);
   await metricScope((metrics) => async () => {
     // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73
-    metrics.setDimensions();
+    metrics.setDimensions({});
 
     metrics.setNamespace(METRICS_NAMESPACE);
     metrics.putMetric(

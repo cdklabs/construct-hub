@@ -38,13 +38,12 @@ const project = new cdk.JsiiProject({
     '@types/fs-extra',
     '@types/semver',
     '@types/tar-stream',
+    '@types/tough-cookie',
     cdkCli,
     'aws-embedded-metrics',
     'dotenv',
     'async-sema',
-    // 5.6.1 introduces a type literal signature that is not compatible with
-    // the version of TypeScript currently used by jsii, causing builds to fail
-    'aws-sdk-mock@5.6.0',
+    'aws-sdk-mock',
     'aws-sdk',
     'aws-xray-sdk-core',
     'case',
@@ -676,7 +675,7 @@ function newEcsTask(entrypoint) {
   main.line(
     '  await sfn.send(new SendTaskSuccessCommand({ output: JSON.stringify(result), taskToken }));'
   );
-  main.line('} catch (err) {');
+  main.line('} catch (err: any) {');
   main.line("  console.log('Task failed:', err);");
   main.line('  process.exitCode = 1;');
   main.open('  await sfn.send(new SendTaskFailureCommand({');
@@ -696,6 +695,7 @@ function newEcsTask(entrypoint) {
   main.line("console.log('Unexpected error:', cause);");
   main.line('exit(-1);');
   main.close('});');
+  main.line();
 
   const df = new SourceCode(project, dockerfile);
   df.line(`# ${df.marker}`);

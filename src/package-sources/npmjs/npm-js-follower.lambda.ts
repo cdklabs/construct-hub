@@ -90,7 +90,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
       const changes = await npm.changes(updatedMarker);
 
       // Clear automatically set dimensions - we don't need them (see https://github.com/awslabs/aws-embedded-metrics-node/issues/73)
-      metrics.setDimensions();
+      metrics.setDimensions({});
 
       // Recording current seq range and updating the `updatedMarker`.
       metrics.setProperty('StartSeq', updatedMarker);

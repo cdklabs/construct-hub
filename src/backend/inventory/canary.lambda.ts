@@ -314,7 +314,7 @@ export async function handler(event: InventoryCanaryEvent, context: Context) {
 
   await metricScope((metrics) => () => {
     // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
-    metrics.setDimensions();
+    metrics.setDimensions({});
 
     const missingMetadata = new Array<string>();
     const missingAssembly = new Array<string>();

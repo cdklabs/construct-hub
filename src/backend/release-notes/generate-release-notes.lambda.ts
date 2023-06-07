@@ -22,7 +22,7 @@ export type ReleaseNotesGenerateEvent = { tarballUri: string };
 export const handler = metricScope(
   (metrics) => async (event: ReleaseNotesGenerateEvent, context: Context) => {
     console.log(`Event: ${JSON.stringify(event, null, 2)}`);
-    metrics.setDimensions();
+    metrics.setDimensions({});
     metrics.setNamespace(constants.METRICS_NAMESPACE);
 
     const BUCKET_NAME = requireEnv('BUCKET_NAME');

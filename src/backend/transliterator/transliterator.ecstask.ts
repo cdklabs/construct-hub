@@ -174,8 +174,6 @@ export function handler(
       // if the package used to not be installable, remove the marker for it.
       await unmarkPackage(constants.UNINSTALLABLE_PACKAGE_SUFFIX);
       for (const language of DocumentationLanguage.ALL) {
-        debugger;
-
         if (event.languages && !event.languages[language.toString()]) {
           console.log(`Skipping language ${language} as it was not requested!`);
           continue;
@@ -183,7 +181,7 @@ export function handler(
 
         const generateDocs = metricScope(
           (metrics) => async (lang: DocumentationLanguage) => {
-            metrics.setDimensions();
+            metrics.setDimensions({});
             metrics.setNamespace(METRICS_NAMESPACE);
 
             async function renderAndDispatch(submodule?: string) {

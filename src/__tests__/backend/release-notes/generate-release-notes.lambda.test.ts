@@ -78,7 +78,7 @@ beforeAll(() => {
       expect(namespace).toEqual(constants.METRICS_NAMESPACE);
       return mockMetrics;
     }),
-    setDimensions: (...args: any[]) => expect(args).toEqual([]),
+    setDimensions: (...args: any[]) => expect(args).toEqual([{}]),
   } as any;
 
   mockMetricScope.mockImplementation((cb) => {

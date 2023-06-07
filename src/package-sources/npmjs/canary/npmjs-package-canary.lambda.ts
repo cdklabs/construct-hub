@@ -74,7 +74,7 @@ export async function handler(event: unknown): Promise<void> {
 
       await metricScope((metrics) => async () => {
         // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
-        metrics.setDimensions();
+        metrics.setDimensions({});
         metrics.putMetric(
           MetricName.TRACKED_VERSION_COUNT,
           Object.keys(state.pending).length + 1,
@@ -111,7 +111,7 @@ export async function handler(event: unknown): Promise<void> {
 
         await metricScope((metrics) => async () => {
           // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
-          metrics.setDimensions();
+          metrics.setDimensions({});
           metrics.setProperty('PackageName', packageName);
           metrics.setProperty('PackageVersion', versionState.version);
           metrics.setProperty(
@@ -187,7 +187,7 @@ export async function handler(event: unknown): Promise<void> {
       );
       await metricScope((metrics) => async () => {
         // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
-        metrics.setDimensions();
+        metrics.setDimensions({});
         metrics.setProperty('ErrorCode', error.httpStatusCode);
         metrics.setProperty('ErrorMessage', error.message);
 
@@ -200,7 +200,7 @@ export async function handler(event: unknown): Promise<void> {
       );
       await metricScope((metrics) => async () => {
         // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
-        metrics.setDimensions();
+        metrics.setDimensions({});
         metrics.setProperty('ErrorCode', 'REQUEST_TIMEOUT');
         metrics.setProperty('ErrorMessage', error.message);
 

@@ -39,7 +39,7 @@ const mockPutMetric = jest
 >;
 const mockMetrics: MetricsLogger = {
   putMetric: mockPutMetric,
-  setDimensions: (...args: any[]) => expect(args).toEqual([]),
+  setDimensions: (...args: any[]) => expect(args).toEqual([{}]),
 } as any;
 mockMetricScope.mockImplementation((cb) => {
   const impl = cb(mockMetrics);

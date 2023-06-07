@@ -49,7 +49,7 @@ export const handler = async (): Promise<ExecutionResult | ServiceLimit> => {
     serviceLimit = await getServiceLimits();
     await metricScope((metrics) => async () => {
       metrics.setNamespace(constants.METRICS_NAMESPACE);
-      metrics.setDimensions();
+      metrics.setDimensions({});
       metrics.putMetric(
         constants.GhRateLimitsRemaining,
         serviceLimit!.remaining,
@@ -66,7 +66,7 @@ export const handler = async (): Promise<ExecutionResult | ServiceLimit> => {
   } catch (e) {
     if ((e as any).status == 401) {
       await metricScope((metrics) => async () => {
-        metrics.setDimensions();
+        metrics.setDimensions({});
 
         metrics.setNamespace(constants.METRICS_NAMESPACE);
         metrics.putMetric(constants.InvalidCredentials, 1, Unit.Count);
@@ -75,7 +75,7 @@ export const handler = async (): Promise<ExecutionResult | ServiceLimit> => {
       return { error: 'InvalidCredentials' };
     }
     await metricScope((metrics) => async () => {
-      metrics.setDimensions();
+      metrics.setDimensions({});
 
       metrics.setNamespace(constants.METRICS_NAMESPACE);
       metrics.putMetric(constants.UnknownError, 1, Unit.Count);

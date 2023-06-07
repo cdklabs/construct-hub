@@ -11,7 +11,7 @@ export const handler = metricScope(
     console.log(`Event: ${JSON.stringify(event, null, 2)}`);
 
     // Clear out the default dimensions, we won't need them.
-    metrics.setDimensions();
+    metrics.setDimensions({});
 
     const CLUSTER_NAME = requireEnv(Environment.CLUSTER_NAME);
     const TIMEOUT_MILLIS = parseInt(requireEnv(Environment.TIMEOUT_MILLIS), 10);
