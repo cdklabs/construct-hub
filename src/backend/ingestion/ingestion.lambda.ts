@@ -38,7 +38,7 @@ export const handler = metricScope(
     console.log(`Event: ${JSON.stringify(event, null, 2)}`);
 
     // Clear out the default dimensions, we won't need them.
-    metrics.setDimensions();
+    metrics.setDimensions({});
 
     const BUCKET_NAME = requireEnv('BUCKET_NAME');
     const STATE_MACHINE_ARN = requireEnv('STATE_MACHINE_ARN');
@@ -112,7 +112,7 @@ export const handler = metricScope(
       } catch (err) {
         console.error(`Invalid tarball content: ${err}`);
         metrics.putMetric(MetricName.INVALID_TARBALL, 1, Unit.Count);
-        return;
+        return undefined;
       }
 
       let parsedAssembly: Assembly;

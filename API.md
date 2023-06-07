@@ -1431,19 +1431,6 @@ This implies the creation of additonal resources, including:
 
 ---
 
-### DenyListMap <a name="DenyListMap" id="construct-hub.DenyListMap"></a>
-
-The contents of the deny list file in S3.
-
-#### Initializer <a name="Initializer" id="construct-hub.DenyListMap.Initializer"></a>
-
-```typescript
-import { DenyListMap } from 'construct-hub'
-
-const denyListMap: DenyListMap = { ... }
-```
-
-
 ### DenyListRule <a name="DenyListRule" id="construct-hub.DenyListRule"></a>
 
 An entry in the list of packages blocked from display in the construct hub.

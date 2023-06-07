@@ -39,7 +39,7 @@ const mockPutMetric = jest
 >;
 const mockMetrics: MetricsLogger = {
   putMetric: mockPutMetric,
-  setDimensions: (...args: any[]) => expect(args).toEqual([]),
+  setDimensions: (...args: any[]) => expect(args).toEqual([{}]),
 } as any;
 mockMetricScope.mockImplementation((cb) => {
   const impl = cb(mockMetrics);
@@ -117,7 +117,7 @@ test('basic happy case', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -127,7 +127,7 @@ test('basic happy case', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -207,7 +207,7 @@ test('basic happy case', async () => {
           default:
             fail(`Unexpected key: "${req.Key}"`);
         }
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { VersionId: `${req.Key}-NewVersion` });
@@ -236,7 +236,7 @@ test('basic happy case', async () => {
           },
           package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
         });
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { executionArn, startDate: new Date() });
@@ -343,7 +343,7 @@ test('basic happy case with duplicated packages', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -353,7 +353,7 @@ test('basic happy case with duplicated packages', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -433,7 +433,7 @@ test('basic happy case with duplicated packages', async () => {
           default:
             fail(`Unexpected key: "${req.Key}"`);
         }
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { VersionId: `${req.Key}-NewVersion` });
@@ -465,7 +465,7 @@ test('basic happy case with duplicated packages', async () => {
           },
           package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
         });
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { executionArn, startDate: new Date() });
@@ -588,7 +588,7 @@ test('basic happy case with compressed assembly', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -598,7 +598,7 @@ test('basic happy case with compressed assembly', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -687,7 +687,7 @@ test('basic happy case with compressed assembly', async () => {
           default:
             fail(`Unexpected key: "${req.Key}"`);
         }
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { VersionId: `${req.Key}-NewVersion` });
@@ -716,7 +716,7 @@ test('basic happy case with compressed assembly', async () => {
           },
           package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
         });
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { executionArn, startDate: new Date() });
@@ -824,7 +824,7 @@ test('basic happy case with license file', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -834,7 +834,7 @@ test('basic happy case with license file', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -912,7 +912,7 @@ test('basic happy case with license file', async () => {
           default:
             fail(`Unexpected key: "${req.Key}"`);
         }
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { VersionId: `${req.Key}-NewVersion` });
@@ -941,7 +941,7 @@ test('basic happy case with license file', async () => {
           },
           package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
         });
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, {
@@ -1067,7 +1067,7 @@ test('basic happy case with custom package links', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -1077,7 +1077,7 @@ test('basic happy case with custom package links', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -1164,7 +1164,7 @@ test('basic happy case with custom package links', async () => {
           default:
             fail(`Unexpected key: "${req.Key}"`);
         }
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { VersionId: `${req.Key}-NewVersion` });
@@ -1193,7 +1193,7 @@ test('basic happy case with custom package links', async () => {
           },
           package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
         });
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { executionArn, startDate: new Date() });
@@ -1337,7 +1337,7 @@ test('basic happy case with custom tags', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -1347,7 +1347,7 @@ test('basic happy case with custom tags', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -1426,7 +1426,7 @@ test('basic happy case with custom tags', async () => {
           default:
             fail(`Unexpected key: "${req.Key}"`);
         }
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { VersionId: `${req.Key}-NewVersion` });
@@ -1455,7 +1455,7 @@ test('basic happy case with custom tags', async () => {
           },
           package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
         });
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { executionArn, startDate: new Date() });
@@ -1574,7 +1574,7 @@ for (const [frameworkName, frameworkPackage] of [
           try {
             expect(req.Bucket).toBe(mockConfigBucket);
             expect(req.Key).toBe(mockConfigkey);
-          } catch (e) {
+          } catch (e: any) {
             return cb(e);
           }
           return cb(null, { Body: mockConfig });
@@ -1584,7 +1584,7 @@ for (const [frameworkName, frameworkPackage] of [
           expect(req.Bucket).toBe(stagingBucket);
           expect(req.Key).toBe(stagingKey);
           expect(req.VersionId).toBe(stagingVersion);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: fakeTarGz });
@@ -1659,7 +1659,7 @@ for (const [frameworkName, frameworkPackage] of [
             default:
               fail(`Unexpected key: "${req.Key}"`);
           }
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { VersionId: `${req.Key}-NewVersion` });
@@ -1688,7 +1688,7 @@ for (const [frameworkName, frameworkPackage] of [
             },
             package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
           });
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { executionArn, startDate: new Date() });
@@ -1793,7 +1793,7 @@ for (const [frameworkName, frameworkPackage] of [
           try {
             expect(req.Bucket).toBe(mockConfigBucket);
             expect(req.Key).toBe(mockConfigkey);
-          } catch (e) {
+          } catch (e: any) {
             return cb(e);
           }
           return cb(null, { Body: mockConfig });
@@ -1803,7 +1803,7 @@ for (const [frameworkName, frameworkPackage] of [
           expect(req.Bucket).toBe(stagingBucket);
           expect(req.Key).toBe(stagingKey);
           expect(req.VersionId).toBe(stagingVersion);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: fakeTarGz });
@@ -1878,7 +1878,7 @@ for (const [frameworkName, frameworkPackage] of [
             default:
               fail(`Unexpected key: "${req.Key}"`);
           }
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { VersionId: `${req.Key}-NewVersion` });
@@ -1907,7 +1907,7 @@ for (const [frameworkName, frameworkPackage] of [
             },
             package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
           });
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { executionArn, startDate: new Date() });
@@ -2020,7 +2020,7 @@ for (const [frameworkName, frameworkPackage] of [
           try {
             expect(req.Bucket).toBe(mockConfigBucket);
             expect(req.Key).toBe(mockConfigkey);
-          } catch (e) {
+          } catch (e: any) {
             return cb(e);
           }
           return cb(null, { Body: mockConfig });
@@ -2030,7 +2030,7 @@ for (const [frameworkName, frameworkPackage] of [
           expect(req.Bucket).toBe(stagingBucket);
           expect(req.Key).toBe(stagingKey);
           expect(req.VersionId).toBe(stagingVersion);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: fakeTarGz });
@@ -2103,7 +2103,7 @@ for (const [frameworkName, frameworkPackage] of [
             default:
               fail(`Unexpected key: "${req.Key}"`);
           }
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { VersionId: `${req.Key}-NewVersion` });
@@ -2132,7 +2132,7 @@ for (const [frameworkName, frameworkPackage] of [
             },
             package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
           });
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { executionArn, startDate: new Date() });
@@ -2240,7 +2240,7 @@ test('mismatched package name', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -2250,7 +2250,7 @@ test('mismatched package name', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -2378,7 +2378,7 @@ test('mismatched package version', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -2388,7 +2388,7 @@ test('mismatched package version', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -2516,7 +2516,7 @@ test('mismatched package license', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -2526,7 +2526,7 @@ test('mismatched package license', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -2651,7 +2651,7 @@ test('missing .jsii file', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -2661,7 +2661,7 @@ test('missing .jsii file', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -2782,7 +2782,7 @@ test('missing package.json file', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -2792,7 +2792,7 @@ test('missing package.json file', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -2864,7 +2864,7 @@ class FakeGunzip extends EventEmitter {
     try {
       expect(data).toEqual(this.gz);
       setImmediate(() => this.sendData());
-    } catch (e) {
+    } catch (e: any) {
       this.emit('error', e);
     }
   }
@@ -2896,7 +2896,7 @@ class FakeExtract extends EventEmitter {
       expect(data).toEqual(Buffer.from(this.tar));
       cb?.(null);
       setImmediate(() => this.sendNextEntry());
-    } catch (e) {
+    } catch (e: any) {
       cb?.(e);
     }
   }

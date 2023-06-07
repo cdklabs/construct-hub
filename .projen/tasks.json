@@ -46,79 +46,82 @@
       "description": "Bundle all lambda and ECS functions",
       "steps": [
         {
-          "spawn": "bundle:catalog-builder-mock"
-        },
-        {
-          "spawn": "bundle:trigger.client-test"
-        },
-        {
-          "spawn": "bundle:trigger.prune-test"
-        },
-        {
-          "spawn": "bundle:catalog-builder"
-        },
-        {
-          "spawn": "bundle:prune-handler"
-        },
-        {
-          "spawn": "bundle:prune-queue-handler"
-        },
-        {
-          "spawn": "bundle:update-feed"
-        },
-        {
-          "spawn": "bundle:ingestion"
-        },
-        {
-          "spawn": "bundle:re-ingest"
-        },
-        {
-          "spawn": "bundle:canary"
-        },
-        {
-          "spawn": "bundle:package-versions-table-widget-function"
-        },
-        {
-          "spawn": "bundle:needs-catalog-update"
-        },
-        {
-          "spawn": "bundle:redrive-state-machine"
-        },
-        {
-          "spawn": "bundle:package-stats"
-        },
-        {
-          "spawn": "bundle:generate-release-notes"
-        },
-        {
-          "spawn": "bundle:get-messages-from-worker-queue"
-        },
-        {
-          "spawn": "bundle:release-notes-trigger"
-        },
-        {
-          "spawn": "bundle:version-tracker"
-        },
-        {
-          "spawn": "bundle:certificate-monitor"
-        },
-        {
-          "spawn": "bundle:http-get-function"
-        },
-        {
-          "spawn": "bundle:sqs-dlq-stats-widget-function"
-        },
-        {
-          "spawn": "bundle:code-artifact-forwarder"
-        },
-        {
-          "spawn": "bundle:npmjs-package-canary"
+          "spawn": "bundle:stage-and-notify"
         },
         {
           "spawn": "bundle:npm-js-follower"
         },
         {
-          "spawn": "bundle:stage-and-notify"
+          "spawn": "bundle:npmjs-package-canary"
+        },
+        {
+          "spawn": "bundle:code-artifact-forwarder"
+        },
+        {
+          "spawn": "bundle:sqs-dlq-stats-widget-function"
+        },
+        {
+          "spawn": "bundle:http-get-function"
+        },
+        {
+          "spawn": "bundle:certificate-monitor"
+        },
+        {
+          "spawn": "bundle:version-tracker"
+        },
+        {
+          "spawn": "bundle:release-notes-trigger"
+        },
+        {
+          "spawn": "bundle:get-messages-from-worker-queue"
+        },
+        {
+          "spawn": "bundle:generate-release-notes"
+        },
+        {
+          "spawn": "bundle:package-stats"
+        },
+        {
+          "spawn": "bundle:redrive-state-machine"
+        },
+        {
+          "spawn": "bundle:needs-catalog-update"
+        },
+        {
+          "spawn": "bundle:package-versions-table-widget-function"
+        },
+        {
+          "spawn": "bundle:canary"
+        },
+        {
+          "spawn": "bundle:re-ingest"
+        },
+        {
+          "spawn": "bundle:ingestion"
+        },
+        {
+          "spawn": "bundle:update-feed"
+        },
+        {
+          "spawn": "bundle:monitor"
+        },
+        {
+          "spawn": "bundle:prune-queue-handler"
+        },
+        {
+          "spawn": "bundle:prune-handler"
+        },
+        {
+          "spawn": "bundle:catalog-builder"
+        },
+        {
+          "spawn": "bundle:trigger.prune-test"
+        },
+        {
+          "spawn": "bundle:trigger.client-test"
+        },
+        {
+          "spawn": "bundle:catalog-builder-mock"
         },
         {
           "spawn": "bundle:transliterator"
@@ -301,7 +304,25 @@
       "description": "Continuously bundle all AWS Lambda functions",
       "steps": [
         {
-          "exec": "esbuild --bundle src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/feed-builder/update-feed.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/inventory/package-versions-table-widget-function.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/package-stats/package-stats.lambda.ts src/backend/release-notes/generate-release-notes.lambda.ts src/backend/release-notes/get-messages-from-worker-queue.lambda.ts src/backend/release-notes/release-notes-trigger.lambda.ts src/backend/version-tracker/version-tracker.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/monitoring/http-get-function.lambda.ts src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/stage-and-notify.lambda.ts --target=\"node14\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch --tsconfig=tsconfig.dev.json"
+          "exec": "esbuild --bundle src/package-sources/npmjs/stage-and-notify.lambda.ts src/package-sources/npmjs/npm-js-follower.lambda.ts src/package-sources/npmjs/canary/npmjs-package-canary.lambda.ts src/package-sources/codeartifact/code-artifact-forwarder.lambda.ts src/overview-dashboard/sqs-dlq-stats-widget-function.lambda.ts src/monitoring/http-get-function.lambda.ts src/monitored-certificate/certificate-monitor.lambda.ts src/backend/version-tracker/version-tracker.lambda.ts src/backend/release-notes/release-notes-trigger.lambda.ts src/backend/release-notes/get-messages-from-worker-queue.lambda.ts src/backend/release-notes/generate-release-notes.lambda.ts src/backend/package-stats/package-stats.lambda.ts src/backend/orchestration/redrive-state-machine.lambda.ts src/backend/orchestration/needs-catalog-update.lambda.ts src/backend/inventory/package-versions-table-widget-function.lambda.ts src/backend/inventory/canary.lambda.ts src/backend/ingestion/re-ingest.lambda.ts src/backend/ingestion/ingestion.lambda.ts src/backend/feed-builder/update-feed.lambda.ts src/backend/ecs-task-monitor/monitor.lambda.ts src/backend/deny-list/prune-queue-handler.lambda.ts src/backend/deny-list/prune-handler.lambda.ts src/backend/catalog-builder/catalog-builder.lambda.ts src/__tests__/backend/deny-list/integ/trigger.prune-test.lambda.ts src/__tests__/backend/deny-list/integ/trigger.client-test.lambda.ts src/__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts --target=\"node14\" --platform=\"node\" --outbase=\"src\" --outdir=\"lib\" --entry-names=\"[dir]/[name].bundle/index\" --external:aws-sdk --sourcemap --watch --tsconfig=tsconfig.dev.json"
+        }
+      ]
+    },
+    "bundle:monitor": {
+      "name": "bundle:monitor",
+      "description": "Create an AWS Lambda bundle from src/backend/ecs-task-monitor/monitor.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/ecs-task-monitor/monitor.lambda.ts --target=\"node16\" --platform=\"node\" --outfile=\"lib/backend/ecs-task-monitor/monitor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json"
+        }
+      ]
+    },
+    "bundle:monitor:watch": {
+      "name": "bundle:monitor:watch",
+      "description": "Continuously update an AWS Lambda bundle from src/backend/ecs-task-monitor/monitor.lambda.ts",
+      "steps": [
+        {
+          "exec": "esbuild --bundle src/backend/ecs-task-monitor/monitor.lambda.ts --target=\"node16\" --platform=\"node\" --outfile=\"lib/backend/ecs-task-monitor/monitor.lambda.bundle/index.js\" --external:aws-sdk --sourcemap --tsconfig=tsconfig.dev.json --watch"
         }
       ]
     },
@@ -678,79 +699,82 @@
           "exec": "jsii --silence-warnings=reserved-word"
         },
         {
-          "spawn": "bundle:catalog-builder-mock"
-        },
-        {
-          "spawn": "bundle:trigger.client-test"
-        },
-        {
-          "spawn": "bundle:trigger.prune-test"
-        },
-        {
-          "spawn": "bundle:catalog-builder"
-        },
-        {
-          "spawn": "bundle:prune-handler"
-        },
-        {
-          "spawn": "bundle:prune-queue-handler"
-        },
-        {
-          "spawn": "bundle:update-feed"
-        },
-        {
-          "spawn": "bundle:ingestion"
-        },
-        {
-          "spawn": "bundle:re-ingest"
-        },
-        {
-          "spawn": "bundle:canary"
-        },
-        {
-          "spawn": "bundle:package-versions-table-widget-function"
-        },
-        {
-          "spawn": "bundle:needs-catalog-update"
-        },
-        {
-          "spawn": "bundle:redrive-state-machine"
-        },
-        {
-          "spawn": "bundle:package-stats"
-        },
-        {
-          "spawn": "bundle:generate-release-notes"
-        },
-        {
-          "spawn": "bundle:get-messages-from-worker-queue"
-        },
-        {
-          "spawn": "bundle:release-notes-trigger"
-        },
-        {
-          "spawn": "bundle:version-tracker"
-        },
-        {
-          "spawn": "bundle:certificate-monitor"
-        },
-        {
-          "spawn": "bundle:http-get-function"
-        },
-        {
-          "spawn": "bundle:sqs-dlq-stats-widget-function"
-        },
-        {
-          "spawn": "bundle:code-artifact-forwarder"
-        },
-        {
-          "spawn": "bundle:npmjs-package-canary"
+          "spawn": "bundle:stage-and-notify"
         },
         {
           "spawn": "bundle:npm-js-follower"
         },
         {
-          "spawn": "bundle:stage-and-notify"
+          "spawn": "bundle:npmjs-package-canary"
+        },
+        {
+          "spawn": "bundle:code-artifact-forwarder"
+        },
+        {
+          "spawn": "bundle:sqs-dlq-stats-widget-function"
+        },
+        {
+          "spawn": "bundle:http-get-function"
+        },
+        {
+          "spawn": "bundle:certificate-monitor"
+        },
+        {
+          "spawn": "bundle:version-tracker"
+        },
+        {
+          "spawn": "bundle:release-notes-trigger"
+        },
+        {
+          "spawn": "bundle:get-messages-from-worker-queue"
+        },
+        {
+          "spawn": "bundle:generate-release-notes"
+        },
+        {
+          "spawn": "bundle:package-stats"
+        },
+        {
+          "spawn": "bundle:redrive-state-machine"
+        },
+        {
+          "spawn": "bundle:needs-catalog-update"
+        },
+        {
+          "spawn": "bundle:package-versions-table-widget-function"
+        },
+        {
+          "spawn": "bundle:canary"
+        },
+        {
+          "spawn": "bundle:re-ingest"
+        },
+        {
+          "spawn": "bundle:ingestion"
+        },
+        {
+          "spawn": "bundle:update-feed"
+        },
+        {
+          "spawn": "bundle:monitor"
+        },
+        {
+          "spawn": "bundle:prune-queue-handler"
+        },
+        {
+          "spawn": "bundle:prune-handler"
+        },
+        {
+          "spawn": "bundle:catalog-builder"
+        },
+        {
+          "spawn": "bundle:trigger.prune-test"
+        },
+        {
+          "spawn": "bundle:trigger.client-test"
+        },
+        {
+          "spawn": "bundle:catalog-builder-mock"
         },
         {
           "spawn": "bundle:transliterator"
@@ -1056,10 +1080,10 @@
           "spawn": "eslint"
         },
         {
-          "spawn": "integ:deny-list:assert"
+          "spawn": "integ:domain-redirect:assert"
         },
         {
-          "spawn": "integ:domain-redirect:assert"
+          "spawn": "integ:deny-list:assert"
         }
       ]
     },
@@ -1099,25 +1123,25 @@
           "exec": "yarn upgrade npm-check-updates"
         },
         {
-          "exec": "npm-check-updates --dep dev --upgrade --target=minor --reject='aws-sdk-mock,jsii,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
+          "exec": "npm-check-updates --dep dev --upgrade --target=minor --reject='jsii,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
         },
         {
-          "exec": "npm-check-updates --dep optional --upgrade --target=minor --reject='aws-sdk-mock,jsii,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
+          "exec": "npm-check-updates --dep optional --upgrade --target=minor --reject='jsii,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
         },
         {
-          "exec": "npm-check-updates --dep peer --upgrade --target=minor --reject='aws-sdk-mock,jsii,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
+          "exec": "npm-check-updates --dep peer --upgrade --target=minor --reject='jsii,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
         },
         {
-          "exec": "npm-check-updates --dep prod --upgrade --target=minor --reject='aws-sdk-mock,jsii,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
+          "exec": "npm-check-updates --dep prod --upgrade --target=minor --reject='jsii,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
         },
         {
-          "exec": "npm-check-updates --dep bundle --upgrade --target=minor --reject='aws-sdk-mock,jsii,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
+          "exec": "npm-check-updates --dep bundle --upgrade --target=minor --reject='jsii,@aws-cdk/aws-servicecatalogappregistry-alpha,aws-cdk-lib,cdk-watchful,constructs,aws-cdk@^2'"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @aws-sdk/client-sfn @jsii/spec @octokit/rest @types/aws-lambda @types/changelog-filename-regex @types/fs-extra @types/jest @types/markdown-it @types/markdown-it-emoji @types/node @types/semver @types/tar-stream @typescript-eslint/eslint-plugin @typescript-eslint/parser async-sema aws-cdk aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case changelog-filename-regex construct-hub-webapp dotenv esbuild eslint-config-prettier eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint feed fs-extra glob got jest-junit jest jsii-diff jsii-docgen jsii-pacmak jsii JSONStream markdown-it markdown-it-emoji normalize-registry-metadata npm-check-updates prettier projen semver spdx-license-list standard-version tar-stream typescript uuid yaml"
+          "exec": "yarn upgrade @aws-sdk/client-sfn @jsii/spec @octokit/rest @types/aws-lambda @types/changelog-filename-regex @types/fs-extra @types/jest @types/markdown-it @types/markdown-it-emoji @types/node @types/semver @types/tar-stream @types/tough-cookie @typescript-eslint/eslint-plugin @typescript-eslint/parser async-sema aws-cdk aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case changelog-filename-regex construct-hub-webapp dotenv esbuild eslint-config-prettier eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint feed fs-extra glob got jest jest-junit jsii-diff jsii-docgen jsii-pacmak jsii JSONStream markdown-it markdown-it-emoji normalize-registry-metadata npm-check-updates prettier projen semver spdx-license-list standard-version tar-stream typescript uuid yaml"
         },
         {
           "exec": "npx projen"
@@ -1138,7 +1162,7 @@
     }
   },
   "env": {
-    "PATH": "$(npx -c \"node -e \\\"console.log(process.env.PATH)\\\"\")"
+    "PATH": "$(npx -c \"node --print process.env.PATH\")"
   },
   "//": "~~ Generated by projen. To modify, edit .projenrc.js and run \"npx projen\"."
 }

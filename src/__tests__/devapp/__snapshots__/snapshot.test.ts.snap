@@ -2628,7 +2628,7 @@ Resources:
       Content:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip
+        S3Key: 88b83f5f61fe6f85ffcd0a37a09a8f3be90e7c090964b0b62b062eb8a5a1a3a7.zip
       Description: /opt/awscli/aws
   ConstructHubDenyListBucketDeploymentCustomResourceF835956B:
     Type: Custom::CDKBucketDeployment
@@ -2737,7 +2737,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: e2c2dd27dc5ff32f57bcc38c41340810979fd0964830338cd94ef42fe769e2e4.zip
+        S3Key: 11e0f053d1a31a93dc8ecaffcdd1128541b4ce95028e6df7793e20e097e70143.zip
       Role:
         Fn::GetAtt:
           - ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE
@@ -2921,7 +2921,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: f5139828e420e1b9d6b8e07ff6062bb919e85a1f1a0c0c8d3d8e10c3b5bbb09c.zip
+        S3Key: 0e9e8bd9ad3e646c95f5ff798206641e34df1ec1837f4f3bb38796a334305abb.zip
       Role:
         Fn::GetAtt:
           - ConstructHubStatsServiceRole48DCA379
@@ -3072,7 +3072,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: a00f378a47e549be55a92e0b474e150c1143e4845abde2eee66c0316a2bad7bd.zip
+        S3Key: c253902b6254619085a69717d14e1a1e44e6cfbd29a028ab85bbd3d67d1d0172.zip
       Role:
         Fn::GetAtt:
           - ConstructHubVersionTrackerServiceRole721EE863
@@ -3297,7 +3297,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 5b7eccafc5b6e71a6ff45bf5682a9cd00f733d8f3a3dc46339abf18b1bdd82c3.zip
+        S3Key: 7ed4c75404d9c05db502e0d3e0d9d7d1bfd2176bb7eed0c95af8d4a54f674996.zip
       Role:
         Fn::GetAtt:
           - ConstructHubFeedBuilderReleaseNotesUpdateFeedServiceRoleC857E364
@@ -3484,7 +3484,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 792c17eb1e2d2cd8dfd74e1dc2b69b22cb704c4fed3955ba2534939aecc1a426.zip
+        S3Key: 9ea680f51399db3f0ea334eb58696390fe527303f70620cee2cf14fba604a10e.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
@@ -3613,7 +3613,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 122c629cf93da877e94a1cb364f74b32e8a81ad01724f75f1a37d20ae108e8a2.zip
+        S3Key: 2b2c609da880d1ded848ea65f086ec3374f8044ae6b380054d637129208c81ea.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationNeedsCatalogUpdateServiceRoleE6BF31C3
@@ -3638,6 +3638,120 @@ Resources:
       ClusterSettings:
         - Name: containerInsights
           Value: enabled
+  ConstructHubOrchestrationClusterMonitorServiceRoleA4055F89:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: 2012-10-17
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+  ConstructHubOrchestrationClusterMonitorServiceRoleDefaultPolicy258B6050:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - ecs:ListTasks
+              - ecs:DescribeTasks
+              - ecs:StopTask
+            Condition:
+              ArnEquals:
+                ecs:cluster:
+                  Fn::GetAtt:
+                    - ConstructHubOrchestrationCluster3D6F0081
+                    - Arn
+            Effect: Allow
+            Resource:
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - ":ecs:"
+                    - Ref: AWS::Region
+                    - ":"
+                    - Ref: AWS::AccountId
+                    - :container-instance/
+                    - Ref: ConstructHubOrchestrationCluster3D6F0081
+                    - /*
+              - Fn::Join:
+                  - ""
+                  - - "arn:"
+                    - Ref: AWS::Partition
+                    - ":ecs:"
+                    - Ref: AWS::Region
+                    - ":"
+                    - Ref: AWS::AccountId
+                    - :task/
+                    - Ref: ConstructHubOrchestrationCluster3D6F0081
+                    - /*
+        Version: 2012-10-17
+      PolicyName: ConstructHubOrchestrationClusterMonitorServiceRoleDefaultPolicy258B6050
+      Roles:
+        - Ref: ConstructHubOrchestrationClusterMonitorServiceRoleA4055F89
+  ConstructHubOrchestrationClusterMonitorB0D4B645:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket:
+          Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
+        S3Key: ffbbce445e223599839c33fcf04fe4bcdfff03a4d96a6946cb6a8276e1d04b99.zip
+      Role:
+        Fn::GetAtt:
+          - ConstructHubOrchestrationClusterMonitorServiceRoleA4055F89
+          - Arn
+      Description:
+        Fn::Join:
+          - ""
+          - - "[dev/ConstructHub/Orchestration/Cluster/Monitor] Monitors tasks
+              on the ECS cluster "
+            - Ref: ConstructHubOrchestrationCluster3D6F0081
+      Environment:
+        Variables:
+          CLUSTER_NAME:
+            Ref: ConstructHubOrchestrationCluster3D6F0081
+          TIMEOUT_MILLIS: "7800000"
+      Handler: index.handler
+      ReservedConcurrentExecutions: 1
+      Runtime: nodejs16.x
+      Timeout: 900
+    DependsOn:
+      - ConstructHubOrchestrationClusterMonitorServiceRoleDefaultPolicy258B6050
+      - ConstructHubOrchestrationClusterMonitorServiceRoleA4055F89
+  ConstructHubOrchestrationClusterMonitorSchedule4950645D:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Periodically runs the ECS Task Monitor
+        (dev/ConstructHub/Orchestration/Cluster/Monitor)
+      ScheduleExpression: rate(15 minutes)
+      State: ENABLED
+      Targets:
+        - Arn:
+            Fn::GetAtt:
+              - ConstructHubOrchestrationClusterMonitorB0D4B645
+              - Arn
+          Id: Target0
+  ConstructHubOrchestrationClusterMonitorScheduleAllowEventRuledevConstructHubOrchestrationClusterMonitor4990E760DBA143C5:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - ConstructHubOrchestrationClusterMonitorB0D4B645
+          - Arn
+      Principal: events.amazonaws.com
+      SourceArn:
+        Fn::GetAtt:
+          - ConstructHubOrchestrationClusterMonitorSchedule4950645D
+          - Arn
   ConstructHubOrchestrationCluster4C9C8AA6:
     Type: AWS::ECS::ClusterCapacityProviderAssociations
     Properties:
@@ -4813,7 +4927,7 @@ Resources:
                   - repositoryEndpoint
           Essential: true
           Image:
-            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:79f58aeb41e275be263a7a227e021c4be5b840429fe4269148df691936b87ab6
+            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:758c8e1372a21e459ba35b79c6d9acde5a9037ea7a9236c825f7d78b604dc04d
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -5104,6 +5218,8 @@ Resources:
       - ConstructHubOrchestrationRoleDefaultPolicyEACD181F
       - ConstructHubOrchestrationRoleF4CF6987
       - ConstructHubVPCIGW935F4C28
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
   ConstructHubOrchestrationOrchestrationFailed5AF50838:
     Type: AWS::CloudWatch::Alarm
     Properties:
@@ -5185,7 +5301,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: f401d64ec903e9d8358f060ad376ee0f8521736be1f34f1de0408ffc932558d0.zip
+        S3Key: b8dbccb5a7de8cdf19210b512a45c6c02bb38d579ef55d8389c7ab12c1fc0430.zip
       Role:
         Fn::GetAtt:
           - ConstructHubOrchestrationRedriveServiceRoleB84EFF33
@@ -5311,6 +5427,8 @@ Resources:
     DependsOn:
       - ConstructHubOrchestrationRegenerateAllDocumentationPerPackageRoleDefaultPolicy001A4726
       - ConstructHubOrchestrationRegenerateAllDocumentationPerPackageRoleD7CCFA73
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
   ConstructHubOrchestrationRegenerateAllDocumentationRole1C7D3B5F:
     Type: AWS::IAM::Role
     Properties:
@@ -5470,6 +5588,8 @@ Resources:
     DependsOn:
       - ConstructHubOrchestrationRegenerateAllDocumentationRoleDefaultPolicy2F4FBD86
       - ConstructHubOrchestrationRegenerateAllDocumentationRole1C7D3B5F
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
   ConstructHubReleaseNotesReleaseNotesFetchWorkerQueueDLQ56BF53F1:
     Type: AWS::SQS::Queue
     Properties:
@@ -5666,7 +5786,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: e8ff0780c69b5f9cef4661621b6883ad6f2e10316156b81964ef5da4d38a31ba.zip
+        S3Key: 7da0fcad8c4c5cfc4557935e9793c7b2d208fe48e20c5116f380c51bd0281d8b.zip
       Role:
         Fn::GetAtt:
           - ConstructHubReleaseNotesGithubChangelogFetcherServiceRoleCAE3656D
@@ -5739,7 +5859,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 320f8ef20c18ac039c1cef16364765fdf6184deb5075ab676b517b19432e0993.zip
+        S3Key: 9d40168780374de2bcc0aa31eac3fd144d715adcef9f3392a58a9fafaab49146.zip
       Role:
         Fn::GetAtt:
           - ConstructHubReleaseNotesReleaseNoteTasksServiceRole662376CD
@@ -5968,6 +6088,8 @@ Resources:
     DependsOn:
       - ConstructHubReleaseNotesStateMachineRoleDefaultPolicy425D1E83
       - ConstructHubReleaseNotesStateMachineRole0322C9EF
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
   ConstructHubReleaseNotesReleaseNotesGenerationFailure04ABD01D:
     Type: AWS::CloudWatch::Alarm
     Properties:
@@ -6185,7 +6307,7 @@ Resources:
       Content:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip
+        S3Key: 88b83f5f61fe6f85ffcd0a37a09a8f3be90e7c090964b0b62b062eb8a5a1a3a7.zip
       Description: /opt/awscli/aws
   ConstructHubIngestionDeployIngestionConfigurationCustomResourceD7F243C1:
     Type: Custom::CDKBucketDeployment
@@ -6392,7 +6514,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 0297332c015a5e61e0843bafdcfa280517e5c1d3a432864465443953ecb85fac.zip
+        S3Key: 3bd0dfa9360ac407538246b78bebc2f8aee3f1ce7cf52a2e876311cc6f04a75b.zip
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
@@ -6565,7 +6687,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 294cb5f2786a4d26030b92e7d584cc906482febabed0430fb3b4a798e8eb2f47.zip
+        S3Key: 48bab6a27a21e3babd1d9a3ed788c14a79caee163ec72753b7e4bbed07835d6c.zip
       Role:
         Fn::GetAtt:
           - ConstructHubIngestionReprocessWorkflowFunctionServiceRoleA59056B1
@@ -6719,6 +6841,8 @@ Resources:
     DependsOn:
       - ConstructHubIngestionReprocessWorkflowStateMachineRoleDefaultPolicy3A21E747
       - ConstructHubIngestionReprocessWorkflowStateMachineRoleA07E1479
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
   ConstructHubIngestionDLQAlarm83BD1903:
     Type: AWS::CloudWatch::Alarm
     Properties:
@@ -6902,7 +7026,7 @@ Resources:
       Content:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip
+        S3Key: 88b83f5f61fe6f85ffcd0a37a09a8f3be90e7c090964b0b62b062eb8a5a1a3a7.zip
       Description: /opt/awscli/aws
   ConstructHubLicenseListCustomResource323F0FD4:
     Type: Custom::CDKBucketDeployment
@@ -7016,8 +7140,6 @@ Resources:
   ConstructHubWebAppAddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7E9FDB69:
     Type: AWS::CloudFront::Function
     Properties:
-      Name: AddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
-      AutoPublish: true
       FunctionCode: >-
         "use strict";
 
@@ -7066,6 +7188,8 @@ Resources:
       FunctionConfig:
         Comment: AddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
         Runtime: cloudfront-js-1.0
+      Name: AddHeadersFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
+      AutoPublish: true
   ConstructHubWebAppDistributionOrigin1S3Origin694AF937:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
@@ -7206,8 +7330,6 @@ Resources:
   ConstructHubWebAppBadgeRedirectFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c7DAA75A6:
     Type: AWS::CloudFront::Function
     Properties:
-      Name: BadgeRedirectFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
-      AutoPublish: true
       FunctionCode: >-
         "use strict";
 
@@ -7225,13 +7347,15 @@ Resources:
       FunctionConfig:
         Comment: BadgeRedirectFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
         Runtime: cloudfront-js-1.0
+      Name: BadgeRedirectFunctionc8e10155f2162f48ff533f91d4832060d5a08c2d5c
+      AutoPublish: true
   ConstructHubWebAppDeployWebsiteAwsCliLayer23CFFBC1:
     Type: AWS::Lambda::LayerVersion
     Properties:
       Content:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip
+        S3Key: 88b83f5f61fe6f85ffcd0a37a09a8f3be90e7c090964b0b62b062eb8a5a1a3a7.zip
       Description: /opt/awscli/aws
   ConstructHubWebAppDeployWebsiteCustomResourceE6DF98C9:
     Type: Custom::CDKBucketDeployment
@@ -7243,7 +7367,7 @@ Resources:
       SourceBucketNames:
         - Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
       SourceObjectKeys:
-        - 21a0651e8e5e696d9b73ad58a2d8ab7603eca144732b7ba5f9b9d70bd61e4298.zip
+        - 7f85d5733c221e01ebfbb5723a4276a8b4e0e51579b8142a7ff14457176f38a3.zip
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: false
@@ -7259,7 +7383,7 @@ Resources:
       Content:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip
+        S3Key: 88b83f5f61fe6f85ffcd0a37a09a8f3be90e7c090964b0b62b062eb8a5a1a3a7.zip
       Description: /opt/awscli/aws
   ConstructHubWebAppDeployWebsiteConfigCustomResource2D18C708:
     Type: Custom::CDKBucketDeployment
@@ -7274,6 +7398,9 @@ Resources:
       SourceObjectKeys:
         - 14e4f0139224d21210279e451b3ecaef287913006c68e6050415f640c0ef7522.zip
         - d7eba45c105712349db08f8edd1c547cd768fb9c92dadc0bfd2403ecc4127f96.zip
+      SourceMarkers:
+        - {}
+        - {}
       DestinationBucketName:
         Ref: ConstructHubWebAppWebsiteBucket4B2B9DB2
       Prune: false
@@ -7473,7 +7600,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: f035f6af365b3abd81f45933e94e52fe41e24c7850b22c70a977bdaa325fcc77.zip
+        S3Key: 24402ee2527a953f73afe877c2f068935faa2e085be104cacfd43c1882c80828.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50
@@ -7628,7 +7755,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 424aaafbb47069ac9d6aca26347dc7e661bbeb25e214674c07b2955b1ac1f77d.zip
+        S3Key: 3d43095ae12cd4d3b752e44a92a85f6de3a2d404e24e7206fe1ed51232e8d06e.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsServiceRoleAC3F7AA6
@@ -7719,7 +7846,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: d60d409273bc55759515aa087d44088a39235e10307e9121db2bbcf9b373ab2f.zip
+        S3Key: 463acfe385c6cb63391801e77c5014c0bf49b35b116fd0b42e5bc921ac939052.zip
       Role:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2
@@ -7865,7 +7992,6 @@ Resources:
   ConstructHubSourcesNpmJsCanaryNotRunningOrFailing62A8E2F6:
     Type: AWS::CloudWatch::CompositeAlarm
     Properties:
-      AlarmName: dev/ConstructHub/Sources/NpmJs/Canary/NotRunningOrFailing
       AlarmRule:
         Fn::Join:
           - ""
@@ -7886,6 +8012,7 @@ Resources:
 
 
         Runbook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+      AlarmName: dev/ConstructHub/Sources/NpmJs/Canary/NotRunningOrFailing
     DependsOn:
       - ConstructHubLicenseListAwsCliLayer59592811
       - ConstructHubLicenseListCustomResource323F0FD4
@@ -8301,7 +8428,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 09496fd6786e1801b8c63dc5823e2ace357ad4284c17a2685ac43c80b4084fa8.zip
+        S3Key: 35318f96d5bd1fa499137702d694a41c0da02926a533ea3bdd0792788affc34a.zip
       Role:
         Fn::GetAtt:
           - ConstructHubInventoryCanaryServiceRole7684EDDE
@@ -8402,6 +8529,8 @@ Resources:
     DependsOn:
       - ConstructHubInventoryCanaryStateMachineRoleDefaultPolicy6F9D94C1
       - ConstructHubInventoryCanaryStateMachineRole9D5D502F
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
   ConstructHubInventoryCanaryStateMachineEventsRole8AD19655:
     Type: AWS::IAM::Role
     Properties:
@@ -8702,57 +8831,70 @@ Resources:
               0)","yAxis":"right"}],["ECS/ContainerInsights","TaskCount","ClusterName","'
             - Ref: ConstructHubOrchestrationCluster3D6F0081
             - '",{"label":"Task
-              Count","stat":"Sum","visible":false,"id":"mbb258976f5c025a7dff5289417a6b07619e000e4af1a427fecc57b31586fd6dd"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"text","width":24,"height":1,"x":0,"y":16,"properties":{"markdown":"##
+              Count","stat":"Sum","visible":false,"id":"mbb258976f5c025a7dff5289417a6b07619e000e4af1a427fecc57b31586fd6dd"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":0,"y":16,"properties":{"view":"timeSeries","title":"ECS
+              Task Monitor","region":"'
+            - Ref: AWS::Region
+            - '","metrics":[["ConstructHub/EcsTaskMonitor","ActiveTaskCount",{"label":"Active
+              Task
+              Count","period":900}],["ConstructHub/EcsTaskMonitor","KilledTaskCount",{"label":"Killed
+              Task
+              Count","period":900,"stat":"Maximum"}],["ConstructHub/EcsTaskMonitor","ActiveTaskAge",{"label":"Active
+              Task Age
+              (Max)","period":900,"stat":"Maximum","yAxis":"right"}],["ConstructHub/EcsTaskMonitor","ActiveTaskAge",{"label":"Active
+              Task Age
+              (Avg)","period":900,"yAxis":"right"}],["ConstructHub/EcsTaskMonitor","ActiveTaskAge",{"label":"Active
+              Task Age
+              (Min)","period":900,"stat":"Minimum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"text","width":24,"height":1,"x":0,"y":22,"properties":{"markdown":"##
               Language:
-              typescript"}},{"type":"metric","width":12,"height":6,"x":0,"y":17,"properties":{"view":"pie","title":"Package
+              typescript"}},{"type":"metric","width":12,"height":6,"x":0,"y":23,"properties":{"view":"pie","title":"Package
               Versions","region":"'
             - Ref: AWS::Region
             - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","typescript",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblyPackageVersionCount","Language","typescript",{"color":"#3542D7","label":"Corrupt
-              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","typescript",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":17,"properties":{"view":"pie","title":"Package
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","typescript",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":23,"properties":{"view":"pie","title":"Package
               Version Submodules","region":"'
             - Ref: AWS::Region
             - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","typescript",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblySubmoduleCount","Language","typescript",{"color":"#3542D7","label":"Corrupt
-              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","typescript",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":23,"properties":{"markdown":"##
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","typescript",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","typescript",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":29,"properties":{"markdown":"##
               Language:
-              python"}},{"type":"metric","width":12,"height":6,"x":0,"y":24,"properties":{"view":"pie","title":"Package
+              python"}},{"type":"metric","width":12,"height":6,"x":0,"y":30,"properties":{"view":"pie","title":"Package
               Versions","region":"'
             - Ref: AWS::Region
             - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","python",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblyPackageVersionCount","Language","python",{"color":"#3542D7","label":"Corrupt
-              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","python",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","python",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":24,"properties":{"view":"pie","title":"Package
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","python",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","python",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":30,"properties":{"view":"pie","title":"Package
               Version Submodules","region":"'
             - Ref: AWS::Region
             - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","python",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblySubmoduleCount","Language","python",{"color":"#3542D7","label":"Corrupt
-              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","python",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","python",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":30,"properties":{"markdown":"##
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","python",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","python",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":36,"properties":{"markdown":"##
               Language:
-              java"}},{"type":"metric","width":12,"height":6,"x":0,"y":31,"properties":{"view":"pie","title":"Package
+              java"}},{"type":"metric","width":12,"height":6,"x":0,"y":37,"properties":{"view":"pie","title":"Package
               Versions","region":"'
             - Ref: AWS::Region
             - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","java",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblyPackageVersionCount","Language","java",{"color":"#3542D7","label":"Corrupt
-              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","java",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","java",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":31,"properties":{"view":"pie","title":"Package
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","java",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","java",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":37,"properties":{"view":"pie","title":"Package
               Version Submodules","region":"'
             - Ref: AWS::Region
             - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","java",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblySubmoduleCount","Language","java",{"color":"#3542D7","label":"Corrupt
-              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","java",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","java",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":37,"properties":{"markdown":"##
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","java",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","java",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":43,"properties":{"markdown":"##
               Language:
-              csharp"}},{"type":"metric","width":12,"height":6,"x":0,"y":38,"properties":{"view":"pie","title":"Package
+              csharp"}},{"type":"metric","width":12,"height":6,"x":0,"y":44,"properties":{"view":"pie","title":"Package
               Versions","region":"'
             - Ref: AWS::Region
             - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","csharp",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblyPackageVersionCount","Language","csharp",{"color":"#3542D7","label":"Corrupt
-              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","csharp",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","csharp",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":38,"properties":{"view":"pie","title":"Package
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","csharp",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","csharp",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":44,"properties":{"view":"pie","title":"Package
               Version Submodules","region":"'
             - Ref: AWS::Region
             - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","csharp",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblySubmoduleCount","Language","csharp",{"color":"#3542D7","label":"Corrupt
-              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","csharp",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","csharp",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":44,"properties":{"markdown":"##
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","csharp",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","csharp",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":1,"x":0,"y":50,"properties":{"markdown":"##
               Language:
-              go"}},{"type":"metric","width":12,"height":6,"x":0,"y":45,"properties":{"view":"pie","title":"Package
+              go"}},{"type":"metric","width":12,"height":6,"x":0,"y":51,"properties":{"view":"pie","title":"Package
               Versions","region":"'
             - Ref: AWS::Region
             - '","metrics":[["ConstructHub/Inventory","SupportedPackageVersionCount","Language","go",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblyPackageVersionCount","Language","go",{"color":"#3542D7","label":"Corrupt
-              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","go",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","go",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":45,"properties":{"view":"pie","title":"Package
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedPackageVersionCount","Language","go",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingPackageVersionCount","Language","go",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":51,"properties":{"view":"pie","title":"Package
               Version Submodules","region":"'
             - Ref: AWS::Region
             - '","metrics":[["ConstructHub/Inventory","SupportedSubmoduleCount","Language","go",{"color":"#2ca02c","label":"Available","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","CorruptAssemblySubmoduleCount","Language","go",{"color":"#3542D7","label":"Corrupt
-              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","go",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","go",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":2,"x":0,"y":51,"properties":{"markdown":"#
+              Assembly","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","UnsupportedSubmoduleCount","Language","go",{"color":"#9467bd","label":"Unsupported","period":900,"stat":"Maximum"}],["ConstructHub/Inventory","MissingSubmoduleCount","Language","go",{"color":"#d62728","label":"Missing","period":900,"stat":"Maximum"}]],"yAxis":{"left":{"showUnits":false}}}},{"type":"text","width":24,"height":2,"x":0,"y":57,"properties":{"markdown":"#
               dev/ConstructHub/Sources/NpmJs\\n\\n[button:primary:NpmJs
               Follower](/lambda/home#/functions/'
             - Ref: ConstructHubSourcesNpmJs15A77D2D
@@ -8768,7 +8910,7 @@ Resources:
             - Fn::GetAtt:
                 - ConstructHubSourcesStagerDLQ80BD2600
                 - QueueName
-            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":53,"properties":{"view":"timeSeries","title":"Follower
+            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":59,"properties":{"view":"timeSeries","title":"Follower
               Health","region":"
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Invocations","expression":"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2,
@@ -8778,7 +8920,7 @@ Resources:
               0)"}],["AWS/Lambda","Errors","FunctionName","'
             - Ref: ConstructHubSourcesNpmJs15A77D2D
             - '",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}],["ConstructHub/PackageSource/NpmJs/Follower","RemainingTime",{"label":"Remaining
-              Time","stat":"Minimum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":53,"properties":{"view":"timeSeries","title":"Stager
+              Time","stat":"Minimum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":59,"properties":{"view":"timeSeries","title":"Stager
               Health","region":"'
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Invocations","expression":"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2,
@@ -8789,7 +8931,7 @@ Resources:
             - Ref: ConstructHubSourcesNpmJsStageAndNotify591C0CFA
             - '",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}],["AWS/Lambda","Duration","FunctionName","'
             - Ref: ConstructHubSourcesNpmJsStageAndNotify591C0CFA
-            - '",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":59,"properties":{"view":"timeSeries","title":"CouchDB
+            - '",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":65,"properties":{"view":"timeSeries","title":"CouchDB
               Follower","region":"'
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Change
@@ -8806,14 +8948,14 @@ Resources:
               Age","expression":"FILL(mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4,
               REPEAT)","yAxis":"right"}],["ConstructHub/PackageSource/NpmJs/Follower","PackageVersionAge",{"label":"Package
               Version
-              Age","stat":"Maximum","visible":false,"id":"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4"}]],"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":59,"properties":{"view":"timeSeries","title":"CouchDB
+              Age","stat":"Maximum","visible":false,"id":"mec485aa83505431ed7a356970082cd4815c310504ff176dd3eeb241ae7bbf0c4"}]],"yAxis":{"left":{"min":0},"right":{"label":"Milliseconds","min":0,"showUnits":false}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":65,"properties":{"view":"timeSeries","title":"CouchDB
               Changes","region":"'
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Last Sequence
               Number","expression":"FILL(mcc89a801dd7db60ea52e74b9851bd34a3899e7a26323ac98feb632cdf70c2500,
               REPEAT)"}],["ConstructHub/PackageSource/NpmJs/Follower","LastSeq",{"label":"Last
               Sequence
-              Number","stat":"Maximum","visible":false,"id":"mcc89a801dd7db60ea52e74b9851bd34a3899e7a26323ac98feb632cdf70c2500"}]],"yAxis":{},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":65,"properties":{"view":"timeSeries","title":"Stager
+              Number","stat":"Maximum","visible":false,"id":"mcc89a801dd7db60ea52e74b9851bd34a3899e7a26323ac98feb632cdf70c2500"}]],"yAxis":{},"period":300}},{"type":"metric","width":12,"height":6,"x":0,"y":71,"properties":{"view":"timeSeries","title":"Stager
               Dead-Letter Queue","region":"'
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Visible
@@ -8835,7 +8977,7 @@ Resources:
                 - ConstructHubSourcesStagerDLQ80BD2600
                 - QueueName
             - '",{"label":"Oldest
-              Message","stat":"Maximum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":12,"y":65,"properties":{"view":"timeSeries","title":"Package
+              Message","stat":"Maximum","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":12,"y":71,"properties":{"view":"timeSeries","title":"Package
               Canary","region":"'
             - Ref: AWS::Region
             - '","metrics":[["ConstructHub/PackageCanary","DwellTime",{"label":"Dwell
@@ -8845,13 +8987,13 @@ Resources:
               Version
               Count","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff0000","label":"SLA
               (5
-              minutes)","value":300,"yAxis":"left"}]},"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":0,"y":71,"properties":{"view":"timeSeries","title":"Observed
+              minutes)","value":300,"yAxis":"left"}]},"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":0,"y":77,"properties":{"view":"timeSeries","title":"Observed
               lag of replicate.npmjs.com","region":"'
             - Ref: AWS::Region
             - '","metrics":[["ConstructHub/PackageCanary","EstimatedNpmReplicaLag",{"label":"Replica
               lag
               (construct-hub-probe)","stat":"Maximum"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"5
-              minutes","value":300,"yAxis":"left"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":77,"properties":{"markdown":"#
+              minutes","value":300,"yAxis":"left"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":83,"properties":{"markdown":"#
               Ingestion Function\\n\\n[button:Ingestion
               Function](/lambda/home#/functions/'
             - Ref: ConstructHubIngestion407909CE
@@ -8866,7 +9008,7 @@ Resources:
             - Fn::GetAtt:
                 - ConstructHubIngestionDLQ3E96A5F2
                 - QueueName
-            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":79,"properties":{"view":"timeSeries","title":"Function
+            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":85,"properties":{"view":"timeSeries","title":"Function
               Health","region":"
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Invocations","expression":"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2,
@@ -8875,7 +9017,7 @@ Resources:
             - '",{"label":"Invocations","stat":"Sum","visible":false,"id":"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2"}],[{"label":"Errors","expression":"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55,
               0)"}],["AWS/Lambda","Errors","FunctionName","'
             - Ref: ConstructHubIngestion407909CE
-            - '",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":12,"y":79,"properties":{"view":"timeSeries","title":"Input
+            - '",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":12,"y":85,"properties":{"view":"timeSeries","title":"Input
               Queue","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","'
@@ -8894,7 +9036,7 @@ Resources:
                 - QueueName
             - '",{"label":"Oldest Message
               Age","period":60,"stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"10
-              Minutes","value":600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":0,"y":85,"properties":{"view":"timeSeries","title":"Input
+              Minutes","value":600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"metric","width":12,"height":6,"x":0,"y":91,"properties":{"view":"timeSeries","title":"Input
               Quality","region":"'
             - Ref: AWS::Region
             - '","stacked":true,"metrics":[[{"label":"Invalid
@@ -8914,7 +9056,7 @@ Resources:
               file","expression":"FILL(m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661,
               0)"}],["ConstructHub/Ingestion","FoundLicenseFile",{"label":"Found
               License
-              file","stat":"Sum","visible":false,"id":"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661"}]],"yAxis":{"left":{"label":"Count","min":0,"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":85,"properties":{"view":"timeSeries","title":"Dead
+              file","stat":"Sum","visible":false,"id":"m7084dfec3c5bab86694d7ae438460f471c174a94bc67c9c9738e3ab60246b661"}]],"yAxis":{"left":{"label":"Count","min":0,"showUnits":false}}}},{"type":"metric","width":12,"height":6,"x":12,"y":91,"properties":{"view":"timeSeries","title":"Dead
               Letters","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","'
@@ -8935,7 +9077,7 @@ Resources:
               Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10
               days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14
               days (DLQ
-              Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":91,"properties":{"markdown":"#
+              Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":97,"properties":{"markdown":"#
               Orchestration\\n\\n[button:primary:State
               Machine](/states/home#/statemachines/view/'
             - Ref: ConstructHubOrchestration39161A46
@@ -8952,7 +9094,7 @@ Resources:
             - )\\n[button:Regenerate All
               Documentation](/states/home#/statemachines/view/
             - Ref: ConstructHubOrchestrationRegenerateAllDocumentationE9FAB254
-            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":93,"properties":{"view":"timeSeries","title":"State
+            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":99,"properties":{"view":"timeSeries","title":"State
               Machine Executions","region":"
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Started","expression":"FILL(m392141ff4cfa3bbe1889b2db42bcf20599513e199a0b9fb8dc736cde893c1d7c,
@@ -8977,7 +9119,7 @@ Resources:
             - '",{"label":"Timed
               Out","stat":"Sum","visible":false,"id":"m106d91118c893ec9037d16448722184f1ebdcca08a617e1f13758151a8c85a21"}],["AWS/States","ExecutionTime","StateMachineArn","'
             - Ref: ConstructHubOrchestration39161A46
-            - '",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":93,"properties":{"view":"timeSeries","title":"Dead
+            - '",{"label":"Duration","yAxis":"right"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":99,"properties":{"view":"timeSeries","title":"Dead
               Letter Queue","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/SQS","ApproximateNumberOfMessagesVisible","QueueName","'
@@ -8998,7 +9140,7 @@ Resources:
               Age","stat":"Maximum","yAxis":"right"}]],"annotations":{"horizontal":[{"color":"#ff7f0e","label":"10
               days","value":864000,"yAxis":"right"},{"color":"#ff0000","label":"14
               days (DLQ
-              Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":99,"properties":{"markdown":"#
+              Retention)","value":1209600,"yAxis":"right"}]},"yAxis":{"left":{"min":0},"right":{"min":0}},"period":60}},{"type":"text","width":24,"height":2,"x":0,"y":105,"properties":{"markdown":"#
               Deny List\\n\\n[button:primary:Deny List Object](/s3/object/'
             - Ref: ConstructHubDenyListBucket1B3C2C2E
             - ?prefix=deny-list.json)\\n[button:Prune
@@ -9019,7 +9161,7 @@ Resources:
             - )\\n[button:Delete
               Logs](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f
             - Ref: ConstructHubDenyListPrunePruneQueueHandlerF7EB599B
-            - /log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":101,"properties":{"view":"timeSeries","title":"Deny
+            - /log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":107,"properties":{"view":"timeSeries","title":"Deny
               List","region":"
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Rules","expression":"FILL(m41327b0edbbef1ca627d9503d1b9b9fab401700118519537b58e0557adee7e4f,
@@ -9028,7 +9170,7 @@ Resources:
                 - ConstructHubDenyListPruneDeleteQueueBBF60185
                 - QueueName
             - '",{"label":"Deleted
-              Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":101,"properties":{"view":"timeSeries","title":"Prune
+              Files","stat":"Sum"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"metric","width":12,"height":6,"x":12,"y":107,"properties":{"view":"timeSeries","title":"Prune
               Function Health","region":"'
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Invocations","expression":"FILL(m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2,
@@ -9037,7 +9179,7 @@ Resources:
             - '",{"label":"Invocations","stat":"Sum","visible":false,"id":"m9ff955bd33652ecefb4dd9402064988aa5e418fcf59360156ff8c9e38dbde5e2"}],[{"label":"Errors","expression":"FILL(m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55,
               0)"}],["AWS/Lambda","Errors","FunctionName","'
             - Ref: ConstructHubDenyListPrunePruneHandler30B33551
-            - '",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":107,"properties":{"markdown":"#
+            - '",{"label":"Errors","stat":"Sum","visible":false,"id":"m3aa18789f406dc22d5fd69d6a8b1ae08cbc04aabfde21bee51e16796b37a2e55"}]],"yAxis":{"left":{"min":0}},"period":300}},{"type":"text","width":24,"height":2,"x":0,"y":113,"properties":{"markdown":"#
               Package Stats\\n\\n[button:primary:Package Stats
               Object](/s3/object/'
             - Ref: ConstructHubPackageDataDC5EF35E
@@ -9047,21 +9189,21 @@ Resources:
             - )\\n[button:Package Stats
               Logs](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f
             - Ref: ConstructHubStats61DB07B1
-            - /log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":109,"properties":{"view":"timeSeries","title":"Number
+            - /log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":115,"properties":{"view":"timeSeries","title":"Number
               of Package Stats Recorded","region":"
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Packages with
               stats","expression":"FILL(m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f,
               REPEAT)"}],["ConstructHub/PackageStats","RegisteredPackagesWithStats",{"label":"Packages
               with
-              stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":109,"properties":{"view":"timeSeries","title":"Invocation
+              stats","stat":"Maximum","visible":false,"id":"m47411943a6e8f8e16a1dd905ff43cab11425b802c4d32615e081cab30c15f29f"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":115,"properties":{"view":"timeSeries","title":"Invocation
               Duration","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/Lambda","Duration","FunctionName","'
             - Ref: ConstructHubStats61DB07B1
             - '",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"15
               minutes (Lambda
-              timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":115,"properties":{"markdown":"#
+              timeout)","value":900,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":121,"properties":{"markdown":"#
               Version Tracker\\n\\n[button:primary:Versions Object](/s3/object/'
             - Ref: ConstructHubPackageDataDC5EF35E
             - ?prefix=all-versions.json)\\n[button:Version Tracker
@@ -9070,21 +9212,21 @@ Resources:
             - )\\n[button:Version Tracker
               Logs](/cloudwatch/home#logsV2:log-groups/log-group/$252Faws$252flambda$252f
             - Ref: ConstructHubVersionTrackerD5E8AEAE
-            - /log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":117,"properties":{"view":"timeSeries","title":"Number
+            - /log-events)"}},{"type":"metric","width":12,"height":6,"x":0,"y":123,"properties":{"view":"timeSeries","title":"Number
               of Package Versions Recorded","region":"
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Package versions
               recorded","expression":"FILL(m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d,
               REPEAT)"}],["ConstructHub/VersionTracker","TrackedVersionsCount",{"label":"Package
               versions
-              recorded","stat":"Maximum","visible":false,"id":"m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":117,"properties":{"view":"timeSeries","title":"Invocation
+              recorded","stat":"Maximum","visible":false,"id":"m343ebb2e5802fe223e549d8262d8d0c364846e0276426bc0a2d872e83bd8e63d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":123,"properties":{"view":"timeSeries","title":"Invocation
               Duration","region":"'
             - Ref: AWS::Region
             - '","metrics":[["AWS/Lambda","Duration","FunctionName","'
             - Ref: ConstructHubVersionTrackerD5E8AEAE
             - '",{"label":"Duration"}]],"annotations":{"horizontal":[{"color":"#ffa500","label":"1
               minutes (Lambda
-              timeout)","value":60,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":123,"properties":{"markdown":"#
+              timeout)","value":60,"yAxis":"right"}]},"yAxis":{"left":{"min":0}}}},{"type":"text","width":24,"height":2,"x":0,"y":129,"properties":{"markdown":"#
               Release
               Notes\\n\\n[button:primary:StateMachine](/states/home#/statemachines/view/'
             - Ref: ConstructHubReleaseNotesStateMachine8C711CC7
@@ -9118,18 +9260,18 @@ Resources:
             - Fn::GetAtt:
                 - ConstructHubReleaseNotesReleaseNotesFetchWorkerQueueDLQ56BF53F1
                 - QueueName
-            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":125,"properties":{"view":"timeSeries","title":"Number
+            - )"}},{"type":"metric","width":12,"height":6,"x":0,"y":131,"properties":{"view":"timeSeries","title":"Number
               of release Notes","region":"
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Packages with release
               notes","expression":"FILL(m7a7a3037972a088d52187e29766f681a9cb9642d00a12e818823d134184ff48d,
               REPEAT)"}],["ConstructHub/ReleaseNotes","PackageWithChangeLog",{"label":"Packages
               with release
-              notes","stat":"Sum","visible":false,"id":"m7a7a3037972a088d52187e29766f681a9cb9642d00a12e818823d134184ff48d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":125,"properties":{"view":"timeSeries","title":"Release
+              notes","stat":"Sum","visible":false,"id":"m7a7a3037972a088d52187e29766f681a9cb9642d00a12e818823d134184ff48d"}]],"yAxis":{"left":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":12,"y":131,"properties":{"view":"timeSeries","title":"Release
               notes generation Errors","region":"'
             - Ref: AWS::Region
             - '","metrics":[["ConstructHub/ReleaseNotes","AllErrors",{"label":"All
-              Errors","stat":"Maximum"}],["ConstructHub/ReleaseNotes","UnknownError",{"label":"UnknownError","stat":"Maximum"}],["ConstructHub/ReleaseNotes","InvalidCredentials",{"label":"InvalidCredentials","stat":"Maximum"}],["ConstructHub/ReleaseNotes","RequestQuotaExhausted",{"label":"RequestQuotaExhausted","stat":"Maximum"}],["ConstructHub/ReleaseNotes","UnSupportedRepo",{"label":"UnSupportedRepo","stat":"Maximum"}],["ConstructHub/ReleaseNotes","InvalidPackageJson",{"label":"InvalidPackageJson","stat":"Maximum"}],["ConstructHub/ReleaseNotes","ChangelogFetchError",{"label":"ChangeLogFetchError","stat":"Maximum"}]],"yAxis":{}}},{"type":"metric","width":12,"height":6,"x":0,"y":131,"properties":{"view":"timeSeries","title":"GitHub
+              Errors","stat":"Maximum"}],["ConstructHub/ReleaseNotes","UnknownError",{"label":"UnknownError","stat":"Maximum"}],["ConstructHub/ReleaseNotes","InvalidCredentials",{"label":"InvalidCredentials","stat":"Maximum"}],["ConstructHub/ReleaseNotes","RequestQuotaExhausted",{"label":"RequestQuotaExhausted","stat":"Maximum"}],["ConstructHub/ReleaseNotes","UnSupportedRepo",{"label":"UnSupportedRepo","stat":"Maximum"}],["ConstructHub/ReleaseNotes","InvalidPackageJson",{"label":"InvalidPackageJson","stat":"Maximum"}],["ConstructHub/ReleaseNotes","ChangelogFetchError",{"label":"ChangeLogFetchError","stat":"Maximum"}]],"yAxis":{}}},{"type":"metric","width":12,"height":6,"x":0,"y":137,"properties":{"view":"timeSeries","title":"GitHub
               API Rate Limits","region":"'
             - Ref: AWS::Region
             - '","metrics":[[{"label":"Limit","expression":"FILL(mcf810098fa7b0359cfa64484e165026013fa6611de36e48a68984a9615f7599d,
@@ -9173,13 +9315,17 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 6dbd112fe448437b3438da4382c72fccbb7d2ee1543db222620d7447fffebc50.zip
+        S3Key: bb459fac5f6b4b052aac9803443226d161a5cfe96f4648b21f9e4912c698bf30.zip
       Role:
         Fn::GetAtt:
           - AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2
           - Arn
       Handler: index.handler
-      Runtime: nodejs14.x
+      Runtime:
+        Fn::FindInMap:
+          - DefaultCrNodeVersionMap
+          - Ref: AWS::Region
+          - value
       Timeout: 120
     DependsOn:
       - AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2
@@ -9201,7 +9347,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: e57c1acaa363d7d2b81736776007a7091bc73dff4aeb8135627c4511a51e7dca.zip
+        S3Key: 350185a1069fa20a23a583e20c77f6844218bd73097902362dc94f1a108f5d89.zip
       Timeout: 900
       MemorySize: 128
       Handler: __entrypoint__.handler
@@ -9209,7 +9355,7 @@ Resources:
         Fn::GetAtt:
           - CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092
           - Arn
-      Runtime: nodejs14.x
+      Runtime: nodejs16.x
       Description:
         Fn::Join:
           - ""
@@ -9361,11 +9507,14 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: f98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711da.zip
+        S3Key: 9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd.zip
       Role:
         Fn::GetAtt:
           - CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265
           - Arn
+      Environment:
+        Variables:
+          AWS_CA_BUNDLE: /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
       Handler: index.handler
       Layers:
         - Ref: ConstructHubDenyListBucketDeploymentAwsCliLayerEAC3D4DA
@@ -9521,7 +9670,7 @@ Resources:
         Fn::GetAtt:
           - BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC
           - Arn
-      Runtime: python3.7
+      Runtime: python3.9
       Timeout: 300
     DependsOn:
       - BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36
@@ -9560,11 +9709,15 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Handler: index.handler
-      Runtime: nodejs14.x
+      Runtime:
+        Fn::FindInMap:
+          - DefaultCrNodeVersionMap
+          - Ref: AWS::Region
+          - value
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: eb5b005c858404ea0c8f68098ed5dcdf5340e02461f149751d10f59c210d5ef8.zip
+        S3Key: 5fa1330271b8967d9254ba2d4a07144f8acefe8b77e6d6bba38261373a50d5f8.zip
       Role:
         Fn::GetAtt:
           - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB
@@ -9822,7 +9975,7 @@ Resources:
       Code:
         S3Bucket:
           Fn::Sub: cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}
-        S3Key: 1cd68c98b7c1dc27467e32e72430e959b21de0da3932db8bbff6db84c9d9ad59.zip
+        S3Key: b9dcf90c28bebd45a702aadc8723a9db8c03a2df3c7233073fadbee9a0ebed9a.zip
       Role:
         Fn::GetAtt:
           - PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfServiceRole060BA12C
@@ -9924,6 +10077,73 @@ Outputs:
           - " s3://"
           - Ref: ConstructHubInventoryCanaryFailoverScratchworkBucketE8015DAD
 Mappings:
+  DefaultCrNodeVersionMap:
+    af-south-1:
+      value: nodejs16.x
+    ap-east-1:
+      value: nodejs16.x
+    ap-northeast-1:
+      value: nodejs16.x
+    ap-northeast-2:
+      value: nodejs16.x
+    ap-northeast-3:
+      value: nodejs16.x
+    ap-south-1:
+      value: nodejs16.x
+    ap-south-2:
+      value: nodejs16.x
+    ap-southeast-1:
+      value: nodejs16.x
+    ap-southeast-2:
+      value: nodejs16.x
+    ap-southeast-3:
+      value: nodejs16.x
+    ca-central-1:
+      value: nodejs16.x
+    cn-north-1:
+      value: nodejs16.x
+    cn-northwest-1:
+      value: nodejs16.x
+    eu-central-1:
+      value: nodejs16.x
+    eu-central-2:
+      value: nodejs16.x
+    eu-north-1:
+      value: nodejs16.x
+    eu-south-1:
+      value: nodejs16.x
+    eu-south-2:
+      value: nodejs16.x
+    eu-west-1:
+      value: nodejs16.x
+    eu-west-2:
+      value: nodejs16.x
+    eu-west-3:
+      value: nodejs16.x
+    me-central-1:
+      value: nodejs16.x
+    me-south-1:
+      value: nodejs16.x
+    sa-east-1:
+      value: nodejs16.x
+    us-east-1:
+      value: nodejs16.x
+    us-east-2:
+      value: nodejs16.x
+    us-gov-east-1:
+      value: nodejs16.x
+    us-gov-west-1:
+      value: nodejs16.x
+    us-iso-east-1:
+      value: nodejs14.x
+    us-iso-west-1:
+      value: nodejs14.x
+    us-isob-east-1:
+      value: nodejs14.x
+    us-west-1:
+      value: nodejs16.x
+    us-west-2:
+      value: nodejs16.x
   ServiceprincipalMap:
     af-south-1:
       states: states.af-south-1.amazonaws.com
@@ -9937,6 +10157,8 @@ Mappings:
       states: states.ap-northeast-3.amazonaws.com
     ap-south-1:
       states: states.ap-south-1.amazonaws.com
+    ap-south-2:
+      states: states.ap-south-2.amazonaws.com
     ap-southeast-1:
       states: states.ap-southeast-1.amazonaws.com
     ap-southeast-2:
@@ -9951,6 +10173,8 @@ Mappings:
       states: states.cn-northwest-1.amazonaws.com
     eu-central-1:
       states: states.eu-central-1.amazonaws.com
+    eu-central-2:
+      states: states.eu-central-2.amazonaws.com
     eu-north-1:
       states: states.eu-north-1.amazonaws.com
     eu-south-1:
@@ -9963,6 +10187,8 @@ Mappings:
       states: states.eu-west-2.amazonaws.com
     eu-west-3:
       states: states.eu-west-3.amazonaws.com
+    me-central-1:
+      states: states.me-central-1.amazonaws.com
     me-south-1:
       states: states.me-south-1.amazonaws.com
     sa-east-1:

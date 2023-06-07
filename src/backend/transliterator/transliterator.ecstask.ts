@@ -110,6 +110,9 @@ export function handler(
     const submodules = Object.keys(assembly.submodules ?? {}).map(
       (s) => s.split('.')[1]
     );
+    console.log(
+      `Assembly ${assembly.name} has ${submodules.length} submodules.`
+    );
 
     restrictSubmoduleCountToReturnable(event, submodules);
 
@@ -178,7 +181,7 @@ export function handler(
 
         const generateDocs = metricScope(
           (metrics) => async (lang: DocumentationLanguage) => {
-            metrics.setDimensions();
+            metrics.setDimensions({});
             metrics.setNamespace(METRICS_NAMESPACE);
 
             async function renderAndDispatch(submodule?: string) {

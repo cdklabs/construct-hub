@@ -25,7 +25,7 @@ export async function handler(event: unknown) {
   const client = await DenyListClient.newClient();
 
   await metricScope((metrics) => async () => {
-    metrics.setDimensions();
+    metrics.setDimensions({});
 
     const ruleCount = Object.keys(client.map).length;
     metrics.putMetric(MetricName.DENY_LIST_RULE_COUNT, ruleCount, Unit.Count);

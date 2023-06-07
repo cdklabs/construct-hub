@@ -58,7 +58,7 @@ async function main(): Promise<void> {
     const result = await (handler as (...args: any[]) => unknown)(...input);
     console.log('Task result:', result);
     await sfn.send(new SendTaskSuccessCommand({ output: JSON.stringify(result), taskToken }));
-  } catch (err) {
+  } catch (err: any) {
     console.log('Task failed:', err);
     process.exitCode = 1;
     await sfn.send(new SendTaskFailureCommand({

@@ -73,7 +73,7 @@ export class DenyListClient {
       }
 
       this._map = data;
-    } catch (e) {
+    } catch (e: any) {
       if (e.code === 'NoSuchKey' || e.code === 'NoSuchBucket') {
         return;
       }

@@ -128,7 +128,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "e57c1acaa363d7d2b81736776007a7091bc73dff4aeb8135627c4511a51e7dca.zip"
+     "S3Key": "350185a1069fa20a23a583e20c77f6844218bd73097902362dc94f1a108f5d89.zip"
     },
     "Timeout": 900,
     "MemorySize": 128,
@@ -139,7 +139,7 @@
       "Arn"
      ]
     },
-    "Runtime": "nodejs14.x",
+    "Runtime": "nodejs16.x",
     "Description": {
      "Fn::Join": [
       "",
@@ -158,7 +158,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "TestDenyList/Custom::S3AutoDeleteObjectsCustomResourceProvider/Handler",
-    "aws:asset:path": "asset.e57c1acaa363d7d2b81736776007a7091bc73dff4aeb8135627c4511a51e7dca",
+    "aws:asset:path": "asset.350185a1069fa20a23a583e20c77f6844218bd73097902362dc94f1a108f5d89",
     "aws:asset:property": "Code"
    }
   },
@@ -169,13 +169,13 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip"
+     "S3Key": "88b83f5f61fe6f85ffcd0a37a09a8f3be90e7c090964b0b62b062eb8a5a1a3a7.zip"
     },
     "Description": "/opt/awscli/aws"
    },
    "Metadata": {
     "aws:cdk:path": "TestDenyList/MockData/AwsCliLayer/Resource",
-    "aws:asset:path": "asset.2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
+    "aws:asset:path": "asset.88b83f5f61fe6f85ffcd0a37a09a8f3be90e7c090964b0b62b062eb8a5a1a3a7.zip",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Content"
    }
@@ -383,13 +383,18 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "f98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711da.zip"
+     "S3Key": "9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd.zip"
     },
     "Role": {
      "Fn::GetAtt": [
       "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
       "Arn"
      ]
+    },
+    "Environment": {
+     "Variables": {
+      "AWS_CA_BUNDLE": "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem"
+     }
     },
     "Handler": "index.handler",
     "Layers": [
@@ -406,7 +411,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "TestDenyList/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource",
-    "aws:asset:path": "asset.f98b78092dcdd31f5e6d47489beb5f804d4835ef86a8085d0a2053cb9ae711da",
+    "aws:asset:path": "asset.9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1147,13 +1152,13 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip"
+     "S3Key": "88b83f5f61fe6f85ffcd0a37a09a8f3be90e7c090964b0b62b062eb8a5a1a3a7.zip"
     },
     "Description": "/opt/awscli/aws"
    },
    "Metadata": {
     "aws:cdk:path": "TestDenyList/DenyList/BucketDeployment/AwsCliLayer/Resource",
-    "aws:asset:path": "asset.2cbb4c8a663eb2c903e9cef3ad44c9b47d48b0a2cd35dfc270a23bf93b2ecf1f.zip",
+    "aws:asset:path": "asset.88b83f5f61fe6f85ffcd0a37a09a8f3be90e7c090964b0b62b062eb8a5a1a3a7.zip",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Content"
    }
@@ -1361,7 +1366,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "e2c2dd27dc5ff32f57bcc38c41340810979fd0964830338cd94ef42fe769e2e4.zip"
+     "S3Key": "11e0f053d1a31a93dc8ecaffcdd1128541b4ce95028e6df7793e20e097e70143.zip"
     },
     "Role": {
      "Fn::GetAtt": [
@@ -1401,7 +1406,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "TestDenyList/DenyList/Prune/PruneHandler/Resource",
-    "aws:asset:path": "asset.e2c2dd27dc5ff32f57bcc38c41340810979fd0964830338cd94ef42fe769e2e4.bundle",
+    "aws:asset:path": "asset.11e0f053d1a31a93dc8ecaffcdd1128541b4ce95028e6df7793e20e097e70143.bundle",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1663,7 +1668,7 @@
       "Arn"
      ]
     },
-    "Runtime": "python3.7",
+    "Runtime": "python3.9",
     "Timeout": 300
    },
    "DependsOn": [
@@ -1827,7 +1832,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "bddd0c403e28d0803b2eea84a0271848c35a6b48e8f9355727a06d29f9d6f22d.zip"
+     "S3Key": "e61408ee0b9933e10f2624bd266cc296c3eff7cb36a9dada33f6efe70532ade9.zip"
     },
     "Role": {
      "Fn::GetAtt": [
@@ -1857,7 +1862,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "TestDenyList/ClientTest/Resource",
-    "aws:asset:path": "asset.bddd0c403e28d0803b2eea84a0271848c35a6b48e8f9355727a06d29f9d6f22d.bundle",
+    "aws:asset:path": "asset.e61408ee0b9933e10f2624bd266cc296c3eff7cb36a9dada33f6efe70532ade9.bundle",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1872,8 +1877,10 @@
      ]
     },
     "HandlerArn": {
-     "Ref": "ClientTestCurrentVersionAB7E7F652d756f1f86cecf221d4831a61eea7224"
-    }
+     "Ref": "ClientTestCurrentVersionAB7E7F650d2ea46617b18c554631153b9a57fcbc"
+    },
+    "InvocationType": "RequestResponse",
+    "Timeout": "120000"
    },
    "DependsOn": [
     "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7",
@@ -1903,7 +1910,7 @@
     "aws:cdk:path": "TestDenyList/ClientTest/Trigger/Default/Default"
    }
   },
-  "ClientTestCurrentVersionAB7E7F652d756f1f86cecf221d4831a61eea7224": {
+  "ClientTestCurrentVersionAB7E7F650d2ea46617b18c554631153b9a57fcbc": {
    "Type": "AWS::Lambda::Version",
    "Properties": {
     "FunctionName": {
@@ -2021,6 +2028,28 @@
            ]
           }
          ]
+        },
+        {
+         "Effect": "Allow",
+         "Action": [
+          "lambda:InvokeFunction"
+         ],
+         "Resource": [
+          {
+           "Fn::Join": [
+            "",
+            [
+             {
+              "Fn::GetAtt": [
+               "PruneTest66C7D9FC",
+               "Arn"
+              ]
+             },
+             ":*"
+            ]
+           ]
+          }
+         ]
         }
        ]
       }
@@ -2038,7 +2067,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "bf07247eadaa39d379953373748b89b79363b07f65d808493774c573fd5fc02b.zip"
+     "S3Key": "e8adfc80603cbf0b8f56fd639b6444aeb86502537f92274026a04ae0d0d2574f.zip"
     },
     "Timeout": 900,
     "MemorySize": 128,
@@ -2049,14 +2078,14 @@
       "Arn"
      ]
     },
-    "Runtime": "nodejs14.x"
+    "Runtime": "nodejs16.x"
    },
    "DependsOn": [
     "AWSCDKTriggerCustomResourceProviderCustomResourceProviderRoleE18FAF0A"
    ],
    "Metadata": {
     "aws:cdk:path": "TestDenyList/AWSCDK.TriggerCustomResourceProviderCustomResourceProvider/Handler",
-    "aws:asset:path": "asset.bf07247eadaa39d379953373748b89b79363b07f65d808493774c573fd5fc02b",
+    "aws:asset:path": "asset.e8adfc80603cbf0b8f56fd639b6444aeb86502537f92274026a04ae0d0d2574f",
     "aws:asset:property": "Code"
    }
   },
@@ -2194,7 +2223,9 @@
     },
     "HandlerArn": {
      "Ref": "PruneTestCurrentVersion332993F805fa1663a3fce455849a1f7a0f9ab8d8"
-    }
+    },
+    "InvocationType": "RequestResponse",
+    "Timeout": "120000"
    },
    "DependsOn": [
     "DenyListBucketAllowBucketNotificationsToTestDenyListPrunePruneHandlerDB8102B7D72AB8A7",
@@ -2293,6 +2324,109 @@
    },
    "Metadata": {
     "aws:cdk:path": "TestDenyList/PruneTest/Policy/Resource"
+   }
+  }
+ },
+ "Mappings": {
+  "DefaultCrNodeVersionMap": {
+   "af-south-1": {
+    "value": "nodejs16.x"
+   },
+   "ap-east-1": {
+    "value": "nodejs16.x"
+   },
+   "ap-northeast-1": {
+    "value": "nodejs16.x"
+   },
+   "ap-northeast-2": {
+    "value": "nodejs16.x"
+   },
+   "ap-northeast-3": {
+    "value": "nodejs16.x"
+   },
+   "ap-south-1": {
+    "value": "nodejs16.x"
+   },
+   "ap-south-2": {
+    "value": "nodejs16.x"
+   },
+   "ap-southeast-1": {
+    "value": "nodejs16.x"
+   },
+   "ap-southeast-2": {
+    "value": "nodejs16.x"
+   },
+   "ap-southeast-3": {
+    "value": "nodejs16.x"
+   },
+   "ca-central-1": {
+    "value": "nodejs16.x"
+   },
+   "cn-north-1": {
+    "value": "nodejs16.x"
+   },
+   "cn-northwest-1": {
+    "value": "nodejs16.x"
+   },
+   "eu-central-1": {
+    "value": "nodejs16.x"
+   },
+   "eu-central-2": {
+    "value": "nodejs16.x"
+   },
+   "eu-north-1": {
+    "value": "nodejs16.x"
+   },
+   "eu-south-1": {
+    "value": "nodejs16.x"
+   },
+   "eu-south-2": {
+    "value": "nodejs16.x"
+   },
+   "eu-west-1": {
+    "value": "nodejs16.x"
+   },
+   "eu-west-2": {
+    "value": "nodejs16.x"
+   },
+   "eu-west-3": {
+    "value": "nodejs16.x"
+   },
+   "me-central-1": {
+    "value": "nodejs16.x"
+   },
+   "me-south-1": {
+    "value": "nodejs16.x"
+   },
+   "sa-east-1": {
+    "value": "nodejs16.x"
+   },
+   "us-east-1": {
+    "value": "nodejs16.x"
+   },
+   "us-east-2": {
+    "value": "nodejs16.x"
+   },
+   "us-gov-east-1": {
+    "value": "nodejs16.x"
+   },
+   "us-gov-west-1": {
+    "value": "nodejs16.x"
+   },
+   "us-iso-east-1": {
+    "value": "nodejs14.x"
+   },
+   "us-iso-west-1": {
+    "value": "nodejs14.x"
+   },
+   "us-isob-east-1": {
+    "value": "nodejs14.x"
+   },
+   "us-west-1": {
+    "value": "nodejs16.x"
+   },
+   "us-west-2": {
+    "value": "nodejs16.x"
    }
   }
  },

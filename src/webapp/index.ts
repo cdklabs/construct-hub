@@ -107,6 +107,7 @@ export interface FeaturedPackagesDetail {
 export interface FeatureFlags {
   readonly homeRedesign?: boolean;
   readonly searchRedesign?: boolean;
+  /** @jsii ignore */
   [key: string]: any;
 }
 
