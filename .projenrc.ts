@@ -1,10 +1,10 @@
-const fs = require('fs');
-const { basename, join, dirname, relative } = require('path');
-const Case = require('case');
-const glob = require('glob');
-const { SourceCode, JsonFile, JsonPatch, cdk, github } = require('projen');
-const spdx = require('spdx-license-list');
-const uuid = require('uuid');
+import fs from 'fs';
+import { basename, join, dirname, relative } from 'path';
+import Case from 'case';
+import * as glob from 'glob';
+import { SourceCode, JsonFile, cdk, github } from 'projen';
+import spdx from 'spdx-license-list';
+import * as uuid from 'uuid';
 
 const BUNDLE_DIR_ENV = 'BUNDLE_DIR';
 
@@ -19,6 +19,7 @@ const cdkCli = 'aws-cdk@^2';
 
 const project = new cdk.JsiiProject({
   name: 'construct-hub',
+  projenrcTs: true,
   description: 'A construct library that models Construct Hub instances.',
   keywords: ['aws', 'aws-cdk', 'constructs', 'construct-hub'],
   license: 'Apache-2.0',
@@ -39,6 +40,7 @@ const project = new cdk.JsiiProject({
     '@types/semver',
     '@types/tar-stream',
     '@types/tough-cookie',
+    '@types/uuid',
     cdkCli,
     'aws-embedded-metrics',
     'dotenv',
@@ -79,8 +81,6 @@ const project = new cdk.JsiiProject({
     '*By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license*',
   ],
 
-  projenUpgradeSecret: 'PROJEN_GITHUB_TOKEN',
-
   releaseToNpm: true,
 
   // publishToGo: {
@@ -120,10 +120,11 @@ const project = new cdk.JsiiProject({
 
   depsUpgradeOptions: {
     exclude: [...peerDeps, cdkCli],
-    ignoreProjen: false,
     workflowOptions: {
       labels: ['auto-approve'],
-      secret: 'PROJEN_GITHUB_TOKEN',
+      projenCredentials: github.GithubCredentials.fromPersonalAccessToken({
+        secret: 'PROJEN_GITHUB_TOKEN',
+      }),
     },
   },
 
@@ -161,20 +162,20 @@ project.package.addField('resolutions', {
 });
 
 function addVpcAllowListManagement() {
-  const workflow = project.github.addWorkflow('update-vpc-acl-allow-lists');
+  const workflow = project.github?.addWorkflow('update-vpc-acl-allow-lists');
 
   const prTitle = 'chore: upgrade network ACL allow-lists';
   const prBody =
     'Updated the network ACL allow-lists from authoritative sources.';
 
-  workflow.addJobs({
+  workflow?.addJobs({
     update: {
       permissions: {
         actions: github.workflows.JobPermission.WRITE,
         contents: github.workflows.JobPermission.WRITE,
         pullRequests: github.workflows.JobPermission.WRITE,
       },
-      runsOn: 'ubuntu-latest',
+      runsOn: ['ubuntu-latest'],
       steps: [
         {
           name: 'Check Out',
@@ -208,7 +209,7 @@ function addVpcAllowListManagement() {
           name: 'Make Pull Request',
           uses: 'peter-evans/create-pull-request@v3',
           with: {
-            token: project.github.projenCredentials.tokenRef,
+            token: project?.github?.projenCredentials.tokenRef,
             branch: `automation/${workflow.name}`,
             'commit-message': `${prTitle}\n\n${prBody}`,
             title: prTitle,
@@ -224,9 +225,9 @@ function addVpcAllowListManagement() {
   });
 
   // This workflow runs every day at 13:37.
-  workflow.on({ schedule: [{ cron: '37 13 * * *' }] });
+  workflow?.on({ schedule: [{ cron: '37 13 * * *' }] });
 
-  project.npmignore.addPatterns('/update-github-ip-allowlist.js');
+  project.npmignore?.addPatterns('/update-github-ip-allowlist.js');
 }
 
 function addDevApp() {
@@ -380,7 +381,7 @@ const bundleTask = project.addTask('bundle', {
  *
  * @param trigger trigger this handler during deployment
  */
-function newLambdaHandler(entrypoint, trigger) {
+function newLambdaHandler(entrypoint: string, trigger: boolean) {
   if (!entrypoint.startsWith(project.srcdir)) {
     throw new Error(`${entrypoint} must be under ${project.srcdir}`);
   }
@@ -513,7 +514,7 @@ function newLambdaHandler(entrypoint, trigger) {
   console.error(`${base}: bundle watch task "${bundleWatch.name}"`);
 }
 
-function newEcsTask(entrypoint) {
+function newEcsTask(entrypoint: string) {
   if (!entrypoint.startsWith(project.srcdir)) {
     throw new Error(`${entrypoint} must be under ${project.srcdir}`);
   }
@@ -757,12 +758,12 @@ function newEcsTask(entrypoint) {
  * Auto-discovers all lambda functions.
  */
 function discoverLambdas() {
-  const entrypoints = [];
+  const entrypoints = new Array<string>();
 
   // allow .lambda code to import dev-deps (since they are only needed during bundling)
-  project.eslint.allowDevDeps('src/**/*.lambda.ts');
+  project.eslint?.allowDevDeps('src/**/*.lambda.ts');
   // Allow .lambda-shared code to import dev-deps (these are not entry points, but are shared by several lambdas)
-  project.eslint.allowDevDeps('src/**/*.lambda-shared.ts');
+  project.eslint?.allowDevDeps('src/**/*.lambda-shared.ts');
   for (const entry of glob.sync('src/**/*.lambda.ts')) {
     const trigger = basename(entry).startsWith('trigger.');
     newLambdaHandler(entry, trigger);
@@ -800,11 +801,11 @@ function discoverLambdas() {
 }
 
 function discoverEcsTasks() {
-  const entrypoints = [];
+  const entrypoints = new Array<string>();
 
   // allow .fargate code to import dev-deps (since they are only needed during bundling)
-  project.eslint.allowDevDeps('src/**/*.ecstask.ts');
-  project.eslint.allowDevDeps('src/**/*.ecs-entrypoint.ts');
+  project.eslint?.allowDevDeps('src/**/*.ecstask.ts');
+  project.eslint?.allowDevDeps('src/**/*.ecs-entrypoint.ts');
 
   for (const entry of glob.sync('src/**/*.ecstask.ts')) {
     newEcsTask(entry);
@@ -976,13 +977,13 @@ function generateSpdxLicenseEnum() {
 
   ts.close('}');
 
-  function slugify(id) {
+  function slugify(id: string) {
     // Applying twice - some values don't re-constantize cleanly, and `jsii`
     // will actually check the case by re-constantizing those... This is silly,
     // but fixing that is likely going to be a breaking change T_T.
     return Case.constant(
       Case.constant(
-        id.replace(/\+$/, '_Plus').replace(/^(\d)/, (digit) => {
+        id.replace(/\+$/, '_Plus').replace(/^(\d)/, (digit: string) => {
           switch (digit) {
             case '0':
               return 'Zero_';
@@ -1022,7 +1023,7 @@ project.compileTask.prependExec(
   'cp -r ./node_modules/construct-hub-webapp/build ./website'
 );
 project.compileTask.prependExec('rm -rf ./website');
-project.npmignore.addPatterns('!/website'); // <-- include in tarball
+project.npmignore?.addPatterns('!/website'); // <-- include in tarball
 project.gitignore.addPatterns('/website'); // <-- don't commit
 
 project.gitignore.exclude('.vscode/');
@@ -1037,16 +1038,16 @@ discoverIntegrationTests();
 
 // see https://github.com/aws/jsii/issues/3311
 const bundleWorkerPool = `esbuild --bundle node_modules/jsii-rosetta/lib/translate_all_worker.js --target="node16" --platform="node" --outfile="$${BUNDLE_DIR_ENV}/translate_all_worker.js" --sourcemap  --tsconfig=tsconfig.dev.json`;
-project.tasks.tryFind('bundle:transliterator').exec(bundleWorkerPool);
+project.tasks.tryFind('bundle:transliterator')?.exec(bundleWorkerPool);
 project.tasks
   .tryFind('bundle:transliterator:watch')
-  .prependExec(bundleWorkerPool);
+  ?.prependExec(bundleWorkerPool);
 
 generateSpdxLicenseEnum();
 
 // Escape hatch to fix "JavaScript heap out of memory" in GitHub Actions
 const buildWorkflow = project.tryFindObjectFile('.github/workflows/build.yml');
-buildWorkflow.addOverride(
+buildWorkflow?.addOverride(
   'jobs.build.steps.3.env.NODE_OPTIONS',
   '--max-old-space-size=8192' // 8GB
 );
