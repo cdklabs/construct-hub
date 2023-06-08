@@ -433,7 +433,8 @@ function newLambdaHandler(entrypoint, trigger) {
   ts.close('}');
   ts.line();
   ts.open(
-    `export class ${className} extends lambda.${isSingleton ? 'SingletonFunction' : 'Function'
+    `export class ${className} extends lambda.${
+      isSingleton ? 'SingletonFunction' : 'Function'
     } {`
   );
   // NOTE: unlike the array splat (`[...arr]`), the object splat (`{...obj}`) is
