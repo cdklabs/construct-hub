@@ -144,9 +144,7 @@ const project = new cdk.JsiiProject({
   },
 });
 
-delete project.buildTask._locked;
-project.buildTask.env('NODE_OPTIONS', '--max-old-space-size=4096');
-project.buildTask.lock();
+project.tasks.addEnvironment('NODE_OPTIONS', '--max-old-space-size=4096');
 
 project.package.addField('resolutions', {
   // https://github.com/aws/aws-cdk/issues/20319
@@ -435,8 +433,7 @@ function newLambdaHandler(entrypoint, trigger) {
   ts.close('}');
   ts.line();
   ts.open(
-    `export class ${className} extends lambda.${
-      isSingleton ? 'SingletonFunction' : 'Function'
+    `export class ${className} extends lambda.${isSingleton ? 'SingletonFunction' : 'Function'
     } {`
   );
   // NOTE: unlike the array splat (`[...arr]`), the object splat (`{...obj}`) is
