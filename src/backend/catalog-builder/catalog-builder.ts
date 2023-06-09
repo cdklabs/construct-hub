@@ -11,6 +11,7 @@ export class CatalogBuilder extends lambda.Function {
     super(scope, id, {
       description: 'backend/catalog-builder/catalog-builder.lambda.ts',
       ...props,
+      architecture: lambda.Architecture.ARM_64,
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/catalog-builder.lambda.bundle')),

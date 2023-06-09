@@ -11,6 +11,7 @@ export class ReleaseNotesTrigger extends lambda.Function {
     super(scope, id, {
       description: 'backend/release-notes/release-notes-trigger.lambda.ts',
       ...props,
+      architecture: lambda.Architecture.ARM_64,
       runtime: lambda.Runtime.NODEJS_16_X,
       handler: 'index.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, '/release-notes-trigger.lambda.bundle')),

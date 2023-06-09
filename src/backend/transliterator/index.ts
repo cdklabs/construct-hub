@@ -7,10 +7,12 @@ import {
 } from 'aws-cdk-lib/aws-ec2';
 import {
   ContainerDefinition,
+  CpuArchitecture,
   FargatePlatformVersion,
   FargateTaskDefinition,
   ICluster,
   LogDrivers,
+  OperatingSystemFamily,
   UlimitName,
 } from 'aws-cdk-lib/aws-ecs';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
@@ -166,6 +168,10 @@ export class Transliterator extends Construct {
       taskDefinition: new FargateTaskDefinition(this, 'TaskDefinition', {
         cpu: 4_096,
         memoryLimitMiB: 8_192,
+        runtimePlatform: {
+          cpuArchitecture: CpuArchitecture.ARM64,
+          operatingSystemFamily: OperatingSystemFamily.LINUX,
+        },
       }),
     });
     // Encountered an error of "EMFILE: too many open files" in ECS.
