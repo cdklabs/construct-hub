@@ -49,6 +49,7 @@ const project = new cdk.JsiiProject({
     'aws-sdk',
     'aws-xray-sdk-core',
     'case',
+    'cdk-dia',
     'esbuild',
     'feed',
     'fs-extra',
@@ -146,6 +147,12 @@ const project = new cdk.JsiiProject({
 });
 
 project.tasks.addEnvironment('NODE_OPTIONS', '--max-old-space-size=4096');
+
+// create component diagram
+project.setScript(
+  'dia',
+  'yarn dev:synth && cd lib/__tests__/devapp && npx cdk-dia && mv diagram.png ../../../diagrams/diagram.png'
+);
 
 project.package.addField('resolutions', {
   // https://github.com/aws/aws-cdk/issues/20319
