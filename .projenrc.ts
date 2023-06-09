@@ -461,6 +461,7 @@ function newLambdaHandler(entrypoint: string, trigger: boolean) {
       );
     }
   }
+  ts.line('architecture: lambda.Architecture.ARM_64,');
   ts.line('runtime: lambda.Runtime.NODEJS_16_X,');
   ts.line("handler: 'index.handler',");
   ts.line(
@@ -549,6 +550,7 @@ function newEcsTask(entrypoint: string) {
   const ts = new SourceCode(project, infra);
   ts.line(`// ${ts.marker}`);
   ts.line("import * as path from 'path';");
+  ts.line("import * as ecrAssets from 'aws-cdk-lib/aws-ecr-assets';");
   ts.line("import * as ecs from 'aws-cdk-lib/aws-ecs';");
   ts.line("import * as iam from 'aws-cdk-lib/aws-iam';");
   ts.line("import { Construct } from 'constructs';");
@@ -568,7 +570,7 @@ function newEcsTask(entrypoint: string) {
   ts.line(
     `image: ecs.ContainerImage.fromAsset(path.join(__dirname, '${basename(
       outdir
-    )}')),`
+    )}'), { platform: ecrAssets.Platform.LINUX_ARM64 }),`
   );
   ts.close('});');
   ts.line();

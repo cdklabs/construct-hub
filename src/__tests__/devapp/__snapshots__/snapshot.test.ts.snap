@@ -273,6 +273,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubMonitoringWebCanaryHomePageHttpGetFunctionServiceRole9AAAD93C
           - Arn
+      Architectures:
+        - arm64
       Description:
         Fn::Join:
           - ""
@@ -2742,6 +2744,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubDenyListPrunePruneHandlerServiceRole58BDE1FE
           - Arn
+      Architectures:
+        - arm64
       Description: backend/deny-list/prune-handler.lambda.ts
       Environment:
         Variables:
@@ -2819,6 +2823,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubDenyListPrunePruneQueueHandlerServiceRoleC10AC418
           - Arn
+      Architectures:
+        - arm64
       Description: backend/deny-list/prune-queue-handler.lambda.ts
       Environment:
         Variables:
@@ -2926,6 +2932,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubStatsServiceRole48DCA379
           - Arn
+      Architectures:
+        - arm64
       Description:
         Fn::Join:
           - ""
@@ -3077,6 +3085,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubVersionTrackerServiceRole721EE863
           - Arn
+      Architectures:
+        - arm64
       Description:
         Fn::Join:
           - ""
@@ -3302,6 +3312,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubFeedBuilderReleaseNotesUpdateFeedServiceRoleC857E364
           - Arn
+      Architectures:
+        - arm64
       Description: Release note RSS feed updater
       Environment:
         Variables:
@@ -3489,6 +3501,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubOrchestrationCatalogBuilderServiceRole851C750C
           - Arn
+      Architectures:
+        - arm64
       Description:
         Fn::Join:
           - ""
@@ -3618,6 +3632,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubOrchestrationNeedsCatalogUpdateServiceRoleE6BF31C3
           - Arn
+      Architectures:
+        - arm64
       Description: "[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether
         a package version requires a catalog update"
       Environment:
@@ -3705,6 +3721,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubOrchestrationClusterMonitorServiceRoleA4055F89
           - Arn
+      Architectures:
+        - arm64
       Description:
         Fn::Join:
           - ""
@@ -4924,7 +4942,7 @@ Resources:
                   - repositoryEndpoint
           Essential: true
           Image:
-            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:4f53b3c61017a2c8df6f38dd8823fa40ba12b8a6b9d36a0ee5a403f50b055eb3
+            Fn::Sub: \${AWS::AccountId}.dkr.ecr.\${AWS::Region}.\${AWS::URLSuffix}/cdk-hnb659fds-container-assets-\${AWS::AccountId}-\${AWS::Region}:207f95d3a3f8731070a57b7f415f5c1e4552abdc0b6bd0446d5a20da39448596
           LogConfiguration:
             LogDriver: awslogs
             Options:
@@ -4948,6 +4966,9 @@ Resources:
       NetworkMode: awsvpc
       RequiresCompatibilities:
         - FARGATE
+      RuntimePlatform:
+        CpuArchitecture: ARM64
+        OperatingSystemFamily: LINUX
       TaskRoleArn:
         Fn::GetAtt:
           - ConstructHubOrchestrationTransliteratorTaskDefinitionTaskRoleD060AB1A
@@ -5303,6 +5324,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubOrchestrationRedriveServiceRoleB84EFF33
           - Arn
+      Architectures:
+        - arm64
       Description: "[ConstructHub/Redrive] Manually redrives all messages from the
         backend dead letter queue"
       Environment:
@@ -5685,6 +5708,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubReleaseNotesReleaseNotesTriggerServiceRoleD0FDE2B6
           - Arn
+      Architectures:
+        - arm64
       Description: backend/release-notes/release-notes-trigger.lambda.ts
       Environment:
         Variables:
@@ -5788,6 +5813,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubReleaseNotesGithubChangelogFetcherServiceRoleCAE3656D
           - Arn
+      Architectures:
+        - arm64
       Description: ReleaseNotes generator
       Environment:
         Variables:
@@ -5861,6 +5888,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubReleaseNotesReleaseNoteTasksServiceRole662376CD
           - Arn
+      Architectures:
+        - arm64
       Description: ReleaseNotes get message from the worker queue
       Environment:
         Variables:
@@ -6516,6 +6545,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubIngestionServiceRole6380BAB6
           - Arn
+      Architectures:
+        - arm64
       Description: "[ConstructHub/Ingestion] Ingests new package versions into the
         Construct Hub"
       Environment:
@@ -6689,6 +6720,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubIngestionReprocessWorkflowFunctionServiceRoleA59056B1
           - Arn
+      Architectures:
+        - arm64
       Description: "[ConstructHub/Ingestion/ReIngest] The function used to reprocess
         packages through ingestion"
       Environment:
@@ -7602,6 +7635,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsStageAndNotifyServiceRoleD5BB5B50
           - Arn
+      Architectures:
+        - arm64
       DeadLetterConfig:
         TargetArn:
           Fn::GetAtt:
@@ -7757,6 +7792,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsServiceRoleAC3F7AA6
           - Arn
+      Architectures:
+        - arm64
       Description: "[dev/ConstructHub/Sources/NpmJs] Periodically query npmjs.com
         index for new packages"
       Environment:
@@ -7848,6 +7885,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubSourcesNpmJsCanaryServiceRoleC4CBCDA2
           - Arn
+      Architectures:
+        - arm64
       Description: "[dev/ConstructHub/Sources/NpmJs/PackageCanary] Monitors
         construct-hub-probe versions availability"
       Environment:
@@ -8430,6 +8469,8 @@ Resources:
         Fn::GetAtt:
           - ConstructHubInventoryCanaryServiceRole7684EDDE
           - Arn
+      Architectures:
+        - arm64
       Description: "[ConstructHub/Inventory] A canary that periodically inspects the
         list of indexed packages"
       Environment:
@@ -9764,6 +9805,8 @@ Resources:
         Fn::GetAtt:
           - SQSDLQStatsWidgetHandlerfc176846044f5e56baf2c71723501885ServiceRole2F995712
           - Arn
+      Architectures:
+        - arm64
       Description: "[ConstructHub/SQSDLQWidget] Is a custom CloudWatch widget handler"
       Handler: index.handler
       Runtime: nodejs16.x
@@ -9977,6 +10020,8 @@ Resources:
         Fn::GetAtt:
           - PackageVersionsTableWidgetHandler5fa848259c1d5e388c0df69f05c016dfServiceRole060BA12C
           - Arn
+      Architectures:
+        - arm64
       Description: "[ConstructHub/MissingDocumentationWidget] Is a custom CloudWatch
         widget handler"
       Environment:
