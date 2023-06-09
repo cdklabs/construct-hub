@@ -57,7 +57,9 @@ export class EcsTaskMonitor extends Construct {
     /**
      * These permissions might look surprising... Here's the TL;DR:
      *
-     * - ListTasks operates on a container-instance
+     * - ListTasks operates on a container-instance, but we're actually using it
+     *   on "every instance in a cluster", so the `ecs:cluster` condition is the
+     *   only scoping limit we can use (resource will be `*`).
      * - DescribeTasks and StopTask operates on tasks
      *
      * The ARN formats follow:
@@ -68,7 +70,19 @@ export class EcsTaskMonitor extends Construct {
      */
     resource.addToRolePolicy(
       new aws_iam.PolicyStatement({
-        actions: ['ecs:ListTasks', 'ecs:DescribeTasks', 'ecs:StopTask'],
+        actions: ['ecs:ListTasks'],
+        conditions: {
+          ArnEquals: {
+            'ecs:cluster': props.cluster.clusterArn,
+          },
+        },
+        effect: aws_iam.Effect.ALLOW,
+        resources: ['*'],
+      })
+    );
+    resource.addToRolePolicy(
+      new aws_iam.PolicyStatement({
+        actions: ['ecs:DescribeTasks', 'ecs:StopTask'],
         conditions: {
           ArnEquals: {
             'ecs:cluster': props.cluster.clusterArn,
@@ -76,12 +90,6 @@ export class EcsTaskMonitor extends Construct {
         },
         effect: aws_iam.Effect.ALLOW,
         resources: [
-          Stack.of(this).formatArn({
-            service: 'ecs',
-            resource: 'container-instance',
-            arnFormat: ArnFormat.SLASH_RESOURCE_NAME,
-            resourceName: `${props.cluster.clusterName}/*`,
-          }),
           Stack.of(this).formatArn({
             service: 'ecs',
             resource: 'task',
