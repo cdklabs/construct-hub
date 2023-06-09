@@ -18,6 +18,15 @@ import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { BlockPublicAccess, IBucket } from 'aws-cdk-lib/aws-s3';
 import { Queue, QueueEncryption } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
+import { NpmJsPackageCanary } from './npmjs/canary';
+import {
+  MARKER_FILE_NAME,
+  METRICS_NAMESPACE,
+  MetricName,
+  S3KeyPrefix,
+} from './npmjs/constants.lambda-shared';
+import { NpmJsFollower } from './npmjs/npm-js-follower';
+import { StageAndNotify } from './npmjs/stage-and-notify';
 import { lambdaFunctionUrl, s3ObjectUrl, sqsQueueUrl } from '../deep-link';
 import { fillMetric } from '../metric-utils';
 import { IMonitoring } from '../monitoring/api';
@@ -28,16 +37,6 @@ import type {
 } from '../package-source';
 import { RUNBOOK_URL } from '../runbook-url';
 import { S3StorageFactory } from '../s3/storage';
-import { NpmJsPackageCanary } from './npmjs/canary';
-import {
-  MARKER_FILE_NAME,
-  METRICS_NAMESPACE,
-  MetricName,
-  S3KeyPrefix,
-} from './npmjs/constants.lambda-shared';
-
-import { NpmJsFollower } from './npmjs/npm-js-follower';
-import { StageAndNotify } from './npmjs/stage-and-notify';
 
 /**
  * The periodicity at which the NpmJs follower will run. This MUST be a valid
@@ -50,10 +49,15 @@ const FOLLOWER_RUN_RATE = Duration.minutes(5);
  * Alarm if we haven't seen changes over this time
  *
  * The CouchDB leader occasionally just starts tossing out timeouts and they
- * may last for a good while. We need to be conservative with our alarms
- * otherwise we're just going to be too spammy.
+ * may last for a good while.
+ *
+ * - On 2022-09-29 it was slow for 12 hours.
+ * - On 2022-10-04 it was slow for 2 hours.
+ *
+ * This is leading to extreme alarm fatigue, and also this alarm is non-actionable.
+ * Let's be very very conservative here.
  */
-const NO_CHANGES_ALARM_DURATION = Duration.hours(1);
+const NO_CHANGES_ALARM_DURATION = Duration.hours(24);
 
 export interface NpmJsProps {
   /**

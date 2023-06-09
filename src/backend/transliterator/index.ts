@@ -11,6 +11,7 @@ import {
   FargateTaskDefinition,
   ICluster,
   LogDrivers,
+  UlimitName,
 } from 'aws-cdk-lib/aws-ecs';
 import { Effect, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { ILogGroup, LogGroup, RetentionDays } from 'aws-cdk-lib/aws-logs';
@@ -25,12 +26,12 @@ import {
   EcsRunTask,
 } from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
+import { Transliterator as Container } from './transliterator';
 import { Repository } from '../../codeartifact/repository';
 import { Monitoring } from '../../monitoring';
 import * as s3 from '../../s3';
 import * as constants from '../shared/constants';
 import { DocumentationLanguage } from '../shared/language';
-import { Transliterator as Container } from './transliterator';
 
 export interface TransliteratorProps {
   /**
@@ -155,6 +156,7 @@ export class Transliterator extends Construct {
     this.logGroup = new LogGroup(this, 'LogGroup', {
       retention: props.logRetention,
     });
+
     this.containerDefinition = new Container(this, 'Resource', {
       environment,
       logging: LogDrivers.awsLogs({
@@ -165,6 +167,16 @@ export class Transliterator extends Construct {
         cpu: 4_096,
         memoryLimitMiB: 8_192,
       }),
+    });
+    // Encountered an error of "EMFILE: too many open files" in ECS.
+    // Default nofile ulimit is 1024/4096.
+    //
+    // For ECS ulimit documentation see: https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_Ulimit.html
+    // For construct hub tracking issue see: https://github.com/cdklabs/construct-hub/issues/982
+    this.containerDefinition.addUlimits({
+      name: UlimitName.NOFILE, // file descriptors
+      softLimit: 16_384,
+      hardLimit: 65_535,
     });
 
     repository?.grantReadFromRepository(this.taskDefinition.taskRole);
@@ -356,7 +368,11 @@ export class Transliterator extends Construct {
         {
           containerDefinition: this.containerDefinition,
           command: JsonPath.listAt('$'),
-          environment: [{ name: 'SFN_TASK_TOKEN', value: JsonPath.taskToken }],
+          environment: [
+            { name: 'SFN_TASK_TOKEN', value: JsonPath.taskToken },
+            // PLACEHOLDER: Set this to something non-empty to enable lsof running...
+            { name: 'RUN_LSOF_ON_HEARTBEAT', value: '' },
+          ],
         },
       ],
       integrationPattern: IntegrationPattern.WAIT_FOR_TASK_TOKEN,

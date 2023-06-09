@@ -10,10 +10,6 @@ import {
 import type { Context, ScheduledEvent } from 'aws-lambda';
 import { captureHTTPsGlobal } from 'aws-xray-sdk-core';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
-import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
-import * as aws from '../../backend/shared/aws.lambda-shared';
-import { requireEnv } from '../../backend/shared/env.lambda-shared';
 import {
   MetricName,
   MARKER_FILE_NAME,
@@ -21,6 +17,10 @@ import {
 } from './constants.lambda-shared';
 import { CouchChanges, DatabaseChange } from './couch-changes.lambda-shared';
 import { PackageVersion } from './stage-and-notify.lambda';
+import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
+import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
+import * as aws from '../../backend/shared/aws.lambda-shared';
+import { requireEnv } from '../../backend/shared/env.lambda-shared';
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const normalizeNPMMetadata = require('normalize-registry-metadata');
 
@@ -90,7 +90,7 @@ export async function handler(event: ScheduledEvent, context: Context) {
       const changes = await npm.changes(updatedMarker);
 
       // Clear automatically set dimensions - we don't need them (see https://github.com/awslabs/aws-embedded-metrics-node/issues/73)
-      metrics.setDimensions();
+      metrics.setDimensions({});
 
       // Recording current seq range and updating the `updatedMarker`.
       metrics.setProperty('StartSeq', updatedMarker);
@@ -268,7 +268,7 @@ async function loadLastTransactionMarker(
     }
 
     return data;
-  } catch (error) {
+  } catch (error: any) {
     if (error.code !== 'NoSuchKey') {
       throw error;
     }

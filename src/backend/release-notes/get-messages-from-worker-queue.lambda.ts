@@ -1,15 +1,14 @@
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import { StepFunctions, SQS } from 'aws-sdk';
-import { requireEnv } from '../shared/env.lambda-shared';
 import * as constants from './constants';
+import { getServiceLimits } from './shared/github-changelog-fetcher.lambda-shared';
+import { requireEnv } from '../shared/env.lambda-shared';
 
 // Each of the release note fetch task can involve making multiple Github
 // API requests. This is a worst case scenario where a package might require
 // MAX_GH_REQUEST_PER_PACKAGE number of requests. This will be used to
 // ensure that the state machine does not hammer and exhaust the service limits
 const MAX_GH_REQUEST_PER_PACKAGE = 10;
-
-import { getServiceLimits } from './shared/github-changelog-fetcher.lambda-shared';
 
 type ServiceLimit = {
   waitUntil: string;
@@ -40,13 +39,34 @@ type ExecutionResult = {
  * @returns ExecutionResult | ServiceLimit
  */
 export const handler = async (): Promise<ExecutionResult | ServiceLimit> => {
-  let serviceLimit;
+  let serviceLimit: {
+    limit: number;
+    remaining: number;
+    used: number;
+    reset: number;
+  };
   try {
     serviceLimit = await getServiceLimits();
+    await metricScope((metrics) => async () => {
+      metrics.setNamespace(constants.METRICS_NAMESPACE);
+      metrics.setDimensions({});
+      metrics.putMetric(
+        constants.GhRateLimitsRemaining,
+        serviceLimit!.remaining,
+        Unit.Count
+      );
+      metrics.putMetric(constants.GhLimitsUsed, serviceLimit!.used, Unit.Count);
+
+      metrics.putMetric(
+        constants.GhLimitsLimit,
+        serviceLimit!.limit,
+        Unit.Count
+      );
+    })();
   } catch (e) {
     if ((e as any).status == 401) {
       await metricScope((metrics) => async () => {
-        metrics.setDimensions();
+        metrics.setDimensions({});
 
         metrics.setNamespace(constants.METRICS_NAMESPACE);
         metrics.putMetric(constants.InvalidCredentials, 1, Unit.Count);
@@ -55,7 +75,7 @@ export const handler = async (): Promise<ExecutionResult | ServiceLimit> => {
       return { error: 'InvalidCredentials' };
     }
     await metricScope((metrics) => async () => {
-      metrics.setDimensions();
+      metrics.setDimensions({});
 
       metrics.setNamespace(constants.METRICS_NAMESPACE);
       metrics.putMetric(constants.UnknownError, 1, Unit.Count);

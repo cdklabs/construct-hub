@@ -1,4 +1,5 @@
 import { pseudoRandomBytes } from 'crypto';
+import { SPEC_FILE_NAME } from '@jsii/spec';
 import type { Context } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
@@ -128,7 +129,7 @@ test('happy path', async () => {
           packageVersion: detail.packageVersion,
         });
         cb(null, mockGetPackageVersionAssetResult);
-      } catch (e) {
+      } catch (e: any) {
         cb(e);
       }
     }
@@ -142,7 +143,9 @@ test('happy path', async () => {
     expect(tgz).toEqual(
       Buffer.from(mockGetPackageVersionAssetResult.asset! as any)
     );
-    expect(selector).toHaveProperty('assemblyJson', { path: 'package/.jsii' });
+    expect(selector).toHaveProperty('assemblyJson', {
+      path: `package/${SPEC_FILE_NAME}`,
+    });
     expect(selector).toHaveProperty('packageJson', {
       path: 'package/package.json',
       required: true,
@@ -174,7 +177,7 @@ test('happy path', async () => {
           },
         });
         cb(null, safeMock<AWS.S3.PutObjectOutput>('mockS3PutObjectOutput', {}));
-      } catch (e) {
+      } catch (e: any) {
         cb(e);
       }
     }
@@ -221,7 +224,7 @@ test('happy path', async () => {
           QueueUrl: mockQueueUrl,
         });
         cb(null, mockSendMessageResult);
-      } catch (e) {
+      } catch (e: any) {
         cb(e);
       }
     }
@@ -283,7 +286,7 @@ test('no license (i.e: UNLICENSED)', async () => {
           packageVersion: detail.packageVersion,
         });
         cb(null, mockGetPackageVersionAssetResult);
-      } catch (e) {
+      } catch (e: any) {
         cb(e);
       }
     }
@@ -295,7 +298,9 @@ test('no license (i.e: UNLICENSED)', async () => {
     expect(tgz).toEqual(
       Buffer.from(mockGetPackageVersionAssetResult.asset! as any)
     );
-    expect(selector).toHaveProperty('assemblyJson', { path: 'package/.jsii' });
+    expect(selector).toHaveProperty('assemblyJson', {
+      path: `package/${SPEC_FILE_NAME}`,
+    });
     expect(selector).toHaveProperty('packageJson', {
       path: 'package/package.json',
       required: true,
@@ -356,7 +361,7 @@ test('ineligible license', async () => {
           packageVersion: detail.packageVersion,
         });
         cb(null, mockGetPackageVersionAssetResult);
-      } catch (e) {
+      } catch (e: any) {
         cb(e);
       }
     }
@@ -370,7 +375,9 @@ test('ineligible license', async () => {
     expect(tgz).toEqual(
       Buffer.from(mockGetPackageVersionAssetResult.asset! as any)
     );
-    expect(selector).toHaveProperty('assemblyJson', { path: 'package/.jsii' });
+    expect(selector).toHaveProperty('assemblyJson', {
+      path: `package/${SPEC_FILE_NAME}`,
+    });
     expect(selector).toHaveProperty('packageJson', {
       path: 'package/package.json',
       required: true,
@@ -431,7 +438,7 @@ test('not a jsii package', async () => {
           packageVersion: detail.packageVersion,
         });
         cb(null, mockGetPackageVersionAssetResult);
-      } catch (e) {
+      } catch (e: any) {
         cb(e);
       }
     }
@@ -444,7 +451,9 @@ test('not a jsii package', async () => {
     expect(tgz).toEqual(
       Buffer.from(mockGetPackageVersionAssetResult.asset! as any)
     );
-    expect(selector).toHaveProperty('assemblyJson', { path: 'package/.jsii' });
+    expect(selector).toHaveProperty('assemblyJson', {
+      path: `package/${SPEC_FILE_NAME}`,
+    });
     expect(selector).toHaveProperty('packageJson', {
       path: 'package/package.json',
       required: true,

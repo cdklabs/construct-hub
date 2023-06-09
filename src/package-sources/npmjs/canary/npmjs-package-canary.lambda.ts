@@ -4,15 +4,15 @@ import { createGunzip } from 'zlib';
 import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { AWSError, S3 } from 'aws-sdk';
 import * as JSONStream from 'JSONStream';
-import { CatalogModel } from '../../../backend';
-import * as aws from '../../../backend/shared/aws.lambda-shared';
-import { requireEnv } from '../../../backend/shared/env.lambda-shared';
 import {
   METRICS_NAMESPACE,
   MetricName,
   Environment,
   ObjectKey,
 } from './constants';
+import { CatalogModel } from '../../../backend';
+import * as aws from '../../../backend/shared/aws.lambda-shared';
+import { requireEnv } from '../../../backend/shared/env.lambda-shared';
 
 Configuration.namespace = METRICS_NAMESPACE;
 
@@ -74,7 +74,7 @@ export async function handler(event: unknown): Promise<void> {
 
       await metricScope((metrics) => async () => {
         // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
-        metrics.setDimensions();
+        metrics.setDimensions({});
         metrics.putMetric(
           MetricName.TRACKED_VERSION_COUNT,
           Object.keys(state.pending).length + 1,
@@ -111,7 +111,7 @@ export async function handler(event: unknown): Promise<void> {
 
         await metricScope((metrics) => async () => {
           // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
-          metrics.setDimensions();
+          metrics.setDimensions({});
           metrics.setProperty('PackageName', packageName);
           metrics.setProperty('PackageVersion', versionState.version);
           metrics.setProperty(
@@ -174,10 +174,11 @@ export async function handler(event: unknown): Promise<void> {
     } finally {
       await stateService.save(packageName, state);
     }
-  } catch (error) {
+  } catch (error: any) {
     if (
       error instanceof HTTPError &&
-      (error.httpStatusCode === 502 || error.httpStatusCode === 504)
+      error.httpStatusCode &&
+      error.httpStatusCode >= 500
     ) {
       // This is an HTTP 5XX from a dependency, so we'll log this out, and pretend it did not fail...
       console.error(
@@ -186,7 +187,7 @@ export async function handler(event: unknown): Promise<void> {
       );
       await metricScope((metrics) => async () => {
         // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
-        metrics.setDimensions();
+        metrics.setDimensions({});
         metrics.setProperty('ErrorCode', error.httpStatusCode);
         metrics.setProperty('ErrorMessage', error.message);
 
@@ -199,7 +200,7 @@ export async function handler(event: unknown): Promise<void> {
       );
       await metricScope((metrics) => async () => {
         // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
-        metrics.setDimensions();
+        metrics.setDimensions({});
         metrics.setProperty('ErrorCode', 'REQUEST_TIMEOUT');
         metrics.setProperty('ErrorMessage', error.message);
 

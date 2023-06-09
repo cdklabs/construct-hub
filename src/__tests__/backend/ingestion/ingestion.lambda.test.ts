@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import type { createGunzip } from 'zlib';
+import type { createGunzip, gunzipSync } from 'zlib';
 import {
   Assembly,
   CollectionKind,
@@ -8,6 +8,8 @@ import {
   SchemaVersion,
   Stability,
   TypeKind,
+  SPEC_FILE_NAME,
+  SPEC_FILE_NAME_COMPRESSED,
 } from '@jsii/spec';
 import type { metricScope, MetricsLogger } from 'aws-embedded-metrics';
 import { Context, SQSEvent } from 'aws-lambda';
@@ -37,7 +39,7 @@ const mockPutMetric = jest
 >;
 const mockMetrics: MetricsLogger = {
   putMetric: mockPutMetric,
-  setDimensions: (...args: any[]) => expect(args).toEqual([]),
+  setDimensions: (...args: any[]) => expect(args).toEqual([{}]),
 } as any;
 mockMetricScope.mockImplementation((cb) => {
   const impl = cb(mockMetrics);
@@ -115,7 +117,7 @@ test('basic happy case', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -125,7 +127,7 @@ test('basic happy case', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -147,7 +149,7 @@ test('basic happy case', async () => {
   mockExtract.mockImplementation(
     () =>
       new FakeExtract(fakeTar, {
-        'package/.jsii': fakeDotJsii,
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
         'package/index.js': '// Ignore me!',
         'package/package.json': JSON.stringify({
           name: packageName,
@@ -205,7 +207,7 @@ test('basic happy case', async () => {
           default:
             fail(`Unexpected key: "${req.Key}"`);
         }
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { VersionId: `${req.Key}-NewVersion` });
@@ -234,7 +236,487 @@ test('basic happy case', async () => {
           },
           package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
         });
-      } catch (e) {
+      } catch (e: any) {
+        return cb(e);
+      }
+      return cb(null, { executionArn, startDate: new Date() });
+    }
+  );
+
+  const event: SQSEvent = {
+    Records: [
+      {
+        attributes: {} as any,
+        awsRegion: 'test-bermuda-1',
+        body: JSON.stringify({ tarballUri, integrity, time }),
+        eventSource: 'sqs',
+        eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
+        md5OfBody: 'Fake-MD5-Of-Body',
+        messageAttributes: {},
+        messageId: 'Fake-Message-ID',
+        receiptHandle: 'Fake-Receipt-Handke',
+      },
+    ],
+  };
+
+  // We require the handler here so that any mocks to metricScope are set up
+  // prior to the handler being created.
+  //
+
+  await expect(
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('../../../backend/ingestion/ingestion.lambda').handler(
+      event,
+      context
+    )
+  ).resolves.toEqual([executionArn]);
+
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.MISMATCHED_IDENTITY_REJECTIONS,
+    0,
+    'Count'
+  );
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.FOUND_LICENSE_FILE,
+    0,
+    'Count'
+  );
+});
+
+test('basic happy case with duplicated packages', async () => {
+  const mockBucketName = 'fake-bucket';
+  const mockStateMachineArn = 'fake-state-machine-arn';
+  const mockConfigBucket = 'fake-config-bucket';
+  const mockConfigkey = 'fake-config-obj-key';
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared')
+    .requireEnv as jest.MockedFunction<typeof requireEnv>;
+  mockRequireEnv.mockImplementation((name) => {
+    if (name === 'BUCKET_NAME') {
+      return mockBucketName;
+    }
+    if (name === 'STATE_MACHINE_ARN') {
+      return mockStateMachineArn;
+    }
+    if (name === 'CONFIG_BUCKET_NAME') {
+      return mockConfigBucket;
+    }
+    if (name === 'CONFIG_FILE_KEY') {
+      return mockConfigkey;
+    }
+    throw new Error(`Bad environment variable: "${name}"`);
+  });
+
+  const stagingBucket = 'staging-bucket';
+  const stagingKey = 'staging-key';
+  const stagingVersion = 'staging-version-id';
+  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
+  const fakeTar = Buffer.from('fake-tarball-content');
+  const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
+  const time = '2021-07-12T15:18:00.000000+02:00';
+  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
+  const packageName = '@package-scope/package-name';
+  const packageVersion = '1.2.3-pre.4';
+  const packageLicense = 'Apache-2.0';
+  const fakeDotJsii = JSON.stringify(
+    fakeAssembly(packageName, packageVersion, packageLicense)
+  );
+  const mockConfig = Buffer.from(
+    JSON.stringify({
+      packageLinks: [],
+      packageTags: [],
+    })
+  );
+
+  const context: Context = {
+    awsRequestId: 'Fake-Request-ID',
+    logGroupName: 'Fake-Log-Group',
+    logStreamName: 'Fake-Log-Stream',
+  } as any;
+
+  AWSMock.mock(
+    'S3',
+    'getObject',
+    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      if (req.Bucket === mockConfigBucket) {
+        try {
+          expect(req.Bucket).toBe(mockConfigBucket);
+          expect(req.Key).toBe(mockConfigkey);
+        } catch (e: any) {
+          return cb(e);
+        }
+        return cb(null, { Body: mockConfig });
+      }
+
+      try {
+        expect(req.Bucket).toBe(stagingBucket);
+        expect(req.Key).toBe(stagingKey);
+        expect(req.VersionId).toBe(stagingVersion);
+      } catch (e: any) {
+        return cb(e);
+      }
+      return cb(null, { Body: fakeTarGz });
+    }
+  );
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
+    typeof createGunzip
+  >;
+  mockCreateGunzip.mockImplementation(
+    () => new FakeGunzip(fakeTarGz, fakeTar) as any
+  );
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
+    typeof extract
+  >;
+  mockExtract.mockImplementation(
+    () =>
+      new FakeExtract(fakeTar, {
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+        'package/index.js': '// Ignore me!',
+        'package/package.json': JSON.stringify({
+          name: packageName,
+          version: packageVersion,
+          license: packageLicense,
+        }),
+      }) as any
+  );
+
+  let mockTarballCreated = false;
+  let mockMetadataCreated = false;
+  const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(
+    packageName,
+    packageVersion
+  );
+  AWSMock.mock(
+    'S3',
+    'putObject',
+    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
+      try {
+        expect(req.Bucket).toBe(mockBucketName);
+        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
+        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+        switch (req.Key) {
+          case assemblyKey:
+            expect(req.ContentType).toBe('application/json');
+
+            // our service removes the "types" field from the assembly since it is not needed
+            // and takes up a lot of space.
+            assertAssembly(fakeDotJsii, req.Body?.toString());
+
+            // Must be created strictly after the tarball and metadata files have been uploaded.
+            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+            break;
+          case metadataKey:
+            expect(req.ContentType).toBe('application/json');
+            expect(Buffer.from(req.Body! as any)).toEqual(
+              Buffer.from(
+                JSON.stringify({
+                  constructFrameworks: [],
+                  date: time,
+                  packageLinks: {},
+                  packageTags: [],
+                })
+              )
+            );
+            mockMetadataCreated = true;
+            break;
+          case packageKey:
+            expect(req.ContentType).toBe('application/octet-stream');
+            expect(req.Body).toEqual(fakeTarGz);
+            mockTarballCreated = true;
+            break;
+          default:
+            fail(`Unexpected key: "${req.Key}"`);
+        }
+      } catch (e: any) {
+        return cb(e);
+      }
+      return cb(null, { VersionId: `${req.Key}-NewVersion` });
+    }
+  );
+
+  let executionsStarted = 0;
+  const executionArn = 'Fake-Execution-Arn';
+  AWSMock.mock(
+    'StepFunctions',
+    'startExecution',
+    (
+      req: AWS.StepFunctions.StartExecutionInput,
+      cb: Response<AWS.StepFunctions.StartExecutionOutput>
+    ) => {
+      executionsStarted++;
+      expect(executionsStarted).toEqual(1);
+      try {
+        expect(req.stateMachineArn).toBe(mockStateMachineArn);
+        expect(JSON.parse(req.input!)).toEqual({
+          bucket: mockBucketName,
+          assembly: {
+            key: assemblyKey,
+            versionId: `${assemblyKey}-NewVersion`,
+          },
+          metadata: {
+            key: metadataKey,
+            versionId: `${metadataKey}-NewVersion`,
+          },
+          package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+        });
+      } catch (e: any) {
+        return cb(e);
+      }
+      return cb(null, { executionArn, startDate: new Date() });
+    }
+  );
+
+  const event: SQSEvent = {
+    Records: [
+      {
+        attributes: {} as any,
+        awsRegion: 'test-bermuda-1',
+        body: JSON.stringify({ tarballUri, integrity, time }),
+        eventSource: 'sqs',
+        eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
+        md5OfBody: 'Fake-MD5-Of-Body',
+        messageAttributes: {},
+        messageId: 'Fake-Message-ID1',
+        receiptHandle: 'Fake-Receipt-Handke1',
+      },
+      {
+        attributes: {} as any,
+        awsRegion: 'test-bermuda-1',
+        body: JSON.stringify({ tarballUri, integrity, time }),
+        eventSource: 'sqs',
+        eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
+        md5OfBody: 'Fake-MD5-Of-Body',
+        messageAttributes: {},
+        messageId: 'Fake-Message-ID2',
+        receiptHandle: 'Fake-Receipt-Handke2',
+      },
+    ],
+  };
+
+  // We require the handler here so that any mocks to metricScope are set up
+  // prior to the handler being created.
+  //
+
+  await expect(
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('../../../backend/ingestion/ingestion.lambda').handler(
+      event,
+      context
+    )
+  ).resolves.toEqual([executionArn]);
+
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.MISMATCHED_IDENTITY_REJECTIONS,
+    0,
+    'Count'
+  );
+  expect(mockPutMetric).toHaveBeenCalledWith(
+    MetricName.FOUND_LICENSE_FILE,
+    0,
+    'Count'
+  );
+});
+
+test('basic happy case with compressed assembly', async () => {
+  const mockBucketName = 'fake-bucket';
+  const mockStateMachineArn = 'fake-state-machine-arn';
+  const mockConfigBucket = 'fake-config-bucket';
+  const mockConfigkey = 'fake-config-obj-key';
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockRequireEnv = require('../../../backend/shared/env.lambda-shared')
+    .requireEnv as jest.MockedFunction<typeof requireEnv>;
+  mockRequireEnv.mockImplementation((name) => {
+    if (name === 'BUCKET_NAME') {
+      return mockBucketName;
+    }
+    if (name === 'STATE_MACHINE_ARN') {
+      return mockStateMachineArn;
+    }
+    if (name === 'CONFIG_BUCKET_NAME') {
+      return mockConfigBucket;
+    }
+    if (name === 'CONFIG_FILE_KEY') {
+      return mockConfigkey;
+    }
+    throw new Error(`Bad environment variable: "${name}"`);
+  });
+
+  const stagingBucket = 'staging-bucket';
+  const stagingKey = 'staging-key';
+  const stagingVersion = 'staging-version-id';
+  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
+  const fakeTar = Buffer.from('fake-tarball-content');
+  const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
+  const time = '2021-07-12T15:18:00.000000+02:00';
+  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
+  const packageName = '@package-scope/package-name';
+  const packageVersion = '1.2.3-pre.4';
+  const packageLicense = 'Apache-2.0';
+  const fakeDotJsii = JSON.stringify(
+    fakeAssembly(packageName, packageVersion, packageLicense)
+  );
+  const fakeDotJsiiRedirect = JSON.stringify({
+    schema: 'jsii/file-redirect',
+    compression: 'gzip',
+    filename: SPEC_FILE_NAME_COMPRESSED,
+  });
+  const mockConfig = Buffer.from(
+    JSON.stringify({
+      packageLinks: [],
+      packageTags: [],
+    })
+  );
+
+  const context: Context = {
+    awsRequestId: 'Fake-Request-ID',
+    logGroupName: 'Fake-Log-Group',
+    logStreamName: 'Fake-Log-Stream',
+  } as any;
+
+  AWSMock.mock(
+    'S3',
+    'getObject',
+    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+      if (req.Bucket === mockConfigBucket) {
+        try {
+          expect(req.Bucket).toBe(mockConfigBucket);
+          expect(req.Key).toBe(mockConfigkey);
+        } catch (e: any) {
+          return cb(e);
+        }
+        return cb(null, { Body: mockConfig });
+      }
+
+      try {
+        expect(req.Bucket).toBe(stagingBucket);
+        expect(req.Key).toBe(stagingKey);
+        expect(req.VersionId).toBe(stagingVersion);
+      } catch (e: any) {
+        return cb(e);
+      }
+      return cb(null, { Body: fakeTarGz });
+    }
+  );
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
+    typeof createGunzip
+  >;
+  mockCreateGunzip.mockImplementation(
+    () => new FakeGunzip(fakeTarGz, fakeTar) as any
+  );
+
+  // mock gunzipSync as that is what is used in loadAssemblyFromBuffer to uncompress assemblies
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockGunzipSync = require('zlib').gunzipSync as jest.MockedFunction<
+    typeof gunzipSync
+  >;
+  mockGunzipSync.mockImplementation(() => Buffer.from(fakeDotJsii));
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
+    typeof extract
+  >;
+  mockExtract.mockImplementation(
+    () =>
+      new FakeExtract(fakeTar, {
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsiiRedirect,
+        [`package/${SPEC_FILE_NAME_COMPRESSED}`]:
+          '// Mocks a file existing with this name',
+        'package/index.js': '// Ignore me!',
+        'package/package.json': JSON.stringify({
+          name: packageName,
+          version: packageVersion,
+          license: packageLicense,
+        }),
+      }) as any
+  );
+
+  let mockTarballCreated = false;
+  let mockMetadataCreated = false;
+  const { assemblyKey, metadataKey, packageKey } = constants.getObjectKeys(
+    packageName,
+    packageVersion
+  );
+  AWSMock.mock(
+    'S3',
+    'putObject',
+    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
+      try {
+        expect(req.Bucket).toBe(mockBucketName);
+        expect(req.Metadata?.['Lambda-Log-Group']).toBe(context.logGroupName);
+        expect(req.Metadata?.['Lambda-Log-Stream']).toBe(context.logStreamName);
+        expect(req.Metadata?.['Lambda-Run-Id']).toBe(context.awsRequestId);
+        switch (req.Key) {
+          case assemblyKey:
+            expect(req.ContentType).toBe('application/json');
+
+            // our service removes the "types" field from the assembly since it is not needed
+            // and takes up a lot of space.
+            assertAssembly(fakeDotJsii, req.Body?.toString());
+
+            // Must be created strictly after the tarball and metadata files have been uploaded.
+            expect(mockTarballCreated && mockMetadataCreated).toBeTruthy();
+            break;
+          case metadataKey:
+            expect(req.ContentType).toBe('application/json');
+            expect(Buffer.from(req.Body! as any)).toEqual(
+              Buffer.from(
+                JSON.stringify({
+                  constructFrameworks: [],
+                  date: time,
+                  packageLinks: {},
+                  packageTags: [],
+                })
+              )
+            );
+            mockMetadataCreated = true;
+            break;
+          case packageKey:
+            expect(req.ContentType).toBe('application/octet-stream');
+            expect(req.Body).toEqual(fakeTarGz);
+            mockTarballCreated = true;
+            break;
+          default:
+            fail(`Unexpected key: "${req.Key}"`);
+        }
+      } catch (e: any) {
+        return cb(e);
+      }
+      return cb(null, { VersionId: `${req.Key}-NewVersion` });
+    }
+  );
+
+  const executionArn = 'Fake-Execution-Arn';
+  AWSMock.mock(
+    'StepFunctions',
+    'startExecution',
+    (
+      req: AWS.StepFunctions.StartExecutionInput,
+      cb: Response<AWS.StepFunctions.StartExecutionOutput>
+    ) => {
+      try {
+        expect(req.stateMachineArn).toBe(mockStateMachineArn);
+        expect(JSON.parse(req.input!)).toEqual({
+          bucket: mockBucketName,
+          assembly: {
+            key: assemblyKey,
+            versionId: `${assemblyKey}-NewVersion`,
+          },
+          metadata: {
+            key: metadataKey,
+            versionId: `${metadataKey}-NewVersion`,
+          },
+          package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
+        });
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { executionArn, startDate: new Date() });
@@ -342,7 +824,7 @@ test('basic happy case with license file', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -352,7 +834,7 @@ test('basic happy case with license file', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -374,7 +856,7 @@ test('basic happy case with license file', async () => {
   mockExtract.mockImplementation(
     () =>
       new FakeExtract(fakeTar, {
-        'package/.jsii': fakeDotJsii,
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
         'package/LICENSE.md': fakeLicense,
         'package/index.js': '// Ignore me!',
         'package/package.json': JSON.stringify({
@@ -430,7 +912,7 @@ test('basic happy case with license file', async () => {
           default:
             fail(`Unexpected key: "${req.Key}"`);
         }
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { VersionId: `${req.Key}-NewVersion` });
@@ -459,7 +941,7 @@ test('basic happy case with license file', async () => {
           },
           package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
         });
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, {
@@ -585,7 +1067,7 @@ test('basic happy case with custom package links', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -595,7 +1077,7 @@ test('basic happy case with custom package links', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -617,7 +1099,7 @@ test('basic happy case with custom package links', async () => {
   mockExtract.mockImplementation(
     () =>
       new FakeExtract(fakeTar, {
-        'package/.jsii': fakeDotJsii,
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
         'package/index.js': '// Ignore me!',
         'package/package.json': JSON.stringify({
           name: packageName,
@@ -682,7 +1164,7 @@ test('basic happy case with custom package links', async () => {
           default:
             fail(`Unexpected key: "${req.Key}"`);
         }
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { VersionId: `${req.Key}-NewVersion` });
@@ -711,7 +1193,7 @@ test('basic happy case with custom package links', async () => {
           },
           package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
         });
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { executionArn, startDate: new Date() });
@@ -855,7 +1337,7 @@ test('basic happy case with custom tags', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -865,7 +1347,7 @@ test('basic happy case with custom tags', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -887,7 +1369,7 @@ test('basic happy case with custom tags', async () => {
   mockExtract.mockImplementation(
     () =>
       new FakeExtract(fakeTar, {
-        'package/.jsii': fakeDotJsii,
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
         'package/index.js': '// Ignore me!',
         'package/package.json': JSON.stringify({
           name: packageName,
@@ -944,7 +1426,7 @@ test('basic happy case with custom tags', async () => {
           default:
             fail(`Unexpected key: "${req.Key}"`);
         }
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { VersionId: `${req.Key}-NewVersion` });
@@ -973,7 +1455,7 @@ test('basic happy case with custom tags', async () => {
           },
           package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
         });
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { executionArn, startDate: new Date() });
@@ -1092,7 +1574,7 @@ for (const [frameworkName, frameworkPackage] of [
           try {
             expect(req.Bucket).toBe(mockConfigBucket);
             expect(req.Key).toBe(mockConfigkey);
-          } catch (e) {
+          } catch (e: any) {
             return cb(e);
           }
           return cb(null, { Body: mockConfig });
@@ -1102,7 +1584,7 @@ for (const [frameworkName, frameworkPackage] of [
           expect(req.Bucket).toBe(stagingBucket);
           expect(req.Key).toBe(stagingKey);
           expect(req.VersionId).toBe(stagingVersion);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: fakeTarGz });
@@ -1123,7 +1605,7 @@ for (const [frameworkName, frameworkPackage] of [
     mockExtract.mockImplementation(
       () =>
         new FakeExtract(fakeTar, {
-          'package/.jsii': fakeDotJsii,
+          [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
           'package/index.js': '// Ignore me!',
           'package/package.json': JSON.stringify({
             name: packageName,
@@ -1177,7 +1659,7 @@ for (const [frameworkName, frameworkPackage] of [
             default:
               fail(`Unexpected key: "${req.Key}"`);
           }
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { VersionId: `${req.Key}-NewVersion` });
@@ -1206,7 +1688,7 @@ for (const [frameworkName, frameworkPackage] of [
             },
             package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
           });
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { executionArn, startDate: new Date() });
@@ -1311,7 +1793,7 @@ for (const [frameworkName, frameworkPackage] of [
           try {
             expect(req.Bucket).toBe(mockConfigBucket);
             expect(req.Key).toBe(mockConfigkey);
-          } catch (e) {
+          } catch (e: any) {
             return cb(e);
           }
           return cb(null, { Body: mockConfig });
@@ -1321,7 +1803,7 @@ for (const [frameworkName, frameworkPackage] of [
           expect(req.Bucket).toBe(stagingBucket);
           expect(req.Key).toBe(stagingKey);
           expect(req.VersionId).toBe(stagingVersion);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: fakeTarGz });
@@ -1342,7 +1824,7 @@ for (const [frameworkName, frameworkPackage] of [
     mockExtract.mockImplementation(
       () =>
         new FakeExtract(fakeTar, {
-          'package/.jsii': fakeDotJsii,
+          [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
           'package/index.js': '// Ignore me!',
           'package/package.json': JSON.stringify({
             name: frameworkPackage,
@@ -1396,7 +1878,7 @@ for (const [frameworkName, frameworkPackage] of [
             default:
               fail(`Unexpected key: "${req.Key}"`);
           }
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { VersionId: `${req.Key}-NewVersion` });
@@ -1425,7 +1907,7 @@ for (const [frameworkName, frameworkPackage] of [
             },
             package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
           });
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { executionArn, startDate: new Date() });
@@ -1538,7 +2020,7 @@ for (const [frameworkName, frameworkPackage] of [
           try {
             expect(req.Bucket).toBe(mockConfigBucket);
             expect(req.Key).toBe(mockConfigkey);
-          } catch (e) {
+          } catch (e: any) {
             return cb(e);
           }
           return cb(null, { Body: mockConfig });
@@ -1548,7 +2030,7 @@ for (const [frameworkName, frameworkPackage] of [
           expect(req.Bucket).toBe(stagingBucket);
           expect(req.Key).toBe(stagingKey);
           expect(req.VersionId).toBe(stagingVersion);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: fakeTarGz });
@@ -1569,7 +2051,7 @@ for (const [frameworkName, frameworkPackage] of [
     mockExtract.mockImplementation(
       () =>
         new FakeExtract(fakeTar, {
-          'package/.jsii': fakeDotJsii,
+          [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
           'package/index.js': '// Ignore me!',
           'package/package.json': JSON.stringify({
             name: packageName,
@@ -1621,7 +2103,7 @@ for (const [frameworkName, frameworkPackage] of [
             default:
               fail(`Unexpected key: "${req.Key}"`);
           }
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { VersionId: `${req.Key}-NewVersion` });
@@ -1650,7 +2132,7 @@ for (const [frameworkName, frameworkPackage] of [
             },
             package: { key: packageKey, versionId: `${packageKey}-NewVersion` },
           });
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { executionArn, startDate: new Date() });
@@ -1758,7 +2240,7 @@ test('mismatched package name', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -1768,7 +2250,7 @@ test('mismatched package name', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -1790,7 +2272,7 @@ test('mismatched package name', async () => {
   mockExtract.mockImplementation(
     () =>
       new FakeExtract(fakeTar, {
-        'package/.jsii': fakeDotJsii,
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
         'package/LICENSE.md': fakeLicense,
         'package/index.js': '// Ignore me!',
         'package/package.json': JSON.stringify({
@@ -1896,7 +2378,7 @@ test('mismatched package version', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -1906,7 +2388,7 @@ test('mismatched package version', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -1928,7 +2410,7 @@ test('mismatched package version', async () => {
   mockExtract.mockImplementation(
     () =>
       new FakeExtract(fakeTar, {
-        'package/.jsii': fakeDotJsii,
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
         'package/LICENSE.md': fakeLicense,
         'package/index.js': '// Ignore me!',
         'package/package.json': JSON.stringify({
@@ -2034,7 +2516,7 @@ test('mismatched package license', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -2044,7 +2526,7 @@ test('mismatched package license', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -2066,7 +2548,7 @@ test('mismatched package license', async () => {
   mockExtract.mockImplementation(
     () =>
       new FakeExtract(fakeTar, {
-        'package/.jsii': fakeDotJsii,
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
         'package/LICENSE.md': fakeLicense,
         'package/index.js': '// Ignore me!',
         'package/package.json': JSON.stringify({
@@ -2169,7 +2651,7 @@ test('missing .jsii file', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -2179,7 +2661,7 @@ test('missing .jsii file', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -2300,7 +2782,7 @@ test('missing package.json file', async () => {
         try {
           expect(req.Bucket).toBe(mockConfigBucket);
           expect(req.Key).toBe(mockConfigkey);
-        } catch (e) {
+        } catch (e: any) {
           return cb(e);
         }
         return cb(null, { Body: mockConfig });
@@ -2310,7 +2792,7 @@ test('missing package.json file', async () => {
         expect(req.Bucket).toBe(stagingBucket);
         expect(req.Key).toBe(stagingKey);
         expect(req.VersionId).toBe(stagingVersion);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, { Body: fakeTarGz });
@@ -2332,7 +2814,7 @@ test('missing package.json file', async () => {
   mockExtract.mockImplementation(
     () =>
       new FakeExtract(fakeTar, {
-        'package/.jsii': fakeDotJsii,
+        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
         'package/LICENSE.md': fakeLicense,
         'package/index.js': '// Ignore me!',
       }) as any
@@ -2382,7 +2864,7 @@ class FakeGunzip extends EventEmitter {
     try {
       expect(data).toEqual(this.gz);
       setImmediate(() => this.sendData());
-    } catch (e) {
+    } catch (e: any) {
       this.emit('error', e);
     }
   }
@@ -2414,7 +2896,7 @@ class FakeExtract extends EventEmitter {
       expect(data).toEqual(Buffer.from(this.tar));
       cb?.(null);
       setImmediate(() => this.sendNextEntry());
-    } catch (e) {
+    } catch (e: any) {
       cb?.(e);
     }
   }

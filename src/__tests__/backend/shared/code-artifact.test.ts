@@ -39,7 +39,7 @@ test('logInWithCodeArtifact', async () => {
         expect(param.domain).toBe(domain);
         expect(param.domainOwner).toBe(domainOwner);
         expect(param.durationSeconds).toBe(0);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       cb(null, { authorizationToken });

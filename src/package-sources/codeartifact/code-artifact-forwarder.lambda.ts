@@ -1,12 +1,7 @@
+import { SPEC_FILE_NAME } from '@jsii/spec';
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context, EventBridgeEvent } from 'aws-lambda';
 
-import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
-import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
-import * as aws from '../../backend/shared/aws.lambda-shared';
-import { requireEnv } from '../../backend/shared/env.lambda-shared';
-import { integrity } from '../../backend/shared/integrity.lambda-shared';
-import { extractObjects } from '../../backend/shared/tarball.lambda-shared';
 import {
   METRICS_NAMESPACE,
   MetricName,
@@ -14,6 +9,12 @@ import {
   DOMAIN_NAME_DIMENSION,
   REPOSITORY_NAME_DIMENSION,
 } from './constants.lambda-shared';
+import { DenyListClient } from '../../backend/deny-list/client.lambda-shared';
+import { LicenseListClient } from '../../backend/license-list/client.lambda-shared';
+import * as aws from '../../backend/shared/aws.lambda-shared';
+import { requireEnv } from '../../backend/shared/env.lambda-shared';
+import { integrity } from '../../backend/shared/integrity.lambda-shared';
+import { extractObjects } from '../../backend/shared/tarball.lambda-shared';
 
 const DETAIL_TYPE = 'CodeArtifact Package Version State Change' as const;
 
@@ -75,7 +76,7 @@ export const handler = metricScope(
       const tarball = Buffer.from(asset! as any);
 
       const { assemblyJson, packageJson } = await extractObjects(tarball, {
-        assemblyJson: { path: 'package/.jsii' },
+        assemblyJson: { path: `package/${SPEC_FILE_NAME}` },
         packageJson: { path: 'package/package.json', required: true },
       });
       metrics.putMetric(
@@ -85,7 +86,7 @@ export const handler = metricScope(
       );
       if (assemblyJson == null) {
         console.log(
-          `Package "${packageName}@${event.detail.packageVersion}" does not contain a .jsii assembly`
+          `Package "${packageName}@${event.detail.packageVersion}" does not contain a ${SPEC_FILE_NAME} assembly`
         );
         return;
       }

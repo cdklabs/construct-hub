@@ -78,7 +78,7 @@ beforeAll(() => {
       expect(namespace).toEqual(constants.METRICS_NAMESPACE);
       return mockMetrics;
     }),
-    setDimensions: (...args: any[]) => expect(args).toEqual([]),
+    setDimensions: (...args: any[]) => expect(args).toEqual([{}]),
   } as any;
 
   mockMetricScope.mockImplementation((cb) => {
@@ -354,7 +354,7 @@ const setupPkgTarS3GetObjectMock = () => {
       try {
         expect(req.Bucket).toBe(MOCK_BUCKET_NAME);
         expect(req.Key).toBe(PACKAGE_TGZ);
-      } catch (e) {
+      } catch (e: any) {
         return cb(e);
       }
       return cb(null, spy());

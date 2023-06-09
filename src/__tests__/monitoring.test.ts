@@ -31,7 +31,7 @@ test('watchful can be used for setting up automatic monitoring', () => {
   // GIVEN
   const stack = new Stack();
   const fn = new lambda.Function(stack, 'Function', {
-    runtime: lambda.Runtime.NODEJS_14_X,
+    runtime: lambda.Runtime.NODEJS_16_X,
     code: lambda.Code.fromInline('foo'),
     handler: 'index.handler',
   });
@@ -176,12 +176,12 @@ test('web canaries can ping URLs and raise high severity alarms', () => {
 
 describe('web canary handler', () => {
   test('web ping is successful', async () => {
-    process.env.URL = 'https://amazon.com';
+    process.env.URL = 'https://www.amazon.com';
     await webCanaryHandler({});
   });
 
   test('web ping throws for a non-200 response', async () => {
-    process.env.URL = 'https://amazon.com/not-found-please12345';
+    process.env.URL = 'https://www.amazon.com/not-found-please12345';
     await expect(webCanaryHandler({})).rejects.toThrow(
       /Response code 404 \(Not Found\)/
     );

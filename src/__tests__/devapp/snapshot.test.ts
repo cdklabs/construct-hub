@@ -2,8 +2,8 @@ import { App } from 'aws-cdk-lib';
 import * as cxapi from 'aws-cdk-lib/cx-api';
 import { stringify as yaml } from 'yaml';
 
-import { Isolation } from '../../construct-hub';
 import { DevStack } from './dev-stack';
+import { Isolation } from '../../construct-hub';
 
 expect.addSnapshotSerializer({
   test: (val) => val instanceof cxapi.CloudFormationStackArtifact,

@@ -43,3 +43,18 @@ export const InvalidCredentials = 'InvalidCredentials';
  * metric emitted when any error occurs
  */
 export const AllErrors = 'AllErrors';
+
+/**
+ * metric emitted for GitHub API remaining rate limit
+ */
+export const GhRateLimitsRemaining = 'GhRateLimitsRemaining';
+
+/**
+ * metric emitted for GitHub API used rate limit
+ */
+export const GhLimitsUsed = 'GhLimitsUsed';
+
+/**
+ * metric emitted for GitHub API limit
+ */
+export const GhLimitsLimit = 'GhLimitsLimit';

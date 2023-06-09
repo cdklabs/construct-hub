@@ -546,8 +546,8 @@ export class BackendDashboard extends Construct {
     ];
     const mFargateUsage = new Metric({
       dimensionsMap: {
-        Class: 'None',
-        Resource: 'OnDemand',
+        Class: 'Standard/OnDemand',
+        Resource: 'vCPU',
         Service: 'Fargate',
         Type: 'Resource',
       },
@@ -562,10 +562,10 @@ export class BackendDashboard extends Construct {
         width: 12,
         title: 'Fargate Resources',
         left: [
-          mFargateUsage.with({ label: 'Fargate Usage (On-Demand)' }),
+          mFargateUsage.with({ label: 'Fargate vCPU Usage (On-Demand)' }),
           new MathExpression({
             expression: 'SERVICE_QUOTA(mFargateUsage)',
-            label: 'Fargate Quota (On-Demand)',
+            label: 'Fargate vCPU Quota (On-Demand)',
             usingMetrics: { mFargateUsage },
           }),
         ],
@@ -595,6 +595,35 @@ export class BackendDashboard extends Construct {
         leftYAxis: { min: 0 },
         right: [
           fillMetric(orchestration.metricEcsTaskCount({ label: 'Task Count' })),
+        ],
+        rightYAxis: { min: 0 },
+      }),
+      new GraphWidget({
+        height: 6,
+        width: 12,
+        title: 'ECS Task Monitor',
+        left: [
+          orchestration.ecsTaskMonitor.metricActiveTaskCount({
+            label: 'Active Task Count',
+          }),
+          orchestration.ecsTaskMonitor.metricKilledTaskCount({
+            label: 'Killed Task Count',
+          }),
+        ],
+        leftYAxis: { min: 0 },
+        right: [
+          orchestration.ecsTaskMonitor.metricActiveTaskAge({
+            label: 'Active Task Age (Max)',
+            statistic: Statistic.MAXIMUM,
+          }),
+          orchestration.ecsTaskMonitor.metricActiveTaskAge({
+            label: 'Active Task Age (Avg)',
+            statistic: Statistic.AVERAGE,
+          }),
+          orchestration.ecsTaskMonitor.metricActiveTaskAge({
+            label: 'Active Task Age (Min)',
+            statistic: Statistic.MINIMUM,
+          }),
         ],
         rightYAxis: { min: 0 },
       }),
@@ -863,6 +892,29 @@ function renderReleaseNotesWidgets(
           releaseNotes.metricChangeLogFetchError({
             label: 'ChangeLogFetchError',
           }),
+        ],
+      }),
+    ],
+    [
+      new GraphWidget({
+        height: 6,
+        width: 12,
+        title: 'GitHub API Rate Limits',
+        left: [
+          fillMetric(
+            releaseNotes.metricGhRateLimitLimit({ label: 'Limit' }),
+            'REPEAT'
+          ),
+          fillMetric(
+            releaseNotes.metricGhRateLimitUsed({ label: 'Used' }),
+            'REPEAT'
+          ),
+          fillMetric(
+            releaseNotes.metricGhRateLimitRemaining({
+              label: 'Remaining',
+            }),
+            'REPEAT'
+          ),
         ],
       }),
     ],

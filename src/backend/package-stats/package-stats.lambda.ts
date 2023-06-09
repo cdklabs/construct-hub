@@ -1,16 +1,16 @@
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
 import got from 'got';
-import { CacheStrategy } from '../../caching';
-import { CatalogClient } from '../catalog-builder/client.lambda-shared';
-import * as aws from '../shared/aws.lambda-shared';
-import { requireEnv } from '../shared/env.lambda-shared';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import {
   NpmDownloadsClient,
   NpmDownloadsEntry,
   NpmDownloadsPeriod,
 } from './npm-downloads.lambda-shared';
+import { CacheStrategy } from '../../caching';
+import { CatalogClient } from '../catalog-builder/client.lambda-shared';
+import * as aws from '../shared/aws.lambda-shared';
+import { requireEnv } from '../shared/env.lambda-shared';
 
 /**
  * Rebuilds the `stats.json` object in the configured S3 bucket.
@@ -61,7 +61,7 @@ export async function handler(event: any, context: Context) {
   console.log(`There are now ${statsCount} packages with NPM stats stored.`);
   await metricScope((metrics) => async () => {
     // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73
-    metrics.setDimensions();
+    metrics.setDimensions({});
 
     metrics.setNamespace(METRICS_NAMESPACE);
     metrics.putMetric(

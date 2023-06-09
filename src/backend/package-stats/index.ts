@@ -12,12 +12,12 @@ import { IFunction, Tracing } from 'aws-cdk-lib/aws-lambda';
 import { RetentionDays } from 'aws-cdk-lib/aws-logs';
 import type { IBucket } from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
+import { MetricName, METRICS_NAMESPACE } from './constants';
+import { PackageStats as Handler } from './package-stats';
 import { lambdaFunctionUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
 import { RUNBOOK_URL } from '../../runbook-url';
 import { CATALOG_KEY } from '../shared/constants';
-import { MetricName, METRICS_NAMESPACE } from './constants';
-import { PackageStats as Handler } from './package-stats';
 
 /**
  * Props for `PackageStats`.

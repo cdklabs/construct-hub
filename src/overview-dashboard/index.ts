@@ -11,10 +11,10 @@ import {
 import { IFunction } from 'aws-cdk-lib/aws-lambda';
 import { IQueue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
-import { Inventory } from '../backend/inventory';
-import { RUNBOOK_URL } from '../runbook-url';
 import { IOverviewDashboard } from './api';
 import { SQSDLQWidget } from './sqs-dlq-widget';
+import { Inventory } from '../backend/inventory';
+import { RUNBOOK_URL } from '../runbook-url';
 
 /**
  * Properties for OverviewDashboard

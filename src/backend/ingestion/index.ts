@@ -34,6 +34,9 @@ import {
   StepFunctionsStartExecution,
 } from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
+import { MetricName, METRICS_NAMESPACE } from './constants';
+import { Ingestion as Handler } from './ingestion';
+import { ReIngest } from './re-ingest';
 import { Repository } from '../../codeartifact/repository';
 import { lambdaFunctionUrl, sqsQueueUrl } from '../../deep-link';
 import { Monitoring } from '../../monitoring';
@@ -50,9 +53,6 @@ import {
   METADATA_KEY_SUFFIX,
   PACKAGE_KEY_SUFFIX,
 } from '../shared/constants';
-import { MetricName, METRICS_NAMESPACE } from './constants';
-import { Ingestion as Handler } from './ingestion';
-import { ReIngest } from './re-ingest';
 
 export interface IngestionProps {
   /**
@@ -374,7 +374,7 @@ export class Ingestion extends Construct implements IGrantable {
   /**
    * This metrics is the total count of packages that were rejected due to
    * mismatched identity (name, version, license) between the `package.json`
-   * file and te `.jsii` attribute.
+   * file and the `.jsii` attribute.
    */
   public metricMismatchedIdentityRejections(opts?: MetricOptions): Metric {
     return new Metric({

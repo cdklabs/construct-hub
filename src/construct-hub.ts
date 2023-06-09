@@ -13,7 +13,6 @@ import { Construct } from 'constructs';
 import { createRestrictedSecurityGroups } from './_limited-internet-access';
 import { AlarmActions, Domain } from './api';
 import { DenyList, Ingestion } from './backend';
-import { BackendDashboard } from './backend-dashboard';
 import { DenyListRule } from './backend/deny-list/api';
 import { FeedBuilder } from './backend/feed-builder';
 import { Inventory } from './backend/inventory';
@@ -23,6 +22,7 @@ import { PackageStats } from './backend/package-stats';
 import { ReleaseNoteFetcher } from './backend/release-notes';
 import { CATALOG_KEY, STORAGE_KEY_PREFIX } from './backend/shared/constants';
 import { VersionTracker } from './backend/version-tracker';
+import { BackendDashboard } from './backend-dashboard';
 import { Repository } from './codeartifact/repository';
 import { DomainRedirect, DomainRedirectSource } from './domain-redirect';
 import { Monitoring } from './monitoring';
@@ -575,7 +575,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
 
     const subnetType =
       isolation === Isolation.NO_INTERNET_ACCESS
-        ? ec2.SubnetType.ISOLATED
+        ? ec2.SubnetType.PRIVATE_ISOLATED
         : ec2.SubnetType.PRIVATE_WITH_NAT;
     const vpcSubnets = { subnetType };
 
@@ -583,7 +583,8 @@ export class ConstructHub extends Construct implements iam.IGrantable {
       enableDnsHostnames: true,
       enableDnsSupport: true,
       // Provision no NAT gateways if we are running ISOLATED (we wouldn't have a public subnet)
-      natGateways: subnetType === ec2.SubnetType.ISOLATED ? 0 : undefined,
+      natGateways:
+        subnetType === ec2.SubnetType.PRIVATE_ISOLATED ? 0 : undefined,
       // Pre-allocating PUBLIC / PRIVATE / INTERNAL subnets, regardless of use, so we don't create
       // a whole new VPC if we ever need to introduce subnets of these types.
       subnetConfiguration: [
@@ -591,17 +592,17 @@ export class ConstructHub extends Construct implements iam.IGrantable {
         {
           name: 'Public',
           subnetType: ec2.SubnetType.PUBLIC,
-          reserved: subnetType === ec2.SubnetType.ISOLATED,
+          reserved: subnetType === ec2.SubnetType.PRIVATE_ISOLATED,
         },
         {
           name: 'Private',
           subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
-          reserved: subnetType === ec2.SubnetType.ISOLATED,
+          reserved: subnetType === ec2.SubnetType.PRIVATE_ISOLATED,
         },
         {
           name: 'Isolated',
-          subnetType: ec2.SubnetType.ISOLATED,
-          reserved: subnetType !== ec2.SubnetType.ISOLATED,
+          subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+          reserved: subnetType !== ec2.SubnetType.PRIVATE_ISOLATED,
         },
       ],
     });

@@ -2,6 +2,109 @@
 
 exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
 Object {
+  "Mappings": Object {
+    "DefaultCrNodeVersionMap": Object {
+      "af-south-1": Object {
+        "value": "nodejs16.x",
+      },
+      "ap-east-1": Object {
+        "value": "nodejs16.x",
+      },
+      "ap-northeast-1": Object {
+        "value": "nodejs16.x",
+      },
+      "ap-northeast-2": Object {
+        "value": "nodejs16.x",
+      },
+      "ap-northeast-3": Object {
+        "value": "nodejs16.x",
+      },
+      "ap-south-1": Object {
+        "value": "nodejs16.x",
+      },
+      "ap-south-2": Object {
+        "value": "nodejs16.x",
+      },
+      "ap-southeast-1": Object {
+        "value": "nodejs16.x",
+      },
+      "ap-southeast-2": Object {
+        "value": "nodejs16.x",
+      },
+      "ap-southeast-3": Object {
+        "value": "nodejs16.x",
+      },
+      "ca-central-1": Object {
+        "value": "nodejs16.x",
+      },
+      "cn-north-1": Object {
+        "value": "nodejs16.x",
+      },
+      "cn-northwest-1": Object {
+        "value": "nodejs16.x",
+      },
+      "eu-central-1": Object {
+        "value": "nodejs16.x",
+      },
+      "eu-central-2": Object {
+        "value": "nodejs16.x",
+      },
+      "eu-north-1": Object {
+        "value": "nodejs16.x",
+      },
+      "eu-south-1": Object {
+        "value": "nodejs16.x",
+      },
+      "eu-south-2": Object {
+        "value": "nodejs16.x",
+      },
+      "eu-west-1": Object {
+        "value": "nodejs16.x",
+      },
+      "eu-west-2": Object {
+        "value": "nodejs16.x",
+      },
+      "eu-west-3": Object {
+        "value": "nodejs16.x",
+      },
+      "me-central-1": Object {
+        "value": "nodejs16.x",
+      },
+      "me-south-1": Object {
+        "value": "nodejs16.x",
+      },
+      "sa-east-1": Object {
+        "value": "nodejs16.x",
+      },
+      "us-east-1": Object {
+        "value": "nodejs16.x",
+      },
+      "us-east-2": Object {
+        "value": "nodejs16.x",
+      },
+      "us-gov-east-1": Object {
+        "value": "nodejs16.x",
+      },
+      "us-gov-west-1": Object {
+        "value": "nodejs16.x",
+      },
+      "us-iso-east-1": Object {
+        "value": "nodejs14.x",
+      },
+      "us-iso-west-1": Object {
+        "value": "nodejs14.x",
+      },
+      "us-isob-east-1": Object {
+        "value": "nodejs14.x",
+      },
+      "us-west-1": Object {
+        "value": "nodejs16.x",
+      },
+      "us-west-2": Object {
+        "value": "nodejs16.x",
+      },
+    },
+  },
   "Parameters": Object {
     "BootstrapVersion": Object {
       "Default": "/cdk-bootstrap/hnb659fds/version",
@@ -19,7 +122,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "39381d2c8b8ec42679de4960c24f0c83c56772cdc2b10b6fc14cd0a99aba42ed.zip",
+          "S3Key": "bb459fac5f6b4b052aac9803443226d161a5cfe96f4648b21f9e4912c698bf30.zip",
         },
         "Handler": "index.handler",
         "Role": Object {
@@ -28,7 +131,15 @@ Object {
             "Arn",
           ],
         },
-        "Runtime": "nodejs12.x",
+        "Runtime": Object {
+          "Fn::FindInMap": Array [
+            "DefaultCrNodeVersionMap",
+            Object {
+              "Ref": "AWS::Region",
+            },
+            "value",
+          ],
+        },
         "Timeout": 120,
       },
       "Type": "AWS::Lambda::Function",
@@ -195,7 +306,7 @@ Object {
           "S3Bucket": Object {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "558dc75fbdc793c8e2f64f85d2d7ed2cb820c727ec7e9b08666ad1af0103992e.zip",
+          "S3Key": "5fa1330271b8967d9254ba2d4a07144f8acefe8b77e6d6bba38261373a50d5f8.zip",
         },
         "Handler": "index.handler",
         "Role": Object {
@@ -204,7 +315,15 @@ Object {
             "Arn",
           ],
         },
-        "Runtime": "nodejs14.x",
+        "Runtime": Object {
+          "Fn::FindInMap": Array [
+            "DefaultCrNodeVersionMap",
+            Object {
+              "Ref": "AWS::Region",
+            },
+            "value",
+          ],
+        },
       },
       "Type": "AWS::Lambda::Function",
     },
@@ -517,6 +636,10 @@ Object {
       "Type": "AWS::EC2::EIP",
     },
     "VPCPublicSubnet1NATGatewayE0556630": Object {
+      "DependsOn": Array [
+        "VPCPublicSubnet1DefaultRoute91CEF279",
+        "VPCPublicSubnet1RouteTableAssociation0B0896DC",
+      ],
       "Properties": Object {
         "AllocationId": Object {
           "Fn::GetAtt": Array [
@@ -621,6 +744,10 @@ Object {
       "Type": "AWS::EC2::EIP",
     },
     "VPCPublicSubnet2NATGateway3C070193": Object {
+      "DependsOn": Array [
+        "VPCPublicSubnet2DefaultRouteB7481BBA",
+        "VPCPublicSubnet2RouteTableAssociation5A808732",
+      ],
       "Properties": Object {
         "AllocationId": Object {
           "Fn::GetAtt": Array [
@@ -799,39 +926,15 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "githubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378fea": Object {
+    "githubapiIPv4179d867a9708387a1e798d46ac19c0a9014521d4": Object {
       "Properties": Object {
         "AddressFamily": "IPv4",
         "Entries": Array [
-          Object {
-            "Cidr": "102.133.202.248/32",
-          },
-          Object {
-            "Cidr": "13.209.163.61/32",
-          },
-          Object {
-            "Cidr": "13.230.158.120/32",
-          },
-          Object {
-            "Cidr": "13.233.76.15/32",
-          },
-          Object {
-            "Cidr": "13.234.168.60/32",
-          },
-          Object {
-            "Cidr": "13.236.14.80/32",
-          },
-          Object {
-            "Cidr": "13.238.54.232/32",
-          },
           Object {
             "Cidr": "140.82.112.0/20",
           },
           Object {
             "Cidr": "143.55.64.0/20",
-          },
-          Object {
-            "Cidr": "18.179.245.253/32",
           },
           Object {
             "Cidr": "185.199.108.0/22",
@@ -840,27 +943,36 @@ Object {
             "Cidr": "192.30.252.0/22",
           },
           Object {
+            "Cidr": "20.200.245.245/32",
+          },
+          Object {
             "Cidr": "20.201.28.148/32",
           },
           Object {
             "Cidr": "20.205.243.168/32",
           },
           Object {
-            "Cidr": "52.63.231.178/32",
+            "Cidr": "20.207.73.85/32",
           },
           Object {
-            "Cidr": "52.69.239.207/32",
+            "Cidr": "20.233.54.49/32",
           },
           Object {
-            "Cidr": "54.180.75.25/32",
+            "Cidr": "20.248.137.49/32",
+          },
+          Object {
+            "Cidr": "20.27.177.116/32",
+          },
+          Object {
+            "Cidr": "20.87.225.211/32",
           },
         ],
-        "MaxEntries": 17,
+        "MaxEntries": 12,
         "PrefixListName": "github.api.IPv4",
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "githubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378feaFFACB27C": Object {
+    "githubapiIPv4179d867a9708387a1e798d46ac19c0a9014521d4B4A19AE1": Object {
       "Properties": Object {
         "GroupDescription": "TestStack/github.api-IPv4",
         "Tags": Array [
@@ -875,19 +987,19 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "githubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378featoTestStackgithubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378fea4436583C814": Object {
+    "githubapiIPv4179d867a9708387a1e798d46ac19c0a9014521d4toTestStackgithubapiIPv4179d867a9708387a1e798d46ac19c0a9014521d44436D1C5A00": Object {
       "Properties": Object {
         "Description": "to github.api (IPv4)",
         "DestinationPrefixListId": Object {
           "Fn::GetAtt": Array [
-            "githubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378fea",
+            "githubapiIPv4179d867a9708387a1e798d46ac19c0a9014521d4",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "githubapiIPv424c16ca4cf57b92219f56d3e4d4c4f6818378feaFFACB27C",
+            "githubapiIPv4179d867a9708387a1e798d46ac19c0a9014521d4B4A19AE1",
             "GroupId",
           ],
         },
@@ -896,34 +1008,10 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "githubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6d": Object {
+    "githubgitIPv4172f66a5fbd73b0c0ef25b6c601d5acc6365e585": Object {
       "Properties": Object {
         "AddressFamily": "IPv4",
         "Entries": Array [
-          Object {
-            "Cidr": "102.133.202.242/32",
-          },
-          Object {
-            "Cidr": "102.133.202.246/32",
-          },
-          Object {
-            "Cidr": "13.114.40.48/32",
-          },
-          Object {
-            "Cidr": "13.125.114.27/32",
-          },
-          Object {
-            "Cidr": "13.234.176.102/32",
-          },
-          Object {
-            "Cidr": "13.234.210.38/32",
-          },
-          Object {
-            "Cidr": "13.236.229.21/32",
-          },
-          Object {
-            "Cidr": "13.237.44.5/32",
-          },
           Object {
             "Cidr": "140.82.112.0/20",
           },
@@ -931,16 +1019,16 @@ Object {
             "Cidr": "143.55.64.0/20",
           },
           Object {
-            "Cidr": "15.164.81.167/32",
-          },
-          Object {
-            "Cidr": "18.181.13.223/32",
-          },
-          Object {
             "Cidr": "185.199.108.0/22",
           },
           Object {
             "Cidr": "192.30.252.0/22",
+          },
+          Object {
+            "Cidr": "20.200.245.247/32",
+          },
+          Object {
+            "Cidr": "20.200.245.248/32",
           },
           Object {
             "Cidr": "20.201.28.151/32",
@@ -955,48 +1043,42 @@ Object {
             "Cidr": "20.205.243.166/32",
           },
           Object {
-            "Cidr": "3.105.147.174/32",
+            "Cidr": "20.207.73.82/32",
           },
           Object {
-            "Cidr": "3.106.158.203/32",
+            "Cidr": "20.207.73.83/32",
           },
           Object {
-            "Cidr": "3.34.26.58/32",
+            "Cidr": "20.233.54.52/32",
           },
           Object {
-            "Cidr": "3.6.106.81/32",
+            "Cidr": "20.233.54.53/32",
           },
           Object {
-            "Cidr": "3.7.2.84/32",
+            "Cidr": "20.248.137.48/32",
           },
           Object {
-            "Cidr": "52.192.72.89/32",
+            "Cidr": "20.248.137.50/32",
           },
           Object {
-            "Cidr": "52.63.152.235/32",
+            "Cidr": "20.27.177.113/32",
           },
           Object {
-            "Cidr": "52.64.108.95/32",
+            "Cidr": "20.27.177.118/32",
           },
           Object {
-            "Cidr": "52.69.186.44/32",
+            "Cidr": "20.87.225.212/32",
           },
           Object {
-            "Cidr": "52.78.231.108/32",
-          },
-          Object {
-            "Cidr": "54.168.17.15/32",
-          },
-          Object {
-            "Cidr": "54.238.117.237/32",
+            "Cidr": "20.87.225.214/32",
           },
         ],
-        "MaxEntries": 30,
+        "MaxEntries": 20,
         "PrefixListName": "github.git.IPv4",
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "githubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6dA1E32585": Object {
+    "githubgitIPv4172f66a5fbd73b0c0ef25b6c601d5acc6365e585D9A8E1E3": Object {
       "Properties": Object {
         "GroupDescription": "TestStack/github.git-IPv4",
         "Tags": Array [
@@ -1011,19 +1093,19 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "githubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6dtoTestStackgithubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6d4435A75B4DA": Object {
+    "githubgitIPv4172f66a5fbd73b0c0ef25b6c601d5acc6365e585toTestStackgithubgitIPv4172f66a5fbd73b0c0ef25b6c601d5acc6365e5854435A64344A": Object {
       "Properties": Object {
         "Description": "to github.git (IPv4)",
         "DestinationPrefixListId": Object {
           "Fn::GetAtt": Array [
-            "githubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6d",
+            "githubgitIPv4172f66a5fbd73b0c0ef25b6c601d5acc6365e585",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "githubgitIPv4b08084c572c0b5ff4dd2b9f42c0c0386b35abd6dA1E32585",
+            "githubgitIPv4172f66a5fbd73b0c0ef25b6c601d5acc6365e585D9A8E1E3",
             "GroupId",
           ],
         },
@@ -1032,36 +1114,15 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "githubwebIPv49b292faed277d68adffe79e317cbcff49762581a": Object {
+    "githubwebIPv4b687737393cacef30bab80886608a7fd3799561b": Object {
       "Properties": Object {
         "AddressFamily": "IPv4",
         "Entries": Array [
-          Object {
-            "Cidr": "102.133.202.242/32",
-          },
-          Object {
-            "Cidr": "13.114.40.48/32",
-          },
-          Object {
-            "Cidr": "13.234.176.102/32",
-          },
-          Object {
-            "Cidr": "13.234.210.38/32",
-          },
-          Object {
-            "Cidr": "13.236.229.21/32",
-          },
-          Object {
-            "Cidr": "13.237.44.5/32",
-          },
           Object {
             "Cidr": "140.82.112.0/20",
           },
           Object {
             "Cidr": "143.55.64.0/20",
-          },
-          Object {
-            "Cidr": "15.164.81.167/32",
           },
           Object {
             "Cidr": "185.199.108.0/22",
@@ -1070,30 +1131,36 @@ Object {
             "Cidr": "192.30.252.0/22",
           },
           Object {
+            "Cidr": "20.200.245.247/32",
+          },
+          Object {
             "Cidr": "20.201.28.151/32",
           },
           Object {
             "Cidr": "20.205.243.166/32",
           },
           Object {
-            "Cidr": "52.192.72.89/32",
+            "Cidr": "20.207.73.82/32",
           },
           Object {
-            "Cidr": "52.64.108.95/32",
+            "Cidr": "20.233.54.53/32",
           },
           Object {
-            "Cidr": "52.69.186.44/32",
+            "Cidr": "20.248.137.48/32",
           },
           Object {
-            "Cidr": "52.78.231.108/32",
+            "Cidr": "20.27.177.113/32",
+          },
+          Object {
+            "Cidr": "20.87.225.212/32",
           },
         ],
-        "MaxEntries": 17,
+        "MaxEntries": 12,
         "PrefixListName": "github.web.IPv4",
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "githubwebIPv49b292faed277d68adffe79e317cbcff49762581aED35DB49": Object {
+    "githubwebIPv4b687737393cacef30bab80886608a7fd3799561b44AB4689": Object {
       "Properties": Object {
         "GroupDescription": "TestStack/github.web-IPv4",
         "Tags": Array [
@@ -1108,19 +1175,19 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "githubwebIPv49b292faed277d68adffe79e317cbcff49762581atoTestStackgithubwebIPv49b292faed277d68adffe79e317cbcff49762581a44397D88D6F": Object {
+    "githubwebIPv4b687737393cacef30bab80886608a7fd3799561btoTestStackgithubwebIPv4b687737393cacef30bab80886608a7fd3799561b443C353106E": Object {
       "Properties": Object {
         "Description": "to github.web (IPv4)",
         "DestinationPrefixListId": Object {
           "Fn::GetAtt": Array [
-            "githubwebIPv49b292faed277d68adffe79e317cbcff49762581a",
+            "githubwebIPv4b687737393cacef30bab80886608a7fd3799561b",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
         "GroupId": Object {
           "Fn::GetAtt": Array [
-            "githubwebIPv49b292faed277d68adffe79e317cbcff49762581aED35DB49",
+            "githubwebIPv4b687737393cacef30bab80886608a7fd3799561b44AB4689",
             "GroupId",
           ],
         },

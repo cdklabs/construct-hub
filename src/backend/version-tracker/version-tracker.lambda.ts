@@ -1,9 +1,6 @@
 import { metricScope, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
 import * as _AWS from 'aws-sdk';
-import { CacheStrategy } from '../../caching';
-import * as aws from '../shared/aws.lambda-shared';
-import { requireEnv } from '../shared/env.lambda-shared';
 import {
   ENV_PACKAGE_DATA_BUCKET_NAME,
   ENV_PACKAGE_DATA_KEY_PREFIX,
@@ -12,6 +9,9 @@ import {
   MetricName,
   METRICS_NAMESPACE,
 } from './constants';
+import { CacheStrategy } from '../../caching';
+import * as aws from '../shared/aws.lambda-shared';
+import { requireEnv } from '../shared/env.lambda-shared';
 
 // Batch size that limits how many outgoing S3 calls are made at a time.
 // This can be tweaked as needed (increased if we want to squeeze out more
@@ -78,7 +78,7 @@ export async function handler(event: any, context: Context) {
   console.log(`${versionMap.size} package versions have been recorded.`);
   await metricScope((metrics) => async () => {
     // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73
-    metrics.setDimensions();
+    metrics.setDimensions({});
 
     metrics.setNamespace(METRICS_NAMESPACE);
     metrics.putMetric(

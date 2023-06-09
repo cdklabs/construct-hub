@@ -61,7 +61,7 @@ test('basic case', () => {
       } else {
         fail(`Unexpected object key: ${request.Key}`);
       }
-    } catch (e) {
+    } catch (e: any) {
       cb(e, undefined);
     }
   });
@@ -82,7 +82,7 @@ test('basic case', () => {
         time: mockTime,
       });
       cb(undefined, {});
-    } catch (e) {
+    } catch (e: any) {
       cb(e, undefined);
     }
   });
