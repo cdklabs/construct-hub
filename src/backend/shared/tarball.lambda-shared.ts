@@ -1,4 +1,5 @@
 import { createGunzip } from 'zlib';
+import { Readable } from 'streamx';
 import { extract } from 'tar-stream';
 
 /**
@@ -21,10 +22,29 @@ export async function extractObjects<S extends Selector>(
   tgz: Buffer,
   selector: S
 ): Promise<Selection<S>> {
-  const tarball = await gunzip(tgz);
   return new Promise((ok, ko) => {
     const result: { [name: string]: Buffer } = {};
-    const extractor = extract({ filenameEncoding: 'utf-8' })
+
+    // The readable will send data in chubks of 4KiB here.
+    let idx = 0;
+    new Readable({
+      read(cb) {
+        let drained = true;
+        while (drained && idx < tgz.length) {
+          const slice = tgz.slice(idx, idx + 4_096);
+          drained = this.push(slice);
+          idx += slice.length;
+        }
+
+        // If we've sent it all, we'll cork it by pushing null.
+        if (idx >= tgz.length) {
+          this.push(null);
+        }
+        cb(null);
+      },
+    })
+      .pipe(createGunzip())
+      .pipe(extract({ filenameEncoding: 'utf-8' }), { end: true })
       .once('error', ko)
       .once('finish', () => {
         for (const [name, { path, required }] of Object.entries(selector)) {
@@ -45,41 +65,27 @@ export async function extractObjects<S extends Selector>(
         ok(result as Selection<S>);
       })
       .on('entry', (headers, stream, next) => {
-        for (const [name, config] of Object.entries(selector)) {
-          if (selectorMatches(headers.name, config)) {
-            const chunks = new Array<Buffer>();
-            stream
-              .once('error', ko)
-              .on('data', (chunk) => chunks.push(Buffer.from(chunk)))
-              .once('end', () => {
-                result[name] = Buffer.concat(chunks);
-                // Running `next` on the next runLoop iteration to avoid stack overflow
-                setImmediate(next);
-              })
-              .resume();
-            return;
-          }
+        const selected = Object.entries(selector).find(([_, config]) =>
+          selectorMatches(headers.name, config)
+        );
+        const chunks = selected != null ? new Array<Buffer>() : undefined;
+        if (chunks != null) {
+          stream.on('data', (chunk) => chunks?.push(Buffer.from(chunk)));
         }
-        // Running `next` on the next runLoop iteration to avoid stack overflow
-        setImmediate(next);
+        // Un-conditionally consume the `stream`, as not doing so weill prevent the tar-stream from continuing to
+        // process more entries...
+        stream
+          .once('error', next)
+          .once('end', () => {
+            if (selected != null && chunks != null) {
+              const [name] = selected;
+              result[name] = Buffer.concat(chunks);
+            }
+            next();
+          })
+          .resume();
+        return;
       });
-    extractor.write(tarball, (err) => {
-      if (err != null) {
-        ko(err);
-      }
-      extractor.end();
-    });
-  });
-}
-
-function gunzip(gz: Buffer): Promise<Buffer> {
-  return new Promise((ok, ko) => {
-    const chunks = new Array<Buffer>();
-    createGunzip()
-      .once('error', ko)
-      .on('data', (chunk) => chunks.push(Buffer.from(chunk)))
-      .once('end', () => ok(Buffer.concat(chunks)))
-      .end(gz);
   });
 }
 
