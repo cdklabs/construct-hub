@@ -72,7 +72,7 @@ export async function extractObjects<S extends Selector>(
         if (chunks != null) {
           stream.on('data', (chunk) => chunks?.push(Buffer.from(chunk)));
         }
-        // Un-conditionally consume the `stream`, as not doing so weill prevent the tar-stream from continuing to
+        // Un-conditionally consume the `stream`, as not doing so will prevent the tar-stream from continuing to
         // process more entries...
         stream
           .once('error', next)
