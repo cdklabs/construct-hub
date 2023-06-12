@@ -1,5 +1,4 @@
-import { EventEmitter } from 'events';
-import type { createGunzip, gunzipSync } from 'zlib';
+import { createGzip, gzipSync } from 'zlib';
 import {
   Assembly,
   CollectionKind,
@@ -15,18 +14,17 @@ import type { metricScope, MetricsLogger } from 'aws-embedded-metrics';
 import { Context, SQSEvent } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
-import type { extract, Headers } from 'tar-stream';
+import { pack } from 'tar-stream';
 import { MetricName } from '../../../backend/ingestion/constants';
 import { reset } from '../../../backend/shared/aws.lambda-shared';
 import * as constants from '../../../backend/shared/constants';
 import type { requireEnv } from '../../../backend/shared/env.lambda-shared';
+import { integrity as computeIntegrity } from '../../../backend/shared/integrity.lambda-shared';
 import { TagCondition } from '../../../package-tag';
 
 jest.setTimeout(10_000);
 
-jest.mock('zlib');
 jest.mock('aws-embedded-metrics');
-jest.mock('tar-stream');
 jest.mock('../../../backend/shared/env.lambda-shared');
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -85,11 +83,8 @@ test('basic happy case', async () => {
   const stagingBucket = 'staging-bucket';
   const stagingKey = 'staging-key';
   const stagingVersion = 'staging-version-id';
-  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
-  const fakeTar = Buffer.from('fake-tarball-content');
   const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
   const time = '2021-07-12T15:18:00.000000+02:00';
-  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
@@ -108,6 +103,16 @@ test('basic happy case', async () => {
     logGroupName: 'Fake-Log-Group',
     logStreamName: 'Fake-Log-Stream',
   } as any;
+
+  const tarball = await buildTarGz({
+    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+    'package/index.js': '// Ignore me!',
+    'package/package.json': JSON.stringify({
+      name: packageName,
+      version: packageVersion,
+      license: packageLicense,
+    }),
+  });
 
   AWSMock.mock(
     'S3',
@@ -130,33 +135,8 @@ test('basic happy case', async () => {
       } catch (e: any) {
         return cb(e);
       }
-      return cb(null, { Body: fakeTarGz });
+      return cb(null, { Body: tarball });
     }
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
-    typeof createGunzip
-  >;
-  mockCreateGunzip.mockImplementation(
-    () => new FakeGunzip(fakeTarGz, fakeTar) as any
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
-    typeof extract
-  >;
-  mockExtract.mockImplementation(
-    () =>
-      new FakeExtract(fakeTar, {
-        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-        'package/index.js': '// Ignore me!',
-        'package/package.json': JSON.stringify({
-          name: packageName,
-          version: packageVersion,
-          license: packageLicense,
-        }),
-      }) as any
   );
 
   let mockTarballCreated = false;
@@ -201,7 +181,7 @@ test('basic happy case', async () => {
             break;
           case packageKey:
             expect(req.ContentType).toBe('application/octet-stream');
-            expect(req.Body).toEqual(fakeTarGz);
+            expect(req.Body).toEqual(tarball);
             mockTarballCreated = true;
             break;
           default:
@@ -248,7 +228,14 @@ test('basic happy case', async () => {
       {
         attributes: {} as any,
         awsRegion: 'test-bermuda-1',
-        body: JSON.stringify({ tarballUri, integrity, time }),
+        body: JSON.stringify({
+          tarballUri,
+          integrity: computeIntegrity(
+            { metadata: {}, tarballUri, time },
+            tarball
+          ).integrity,
+          time,
+        }),
         eventSource: 'sqs',
         eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
         md5OfBody: 'Fake-MD5-Of-Body',
@@ -311,11 +298,8 @@ test('basic happy case with duplicated packages', async () => {
   const stagingBucket = 'staging-bucket';
   const stagingKey = 'staging-key';
   const stagingVersion = 'staging-version-id';
-  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
-  const fakeTar = Buffer.from('fake-tarball-content');
   const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
   const time = '2021-07-12T15:18:00.000000+02:00';
-  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
@@ -334,6 +318,16 @@ test('basic happy case with duplicated packages', async () => {
     logGroupName: 'Fake-Log-Group',
     logStreamName: 'Fake-Log-Stream',
   } as any;
+
+  const tarball = await buildTarGz({
+    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+    'package/index.js': '// Ignore me!',
+    'package/package.json': JSON.stringify({
+      name: packageName,
+      version: packageVersion,
+      license: packageLicense,
+    }),
+  });
 
   AWSMock.mock(
     'S3',
@@ -356,33 +350,8 @@ test('basic happy case with duplicated packages', async () => {
       } catch (e: any) {
         return cb(e);
       }
-      return cb(null, { Body: fakeTarGz });
+      return cb(null, { Body: tarball });
     }
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
-    typeof createGunzip
-  >;
-  mockCreateGunzip.mockImplementation(
-    () => new FakeGunzip(fakeTarGz, fakeTar) as any
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
-    typeof extract
-  >;
-  mockExtract.mockImplementation(
-    () =>
-      new FakeExtract(fakeTar, {
-        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-        'package/index.js': '// Ignore me!',
-        'package/package.json': JSON.stringify({
-          name: packageName,
-          version: packageVersion,
-          license: packageLicense,
-        }),
-      }) as any
   );
 
   let mockTarballCreated = false;
@@ -427,7 +396,7 @@ test('basic happy case with duplicated packages', async () => {
             break;
           case packageKey:
             expect(req.ContentType).toBe('application/octet-stream');
-            expect(req.Body).toEqual(fakeTarGz);
+            expect(req.Body).toEqual(tarball);
             mockTarballCreated = true;
             break;
           default:
@@ -477,7 +446,14 @@ test('basic happy case with duplicated packages', async () => {
       {
         attributes: {} as any,
         awsRegion: 'test-bermuda-1',
-        body: JSON.stringify({ tarballUri, integrity, time }),
+        body: JSON.stringify({
+          tarballUri,
+          integrity: computeIntegrity(
+            { metadata: {}, tarballUri, time },
+            tarball
+          ).integrity,
+          time,
+        }),
         eventSource: 'sqs',
         eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
         md5OfBody: 'Fake-MD5-Of-Body',
@@ -488,7 +464,14 @@ test('basic happy case with duplicated packages', async () => {
       {
         attributes: {} as any,
         awsRegion: 'test-bermuda-1',
-        body: JSON.stringify({ tarballUri, integrity, time }),
+        body: JSON.stringify({
+          tarballUri,
+          integrity: computeIntegrity(
+            { metadata: {}, tarballUri, time },
+            tarball
+          ).integrity,
+          time,
+        }),
         eventSource: 'sqs',
         eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
         md5OfBody: 'Fake-MD5-Of-Body',
@@ -551,11 +534,8 @@ test('basic happy case with compressed assembly', async () => {
   const stagingBucket = 'staging-bucket';
   const stagingKey = 'staging-key';
   const stagingVersion = 'staging-version-id';
-  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
-  const fakeTar = Buffer.from('fake-tarball-content');
   const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
   const time = '2021-07-12T15:18:00.000000+02:00';
-  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
@@ -580,6 +560,17 @@ test('basic happy case with compressed assembly', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
+  const tarball = await buildTarGz({
+    [`package/${SPEC_FILE_NAME}`]: fakeDotJsiiRedirect,
+    [`package/${SPEC_FILE_NAME_COMPRESSED}`]: gzipSync(fakeDotJsii),
+    'package/index.js': '// Ignore me!',
+    'package/package.json': JSON.stringify({
+      name: packageName,
+      version: packageVersion,
+      license: packageLicense,
+    }),
+  });
+
   AWSMock.mock(
     'S3',
     'getObject',
@@ -601,42 +592,8 @@ test('basic happy case with compressed assembly', async () => {
       } catch (e: any) {
         return cb(e);
       }
-      return cb(null, { Body: fakeTarGz });
+      return cb(null, { Body: tarball });
     }
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
-    typeof createGunzip
-  >;
-  mockCreateGunzip.mockImplementation(
-    () => new FakeGunzip(fakeTarGz, fakeTar) as any
-  );
-
-  // mock gunzipSync as that is what is used in loadAssemblyFromBuffer to uncompress assemblies
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockGunzipSync = require('zlib').gunzipSync as jest.MockedFunction<
-    typeof gunzipSync
-  >;
-  mockGunzipSync.mockImplementation(() => Buffer.from(fakeDotJsii));
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
-    typeof extract
-  >;
-  mockExtract.mockImplementation(
-    () =>
-      new FakeExtract(fakeTar, {
-        [`package/${SPEC_FILE_NAME}`]: fakeDotJsiiRedirect,
-        [`package/${SPEC_FILE_NAME_COMPRESSED}`]:
-          '// Mocks a file existing with this name',
-        'package/index.js': '// Ignore me!',
-        'package/package.json': JSON.stringify({
-          name: packageName,
-          version: packageVersion,
-          license: packageLicense,
-        }),
-      }) as any
   );
 
   let mockTarballCreated = false;
@@ -681,7 +638,7 @@ test('basic happy case with compressed assembly', async () => {
             break;
           case packageKey:
             expect(req.ContentType).toBe('application/octet-stream');
-            expect(req.Body).toEqual(fakeTarGz);
+            expect(req.Body).toEqual(tarball);
             mockTarballCreated = true;
             break;
           default:
@@ -728,7 +685,14 @@ test('basic happy case with compressed assembly', async () => {
       {
         attributes: {} as any,
         awsRegion: 'test-bermuda-1',
-        body: JSON.stringify({ tarballUri, integrity, time }),
+        body: JSON.stringify({
+          tarballUri,
+          integrity: computeIntegrity(
+            { metadata: {}, tarballUri, time },
+            tarball
+          ).integrity,
+          time,
+        }),
         eventSource: 'sqs',
         eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
         md5OfBody: 'Fake-MD5-Of-Body',
@@ -742,7 +706,6 @@ test('basic happy case with compressed assembly', async () => {
   // We require the handler here so that any mocks to metricScope are set up
   // prior to the handler being created.
   //
-
   await expect(
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     require('../../../backend/ingestion/ingestion.lambda').handler(
@@ -791,12 +754,9 @@ test('basic happy case with license file', async () => {
   const stagingBucket = 'staging-bucket';
   const stagingKey = 'staging-key';
   const stagingVersion = 'staging-version-id';
-  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
-  const fakeTar = Buffer.from('fake-tarball-content');
   const fakeLicense = 'inscrutable-legalese';
   const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
   const time = '2021-07-12T15:18:00.000000+02:00';
-  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
@@ -815,6 +775,17 @@ test('basic happy case with license file', async () => {
     logGroupName: 'Fake-Log-Group',
     logStreamName: 'Fake-Log-Stream',
   } as any;
+
+  const tarball = await buildTarGz({
+    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+    'package/LICENSE.md': fakeLicense,
+    'package/index.js': '// Ignore me!',
+    'package/package.json': JSON.stringify({
+      name: packageName,
+      version: packageVersion,
+      license: packageLicense,
+    }),
+  });
 
   AWSMock.mock(
     'S3',
@@ -837,34 +808,8 @@ test('basic happy case with license file', async () => {
       } catch (e: any) {
         return cb(e);
       }
-      return cb(null, { Body: fakeTarGz });
+      return cb(null, { Body: tarball });
     }
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
-    typeof createGunzip
-  >;
-  mockCreateGunzip.mockImplementation(
-    () => new FakeGunzip(fakeTarGz, fakeTar) as any
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
-    typeof extract
-  >;
-  mockExtract.mockImplementation(
-    () =>
-      new FakeExtract(fakeTar, {
-        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-        'package/LICENSE.md': fakeLicense,
-        'package/index.js': '// Ignore me!',
-        'package/package.json': JSON.stringify({
-          name: packageName,
-          version: packageVersion,
-          license: packageLicense,
-        }),
-      }) as any
   );
 
   let mockTarballCreated = false;
@@ -906,7 +851,7 @@ test('basic happy case with license file', async () => {
             break;
           case packageKey:
             expect(req.ContentType).toBe('application/octet-stream');
-            expect(req.Body).toEqual(fakeTarGz);
+            expect(req.Body).toEqual(tarball);
             mockTarballCreated = true;
             break;
           default:
@@ -956,7 +901,14 @@ test('basic happy case with license file', async () => {
       {
         attributes: {} as any,
         awsRegion: 'test-bermuda-1',
-        body: JSON.stringify({ tarballUri, integrity, time }),
+        body: JSON.stringify({
+          tarballUri,
+          integrity: computeIntegrity(
+            { metadata: {}, tarballUri, time },
+            tarball
+          ).integrity,
+          time,
+        }),
         eventSource: 'sqs',
         eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
         md5OfBody: 'Fake-MD5-Of-Body',
@@ -1018,11 +970,8 @@ test('basic happy case with custom package links', async () => {
   const stagingBucket = 'staging-bucket';
   const stagingKey = 'staging-key';
   const stagingVersion = 'staging-version-id';
-  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
-  const fakeTar = Buffer.from('fake-tarball-content');
   const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
   const time = '2021-07-12T15:18:00.000000+02:00';
-  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
@@ -1059,6 +1008,23 @@ test('basic happy case with custom package links', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
+  const tarball = await buildTarGz({
+    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+    'package/index.js': '// Ignore me!',
+    'package/package.json': JSON.stringify({
+      name: packageName,
+      version: packageVersion,
+      license: packageLicense,
+      constructHub: {
+        packageLinks: {
+          PackageLinkKey: packageLinkValue,
+          PackageLinkDomainKey: packageLinkValue,
+          PackageLinkBadDomainKey: packageLinkBadValue,
+        },
+      },
+    }),
+  });
+
   AWSMock.mock(
     'S3',
     'getObject',
@@ -1080,40 +1046,8 @@ test('basic happy case with custom package links', async () => {
       } catch (e: any) {
         return cb(e);
       }
-      return cb(null, { Body: fakeTarGz });
+      return cb(null, { Body: tarball });
     }
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
-    typeof createGunzip
-  >;
-  mockCreateGunzip.mockImplementation(
-    () => new FakeGunzip(fakeTarGz, fakeTar) as any
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
-    typeof extract
-  >;
-  mockExtract.mockImplementation(
-    () =>
-      new FakeExtract(fakeTar, {
-        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-        'package/index.js': '// Ignore me!',
-        'package/package.json': JSON.stringify({
-          name: packageName,
-          version: packageVersion,
-          license: packageLicense,
-          constructHub: {
-            packageLinks: {
-              PackageLinkKey: packageLinkValue,
-              PackageLinkDomainKey: packageLinkValue,
-              PackageLinkBadDomainKey: packageLinkBadValue,
-            },
-          },
-        }),
-      }) as any
   );
 
   let mockTarballCreated = false;
@@ -1158,7 +1092,7 @@ test('basic happy case with custom package links', async () => {
             break;
           case packageKey:
             expect(req.ContentType).toBe('application/octet-stream');
-            expect(req.Body).toEqual(fakeTarGz);
+            expect(req.Body).toEqual(tarball);
             mockTarballCreated = true;
             break;
           default:
@@ -1205,7 +1139,14 @@ test('basic happy case with custom package links', async () => {
       {
         attributes: {} as any,
         awsRegion: 'test-bermuda-1',
-        body: JSON.stringify({ tarballUri, integrity, time }),
+        body: JSON.stringify({
+          tarballUri,
+          integrity: computeIntegrity(
+            { metadata: {}, tarballUri, time },
+            tarball
+          ).integrity,
+          time,
+        }),
         eventSource: 'sqs',
         eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
         md5OfBody: 'Fake-MD5-Of-Body',
@@ -1268,11 +1209,8 @@ test('basic happy case with custom tags', async () => {
   const stagingBucket = 'staging-bucket';
   const stagingKey = 'staging-key';
   const stagingVersion = 'staging-version-id';
-  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
-  const fakeTar = Buffer.from('fake-tarball-content');
   const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
   const time = '2021-07-12T15:18:00.000000+02:00';
-  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
   const fakeDotJsii = JSON.stringify(
@@ -1329,6 +1267,16 @@ test('basic happy case with custom tags', async () => {
     logStreamName: 'Fake-Log-Stream',
   } as any;
 
+  const tarball = await buildTarGz({
+    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+    'package/index.js': '// Ignore me!',
+    'package/package.json': JSON.stringify({
+      name: packageName,
+      version: packageVersion,
+      license: packageLicense,
+    }),
+  });
+
   AWSMock.mock(
     'S3',
     'getObject',
@@ -1350,33 +1298,8 @@ test('basic happy case with custom tags', async () => {
       } catch (e: any) {
         return cb(e);
       }
-      return cb(null, { Body: fakeTarGz });
+      return cb(null, { Body: tarball });
     }
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
-    typeof createGunzip
-  >;
-  mockCreateGunzip.mockImplementation(
-    () => new FakeGunzip(fakeTarGz, fakeTar) as any
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
-    typeof extract
-  >;
-  mockExtract.mockImplementation(
-    () =>
-      new FakeExtract(fakeTar, {
-        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-        'package/index.js': '// Ignore me!',
-        'package/package.json': JSON.stringify({
-          name: packageName,
-          version: packageVersion,
-          license: packageLicense,
-        }),
-      }) as any
   );
 
   let mockTarballCreated = false;
@@ -1420,7 +1343,7 @@ test('basic happy case with custom tags', async () => {
             break;
           case packageKey:
             expect(req.ContentType).toBe('application/octet-stream');
-            expect(req.Body).toEqual(fakeTarGz);
+            expect(req.Body).toEqual(tarball);
             mockTarballCreated = true;
             break;
           default:
@@ -1467,7 +1390,14 @@ test('basic happy case with custom tags', async () => {
       {
         attributes: {} as any,
         awsRegion: 'test-bermuda-1',
-        body: JSON.stringify({ tarballUri, integrity, time }),
+        body: JSON.stringify({
+          tarballUri,
+          integrity: computeIntegrity(
+            { metadata: {}, tarballUri, time },
+            tarball
+          ).integrity,
+          time,
+        }),
         eventSource: 'sqs',
         eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
         md5OfBody: 'Fake-MD5-Of-Body',
@@ -1536,11 +1466,8 @@ for (const [frameworkName, frameworkPackage] of [
     const stagingBucket = 'staging-bucket';
     const stagingKey = 'staging-key';
     const stagingVersion = 'staging-version-id';
-    const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
-    const fakeTar = Buffer.from('fake-tarball-content');
     const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
     const time = '2021-07-12T15:18:00.000000+02:00';
-    const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
     const packageName = '@package-scope/package-name';
     const packageVersion = '1.2.3-pre.4';
     const packageLicense = 'Apache-2.0';
@@ -1566,6 +1493,16 @@ for (const [frameworkName, frameworkPackage] of [
       logStreamName: 'Fake-Log-Stream',
     } as any;
 
+    const tarball = await buildTarGz({
+      [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+      'package/index.js': '// Ignore me!',
+      'package/package.json': JSON.stringify({
+        name: packageName,
+        version: packageVersion,
+        license: packageLicense,
+      }),
+    });
+
     AWSMock.mock(
       'S3',
       'getObject',
@@ -1587,32 +1524,8 @@ for (const [frameworkName, frameworkPackage] of [
         } catch (e: any) {
           return cb(e);
         }
-        return cb(null, { Body: fakeTarGz });
+        return cb(null, { Body: tarball });
       }
-    );
-
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mockCreateGunzip = require('zlib')
-      .createGunzip as jest.MockedFunction<typeof createGunzip>;
-    mockCreateGunzip.mockImplementation(
-      () => new FakeGunzip(fakeTarGz, fakeTar) as any
-    );
-
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mockExtract = require('tar-stream').extract as jest.MockedFunction<
-      typeof extract
-    >;
-    mockExtract.mockImplementation(
-      () =>
-        new FakeExtract(fakeTar, {
-          [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-          'package/index.js': '// Ignore me!',
-          'package/package.json': JSON.stringify({
-            name: packageName,
-            version: packageVersion,
-            license: packageLicense,
-          }),
-        }) as any
     );
 
     let mockTarballCreated = false;
@@ -1653,7 +1566,7 @@ for (const [frameworkName, frameworkPackage] of [
               break;
             case packageKey:
               expect(req.ContentType).toBe('application/octet-stream');
-              expect(req.Body).toEqual(fakeTarGz);
+              expect(req.Body).toEqual(tarball);
               mockTarballCreated = true;
               break;
             default:
@@ -1700,7 +1613,14 @@ for (const [frameworkName, frameworkPackage] of [
         {
           attributes: {} as any,
           awsRegion: 'test-bermuda-1',
-          body: JSON.stringify({ tarballUri, integrity, time }),
+          body: JSON.stringify({
+            tarballUri,
+            integrity: computeIntegrity(
+              { metadata: {}, tarballUri, time },
+              tarball
+            ).integrity,
+            time,
+          }),
           eventSource: 'sqs',
           eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
           md5OfBody: 'Fake-MD5-Of-Body',
@@ -1762,11 +1682,8 @@ for (const [frameworkName, frameworkPackage] of [
     const stagingBucket = 'staging-bucket';
     const stagingKey = 'staging-key';
     const stagingVersion = 'staging-version-id';
-    const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
-    const fakeTar = Buffer.from('fake-tarball-content');
     const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
     const time = '2021-07-12T15:18:00.000000+02:00';
-    const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
     const packageVersion = '42.2.3-pre.4';
     const packageLicense = 'Apache-2.0';
     const fakeDotJsii = JSON.stringify(
@@ -1784,6 +1701,16 @@ for (const [frameworkName, frameworkPackage] of [
       logGroupName: 'Fake-Log-Group',
       logStreamName: 'Fake-Log-Stream',
     } as any;
+
+    const tarball = await buildTarGz({
+      [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+      'package/index.js': '// Ignore me!',
+      'package/package.json': JSON.stringify({
+        name: frameworkPackage,
+        version: packageVersion,
+        license: packageLicense,
+      }),
+    });
 
     AWSMock.mock(
       'S3',
@@ -1806,32 +1733,8 @@ for (const [frameworkName, frameworkPackage] of [
         } catch (e: any) {
           return cb(e);
         }
-        return cb(null, { Body: fakeTarGz });
+        return cb(null, { Body: tarball });
       }
-    );
-
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mockCreateGunzip = require('zlib')
-      .createGunzip as jest.MockedFunction<typeof createGunzip>;
-    mockCreateGunzip.mockImplementation(
-      () => new FakeGunzip(fakeTarGz, fakeTar) as any
-    );
-
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mockExtract = require('tar-stream').extract as jest.MockedFunction<
-      typeof extract
-    >;
-    mockExtract.mockImplementation(
-      () =>
-        new FakeExtract(fakeTar, {
-          [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-          'package/index.js': '// Ignore me!',
-          'package/package.json': JSON.stringify({
-            name: frameworkPackage,
-            version: packageVersion,
-            license: packageLicense,
-          }),
-        }) as any
     );
 
     let mockTarballCreated = false;
@@ -1872,7 +1775,7 @@ for (const [frameworkName, frameworkPackage] of [
               break;
             case packageKey:
               expect(req.ContentType).toBe('application/octet-stream');
-              expect(req.Body).toEqual(fakeTarGz);
+              expect(req.Body).toEqual(tarball);
               mockTarballCreated = true;
               break;
             default:
@@ -1919,7 +1822,14 @@ for (const [frameworkName, frameworkPackage] of [
         {
           attributes: {} as any,
           awsRegion: 'test-bermuda-1',
-          body: JSON.stringify({ tarballUri, integrity, time }),
+          body: JSON.stringify({
+            tarballUri,
+            integrity: computeIntegrity(
+              { metadata: {}, tarballUri, time },
+              tarball
+            ).integrity,
+            time,
+          }),
           eventSource: 'sqs',
           eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
           md5OfBody: 'Fake-MD5-Of-Body',
@@ -1981,11 +1891,8 @@ for (const [frameworkName, frameworkPackage] of [
     const stagingBucket = 'staging-bucket';
     const stagingKey = 'staging-key';
     const stagingVersion = 'staging-version-id';
-    const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
-    const fakeTar = Buffer.from('fake-tarball-content');
     const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
     const time = '2021-07-12T15:18:00.000000+02:00';
-    const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
     const packageName = '@package-scope/package-name';
     const packageVersion = '1.2.3-pre.4';
     const packageLicense = 'Apache-2.0';
@@ -2012,6 +1919,16 @@ for (const [frameworkName, frameworkPackage] of [
       logStreamName: 'Fake-Log-Stream',
     } as any;
 
+    const tarball = await buildTarGz({
+      [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+      'package/index.js': '// Ignore me!',
+      'package/package.json': JSON.stringify({
+        name: packageName,
+        version: packageVersion,
+        license: packageLicense,
+      }),
+    });
+
     AWSMock.mock(
       'S3',
       'getObject',
@@ -2033,32 +1950,8 @@ for (const [frameworkName, frameworkPackage] of [
         } catch (e: any) {
           return cb(e);
         }
-        return cb(null, { Body: fakeTarGz });
+        return cb(null, { Body: tarball });
       }
-    );
-
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mockCreateGunzip = require('zlib')
-      .createGunzip as jest.MockedFunction<typeof createGunzip>;
-    mockCreateGunzip.mockImplementation(
-      () => new FakeGunzip(fakeTarGz, fakeTar) as any
-    );
-
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const mockExtract = require('tar-stream').extract as jest.MockedFunction<
-      typeof extract
-    >;
-    mockExtract.mockImplementation(
-      () =>
-        new FakeExtract(fakeTar, {
-          [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-          'package/index.js': '// Ignore me!',
-          'package/package.json': JSON.stringify({
-            name: packageName,
-            version: packageVersion,
-            license: packageLicense,
-          }),
-        }) as any
     );
 
     let mockTarballCreated = false;
@@ -2097,7 +1990,7 @@ for (const [frameworkName, frameworkPackage] of [
               break;
             case packageKey:
               expect(req.ContentType).toBe('application/octet-stream');
-              expect(req.Body).toEqual(fakeTarGz);
+              expect(req.Body).toEqual(tarball);
               mockTarballCreated = true;
               break;
             default:
@@ -2144,7 +2037,14 @@ for (const [frameworkName, frameworkPackage] of [
         {
           attributes: {} as any,
           awsRegion: 'test-bermuda-1',
-          body: JSON.stringify({ tarballUri, integrity, time }),
+          body: JSON.stringify({
+            tarballUri,
+            integrity: computeIntegrity(
+              { metadata: {}, tarballUri, time },
+              tarball
+            ).integrity,
+            time,
+          }),
           eventSource: 'sqs',
           eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
           md5OfBody: 'Fake-MD5-Of-Body',
@@ -2207,12 +2107,9 @@ test('mismatched package name', async () => {
   const stagingBucket = 'staging-bucket';
   const stagingKey = 'staging-key';
   const stagingVersion = 'staging-version-id';
-  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
-  const fakeTar = Buffer.from('fake-tarball-content');
   const fakeLicense = 'inscrutable-legalese';
   const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
   const time = '2021-07-12T15:18:00.000000+02:00';
-  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
@@ -2231,6 +2128,17 @@ test('mismatched package name', async () => {
     logGroupName: 'Fake-Log-Group',
     logStreamName: 'Fake-Log-Stream',
   } as any;
+
+  const tarball = await buildTarGz({
+    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+    'package/LICENSE.md': fakeLicense,
+    'package/index.js': '// Ignore me!',
+    'package/package.json': JSON.stringify({
+      name: packageName,
+      version: packageVersion,
+      license: packageLicense,
+    }),
+  });
 
   AWSMock.mock(
     'S3',
@@ -2253,34 +2161,8 @@ test('mismatched package name', async () => {
       } catch (e: any) {
         return cb(e);
       }
-      return cb(null, { Body: fakeTarGz });
+      return cb(null, { Body: tarball });
     }
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
-    typeof createGunzip
-  >;
-  mockCreateGunzip.mockImplementation(
-    () => new FakeGunzip(fakeTarGz, fakeTar) as any
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
-    typeof extract
-  >;
-  mockExtract.mockImplementation(
-    () =>
-      new FakeExtract(fakeTar, {
-        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-        'package/LICENSE.md': fakeLicense,
-        'package/index.js': '// Ignore me!',
-        'package/package.json': JSON.stringify({
-          name: packageName,
-          version: packageVersion,
-          license: packageLicense,
-        }),
-      }) as any
   );
 
   const event: SQSEvent = {
@@ -2288,7 +2170,14 @@ test('mismatched package name', async () => {
       {
         attributes: {} as any,
         awsRegion: 'test-bermuda-1',
-        body: JSON.stringify({ tarballUri, integrity, time }),
+        body: JSON.stringify({
+          tarballUri,
+          integrity: computeIntegrity(
+            { metadata: {}, tarballUri, time },
+            tarball
+          ).integrity,
+          time,
+        }),
         eventSource: 'sqs',
         eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
         md5OfBody: 'Fake-MD5-Of-Body',
@@ -2345,12 +2234,9 @@ test('mismatched package version', async () => {
   const stagingBucket = 'staging-bucket';
   const stagingKey = 'staging-key';
   const stagingVersion = 'staging-version-id';
-  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
-  const fakeTar = Buffer.from('fake-tarball-content');
   const fakeLicense = 'inscrutable-legalese';
   const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
   const time = '2021-07-12T15:18:00.000000+02:00';
-  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
@@ -2369,6 +2255,17 @@ test('mismatched package version', async () => {
     logGroupName: 'Fake-Log-Group',
     logStreamName: 'Fake-Log-Stream',
   } as any;
+
+  const tarball = await buildTarGz({
+    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+    'package/LICENSE.md': fakeLicense,
+    'package/index.js': '// Ignore me!',
+    'package/package.json': JSON.stringify({
+      name: packageName,
+      version: packageVersion,
+      license: packageLicense,
+    }),
+  });
 
   AWSMock.mock(
     'S3',
@@ -2391,34 +2288,8 @@ test('mismatched package version', async () => {
       } catch (e: any) {
         return cb(e);
       }
-      return cb(null, { Body: fakeTarGz });
+      return cb(null, { Body: tarball });
     }
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
-    typeof createGunzip
-  >;
-  mockCreateGunzip.mockImplementation(
-    () => new FakeGunzip(fakeTarGz, fakeTar) as any
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
-    typeof extract
-  >;
-  mockExtract.mockImplementation(
-    () =>
-      new FakeExtract(fakeTar, {
-        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-        'package/LICENSE.md': fakeLicense,
-        'package/index.js': '// Ignore me!',
-        'package/package.json': JSON.stringify({
-          name: packageName,
-          version: packageVersion,
-          license: packageLicense,
-        }),
-      }) as any
   );
 
   const event: SQSEvent = {
@@ -2426,7 +2297,14 @@ test('mismatched package version', async () => {
       {
         attributes: {} as any,
         awsRegion: 'test-bermuda-1',
-        body: JSON.stringify({ tarballUri, integrity, time }),
+        body: JSON.stringify({
+          tarballUri,
+          integrity: computeIntegrity(
+            { metadata: {}, tarballUri, time },
+            tarball
+          ).integrity,
+          time,
+        }),
         eventSource: 'sqs',
         eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
         md5OfBody: 'Fake-MD5-Of-Body',
@@ -2483,12 +2361,9 @@ test('mismatched package license', async () => {
   const stagingBucket = 'staging-bucket';
   const stagingKey = 'staging-key';
   const stagingVersion = 'staging-version-id';
-  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
-  const fakeTar = Buffer.from('fake-tarball-content');
   const fakeLicense = 'inscrutable-legalese';
   const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
   const time = '2021-07-12T15:18:00.000000+02:00';
-  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
@@ -2507,6 +2382,17 @@ test('mismatched package license', async () => {
     logGroupName: 'Fake-Log-Group',
     logStreamName: 'Fake-Log-Stream',
   } as any;
+
+  const tarball = await buildTarGz({
+    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+    'package/LICENSE.md': fakeLicense,
+    'package/index.js': '// Ignore me!',
+    'package/package.json': JSON.stringify({
+      name: packageName,
+      version: packageVersion,
+      license: packageLicense,
+    }),
+  });
 
   AWSMock.mock(
     'S3',
@@ -2529,34 +2415,8 @@ test('mismatched package license', async () => {
       } catch (e: any) {
         return cb(e);
       }
-      return cb(null, { Body: fakeTarGz });
+      return cb(null, { Body: tarball });
     }
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
-    typeof createGunzip
-  >;
-  mockCreateGunzip.mockImplementation(
-    () => new FakeGunzip(fakeTarGz, fakeTar) as any
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
-    typeof extract
-  >;
-  mockExtract.mockImplementation(
-    () =>
-      new FakeExtract(fakeTar, {
-        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-        'package/LICENSE.md': fakeLicense,
-        'package/index.js': '// Ignore me!',
-        'package/package.json': JSON.stringify({
-          name: packageName,
-          version: packageVersion,
-          license: packageLicense,
-        }),
-      }) as any
   );
 
   const event: SQSEvent = {
@@ -2564,7 +2424,14 @@ test('mismatched package license', async () => {
       {
         attributes: {} as any,
         awsRegion: 'test-bermuda-1',
-        body: JSON.stringify({ tarballUri, integrity, time }),
+        body: JSON.stringify({
+          tarballUri,
+          integrity: computeIntegrity(
+            { metadata: {}, tarballUri, time },
+            tarball
+          ).integrity,
+          time,
+        }),
         eventSource: 'sqs',
         eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
         md5OfBody: 'Fake-MD5-Of-Body',
@@ -2621,12 +2488,9 @@ test('missing .jsii file', async () => {
   const stagingBucket = 'staging-bucket';
   const stagingKey = 'staging-key';
   const stagingVersion = 'staging-version-id';
-  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
-  const fakeTar = Buffer.from('fake-tarball-content');
   const fakeLicense = 'inscrutable-legalese';
   const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
   const time = '2021-07-12T15:18:00.000000+02:00';
-  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
@@ -2642,6 +2506,16 @@ test('missing .jsii file', async () => {
     logGroupName: 'Fake-Log-Group',
     logStreamName: 'Fake-Log-Stream',
   } as any;
+
+  const tarball = await buildTarGz({
+    'package/LICENSE.md': fakeLicense,
+    'package/index.js': '// Ignore me!',
+    'package/package.json': JSON.stringify({
+      name: packageName,
+      version: packageVersion,
+      license: packageLicense,
+    }),
+  });
 
   AWSMock.mock(
     'S3',
@@ -2664,33 +2538,8 @@ test('missing .jsii file', async () => {
       } catch (e: any) {
         return cb(e);
       }
-      return cb(null, { Body: fakeTarGz });
+      return cb(null, { Body: tarball });
     }
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
-    typeof createGunzip
-  >;
-  mockCreateGunzip.mockImplementation(
-    () => new FakeGunzip(fakeTarGz, fakeTar) as any
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
-    typeof extract
-  >;
-  mockExtract.mockImplementation(
-    () =>
-      new FakeExtract(fakeTar, {
-        'package/LICENSE.md': fakeLicense,
-        'package/index.js': '// Ignore me!',
-        'package/package.json': JSON.stringify({
-          name: packageName,
-          version: packageVersion,
-          license: packageLicense,
-        }),
-      }) as any
   );
 
   const event: SQSEvent = {
@@ -2698,7 +2547,14 @@ test('missing .jsii file', async () => {
       {
         attributes: {} as any,
         awsRegion: 'test-bermuda-1',
-        body: JSON.stringify({ tarballUri, integrity, time }),
+        body: JSON.stringify({
+          tarballUri,
+          integrity: computeIntegrity(
+            { metadata: {}, tarballUri, time },
+            tarball
+          ).integrity,
+          time,
+        }),
         eventSource: 'sqs',
         eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
         md5OfBody: 'Fake-MD5-Of-Body',
@@ -2749,12 +2605,9 @@ test('missing package.json file', async () => {
   const stagingBucket = 'staging-bucket';
   const stagingKey = 'staging-key';
   const stagingVersion = 'staging-version-id';
-  const fakeTarGz = Buffer.from('fake-tarball-content[gzipped]');
-  const fakeTar = Buffer.from('fake-tarball-content');
   const fakeLicense = 'inscrutable-legalese';
   const tarballUri = `s3://${stagingBucket}.test-bermuda-2.s3.amazonaws.com/${stagingKey}?versionId=${stagingVersion}`;
   const time = '2021-07-12T15:18:00.000000+02:00';
-  const integrity = 'sha256-1RyNs3cDpyTqBMqJIiHbCpl8PEN6h3uWx3lzF+3qcmY=';
   const packageName = '@package-scope/package-name';
   const packageVersion = '1.2.3-pre.4';
   const packageLicense = 'Apache-2.0';
@@ -2773,6 +2626,12 @@ test('missing package.json file', async () => {
     logGroupName: 'Fake-Log-Group',
     logStreamName: 'Fake-Log-Stream',
   } as any;
+
+  const tarball = await buildTarGz({
+    [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
+    'package/LICENSE.md': fakeLicense,
+    'package/index.js': '// Ignore me!',
+  });
 
   AWSMock.mock(
     'S3',
@@ -2795,29 +2654,8 @@ test('missing package.json file', async () => {
       } catch (e: any) {
         return cb(e);
       }
-      return cb(null, { Body: fakeTarGz });
+      return cb(null, { Body: tarball });
     }
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockCreateGunzip = require('zlib').createGunzip as jest.MockedFunction<
-    typeof createGunzip
-  >;
-  mockCreateGunzip.mockImplementation(
-    () => new FakeGunzip(fakeTarGz, fakeTar) as any
-  );
-
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const mockExtract = require('tar-stream').extract as jest.MockedFunction<
-    typeof extract
-  >;
-  mockExtract.mockImplementation(
-    () =>
-      new FakeExtract(fakeTar, {
-        [`package/${SPEC_FILE_NAME}`]: fakeDotJsii,
-        'package/LICENSE.md': fakeLicense,
-        'package/index.js': '// Ignore me!',
-      }) as any
   );
 
   const event: SQSEvent = {
@@ -2825,7 +2663,14 @@ test('missing package.json file', async () => {
       {
         attributes: {} as any,
         awsRegion: 'test-bermuda-1',
-        body: JSON.stringify({ tarballUri, integrity, time }),
+        body: JSON.stringify({
+          tarballUri,
+          integrity: computeIntegrity(
+            { metadata: {}, tarballUri, time },
+            tarball
+          ).integrity,
+          time,
+        }),
         eventSource: 'sqs',
         eventSourceARN: 'arn:aws:sqs:test-bermuda-1:123456789012:fake',
         md5OfBody: 'Fake-MD5-Of-Body',
@@ -2850,97 +2695,37 @@ test('missing package.json file', async () => {
 
 type Response<T> = (err: AWS.AWSError | null, data?: T) => void;
 
-class FakeGunzip extends EventEmitter {
-  private sent = 0;
+/**
+ * Builds a .tar.gz blob from the provided entries.
+ */
+async function buildTarGz(
+  entries: Record<string, string | Buffer>
+): Promise<Buffer> {
+  return new Promise(async (ok, ko) => {
+    const tar = pack();
+    const gzip = createGzip();
 
-  public constructor(
-    private readonly gz: Buffer,
-    private readonly result: Buffer
-  ) {
-    super();
-  }
+    const chunks = new Array<Buffer>();
+    gzip
+      .on('data', (chunk) => chunks.push(Buffer.from(chunk)))
+      .once('error', ko)
+      .once('finish', () => ok(Buffer.concat(chunks)));
 
-  public end(data: Buffer): void {
-    try {
-      expect(data).toEqual(this.gz);
-      setImmediate(() => this.sendData());
-    } catch (e: any) {
-      this.emit('error', e);
+    tar.pipe(gzip, { end: true });
+
+    for (const [name, data] of Object.entries(entries)) {
+      await new Promise<void>((tok, tko) => {
+        const bytes = typeof data === 'string' ? Buffer.from(data) : data;
+        const entry = tar.entry(
+          { name, size: bytes.length, mtime: new Date(0) },
+          () => tok()
+        );
+        entry.once('error', tko);
+        entry.end(bytes);
+      });
     }
-  }
-
-  private sendData() {
-    if (this.sent >= this.result.length) {
-      this.emit('end');
-      return;
-    }
-    this.emit('data', this.result.slice(this.sent, this.sent + 1));
-    this.sent++;
-    setImmediate(() => this.sendData());
-  }
-}
-
-class FakeExtract extends EventEmitter {
-  private readonly files: Array<[string, string]>;
-
-  public constructor(
-    private readonly tar: Buffer,
-    files: Record<string, string>
-  ) {
-    super();
-    this.files = Object.entries(files);
-  }
-
-  public write(data: Buffer, cb?: (err: Error | null) => void): void {
-    try {
-      expect(data).toEqual(Buffer.from(this.tar));
-      cb?.(null);
-      setImmediate(() => this.sendNextEntry());
-    } catch (e: any) {
-      cb?.(e);
-    }
-  }
-
-  public end(): void {
-    // no-op
-  }
-
-  private sendNextEntry() {
-    const nextEntry = this.files.shift();
-    if (nextEntry == null) {
-      this.emit('finish');
-      return;
-    }
-
-    const [name, content] = nextEntry;
-
-    const headers: Headers = { name };
-    const stream = new FakeStream(Buffer.from(content));
-    const next = () => this.sendNextEntry();
-    this.emit('entry', headers, stream, next);
-  }
-}
-
-class FakeStream extends EventEmitter {
-  private sent = 0;
-
-  public constructor(private readonly content: Buffer) {
-    super();
-  }
-
-  public resume() {
-    setImmediate(() => this.sendData());
-  }
-
-  private sendData() {
-    if (this.sent >= this.content.length) {
-      this.emit('end');
-      return;
-    }
-    this.emit('data', this.content.slice(this.sent, this.sent + 1));
-    this.sent++;
-    setImmediate(() => this.sendData());
-  }
+    tar.finalize();
+  });
 }
 
 function assertAssembly(expected: string, actual: string | undefined) {
