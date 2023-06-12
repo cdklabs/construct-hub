@@ -27,14 +27,10 @@ instance with personalized configuration.
 
 > 💰 Cost of running Construct Hub
 >
-> Please be aware that Construct Hub will launch compute and do (somewhat expensive)
-> processing for every version of every construct library. Your costs for running Construct Hub will directly
-> correlate to how many packages it must process. It will also start backfilling all
-> packages on first startup. If you run Construct Hub without package filters and connected
-> to public NPM, you will end up paying to process every single CDK package on NPM. This may end up
-> costing more than you were willing to spend on it.
->
-> Please take care to configure package filters or consume only private repositories.
+> If you opt to use Construct Hub for processing your CDK packages, 
+> you will be subject to charges based on the number of packages processed by Construct Hub.
+> To minimize these charges, you can implement package filters for relevant sources 
+> and exclude public NPM packages from the processing list.
 
 ### Quick Start
 
