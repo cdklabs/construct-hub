@@ -331,8 +331,13 @@ async function appendPackage(
       extract()
         .on('entry', (header, stream, next) => {
           if (header.name !== 'package/package.json') {
-            // Not the file we are looking for, skip ahead (next run-loop tick).
-            return setImmediate(next);
+            // Not the file we are looking for, skip ahead... We consume the `stream`, as not doing so will prevent the
+            // tar-stream from continuing to process more entries...
+            return stream
+              .on('data', () => undefined)
+              .once('error', next)
+              .once('end', next)
+              .resume();
           }
           const chunks = new Array<Buffer>();
           return stream
