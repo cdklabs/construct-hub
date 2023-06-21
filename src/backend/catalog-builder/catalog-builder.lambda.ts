@@ -333,7 +333,8 @@ async function appendPackage(
           if (header.name !== 'package/package.json') {
             // Not the file we are looking for, skip ahead... We consume the `stream`, as not doing so will prevent the
             // tar-stream from continuing to process more entries...
-            return stream.on('data', () => undefined)
+            return stream
+              .on('data', () => undefined)
               .once('error', next)
               .once('end', next)
               .resume();
