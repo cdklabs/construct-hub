@@ -169,7 +169,7 @@ export function handler(
     console.log(`Generating documentation for ${packageFqn}...`);
     try {
       const docs = await docgen.Documentation.forPackage(tarball, {
-        name: assembly.name,
+        verbose: true,
       });
       // if the package used to not be installable, remove the marker for it.
       await unmarkPackage(constants.UNINSTALLABLE_PACKAGE_SUFFIX);

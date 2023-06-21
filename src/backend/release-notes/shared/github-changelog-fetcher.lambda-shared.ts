@@ -3,13 +3,13 @@ import * as changelogFilenameRegex from 'changelog-filename-regex';
 import getReleaseNotesMd from './md-changelog-parser.lambda-shared.js';
 
 export async function getReleaseNotesFromAllReleases(
-  octakit: Octokit,
+  octokit: Octokit,
   owner: string,
   repo: string,
   projectName: string,
   version: string
 ): Promise<string | undefined> {
-  const iterator = octakit.paginate.iterator(octakit.rest.repos.listReleases, {
+  const iterator = octokit.paginate.iterator(octokit.rest.repos.listReleases, {
     owner,
     repo,
   });
@@ -165,13 +165,13 @@ export async function generateReleaseNotes(
 ): Promise<string | void> {
   let changelog: string | void;
 
-  const octakit = new Octokit({
+  const octokit = new Octokit({
     auth: process.env.GITHUB_TOKEN,
     userAgent: 'github-changelog-generator',
   });
 
   changelog = await getReleaseNotesFromTag(
-    octakit,
+    octokit,
     owner,
     repo,
     version,
@@ -179,7 +179,7 @@ export async function generateReleaseNotes(
   );
   if (!changelog) {
     changelog = await getReleaseNotesFromAllReleases(
-      octakit,
+      octokit,
       owner,
       repo,
       projectName,
@@ -187,7 +187,7 @@ export async function generateReleaseNotes(
     );
   } else if (!changelog) {
     changelog = await getReleaseNotesFromChangelogFile(
-      octakit,
+      octokit,
       owner,
       repo,
       version,
