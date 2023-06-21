@@ -525,7 +525,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
       const application = new Application(this, 'Application', {
         applicationName: 'ConstructHub',
       });
-      application.associateStack(Stack.of(this));
+      application.associateApplicationWithStack(Stack.of(this));
     }
   }
 
