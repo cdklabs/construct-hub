@@ -576,7 +576,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
     const subnetType =
       isolation === Isolation.NO_INTERNET_ACCESS
         ? ec2.SubnetType.PRIVATE_ISOLATED
-        : ec2.SubnetType.PRIVATE_WITH_NAT;
+        : ec2.SubnetType.PRIVATE_WITH_EGRESS;
     const vpcSubnets = { subnetType };
 
     const vpc = new ec2.Vpc(this, 'VPC', {
@@ -596,7 +596,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
         },
         {
           name: 'Private',
-          subnetType: ec2.SubnetType.PRIVATE_WITH_NAT,
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
           reserved: subnetType === ec2.SubnetType.PRIVATE_ISOLATED,
         },
         {
@@ -609,7 +609,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
     Tags.of(vpc.node.defaultChild!).add('Name', vpc.node.path);
 
     const securityGroups =
-      subnetType === ec2.SubnetType.PRIVATE_WITH_NAT
+      subnetType === ec2.SubnetType.PRIVATE_WITH_EGRESS
         ? createRestrictedSecurityGroups(this, vpc)
         : undefined;
 
