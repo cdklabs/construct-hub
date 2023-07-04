@@ -11,6 +11,9 @@ const fakeGot = require('got') as jest.MockedFunction<Got>;
 beforeEach(() => {
   fakeGot.mockReset();
 });
+afterAll(() => {
+  fakeGot.mockRestore();
+});
 
 const sampleData = {
   npm: {
