@@ -168,6 +168,10 @@ project.package.addField('resolutions', {
 
   // https://github.com/DefinitelyTyped/DefinitelyTyped/pull/64924
   '@types/lodash': '4.14.192',
+
+  // octokit messed something up with its dependencies, causing incompatible types
+  // try removing this once @octokit/rest v20 is released
+  '@octokit/plugin-rest-endpoint-methods': '7.1.2',
 });
 
 function addVpcAllowListManagement() {

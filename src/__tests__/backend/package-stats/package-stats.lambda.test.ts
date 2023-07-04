@@ -54,98 +54,104 @@ const initialCatalog = {
   packages: [initialScopePackageV2, initialNameV1, initialNameV2],
   updatedAt: new Date().toISOString(),
 };
-
-test('full build', () => {
-  // GIVEN
-  AWSMock.mock(
-    'S3',
-    'getObject',
-    (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
-      try {
-        expect(req.Bucket).toBe(mockCatalogBucket);
-      } catch (e) {
-        return cb(e as AWSError);
-      }
-
-      if (req.Key === mockCatalogKey) {
-        return cb(null, { Body: JSON.stringify(initialCatalog) });
-      } else if (req.Key === mockStatsKey) {
-        // suppose we are building for the first time
-        return cb(new NoSuchKeyError());
-      } else {
-        return cb(new NoSuchKeyError());
-      }
-    }
-  );
-
+describe('full build', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const mockGot = require('got') as jest.MockedFunction<Got>;
-  // two API calls to NPM downloads API since one of the packages is scoped
-  // so the bulk API can't be used
-  mockGot.mockImplementationOnce(
-    () =>
-      Promise.resolve({
-        body: JSON.stringify({
-          downloads: 1000,
-          package: '@scope/package',
-          start: 'start-date',
-          end: 'end-date',
-        }),
-      }) as any
-  );
-  mockGot.mockImplementationOnce(
-    () =>
-      Promise.resolve({
-        body: JSON.stringify({
-          downloads: 2000,
-          package: 'name',
-          start: 'start-date',
-          end: 'end-date',
-        }),
-      }) as any
-  );
 
-  const mockPutObjectResult: AWS.S3.PutObjectOutput = {};
-  AWSMock.mock(
-    'S3',
-    'putObject',
-    (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
-      try {
-        expect(req.Bucket).toBe(mockBucketName);
-        expect(req.Key).toBe(mockStatsKey);
-        expect(req.ContentType).toBe('application/json');
-        expect(req.Metadata).toHaveProperty('Package-Stats-Count', '2');
-        const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
-        expect(body).toEqual({
-          packages: {
-            '@scope/package': {
-              downloads: {
-                npm: 1000,
-              },
-            },
-            name: {
-              downloads: {
-                npm: 2000,
-              },
-            },
-          },
-          updated: expect.anything(),
-        });
-        expect(Date.parse(body.updated)).toBeDefined();
-      } catch (e) {
-        return cb(e as AWSError);
+  afterAll(() => {
+    mockGot.mockRestore();
+  });
+
+  test('is successful', () => {
+    // GIVEN
+    AWSMock.mock(
+      'S3',
+      'getObject',
+      (req: AWS.S3.GetObjectRequest, cb: Response<AWS.S3.GetObjectOutput>) => {
+        try {
+          expect(req.Bucket).toBe(mockCatalogBucket);
+        } catch (e) {
+          return cb(e as AWSError);
+        }
+
+        if (req.Key === mockCatalogKey) {
+          return cb(null, { Body: JSON.stringify(initialCatalog) });
+        } else if (req.Key === mockStatsKey) {
+          // suppose we are building for the first time
+          return cb(new NoSuchKeyError());
+        } else {
+          return cb(new NoSuchKeyError());
+        }
       }
-      return cb(null, mockPutObjectResult);
-    }
-  );
+    );
 
-  // WHEN
-  const result = handler({}, {
-    /* context */
-  } as any);
+    // two API calls to NPM downloads API since one of the packages is scoped
+    // so the bulk API can't be used
+    mockGot.mockImplementationOnce(
+      () =>
+        Promise.resolve({
+          body: JSON.stringify({
+            downloads: 1000,
+            package: '@scope/package',
+            start: 'start-date',
+            end: 'end-date',
+          }),
+        }) as any
+    );
+    mockGot.mockImplementationOnce(
+      () =>
+        Promise.resolve({
+          body: JSON.stringify({
+            downloads: 2000,
+            package: 'name',
+            start: 'start-date',
+            end: 'end-date',
+          }),
+        }) as any
+    );
 
-  // THEN
-  return expect(result).resolves.toBe(mockPutObjectResult);
+    const mockPutObjectResult: AWS.S3.PutObjectOutput = {};
+    AWSMock.mock(
+      'S3',
+      'putObject',
+      (req: AWS.S3.PutObjectRequest, cb: Response<AWS.S3.PutObjectOutput>) => {
+        try {
+          expect(req.Bucket).toBe(mockBucketName);
+          expect(req.Key).toBe(mockStatsKey);
+          expect(req.ContentType).toBe('application/json');
+          expect(req.Metadata).toHaveProperty('Package-Stats-Count', '2');
+          const body = JSON.parse(req.Body?.toString('utf-8') ?? 'null');
+          expect(body).toEqual({
+            packages: {
+              '@scope/package': {
+                downloads: {
+                  npm: 1000,
+                },
+              },
+              name: {
+                downloads: {
+                  npm: 2000,
+                },
+              },
+            },
+            updated: expect.anything(),
+          });
+          expect(Date.parse(body.updated)).toBeDefined();
+        } catch (e) {
+          return cb(e as AWSError);
+        }
+        return cb(null, mockPutObjectResult);
+      }
+    );
+
+    // WHEN
+    const result = handler({}, {
+      /* context */
+    } as any);
+
+    // THEN
+    return expect(result).resolves.toBe(mockPutObjectResult);
+  });
 });
 
 test('errors if no catalog found', async () => {
