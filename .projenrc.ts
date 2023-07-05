@@ -743,13 +743,10 @@ function newEcsTask(entrypoint: string) {
   df.line(`ENTRYPOINT ["/usr/bin/env", "node", "/bundle/${dockerEntry}"]`);
 
   const bundleCmd = [
-    'esbuild',
-    '--bundle',
+    'ts-node',
+    join(__dirname, 'projenrc', 'bundle-javascript-for-ecs.exec.ts'),
     ecsMain,
-    '--target="node16"',
-    '--platform="node"',
-    `--outfile="$${BUNDLE_DIR_ENV}/${dockerEntry}"`,
-    '--sourcemap',
+    `${outdir}/${dockerEntry}`,
   ];
   const bundle = project.addTask(`bundle:${base}`, {
     description: `Create an AWS Fargate bundle from ${entry}`,
@@ -1052,7 +1049,12 @@ discoverEcsTasks();
 discoverIntegrationTests();
 
 // see https://github.com/aws/jsii/issues/3311
-const bundleWorkerPool = `esbuild --bundle node_modules/jsii-rosetta/lib/translate_all_worker.js --target="node16" --platform="node" --outfile="$${BUNDLE_DIR_ENV}/translate_all_worker.js" --sourcemap  --tsconfig=tsconfig.dev.json`;
+const bundleWorkerPool = [
+  'ts-node',
+  join(__dirname, 'projenrc', 'bundle-javascript-for-ecs.exec.ts'),
+  'node_modules/jsii-rosetta/lib/translate_all_worker.js',
+  `lib/backend/transliterator/transliterator.ecs-entrypoint.bundle/translate_all_worker.js`,
+].join(' ');
 project.tasks.tryFind('bundle:transliterator')?.exec(bundleWorkerPool);
 project.tasks
   .tryFind('bundle:transliterator:watch')
