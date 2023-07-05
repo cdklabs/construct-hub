@@ -4,7 +4,6 @@ import { IAlarmAction, Alarm, Metric } from 'aws-cdk-lib/aws-cloudwatch';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as sns from 'aws-cdk-lib/aws-sns';
 import { Monitoring } from '../monitoring';
-import { handler as webCanaryHandler } from '../monitoring/http-get-function.lambda';
 
 const actions = {
   highSeverity: 'arn:aws:sns:us-east-1:123456789012:high',
@@ -171,20 +170,6 @@ test('web canaries can ping URLs and raise high severity alarms', () => {
         URL: 'https://ping1',
       },
     },
-  });
-});
-
-describe('web canary handler', () => {
-  test('web ping is successful', async () => {
-    process.env.URL = 'https://www.amazon.com';
-    await webCanaryHandler({});
-  });
-
-  test('web ping throws for a non-200 response', async () => {
-    process.env.URL = 'https://www.amazon.com/not-found-please12345';
-    await expect(webCanaryHandler({})).rejects.toThrow(
-      /Response code 404 \(Not Found\)/
-    );
   });
 });
 

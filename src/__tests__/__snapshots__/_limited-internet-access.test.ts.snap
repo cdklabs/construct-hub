@@ -1,140 +1,140 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
-Object {
-  "Mappings": Object {
-    "DefaultCrNodeVersionMap": Object {
-      "af-south-1": Object {
+{
+  "Mappings": {
+    "DefaultCrNodeVersionMap": {
+      "af-south-1": {
         "value": "nodejs16.x",
       },
-      "ap-east-1": Object {
+      "ap-east-1": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-1": Object {
+      "ap-northeast-1": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-2": Object {
+      "ap-northeast-2": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-3": Object {
+      "ap-northeast-3": {
         "value": "nodejs16.x",
       },
-      "ap-south-1": Object {
+      "ap-south-1": {
         "value": "nodejs16.x",
       },
-      "ap-south-2": Object {
+      "ap-south-2": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-1": Object {
+      "ap-southeast-1": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-2": Object {
+      "ap-southeast-2": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-3": Object {
+      "ap-southeast-3": {
         "value": "nodejs16.x",
       },
-      "ca-central-1": Object {
+      "ca-central-1": {
         "value": "nodejs16.x",
       },
-      "cn-north-1": Object {
+      "cn-north-1": {
         "value": "nodejs16.x",
       },
-      "cn-northwest-1": Object {
+      "cn-northwest-1": {
         "value": "nodejs16.x",
       },
-      "eu-central-1": Object {
+      "eu-central-1": {
         "value": "nodejs16.x",
       },
-      "eu-central-2": Object {
+      "eu-central-2": {
         "value": "nodejs16.x",
       },
-      "eu-north-1": Object {
+      "eu-north-1": {
         "value": "nodejs16.x",
       },
-      "eu-south-1": Object {
+      "eu-south-1": {
         "value": "nodejs16.x",
       },
-      "eu-south-2": Object {
+      "eu-south-2": {
         "value": "nodejs16.x",
       },
-      "eu-west-1": Object {
+      "eu-west-1": {
         "value": "nodejs16.x",
       },
-      "eu-west-2": Object {
+      "eu-west-2": {
         "value": "nodejs16.x",
       },
-      "eu-west-3": Object {
+      "eu-west-3": {
         "value": "nodejs16.x",
       },
-      "me-central-1": Object {
+      "me-central-1": {
         "value": "nodejs16.x",
       },
-      "me-south-1": Object {
+      "me-south-1": {
         "value": "nodejs16.x",
       },
-      "sa-east-1": Object {
+      "sa-east-1": {
         "value": "nodejs16.x",
       },
-      "us-east-1": Object {
+      "us-east-1": {
         "value": "nodejs16.x",
       },
-      "us-east-2": Object {
+      "us-east-2": {
         "value": "nodejs16.x",
       },
-      "us-gov-east-1": Object {
+      "us-gov-east-1": {
         "value": "nodejs16.x",
       },
-      "us-gov-west-1": Object {
+      "us-gov-west-1": {
         "value": "nodejs16.x",
       },
-      "us-iso-east-1": Object {
+      "us-iso-east-1": {
         "value": "nodejs14.x",
       },
-      "us-iso-west-1": Object {
+      "us-iso-west-1": {
         "value": "nodejs14.x",
       },
-      "us-isob-east-1": Object {
+      "us-isob-east-1": {
         "value": "nodejs14.x",
       },
-      "us-west-1": Object {
+      "us-west-1": {
         "value": "nodejs16.x",
       },
-      "us-west-2": Object {
+      "us-west-2": {
         "value": "nodejs16.x",
       },
     },
   },
-  "Parameters": Object {
-    "BootstrapVersion": Object {
+  "Parameters": {
+    "BootstrapVersion": {
       "Default": "/cdk-bootstrap/hnb659fds/version",
       "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
   },
-  "Resources": Object {
-    "AWS679f53fac002430cb0da5b7982bd22872D164C4C": Object {
-      "DependsOn": Array [
+  "Resources": {
+    "AWS679f53fac002430cb0da5b7982bd22872D164C4C": {
+      "DependsOn": [
         "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
       ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
           "S3Key": "f9346b940b724b094a16ca051c017799995fa93df6da38a0539bf7c000fee50a.zip",
         },
         "Handler": "index.handler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
+        "Role": {
+          "Fn::GetAtt": [
             "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
             "Arn",
           ],
         },
-        "Runtime": Object {
-          "Fn::FindInMap": Array [
+        "Runtime": {
+          "Fn::FindInMap": [
             "DefaultCrNodeVersionMap",
-            Object {
+            {
               "Ref": "AWS::Region",
             },
             "value",
@@ -144,22 +144,22 @@ Object {
       },
       "Type": "AWS::Lambda::Function",
     },
-    "AWS679f53fac002430cb0da5b7982bd2287LogRetentionCE72797A": Object {
-      "Properties": Object {
-        "LogGroupName": Object {
-          "Fn::Join": Array [
+    "AWS679f53fac002430cb0da5b7982bd2287LogRetentionCE72797A": {
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
             "",
-            Array [
+            [
               "/aws/lambda/",
-              Object {
+              {
                 "Ref": "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
               },
             ],
           ],
         },
         "RetentionInDays": 90,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
+        "ServiceToken": {
+          "Fn::GetAtt": [
             "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
             "Arn",
           ],
@@ -167,27 +167,27 @@ Object {
       },
       "Type": "Custom::LogRetention",
     },
-    "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "lambda.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
               "",
-              Array [
+              [
                 "arn:",
-                Object {
+                {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
@@ -198,13 +198,13 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "InternalTraffic7EB8CBFA": Object {
-      "Properties": Object {
+    "InternalTraffic7EB8CBFA": {
+      "Properties": {
         "GroupDescription": "TestStack/SG",
-        "SecurityGroupEgress": Array [
-          Object {
-            "CidrIp": Object {
-              "Fn::GetAtt": Array [
+        "SecurityGroupEgress": [
+          {
+            "CidrIp": {
+              "Fn::GetAtt": [
                 "VPCB9E5F0B4",
                 "CidrBlock",
               ],
@@ -214,9 +214,9 @@ Object {
             "IpProtocol": "tcp",
             "ToPort": 53,
           },
-          Object {
-            "CidrIp": Object {
-              "Fn::GetAtt": Array [
+          {
+            "CidrIp": {
+              "Fn::GetAtt": [
                 "VPCB9E5F0B4",
                 "CidrBlock",
               ],
@@ -227,25 +227,25 @@ Object {
             "ToPort": 53,
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "VPCB9E5F0B4",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "InternalTrafficfromTestStackInternalTrafficF42F4713443027AEFD8": Object {
-      "Properties": Object {
+    "InternalTrafficfromTestStackInternalTrafficF42F4713443027AEFD8": {
+      "Properties": {
         "Description": "Traffic within this SecurityGroup",
         "FromPort": 443,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
+        "GroupId": {
+          "Fn::GetAtt": [
             "InternalTraffic7EB8CBFA",
             "GroupId",
           ],
         },
         "IpProtocol": "tcp",
-        "SourceSecurityGroupId": Object {
-          "Fn::GetAtt": Array [
+        "SourceSecurityGroupId": {
+          "Fn::GetAtt": [
             "InternalTraffic7EB8CBFA",
             "GroupId",
           ],
@@ -254,18 +254,18 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupIngress",
     },
-    "InternalTraffictoAWSS3443CE69D110": Object {
-      "Properties": Object {
+    "InternalTraffictoAWSS3443CE69D110": {
+      "Properties": {
         "Description": "to AWS S3",
-        "DestinationPrefixListId": Object {
-          "Fn::GetAtt": Array [
+        "DestinationPrefixListId": {
+          "Fn::GetAtt": [
             "S3PrefixListA52A6956",
             "PrefixLists.0.PrefixListId",
           ],
         },
         "FromPort": 443,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
+        "GroupId": {
+          "Fn::GetAtt": [
             "InternalTraffic7EB8CBFA",
             "GroupId",
           ],
@@ -275,18 +275,18 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "InternalTraffictoTestStackInternalTrafficF42F4713443EAA262C8": Object {
-      "Properties": Object {
+    "InternalTraffictoTestStackInternalTrafficF42F4713443EAA262C8": {
+      "Properties": {
         "Description": "Traffic within this SecurityGroup",
-        "DestinationSecurityGroupId": Object {
-          "Fn::GetAtt": Array [
+        "DestinationSecurityGroupId": {
+          "Fn::GetAtt": [
             "InternalTraffic7EB8CBFA",
             "GroupId",
           ],
         },
         "FromPort": 443,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
+        "GroupId": {
+          "Fn::GetAtt": [
             "InternalTraffic7EB8CBFA",
             "GroupId",
           ],
@@ -296,29 +296,29 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": Object {
-      "DependsOn": Array [
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": {
+      "DependsOn": [
         "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
         "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
       ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
           "S3Key": "5fa1330271b8967d9254ba2d4a07144f8acefe8b77e6d6bba38261373a50d5f8.zip",
         },
         "Handler": "index.handler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
+        "Role": {
+          "Fn::GetAtt": [
             "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
             "Arn",
           ],
         },
-        "Runtime": Object {
-          "Fn::FindInMap": Array [
+        "Runtime": {
+          "Fn::FindInMap": [
             "DefaultCrNodeVersionMap",
-            Object {
+            {
               "Ref": "AWS::Region",
             },
             "value",
@@ -327,27 +327,27 @@ Object {
       },
       "Type": "AWS::Lambda::Function",
     },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "lambda.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
               "",
-              Array [
+              [
                 "arn:",
-                Object {
+                {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
@@ -358,12 +358,12 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
                 "logs:PutRetentionPolicy",
                 "logs:DeleteRetentionPolicy",
               ],
@@ -374,48 +374,48 @@ Object {
           "Version": "2012-10-17",
         },
         "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
-        "Roles": Array [
-          Object {
+        "Roles": [
+          {
             "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "S3PrefixListA52A6956": Object {
+    "S3PrefixListA52A6956": {
       "DeletionPolicy": "Delete",
-      "DependsOn": Array [
+      "DependsOn": [
         "S3PrefixListCustomResourcePolicy456414A6",
       ],
-      "Properties": Object {
-        "Create": Object {
-          "Fn::Join": Array [
+      "Properties": {
+        "Create": {
+          "Fn::Join": [
             "",
-            Array [
-              "{\\"action\\":\\"describePrefixLists\\",\\"service\\":\\"EC2\\",\\"parameters\\":{\\"Filters\\":[{\\"Name\\":\\"prefix-list-name\\",\\"Values\\":[\\"com.amazonaws.",
-              Object {
+            [
+              "{"action":"describePrefixLists","service":"EC2","parameters":{"Filters":[{"Name":"prefix-list-name","Values":["com.amazonaws.",
+              {
                 "Ref": "AWS::Region",
               },
-              ".s3\\"]}]},\\"outputPaths\\":[\\"PrefixLists.0.PrefixListId\\",\\"PrefixLists.0.PrefixListName\\"],\\"physicalResourceId\\":{\\"responsePath\\":\\"PrefixLists.0.PrefixListId\\"}}",
+              ".s3"]}]},"outputPaths":["PrefixLists.0.PrefixListId","PrefixLists.0.PrefixListName"],"physicalResourceId":{"responsePath":"PrefixLists.0.PrefixListId"}}",
             ],
           ],
         },
         "InstallLatestAwsSdk": true,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
+        "ServiceToken": {
+          "Fn::GetAtt": [
             "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
             "Arn",
           ],
         },
-        "Update": Object {
-          "Fn::Join": Array [
+        "Update": {
+          "Fn::Join": [
             "",
-            Array [
-              "{\\"action\\":\\"describePrefixLists\\",\\"service\\":\\"EC2\\",\\"parameters\\":{\\"Filters\\":[{\\"Name\\":\\"prefix-list-name\\",\\"Values\\":[\\"com.amazonaws.",
-              Object {
+            [
+              "{"action":"describePrefixLists","service":"EC2","parameters":{"Filters":[{"Name":"prefix-list-name","Values":["com.amazonaws.",
+              {
                 "Ref": "AWS::Region",
               },
-              ".s3\\"]}]},\\"outputPaths\\":[\\"PrefixLists.0.PrefixListId\\",\\"PrefixLists.0.PrefixListName\\"],\\"physicalResourceId\\":{\\"responsePath\\":\\"PrefixLists.0.PrefixListId\\"}}",
+              ".s3"]}]},"outputPaths":["PrefixLists.0.PrefixListId","PrefixLists.0.PrefixListName"],"physicalResourceId":{"responsePath":"PrefixLists.0.PrefixListId"}}",
             ],
           ],
         },
@@ -423,11 +423,11 @@ Object {
       "Type": "Custom::S3-PrefixList",
       "UpdateReplacePolicy": "Delete",
     },
-    "S3PrefixListCustomResourcePolicy456414A6": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "S3PrefixListCustomResourcePolicy456414A6": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
               "Action": "ec2:DescribePrefixLists",
               "Effect": "Allow",
               "Resource": "*",
@@ -436,22 +436,22 @@ Object {
           "Version": "2012-10-17",
         },
         "PolicyName": "S3PrefixListCustomResourcePolicy456414A6",
-        "Roles": Array [
-          Object {
+        "Roles": [
+          {
             "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "VPCB9E5F0B4": Object {
-      "Properties": Object {
+    "VPCB9E5F0B4": {
+      "Properties": {
         "CidrBlock": "10.0.0.0/16",
         "EnableDnsHostnames": true,
         "EnableDnsSupport": true,
         "InstanceTenancy": "default",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "TestStack/VPC",
           },
@@ -459,10 +459,10 @@ Object {
       },
       "Type": "AWS::EC2::VPC",
     },
-    "VPCIGWB7E252D3": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "VPCIGWB7E252D3": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "TestStack/VPC",
           },
@@ -470,164 +470,164 @@ Object {
       },
       "Type": "AWS::EC2::InternetGateway",
     },
-    "VPCPrivateSubnet1DefaultRouteAE1D6490": Object {
-      "Properties": Object {
+    "VPCPrivateSubnet1DefaultRouteAE1D6490": {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "NatGatewayId": Object {
+        "NatGatewayId": {
           "Ref": "VPCPublicSubnet1NATGatewayE0556630",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "VPCPrivateSubnet1RouteTableBE8A6027",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "VPCPrivateSubnet1RouteTableAssociation347902D1": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "VPCPrivateSubnet1RouteTableAssociation347902D1": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "VPCPrivateSubnet1RouteTableBE8A6027",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "VPCPrivateSubnet1Subnet8BCA10E0",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "VPCPrivateSubnet1RouteTableBE8A6027": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "VPCPrivateSubnet1RouteTableBE8A6027": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "TestStack/VPC/PrivateSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "VPCB9E5F0B4",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "VPCPrivateSubnet1Subnet8BCA10E0": Object {
-      "Properties": Object {
-        "AvailabilityZone": Object {
-          "Fn::Select": Array [
+    "VPCPrivateSubnet1Subnet8BCA10E0": {
+      "Properties": {
+        "AvailabilityZone": {
+          "Fn::Select": [
             0,
-            Object {
+            {
               "Fn::GetAZs": "",
             },
           ],
         },
         "CidrBlock": "10.0.128.0/18",
         "MapPublicIpOnLaunch": false,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "TestStack/VPC/PrivateSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "VPCB9E5F0B4",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "VPCPrivateSubnet2DefaultRouteF4F5CFD2": Object {
-      "Properties": Object {
+    "VPCPrivateSubnet2DefaultRouteF4F5CFD2": {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "NatGatewayId": Object {
+        "NatGatewayId": {
           "Ref": "VPCPublicSubnet2NATGateway3C070193",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "VPCPrivateSubnet2RouteTable0A19E10E",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "VPCPrivateSubnet2RouteTable0A19E10E": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "VPCPrivateSubnet2RouteTable0A19E10E": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "TestStack/VPC/PrivateSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "VPCB9E5F0B4",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "VPCPrivateSubnet2RouteTableAssociation0C73D413": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "VPCPrivateSubnet2RouteTableAssociation0C73D413": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "VPCPrivateSubnet2RouteTable0A19E10E",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "VPCPrivateSubnet2SubnetCFCDAA7A",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "VPCPrivateSubnet2SubnetCFCDAA7A": Object {
-      "Properties": Object {
-        "AvailabilityZone": Object {
-          "Fn::Select": Array [
+    "VPCPrivateSubnet2SubnetCFCDAA7A": {
+      "Properties": {
+        "AvailabilityZone": {
+          "Fn::Select": [
             1,
-            Object {
+            {
               "Fn::GetAZs": "",
             },
           ],
         },
         "CidrBlock": "10.0.192.0/18",
         "MapPublicIpOnLaunch": false,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Private",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "TestStack/VPC/PrivateSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "VPCB9E5F0B4",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "VPCPublicSubnet1DefaultRoute91CEF279": Object {
-      "DependsOn": Array [
+    "VPCPublicSubnet1DefaultRoute91CEF279": {
+      "DependsOn": [
         "VPCVPCGW99B986DC",
       ],
-      "Properties": Object {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": Object {
+        "GatewayId": {
           "Ref": "VPCIGWB7E252D3",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "VPCPublicSubnet1RouteTableFEE4B781",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "VPCPublicSubnet1EIP6AD938E8": Object {
-      "Properties": Object {
+    "VPCPublicSubnet1EIP6AD938E8": {
+      "Properties": {
         "Domain": "vpc",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "TestStack/VPC/PublicSubnet1",
           },
@@ -635,23 +635,23 @@ Object {
       },
       "Type": "AWS::EC2::EIP",
     },
-    "VPCPublicSubnet1NATGatewayE0556630": Object {
-      "DependsOn": Array [
+    "VPCPublicSubnet1NATGatewayE0556630": {
+      "DependsOn": [
         "VPCPublicSubnet1DefaultRoute91CEF279",
         "VPCPublicSubnet1RouteTableAssociation0B0896DC",
       ],
-      "Properties": Object {
-        "AllocationId": Object {
-          "Fn::GetAtt": Array [
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
             "VPCPublicSubnet1EIP6AD938E8",
             "AllocationId",
           ],
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "VPCPublicSubnet1SubnetB4246D30",
         },
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "TestStack/VPC/PublicSubnet1",
           },
@@ -659,83 +659,83 @@ Object {
       },
       "Type": "AWS::EC2::NatGateway",
     },
-    "VPCPublicSubnet1RouteTableAssociation0B0896DC": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "VPCPublicSubnet1RouteTableAssociation0B0896DC": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "VPCPublicSubnet1RouteTableFEE4B781",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "VPCPublicSubnet1SubnetB4246D30",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "VPCPublicSubnet1RouteTableFEE4B781": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "VPCPublicSubnet1RouteTableFEE4B781": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "TestStack/VPC/PublicSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "VPCB9E5F0B4",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "VPCPublicSubnet1SubnetB4246D30": Object {
-      "Properties": Object {
-        "AvailabilityZone": Object {
-          "Fn::Select": Array [
+    "VPCPublicSubnet1SubnetB4246D30": {
+      "Properties": {
+        "AvailabilityZone": {
+          "Fn::Select": [
             0,
-            Object {
+            {
               "Fn::GetAZs": "",
             },
           ],
         },
         "CidrBlock": "10.0.0.0/18",
         "MapPublicIpOnLaunch": true,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "TestStack/VPC/PublicSubnet1",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "VPCB9E5F0B4",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "VPCPublicSubnet2DefaultRouteB7481BBA": Object {
-      "DependsOn": Array [
+    "VPCPublicSubnet2DefaultRouteB7481BBA": {
+      "DependsOn": [
         "VPCVPCGW99B986DC",
       ],
-      "Properties": Object {
+      "Properties": {
         "DestinationCidrBlock": "0.0.0.0/0",
-        "GatewayId": Object {
+        "GatewayId": {
           "Ref": "VPCIGWB7E252D3",
         },
-        "RouteTableId": Object {
+        "RouteTableId": {
           "Ref": "VPCPublicSubnet2RouteTable6F1A15F1",
         },
       },
       "Type": "AWS::EC2::Route",
     },
-    "VPCPublicSubnet2EIP4947BC00": Object {
-      "Properties": Object {
+    "VPCPublicSubnet2EIP4947BC00": {
+      "Properties": {
         "Domain": "vpc",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "TestStack/VPC/PublicSubnet2",
           },
@@ -743,23 +743,23 @@ Object {
       },
       "Type": "AWS::EC2::EIP",
     },
-    "VPCPublicSubnet2NATGateway3C070193": Object {
-      "DependsOn": Array [
+    "VPCPublicSubnet2NATGateway3C070193": {
+      "DependsOn": [
         "VPCPublicSubnet2DefaultRouteB7481BBA",
         "VPCPublicSubnet2RouteTableAssociation5A808732",
       ],
-      "Properties": Object {
-        "AllocationId": Object {
-          "Fn::GetAtt": Array [
+      "Properties": {
+        "AllocationId": {
+          "Fn::GetAtt": [
             "VPCPublicSubnet2EIP4947BC00",
             "AllocationId",
           ],
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "VPCPublicSubnet2Subnet74179F39",
         },
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "TestStack/VPC/PublicSubnet2",
           },
@@ -767,121 +767,121 @@ Object {
       },
       "Type": "AWS::EC2::NatGateway",
     },
-    "VPCPublicSubnet2RouteTable6F1A15F1": Object {
-      "Properties": Object {
-        "Tags": Array [
-          Object {
+    "VPCPublicSubnet2RouteTable6F1A15F1": {
+      "Properties": {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "TestStack/VPC/PublicSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "VPCB9E5F0B4",
         },
       },
       "Type": "AWS::EC2::RouteTable",
     },
-    "VPCPublicSubnet2RouteTableAssociation5A808732": Object {
-      "Properties": Object {
-        "RouteTableId": Object {
+    "VPCPublicSubnet2RouteTableAssociation5A808732": {
+      "Properties": {
+        "RouteTableId": {
           "Ref": "VPCPublicSubnet2RouteTable6F1A15F1",
         },
-        "SubnetId": Object {
+        "SubnetId": {
           "Ref": "VPCPublicSubnet2Subnet74179F39",
         },
       },
       "Type": "AWS::EC2::SubnetRouteTableAssociation",
     },
-    "VPCPublicSubnet2Subnet74179F39": Object {
-      "Properties": Object {
-        "AvailabilityZone": Object {
-          "Fn::Select": Array [
+    "VPCPublicSubnet2Subnet74179F39": {
+      "Properties": {
+        "AvailabilityZone": {
+          "Fn::Select": [
             1,
-            Object {
+            {
               "Fn::GetAZs": "",
             },
           ],
         },
         "CidrBlock": "10.0.64.0/18",
         "MapPublicIpOnLaunch": true,
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:subnet-name",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "aws-cdk:subnet-type",
             "Value": "Public",
           },
-          Object {
+          {
             "Key": "Name",
             "Value": "TestStack/VPC/PublicSubnet2",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "VPCB9E5F0B4",
         },
       },
       "Type": "AWS::EC2::Subnet",
     },
-    "VPCVPCGW99B986DC": Object {
-      "Properties": Object {
-        "InternetGatewayId": Object {
+    "VPCVPCGW99B986DC": {
+      "Properties": {
+        "InternetGatewayId": {
           "Ref": "VPCIGWB7E252D3",
         },
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "VPCB9E5F0B4",
         },
       },
       "Type": "AWS::EC2::VPCGatewayAttachment",
     },
-    "cloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec16388": Object {
-      "Properties": Object {
+    "cloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec16388": {
+      "Properties": {
         "AddressFamily": "IPv4",
-        "Entries": Array [
-          Object {
+        "Entries": [
+          {
             "Cidr": "103.21.244.0/22",
           },
-          Object {
+          {
             "Cidr": "103.22.200.0/22",
           },
-          Object {
+          {
             "Cidr": "103.31.4.0/22",
           },
-          Object {
+          {
             "Cidr": "104.16.0.0/13",
           },
-          Object {
+          {
             "Cidr": "104.24.0.0/14",
           },
-          Object {
+          {
             "Cidr": "108.162.192.0/18",
           },
-          Object {
+          {
             "Cidr": "131.0.72.0/22",
           },
-          Object {
+          {
             "Cidr": "141.101.64.0/18",
           },
-          Object {
+          {
             "Cidr": "162.158.0.0/15",
           },
-          Object {
+          {
             "Cidr": "172.64.0.0/13",
           },
-          Object {
+          {
             "Cidr": "173.245.48.0/20",
           },
-          Object {
+          {
             "Cidr": "188.114.96.0/20",
           },
-          Object {
+          {
             "Cidr": "190.93.240.0/20",
           },
-          Object {
+          {
             "Cidr": "197.234.240.0/22",
           },
-          Object {
+          {
             "Cidr": "198.41.128.0/17",
           },
         ],
@@ -890,33 +890,33 @@ Object {
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "cloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec16388D0AFA17A": Object {
-      "Properties": Object {
+    "cloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec16388D0AFA17A": {
+      "Properties": {
         "GroupDescription": "TestStack/cloudflare-IPv4",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "cloudflare.IPv4",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "VPCB9E5F0B4",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "cloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec16388toTestStackcloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec163884432973C5B9": Object {
-      "Properties": Object {
+    "cloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec16388toTestStackcloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec163884432973C5B9": {
+      "Properties": {
         "Description": "to cloudflare (IPv4)",
-        "DestinationPrefixListId": Object {
-          "Fn::GetAtt": Array [
+        "DestinationPrefixListId": {
+          "Fn::GetAtt": [
             "cloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec16388",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
+        "GroupId": {
+          "Fn::GetAtt": [
             "cloudflareIPv4c2cf61493c41a0c1519c61e5aad250b74ec16388D0AFA17A",
             "GroupId",
           ],
@@ -926,44 +926,44 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "githubapiIPv4179d867a9708387a1e798d46ac19c0a9014521d4": Object {
-      "Properties": Object {
+    "githubapiIPv4179d867a9708387a1e798d46ac19c0a9014521d4": {
+      "Properties": {
         "AddressFamily": "IPv4",
-        "Entries": Array [
-          Object {
+        "Entries": [
+          {
             "Cidr": "140.82.112.0/20",
           },
-          Object {
+          {
             "Cidr": "143.55.64.0/20",
           },
-          Object {
+          {
             "Cidr": "185.199.108.0/22",
           },
-          Object {
+          {
             "Cidr": "192.30.252.0/22",
           },
-          Object {
+          {
             "Cidr": "20.200.245.245/32",
           },
-          Object {
+          {
             "Cidr": "20.201.28.148/32",
           },
-          Object {
+          {
             "Cidr": "20.205.243.168/32",
           },
-          Object {
+          {
             "Cidr": "20.207.73.85/32",
           },
-          Object {
+          {
             "Cidr": "20.233.54.49/32",
           },
-          Object {
+          {
             "Cidr": "20.248.137.49/32",
           },
-          Object {
+          {
             "Cidr": "20.27.177.116/32",
           },
-          Object {
+          {
             "Cidr": "20.87.225.211/32",
           },
         ],
@@ -972,33 +972,33 @@ Object {
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "githubapiIPv4179d867a9708387a1e798d46ac19c0a9014521d4B4A19AE1": Object {
-      "Properties": Object {
+    "githubapiIPv4179d867a9708387a1e798d46ac19c0a9014521d4B4A19AE1": {
+      "Properties": {
         "GroupDescription": "TestStack/github.api-IPv4",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "github.api.IPv4",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "VPCB9E5F0B4",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "githubapiIPv4179d867a9708387a1e798d46ac19c0a9014521d4toTestStackgithubapiIPv4179d867a9708387a1e798d46ac19c0a9014521d44436D1C5A00": Object {
-      "Properties": Object {
+    "githubapiIPv4179d867a9708387a1e798d46ac19c0a9014521d4toTestStackgithubapiIPv4179d867a9708387a1e798d46ac19c0a9014521d44436D1C5A00": {
+      "Properties": {
         "Description": "to github.api (IPv4)",
-        "DestinationPrefixListId": Object {
-          "Fn::GetAtt": Array [
+        "DestinationPrefixListId": {
+          "Fn::GetAtt": [
             "githubapiIPv4179d867a9708387a1e798d46ac19c0a9014521d4",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
+        "GroupId": {
+          "Fn::GetAtt": [
             "githubapiIPv4179d867a9708387a1e798d46ac19c0a9014521d4B4A19AE1",
             "GroupId",
           ],
@@ -1008,68 +1008,68 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "githubgitIPv4172f66a5fbd73b0c0ef25b6c601d5acc6365e585": Object {
-      "Properties": Object {
+    "githubgitIPv4172f66a5fbd73b0c0ef25b6c601d5acc6365e585": {
+      "Properties": {
         "AddressFamily": "IPv4",
-        "Entries": Array [
-          Object {
+        "Entries": [
+          {
             "Cidr": "140.82.112.0/20",
           },
-          Object {
+          {
             "Cidr": "143.55.64.0/20",
           },
-          Object {
+          {
             "Cidr": "185.199.108.0/22",
           },
-          Object {
+          {
             "Cidr": "192.30.252.0/22",
           },
-          Object {
+          {
             "Cidr": "20.200.245.247/32",
           },
-          Object {
+          {
             "Cidr": "20.200.245.248/32",
           },
-          Object {
+          {
             "Cidr": "20.201.28.151/32",
           },
-          Object {
+          {
             "Cidr": "20.201.28.152/32",
           },
-          Object {
+          {
             "Cidr": "20.205.243.160/32",
           },
-          Object {
+          {
             "Cidr": "20.205.243.166/32",
           },
-          Object {
+          {
             "Cidr": "20.207.73.82/32",
           },
-          Object {
+          {
             "Cidr": "20.207.73.83/32",
           },
-          Object {
+          {
             "Cidr": "20.233.54.52/32",
           },
-          Object {
+          {
             "Cidr": "20.233.54.53/32",
           },
-          Object {
+          {
             "Cidr": "20.248.137.48/32",
           },
-          Object {
+          {
             "Cidr": "20.248.137.50/32",
           },
-          Object {
+          {
             "Cidr": "20.27.177.113/32",
           },
-          Object {
+          {
             "Cidr": "20.27.177.118/32",
           },
-          Object {
+          {
             "Cidr": "20.87.225.212/32",
           },
-          Object {
+          {
             "Cidr": "20.87.225.214/32",
           },
         ],
@@ -1078,33 +1078,33 @@ Object {
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "githubgitIPv4172f66a5fbd73b0c0ef25b6c601d5acc6365e585D9A8E1E3": Object {
-      "Properties": Object {
+    "githubgitIPv4172f66a5fbd73b0c0ef25b6c601d5acc6365e585D9A8E1E3": {
+      "Properties": {
         "GroupDescription": "TestStack/github.git-IPv4",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "github.git.IPv4",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "VPCB9E5F0B4",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "githubgitIPv4172f66a5fbd73b0c0ef25b6c601d5acc6365e585toTestStackgithubgitIPv4172f66a5fbd73b0c0ef25b6c601d5acc6365e5854435A64344A": Object {
-      "Properties": Object {
+    "githubgitIPv4172f66a5fbd73b0c0ef25b6c601d5acc6365e585toTestStackgithubgitIPv4172f66a5fbd73b0c0ef25b6c601d5acc6365e5854435A64344A": {
+      "Properties": {
         "Description": "to github.git (IPv4)",
-        "DestinationPrefixListId": Object {
-          "Fn::GetAtt": Array [
+        "DestinationPrefixListId": {
+          "Fn::GetAtt": [
             "githubgitIPv4172f66a5fbd73b0c0ef25b6c601d5acc6365e585",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
+        "GroupId": {
+          "Fn::GetAtt": [
             "githubgitIPv4172f66a5fbd73b0c0ef25b6c601d5acc6365e585D9A8E1E3",
             "GroupId",
           ],
@@ -1114,44 +1114,44 @@ Object {
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "githubwebIPv4b687737393cacef30bab80886608a7fd3799561b": Object {
-      "Properties": Object {
+    "githubwebIPv4b687737393cacef30bab80886608a7fd3799561b": {
+      "Properties": {
         "AddressFamily": "IPv4",
-        "Entries": Array [
-          Object {
+        "Entries": [
+          {
             "Cidr": "140.82.112.0/20",
           },
-          Object {
+          {
             "Cidr": "143.55.64.0/20",
           },
-          Object {
+          {
             "Cidr": "185.199.108.0/22",
           },
-          Object {
+          {
             "Cidr": "192.30.252.0/22",
           },
-          Object {
+          {
             "Cidr": "20.200.245.247/32",
           },
-          Object {
+          {
             "Cidr": "20.201.28.151/32",
           },
-          Object {
+          {
             "Cidr": "20.205.243.166/32",
           },
-          Object {
+          {
             "Cidr": "20.207.73.82/32",
           },
-          Object {
+          {
             "Cidr": "20.233.54.53/32",
           },
-          Object {
+          {
             "Cidr": "20.248.137.48/32",
           },
-          Object {
+          {
             "Cidr": "20.27.177.113/32",
           },
-          Object {
+          {
             "Cidr": "20.87.225.212/32",
           },
         ],
@@ -1160,33 +1160,33 @@ Object {
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "githubwebIPv4b687737393cacef30bab80886608a7fd3799561b44AB4689": Object {
-      "Properties": Object {
+    "githubwebIPv4b687737393cacef30bab80886608a7fd3799561b44AB4689": {
+      "Properties": {
         "GroupDescription": "TestStack/github.web-IPv4",
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "Name",
             "Value": "github.web.IPv4",
           },
         ],
-        "VpcId": Object {
+        "VpcId": {
           "Ref": "VPCB9E5F0B4",
         },
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "githubwebIPv4b687737393cacef30bab80886608a7fd3799561btoTestStackgithubwebIPv4b687737393cacef30bab80886608a7fd3799561b443C353106E": Object {
-      "Properties": Object {
+    "githubwebIPv4b687737393cacef30bab80886608a7fd3799561btoTestStackgithubwebIPv4b687737393cacef30bab80886608a7fd3799561b443C353106E": {
+      "Properties": {
         "Description": "to github.web (IPv4)",
-        "DestinationPrefixListId": Object {
-          "Fn::GetAtt": Array [
+        "DestinationPrefixListId": {
+          "Fn::GetAtt": [
             "githubwebIPv4b687737393cacef30bab80886608a7fd3799561b",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
-        "GroupId": Object {
-          "Fn::GetAtt": Array [
+        "GroupId": {
+          "Fn::GetAtt": [
             "githubwebIPv4b687737393cacef30bab80886608a7fd3799561b44AB4689",
             "GroupId",
           ],
@@ -1197,22 +1197,22 @@ Object {
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
   },
-  "Rules": Object {
-    "CheckBootstrapVersion": Object {
-      "Assertions": Array [
-        Object {
-          "Assert": Object {
-            "Fn::Not": Array [
-              Object {
-                "Fn::Contains": Array [
-                  Array [
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
                     "1",
                     "2",
                     "3",
                     "4",
                     "5",
                   ],
-                  Object {
+                  {
                     "Ref": "BootstrapVersion",
                   },
                 ],

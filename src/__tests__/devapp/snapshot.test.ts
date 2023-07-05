@@ -17,5 +17,7 @@ test('golden snapshot', () => {
   const stack = new DevStack(app, 'dev', {
     sensitiveTaskIsolation: Isolation.NO_INTERNET_ACCESS,
   });
-  expect(app.synth().getStackByName(stack.stackName)).toMatchSnapshot();
+  expect(
+    app.synth().getStackByName(stack.stackName).template
+  ).toMatchSnapshot();
 });

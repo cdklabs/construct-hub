@@ -1,140 +1,140 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`defaults - empty deny list 1`] = `
-Object {
-  "Mappings": Object {
-    "DefaultCrNodeVersionMap": Object {
-      "af-south-1": Object {
+{
+  "Mappings": {
+    "DefaultCrNodeVersionMap": {
+      "af-south-1": {
         "value": "nodejs16.x",
       },
-      "ap-east-1": Object {
+      "ap-east-1": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-1": Object {
+      "ap-northeast-1": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-2": Object {
+      "ap-northeast-2": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-3": Object {
+      "ap-northeast-3": {
         "value": "nodejs16.x",
       },
-      "ap-south-1": Object {
+      "ap-south-1": {
         "value": "nodejs16.x",
       },
-      "ap-south-2": Object {
+      "ap-south-2": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-1": Object {
+      "ap-southeast-1": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-2": Object {
+      "ap-southeast-2": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-3": Object {
+      "ap-southeast-3": {
         "value": "nodejs16.x",
       },
-      "ca-central-1": Object {
+      "ca-central-1": {
         "value": "nodejs16.x",
       },
-      "cn-north-1": Object {
+      "cn-north-1": {
         "value": "nodejs16.x",
       },
-      "cn-northwest-1": Object {
+      "cn-northwest-1": {
         "value": "nodejs16.x",
       },
-      "eu-central-1": Object {
+      "eu-central-1": {
         "value": "nodejs16.x",
       },
-      "eu-central-2": Object {
+      "eu-central-2": {
         "value": "nodejs16.x",
       },
-      "eu-north-1": Object {
+      "eu-north-1": {
         "value": "nodejs16.x",
       },
-      "eu-south-1": Object {
+      "eu-south-1": {
         "value": "nodejs16.x",
       },
-      "eu-south-2": Object {
+      "eu-south-2": {
         "value": "nodejs16.x",
       },
-      "eu-west-1": Object {
+      "eu-west-1": {
         "value": "nodejs16.x",
       },
-      "eu-west-2": Object {
+      "eu-west-2": {
         "value": "nodejs16.x",
       },
-      "eu-west-3": Object {
+      "eu-west-3": {
         "value": "nodejs16.x",
       },
-      "me-central-1": Object {
+      "me-central-1": {
         "value": "nodejs16.x",
       },
-      "me-south-1": Object {
+      "me-south-1": {
         "value": "nodejs16.x",
       },
-      "sa-east-1": Object {
+      "sa-east-1": {
         "value": "nodejs16.x",
       },
-      "us-east-1": Object {
+      "us-east-1": {
         "value": "nodejs16.x",
       },
-      "us-east-2": Object {
+      "us-east-2": {
         "value": "nodejs16.x",
       },
-      "us-gov-east-1": Object {
+      "us-gov-east-1": {
         "value": "nodejs16.x",
       },
-      "us-gov-west-1": Object {
+      "us-gov-west-1": {
         "value": "nodejs16.x",
       },
-      "us-iso-east-1": Object {
+      "us-iso-east-1": {
         "value": "nodejs14.x",
       },
-      "us-iso-west-1": Object {
+      "us-iso-west-1": {
         "value": "nodejs14.x",
       },
-      "us-isob-east-1": Object {
+      "us-isob-east-1": {
         "value": "nodejs14.x",
       },
-      "us-west-1": Object {
+      "us-west-1": {
         "value": "nodejs16.x",
       },
-      "us-west-2": Object {
+      "us-west-2": {
         "value": "nodejs16.x",
       },
     },
   },
-  "Outputs": Object {
-    "DenyListSnapshotCommand31529C83": Object {
+  "Outputs": {
+    "DenyListSnapshotCommand31529C83": {
       "Description": "Snapshot Default/DenyList/Bucket",
-      "Value": Object {
-        "Fn::Join": Array [
+      "Value": {
+        "Fn::Join": [
           "",
-          Array [
+          [
             "aws s3 sync s3://",
-            Object {
+            {
               "Ref": "DenyListBucketC1C9D3D9",
             },
             " s3://",
-            Object {
+            {
               "Ref": "DenyListFailoverBucketC0405145",
             },
           ],
         ],
       },
     },
-    "MonitoringWatchfulWatchfulDashboard1D7DDB1C": Object {
-      "Value": Object {
-        "Fn::Join": Array [
+    "MonitoringWatchfulWatchfulDashboard1D7DDB1C": {
+      "Value": {
+        "Fn::Join": [
           "",
-          Array [
+          [
             "https://console.aws.amazon.com/cloudwatch/home?region=",
-            Object {
+            {
               "Ref": "AWS::Region",
             },
             "#dashboards:name=",
-            Object {
+            {
               "Ref": "MonitoringWatchfulDashboard9EB9FD4D",
             },
           ],
@@ -142,40 +142,40 @@ Object {
       },
     },
   },
-  "Parameters": Object {
-    "BootstrapVersion": Object {
+  "Parameters": {
+    "BootstrapVersion": {
       "Default": "/cdk-bootstrap/hnb659fds/version",
       "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
   },
-  "Resources": Object {
-    "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691": Object {
-      "DependsOn": Array [
+  "Resources": {
+    "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691": {
+      "DependsOn": [
         "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
         "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
       ],
-      "Properties": Object {
-        "Code": Object {
+      "Properties": {
+        "Code": {
           "ZipFile": "import boto3  # type: ignore
 import json
 import logging
 import urllib.request
 
-s3 = boto3.client(\\"s3\\")
+s3 = boto3.client("s3")
 
 EVENTBRIDGE_CONFIGURATION = 'EventBridgeConfiguration'
 
-CONFIGURATION_TYPES = [\\"TopicConfigurations\\", \\"QueueConfigurations\\", \\"LambdaFunctionConfigurations\\"]
+CONFIGURATION_TYPES = ["TopicConfigurations", "QueueConfigurations", "LambdaFunctionConfigurations"]
 
 def handler(event: dict, context):
-  response_status = \\"SUCCESS\\"
-  error_message = \\"\\"
+  response_status = "SUCCESS"
+  error_message = ""
   try:
-    props = event[\\"ResourceProperties\\"]
-    bucket = props[\\"BucketName\\"]
-    notification_configuration = props[\\"NotificationConfiguration\\"]
-    request_type = event[\\"RequestType\\"]
+    props = event["ResourceProperties"]
+    bucket = props["BucketName"]
+    notification_configuration = props["NotificationConfiguration"]
+    request_type = event["RequestType"]
     managed = props.get('Managed', 'true').lower() == 'true'
     stack_id = event['StackId']
 
@@ -186,9 +186,9 @@ def handler(event: dict, context):
 
     put_bucket_notification_configuration(bucket, config)
   except Exception as e:
-    logging.exception(\\"Failed to put bucket notification configuration\\")
-    response_status = \\"FAILED\\"
-    error_message = f\\"Error: {str(e)}. \\"
+    logging.exception("Failed to put bucket notification configuration")
+    response_status = "FAILED"
+    error_message = f"Error: {str(e)}. "
   finally:
     submit_response(event, context, response_status, error_message)
 
@@ -204,7 +204,7 @@ def handle_unmanaged(bucket, stack_id, request_type, notification_configuration)
     return external_notifications
 
   def with_id(notification):
-    notification['Id'] = f\\"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}\\"
+    notification['Id'] = f"{stack_id}-{hash(json.dumps(notification, sort_keys=True))}"
     return notification
 
   notifications = {}
@@ -224,7 +224,7 @@ def find_external_notifications(bucket, stack_id):
   existing_notifications = get_bucket_notification_configuration(bucket)
   external_notifications = {}
   for t in CONFIGURATION_TYPES:
-    external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f\\"{stack_id}-\\")]
+    external_notifications[t] = [n for n in existing_notifications.get(t, []) if not n['Id'].startswith(f"{stack_id}-")]
 
   if EVENTBRIDGE_CONFIGURATION in existing_notifications:
     external_notifications[EVENTBRIDGE_CONFIGURATION] = existing_notifications[EVENTBRIDGE_CONFIGURATION]
@@ -240,29 +240,29 @@ def put_bucket_notification_configuration(bucket, notification_configuration):
 def submit_response(event: dict, context, response_status: str, error_message: str):
   response_body = json.dumps(
     {
-      \\"Status\\": response_status,
-      \\"Reason\\": f\\"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}\\",
-      \\"PhysicalResourceId\\": event.get(\\"PhysicalResourceId\\") or event[\\"LogicalResourceId\\"],
-      \\"StackId\\": event[\\"StackId\\"],
-      \\"RequestId\\": event[\\"RequestId\\"],
-      \\"LogicalResourceId\\": event[\\"LogicalResourceId\\"],
-      \\"NoEcho\\": False,
+      "Status": response_status,
+      "Reason": f"{error_message}See the details in CloudWatch Log Stream: {context.log_stream_name}",
+      "PhysicalResourceId": event.get("PhysicalResourceId") or event["LogicalResourceId"],
+      "StackId": event["StackId"],
+      "RequestId": event["RequestId"],
+      "LogicalResourceId": event["LogicalResourceId"],
+      "NoEcho": False,
     }
-  ).encode(\\"utf-8\\")
-  headers = {\\"content-type\\": \\"\\", \\"content-length\\": str(len(response_body))}
+  ).encode("utf-8")
+  headers = {"content-type": "", "content-length": str(len(response_body))}
   try:
-    req = urllib.request.Request(url=event[\\"ResponseURL\\"], headers=headers, data=response_body, method=\\"PUT\\")
+    req = urllib.request.Request(url=event["ResponseURL"], headers=headers, data=response_body, method="PUT")
     with urllib.request.urlopen(req) as response:
-      print(response.read().decode(\\"utf-8\\"))
-    print(\\"Status code: \\" + response.reason)
+      print(response.read().decode("utf-8"))
+    print("Status code: " + response.reason)
   except Exception as e:
-      print(\\"send(..) failed executing request.urlopen(..): \\" + str(e))
+      print("send(..) failed executing request.urlopen(..): " + str(e))
 ",
         },
-        "Description": "AWS CloudFormation handler for \\"Custom::S3BucketNotifications\\" resources (@aws-cdk/aws-s3)",
+        "Description": "AWS CloudFormation handler for "Custom::S3BucketNotifications" resources (@aws-cdk/aws-s3)",
         "Handler": "index.handler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
+        "Role": {
+          "Fn::GetAtt": [
             "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
             "Arn",
           ],
@@ -272,27 +272,27 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::Function",
     },
-    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "lambda.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
               "",
-              Array [
+              [
                 "arn:",
-                Object {
+                {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
@@ -303,11 +303,11 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::IAM::Role",
     },
-    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
               "Action": "s3:PutBucketNotification",
               "Effect": "Allow",
               "Resource": "*",
@@ -316,32 +316,32 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "Version": "2012-10-17",
         },
         "PolicyName": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleDefaultPolicy2CF63D36",
-        "Roles": Array [
-          Object {
+        "Roles": [
+          {
             "Ref": "BucketNotificationsHandler050a0587b7544547bf325f094a3db834RoleB6FB88EC",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "CatalogBuilderMock263D4D67": Object {
-      "DependsOn": Array [
+    "CatalogBuilderMock263D4D67": {
+      "DependsOn": [
         "CatalogBuilderMockServiceRole8558CA02",
       ],
-      "Properties": Object {
-        "Architectures": Array [
+      "Properties": {
+        "Architectures": [
           "arm64",
         ],
-        "Code": Object {
-          "S3Bucket": Object {
+        "Code": {
+          "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
           "S3Key": "a2b6fc284e07f2948c5e5664c1dfcff68ed9bbaef106822e51b3ffe723fce733.zip",
         },
         "Description": "__tests__/backend/deny-list/integ/catalog-builder-mock.lambda.ts",
         "Handler": "index.handler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
+        "Role": {
+          "Fn::GetAtt": [
             "CatalogBuilderMockServiceRole8558CA02",
             "Arn",
           ],
@@ -350,27 +350,27 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::Function",
     },
-    "CatalogBuilderMockServiceRole8558CA02": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "CatalogBuilderMockServiceRole8558CA02": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "lambda.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
               "",
-              Array [
+              [
                 "arn:",
-                Object {
+                {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
@@ -381,31 +381,31 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::IAM::Role",
     },
-    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": Object {
-      "DependsOn": Array [
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": {
+      "DependsOn": [
         "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
         "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
       ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
           "S3Key": "9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd.zip",
         },
-        "Environment": Object {
-          "Variables": Object {
+        "Environment": {
+          "Variables": {
             "AWS_CA_BUNDLE": "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem",
           },
         },
         "Handler": "index.handler",
-        "Layers": Array [
-          Object {
+        "Layers": [
+          {
             "Ref": "DenyListBucketDeploymentAwsCliLayer4F94CAE9",
           },
         ],
-        "Role": Object {
-          "Fn::GetAtt": Array [
+        "Role": {
+          "Fn::GetAtt": [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
             "Arn",
           ],
@@ -415,27 +415,27 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::Function",
     },
-    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "lambda.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
               "",
-              Array [
+              [
                 "arn:",
-                Object {
+                {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
@@ -446,43 +446,43 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::IAM::Role",
     },
-    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
                 "s3:GetObject*",
                 "s3:GetBucket*",
                 "s3:List*",
               ],
               "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::Join": Array [
+              "Resource": [
+                {
+                  "Fn::Join": [
                     "",
-                    Array [
+                    [
                       "arn:",
-                      Object {
+                      {
                         "Ref": "AWS::Partition",
                       },
                       ":s3:::",
-                      Object {
+                      {
                         "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
                       },
                     ],
                   ],
                 },
-                Object {
-                  "Fn::Join": Array [
+                {
+                  "Fn::Join": [
                     "",
-                    Array [
+                    [
                       "arn:",
-                      Object {
+                      {
                         "Ref": "AWS::Partition",
                       },
                       ":s3:::",
-                      Object {
+                      {
                         "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
                       },
                       "/*",
@@ -491,8 +491,8 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                 },
               ],
             },
-            Object {
-              "Action": Array [
+            {
+              "Action": [
                 "s3:GetObject*",
                 "s3:GetBucket*",
                 "s3:List*",
@@ -505,19 +505,19 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                 "s3:Abort*",
               ],
               "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
                     "DenyListBucketC1C9D3D9",
                     "Arn",
                   ],
                 },
-                Object {
-                  "Fn::Join": Array [
+                {
+                  "Fn::Join": [
                     "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
+                    [
+                      {
+                        "Fn::GetAtt": [
                           "DenyListBucketC1C9D3D9",
                           "Arn",
                         ],
@@ -532,31 +532,31 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "Version": "2012-10-17",
         },
         "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
-        "Roles": Array [
-          Object {
+        "Roles": [
+          {
             "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": Object {
-      "DependsOn": Array [
+    "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F": {
+      "DependsOn": [
         "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
       ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
           "S3Key": "350185a1069fa20a23a583e20c77f6844218bd73097902362dc94f1a108f5d89.zip",
         },
-        "Description": Object {
-          "Fn::Join": Array [
+        "Description": {
+          "Fn::Join": [
             "",
-            Array [
+            [
               "Lambda function for auto-deleting objects in ",
-              Object {
+              {
                 "Ref": "DenyListBucketC1C9D3D9",
               },
               " S3 bucket.",
@@ -565,8 +565,8 @@ def submit_response(event: dict, context, response_status: str, error_message: s
         },
         "Handler": "__entrypoint__.handler",
         "MemorySize": 128,
-        "Role": Object {
-          "Fn::GetAtt": Array [
+        "Role": {
+          "Fn::GetAtt": [
             "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
             "Arn",
           ],
@@ -576,43 +576,43 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::Function",
     },
-    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "lambda.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
+        "ManagedPolicyArns": [
+          {
             "Fn::Sub": "arn:\${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
           },
         ],
       },
       "Type": "AWS::IAM::Role",
     },
-    "DenyListBucketAllowBucketNotificationsToDenyListPrunePruneHandler6E446DC61E677015": Object {
-      "Properties": Object {
+    "DenyListBucketAllowBucketNotificationsToDenyListPrunePruneHandler6E446DC61E677015": {
+      "Properties": {
         "Action": "lambda:InvokeFunction",
-        "FunctionName": Object {
-          "Fn::GetAtt": Array [
+        "FunctionName": {
+          "Fn::GetAtt": [
             "DenyListPrunePruneHandler5F946B07",
             "Arn",
           ],
         },
         "Principal": "s3.amazonaws.com",
-        "SourceAccount": Object {
+        "SourceAccount": {
           "Ref": "AWS::AccountId",
         },
-        "SourceArn": Object {
-          "Fn::GetAtt": Array [
+        "SourceArn": {
+          "Fn::GetAtt": [
             "DenyListBucketC1C9D3D9",
             "Arn",
           ],
@@ -620,17 +620,17 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::Permission",
     },
-    "DenyListBucketAutoDeleteObjectsCustomResource8261EE69": Object {
+    "DenyListBucketAutoDeleteObjectsCustomResource8261EE69": {
       "DeletionPolicy": "Delete",
-      "DependsOn": Array [
+      "DependsOn": [
         "DenyListBucketPolicyFE28C82A",
       ],
-      "Properties": Object {
-        "BucketName": Object {
+      "Properties": {
+        "BucketName": {
           "Ref": "DenyListBucketC1C9D3D9",
         },
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
+        "ServiceToken": {
+          "Fn::GetAtt": [
             "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
             "Arn",
           ],
@@ -639,45 +639,45 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "Custom::S3AutoDeleteObjects",
       "UpdateReplacePolicy": "Delete",
     },
-    "DenyListBucketC1C9D3D9": Object {
+    "DenyListBucketC1C9D3D9": {
       "DeletionPolicy": "Delete",
-      "Properties": Object {
-        "BucketEncryption": Object {
-          "ServerSideEncryptionConfiguration": Array [
-            Object {
-              "ServerSideEncryptionByDefault": Object {
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
                 "SSEAlgorithm": "AES256",
               },
             },
           ],
         },
-        "PublicAccessBlockConfiguration": Object {
+        "PublicAccessBlockConfiguration": {
           "BlockPublicAcls": true,
           "BlockPublicPolicy": true,
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true,
         },
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:auto-delete-objects",
             "Value": "true",
           },
-          Object {
+          {
             "Key": "aws-cdk:cr-owned:8385ed7a",
             "Value": "true",
           },
         ],
-        "VersioningConfiguration": Object {
+        "VersioningConfiguration": {
           "Status": "Enabled",
         },
       },
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Delete",
     },
-    "DenyListBucketDeploymentAwsCliLayer4F94CAE9": Object {
-      "Properties": Object {
-        "Content": Object {
-          "S3Bucket": Object {
+    "DenyListBucketDeploymentAwsCliLayer4F94CAE9": {
+      "Properties": {
+        "Content": {
+          "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
           "S3Key": "e2277687077a2abf9ae1af1cc9565e6715e2ebb62f79ec53aa75a1af9298f642.zip",
@@ -686,66 +686,66 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::LayerVersion",
     },
-    "DenyListBucketDeploymentCustomResource68E58740": Object {
+    "DenyListBucketDeploymentCustomResource68E58740": {
       "DeletionPolicy": "Delete",
-      "DependsOn": Array [
+      "DependsOn": [
         "DenyListBucketNotificationsEF0449EB",
       ],
-      "Properties": Object {
-        "DestinationBucketName": Object {
+      "Properties": {
+        "DestinationBucketName": {
           "Ref": "DenyListBucketC1C9D3D9",
         },
         "Prune": true,
         "RetainOnDelete": true,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
+        "ServiceToken": {
+          "Fn::GetAtt": [
             "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
             "Arn",
           ],
         },
-        "SourceBucketNames": Array [
-          Object {
+        "SourceBucketNames": [
+          {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
         ],
-        "SourceObjectKeys": Array [
+        "SourceObjectKeys": [
           "8fb25fdd4f1ddeae2b028b9896c12ee4ce71b7b9a580a348a5d48a1459a2e064.zip",
         ],
       },
       "Type": "Custom::CDKBucketDeployment",
       "UpdateReplacePolicy": "Delete",
     },
-    "DenyListBucketNotificationsEF0449EB": Object {
-      "DependsOn": Array [
+    "DenyListBucketNotificationsEF0449EB": {
+      "DependsOn": [
         "DenyListBucketAllowBucketNotificationsToDenyListPrunePruneHandler6E446DC61E677015",
       ],
-      "Properties": Object {
-        "BucketName": Object {
+      "Properties": {
+        "BucketName": {
           "Ref": "DenyListBucketC1C9D3D9",
         },
         "Managed": true,
-        "NotificationConfiguration": Object {
-          "LambdaFunctionConfigurations": Array [
-            Object {
-              "Events": Array [
+        "NotificationConfiguration": {
+          "LambdaFunctionConfigurations": [
+            {
+              "Events": [
                 "s3:ObjectCreated:*",
               ],
-              "Filter": Object {
-                "Key": Object {
-                  "FilterRules": Array [
-                    Object {
+              "Filter": {
+                "Key": {
+                  "FilterRules": [
+                    {
                       "Name": "suffix",
                       "Value": "deny-list.json",
                     },
-                    Object {
+                    {
                       "Name": "prefix",
                       "Value": "deny-list.json",
                     },
                   ],
                 },
               },
-              "LambdaFunctionArn": Object {
-                "Fn::GetAtt": Array [
+              "LambdaFunctionArn": {
+                "Fn::GetAtt": [
                   "DenyListPrunePruneHandler5F946B07",
                   "Arn",
                 ],
@@ -753,8 +753,8 @@ def submit_response(event: dict, context, response_status: str, error_message: s
             },
           ],
         },
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
+        "ServiceToken": {
+          "Fn::GetAtt": [
             "BucketNotificationsHandler050a0587b7544547bf325f094a3db8347ECC3691",
             "Arn",
           ],
@@ -762,37 +762,37 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "Custom::S3BucketNotifications",
     },
-    "DenyListBucketPolicyFE28C82A": Object {
-      "Properties": Object {
-        "Bucket": Object {
+    "DenyListBucketPolicyFE28C82A": {
+      "Properties": {
+        "Bucket": {
           "Ref": "DenyListBucketC1C9D3D9",
         },
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
+        "PolicyDocument": {
+          "Statement": [
+            {
               "Action": "s3:*",
-              "Condition": Object {
-                "Bool": Object {
+              "Condition": {
+                "Bool": {
                   "aws:SecureTransport": "false",
                 },
               },
               "Effect": "Deny",
-              "Principal": Object {
+              "Principal": {
                 "AWS": "*",
               },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
                     "DenyListBucketC1C9D3D9",
                     "Arn",
                   ],
                 },
-                Object {
-                  "Fn::Join": Array [
+                {
+                  "Fn::Join": [
                     "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
+                    [
+                      {
+                        "Fn::GetAtt": [
                           "DenyListBucketC1C9D3D9",
                           "Arn",
                         ],
@@ -803,34 +803,34 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                 },
               ],
             },
-            Object {
-              "Action": Array [
+            {
+              "Action": [
                 "s3:GetBucket*",
                 "s3:List*",
                 "s3:DeleteObject*",
               ],
               "Effect": "Allow",
-              "Principal": Object {
-                "AWS": Object {
-                  "Fn::GetAtt": Array [
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
                     "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
                     "Arn",
                   ],
                 },
               },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
                     "DenyListBucketC1C9D3D9",
                     "Arn",
                   ],
                 },
-                Object {
-                  "Fn::Join": Array [
+                {
+                  "Fn::Join": [
                     "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
+                    [
+                      {
+                        "Fn::GetAtt": [
                           "DenyListBucketC1C9D3D9",
                           "Arn",
                         ],
@@ -847,17 +847,17 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::S3::BucketPolicy",
     },
-    "DenyListFailoverBucketAutoDeleteObjectsCustomResource7D8B8ADF": Object {
+    "DenyListFailoverBucketAutoDeleteObjectsCustomResource7D8B8ADF": {
       "DeletionPolicy": "Delete",
-      "DependsOn": Array [
+      "DependsOn": [
         "DenyListFailoverBucketPolicy7EF208CC",
       ],
-      "Properties": Object {
-        "BucketName": Object {
+      "Properties": {
+        "BucketName": {
           "Ref": "DenyListFailoverBucketC0405145",
         },
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
+        "ServiceToken": {
+          "Fn::GetAtt": [
             "CustomS3AutoDeleteObjectsCustomResourceProviderHandler9D90184F",
             "Arn",
           ],
@@ -866,72 +866,72 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       "Type": "Custom::S3AutoDeleteObjects",
       "UpdateReplacePolicy": "Delete",
     },
-    "DenyListFailoverBucketC0405145": Object {
+    "DenyListFailoverBucketC0405145": {
       "DeletionPolicy": "Delete",
-      "Properties": Object {
-        "BucketEncryption": Object {
-          "ServerSideEncryptionConfiguration": Array [
-            Object {
-              "ServerSideEncryptionByDefault": Object {
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
                 "SSEAlgorithm": "AES256",
               },
             },
           ],
         },
-        "PublicAccessBlockConfiguration": Object {
+        "PublicAccessBlockConfiguration": {
           "BlockPublicAcls": true,
           "BlockPublicPolicy": true,
           "IgnorePublicAcls": true,
           "RestrictPublicBuckets": true,
         },
-        "Tags": Array [
-          Object {
+        "Tags": [
+          {
             "Key": "aws-cdk:auto-delete-objects",
             "Value": "true",
           },
-          Object {
+          {
             "Key": "failover",
             "Value": "true",
           },
         ],
-        "VersioningConfiguration": Object {
+        "VersioningConfiguration": {
           "Status": "Enabled",
         },
       },
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Delete",
     },
-    "DenyListFailoverBucketPolicy7EF208CC": Object {
-      "Properties": Object {
-        "Bucket": Object {
+    "DenyListFailoverBucketPolicy7EF208CC": {
+      "Properties": {
+        "Bucket": {
           "Ref": "DenyListFailoverBucketC0405145",
         },
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
+        "PolicyDocument": {
+          "Statement": [
+            {
               "Action": "s3:*",
-              "Condition": Object {
-                "Bool": Object {
+              "Condition": {
+                "Bool": {
                   "aws:SecureTransport": "false",
                 },
               },
               "Effect": "Deny",
-              "Principal": Object {
+              "Principal": {
                 "AWS": "*",
               },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
                     "DenyListFailoverBucketC0405145",
                     "Arn",
                   ],
                 },
-                Object {
-                  "Fn::Join": Array [
+                {
+                  "Fn::Join": [
                     "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
+                    [
+                      {
+                        "Fn::GetAtt": [
                           "DenyListFailoverBucketC0405145",
                           "Arn",
                         ],
@@ -942,34 +942,34 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                 },
               ],
             },
-            Object {
-              "Action": Array [
+            {
+              "Action": [
                 "s3:GetBucket*",
                 "s3:List*",
                 "s3:DeleteObject*",
               ],
               "Effect": "Allow",
-              "Principal": Object {
-                "AWS": Object {
-                  "Fn::GetAtt": Array [
+              "Principal": {
+                "AWS": {
+                  "Fn::GetAtt": [
                     "CustomS3AutoDeleteObjectsCustomResourceProviderRole3B1BD092",
                     "Arn",
                   ],
                 },
               },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
                     "DenyListFailoverBucketC0405145",
                     "Arn",
                   ],
                 },
-                Object {
-                  "Fn::Join": Array [
+                {
+                  "Fn::Join": [
                     "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
+                    [
+                      {
+                        "Fn::GetAtt": [
                           "DenyListFailoverBucketC0405145",
                           "Arn",
                         ],
@@ -986,18 +986,18 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::S3::BucketPolicy",
     },
-    "DenyListPeriodicPruneAllowEventRuleDenyListPrunePruneHandler6E446DC674D56F6A": Object {
-      "Properties": Object {
+    "DenyListPeriodicPruneAllowEventRuleDenyListPrunePruneHandler6E446DC674D56F6A": {
+      "Properties": {
         "Action": "lambda:InvokeFunction",
-        "FunctionName": Object {
-          "Fn::GetAtt": Array [
+        "FunctionName": {
+          "Fn::GetAtt": [
             "DenyListPrunePruneHandler5F946B07",
             "Arn",
           ],
         },
         "Principal": "events.amazonaws.com",
-        "SourceArn": Object {
-          "Fn::GetAtt": Array [
+        "SourceArn": {
+          "Fn::GetAtt": [
             "DenyListPeriodicPruneC53BF9DB",
             "Arn",
           ],
@@ -1005,14 +1005,14 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::Permission",
     },
-    "DenyListPeriodicPruneC53BF9DB": Object {
-      "Properties": Object {
+    "DenyListPeriodicPruneC53BF9DB": {
+      "Properties": {
         "ScheduleExpression": "rate(5 minutes)",
         "State": "ENABLED",
-        "Targets": Array [
-          Object {
-            "Arn": Object {
-              "Fn::GetAtt": Array [
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
                 "DenyListPrunePruneHandler5F946B07",
                 "Arn",
               ],
@@ -1023,54 +1023,54 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Events::Rule",
     },
-    "DenyListPruneDeleteQueueF9D9EBE3": Object {
+    "DenyListPruneDeleteQueueF9D9EBE3": {
       "DeletionPolicy": "Delete",
-      "Properties": Object {
+      "Properties": {
         "VisibilityTimeout": 120,
       },
       "Type": "AWS::SQS::Queue",
       "UpdateReplacePolicy": "Delete",
     },
-    "DenyListPrunePruneHandler5F946B07": Object {
-      "DependsOn": Array [
+    "DenyListPrunePruneHandler5F946B07": {
+      "DependsOn": [
         "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E",
         "DenyListPrunePruneHandlerServiceRole234C8EF9",
       ],
-      "Properties": Object {
-        "Architectures": Array [
+      "Properties": {
+        "Architectures": [
           "arm64",
         ],
-        "Code": Object {
-          "S3Bucket": Object {
+        "Code": {
+          "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
           "S3Key": "c2a89fc66d83b5405aadcdf4b7998cd0d411cb1427ab417558f097feef6ae3db.zip",
         },
         "Description": "backend/deny-list/prune-handler.lambda.ts",
-        "Environment": Object {
-          "Variables": Object {
-            "DENY_LIST_BUCKET_NAME": Object {
+        "Environment": {
+          "Variables": {
+            "DENY_LIST_BUCKET_NAME": {
               "Ref": "DenyListBucketC1C9D3D9",
             },
             "DENY_LIST_OBJECT_KEY": "deny-list.json",
-            "ON_CHANGE_FUNCTION_NAME": Object {
-              "Fn::GetAtt": Array [
+            "ON_CHANGE_FUNCTION_NAME": {
+              "Fn::GetAtt": [
                 "CatalogBuilderMock263D4D67",
                 "Arn",
               ],
             },
-            "PACKAGE_DATA_BUCKET_NAME": Object {
+            "PACKAGE_DATA_BUCKET_NAME": {
               "Ref": "PackageDataBucket1F18522B",
             },
             "PACKAGE_DATA_KEY_PREFIX": "my-data/",
-            "PRUNE_QUEUE_URL": Object {
+            "PRUNE_QUEUE_URL": {
               "Ref": "DenyListPruneDeleteQueueF9D9EBE3",
             },
           },
         },
         "Handler": "index.handler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
+        "Role": {
+          "Fn::GetAtt": [
             "DenyListPrunePruneHandlerServiceRole234C8EF9",
             "Arn",
           ],
@@ -1080,27 +1080,27 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::Function",
     },
-    "DenyListPrunePruneHandlerServiceRole234C8EF9": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "DenyListPrunePruneHandlerServiceRole234C8EF9": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "lambda.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
               "",
-              Array [
+              [
                 "arn:",
-                Object {
+                {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
@@ -1111,44 +1111,44 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::IAM::Role",
     },
-    "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
+    "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
                 "sqs:SendMessage",
                 "sqs:GetQueueAttributes",
                 "sqs:GetQueueUrl",
               ],
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
+              "Resource": {
+                "Fn::GetAtt": [
                   "DenyListPruneDeleteQueueF9D9EBE3",
                   "Arn",
                 ],
               },
             },
-            Object {
-              "Action": Array [
+            {
+              "Action": [
                 "s3:GetObject*",
                 "s3:GetBucket*",
                 "s3:List*",
               ],
               "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
                     "PackageDataBucket1F18522B",
                     "Arn",
                   ],
                 },
-                Object {
-                  "Fn::Join": Array [
+                {
+                  "Fn::Join": [
                     "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
+                    [
+                      {
+                        "Fn::GetAtt": [
                           "PackageDataBucket1F18522B",
                           "Arn",
                         ],
@@ -1159,26 +1159,26 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                 },
               ],
             },
-            Object {
-              "Action": Array [
+            {
+              "Action": [
                 "s3:GetObject*",
                 "s3:GetBucket*",
                 "s3:List*",
               ],
               "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
                     "DenyListBucketC1C9D3D9",
                     "Arn",
                   ],
                 },
-                Object {
-                  "Fn::Join": Array [
+                {
+                  "Fn::Join": [
                     "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
+                    [
+                      {
+                        "Fn::GetAtt": [
                           "DenyListBucketC1C9D3D9",
                           "Arn",
                         ],
@@ -1189,22 +1189,22 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                 },
               ],
             },
-            Object {
+            {
               "Action": "lambda:InvokeFunction",
               "Effect": "Allow",
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
                     "CatalogBuilderMock263D4D67",
                     "Arn",
                   ],
                 },
-                Object {
-                  "Fn::Join": Array [
+                {
+                  "Fn::Join": [
                     "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
+                    [
+                      {
+                        "Fn::GetAtt": [
                           "CatalogBuilderMock263D4D67",
                           "Arn",
                         ],
@@ -1219,40 +1219,40 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "Version": "2012-10-17",
         },
         "PolicyName": "DenyListPrunePruneHandlerServiceRoleDefaultPolicy7222934E",
-        "Roles": Array [
-          Object {
+        "Roles": [
+          {
             "Ref": "DenyListPrunePruneHandlerServiceRole234C8EF9",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "DenyListPrunePruneQueueHandler087D6B50": Object {
-      "DependsOn": Array [
+    "DenyListPrunePruneQueueHandler087D6B50": {
+      "DependsOn": [
         "DenyListPrunePruneQueueHandlerServiceRoleDefaultPolicy9ED3B9C8",
         "DenyListPrunePruneQueueHandlerServiceRole9BB94361",
       ],
-      "Properties": Object {
-        "Architectures": Array [
+      "Properties": {
+        "Architectures": [
           "arm64",
         ],
-        "Code": Object {
-          "S3Bucket": Object {
+        "Code": {
+          "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
           "S3Key": "2a51a5a459cb9e428c4bf5cc4d67b9f714c6e19d2bfb54d356feb44cbac46aa8.zip",
         },
         "Description": "backend/deny-list/prune-queue-handler.lambda.ts",
-        "Environment": Object {
-          "Variables": Object {
-            "PACKAGE_DATA_BUCKET_NAME": Object {
+        "Environment": {
+          "Variables": {
+            "PACKAGE_DATA_BUCKET_NAME": {
               "Ref": "PackageDataBucket1F18522B",
             },
           },
         },
         "Handler": "index.handler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
+        "Role": {
+          "Fn::GetAtt": [
             "DenyListPrunePruneQueueHandlerServiceRole9BB94361",
             "Arn",
           ],
@@ -1262,27 +1262,27 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::Lambda::Function",
     },
-    "DenyListPrunePruneQueueHandlerServiceRole9BB94361": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "DenyListPrunePruneQueueHandlerServiceRole9BB94361": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "lambda.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
               "",
-              Array [
+              [
                 "arn:",
-                Object {
+                {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
@@ -1293,19 +1293,19 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::IAM::Role",
     },
-    "DenyListPrunePruneQueueHandlerServiceRoleDefaultPolicy9ED3B9C8": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "DenyListPrunePruneQueueHandlerServiceRoleDefaultPolicy9ED3B9C8": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
               "Action": "s3:DeleteObject*",
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
+              "Resource": {
+                "Fn::Join": [
                   "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
+                  [
+                    {
+                      "Fn::GetAtt": [
                         "PackageDataBucket1F18522B",
                         "Arn",
                       ],
@@ -1315,8 +1315,8 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                 ],
               },
             },
-            Object {
-              "Action": Array [
+            {
+              "Action": [
                 "sqs:ReceiveMessage",
                 "sqs:ChangeMessageVisibility",
                 "sqs:GetQueueUrl",
@@ -1324,8 +1324,8 @@ def submit_response(event: dict, context, response_status: str, error_message: s
                 "sqs:GetQueueAttributes",
               ],
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
+              "Resource": {
+                "Fn::GetAtt": [
                   "DenyListPruneDeleteQueueF9D9EBE3",
                   "Arn",
                 ],
@@ -1335,159 +1335,159 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           "Version": "2012-10-17",
         },
         "PolicyName": "DenyListPrunePruneQueueHandlerServiceRoleDefaultPolicy9ED3B9C8",
-        "Roles": Array [
-          Object {
+        "Roles": [
+          {
             "Ref": "DenyListPrunePruneQueueHandlerServiceRole9BB94361",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "DenyListPrunePruneQueueHandlerSqsEventSourceDenyListPruneDeleteQueueA7D1B946A6A4141D": Object {
-      "Properties": Object {
-        "EventSourceArn": Object {
-          "Fn::GetAtt": Array [
+    "DenyListPrunePruneQueueHandlerSqsEventSourceDenyListPruneDeleteQueueA7D1B946A6A4141D": {
+      "Properties": {
+        "EventSourceArn": {
+          "Fn::GetAtt": [
             "DenyListPruneDeleteQueueF9D9EBE3",
             "Arn",
           ],
         },
-        "FunctionName": Object {
+        "FunctionName": {
           "Ref": "DenyListPrunePruneQueueHandler087D6B50",
         },
       },
       "Type": "AWS::Lambda::EventSourceMapping",
     },
-    "MonitoringHighSeverityDashboard17D9CD74": Object {
-      "Properties": Object {
-        "DashboardBody": "{\\"widgets\\":[]}",
+    "MonitoringHighSeverityDashboard17D9CD74": {
+      "Properties": {
+        "DashboardBody": "{"widgets":[]}",
       },
       "Type": "AWS::CloudWatch::Dashboard",
     },
-    "MonitoringWatchfulDashboard9EB9FD4D": Object {
-      "Properties": Object {
-        "DashboardBody": Object {
-          "Fn::Join": Array [
+    "MonitoringWatchfulDashboard9EB9FD4D": {
+      "Properties": {
+        "DashboardBody": {
+          "Fn::Join": [
             "",
-            Array [
-              "{\\"widgets\\":[{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":0,\\"properties\\":{\\"markdown\\":\\"# Deny List - Prune Function\\\\n\\\\n[button:AWS Lambda Console](https://console.aws.amazon.com/lambda/home?region=",
-              Object {
+            [
+              "{"widgets":[{"type":"text","width":24,"height":2,"x":0,"y":0,"properties":{"markdown":"# Deny List - Prune Function\\n\\n[button:AWS Lambda Console](https://console.aws.amazon.com/lambda/home?region=",
+              {
                 "Ref": "AWS::Region",
               },
               "#/functions/",
-              Object {
+              {
                 "Ref": "DenyListPrunePruneHandler5F946B07",
               },
               "?tab=graph) [button:CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home?region=",
-              Object {
+              {
                 "Ref": "AWS::Region",
               },
               "#logEventViewer:group=/aws/lambda/",
-              Object {
+              {
                 "Ref": "DenyListPrunePruneHandler5F946B07",
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":0,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocations/5min\\",\\"region\\":\\"",
-              Object {
+              ")"}},{"type":"metric","width":6,"height":6,"x":0,"y":2,"properties":{"view":"timeSeries","title":"Invocations/5min","region":"",
+              {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
-              Object {
+              "","metrics":[["AWS/Lambda","Invocations","FunctionName","",
+              {
                 "Ref": "DenyListPrunePruneHandler5F946B07",
               },
-              "\\",{\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":6,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Errors/5min\\",\\"region\\":\\"",
-              Object {
+              "",{"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":2,"properties":{"view":"timeSeries","title":"Errors/5min","region":"",
+              {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
-              Object {
+              "","metrics":[["AWS/Lambda","Errors","FunctionName","",
+              {
                 "Ref": "DenyListPrunePruneHandler5F946B07",
               },
-              "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Errors > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":12,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Throttles/5min\\",\\"region\\":\\"",
-              Object {
+              "",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Errors > 0 for 3 datapoints within 15 minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":2,"properties":{"view":"timeSeries","title":"Throttles/5min","region":"",
+              {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Throttles\\",\\"FunctionName\\",\\"",
-              Object {
+              "","metrics":[["AWS/Lambda","Throttles","FunctionName","",
+              {
                 "Ref": "DenyListPrunePruneHandler5F946B07",
               },
-              "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Throttles > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":18,\\"y\\":2,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Duration/5min\\",\\"region\\":\\"",
-              Object {
+              "",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Throttles > 0 for 3 datapoints within 15 minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":2,"properties":{"view":"timeSeries","title":"Duration/5min","region":"",
+              {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Duration\\",\\"FunctionName\\",\\"",
-              Object {
+              "","metrics":[["AWS/Lambda","Duration","FunctionName","",
+              {
                 "Ref": "DenyListPrunePruneHandler5F946B07",
               },
-              "\\",{\\"label\\":\\"p99\\",\\"stat\\":\\"p99\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"p99 > 720000 for 3 datapoints within 15 minutes\\",\\"value\\":720000,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"text\\",\\"width\\":24,\\"height\\":2,\\"x\\":0,\\"y\\":8,\\"properties\\":{\\"markdown\\":\\"# Deny List - Prune Delete Function\\\\n\\\\n[button:AWS Lambda Console](https://console.aws.amazon.com/lambda/home?region=",
-              Object {
+              "",{"label":"p99","stat":"p99"}]],"annotations":{"horizontal":[{"label":"p99 > 720000 for 3 datapoints within 15 minutes","value":720000,"yAxis":"left"}]},"yAxis":{}}},{"type":"text","width":24,"height":2,"x":0,"y":8,"properties":{"markdown":"# Deny List - Prune Delete Function\\n\\n[button:AWS Lambda Console](https://console.aws.amazon.com/lambda/home?region=",
+              {
                 "Ref": "AWS::Region",
               },
               "#/functions/",
-              Object {
+              {
                 "Ref": "DenyListPrunePruneQueueHandler087D6B50",
               },
               "?tab=graph) [button:CloudWatch Logs](https://console.aws.amazon.com/cloudwatch/home?region=",
-              Object {
+              {
                 "Ref": "AWS::Region",
               },
               "#logEventViewer:group=/aws/lambda/",
-              Object {
+              {
                 "Ref": "DenyListPrunePruneQueueHandler087D6B50",
               },
-              ")\\"}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":0,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Invocations/5min\\",\\"region\\":\\"",
-              Object {
+              ")"}},{"type":"metric","width":6,"height":6,"x":0,"y":10,"properties":{"view":"timeSeries","title":"Invocations/5min","region":"",
+              {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
-              Object {
+              "","metrics":[["AWS/Lambda","Invocations","FunctionName","",
+              {
                 "Ref": "DenyListPrunePruneQueueHandler087D6B50",
               },
-              "\\",{\\"stat\\":\\"Sum\\"}]],\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":6,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Errors/5min\\",\\"region\\":\\"",
-              Object {
+              "",{"stat":"Sum"}]],"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":6,"y":10,"properties":{"view":"timeSeries","title":"Errors/5min","region":"",
+              {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Errors\\",\\"FunctionName\\",\\"",
-              Object {
+              "","metrics":[["AWS/Lambda","Errors","FunctionName","",
+              {
                 "Ref": "DenyListPrunePruneQueueHandler087D6B50",
               },
-              "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Errors > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":12,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Throttles/5min\\",\\"region\\":\\"",
-              Object {
+              "",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Errors > 0 for 3 datapoints within 15 minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":12,"y":10,"properties":{"view":"timeSeries","title":"Throttles/5min","region":"",
+              {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Throttles\\",\\"FunctionName\\",\\"",
-              Object {
+              "","metrics":[["AWS/Lambda","Throttles","FunctionName","",
+              {
                 "Ref": "DenyListPrunePruneQueueHandler087D6B50",
               },
-              "\\",{\\"stat\\":\\"Sum\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"Throttles > 0 for 3 datapoints within 15 minutes\\",\\"value\\":0,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}},{\\"type\\":\\"metric\\",\\"width\\":6,\\"height\\":6,\\"x\\":18,\\"y\\":10,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Duration/5min\\",\\"region\\":\\"",
-              Object {
+              "",{"stat":"Sum"}]],"annotations":{"horizontal":[{"label":"Throttles > 0 for 3 datapoints within 15 minutes","value":0,"yAxis":"left"}]},"yAxis":{}}},{"type":"metric","width":6,"height":6,"x":18,"y":10,"properties":{"view":"timeSeries","title":"Duration/5min","region":"",
+              {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[\\"AWS/Lambda\\",\\"Duration\\",\\"FunctionName\\",\\"",
-              Object {
+              "","metrics":[["AWS/Lambda","Duration","FunctionName","",
+              {
                 "Ref": "DenyListPrunePruneQueueHandler087D6B50",
               },
-              "\\",{\\"label\\":\\"p99\\",\\"stat\\":\\"p99\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"label\\":\\"p99 > 48000 for 3 datapoints within 15 minutes\\",\\"value\\":48000,\\"yAxis\\":\\"left\\"}]},\\"yAxis\\":{}}}]}",
+              "",{"label":"p99","stat":"p99"}]],"annotations":{"horizontal":[{"label":"p99 > 48000 for 3 datapoints within 15 minutes","value":48000,"yAxis":"left"}]},"yAxis":{}}}]}",
             ],
           ],
         },
       },
       "Type": "AWS::CloudWatch::Dashboard",
     },
-    "MonitoringWatchfulDenyListPrunePruneHandler6E446DC6DurationAlarm3742CFF6": Object {
-      "Properties": Object {
-        "AlarmActions": Array [],
+    "MonitoringWatchfulDenyListPrunePruneHandler6E446DC6DurationAlarm3742CFF6": {
+      "Properties": {
+        "AlarmActions": [],
         "AlarmDescription": "p99 latency >= 720s (80%)",
         "ComparisonOperator": "GreaterThanThreshold",
         "EvaluationPeriods": 3,
-        "Metrics": Array [
-          Object {
+        "Metrics": [
+          {
             "Id": "m1",
             "Label": "p99",
-            "MetricStat": Object {
-              "Metric": Object {
-                "Dimensions": Array [
-                  Object {
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
                     "Name": "FunctionName",
-                    "Value": Object {
+                    "Value": {
                       "Ref": "DenyListPrunePruneHandler5F946B07",
                     },
                   },
@@ -1505,15 +1505,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "MonitoringWatchfulDenyListPrunePruneHandler6E446DC6ErrorsAlarm7E51A923": Object {
-      "Properties": Object {
-        "AlarmActions": Array [],
+    "MonitoringWatchfulDenyListPrunePruneHandler6E446DC6ErrorsAlarm7E51A923": {
+      "Properties": {
+        "AlarmActions": [],
         "AlarmDescription": "Over 0 errors per minute",
         "ComparisonOperator": "GreaterThanThreshold",
-        "Dimensions": Array [
-          Object {
+        "Dimensions": [
+          {
             "Name": "FunctionName",
-            "Value": Object {
+            "Value": {
               "Ref": "DenyListPrunePruneHandler5F946B07",
             },
           },
@@ -1527,15 +1527,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "MonitoringWatchfulDenyListPrunePruneHandler6E446DC6ThrottlesAlarmF6728CA1": Object {
-      "Properties": Object {
-        "AlarmActions": Array [],
+    "MonitoringWatchfulDenyListPrunePruneHandler6E446DC6ThrottlesAlarmF6728CA1": {
+      "Properties": {
+        "AlarmActions": [],
         "AlarmDescription": "Over 0 throttles per minute",
         "ComparisonOperator": "GreaterThanThreshold",
-        "Dimensions": Array [
-          Object {
+        "Dimensions": [
+          {
             "Name": "FunctionName",
-            "Value": Object {
+            "Value": {
               "Ref": "DenyListPrunePruneHandler5F946B07",
             },
           },
@@ -1549,22 +1549,22 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "MonitoringWatchfulDenyListPrunePruneQueueHandler7CD34449DurationAlarm79074D5F": Object {
-      "Properties": Object {
-        "AlarmActions": Array [],
+    "MonitoringWatchfulDenyListPrunePruneQueueHandler7CD34449DurationAlarm79074D5F": {
+      "Properties": {
+        "AlarmActions": [],
         "AlarmDescription": "p99 latency >= 48s (80%)",
         "ComparisonOperator": "GreaterThanThreshold",
         "EvaluationPeriods": 3,
-        "Metrics": Array [
-          Object {
+        "Metrics": [
+          {
             "Id": "m1",
             "Label": "p99",
-            "MetricStat": Object {
-              "Metric": Object {
-                "Dimensions": Array [
-                  Object {
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
                     "Name": "FunctionName",
-                    "Value": Object {
+                    "Value": {
                       "Ref": "DenyListPrunePruneQueueHandler087D6B50",
                     },
                   },
@@ -1582,15 +1582,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "MonitoringWatchfulDenyListPrunePruneQueueHandler7CD34449ErrorsAlarmC83BF67E": Object {
-      "Properties": Object {
-        "AlarmActions": Array [],
+    "MonitoringWatchfulDenyListPrunePruneQueueHandler7CD34449ErrorsAlarmC83BF67E": {
+      "Properties": {
+        "AlarmActions": [],
         "AlarmDescription": "Over 0 errors per minute",
         "ComparisonOperator": "GreaterThanThreshold",
-        "Dimensions": Array [
-          Object {
+        "Dimensions": [
+          {
             "Name": "FunctionName",
-            "Value": Object {
+            "Value": {
               "Ref": "DenyListPrunePruneQueueHandler087D6B50",
             },
           },
@@ -1604,15 +1604,15 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "MonitoringWatchfulDenyListPrunePruneQueueHandler7CD34449ThrottlesAlarm6BCD2D3B": Object {
-      "Properties": Object {
-        "AlarmActions": Array [],
+    "MonitoringWatchfulDenyListPrunePruneQueueHandler7CD34449ThrottlesAlarm6BCD2D3B": {
+      "Properties": {
+        "AlarmActions": [],
         "AlarmDescription": "Over 0 throttles per minute",
         "ComparisonOperator": "GreaterThanThreshold",
-        "Dimensions": Array [
-          Object {
+        "Dimensions": [
+          {
             "Name": "FunctionName",
-            "Value": Object {
+            "Value": {
               "Ref": "DenyListPrunePruneQueueHandler087D6B50",
             },
           },
@@ -1626,8 +1626,8 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "OverviewDashboardOverviewDashboardlambdaServiceQuotaAA204E67": Object {
-      "Properties": Object {
+    "OverviewDashboardOverviewDashboardlambdaServiceQuotaAA204E67": {
+      "Properties": {
         "AlarmDescription": "Lambda concurrent execution exceeded 70% of SERVICE_QUOTA
 
 RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
@@ -1635,16 +1635,16 @@ RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runboo
 Request a service quota increase for lambda functions",
         "ComparisonOperator": "GreaterThanThreshold",
         "EvaluationPeriods": 5,
-        "Metrics": Array [
-          Object {
+        "Metrics": [
+          {
             "Expression": "mLambdaUsage / mLambdaQuota * 100",
             "Id": "expr_1",
             "Label": "Concurrent executions quota usage %",
           },
-          Object {
+          {
             "Id": "mLambdaUsage",
-            "MetricStat": Object {
-              "Metric": Object {
+            "MetricStat": {
+              "Metric": {
                 "MetricName": "ConcurrentExecutions",
                 "Namespace": "AWS/Lambda",
               },
@@ -1653,7 +1653,7 @@ Request a service quota increase for lambda functions",
             },
             "ReturnData": false,
           },
-          Object {
+          {
             "Expression": "SERVICE_QUOTA(mLambdaUsage)",
             "Id": "mLambdaQuota",
             "ReturnData": false,
@@ -1664,53 +1664,53 @@ Request a service quota increase for lambda functions",
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
-    "OverviewDashboardOverviewdashboard17E450B5": Object {
-      "Properties": Object {
-        "DashboardBody": Object {
-          "Fn::Join": Array [
+    "OverviewDashboardOverviewdashboard17E450B5": {
+      "Properties": {
+        "DashboardBody": {
+          "Fn::Join": [
             "",
-            Array [
-              "{\\"widgets\\":[{\\"type\\":\\"metric\\",\\"width\\":12,\\"height\\":8,\\"x\\":0,\\"y\\":0,\\"properties\\":{\\"view\\":\\"timeSeries\\",\\"title\\":\\"Lambda concurrent execution quota\\",\\"region\\":\\"",
-              Object {
+            [
+              "{"widgets":[{"type":"metric","width":12,"height":8,"x":0,"y":0,"properties":{"view":"timeSeries","title":"Lambda concurrent execution quota","region":"",
+              {
                 "Ref": "AWS::Region",
               },
-              "\\",\\"metrics\\":[[{\\"label\\":\\"Concurrent executions quota usage %\\",\\"expression\\":\\"mLambdaUsage / mLambdaQuota * 100\\",\\"yAxis\\":\\"right\\"}],[\\"AWS/Lambda\\",\\"ConcurrentExecutions\\",{\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"mLambdaUsage\\"}],[{\\"expression\\":\\"SERVICE_QUOTA(mLambdaUsage)\\",\\"visible\\":false,\\"id\\":\\"mLambdaQuota\\"}],[{\\"label\\":\\"PruneHandlerLambda quota usage %\\",\\"expression\\":\\"m1 / mLambdaQuota * 100\\",\\"yAxis\\":\\"right\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
-              Object {
+              "","metrics":[[{"label":"Concurrent executions quota usage %","expression":"mLambdaUsage / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","ConcurrentExecutions",{"stat":"Maximum","visible":false,"id":"mLambdaUsage"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"mLambdaQuota"}],[{"label":"PruneHandlerLambda quota usage %","expression":"m1 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              {
                 "Ref": "DenyListPrunePruneHandler5F946B07",
               },
-              "\\",{\\"label\\":\\"PruneHandlerLambda\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"m1\\"}],[{\\"expression\\":\\"SERVICE_QUOTA(mLambdaUsage)\\",\\"visible\\":false,\\"id\\":\\"lambdaQuotaLimit\\"}],[{\\"label\\":\\"PruneQueueHandlerLambda quota usage %\\",\\"expression\\":\\"m2 / mLambdaQuota * 100\\",\\"yAxis\\":\\"right\\"}],[\\"AWS/Lambda\\",\\"Invocations\\",\\"FunctionName\\",\\"",
-              Object {
+              "",{"label":"PruneHandlerLambda","stat":"Maximum","visible":false,"id":"m1"}],[{"expression":"SERVICE_QUOTA(mLambdaUsage)","visible":false,"id":"lambdaQuotaLimit"}],[{"label":"PruneQueueHandlerLambda quota usage %","expression":"m2 / mLambdaQuota * 100","yAxis":"right"}],["AWS/Lambda","Invocations","FunctionName","",
+              {
                 "Ref": "DenyListPrunePruneQueueHandler087D6B50",
               },
-              "\\",{\\"label\\":\\"PruneQueueHandlerLambda\\",\\"stat\\":\\"Maximum\\",\\"visible\\":false,\\"id\\":\\"m2\\"}]],\\"annotations\\":{\\"horizontal\\":[{\\"value\\":70,\\"yAxis\\":\\"right\\"}]},\\"yAxis\\":{\\"right\\":{\\"label\\":\\"Quota Percent\\",\\"min\\":0,\\"max\\":100}}}}]}",
+              "",{"label":"PruneQueueHandlerLambda","stat":"Maximum","visible":false,"id":"m2"}]],"annotations":{"horizontal":[{"value":70,"yAxis":"right"}]},"yAxis":{"right":{"label":"Quota Percent","min":0,"max":100}}}}]}",
             ],
           ],
         },
       },
       "Type": "AWS::CloudWatch::Dashboard",
     },
-    "PackageDataBucket1F18522B": Object {
+    "PackageDataBucket1F18522B": {
       "DeletionPolicy": "Retain",
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
     },
   },
-  "Rules": Object {
-    "CheckBootstrapVersion": Object {
-      "Assertions": Array [
-        Object {
-          "Assert": Object {
-            "Fn::Not": Array [
-              Object {
-                "Fn::Contains": Array [
-                  Array [
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
                     "1",
                     "2",
                     "3",
                     "4",
                     "5",
                   ],
-                  Object {
+                  {
                     "Ref": "BootstrapVersion",
                   },
                 ],

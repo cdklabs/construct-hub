@@ -11,7 +11,6 @@ import { MarkdownRenderer } from 'jsii-docgen/lib/docgen/render/markdown-render'
 import { JsiiEntity } from 'jsii-docgen/lib/docgen/schema';
 import { MetricName, METRICS_NAMESPACE } from './constants';
 import { writeFile } from './util';
-import { CacheStrategy } from '../../caching';
 import type { S3ObjectVersion, TransliteratorInput } from '../payload-schema';
 import * as aws from '../shared/aws.lambda-shared';
 import { logInWithCodeArtifact } from '../shared/code-artifact.lambda-shared';
@@ -393,7 +392,9 @@ function uploadFile(
       Bucket: bucket,
       Key: key,
       Body: body,
-      CacheControl: CacheStrategy.default().toString(),
+      // We may not import anything that uses 'aws-cdk-lib' here
+      CacheControl:
+        'public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate',
       ContentEncoding: contentEncoding,
       ContentType: contentType,
       Metadata: {
