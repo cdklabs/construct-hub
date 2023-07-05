@@ -44,7 +44,7 @@ async function main(args: string[]) {
           kind: 'error',
         });
         console.log(messages.join('\n'));
-        console.log(`(To ignore edit ${__dirname})`);
+        console.log(`(To ignore edit ${__filename})`);
         process.exitCode = 1;
       }
 
