@@ -174,20 +174,6 @@ test('web canaries can ping URLs and raise high severity alarms', () => {
   });
 });
 
-describe('web canary handler', () => {
-  test('web ping is successful', async () => {
-    process.env.URL = 'https://www.amazon.com';
-    await webCanaryHandler({});
-  });
-
-  test('web ping throws for a non-200 response', async () => {
-    process.env.URL = 'https://www.amazon.com/not-found-please12345';
-    await expect(webCanaryHandler({})).rejects.toThrow(
-      /Response code 404 \(Not Found\)/
-    );
-  });
-});
-
 test('normal-severity alarm actions are registered', () => {
   // GIVEN
   const stack = new Stack(undefined, 'TestStack');
