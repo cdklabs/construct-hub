@@ -4,7 +4,6 @@ import { IAlarmAction, Alarm, Metric } from 'aws-cdk-lib/aws-cloudwatch';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as sns from 'aws-cdk-lib/aws-sns';
 import { Monitoring } from '../monitoring';
-import { handler as webCanaryHandler } from '../monitoring/http-get-function.lambda';
 
 const actions = {
   highSeverity: 'arn:aws:sns:us-east-1:123456789012:high',
