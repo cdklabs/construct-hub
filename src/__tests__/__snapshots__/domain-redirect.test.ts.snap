@@ -1,139 +1,139 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`a bucket is created for each redirect target 1`] = `
-Object {
-  "Mappings": Object {
-    "AWSCloudFrontPartitionHostedZoneIdMap": Object {
-      "aws": Object {
+{
+  "Mappings": {
+    "AWSCloudFrontPartitionHostedZoneIdMap": {
+      "aws": {
         "zoneId": "Z2FDTNDATAQYW2",
       },
-      "aws-cn": Object {
+      "aws-cn": {
         "zoneId": "Z3RFFRIM2A3IF5",
       },
     },
-    "DefaultCrNodeVersionMap": Object {
-      "af-south-1": Object {
+    "DefaultCrNodeVersionMap": {
+      "af-south-1": {
         "value": "nodejs16.x",
       },
-      "ap-east-1": Object {
+      "ap-east-1": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-1": Object {
+      "ap-northeast-1": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-2": Object {
+      "ap-northeast-2": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-3": Object {
+      "ap-northeast-3": {
         "value": "nodejs16.x",
       },
-      "ap-south-1": Object {
+      "ap-south-1": {
         "value": "nodejs16.x",
       },
-      "ap-south-2": Object {
+      "ap-south-2": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-1": Object {
+      "ap-southeast-1": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-2": Object {
+      "ap-southeast-2": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-3": Object {
+      "ap-southeast-3": {
         "value": "nodejs16.x",
       },
-      "ca-central-1": Object {
+      "ca-central-1": {
         "value": "nodejs16.x",
       },
-      "cn-north-1": Object {
+      "cn-north-1": {
         "value": "nodejs16.x",
       },
-      "cn-northwest-1": Object {
+      "cn-northwest-1": {
         "value": "nodejs16.x",
       },
-      "eu-central-1": Object {
+      "eu-central-1": {
         "value": "nodejs16.x",
       },
-      "eu-central-2": Object {
+      "eu-central-2": {
         "value": "nodejs16.x",
       },
-      "eu-north-1": Object {
+      "eu-north-1": {
         "value": "nodejs16.x",
       },
-      "eu-south-1": Object {
+      "eu-south-1": {
         "value": "nodejs16.x",
       },
-      "eu-south-2": Object {
+      "eu-south-2": {
         "value": "nodejs16.x",
       },
-      "eu-west-1": Object {
+      "eu-west-1": {
         "value": "nodejs16.x",
       },
-      "eu-west-2": Object {
+      "eu-west-2": {
         "value": "nodejs16.x",
       },
-      "eu-west-3": Object {
+      "eu-west-3": {
         "value": "nodejs16.x",
       },
-      "me-central-1": Object {
+      "me-central-1": {
         "value": "nodejs16.x",
       },
-      "me-south-1": Object {
+      "me-south-1": {
         "value": "nodejs16.x",
       },
-      "sa-east-1": Object {
+      "sa-east-1": {
         "value": "nodejs16.x",
       },
-      "us-east-1": Object {
+      "us-east-1": {
         "value": "nodejs16.x",
       },
-      "us-east-2": Object {
+      "us-east-2": {
         "value": "nodejs16.x",
       },
-      "us-gov-east-1": Object {
+      "us-gov-east-1": {
         "value": "nodejs16.x",
       },
-      "us-gov-west-1": Object {
+      "us-gov-west-1": {
         "value": "nodejs16.x",
       },
-      "us-iso-east-1": Object {
+      "us-iso-east-1": {
         "value": "nodejs14.x",
       },
-      "us-iso-west-1": Object {
+      "us-iso-west-1": {
         "value": "nodejs14.x",
       },
-      "us-isob-east-1": Object {
+      "us-isob-east-1": {
         "value": "nodejs14.x",
       },
-      "us-west-1": Object {
+      "us-west-1": {
         "value": "nodejs16.x",
       },
-      "us-west-2": Object {
+      "us-west-2": {
         "value": "nodejs16.x",
       },
     },
   },
-  "Parameters": Object {
-    "BootstrapVersion": Object {
+  "Parameters": {
+    "BootstrapVersion": {
       "Default": "/cdk-bootstrap/hnb659fds/version",
       "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
   },
-  "Resources": Object {
-    "DomainRedirect1to1ARecord982EC16B": Object {
-      "Properties": Object {
-        "AliasTarget": Object {
-          "DNSName": Object {
-            "Fn::GetAtt": Array [
+  "Resources": {
+    "DomainRedirect1to1ARecord982EC16B": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::GetAtt": [
               "DomainRedirect1to1Distribution4D65ABD2",
               "DomainName",
             ],
           },
-          "HostedZoneId": Object {
-            "Fn::FindInMap": Array [
+          "HostedZoneId": {
+            "Fn::FindInMap": [
               "AWSCloudFrontPartitionHostedZoneIdMap",
-              Object {
+              {
                 "Ref": "AWS::Partition",
               },
               "zoneId",
@@ -147,19 +147,19 @@ Object {
       },
       "Type": "AWS::Route53::RecordSet",
     },
-    "DomainRedirect1to1AaaaRecord3FA93DC9": Object {
-      "Properties": Object {
-        "AliasTarget": Object {
-          "DNSName": Object {
-            "Fn::GetAtt": Array [
+    "DomainRedirect1to1AaaaRecord3FA93DC9": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::GetAtt": [
               "DomainRedirect1to1Distribution4D65ABD2",
               "DomainName",
             ],
           },
-          "HostedZoneId": Object {
-            "Fn::FindInMap": Array [
+          "HostedZoneId": {
+            "Fn::FindInMap": [
               "AWSCloudFrontPartitionHostedZoneIdMap",
-              Object {
+              {
                 "Ref": "AWS::Partition",
               },
               "zoneId",
@@ -173,29 +173,29 @@ Object {
       },
       "Type": "AWS::Route53::RecordSet",
     },
-    "DomainRedirect1to1CertificateCertificateRequestorFunction1A61DDA0": Object {
-      "DependsOn": Array [
+    "DomainRedirect1to1CertificateCertificateRequestorFunction1A61DDA0": {
+      "DependsOn": [
         "DomainRedirect1to1CertificateCertificateRequestorFunctionServiceRoleDefaultPolicyEE57B3FB",
         "DomainRedirect1to1CertificateCertificateRequestorFunctionServiceRoleF7DDA989",
       ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
           "S3Key": "861509f9607aa6bb9fd7034fb10fe6f0c60d91dfd7f010b9ef666869dec9bbd9.zip",
         },
         "Handler": "index.certificateRequestHandler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
+        "Role": {
+          "Fn::GetAtt": [
             "DomainRedirect1to1CertificateCertificateRequestorFunctionServiceRoleF7DDA989",
             "Arn",
           ],
         },
-        "Runtime": Object {
-          "Fn::FindInMap": Array [
+        "Runtime": {
+          "Fn::FindInMap": [
             "DefaultCrNodeVersionMap",
-            Object {
+            {
               "Ref": "AWS::Region",
             },
             "value",
@@ -205,12 +205,12 @@ Object {
       },
       "Type": "AWS::Lambda::Function",
     },
-    "DomainRedirect1to1CertificateCertificateRequestorFunctionServiceRoleDefaultPolicyEE57B3FB": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
+    "DomainRedirect1to1CertificateCertificateRequestorFunctionServiceRoleDefaultPolicyEE57B3FB": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
                 "acm:RequestCertificate",
                 "acm:DescribeCertificate",
                 "acm:DeleteCertificate",
@@ -219,35 +219,35 @@ Object {
               "Effect": "Allow",
               "Resource": "*",
             },
-            Object {
+            {
               "Action": "route53:GetChange",
               "Effect": "Allow",
               "Resource": "*",
             },
-            Object {
+            {
               "Action": "route53:changeResourceRecordSets",
-              "Condition": Object {
-                "ForAllValues:StringEquals": Object {
-                  "route53:ChangeResourceRecordSetsActions": Array [
+              "Condition": {
+                "ForAllValues:StringEquals": {
+                  "route53:ChangeResourceRecordSetsActions": [
                     "UPSERT",
                   ],
-                  "route53:ChangeResourceRecordSetsRecordTypes": Array [
+                  "route53:ChangeResourceRecordSetsRecordTypes": [
                     "CNAME",
                   ],
                 },
-                "ForAllValues:StringLike": Object {
-                  "route53:ChangeResourceRecordSetsNormalizedRecordNames": Array [
+                "ForAllValues:StringLike": {
+                  "route53:ChangeResourceRecordSetsNormalizedRecordNames": [
                     "*.from1.com",
                   ],
                 },
               },
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
+              "Resource": {
+                "Fn::Join": [
                   "",
-                  Array [
+                  [
                     "arn:",
-                    Object {
+                    {
                       "Ref": "AWS::Partition",
                     },
                     ":route53:::hostedzone/AZ1234",
@@ -259,35 +259,35 @@ Object {
           "Version": "2012-10-17",
         },
         "PolicyName": "DomainRedirect1to1CertificateCertificateRequestorFunctionServiceRoleDefaultPolicyEE57B3FB",
-        "Roles": Array [
-          Object {
+        "Roles": [
+          {
             "Ref": "DomainRedirect1to1CertificateCertificateRequestorFunctionServiceRoleF7DDA989",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "DomainRedirect1to1CertificateCertificateRequestorFunctionServiceRoleF7DDA989": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "DomainRedirect1to1CertificateCertificateRequestorFunctionServiceRoleF7DDA989": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "lambda.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
               "",
-              Array [
+              [
                 "arn:",
-                Object {
+                {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
@@ -298,13 +298,13 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "DomainRedirect1to1CertificateCertificateRequestorResourceF588C7FC": Object {
+    "DomainRedirect1to1CertificateCertificateRequestorResourceF588C7FC": {
       "DeletionPolicy": "Delete",
-      "Properties": Object {
+      "Properties": {
         "DomainName": "from1.com",
         "HostedZoneId": "AZ1234",
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
+        "ServiceToken": {
+          "Fn::GetAtt": [
             "DomainRedirect1to1CertificateCertificateRequestorFunction1A61DDA0",
             "Arn",
           ],
@@ -313,13 +313,13 @@ Object {
       "Type": "AWS::CloudFormation::CustomResource",
       "UpdateReplacePolicy": "Delete",
     },
-    "DomainRedirect1to1Distribution4D65ABD2": Object {
-      "Properties": Object {
-        "DistributionConfig": Object {
-          "Aliases": Array [
+    "DomainRedirect1to1Distribution4D65ABD2": {
+      "Properties": {
+        "DistributionConfig": {
+          "Aliases": [
             "from1.com",
           ],
-          "DefaultCacheBehavior": Object {
+          "DefaultCacheBehavior": {
             "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
             "Compress": true,
             "TargetOriginId": "DomainRedirect1to1DistributionOrigin1AC87119B",
@@ -328,22 +328,22 @@ Object {
           "Enabled": true,
           "HttpVersion": "http2",
           "IPV6Enabled": true,
-          "Origins": Array [
-            Object {
-              "CustomOriginConfig": Object {
+          "Origins": [
+            {
+              "CustomOriginConfig": {
                 "OriginProtocolPolicy": "http-only",
-                "OriginSSLProtocols": Array [
+                "OriginSSLProtocols": [
                   "TLSv1.2",
                 ],
               },
-              "DomainName": Object {
-                "Fn::Select": Array [
+              "DomainName": {
+                "Fn::Select": [
                   2,
-                  Object {
-                    "Fn::Split": Array [
+                  {
+                    "Fn::Split": [
                       "/",
-                      Object {
-                        "Fn::GetAtt": Array [
+                      {
+                        "Fn::GetAtt": [
                           "DomainRedirectBucketsA177hjRedirectBuckettobar1com6449D158",
                           "WebsiteURL",
                         ],
@@ -355,9 +355,9 @@ Object {
               "Id": "DomainRedirect1to1DistributionOrigin1AC87119B",
             },
           ],
-          "ViewerCertificate": Object {
-            "AcmCertificateArn": Object {
-              "Fn::GetAtt": Array [
+          "ViewerCertificate": {
+            "AcmCertificateArn": {
+              "Fn::GetAtt": [
                 "DomainRedirect1to1CertificateCertificateRequestorResourceF588C7FC",
                 "Arn",
               ],
@@ -369,19 +369,19 @@ Object {
       },
       "Type": "AWS::CloudFront::Distribution",
     },
-    "DomainRedirect3to2ARecordC57D5A60": Object {
-      "Properties": Object {
-        "AliasTarget": Object {
-          "DNSName": Object {
-            "Fn::GetAtt": Array [
+    "DomainRedirect3to2ARecordC57D5A60": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::GetAtt": [
               "DomainRedirect3to2DistributionEF38858B",
               "DomainName",
             ],
           },
-          "HostedZoneId": Object {
-            "Fn::FindInMap": Array [
+          "HostedZoneId": {
+            "Fn::FindInMap": [
               "AWSCloudFrontPartitionHostedZoneIdMap",
-              Object {
+              {
                 "Ref": "AWS::Partition",
               },
               "zoneId",
@@ -395,19 +395,19 @@ Object {
       },
       "Type": "AWS::Route53::RecordSet",
     },
-    "DomainRedirect3to2AaaaRecord76F8BB06": Object {
-      "Properties": Object {
-        "AliasTarget": Object {
-          "DNSName": Object {
-            "Fn::GetAtt": Array [
+    "DomainRedirect3to2AaaaRecord76F8BB06": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::GetAtt": [
               "DomainRedirect3to2DistributionEF38858B",
               "DomainName",
             ],
           },
-          "HostedZoneId": Object {
-            "Fn::FindInMap": Array [
+          "HostedZoneId": {
+            "Fn::FindInMap": [
               "AWSCloudFrontPartitionHostedZoneIdMap",
-              Object {
+              {
                 "Ref": "AWS::Partition",
               },
               "zoneId",
@@ -421,29 +421,29 @@ Object {
       },
       "Type": "AWS::Route53::RecordSet",
     },
-    "DomainRedirect3to2CertificateCertificateRequestorFunction27C18917": Object {
-      "DependsOn": Array [
+    "DomainRedirect3to2CertificateCertificateRequestorFunction27C18917": {
+      "DependsOn": [
         "DomainRedirect3to2CertificateCertificateRequestorFunctionServiceRoleDefaultPolicy86F4EAFA",
         "DomainRedirect3to2CertificateCertificateRequestorFunctionServiceRoleF0EC1E06",
       ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
           "S3Key": "861509f9607aa6bb9fd7034fb10fe6f0c60d91dfd7f010b9ef666869dec9bbd9.zip",
         },
         "Handler": "index.certificateRequestHandler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
+        "Role": {
+          "Fn::GetAtt": [
             "DomainRedirect3to2CertificateCertificateRequestorFunctionServiceRoleF0EC1E06",
             "Arn",
           ],
         },
-        "Runtime": Object {
-          "Fn::FindInMap": Array [
+        "Runtime": {
+          "Fn::FindInMap": [
             "DefaultCrNodeVersionMap",
-            Object {
+            {
               "Ref": "AWS::Region",
             },
             "value",
@@ -453,12 +453,12 @@ Object {
       },
       "Type": "AWS::Lambda::Function",
     },
-    "DomainRedirect3to2CertificateCertificateRequestorFunctionServiceRoleDefaultPolicy86F4EAFA": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
+    "DomainRedirect3to2CertificateCertificateRequestorFunctionServiceRoleDefaultPolicy86F4EAFA": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
                 "acm:RequestCertificate",
                 "acm:DescribeCertificate",
                 "acm:DeleteCertificate",
@@ -467,35 +467,35 @@ Object {
               "Effect": "Allow",
               "Resource": "*",
             },
-            Object {
+            {
               "Action": "route53:GetChange",
               "Effect": "Allow",
               "Resource": "*",
             },
-            Object {
+            {
               "Action": "route53:changeResourceRecordSets",
-              "Condition": Object {
-                "ForAllValues:StringEquals": Object {
-                  "route53:ChangeResourceRecordSetsActions": Array [
+              "Condition": {
+                "ForAllValues:StringEquals": {
+                  "route53:ChangeResourceRecordSetsActions": [
                     "UPSERT",
                   ],
-                  "route53:ChangeResourceRecordSetsRecordTypes": Array [
+                  "route53:ChangeResourceRecordSetsRecordTypes": [
                     "CNAME",
                   ],
                 },
-                "ForAllValues:StringLike": Object {
-                  "route53:ChangeResourceRecordSetsNormalizedRecordNames": Array [
+                "ForAllValues:StringLike": {
+                  "route53:ChangeResourceRecordSetsNormalizedRecordNames": [
                     "*.from3.com",
                   ],
                 },
               },
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
+              "Resource": {
+                "Fn::Join": [
                   "",
-                  Array [
+                  [
                     "arn:",
-                    Object {
+                    {
                       "Ref": "AWS::Partition",
                     },
                     ":route53:::hostedzone/AZ1234",
@@ -507,35 +507,35 @@ Object {
           "Version": "2012-10-17",
         },
         "PolicyName": "DomainRedirect3to2CertificateCertificateRequestorFunctionServiceRoleDefaultPolicy86F4EAFA",
-        "Roles": Array [
-          Object {
+        "Roles": [
+          {
             "Ref": "DomainRedirect3to2CertificateCertificateRequestorFunctionServiceRoleF0EC1E06",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "DomainRedirect3to2CertificateCertificateRequestorFunctionServiceRoleF0EC1E06": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "DomainRedirect3to2CertificateCertificateRequestorFunctionServiceRoleF0EC1E06": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "lambda.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
               "",
-              Array [
+              [
                 "arn:",
-                Object {
+                {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
@@ -546,13 +546,13 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "DomainRedirect3to2CertificateCertificateRequestorResource9F787E12": Object {
+    "DomainRedirect3to2CertificateCertificateRequestorResource9F787E12": {
       "DeletionPolicy": "Delete",
-      "Properties": Object {
+      "Properties": {
         "DomainName": "from3.com",
         "HostedZoneId": "AZ1234",
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
+        "ServiceToken": {
+          "Fn::GetAtt": [
             "DomainRedirect3to2CertificateCertificateRequestorFunction27C18917",
             "Arn",
           ],
@@ -561,13 +561,13 @@ Object {
       "Type": "AWS::CloudFormation::CustomResource",
       "UpdateReplacePolicy": "Delete",
     },
-    "DomainRedirect3to2DistributionEF38858B": Object {
-      "Properties": Object {
-        "DistributionConfig": Object {
-          "Aliases": Array [
+    "DomainRedirect3to2DistributionEF38858B": {
+      "Properties": {
+        "DistributionConfig": {
+          "Aliases": [
             "from3.com",
           ],
-          "DefaultCacheBehavior": Object {
+          "DefaultCacheBehavior": {
             "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
             "Compress": true,
             "TargetOriginId": "DomainRedirect3to2DistributionOrigin1CB7BD250",
@@ -576,22 +576,22 @@ Object {
           "Enabled": true,
           "HttpVersion": "http2",
           "IPV6Enabled": true,
-          "Origins": Array [
-            Object {
-              "CustomOriginConfig": Object {
+          "Origins": [
+            {
+              "CustomOriginConfig": {
                 "OriginProtocolPolicy": "http-only",
-                "OriginSSLProtocols": Array [
+                "OriginSSLProtocols": [
                   "TLSv1.2",
                 ],
               },
-              "DomainName": Object {
-                "Fn::Select": Array [
+              "DomainName": {
+                "Fn::Select": [
                   2,
-                  Object {
-                    "Fn::Split": Array [
+                  {
+                    "Fn::Split": [
                       "/",
-                      Object {
-                        "Fn::GetAtt": Array [
+                      {
+                        "Fn::GetAtt": [
                           "DomainRedirectBucketsA177hjRedirectBuckettobar2comAEACFF16",
                           "WebsiteURL",
                         ],
@@ -603,9 +603,9 @@ Object {
               "Id": "DomainRedirect3to2DistributionOrigin1CB7BD250",
             },
           ],
-          "ViewerCertificate": Object {
-            "AcmCertificateArn": Object {
-              "Fn::GetAtt": Array [
+          "ViewerCertificate": {
+            "AcmCertificateArn": {
+              "Fn::GetAtt": [
                 "DomainRedirect3to2CertificateCertificateRequestorResource9F787E12",
                 "Arn",
               ],
@@ -617,11 +617,11 @@ Object {
       },
       "Type": "AWS::CloudFront::Distribution",
     },
-    "DomainRedirectBucketsA177hjRedirectBuckettobar1com6449D158": Object {
+    "DomainRedirectBucketsA177hjRedirectBuckettobar1com6449D158": {
       "DeletionPolicy": "Retain",
-      "Properties": Object {
-        "WebsiteConfiguration": Object {
-          "RedirectAllRequestsTo": Object {
+      "Properties": {
+        "WebsiteConfiguration": {
+          "RedirectAllRequestsTo": {
             "HostName": "to.bar1.com",
           },
         },
@@ -629,11 +629,11 @@ Object {
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
     },
-    "DomainRedirectBucketsA177hjRedirectBuckettobar2comAEACFF16": Object {
+    "DomainRedirectBucketsA177hjRedirectBuckettobar2comAEACFF16": {
       "DeletionPolicy": "Retain",
-      "Properties": Object {
-        "WebsiteConfiguration": Object {
-          "RedirectAllRequestsTo": Object {
+      "Properties": {
+        "WebsiteConfiguration": {
+          "RedirectAllRequestsTo": {
             "HostName": "to.bar2.com",
           },
         },
@@ -641,19 +641,19 @@ Object {
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
     },
-    "SubtreeDomainRedirect2to1ARecord20C500DD": Object {
-      "Properties": Object {
-        "AliasTarget": Object {
-          "DNSName": Object {
-            "Fn::GetAtt": Array [
+    "SubtreeDomainRedirect2to1ARecord20C500DD": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::GetAtt": [
               "SubtreeDomainRedirect2to1Distribution440096FB",
               "DomainName",
             ],
           },
-          "HostedZoneId": Object {
-            "Fn::FindInMap": Array [
+          "HostedZoneId": {
+            "Fn::FindInMap": [
               "AWSCloudFrontPartitionHostedZoneIdMap",
-              Object {
+              {
                 "Ref": "AWS::Partition",
               },
               "zoneId",
@@ -667,19 +667,19 @@ Object {
       },
       "Type": "AWS::Route53::RecordSet",
     },
-    "SubtreeDomainRedirect2to1AaaaRecordE5D60E68": Object {
-      "Properties": Object {
-        "AliasTarget": Object {
-          "DNSName": Object {
-            "Fn::GetAtt": Array [
+    "SubtreeDomainRedirect2to1AaaaRecordE5D60E68": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::GetAtt": [
               "SubtreeDomainRedirect2to1Distribution440096FB",
               "DomainName",
             ],
           },
-          "HostedZoneId": Object {
-            "Fn::FindInMap": Array [
+          "HostedZoneId": {
+            "Fn::FindInMap": [
               "AWSCloudFrontPartitionHostedZoneIdMap",
-              Object {
+              {
                 "Ref": "AWS::Partition",
               },
               "zoneId",
@@ -693,29 +693,29 @@ Object {
       },
       "Type": "AWS::Route53::RecordSet",
     },
-    "SubtreeDomainRedirect2to1CertificateCertificateRequestorFunction0A9B51D2": Object {
-      "DependsOn": Array [
+    "SubtreeDomainRedirect2to1CertificateCertificateRequestorFunction0A9B51D2": {
+      "DependsOn": [
         "SubtreeDomainRedirect2to1CertificateCertificateRequestorFunctionServiceRoleDefaultPolicyCA884C36",
         "SubtreeDomainRedirect2to1CertificateCertificateRequestorFunctionServiceRole64FE40E7",
       ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
           "S3Key": "861509f9607aa6bb9fd7034fb10fe6f0c60d91dfd7f010b9ef666869dec9bbd9.zip",
         },
         "Handler": "index.certificateRequestHandler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
+        "Role": {
+          "Fn::GetAtt": [
             "SubtreeDomainRedirect2to1CertificateCertificateRequestorFunctionServiceRole64FE40E7",
             "Arn",
           ],
         },
-        "Runtime": Object {
-          "Fn::FindInMap": Array [
+        "Runtime": {
+          "Fn::FindInMap": [
             "DefaultCrNodeVersionMap",
-            Object {
+            {
               "Ref": "AWS::Region",
             },
             "value",
@@ -725,27 +725,27 @@ Object {
       },
       "Type": "AWS::Lambda::Function",
     },
-    "SubtreeDomainRedirect2to1CertificateCertificateRequestorFunctionServiceRole64FE40E7": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "SubtreeDomainRedirect2to1CertificateCertificateRequestorFunctionServiceRole64FE40E7": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "lambda.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
               "",
-              Array [
+              [
                 "arn:",
-                Object {
+                {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
@@ -756,12 +756,12 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "SubtreeDomainRedirect2to1CertificateCertificateRequestorFunctionServiceRoleDefaultPolicyCA884C36": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
+    "SubtreeDomainRedirect2to1CertificateCertificateRequestorFunctionServiceRoleDefaultPolicyCA884C36": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
                 "acm:RequestCertificate",
                 "acm:DescribeCertificate",
                 "acm:DeleteCertificate",
@@ -770,35 +770,35 @@ Object {
               "Effect": "Allow",
               "Resource": "*",
             },
-            Object {
+            {
               "Action": "route53:GetChange",
               "Effect": "Allow",
               "Resource": "*",
             },
-            Object {
+            {
               "Action": "route53:changeResourceRecordSets",
-              "Condition": Object {
-                "ForAllValues:StringEquals": Object {
-                  "route53:ChangeResourceRecordSetsActions": Array [
+              "Condition": {
+                "ForAllValues:StringEquals": {
+                  "route53:ChangeResourceRecordSetsActions": [
                     "UPSERT",
                   ],
-                  "route53:ChangeResourceRecordSetsRecordTypes": Array [
+                  "route53:ChangeResourceRecordSetsRecordTypes": [
                     "CNAME",
                   ],
                 },
-                "ForAllValues:StringLike": Object {
-                  "route53:ChangeResourceRecordSetsNormalizedRecordNames": Array [
+                "ForAllValues:StringLike": {
+                  "route53:ChangeResourceRecordSetsNormalizedRecordNames": [
                     "*.from2.com",
                   ],
                 },
               },
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
+              "Resource": {
+                "Fn::Join": [
                   "",
-                  Array [
+                  [
                     "arn:",
-                    Object {
+                    {
                       "Ref": "AWS::Partition",
                     },
                     ":route53:::hostedzone/AZ1234",
@@ -810,21 +810,21 @@ Object {
           "Version": "2012-10-17",
         },
         "PolicyName": "SubtreeDomainRedirect2to1CertificateCertificateRequestorFunctionServiceRoleDefaultPolicyCA884C36",
-        "Roles": Array [
-          Object {
+        "Roles": [
+          {
             "Ref": "SubtreeDomainRedirect2to1CertificateCertificateRequestorFunctionServiceRole64FE40E7",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "SubtreeDomainRedirect2to1CertificateCertificateRequestorResource2437BD48": Object {
+    "SubtreeDomainRedirect2to1CertificateCertificateRequestorResource2437BD48": {
       "DeletionPolicy": "Delete",
-      "Properties": Object {
+      "Properties": {
         "DomainName": "from2.com",
         "HostedZoneId": "AZ1234",
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
+        "ServiceToken": {
+          "Fn::GetAtt": [
             "SubtreeDomainRedirect2to1CertificateCertificateRequestorFunction0A9B51D2",
             "Arn",
           ],
@@ -833,13 +833,13 @@ Object {
       "Type": "AWS::CloudFormation::CustomResource",
       "UpdateReplacePolicy": "Delete",
     },
-    "SubtreeDomainRedirect2to1Distribution440096FB": Object {
-      "Properties": Object {
-        "DistributionConfig": Object {
-          "Aliases": Array [
+    "SubtreeDomainRedirect2to1Distribution440096FB": {
+      "Properties": {
+        "DistributionConfig": {
+          "Aliases": [
             "from2.com",
           ],
-          "DefaultCacheBehavior": Object {
+          "DefaultCacheBehavior": {
             "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
             "Compress": true,
             "TargetOriginId": "SubtreeDomainRedirect2to1DistributionOrigin1E5A3F84F",
@@ -848,22 +848,22 @@ Object {
           "Enabled": true,
           "HttpVersion": "http2",
           "IPV6Enabled": true,
-          "Origins": Array [
-            Object {
-              "CustomOriginConfig": Object {
+          "Origins": [
+            {
+              "CustomOriginConfig": {
                 "OriginProtocolPolicy": "http-only",
-                "OriginSSLProtocols": Array [
+                "OriginSSLProtocols": [
                   "TLSv1.2",
                 ],
               },
-              "DomainName": Object {
-                "Fn::Select": Array [
+              "DomainName": {
+                "Fn::Select": [
                   2,
-                  Object {
-                    "Fn::Split": Array [
+                  {
+                    "Fn::Split": [
                       "/",
-                      Object {
-                        "Fn::GetAtt": Array [
+                      {
+                        "Fn::GetAtt": [
                           "DomainRedirectBucketsA177hjRedirectBuckettobar1com6449D158",
                           "WebsiteURL",
                         ],
@@ -875,9 +875,9 @@ Object {
               "Id": "SubtreeDomainRedirect2to1DistributionOrigin1E5A3F84F",
             },
           ],
-          "ViewerCertificate": Object {
-            "AcmCertificateArn": Object {
-              "Fn::GetAtt": Array [
+          "ViewerCertificate": {
+            "AcmCertificateArn": {
+              "Fn::GetAtt": [
                 "SubtreeDomainRedirect2to1CertificateCertificateRequestorResource2437BD48",
                 "Arn",
               ],
@@ -890,22 +890,22 @@ Object {
       "Type": "AWS::CloudFront::Distribution",
     },
   },
-  "Rules": Object {
-    "CheckBootstrapVersion": Object {
-      "Assertions": Array [
-        Object {
-          "Assert": Object {
-            "Fn::Not": Array [
-              Object {
-                "Fn::Contains": Array [
-                  Array [
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
                     "1",
                     "2",
                     "3",
                     "4",
                     "5",
                   ],
-                  Object {
+                  {
                     "Ref": "BootstrapVersion",
                   },
                 ],
@@ -921,139 +921,139 @@ Object {
 `;
 
 exports[`minimal usage 1`] = `
-Object {
-  "Mappings": Object {
-    "AWSCloudFrontPartitionHostedZoneIdMap": Object {
-      "aws": Object {
+{
+  "Mappings": {
+    "AWSCloudFrontPartitionHostedZoneIdMap": {
+      "aws": {
         "zoneId": "Z2FDTNDATAQYW2",
       },
-      "aws-cn": Object {
+      "aws-cn": {
         "zoneId": "Z3RFFRIM2A3IF5",
       },
     },
-    "DefaultCrNodeVersionMap": Object {
-      "af-south-1": Object {
+    "DefaultCrNodeVersionMap": {
+      "af-south-1": {
         "value": "nodejs16.x",
       },
-      "ap-east-1": Object {
+      "ap-east-1": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-1": Object {
+      "ap-northeast-1": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-2": Object {
+      "ap-northeast-2": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-3": Object {
+      "ap-northeast-3": {
         "value": "nodejs16.x",
       },
-      "ap-south-1": Object {
+      "ap-south-1": {
         "value": "nodejs16.x",
       },
-      "ap-south-2": Object {
+      "ap-south-2": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-1": Object {
+      "ap-southeast-1": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-2": Object {
+      "ap-southeast-2": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-3": Object {
+      "ap-southeast-3": {
         "value": "nodejs16.x",
       },
-      "ca-central-1": Object {
+      "ca-central-1": {
         "value": "nodejs16.x",
       },
-      "cn-north-1": Object {
+      "cn-north-1": {
         "value": "nodejs16.x",
       },
-      "cn-northwest-1": Object {
+      "cn-northwest-1": {
         "value": "nodejs16.x",
       },
-      "eu-central-1": Object {
+      "eu-central-1": {
         "value": "nodejs16.x",
       },
-      "eu-central-2": Object {
+      "eu-central-2": {
         "value": "nodejs16.x",
       },
-      "eu-north-1": Object {
+      "eu-north-1": {
         "value": "nodejs16.x",
       },
-      "eu-south-1": Object {
+      "eu-south-1": {
         "value": "nodejs16.x",
       },
-      "eu-south-2": Object {
+      "eu-south-2": {
         "value": "nodejs16.x",
       },
-      "eu-west-1": Object {
+      "eu-west-1": {
         "value": "nodejs16.x",
       },
-      "eu-west-2": Object {
+      "eu-west-2": {
         "value": "nodejs16.x",
       },
-      "eu-west-3": Object {
+      "eu-west-3": {
         "value": "nodejs16.x",
       },
-      "me-central-1": Object {
+      "me-central-1": {
         "value": "nodejs16.x",
       },
-      "me-south-1": Object {
+      "me-south-1": {
         "value": "nodejs16.x",
       },
-      "sa-east-1": Object {
+      "sa-east-1": {
         "value": "nodejs16.x",
       },
-      "us-east-1": Object {
+      "us-east-1": {
         "value": "nodejs16.x",
       },
-      "us-east-2": Object {
+      "us-east-2": {
         "value": "nodejs16.x",
       },
-      "us-gov-east-1": Object {
+      "us-gov-east-1": {
         "value": "nodejs16.x",
       },
-      "us-gov-west-1": Object {
+      "us-gov-west-1": {
         "value": "nodejs16.x",
       },
-      "us-iso-east-1": Object {
+      "us-iso-east-1": {
         "value": "nodejs14.x",
       },
-      "us-iso-west-1": Object {
+      "us-iso-west-1": {
         "value": "nodejs14.x",
       },
-      "us-isob-east-1": Object {
+      "us-isob-east-1": {
         "value": "nodejs14.x",
       },
-      "us-west-1": Object {
+      "us-west-1": {
         "value": "nodejs16.x",
       },
-      "us-west-2": Object {
+      "us-west-2": {
         "value": "nodejs16.x",
       },
     },
   },
-  "Parameters": Object {
-    "BootstrapVersion": Object {
+  "Parameters": {
+    "BootstrapVersion": {
       "Default": "/cdk-bootstrap/hnb659fds/version",
       "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
       "Type": "AWS::SSM::Parameter::Value<String>",
     },
   },
-  "Resources": Object {
-    "DomainRedirectARecord4A2488D3": Object {
-      "Properties": Object {
-        "AliasTarget": Object {
-          "DNSName": Object {
-            "Fn::GetAtt": Array [
+  "Resources": {
+    "DomainRedirectARecord4A2488D3": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::GetAtt": [
               "DomainRedirectDistributionF059C039",
               "DomainName",
             ],
           },
-          "HostedZoneId": Object {
-            "Fn::FindInMap": Array [
+          "HostedZoneId": {
+            "Fn::FindInMap": [
               "AWSCloudFrontPartitionHostedZoneIdMap",
-              Object {
+              {
                 "Ref": "AWS::Partition",
               },
               "zoneId",
@@ -1067,19 +1067,19 @@ Object {
       },
       "Type": "AWS::Route53::RecordSet",
     },
-    "DomainRedirectAaaaRecordD0B3B9FD": Object {
-      "Properties": Object {
-        "AliasTarget": Object {
-          "DNSName": Object {
-            "Fn::GetAtt": Array [
+    "DomainRedirectAaaaRecordD0B3B9FD": {
+      "Properties": {
+        "AliasTarget": {
+          "DNSName": {
+            "Fn::GetAtt": [
               "DomainRedirectDistributionF059C039",
               "DomainName",
             ],
           },
-          "HostedZoneId": Object {
-            "Fn::FindInMap": Array [
+          "HostedZoneId": {
+            "Fn::FindInMap": [
               "AWSCloudFrontPartitionHostedZoneIdMap",
-              Object {
+              {
                 "Ref": "AWS::Partition",
               },
               "zoneId",
@@ -1093,11 +1093,11 @@ Object {
       },
       "Type": "AWS::Route53::RecordSet",
     },
-    "DomainRedirectBucketsA177hjRedirectBuckettobarcom7E4F605B": Object {
+    "DomainRedirectBucketsA177hjRedirectBuckettobarcom7E4F605B": {
       "DeletionPolicy": "Retain",
-      "Properties": Object {
-        "WebsiteConfiguration": Object {
-          "RedirectAllRequestsTo": Object {
+      "Properties": {
+        "WebsiteConfiguration": {
+          "RedirectAllRequestsTo": {
             "HostName": "to.bar.com",
           },
         },
@@ -1105,29 +1105,29 @@ Object {
       "Type": "AWS::S3::Bucket",
       "UpdateReplacePolicy": "Retain",
     },
-    "DomainRedirectCertificateCertificateRequestorFunction650F6DC9": Object {
-      "DependsOn": Array [
+    "DomainRedirectCertificateCertificateRequestorFunction650F6DC9": {
+      "DependsOn": [
         "DomainRedirectCertificateCertificateRequestorFunctionServiceRoleDefaultPolicyB415D2E6",
         "DomainRedirectCertificateCertificateRequestorFunctionServiceRoleC3F1FE3E",
       ],
-      "Properties": Object {
-        "Code": Object {
-          "S3Bucket": Object {
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
           "S3Key": "861509f9607aa6bb9fd7034fb10fe6f0c60d91dfd7f010b9ef666869dec9bbd9.zip",
         },
         "Handler": "index.certificateRequestHandler",
-        "Role": Object {
-          "Fn::GetAtt": Array [
+        "Role": {
+          "Fn::GetAtt": [
             "DomainRedirectCertificateCertificateRequestorFunctionServiceRoleC3F1FE3E",
             "Arn",
           ],
         },
-        "Runtime": Object {
-          "Fn::FindInMap": Array [
+        "Runtime": {
+          "Fn::FindInMap": [
             "DefaultCrNodeVersionMap",
-            Object {
+            {
               "Ref": "AWS::Region",
             },
             "value",
@@ -1137,27 +1137,27 @@ Object {
       },
       "Type": "AWS::Lambda::Function",
     },
-    "DomainRedirectCertificateCertificateRequestorFunctionServiceRoleC3F1FE3E": Object {
-      "Properties": Object {
-        "AssumeRolePolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "DomainRedirectCertificateCertificateRequestorFunctionServiceRoleC3F1FE3E": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
               "Action": "sts:AssumeRole",
               "Effect": "Allow",
-              "Principal": Object {
+              "Principal": {
                 "Service": "lambda.amazonaws.com",
               },
             },
           ],
           "Version": "2012-10-17",
         },
-        "ManagedPolicyArns": Array [
-          Object {
-            "Fn::Join": Array [
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
               "",
-              Array [
+              [
                 "arn:",
-                Object {
+                {
                   "Ref": "AWS::Partition",
                 },
                 ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
@@ -1168,12 +1168,12 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
-    "DomainRedirectCertificateCertificateRequestorFunctionServiceRoleDefaultPolicyB415D2E6": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
-              "Action": Array [
+    "DomainRedirectCertificateCertificateRequestorFunctionServiceRoleDefaultPolicyB415D2E6": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
                 "acm:RequestCertificate",
                 "acm:DescribeCertificate",
                 "acm:DeleteCertificate",
@@ -1182,35 +1182,35 @@ Object {
               "Effect": "Allow",
               "Resource": "*",
             },
-            Object {
+            {
               "Action": "route53:GetChange",
               "Effect": "Allow",
               "Resource": "*",
             },
-            Object {
+            {
               "Action": "route53:changeResourceRecordSets",
-              "Condition": Object {
-                "ForAllValues:StringEquals": Object {
-                  "route53:ChangeResourceRecordSetsActions": Array [
+              "Condition": {
+                "ForAllValues:StringEquals": {
+                  "route53:ChangeResourceRecordSetsActions": [
                     "UPSERT",
                   ],
-                  "route53:ChangeResourceRecordSetsRecordTypes": Array [
+                  "route53:ChangeResourceRecordSetsRecordTypes": [
                     "CNAME",
                   ],
                 },
-                "ForAllValues:StringLike": Object {
-                  "route53:ChangeResourceRecordSetsNormalizedRecordNames": Array [
+                "ForAllValues:StringLike": {
+                  "route53:ChangeResourceRecordSetsNormalizedRecordNames": [
                     "*.from.com",
                   ],
                 },
               },
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::Join": Array [
+              "Resource": {
+                "Fn::Join": [
                   "",
-                  Array [
+                  [
                     "arn:",
-                    Object {
+                    {
                       "Ref": "AWS::Partition",
                     },
                     ":route53:::hostedzone/AZ1234",
@@ -1222,21 +1222,21 @@ Object {
           "Version": "2012-10-17",
         },
         "PolicyName": "DomainRedirectCertificateCertificateRequestorFunctionServiceRoleDefaultPolicyB415D2E6",
-        "Roles": Array [
-          Object {
+        "Roles": [
+          {
             "Ref": "DomainRedirectCertificateCertificateRequestorFunctionServiceRoleC3F1FE3E",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "DomainRedirectCertificateCertificateRequestorResource13A577DC": Object {
+    "DomainRedirectCertificateCertificateRequestorResource13A577DC": {
       "DeletionPolicy": "Delete",
-      "Properties": Object {
+      "Properties": {
         "DomainName": "from.com",
         "HostedZoneId": "AZ1234",
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
+        "ServiceToken": {
+          "Fn::GetAtt": [
             "DomainRedirectCertificateCertificateRequestorFunction650F6DC9",
             "Arn",
           ],
@@ -1245,13 +1245,13 @@ Object {
       "Type": "AWS::CloudFormation::CustomResource",
       "UpdateReplacePolicy": "Delete",
     },
-    "DomainRedirectDistributionF059C039": Object {
-      "Properties": Object {
-        "DistributionConfig": Object {
-          "Aliases": Array [
+    "DomainRedirectDistributionF059C039": {
+      "Properties": {
+        "DistributionConfig": {
+          "Aliases": [
             "from.com",
           ],
-          "DefaultCacheBehavior": Object {
+          "DefaultCacheBehavior": {
             "CachePolicyId": "658327ea-f89d-4fab-a63d-7e88639e58f6",
             "Compress": true,
             "TargetOriginId": "DomainRedirectDistributionOrigin110C8BE20",
@@ -1260,22 +1260,22 @@ Object {
           "Enabled": true,
           "HttpVersion": "http2",
           "IPV6Enabled": true,
-          "Origins": Array [
-            Object {
-              "CustomOriginConfig": Object {
+          "Origins": [
+            {
+              "CustomOriginConfig": {
                 "OriginProtocolPolicy": "http-only",
-                "OriginSSLProtocols": Array [
+                "OriginSSLProtocols": [
                   "TLSv1.2",
                 ],
               },
-              "DomainName": Object {
-                "Fn::Select": Array [
+              "DomainName": {
+                "Fn::Select": [
                   2,
-                  Object {
-                    "Fn::Split": Array [
+                  {
+                    "Fn::Split": [
                       "/",
-                      Object {
-                        "Fn::GetAtt": Array [
+                      {
+                        "Fn::GetAtt": [
                           "DomainRedirectBucketsA177hjRedirectBuckettobarcom7E4F605B",
                           "WebsiteURL",
                         ],
@@ -1287,9 +1287,9 @@ Object {
               "Id": "DomainRedirectDistributionOrigin110C8BE20",
             },
           ],
-          "ViewerCertificate": Object {
-            "AcmCertificateArn": Object {
-              "Fn::GetAtt": Array [
+          "ViewerCertificate": {
+            "AcmCertificateArn": {
+              "Fn::GetAtt": [
                 "DomainRedirectCertificateCertificateRequestorResource13A577DC",
                 "Arn",
               ],
@@ -1302,22 +1302,22 @@ Object {
       "Type": "AWS::CloudFront::Distribution",
     },
   },
-  "Rules": Object {
-    "CheckBootstrapVersion": Object {
-      "Assertions": Array [
-        Object {
-          "Assert": Object {
-            "Fn::Not": Array [
-              Object {
-                "Fn::Contains": Array [
-                  Array [
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
                     "1",
                     "2",
                     "3",
                     "4",
                     "5",
                   ],
-                  Object {
+                  {
                     "Ref": "BootstrapVersion",
                   },
                 ],

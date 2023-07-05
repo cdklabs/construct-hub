@@ -1,114 +1,114 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`S3 bucket ARN 1`] = `
-Object {
-  "Mappings": Object {
-    "DefaultCrNodeVersionMap": Object {
-      "af-south-1": Object {
+{
+  "Mappings": {
+    "DefaultCrNodeVersionMap": {
+      "af-south-1": {
         "value": "nodejs16.x",
       },
-      "ap-east-1": Object {
+      "ap-east-1": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-1": Object {
+      "ap-northeast-1": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-2": Object {
+      "ap-northeast-2": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-3": Object {
+      "ap-northeast-3": {
         "value": "nodejs16.x",
       },
-      "ap-south-1": Object {
+      "ap-south-1": {
         "value": "nodejs16.x",
       },
-      "ap-south-2": Object {
+      "ap-south-2": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-1": Object {
+      "ap-southeast-1": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-2": Object {
+      "ap-southeast-2": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-3": Object {
+      "ap-southeast-3": {
         "value": "nodejs16.x",
       },
-      "ca-central-1": Object {
+      "ca-central-1": {
         "value": "nodejs16.x",
       },
-      "cn-north-1": Object {
+      "cn-north-1": {
         "value": "nodejs16.x",
       },
-      "cn-northwest-1": Object {
+      "cn-northwest-1": {
         "value": "nodejs16.x",
       },
-      "eu-central-1": Object {
+      "eu-central-1": {
         "value": "nodejs16.x",
       },
-      "eu-central-2": Object {
+      "eu-central-2": {
         "value": "nodejs16.x",
       },
-      "eu-north-1": Object {
+      "eu-north-1": {
         "value": "nodejs16.x",
       },
-      "eu-south-1": Object {
+      "eu-south-1": {
         "value": "nodejs16.x",
       },
-      "eu-south-2": Object {
+      "eu-south-2": {
         "value": "nodejs16.x",
       },
-      "eu-west-1": Object {
+      "eu-west-1": {
         "value": "nodejs16.x",
       },
-      "eu-west-2": Object {
+      "eu-west-2": {
         "value": "nodejs16.x",
       },
-      "eu-west-3": Object {
+      "eu-west-3": {
         "value": "nodejs16.x",
       },
-      "me-central-1": Object {
+      "me-central-1": {
         "value": "nodejs16.x",
       },
-      "me-south-1": Object {
+      "me-south-1": {
         "value": "nodejs16.x",
       },
-      "sa-east-1": Object {
+      "sa-east-1": {
         "value": "nodejs16.x",
       },
-      "us-east-1": Object {
+      "us-east-1": {
         "value": "nodejs16.x",
       },
-      "us-east-2": Object {
+      "us-east-2": {
         "value": "nodejs16.x",
       },
-      "us-gov-east-1": Object {
+      "us-gov-east-1": {
         "value": "nodejs16.x",
       },
-      "us-gov-west-1": Object {
+      "us-gov-west-1": {
         "value": "nodejs16.x",
       },
-      "us-iso-east-1": Object {
+      "us-iso-east-1": {
         "value": "nodejs14.x",
       },
-      "us-iso-west-1": Object {
+      "us-iso-west-1": {
         "value": "nodejs14.x",
       },
-      "us-isob-east-1": Object {
+      "us-isob-east-1": {
         "value": "nodejs14.x",
       },
-      "us-west-1": Object {
+      "us-west-1": {
         "value": "nodejs16.x",
       },
-      "us-west-2": Object {
+      "us-west-2": {
         "value": "nodejs16.x",
       },
     },
   },
-  "Outputs": Object {
-    "S3BucketArn": Object {
-      "Value": Object {
-        "Fn::GetAtt": Array [
+  "Outputs": {
+    "S3BucketArn": {
+      "Value": {
+        "Fn::GetAtt": [
           "RepoDescribeDomainBFB922C1",
           "domain.s3BucketArn",
         ],
@@ -116,50 +116,50 @@ Object {
     },
   },
   "Parameters": Anything,
-  "Resources": Object {
-    "AWS679f53fac002430cb0da5b7982bd22872D164C4C": Object {
-      "DependsOn": Array [
+  "Resources": {
+    "AWS679f53fac002430cb0da5b7982bd22872D164C4C": {
+      "DependsOn": [
         "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
       ],
       "Properties": Anything,
       "Type": "AWS::Lambda::Function",
     },
-    "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2": Object {
+    "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2": {
       "Properties": Anything,
       "Type": "AWS::IAM::Role",
     },
     "Repo": Anything,
-    "RepoDescribeDomainBFB922C1": Object {
+    "RepoDescribeDomainBFB922C1": {
       "DeletionPolicy": "Delete",
-      "DependsOn": Array [
+      "DependsOn": [
         "RepoDescribeDomainCustomResourcePolicy66761D14",
       ],
-      "Properties": Object {
-        "Create": Object {
-          "Fn::Join": Array [
+      "Properties": {
+        "Create": {
+          "Fn::Join": [
             "",
-            Array [
-              "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"describeDomain\\",\\"parameters\\":{\\"domain\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
+            [
+              "{"service":"CodeArtifact","action":"describeDomain","parameters":{"domain":"",
+              {
+                "Fn::GetAtt": [
                   "Repo",
                   "DomainName",
                 ],
               },
-              "\\",\\"domainOwner\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
+              "","domainOwner":"",
+              {
+                "Fn::GetAtt": [
                   "Repo",
                   "DomainOwner",
                 ],
               },
-              "\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"domain.s3BucketArn\\"}}",
+              ""},"physicalResourceId":{"responsePath":"domain.s3BucketArn"}}",
             ],
           ],
         },
         "InstallLatestAwsSdk": true,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
+        "ServiceToken": {
+          "Fn::GetAtt": [
             "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
             "Arn",
           ],
@@ -168,15 +168,15 @@ Object {
       "Type": "Custom::CoreArtifactDomainDescription",
       "UpdateReplacePolicy": "Delete",
     },
-    "RepoDescribeDomainCustomResourcePolicy66761D14": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "RepoDescribeDomainCustomResourcePolicy66761D14": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
               "Action": "codeartifact:DescribeDomain",
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
+              "Resource": {
+                "Fn::GetAtt": [
                   "RepoDomainC79FB030",
                   "Arn",
                 ],
@@ -186,8 +186,8 @@ Object {
           "Version": "2012-10-17",
         },
         "PolicyName": "RepoDescribeDomainCustomResourcePolicy66761D14",
-        "Roles": Array [
-          Object {
+        "Roles": [
+          {
             "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
           },
         ],
@@ -195,11 +195,11 @@ Object {
       "Type": "AWS::IAM::Policy",
     },
     "RepoDomainC79FB030": Anything,
-    "RepoPublishing9FE3D602": Object {
-      "Properties": Object {
+    "RepoPublishing9FE3D602": {
+      "Properties": {
         "Description": "Publishing repository",
-        "DomainName": Object {
-          "Fn::GetAtt": Array [
+        "DomainName": {
+          "Fn::GetAtt": [
             "RepoDomainC79FB030",
             "Name",
           ],
@@ -209,22 +209,22 @@ Object {
       "Type": "AWS::CodeArtifact::Repository",
     },
   },
-  "Rules": Object {
-    "CheckBootstrapVersion": Object {
-      "Assertions": Array [
-        Object {
-          "Assert": Object {
-            "Fn::Not": Array [
-              Object {
-                "Fn::Contains": Array [
-                  Array [
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
                     "1",
                     "2",
                     "3",
                     "4",
                     "5",
                   ],
-                  Object {
+                  {
                     "Ref": "BootstrapVersion",
                   },
                 ],
@@ -240,114 +240,114 @@ Object {
 `;
 
 exports[`npm repository endpoint 1`] = `
-Object {
-  "Mappings": Object {
-    "DefaultCrNodeVersionMap": Object {
-      "af-south-1": Object {
+{
+  "Mappings": {
+    "DefaultCrNodeVersionMap": {
+      "af-south-1": {
         "value": "nodejs16.x",
       },
-      "ap-east-1": Object {
+      "ap-east-1": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-1": Object {
+      "ap-northeast-1": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-2": Object {
+      "ap-northeast-2": {
         "value": "nodejs16.x",
       },
-      "ap-northeast-3": Object {
+      "ap-northeast-3": {
         "value": "nodejs16.x",
       },
-      "ap-south-1": Object {
+      "ap-south-1": {
         "value": "nodejs16.x",
       },
-      "ap-south-2": Object {
+      "ap-south-2": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-1": Object {
+      "ap-southeast-1": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-2": Object {
+      "ap-southeast-2": {
         "value": "nodejs16.x",
       },
-      "ap-southeast-3": Object {
+      "ap-southeast-3": {
         "value": "nodejs16.x",
       },
-      "ca-central-1": Object {
+      "ca-central-1": {
         "value": "nodejs16.x",
       },
-      "cn-north-1": Object {
+      "cn-north-1": {
         "value": "nodejs16.x",
       },
-      "cn-northwest-1": Object {
+      "cn-northwest-1": {
         "value": "nodejs16.x",
       },
-      "eu-central-1": Object {
+      "eu-central-1": {
         "value": "nodejs16.x",
       },
-      "eu-central-2": Object {
+      "eu-central-2": {
         "value": "nodejs16.x",
       },
-      "eu-north-1": Object {
+      "eu-north-1": {
         "value": "nodejs16.x",
       },
-      "eu-south-1": Object {
+      "eu-south-1": {
         "value": "nodejs16.x",
       },
-      "eu-south-2": Object {
+      "eu-south-2": {
         "value": "nodejs16.x",
       },
-      "eu-west-1": Object {
+      "eu-west-1": {
         "value": "nodejs16.x",
       },
-      "eu-west-2": Object {
+      "eu-west-2": {
         "value": "nodejs16.x",
       },
-      "eu-west-3": Object {
+      "eu-west-3": {
         "value": "nodejs16.x",
       },
-      "me-central-1": Object {
+      "me-central-1": {
         "value": "nodejs16.x",
       },
-      "me-south-1": Object {
+      "me-south-1": {
         "value": "nodejs16.x",
       },
-      "sa-east-1": Object {
+      "sa-east-1": {
         "value": "nodejs16.x",
       },
-      "us-east-1": Object {
+      "us-east-1": {
         "value": "nodejs16.x",
       },
-      "us-east-2": Object {
+      "us-east-2": {
         "value": "nodejs16.x",
       },
-      "us-gov-east-1": Object {
+      "us-gov-east-1": {
         "value": "nodejs16.x",
       },
-      "us-gov-west-1": Object {
+      "us-gov-west-1": {
         "value": "nodejs16.x",
       },
-      "us-iso-east-1": Object {
+      "us-iso-east-1": {
         "value": "nodejs14.x",
       },
-      "us-iso-west-1": Object {
+      "us-iso-west-1": {
         "value": "nodejs14.x",
       },
-      "us-isob-east-1": Object {
+      "us-isob-east-1": {
         "value": "nodejs14.x",
       },
-      "us-west-1": Object {
+      "us-west-1": {
         "value": "nodejs16.x",
       },
-      "us-west-2": Object {
+      "us-west-2": {
         "value": "nodejs16.x",
       },
     },
   },
-  "Outputs": Object {
-    "NpmRepositoryEndpoint": Object {
-      "Value": Object {
-        "Fn::GetAtt": Array [
+  "Outputs": {
+    "NpmRepositoryEndpoint": {
+      "Value": {
+        "Fn::GetAtt": [
           "RepoGetEndpoint5034567A",
           "repositoryEndpoint",
         ],
@@ -355,88 +355,88 @@ Object {
     },
   },
   "Parameters": Anything,
-  "Resources": Object {
-    "AWS679f53fac002430cb0da5b7982bd22872D164C4C": Object {
-      "DependsOn": Array [
+  "Resources": {
+    "AWS679f53fac002430cb0da5b7982bd22872D164C4C": {
+      "DependsOn": [
         "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
       ],
       "Properties": Anything,
       "Type": "AWS::Lambda::Function",
     },
-    "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2": Object {
+    "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2": {
       "Properties": Anything,
       "Type": "AWS::IAM::Role",
     },
     "Repo": Anything,
     "RepoDomainC79FB030": Anything,
-    "RepoGetEndpoint5034567A": Object {
+    "RepoGetEndpoint5034567A": {
       "DeletionPolicy": "Delete",
-      "DependsOn": Array [
+      "DependsOn": [
         "RepoGetEndpointCustomResourcePolicy40405D0D",
       ],
-      "Properties": Object {
-        "Create": Object {
-          "Fn::Join": Array [
+      "Properties": {
+        "Create": {
+          "Fn::Join": [
             "",
-            Array [
-              "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"getRepositoryEndpoint\\",\\"parameters\\":{\\"domain\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
+            [
+              "{"service":"CodeArtifact","action":"getRepositoryEndpoint","parameters":{"domain":"",
+              {
+                "Fn::GetAtt": [
                   "Repo",
                   "DomainName",
                 ],
               },
-              "\\",\\"domainOwner\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
+              "","domainOwner":"",
+              {
+                "Fn::GetAtt": [
                   "Repo",
                   "DomainOwner",
                 ],
               },
-              "\\",\\"format\\":\\"npm\\",\\"repository\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
+              "","format":"npm","repository":"",
+              {
+                "Fn::GetAtt": [
                   "Repo",
                   "Name",
                 ],
               },
-              "\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"repositoryEndpoint\\"}}",
+              ""},"physicalResourceId":{"responsePath":"repositoryEndpoint"}}",
             ],
           ],
         },
         "InstallLatestAwsSdk": true,
-        "ServiceToken": Object {
-          "Fn::GetAtt": Array [
+        "ServiceToken": {
+          "Fn::GetAtt": [
             "AWS679f53fac002430cb0da5b7982bd22872D164C4C",
             "Arn",
           ],
         },
-        "Update": Object {
-          "Fn::Join": Array [
+        "Update": {
+          "Fn::Join": [
             "",
-            Array [
-              "{\\"service\\":\\"CodeArtifact\\",\\"action\\":\\"getRepositoryEndpoint\\",\\"parameters\\":{\\"domain\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
+            [
+              "{"service":"CodeArtifact","action":"getRepositoryEndpoint","parameters":{"domain":"",
+              {
+                "Fn::GetAtt": [
                   "Repo",
                   "DomainName",
                 ],
               },
-              "\\",\\"domainOwner\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
+              "","domainOwner":"",
+              {
+                "Fn::GetAtt": [
                   "Repo",
                   "DomainOwner",
                 ],
               },
-              "\\",\\"format\\":\\"npm\\",\\"repository\\":\\"",
-              Object {
-                "Fn::GetAtt": Array [
+              "","format":"npm","repository":"",
+              {
+                "Fn::GetAtt": [
                   "Repo",
                   "Name",
                 ],
               },
-              "\\"},\\"physicalResourceId\\":{\\"responsePath\\":\\"repositoryEndpoint\\"}}",
+              ""},"physicalResourceId":{"responsePath":"repositoryEndpoint"}}",
             ],
           ],
         },
@@ -444,15 +444,15 @@ Object {
       "Type": "Custom::CodeArtifactNpmRepositoryEndpoint",
       "UpdateReplacePolicy": "Delete",
     },
-    "RepoGetEndpointCustomResourcePolicy40405D0D": Object {
-      "Properties": Object {
-        "PolicyDocument": Object {
-          "Statement": Array [
-            Object {
+    "RepoGetEndpointCustomResourcePolicy40405D0D": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
               "Action": "codeartifact:GetRepositoryEndpoint",
               "Effect": "Allow",
-              "Resource": Object {
-                "Fn::GetAtt": Array [
+              "Resource": {
+                "Fn::GetAtt": [
                   "Repo",
                   "Arn",
                 ],
@@ -462,19 +462,19 @@ Object {
           "Version": "2012-10-17",
         },
         "PolicyName": "RepoGetEndpointCustomResourcePolicy40405D0D",
-        "Roles": Array [
-          Object {
+        "Roles": [
+          {
             "Ref": "AWS679f53fac002430cb0da5b7982bd2287ServiceRoleC1EA0FF2",
           },
         ],
       },
       "Type": "AWS::IAM::Policy",
     },
-    "RepoPublishing9FE3D602": Object {
-      "Properties": Object {
+    "RepoPublishing9FE3D602": {
+      "Properties": {
         "Description": "Publishing repository",
-        "DomainName": Object {
-          "Fn::GetAtt": Array [
+        "DomainName": {
+          "Fn::GetAtt": [
             "RepoDomainC79FB030",
             "Name",
           ],
@@ -484,22 +484,22 @@ Object {
       "Type": "AWS::CodeArtifact::Repository",
     },
   },
-  "Rules": Object {
-    "CheckBootstrapVersion": Object {
-      "Assertions": Array [
-        Object {
-          "Assert": Object {
-            "Fn::Not": Array [
-              Object {
-                "Fn::Contains": Array [
-                  Array [
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
                     "1",
                     "2",
                     "3",
                     "4",
                     "5",
                   ],
-                  Object {
+                  {
                     "Ref": "BootstrapVersion",
                   },
                 ],
