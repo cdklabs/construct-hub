@@ -744,7 +744,7 @@ function newEcsTask(entrypoint: string) {
 
   const bundleCmd = [
     'ts-node',
-    join(__dirname, 'projenrc', 'bundle-javascript-for-ecs.exec.ts'),
+    relative(__dirname, join('projenrc', 'bundle-javascript-for-ecs.exec.ts')),
     ecsMain,
     `${outdir}/${dockerEntry}`,
   ];
@@ -1051,7 +1051,7 @@ discoverIntegrationTests();
 // see https://github.com/aws/jsii/issues/3311
 const bundleWorkerPool = [
   'ts-node',
-  join(__dirname, 'projenrc', 'bundle-javascript-for-ecs.exec.ts'),
+  relative(__dirname, join('projenrc', 'bundle-javascript-for-ecs.exec.ts')),
   'node_modules/jsii-rosetta/lib/translate_all_worker.js',
   `lib/backend/transliterator/transliterator.ecs-entrypoint.bundle/translate_all_worker.js`,
 ].join(' ');
