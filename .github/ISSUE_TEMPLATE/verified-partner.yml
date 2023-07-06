@@ -1,0 +1,49 @@
+name: Package verification request
+description: Request verification of a package as an AWS Partner on Construct Hub
+title: "Package verification request for <PACKAGE NAME>"
+labels: [package-verification, needs-triage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form is for existing AWS Partners to have their packages verified on Construct Hub.
+        If you are not an AWS Partner yet, please refer to the [AWS Partner Network](https://aws.amazon.com/partners/).
+
+  - type: input
+    id: package-name
+    attributes:
+      label: What is the name of the package that you would like to be verified?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: is-author
+    attributes:
+      label: Are you the owner of this package?
+      description: |
+        Only the package owners can request to have their packages verified on Construct Hub.
+      options:
+        - label: I am the owner of this package.
+          required: true
+
+  - type: input
+    id: partner-name
+    attributes:
+      label: What is the name of the AWS Partner owning this package?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: is-partner
+    attributes:
+      label: Are you a representative of the AWS Partner?
+      options:
+        - label: I am a representative of the AWS Partner.
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        ---
+
+        This is a :white_check_mark: Package Verification Request
