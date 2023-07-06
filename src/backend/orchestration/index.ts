@@ -83,17 +83,14 @@ const THROTTLE_RETRY_POLICY = {
  * The interval is determined by the execution duration we currently expect from jsii-docgen.
  * See https://github.com/cdklabs/jsii-docgen/blob/main/test/docgen/view/documentation.test.ts#L13.
  *
- * We don't apply backoff because this inevitably causes longer wait times than desired, and unfortunately
- * there is no way to configure max interval. In addition, since a task duration is fairly stable,
- * we can assume capacity will free up after roughly 2 minutes.
- *
- * Combined with a two minute interval, and a backoff factor of 1, 200 attempts gives us just under 7 hours to complete
- * a full reprocessing workflow, which should be sufficient.
+ * Apply a bit of backoff because otherwise in cases of contention we're hammering the ECS
+ * frontend service.
  */
 const DOCGEN_THROTTLE_RETRY_POLICY = {
-  backoffRate: 1,
-  interval: Duration.minutes(2),
-  maxAttempts: 200,
+  interval: Duration.minutes(1),
+  // 1 minute * 1.1^45 / ln(1.1) ~= max 13 hours total time for a package
+  backoffRate: 1.1,
+  maxAttempts: 45,
 };
 
 export interface OrchestrationProps {
