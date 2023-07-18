@@ -5,7 +5,7 @@ import * as ecs from 'aws-cdk-lib/aws-ecs';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { Construct } from 'constructs';
 
-export const HEAP_SIZE = 8192
+export const MEMORY_LIMIT = 8192
 
 export interface TransliteratorProps extends Omit<ecs.ContainerDefinitionOptions, 'image'> {
   readonly taskDefinition: ecs.FargateTaskDefinition;
