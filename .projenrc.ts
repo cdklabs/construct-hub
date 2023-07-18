@@ -553,6 +553,13 @@ function newEcsTask(entrypoint: string) {
   const className = Case.pascal(basename(dir));
   const propsName = `${className}Props`;
 
+  const memoryLimit = ECS_TASK_MEMORY_LIMIT_DEFINITIONS[entrypoint];
+  if (!memoryLimit) {
+    throw new Error(
+      `Unable to find memory limit definition for entrypoint: ${entrypoint}`
+    );
+  }
+
   const ts = new SourceCode(project, infra);
   ts.line(`// ${ts.marker}`);
   ts.line("import * as path from 'path';");
@@ -560,6 +567,8 @@ function newEcsTask(entrypoint: string) {
   ts.line("import * as ecs from 'aws-cdk-lib/aws-ecs';");
   ts.line("import * as iam from 'aws-cdk-lib/aws-iam';");
   ts.line("import { Construct } from 'constructs';");
+  ts.line();
+  ts.line(`export const MEMORY_LIMIT = ${memoryLimit}`);
   ts.line();
   ts.open(
     `export interface ${propsName} extends Omit<ecs.ContainerDefinitionOptions, 'image'> {`
@@ -738,7 +747,12 @@ function newEcsTask(entrypoint: string) {
   df.line('ENV GIT_SSH_COMMAND=ssh');
   // By default, no more than 10 lines of the stack trace are shown. Increase
   // this to help with debugging errors.
-  df.line('ENV NODE_OPTIONS="--stack-trace-limit=100"');
+  df.line(
+    `ENV NODE_OPTIONS="--stack-trace-limit=100 --max-old-space-size=${
+      // don't use up the entire container memory
+      memoryLimit - 512
+    }"`
+  );
   df.line();
   df.line(`ENTRYPOINT ["/usr/bin/env", "node", "/bundle/${dockerEntry}"]`);
 
@@ -811,6 +825,10 @@ function discoverLambdas() {
     };
   }
 }
+
+const ECS_TASK_MEMORY_LIMIT_DEFINITIONS: { [key: string]: number } = {
+  'backend/transliterator/transliterator.ecstask.ts': 8192,
+};
 
 function discoverEcsTasks() {
   const entrypoints = new Array<string>();

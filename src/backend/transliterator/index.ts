@@ -28,7 +28,7 @@ import {
   EcsRunTask,
 } from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
-import { Transliterator as Container } from './transliterator';
+import { Transliterator as Container, MEMORY_LIMIT } from './transliterator';
 import { Repository } from '../../codeartifact/repository';
 import { Monitoring } from '../../monitoring';
 import * as s3 from '../../s3';
@@ -167,7 +167,7 @@ export class Transliterator extends Construct {
       }),
       taskDefinition: new FargateTaskDefinition(this, 'TaskDefinition', {
         cpu: 4_096,
-        memoryLimitMiB: 8_192,
+        memoryLimitMiB: MEMORY_LIMIT,
         runtimePlatform: {
           cpuArchitecture: CpuArchitecture.ARM64,
           operatingSystemFamily: OperatingSystemFamily.LINUX,
