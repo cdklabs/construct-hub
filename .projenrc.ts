@@ -556,7 +556,7 @@ function newEcsTask(entrypoint: string) {
   const memoryLimit = ECS_TASK_MEMORY_LIMIT_DEFINITIONS[entrypoint];
   if (!memoryLimit) {
     throw new Error(
-      `Unable to find heap size definition for entrypoint: ${entrypoint}`
+      `Unable to find memory limit definition for entrypoint: ${entrypoint}`
     );
   }
 
