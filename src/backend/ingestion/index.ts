@@ -107,6 +107,13 @@ export interface IngestionProps {
   readonly reprocessFrequency?: Duration;
 
   /**
+   * Package versions that have been published before this time window will not be reprocessed.
+   *
+   * @default Duration.days(90)
+   */
+  readonly reprocessAge?: Duration;
+
+  /**
    * The SQS queue where new package will be added to fetch release notes.
    */
   readonly releaseNotesFetchQueue?: IQueue;
@@ -249,7 +256,11 @@ export class Ingestion extends Construct implements IGrantable {
     const reprocessWorkflow = new ReprocessIngestionWorkflow(
       this,
       'ReprocessWorkflow',
-      { bucket: props.bucket, queue: reprocessQueue }
+      {
+        bucket: props.bucket,
+        queue: reprocessQueue,
+        reprocessAge: props.reprocessAge ?? Duration.days(90),
+      }
     );
 
     // Run reprocess workflow on a daily basis
@@ -390,6 +401,7 @@ export class Ingestion extends Construct implements IGrantable {
 interface ReprocessIngestionWorkflowProps {
   readonly bucket: IBucket;
   readonly queue: IQueue;
+  readonly reprocessAge: Duration;
 }
 
 /**
@@ -417,6 +429,7 @@ class ReprocessIngestionWorkflow extends Construct {
       environment: {
         BUCKET_NAME: props.bucket.bucketName,
         QUEUE_URL: props.queue.queueUrl,
+        REPROCESS_AGE: `${props.reprocessAge.toMilliseconds()}`,
       },
       memorySize: 10_240,
       tracing: Tracing.ACTIVE,

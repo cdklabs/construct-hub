@@ -14,6 +14,7 @@ export async function handler(event: Input, context: Context) {
 
   const bucket = requireEnv('BUCKET_NAME');
   const queueUrl = requireEnv('QUEUE_URL');
+  const age = requireEnv('REPROCESS_AGE');
 
   console.log(`Download metadata object at ${bucket}/${event.Key}`);
   const { Body: jsonMetadata } = await aws
@@ -30,7 +31,14 @@ export async function handler(event: Input, context: Context) {
     0,
     event.Key.length - METADATA_KEY_SUFFIX.length
   )}${PACKAGE_KEY_SUFFIX}`;
-  console.log(`Download metadata object at ${bucket}/${tarballKey}`);
+
+  if (!isYoungEnough(time, Number(age))) {
+    console.log(
+      `Tarball ${tarballKey} has been published too far in the past (${age}). Not reprocessing`
+    );
+    return;
+  }
+  console.log(`Download tarball object at ${bucket}/${tarballKey}`);
   const { Body: tarball, VersionId: versionId } = await aws
     .s3()
     .getObject({ Bucket: bucket, Key: tarballKey })
@@ -84,4 +92,10 @@ export async function handler(event: Input, context: Context) {
       },
     })
     .promise();
+}
+
+function isYoungEnough(publishDate: string, historyTimeWindow: number) {
+  const now = Date.now();
+  const publish = new Date(publishDate).getTime();
+  return publish + historyTimeWindow >= now;
 }

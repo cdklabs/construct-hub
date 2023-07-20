@@ -23,6 +23,9 @@ mockRequireEnv.mockImplementation((name) => {
   if (name === 'QUEUE_URL') {
     return mockQueueUrl;
   }
+  if (name === 'REPROCESS_AGE') {
+    return '1000';
+  }
   throw new Error(`Bad environment variable: "${name}"`);
 });
 

@@ -3183,7 +3183,7 @@ Direct link to the function: /lambda/home#/functions/",
           "S3Bucket": {
             "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
           },
-          "S3Key": "df9e3d80851fd56bb374d0c3e2a5ad240e98d84890989d77602d204e27b4e83d.zip",
+          "S3Key": "15f7bd6bd2679fce743a682bcc8f40cff6f7b8c4a5de522c9f5f8e823d034587.zip",
         },
         "Description": "[ConstructHub/Ingestion/ReIngest] The function used to reprocess packages through ingestion",
         "Environment": {
@@ -3194,6 +3194,7 @@ Direct link to the function: /lambda/home#/functions/",
             "QUEUE_URL": {
               "Ref": "ConstructHubIngestionReprocessQueueADCE803E",
             },
+            "REPROCESS_AGE": "7776000000",
           },
         },
         "Handler": "index.handler",
