@@ -4,6 +4,7 @@ import * as aws from '../shared/aws.lambda-shared';
 import { METADATA_KEY_SUFFIX, PACKAGE_KEY_SUFFIX } from '../shared/constants';
 import { requireEnv } from '../shared/env.lambda-shared';
 import { integrity } from '../shared/integrity.lambda-shared';
+import { now } from '../shared/time.lambda-shared';
 
 interface Input extends AWS.S3.Object {
   Key: string;
@@ -14,7 +15,7 @@ export async function handler(event: Input, context: Context) {
 
   const bucket = requireEnv('BUCKET_NAME');
   const queueUrl = requireEnv('QUEUE_URL');
-  const age = requireEnv('REPROCESS_AGE');
+  const age = requireEnv('REPROCESS_AGE_MILLIS');
 
   console.log(`Download metadata object at ${bucket}/${event.Key}`);
   const { Body: jsonMetadata } = await aws
@@ -95,7 +96,6 @@ export async function handler(event: Input, context: Context) {
 }
 
 function isYoungEnough(publishDate: string, historyTimeWindow: number) {
-  const now = Date.now();
   const publish = new Date(publishDate).getTime();
-  return publish + historyTimeWindow >= now;
+  return publish + historyTimeWindow >= now();
 }

@@ -213,6 +213,13 @@ export interface ConstructHubProps {
   readonly reprocessFrequency?: Duration;
 
   /**
+   * Package versions that have been published before this time window will not be reprocessed.
+   *
+   * @default Duration.days(90)
+   */
+  readonly reprocessAge?: Duration;
+
+  /**
    * Additional domains which will be set up to redirect to the primary
    * construct hub domain.
    *
@@ -431,6 +438,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
       packageLinks: props.packageLinks,
       packageTags: packageTagsSerialized,
       reprocessFrequency: props.reprocessFrequency,
+      reprocessAge: props.reprocessAge,
       releaseNotesFetchQueue: releaseNotes?.queue,
       overviewDashboard: overviewDashboard,
     });

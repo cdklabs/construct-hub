@@ -429,7 +429,7 @@ class ReprocessIngestionWorkflow extends Construct {
       environment: {
         BUCKET_NAME: props.bucket.bucketName,
         QUEUE_URL: props.queue.queueUrl,
-        REPROCESS_AGE: `${props.reprocessAge.toMilliseconds()}`,
+        REPROCESS_AGE_MILLIS: `${props.reprocessAge.toMilliseconds()}`,
       },
       memorySize: 10_240,
       tracing: Tracing.ACTIVE,
