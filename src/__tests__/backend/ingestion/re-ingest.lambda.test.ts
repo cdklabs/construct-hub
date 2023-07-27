@@ -26,8 +26,8 @@ mockRequireEnv.mockImplementation((name) => {
     return mockQueueUrl;
   }
   if (name === 'REPROCESS_AGE_MILLIS') {
-    // 90 days
-    return `${1000 * 60 * 60 * 24 * 90}`;
+    const ninetyDaysInMillis = 1000 * 60 * 60 * 24 * 90;
+    return ninetyDaysInMillis.toFixed();
   }
   throw new Error(`Bad environment variable: "${name}"`);
 });

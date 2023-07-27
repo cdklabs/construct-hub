@@ -1,3 +1,1 @@
-export function now(): number {
-  return Date.now();
-}
+export const now = Date.now;
