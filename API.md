@@ -1102,6 +1102,7 @@ const constructHubProps: ConstructHubProps = { ... }
 | <code><a href="#construct-hub.ConstructHubProps.property.packageTagGroups">packageTagGroups</a></code> | <code><a href="#construct-hub.PackageTagGroup">PackageTagGroup</a>[]</code> | Optional configuration for grouping custom package tags. |
 | <code><a href="#construct-hub.ConstructHubProps.property.packageTags">packageTags</a></code> | <code><a href="#construct-hub.PackageTag">PackageTag</a>[]</code> | Configuration for custom package tags. |
 | <code><a href="#construct-hub.ConstructHubProps.property.preloadScript">preloadScript</a></code> | <code><a href="#construct-hub.PreloadFile">PreloadFile</a></code> | Javascript to run on webapp before app loads. |
+| <code><a href="#construct-hub.ConstructHubProps.property.reprocessAge">reprocessAge</a></code> | <code>aws-cdk-lib.Duration</code> | Package versions that have been published before this time window will not be reprocessed. |
 | <code><a href="#construct-hub.ConstructHubProps.property.reprocessFrequency">reprocessFrequency</a></code> | <code>aws-cdk-lib.Duration</code> | How frequently all packages should get fully reprocessed. |
 | <code><a href="#construct-hub.ConstructHubProps.property.sensitiveTaskIsolation">sensitiveTaskIsolation</a></code> | <code><a href="#construct-hub.Isolation">Isolation</a></code> | Whether compute environments for sensitive tasks (which operate on un-trusted complex data, such as the transliterator, which operates with externally-sourced npm package tarballs) should run in network-isolated environments. |
 
@@ -1388,6 +1389,19 @@ public readonly preloadScript: PreloadFile;
 - *Default:* create an empty file
 
 Javascript to run on webapp before app loads.
+
+---
+
+##### `reprocessAge`<sup>Optional</sup> <a name="reprocessAge" id="construct-hub.ConstructHubProps.property.reprocessAge"></a>
+
+```typescript
+public readonly reprocessAge: Duration;
+```
+
+- *Type:* aws-cdk-lib.Duration
+- *Default:* Duration.days(90)
+
+Package versions that have been published before this time window will not be reprocessed.
 
 ---
 

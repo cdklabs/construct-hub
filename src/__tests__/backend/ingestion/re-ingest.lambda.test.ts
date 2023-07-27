@@ -7,8 +7,10 @@ import {
   PACKAGE_KEY_SUFFIX,
 } from '../../../backend/shared/constants';
 import type { requireEnv } from '../../../backend/shared/env.lambda-shared';
+import type { now } from '../../../backend/shared/time.lambda-shared';
 
 jest.mock('../../../backend/shared/env.lambda-shared');
+jest.mock('../../../backend/shared/time.lambda-shared');
 
 const mockBucketName = 'fake-bucket-name';
 const mockQueueUrl = 'https://dummy-queue.url';
@@ -23,8 +25,19 @@ mockRequireEnv.mockImplementation((name) => {
   if (name === 'QUEUE_URL') {
     return mockQueueUrl;
   }
+  if (name === 'REPROCESS_AGE_MILLIS') {
+    const ninetyDaysInMillis = 1000 * 60 * 60 * 24 * 90;
+    return ninetyDaysInMillis.toFixed();
+  }
   throw new Error(`Bad environment variable: "${name}"`);
 });
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const mockNow = require('../../../backend/shared/time.lambda-shared')
+  .now as jest.MockedFunction<typeof now>;
+mockNow.mockImplementation(() =>
+  new Date('2023-07-24T10:00:00.000Z').getTime()
+);
 
 beforeEach((done) => {
   AWSMock.setSDKInstance(AWS);
@@ -42,7 +55,7 @@ test('basic case', () => {
   const event = {
     Key: `${STORAGE_KEY_PREFIX}dummy${METADATA_KEY_SUFFIX}`,
   };
-  const mockTime = '2021-10-11T10:33:56.511Z';
+  const mockTime = '2023-06-24T10:00:00.000Z';
   const tarballKey = `${STORAGE_KEY_PREFIX}dummy${PACKAGE_KEY_SUFFIX}`;
 
   const context = {
@@ -71,7 +84,7 @@ test('basic case', () => {
       expect(request.QueueUrl).toBe(mockQueueUrl);
       expect(JSON.parse(request.MessageBody)).toEqual({
         integrity:
-          'sha384-sQ9dnSmDKM875DcJKcQNmU6VKy/nJe3iA5GmaREMnoXxFOpjxEOxNYqwByBj/iyb',
+          'sha384-IOLCcAiKbgz1Uj1o3xp7apSzx1SbeNgBN67HA+Jhyb4ZDhNBeduhlGtDuRlo9UWU',
         reIngest: true,
         metadata: {
           reprocessLogGroup: context.logGroupName,
@@ -94,5 +107,44 @@ test('basic case', () => {
       event,
       context
     )
-  ).resolves.not.toThrowError();
+  ).resolves.toEqual({});
+});
+
+test('too old to re-ingest', () => {
+  // GIVEN
+  const event = {
+    Key: `${STORAGE_KEY_PREFIX}dummy${METADATA_KEY_SUFFIX}`,
+  };
+  const mockTime = '2023-01-24T10:00:00.000Z';
+  const tarballKey = `${STORAGE_KEY_PREFIX}dummy${PACKAGE_KEY_SUFFIX}`;
+
+  const context = {
+    awsRequestId: 'dummy-request-id',
+    logGroupName: 'log-group-name',
+    logStreamName: 'log-stream-name',
+  } as any;
+
+  AWSMock.mock('S3', 'getObject', (request, cb) => {
+    try {
+      expect(request.Bucket).toBe(mockBucketName);
+      if (request.Key === event.Key) {
+        cb(undefined, { Body: JSON.stringify({ date: mockTime }) });
+      } else if (request.Key === tarballKey) {
+        cb(undefined, { Body: Buffer.from('this-is-a-tarball-believe-me') });
+      } else {
+        fail(`Unexpected object key: ${request.Key}`);
+      }
+    } catch (e: any) {
+      cb(e, undefined);
+    }
+  });
+
+  // THEN
+  return expect(
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    require('../../../backend/ingestion/re-ingest.lambda').handler(
+      event,
+      context
+    )
+  ).resolves.toEqual(undefined);
 });
