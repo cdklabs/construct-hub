@@ -468,6 +468,24 @@ export class Orchestration extends Construct {
         })
     );
 
+    props.monitoring.addHighSeverityAlarm(
+      'Execution Failure Rate above 75%',
+      this.metricStatesExecutionFailureRate()
+        .createAlarm(this, 'FailureRateAlarm', {
+          alarmName: `${this.stateMachine.node.path}/${
+            this.metricStatesExecutionFailureRate().metricName
+          }`,
+          alarmDescription: [
+            'Execution Failure Rate above 75%',
+            '',
+          ].join('\n'),
+          comparisonOperator:
+            ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+          evaluationPeriods: 1,
+          threshold: 75,
+        })
+    );
+
     // This function is intended to be manually triggered by an operrator to
     // attempt redriving messages from the DLQ.
     this.redriveFunction = new RedriveStateMachine(this, 'Redrive', {
@@ -504,6 +522,38 @@ export class Orchestration extends Construct {
       needsCatalogUpdateFunction,
       'NeedsCatalogUpdateLambda'
     );
+  }
+
+  public metricStatesExecutionFailureRate(opts?: MathExpressionOptions): MathExpression {
+    return new MathExpression({
+      ...opts,
+      // Calculates the % ExecutionsFailed from the ExecutionsStarted.
+      expression: '100 * executionsFailed / executionsStarted',
+      usingMetrics: {
+        executionsFailed: this.metricStatesExecutionsFailed(),
+        executionsStarted: this.metricStatesExecutionsStarted(),
+      },
+    });
+  }
+
+  public metricStatesExecutionsFailed(opts?: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.SUM,
+      ...opts,
+      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'ExecutionsFailed',
+      namespace: 'AWS/States',
+    });
+  }
+
+  public metricStatesExecutionsStarted(opts?: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.SUM,
+      ...opts,
+      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'ExecutionsStarted',
+      namespace: 'AWS/States',
+    });
   }
 
   public metricEcsTaskCount(opts: MetricOptions): Metric {
