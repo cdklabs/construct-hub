@@ -472,9 +472,7 @@ export class Orchestration extends Construct {
       'Execution Failure Rate above 75%',
       this.metricStatesExecutionFailureRate()
         .createAlarm(this, 'FailureRateAlarm', {
-          alarmName: `${this.stateMachine.node.path}/${
-            this.metricStatesExecutionFailureRate().metricName
-          }`,
+          alarmName: `${this.stateMachine.node.path}/ExecutionFailureRate`,
           alarmDescription: [
             'Execution Failure Rate above 75%',
             '',
