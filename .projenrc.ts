@@ -1,5 +1,6 @@
 import { join, relative } from 'path';
-import { awscdk, github } from 'projen';
+import { CdklabsConstructLibrary } from 'cdklabs-projen-project-types';
+import { github } from 'projen';
 import { addDevApp } from './projenrc/dev-app';
 import { discoverIntegrationTests } from './projenrc/integ-tests';
 import { discoverEcsTasks } from './projenrc/magic-ecs';
@@ -16,7 +17,10 @@ const peerDeps = [
 
 const cdkCli = 'aws-cdk@^2';
 
-const project = new awscdk.AwsCdkConstructLibrary({
+const project = new CdklabsConstructLibrary({
+  cdkVersion: '2.84.0',
+  setNodeEngineVersion: false,
+  private: false,
   name: 'construct-hub',
   projenrcTs: true,
   description: 'A construct library that models Construct Hub instances.',
@@ -84,11 +88,14 @@ const project = new awscdk.AwsCdkConstructLibrary({
   ],
 
   releaseToNpm: true,
+  cdklabsPublishingDefaults: false,
 
+  publishToGo: undefined,
   // publishToGo: {
   //  moduleName: 'github.com/cdklabs/construct-hub-go',
   //},
 
+  publishToMaven: undefined,
   // see https://github.com/cdklabs/construct-hub/issues/60
   // publishToMaven: {
   //   javaPackage: 'software.amazon.constructhub',
@@ -97,11 +104,13 @@ const project = new awscdk.AwsCdkConstructLibrary({
   //   mavenEndpoint: 'https://aws.oss.sonatype.org',
   // },
 
+  publishToNuget: undefined,
   //publishToNuget: {
   //  dotNetNamespace: 'Construct.Hub',
   //  packageId: 'Construct.Hub',
   //},
 
+  publishToPypi: undefined,
   // https://github.com/cdklabs/construct-hub/issues/775
   // publishToPypi: {
   //   distName: 'construct-hub',
@@ -145,6 +154,11 @@ const project = new awscdk.AwsCdkConstructLibrary({
       singleQuote: true,
     },
   },
+
+  // disable some features in favor of custom implementation
+  // in future, we should migrate the custom code to use the provided feature
+  lambdaAutoDiscover: false,
+  integrationTestAutoDiscover: false,
 });
 
 project.tasks.addEnvironment('NODE_OPTIONS', '--max-old-space-size=4096');
