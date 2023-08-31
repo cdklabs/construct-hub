@@ -470,18 +470,18 @@ export class Orchestration extends Construct {
 
     props.monitoring.addHighSeverityAlarm(
       'Execution Failure Rate above 75%',
-      this.metricStatesExecutionFailureRate()
-        .createAlarm(this, 'FailureRateAlarm', {
+      this.metricStatesExecutionFailureRate().createAlarm(
+        this,
+        'FailureRateAlarm',
+        {
           alarmName: `${this.stateMachine.node.path}/ExecutionFailureRate`,
-          alarmDescription: [
-            'Execution Failure Rate above 75%',
-            '',
-          ].join('\n'),
+          alarmDescription: ['Execution Failure Rate above 75%', ''].join('\n'),
           comparisonOperator:
             ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
           evaluationPeriods: 1,
           threshold: 75,
-        })
+        }
+      )
     );
 
     // This function is intended to be manually triggered by an operrator to
@@ -522,7 +522,9 @@ export class Orchestration extends Construct {
     );
   }
 
-  public metricStatesExecutionFailureRate(opts?: MathExpressionOptions): MathExpression {
+  public metricStatesExecutionFailureRate(
+    opts?: MathExpressionOptions
+  ): MathExpression {
     return new MathExpression({
       ...opts,
       // Calculates the % ExecutionsFailed from the ExecutionsStarted.
