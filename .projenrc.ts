@@ -1,5 +1,5 @@
 import { join, relative } from 'path';
-import { cdk, github } from 'projen';
+import { awscdk, github } from 'projen';
 import { addDevApp } from './projenrc/dev-app';
 import { discoverIntegrationTests } from './projenrc/integ-tests';
 import { discoverEcsTasks } from './projenrc/magic-ecs';
@@ -16,7 +16,7 @@ const peerDeps = [
 
 const cdkCli = 'aws-cdk@^2';
 
-const project = new cdk.JsiiProject({
+const project = new awscdk.AwsCdkConstructLibrary({
   name: 'construct-hub',
   projenrcTs: true,
   description: 'A construct library that models Construct Hub instances.',
