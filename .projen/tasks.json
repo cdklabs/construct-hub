@@ -1020,6 +1020,9 @@
       "description": "deploy integration test __tests__/backend/transliterator/transliterator.ecstask.integ.ts",
       "steps": [
         {
+          "exec": "cp -r src/__tests__/backend/transliterator/fixtures lib/__tests__/backend/transliterator"
+        },
+        {
           "exec": "rm -fr src/__tests__/backend/transliterator/.tmp.transliterator.ecstask.integ.cdkout.deploy"
         },
         {

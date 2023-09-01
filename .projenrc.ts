@@ -2,7 +2,7 @@ import fs from 'fs';
 import { basename, join, dirname, relative } from 'path';
 import Case from 'case';
 import * as glob from 'glob';
-import { SourceCode, JsonFile, cdk, github, TaskOptions } from 'projen';
+import { SourceCode, JsonFile, cdk, github } from 'projen';
 import spdx from 'spdx-license-list';
 import * as uuid from 'uuid';
 
@@ -318,6 +318,11 @@ function discoverIntegrationTests() {
       description: `deploy integration test ${entry}`,
     });
 
+    if (name === 'transliterator.ecstask') {
+      deploy.exec(
+        'cp -r src/__tests__/backend/transliterator/fixtures lib/__tests__/backend/transliterator'
+      );
+    }
     deploy.exec(`rm -fr ${deploydir}`);
     deploy.exec(
       `cdk deploy ${options} --require-approval=never -o ${deploydir}`
@@ -334,16 +339,9 @@ function discoverIntegrationTests() {
 
     deploy.spawn(destroy);
 
-    const taskOptions: TaskOptions =
-      name === 'transliterator.ecstask'
-        ? {
-            description: `synthesize integration test ${entry}`,
-            exec: 'cp -r src/__tests__/backend/transliterator/fixtures lib/__tests__/backend/transliterator',
-          }
-        : {
-            description: `synthesize integration test ${entry}`,
-          };
-    const assert = project.addTask(`integ:${name}:assert`, taskOptions);
+    const assert = project.addTask(`integ:${name}:assert`, {
+      description: `synthesize integration test ${entry}`,
+    });
 
     const exclude = [
       'asset.*',
@@ -353,6 +351,11 @@ function discoverIntegrationTests() {
       '.cache',
     ];
 
+    if (name === 'transliterator.ecstask') {
+      assert.exec(
+        'cp -r src/__tests__/backend/transliterator/fixtures lib/__tests__/backend/transliterator'
+      );
+    }
     assert.exec(`cdk synth ${options} -o ${actualdir} > /dev/null`);
     assert.exec(
       `diff -r ${exclude
