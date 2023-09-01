@@ -174,6 +174,10 @@ project.package.addField('resolutions', {
   '@octokit/plugin-rest-endpoint-methods': '7.1.2',
 });
 
+project.addGitIgnore(
+  '!src/__tests__/backend/transliterator/fixtures/tests/package.tgz'
+);
+
 function addVpcAllowListManagement() {
   const workflow = project.github?.addWorkflow('update-vpc-acl-allow-lists');
 
