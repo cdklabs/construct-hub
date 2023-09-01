@@ -1011,6 +1011,63 @@
         }
       ]
     },
+    "integ:transliterator.ecstask:assert": {
+      "name": "integ:transliterator.ecstask:assert",
+      "description": "synthesize integration test __tests__/backend/transliterator/transliterator.ecstask.integ.ts",
+      "steps": [
+        {
+          "exec": "cp -r src/__tests__/backend/transliterator/fixtures lib/__tests__/backend/transliterator"
+        },
+        {
+          "exec": "cdk synth --app \"node lib/__tests__/backend/transliterator/transliterator.ecstask.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true -o src/__tests__/backend/transliterator/.tmp.transliterator.ecstask.integ.cdkout.actual > /dev/null"
+        },
+        {
+          "exec": "diff -r -x asset.* -x cdk.out -x manifest.json -x tree.json -x .cache src/__tests__/backend/transliterator/transliterator.ecstask.integ.cdkout/ src/__tests__/backend/transliterator/.tmp.transliterator.ecstask.integ.cdkout.actual/"
+        }
+      ]
+    },
+    "integ:transliterator.ecstask:deploy": {
+      "name": "integ:transliterator.ecstask:deploy",
+      "description": "deploy integration test __tests__/backend/transliterator/transliterator.ecstask.integ.ts",
+      "steps": [
+        {
+          "exec": "cp -r src/__tests__/backend/transliterator/fixtures lib/__tests__/backend/transliterator"
+        },
+        {
+          "exec": "rm -fr src/__tests__/backend/transliterator/.tmp.transliterator.ecstask.integ.cdkout.deploy"
+        },
+        {
+          "exec": "cdk deploy --app \"node lib/__tests__/backend/transliterator/transliterator.ecstask.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true --require-approval=never -o src/__tests__/backend/transliterator/.tmp.transliterator.ecstask.integ.cdkout.deploy"
+        },
+        {
+          "exec": "rm -fr src/__tests__/backend/transliterator/transliterator.ecstask.integ.cdkout"
+        },
+        {
+          "exec": "mv src/__tests__/backend/transliterator/.tmp.transliterator.ecstask.integ.cdkout.deploy src/__tests__/backend/transliterator/transliterator.ecstask.integ.cdkout"
+        },
+        {
+          "spawn": "integ:transliterator.ecstask:destroy"
+        }
+      ]
+    },
+    "integ:transliterator.ecstask:destroy": {
+      "name": "integ:transliterator.ecstask:destroy",
+      "description": "destroy integration test __tests__/backend/transliterator/transliterator.ecstask.integ.ts",
+      "steps": [
+        {
+          "exec": "cdk destroy --app src/__tests__/backend/transliterator/transliterator.ecstask.integ.cdkout --no-version-reporting"
+        }
+      ]
+    },
+    "integ:transliterator.ecstask:snapshot": {
+      "name": "integ:transliterator.ecstask:snapshot",
+      "description": "update snapshot for integration test __tests__/backend/transliterator/transliterator.ecstask.integ.ts",
+      "steps": [
+        {
+          "exec": "cdk synth --app \"node lib/__tests__/backend/transliterator/transliterator.ecstask.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true -o src/__tests__/backend/transliterator/transliterator.ecstask.integ.cdkout > /dev/null"
+        }
+      ]
+    },
     "integ:update": {
       "name": "integ:update",
       "description": "Run and update integration snapshot tests",
@@ -1117,6 +1174,9 @@
         },
         {
           "spawn": "integ:domain-redirect:assert"
+        },
+        {
+          "spawn": "integ:transliterator.ecstask:assert"
         },
         {
           "spawn": "integ:deny-list:assert"
