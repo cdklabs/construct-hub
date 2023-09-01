@@ -34,11 +34,6 @@ export function discoverIntegrationTests(project: TypeScriptProject) {
       description: `deploy integration test ${entry}`,
     });
 
-    if (name === 'transliterator.ecstask') {
-      deploy.exec(
-        'cp -r src/__tests__/backend/transliterator/fixtures lib/__tests__/backend/transliterator'
-      );
-    }
     deploy.exec(`rm -fr ${deploydir}`);
     deploy.exec(
       `cdk deploy ${options} --require-approval=never -o ${deploydir}`
@@ -67,11 +62,6 @@ export function discoverIntegrationTests(project: TypeScriptProject) {
       '.cache',
     ];
 
-    if (name === 'transliterator.ecstask') {
-      assert.exec(
-        'cp -r src/__tests__/backend/transliterator/fixtures lib/__tests__/backend/transliterator'
-      );
-    }
     assert.exec(`cdk synth ${options} -o ${actualdir} > /dev/null`);
     assert.exec(
       `diff -r ${exclude
