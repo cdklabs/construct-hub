@@ -32,7 +32,8 @@
         "CHANGELOG": "dist/changelog.md",
         "BUMPFILE": "dist/version.txt",
         "RELEASETAG": "dist/releasetag.txt",
-        "RELEASE_TAG_PREFIX": ""
+        "RELEASE_TAG_PREFIX": "",
+        "RELEASABLE_COMMITS": "git log --no-merges --oneline $LATEST_TAG..HEAD -E --grep '^(feat|fix){1}(\\([^()[:space:]]+\\))?(!)?:[[:blank:]]+.+'"
       },
       "steps": [
         {
@@ -898,6 +899,16 @@
         }
       ]
     },
+    "integ": {
+      "name": "integ",
+      "description": "Run integration snapshot tests",
+      "steps": [
+        {
+          "exec": "yarn integ-runner --language typescript",
+          "receiveArgs": true
+        }
+      ]
+    },
     "integ:deny-list:assert": {
       "name": "integ:deny-list:assert",
       "description": "synthesize integration test __tests__/backend/deny-list/integ/deny-list.integ.ts",
@@ -1000,60 +1011,13 @@
         }
       ]
     },
-    "integ:transliterator.ecstask:assert": {
-      "name": "integ:transliterator.ecstask:assert",
-      "description": "synthesize integration test __tests__/backend/transliterator/transliterator.ecstask.integ.ts",
+    "integ:update": {
+      "name": "integ:update",
+      "description": "Run and update integration snapshot tests",
       "steps": [
         {
-          "exec": "cp -r src/__tests__/backend/transliterator/fixtures lib/__tests__/backend/transliterator"
-        },
-        {
-          "exec": "cdk synth --app \"node lib/__tests__/backend/transliterator/transliterator.ecstask.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true -o src/__tests__/backend/transliterator/.tmp.transliterator.ecstask.integ.cdkout.actual > /dev/null"
-        },
-        {
-          "exec": "diff -r -x asset.* -x cdk.out -x manifest.json -x tree.json -x .cache src/__tests__/backend/transliterator/transliterator.ecstask.integ.cdkout/ src/__tests__/backend/transliterator/.tmp.transliterator.ecstask.integ.cdkout.actual/"
-        }
-      ]
-    },
-    "integ:transliterator.ecstask:deploy": {
-      "name": "integ:transliterator.ecstask:deploy",
-      "description": "deploy integration test __tests__/backend/transliterator/transliterator.ecstask.integ.ts",
-      "steps": [
-        {
-          "exec": "cp -r src/__tests__/backend/transliterator/fixtures lib/__tests__/backend/transliterator"
-        },
-        {
-          "exec": "rm -fr src/__tests__/backend/transliterator/.tmp.transliterator.ecstask.integ.cdkout.deploy"
-        },
-        {
-          "exec": "cdk deploy --app \"node lib/__tests__/backend/transliterator/transliterator.ecstask.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true --require-approval=never -o src/__tests__/backend/transliterator/.tmp.transliterator.ecstask.integ.cdkout.deploy"
-        },
-        {
-          "exec": "rm -fr src/__tests__/backend/transliterator/transliterator.ecstask.integ.cdkout"
-        },
-        {
-          "exec": "mv src/__tests__/backend/transliterator/.tmp.transliterator.ecstask.integ.cdkout.deploy src/__tests__/backend/transliterator/transliterator.ecstask.integ.cdkout"
-        },
-        {
-          "spawn": "integ:transliterator.ecstask:destroy"
-        }
-      ]
-    },
-    "integ:transliterator.ecstask:destroy": {
-      "name": "integ:transliterator.ecstask:destroy",
-      "description": "destroy integration test __tests__/backend/transliterator/transliterator.ecstask.integ.ts",
-      "steps": [
-        {
-          "exec": "cdk destroy --app src/__tests__/backend/transliterator/transliterator.ecstask.integ.cdkout --no-version-reporting"
-        }
-      ]
-    },
-    "integ:transliterator.ecstask:snapshot": {
-      "name": "integ:transliterator.ecstask:snapshot",
-      "description": "update snapshot for integration test __tests__/backend/transliterator/transliterator.ecstask.integ.ts",
-      "steps": [
-        {
-          "exec": "cdk synth --app \"node lib/__tests__/backend/transliterator/transliterator.ecstask.integ.js\" --no-version-reporting --context @aws-cdk/core:newStyleStackSynthesis=true -o src/__tests__/backend/transliterator/transliterator.ecstask.integ.cdkout > /dev/null"
+          "exec": "yarn integ-runner --language typescript --update-on-failed",
+          "receiveArgs": true
         }
       ]
     },
@@ -1090,6 +1054,9 @@
       "steps": [
         {
           "spawn": "docgen"
+        },
+        {
+          "spawn": "rosetta:extract"
         }
       ]
     },
@@ -1125,6 +1092,15 @@
         }
       ]
     },
+    "rosetta:extract": {
+      "name": "rosetta:extract",
+      "description": "Test rosetta extract",
+      "steps": [
+        {
+          "exec": "yarn --silent jsii-rosetta extract --strict"
+        }
+      ]
+    },
     "test": {
       "name": "test",
       "description": "Run tests",
@@ -1135,6 +1111,9 @@
         },
         {
           "spawn": "eslint"
+        },
+        {
+          "spawn": "integ"
         },
         {
           "spawn": "integ:domain-redirect:assert"
@@ -1164,7 +1143,8 @@
         "CHANGELOG": "dist/changelog.md",
         "BUMPFILE": "dist/version.txt",
         "RELEASETAG": "dist/releasetag.txt",
-        "RELEASE_TAG_PREFIX": ""
+        "RELEASE_TAG_PREFIX": "",
+        "RELEASABLE_COMMITS": "git log --no-merges --oneline $LATEST_TAG..HEAD -E --grep '^(feat|fix){1}(\\([^()[:space:]]+\\))?(!)?:[[:blank:]]+.+'"
       },
       "steps": [
         {
@@ -1183,19 +1163,43 @@
           "exec": "yarn upgrade npm-check-updates"
         },
         {
-          "exec": "npm-check-updates --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@aws-sdk/client-sfn,@jsii/spec,@octokit/rest,@types/aws-lambda,@types/changelog-filename-regex,@types/fs-extra,@types/jest,@types/markdown-it,@types/markdown-it-emoji,@types/node,@types/semver,@types/streamx,@types/tar-stream,@types/tough-cookie,@types/uuid,@typescript-eslint/eslint-plugin,@typescript-eslint/parser,async-sema,aws-cdk,aws-embedded-metrics,aws-sdk,aws-sdk-mock,aws-xray-sdk-core,case,cdk-dia,changelog-filename-regex,construct-hub-webapp,dotenv,esbuild,eslint-config-prettier,eslint-import-resolver-node,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,eslint,feed,fs-extra,glob,got,jest,jest-junit,jsii-diff,jsii-docgen,jsii-pacmak,JSONStream,markdown-it,markdown-it-emoji,normalize-registry-metadata,npm-check-updates,prettier,projen,semver,spdx-license-list,standard-version,streamx,tar-stream,ts-node,typescript,uuid,yaml"
+          "exec": "npm-check-updates --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=@aws-sdk/client-sfn,@jsii/spec,@octokit/rest,@types/aws-lambda,@types/changelog-filename-regex,@types/fs-extra,@types/jest,@types/markdown-it,@types/markdown-it-emoji,@types/node,@types/semver,@types/streamx,@types/tar-stream,@types/tough-cookie,@types/uuid,@typescript-eslint/eslint-plugin,@typescript-eslint/parser,async-sema,aws-cdk,aws-embedded-metrics,aws-sdk,aws-sdk-mock,aws-xray-sdk-core,case,cdk-dia,cdklabs-projen-project-types,changelog-filename-regex,construct-hub-webapp,dotenv,esbuild,eslint-config-prettier,eslint-import-resolver-node,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,eslint,feed,fs-extra,glob,got,jest,jest-junit,jsii-diff,jsii-docgen,jsii-pacmak,jsii-rosetta,JSONStream,markdown-it,markdown-it-emoji,normalize-registry-metadata,npm-check-updates,prettier,projen,semver,spdx-license-list,standard-version,streamx,tar-stream,ts-node,typescript,uuid,yaml"
         },
         {
           "exec": "yarn install --check-files"
         },
         {
-          "exec": "yarn upgrade @aws-sdk/client-sfn @jsii/spec @octokit/rest @types/aws-lambda @types/changelog-filename-regex @types/fs-extra @types/jest @types/markdown-it @types/markdown-it-emoji @types/node @types/semver @types/streamx @types/tar-stream @types/tough-cookie @types/uuid @typescript-eslint/eslint-plugin @typescript-eslint/parser async-sema aws-cdk aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case cdk-dia changelog-filename-regex construct-hub-webapp dotenv esbuild eslint-config-prettier eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint feed fs-extra glob got jest jest-junit jsii-diff jsii-docgen jsii-pacmak JSONStream markdown-it markdown-it-emoji normalize-registry-metadata npm-check-updates prettier projen semver spdx-license-list standard-version streamx tar-stream ts-node typescript uuid yaml"
+          "exec": "yarn upgrade @aws-sdk/client-sfn @jsii/spec @octokit/rest @types/aws-lambda @types/changelog-filename-regex @types/fs-extra @types/jest @types/markdown-it @types/markdown-it-emoji @types/node @types/semver @types/streamx @types/tar-stream @types/tough-cookie @types/uuid @typescript-eslint/eslint-plugin @typescript-eslint/parser async-sema aws-cdk aws-embedded-metrics aws-sdk aws-sdk-mock aws-xray-sdk-core case cdk-dia cdklabs-projen-project-types changelog-filename-regex construct-hub-webapp dotenv esbuild eslint-config-prettier eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint feed fs-extra glob got jest jest-junit jsii-diff jsii-docgen jsii-pacmak jsii-rosetta JSONStream markdown-it markdown-it-emoji normalize-registry-metadata npm-check-updates prettier projen semver spdx-license-list standard-version streamx tar-stream ts-node typescript uuid yaml"
         },
         {
           "exec": "npx projen"
         },
         {
           "spawn": "post-upgrade"
+        }
+      ]
+    },
+    "upgrade-cdklabs-projen-project-types": {
+      "name": "upgrade-cdklabs-projen-project-types",
+      "description": "upgrade cdklabs-projen-project-types",
+      "env": {
+        "CI": "0"
+      },
+      "steps": [
+        {
+          "exec": "yarn upgrade npm-check-updates"
+        },
+        {
+          "exec": "npm-check-updates --filter=cdklabs-projen-project-types,projen --upgrade"
+        },
+        {
+          "exec": "yarn install --check-files"
+        },
+        {
+          "exec": "yarn upgrade cdklabs-projen-project-types projen"
+        },
+        {
+          "exec": "npx projen"
         }
       ]
     },
