@@ -75,7 +75,7 @@ const project = new CdklabsConstructLibrary({
     '@types/changelog-filename-regex',
   ],
 
-  peerDeps: peerDeps,
+  peerDeps,
 
   minNodeVersion: '16.16.0',
   jsiiVersion: '5.1.x',
@@ -86,6 +86,8 @@ const project = new CdklabsConstructLibrary({
     '',
     '*By submitting this pull request, I confirm that my contribution is made under the terms of the Apache-2.0 license*',
   ],
+
+  enablePRAutoMerge: true,
 
   releaseToNpm: true,
   cdklabsPublishingDefaults: false,
