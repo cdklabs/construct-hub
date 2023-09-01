@@ -479,7 +479,7 @@ export class Orchestration extends Construct {
           ].join('\n'),
           comparisonOperator:
             ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-          evaluationPeriods: 1,
+          evaluationPeriods: 100,
           threshold: 75,
         })
     );
