@@ -1,0 +1,3321 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "Stack": {
+        "id": "Stack",
+        "path": "Stack",
+        "children": {
+          "Bucket": {
+            "id": "Bucket",
+            "path": "Stack/Bucket",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "Stack/Bucket/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                  "aws:cdk:cloudformation:props": {
+                    "tags": [
+                      {
+                        "key": "aws-cdk:cr-owned:data/package-name/v1.2.3-dev.4:ab77f56b",
+                        "value": "true"
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_s3.Bucket",
+              "version": "2.84.0"
+            }
+          },
+          "Monitoring": {
+            "id": "Monitoring",
+            "path": "Stack/Monitoring",
+            "children": {
+              "Watchful": {
+                "id": "Watchful",
+                "path": "Stack/Monitoring/Watchful",
+                "children": {
+                  "Dashboard": {
+                    "id": "Dashboard",
+                    "path": "Stack/Monitoring/Watchful/Dashboard",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "Stack/Monitoring/Watchful/Dashboard/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::CloudWatch::Dashboard",
+                          "aws:cdk:cloudformation:props": {
+                            "dashboardBody": "{\"widgets\":[]}"
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_cloudwatch.CfnDashboard",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_cloudwatch.Dashboard",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "WatchfulDashboard": {
+                    "id": "WatchfulDashboard",
+                    "path": "Stack/Monitoring/Watchful/WatchfulDashboard",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnOutput",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "cdk-watchful.Watchful",
+                  "version": "0.6.443"
+                }
+              },
+              "HighSeverityDashboard": {
+                "id": "HighSeverityDashboard",
+                "path": "Stack/Monitoring/HighSeverityDashboard",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "Stack/Monitoring/HighSeverityDashboard/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::CloudWatch::Dashboard",
+                      "aws:cdk:cloudformation:props": {
+                        "dashboardBody": "{\"widgets\":[]}"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_cloudwatch.CfnDashboard",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_cloudwatch.Dashboard",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.0.5"
+            }
+          },
+          "Cluster": {
+            "id": "Cluster",
+            "path": "Stack/Cluster",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "Stack/Cluster/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ECS::Cluster",
+                  "aws:cdk:cloudformation:props": {}
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ecs.CfnCluster",
+                  "version": "2.84.0"
+                }
+              },
+              "Vpc": {
+                "id": "Vpc",
+                "path": "Stack/Cluster/Vpc",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "Stack/Cluster/Vpc/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::VPC",
+                      "aws:cdk:cloudformation:props": {
+                        "cidrBlock": "10.0.0.0/16",
+                        "enableDnsHostnames": true,
+                        "enableDnsSupport": true,
+                        "instanceTenancy": "default",
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "Stack/Cluster/Vpc"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnVPC",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "PublicSubnet1": {
+                    "id": "PublicSubnet1",
+                    "path": "Stack/Cluster/Vpc/PublicSubnet1",
+                    "children": {
+                      "Subnet": {
+                        "id": "Subnet",
+                        "path": "Stack/Cluster/Vpc/PublicSubnet1/Subnet",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "ClusterVpcFAA3CEDF"
+                            },
+                            "availabilityZone": {
+                              "Fn::Select": [
+                                0,
+                                {
+                                  "Fn::GetAZs": ""
+                                }
+                              ]
+                            },
+                            "cidrBlock": "10.0.0.0/18",
+                            "mapPublicIpOnLaunch": true,
+                            "tags": [
+                              {
+                                "key": "aws-cdk:subnet-name",
+                                "value": "Public"
+                              },
+                              {
+                                "key": "aws-cdk:subnet-type",
+                                "value": "Public"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "Stack/Cluster/Vpc/PublicSubnet1"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Acl": {
+                        "id": "Acl",
+                        "path": "Stack/Cluster/Vpc/PublicSubnet1/Acl",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "RouteTable": {
+                        "id": "RouteTable",
+                        "path": "Stack/Cluster/Vpc/PublicSubnet1/RouteTable",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "ClusterVpcFAA3CEDF"
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "Stack/Cluster/Vpc/PublicSubnet1"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "RouteTableAssociation": {
+                        "id": "RouteTableAssociation",
+                        "path": "Stack/Cluster/Vpc/PublicSubnet1/RouteTableAssociation",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "ClusterVpcPublicSubnet1RouteTable5594A636"
+                            },
+                            "subnetId": {
+                              "Ref": "ClusterVpcPublicSubnet1SubnetA9F7E0A5"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "DefaultRoute": {
+                        "id": "DefaultRoute",
+                        "path": "Stack/Cluster/Vpc/PublicSubnet1/DefaultRoute",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "ClusterVpcPublicSubnet1RouteTable5594A636"
+                            },
+                            "destinationCidrBlock": "0.0.0.0/0",
+                            "gatewayId": {
+                              "Ref": "ClusterVpcIGW1E358A6E"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "EIP": {
+                        "id": "EIP",
+                        "path": "Stack/Cluster/Vpc/PublicSubnet1/EIP",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::EIP",
+                          "aws:cdk:cloudformation:props": {
+                            "domain": "vpc",
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "Stack/Cluster/Vpc/PublicSubnet1"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnEIP",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "NATGateway": {
+                        "id": "NATGateway",
+                        "path": "Stack/Cluster/Vpc/PublicSubnet1/NATGateway",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::NatGateway",
+                          "aws:cdk:cloudformation:props": {
+                            "subnetId": {
+                              "Ref": "ClusterVpcPublicSubnet1SubnetA9F7E0A5"
+                            },
+                            "allocationId": {
+                              "Fn::GetAtt": [
+                                "ClusterVpcPublicSubnet1EIP433C56EE",
+                                "AllocationId"
+                              ]
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "Stack/Cluster/Vpc/PublicSubnet1"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnNatGateway",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.PublicSubnet",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "PublicSubnet2": {
+                    "id": "PublicSubnet2",
+                    "path": "Stack/Cluster/Vpc/PublicSubnet2",
+                    "children": {
+                      "Subnet": {
+                        "id": "Subnet",
+                        "path": "Stack/Cluster/Vpc/PublicSubnet2/Subnet",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "ClusterVpcFAA3CEDF"
+                            },
+                            "availabilityZone": {
+                              "Fn::Select": [
+                                1,
+                                {
+                                  "Fn::GetAZs": ""
+                                }
+                              ]
+                            },
+                            "cidrBlock": "10.0.64.0/18",
+                            "mapPublicIpOnLaunch": true,
+                            "tags": [
+                              {
+                                "key": "aws-cdk:subnet-name",
+                                "value": "Public"
+                              },
+                              {
+                                "key": "aws-cdk:subnet-type",
+                                "value": "Public"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "Stack/Cluster/Vpc/PublicSubnet2"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Acl": {
+                        "id": "Acl",
+                        "path": "Stack/Cluster/Vpc/PublicSubnet2/Acl",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "RouteTable": {
+                        "id": "RouteTable",
+                        "path": "Stack/Cluster/Vpc/PublicSubnet2/RouteTable",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "ClusterVpcFAA3CEDF"
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "Stack/Cluster/Vpc/PublicSubnet2"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "RouteTableAssociation": {
+                        "id": "RouteTableAssociation",
+                        "path": "Stack/Cluster/Vpc/PublicSubnet2/RouteTableAssociation",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "ClusterVpcPublicSubnet2RouteTable7B43F18C"
+                            },
+                            "subnetId": {
+                              "Ref": "ClusterVpcPublicSubnet2Subnet059113C4"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "DefaultRoute": {
+                        "id": "DefaultRoute",
+                        "path": "Stack/Cluster/Vpc/PublicSubnet2/DefaultRoute",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "ClusterVpcPublicSubnet2RouteTable7B43F18C"
+                            },
+                            "destinationCidrBlock": "0.0.0.0/0",
+                            "gatewayId": {
+                              "Ref": "ClusterVpcIGW1E358A6E"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "EIP": {
+                        "id": "EIP",
+                        "path": "Stack/Cluster/Vpc/PublicSubnet2/EIP",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::EIP",
+                          "aws:cdk:cloudformation:props": {
+                            "domain": "vpc",
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "Stack/Cluster/Vpc/PublicSubnet2"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnEIP",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "NATGateway": {
+                        "id": "NATGateway",
+                        "path": "Stack/Cluster/Vpc/PublicSubnet2/NATGateway",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::NatGateway",
+                          "aws:cdk:cloudformation:props": {
+                            "subnetId": {
+                              "Ref": "ClusterVpcPublicSubnet2Subnet059113C4"
+                            },
+                            "allocationId": {
+                              "Fn::GetAtt": [
+                                "ClusterVpcPublicSubnet2EIP203DF3E5",
+                                "AllocationId"
+                              ]
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "Stack/Cluster/Vpc/PublicSubnet2"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnNatGateway",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.PublicSubnet",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "PrivateSubnet1": {
+                    "id": "PrivateSubnet1",
+                    "path": "Stack/Cluster/Vpc/PrivateSubnet1",
+                    "children": {
+                      "Subnet": {
+                        "id": "Subnet",
+                        "path": "Stack/Cluster/Vpc/PrivateSubnet1/Subnet",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "ClusterVpcFAA3CEDF"
+                            },
+                            "availabilityZone": {
+                              "Fn::Select": [
+                                0,
+                                {
+                                  "Fn::GetAZs": ""
+                                }
+                              ]
+                            },
+                            "cidrBlock": "10.0.128.0/18",
+                            "mapPublicIpOnLaunch": false,
+                            "tags": [
+                              {
+                                "key": "aws-cdk:subnet-name",
+                                "value": "Private"
+                              },
+                              {
+                                "key": "aws-cdk:subnet-type",
+                                "value": "Private"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "Stack/Cluster/Vpc/PrivateSubnet1"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Acl": {
+                        "id": "Acl",
+                        "path": "Stack/Cluster/Vpc/PrivateSubnet1/Acl",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "RouteTable": {
+                        "id": "RouteTable",
+                        "path": "Stack/Cluster/Vpc/PrivateSubnet1/RouteTable",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "ClusterVpcFAA3CEDF"
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "Stack/Cluster/Vpc/PrivateSubnet1"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "RouteTableAssociation": {
+                        "id": "RouteTableAssociation",
+                        "path": "Stack/Cluster/Vpc/PrivateSubnet1/RouteTableAssociation",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F"
+                            },
+                            "subnetId": {
+                              "Ref": "ClusterVpcPrivateSubnet1SubnetA4EB481A"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "DefaultRoute": {
+                        "id": "DefaultRoute",
+                        "path": "Stack/Cluster/Vpc/PrivateSubnet1/DefaultRoute",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "ClusterVpcPrivateSubnet1RouteTable5AAEDA3F"
+                            },
+                            "destinationCidrBlock": "0.0.0.0/0",
+                            "natGatewayId": {
+                              "Ref": "ClusterVpcPublicSubnet1NATGateway0693C346"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.PrivateSubnet",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "PrivateSubnet2": {
+                    "id": "PrivateSubnet2",
+                    "path": "Stack/Cluster/Vpc/PrivateSubnet2",
+                    "children": {
+                      "Subnet": {
+                        "id": "Subnet",
+                        "path": "Stack/Cluster/Vpc/PrivateSubnet2/Subnet",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Subnet",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "ClusterVpcFAA3CEDF"
+                            },
+                            "availabilityZone": {
+                              "Fn::Select": [
+                                1,
+                                {
+                                  "Fn::GetAZs": ""
+                                }
+                              ]
+                            },
+                            "cidrBlock": "10.0.192.0/18",
+                            "mapPublicIpOnLaunch": false,
+                            "tags": [
+                              {
+                                "key": "aws-cdk:subnet-name",
+                                "value": "Private"
+                              },
+                              {
+                                "key": "aws-cdk:subnet-type",
+                                "value": "Private"
+                              },
+                              {
+                                "key": "Name",
+                                "value": "Stack/Cluster/Vpc/PrivateSubnet2"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnet",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Acl": {
+                        "id": "Acl",
+                        "path": "Stack/Cluster/Vpc/PrivateSubnet2/Acl",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "RouteTable": {
+                        "id": "RouteTable",
+                        "path": "Stack/Cluster/Vpc/PrivateSubnet2/RouteTable",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::RouteTable",
+                          "aws:cdk:cloudformation:props": {
+                            "vpcId": {
+                              "Ref": "ClusterVpcFAA3CEDF"
+                            },
+                            "tags": [
+                              {
+                                "key": "Name",
+                                "value": "Stack/Cluster/Vpc/PrivateSubnet2"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRouteTable",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "RouteTableAssociation": {
+                        "id": "RouteTableAssociation",
+                        "path": "Stack/Cluster/Vpc/PrivateSubnet2/RouteTableAssociation",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::SubnetRouteTableAssociation",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "ClusterVpcPrivateSubnet2RouteTable73064A66"
+                            },
+                            "subnetId": {
+                              "Ref": "ClusterVpcPrivateSubnet2SubnetBD1ECB6E"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnSubnetRouteTableAssociation",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "DefaultRoute": {
+                        "id": "DefaultRoute",
+                        "path": "Stack/Cluster/Vpc/PrivateSubnet2/DefaultRoute",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::EC2::Route",
+                          "aws:cdk:cloudformation:props": {
+                            "routeTableId": {
+                              "Ref": "ClusterVpcPrivateSubnet2RouteTable73064A66"
+                            },
+                            "destinationCidrBlock": "0.0.0.0/0",
+                            "natGatewayId": {
+                              "Ref": "ClusterVpcPublicSubnet2NATGateway00B24686"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ec2.CfnRoute",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.PrivateSubnet",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "IGW": {
+                    "id": "IGW",
+                    "path": "Stack/Cluster/Vpc/IGW",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::InternetGateway",
+                      "aws:cdk:cloudformation:props": {
+                        "tags": [
+                          {
+                            "key": "Name",
+                            "value": "Stack/Cluster/Vpc"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnInternetGateway",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "VPCGW": {
+                    "id": "VPCGW",
+                    "path": "Stack/Cluster/Vpc/VPCGW",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::VPCGatewayAttachment",
+                      "aws:cdk:cloudformation:props": {
+                        "vpcId": {
+                          "Ref": "ClusterVpcFAA3CEDF"
+                        },
+                        "internetGatewayId": {
+                          "Ref": "ClusterVpcIGW1E358A6E"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnVPCGatewayAttachment",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "RestrictDefaultSecurityGroupCustomResource": {
+                    "id": "RestrictDefaultSecurityGroupCustomResource",
+                    "path": "Stack/Cluster/Vpc/RestrictDefaultSecurityGroupCustomResource",
+                    "children": {
+                      "Default": {
+                        "id": "Default",
+                        "path": "Stack/Cluster/Vpc/RestrictDefaultSecurityGroupCustomResource/Default",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CfnResource",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CustomResource",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.Vpc",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_ecs.Cluster",
+              "version": "2.84.0"
+            }
+          },
+          "Custom::VpcRestrictDefaultSGCustomResourceProvider": {
+            "id": "Custom::VpcRestrictDefaultSGCustomResourceProvider",
+            "path": "Stack/Custom::VpcRestrictDefaultSGCustomResourceProvider",
+            "children": {
+              "Staging": {
+                "id": "Staging",
+                "path": "Stack/Custom::VpcRestrictDefaultSGCustomResourceProvider/Staging",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.AssetStaging",
+                  "version": "2.84.0"
+                }
+              },
+              "Role": {
+                "id": "Role",
+                "path": "Stack/Custom::VpcRestrictDefaultSGCustomResourceProvider/Role",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.84.0"
+                }
+              },
+              "Handler": {
+                "id": "Handler",
+                "path": "Stack/Custom::VpcRestrictDefaultSGCustomResourceProvider/Handler",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CustomResourceProvider",
+              "version": "2.84.0"
+            }
+          },
+          "Transliterator": {
+            "id": "Transliterator",
+            "path": "Stack/Transliterator",
+            "children": {
+              "LogGroup": {
+                "id": "LogGroup",
+                "path": "Stack/Transliterator/LogGroup",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "Stack/Transliterator/LogGroup/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Logs::LogGroup",
+                      "aws:cdk:cloudformation:props": {
+                        "retentionInDays": 731
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_logs.CfnLogGroup",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_logs.LogGroup",
+                  "version": "2.84.0"
+                }
+              },
+              "TaskDefinition": {
+                "id": "TaskDefinition",
+                "path": "Stack/Transliterator/TaskDefinition",
+                "children": {
+                  "TaskRole": {
+                    "id": "TaskRole",
+                    "path": "Stack/Transliterator/TaskDefinition/TaskRole",
+                    "children": {
+                      "ImportTaskRole": {
+                        "id": "ImportTaskRole",
+                        "path": "Stack/Transliterator/TaskDefinition/TaskRole/ImportTaskRole",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "Stack/Transliterator/TaskDefinition/TaskRole/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                          "aws:cdk:cloudformation:props": {
+                            "assumeRolePolicyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "sts:AssumeRole",
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "Service": "ecs-tasks.amazonaws.com"
+                                  }
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "DefaultPolicy": {
+                        "id": "DefaultPolicy",
+                        "path": "Stack/Transliterator/TaskDefinition/TaskRole/DefaultPolicy",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "Stack/Transliterator/TaskDefinition/TaskRole/DefaultPolicy/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                              "aws:cdk:cloudformation:props": {
+                                "policyDocument": {
+                                  "Statement": [
+                                    {
+                                      "Action": [
+                                        "states:SendTaskFailure",
+                                        "states:SendTaskHeartbeat",
+                                        "states:SendTaskSuccess"
+                                      ],
+                                      "Effect": "Allow",
+                                      "Resource": "*"
+                                    },
+                                    {
+                                      "Action": [
+                                        "s3:GetBucket*",
+                                        "s3:GetObject*",
+                                        "s3:List*"
+                                      ],
+                                      "Effect": "Allow",
+                                      "Resource": [
+                                        {
+                                          "Fn::GetAtt": [
+                                            "Bucket83908E77",
+                                            "Arn"
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/assembly.json"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-csharp.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-csharp.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-go.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-java.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-java.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-python.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-python.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-typescript.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-typescript.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-csharp.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-csharp.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-go.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-go.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-java.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-java.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-python.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-python.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-typescript.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-typescript.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/package.tgz"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/uninstallable"
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Action": [
+                                        "s3:Abort*",
+                                        "s3:DeleteObject*",
+                                        "s3:PutObject",
+                                        "s3:PutObjectLegalHold",
+                                        "s3:PutObjectRetention",
+                                        "s3:PutObjectTagging",
+                                        "s3:PutObjectVersionTagging"
+                                      ],
+                                      "Effect": "Allow",
+                                      "Resource": [
+                                        {
+                                          "Fn::GetAtt": [
+                                            "Bucket83908E77",
+                                            "Arn"
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-java.*"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-java.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-java.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-python.*"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-python.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-python.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-typescript.*"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-typescript.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-typescript.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-csharp.*"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-java.*"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-java.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-java.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-python.*"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-python.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-python.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-typescript.*"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-typescript.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-typescript.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/uninstallable"
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Action": "s3:DeleteObject*",
+                                      "Effect": "Allow",
+                                      "Resource": [
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-csharp.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-go.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-java.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-python.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-typescript.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-csharp.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-go.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-java.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-python.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-typescript.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/uninstallable"
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "Action": [
+                                        "s3:Abort*",
+                                        "s3:DeleteObject*",
+                                        "s3:GetBucket*",
+                                        "s3:GetObject*",
+                                        "s3:List*",
+                                        "s3:PutObject",
+                                        "s3:PutObjectLegalHold",
+                                        "s3:PutObjectRetention",
+                                        "s3:PutObjectTagging",
+                                        "s3:PutObjectVersionTagging"
+                                      ],
+                                      "Effect": "Allow",
+                                      "Resource": [
+                                        {
+                                          "Fn::GetAtt": [
+                                            "Bucket83908E77",
+                                            "Arn"
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-go.*.corruptassembly"
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ],
+                                  "Version": "2012-10-17"
+                                },
+                                "policyName": "TransliteratorTaskDefinitionTaskRoleDefaultPolicy9436F5AA",
+                                "roles": [
+                                  {
+                                    "Ref": "TransliteratorTaskDefinitionTaskRole9D702381"
+                                  }
+                                ]
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.Policy",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "OverflowPolicy1": {
+                        "id": "OverflowPolicy1",
+                        "path": "Stack/Transliterator/TaskDefinition/TaskRole/OverflowPolicy1",
+                        "children": {
+                          "ImportedOverflowPolicy1": {
+                            "id": "ImportedOverflowPolicy1",
+                            "path": "Stack/Transliterator/TaskDefinition/TaskRole/OverflowPolicy1/ImportedOverflowPolicy1",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.Resource",
+                              "version": "2.84.0"
+                            }
+                          },
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "Stack/Transliterator/TaskDefinition/TaskRole/OverflowPolicy1/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::IAM::ManagedPolicy",
+                              "aws:cdk:cloudformation:props": {
+                                "policyDocument": {
+                                  "Statement": [
+                                    {
+                                      "Action": [
+                                        "s3:Abort*",
+                                        "s3:DeleteObject*",
+                                        "s3:PutObject",
+                                        "s3:PutObjectLegalHold",
+                                        "s3:PutObjectRetention",
+                                        "s3:PutObjectTagging",
+                                        "s3:PutObjectVersionTagging"
+                                      ],
+                                      "Effect": "Allow",
+                                      "Resource": [
+                                        {
+                                          "Fn::GetAtt": [
+                                            "Bucket83908E77",
+                                            "Arn"
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-csharp.*"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-csharp.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-csharp.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-go.*"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-*-go.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-csharp.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-csharp.*.not-supported"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-go.*"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-go.*.corruptassembly"
+                                            ]
+                                          ]
+                                        },
+                                        {
+                                          "Fn::Join": [
+                                            "",
+                                            [
+                                              {
+                                                "Fn::GetAtt": [
+                                                  "Bucket83908E77",
+                                                  "Arn"
+                                                ]
+                                              },
+                                              "/data/*/docs-go.*.not-supported"
+                                            ]
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ],
+                                  "Version": "2012-10-17"
+                                },
+                                "description": "Part of the policies for Stack/Transliterator/TaskDefinition/TaskRole",
+                                "path": "/",
+                                "roles": [
+                                  {
+                                    "Ref": "TransliteratorTaskDefinitionTaskRole9D702381"
+                                  }
+                                ]
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_iam.CfnManagedPolicy",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.ManagedPolicy",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Role",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "Stack/Transliterator/TaskDefinition/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ECS::TaskDefinition",
+                      "aws:cdk:cloudformation:props": {
+                        "containerDefinitions": [
+                          {
+                            "essential": true,
+                            "image": {
+                              "Fn::Sub": "${AWS::AccountId}.dkr.ecr.${AWS::Region}.${AWS::URLSuffix}/cdk-hnb659fds-container-assets-${AWS::AccountId}-${AWS::Region}:fffc97cfcff491a5191e58c6f86538fd4dda73104c446e0c998b2f512afd6495"
+                            },
+                            "name": "Resource",
+                            "ulimits": [
+                              {
+                                "name": "nofile",
+                                "softLimit": 16384,
+                                "hardLimit": 65535
+                              }
+                            ],
+                            "logConfiguration": {
+                              "logDriver": "awslogs",
+                              "options": {
+                                "awslogs-group": {
+                                  "Ref": "TransliteratorLogGroup09734787"
+                                },
+                                "awslogs-stream-prefix": "transliterator",
+                                "awslogs-region": {
+                                  "Ref": "AWS::Region"
+                                }
+                              }
+                            },
+                            "environment": [
+                              {
+                                "name": "HEADER_SPAN",
+                                "value": "true"
+                              },
+                              {
+                                "name": "AWS_EMF_ENVIRONMENT",
+                                "value": "Local"
+                              }
+                            ]
+                          }
+                        ],
+                        "cpu": "4096",
+                        "executionRoleArn": {
+                          "Fn::GetAtt": [
+                            "TransliteratorTaskDefinitionExecutionRole9E3F5F1A",
+                            "Arn"
+                          ]
+                        },
+                        "family": "StackTransliteratorTaskDefinition3FEF9354",
+                        "memory": "8192",
+                        "networkMode": "awsvpc",
+                        "requiresCompatibilities": [
+                          "FARGATE"
+                        ],
+                        "runtimePlatform": {
+                          "cpuArchitecture": "ARM64",
+                          "operatingSystemFamily": "LINUX"
+                        },
+                        "taskRoleArn": {
+                          "Fn::GetAtt": [
+                            "TransliteratorTaskDefinitionTaskRole9D702381",
+                            "Arn"
+                          ]
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ecs.CfnTaskDefinition",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "ExecutionRole": {
+                    "id": "ExecutionRole",
+                    "path": "Stack/Transliterator/TaskDefinition/ExecutionRole",
+                    "children": {
+                      "ImportExecutionRole": {
+                        "id": "ImportExecutionRole",
+                        "path": "Stack/Transliterator/TaskDefinition/ExecutionRole/ImportExecutionRole",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.Resource",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "Stack/Transliterator/TaskDefinition/ExecutionRole/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                          "aws:cdk:cloudformation:props": {
+                            "assumeRolePolicyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "sts:AssumeRole",
+                                  "Effect": "Allow",
+                                  "Principal": {
+                                    "Service": "ecs-tasks.amazonaws.com"
+                                  }
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "DefaultPolicy": {
+                        "id": "DefaultPolicy",
+                        "path": "Stack/Transliterator/TaskDefinition/ExecutionRole/DefaultPolicy",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "Stack/Transliterator/TaskDefinition/ExecutionRole/DefaultPolicy/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                              "aws:cdk:cloudformation:props": {
+                                "policyDocument": {
+                                  "Statement": [
+                                    {
+                                      "Action": [
+                                        "ecr:BatchCheckLayerAvailability",
+                                        "ecr:BatchGetImage",
+                                        "ecr:GetDownloadUrlForLayer"
+                                      ],
+                                      "Effect": "Allow",
+                                      "Resource": {
+                                        "Fn::Join": [
+                                          "",
+                                          [
+                                            "arn:",
+                                            {
+                                              "Ref": "AWS::Partition"
+                                            },
+                                            ":ecr:",
+                                            {
+                                              "Ref": "AWS::Region"
+                                            },
+                                            ":",
+                                            {
+                                              "Ref": "AWS::AccountId"
+                                            },
+                                            ":repository/",
+                                            {
+                                              "Fn::Sub": "cdk-hnb659fds-container-assets-${AWS::AccountId}-${AWS::Region}"
+                                            }
+                                          ]
+                                        ]
+                                      }
+                                    },
+                                    {
+                                      "Action": "ecr:GetAuthorizationToken",
+                                      "Effect": "Allow",
+                                      "Resource": "*"
+                                    },
+                                    {
+                                      "Action": [
+                                        "logs:CreateLogStream",
+                                        "logs:PutLogEvents"
+                                      ],
+                                      "Effect": "Allow",
+                                      "Resource": {
+                                        "Fn::GetAtt": [
+                                          "TransliteratorLogGroup09734787",
+                                          "Arn"
+                                        ]
+                                      }
+                                    }
+                                  ],
+                                  "Version": "2012-10-17"
+                                },
+                                "policyName": "TransliteratorTaskDefinitionExecutionRoleDefaultPolicyEF9F768F",
+                                "roles": [
+                                  {
+                                    "Ref": "TransliteratorTaskDefinitionExecutionRole9E3F5F1A"
+                                  }
+                                ]
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.Policy",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Role",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ecs.FargateTaskDefinition",
+                  "version": "2.84.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "Stack/Transliterator/Resource",
+                "children": {
+                  "AssetImage": {
+                    "id": "AssetImage",
+                    "path": "Stack/Transliterator/Resource/AssetImage",
+                    "children": {
+                      "Staging": {
+                        "id": "Staging",
+                        "path": "Stack/Transliterator/Resource/AssetImage/Staging",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.AssetStaging",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Repository": {
+                        "id": "Repository",
+                        "path": "Stack/Transliterator/Resource/AssetImage/Repository",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_ecr.RepositoryBase",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ecr_assets.DockerImageAsset",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ecs.ContainerDefinition",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.0.5"
+            }
+          },
+          "BucketDeployment": {
+            "id": "BucketDeployment",
+            "path": "Stack/BucketDeployment",
+            "children": {
+              "AwsCliLayer": {
+                "id": "AwsCliLayer",
+                "path": "Stack/BucketDeployment/AwsCliLayer",
+                "children": {
+                  "Code": {
+                    "id": "Code",
+                    "path": "Stack/BucketDeployment/AwsCliLayer/Code",
+                    "children": {
+                      "Stage": {
+                        "id": "Stage",
+                        "path": "Stack/BucketDeployment/AwsCliLayer/Code/Stage",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.AssetStaging",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "AssetBucket": {
+                        "id": "AssetBucket",
+                        "path": "Stack/BucketDeployment/AwsCliLayer/Code/AssetBucket",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "Stack/BucketDeployment/AwsCliLayer/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::Lambda::LayerVersion",
+                      "aws:cdk:cloudformation:props": {
+                        "content": {
+                          "s3Bucket": {
+                            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                          },
+                          "s3Key": "e2277687077a2abf9ae1af1cc9565e6715e2ebb62f79ec53aa75a1af9298f642.zip"
+                        },
+                        "description": "/opt/awscli/aws"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_lambda.CfnLayerVersion",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.lambda_layer_awscli.AwsCliLayer",
+                  "version": "2.84.0"
+                }
+              },
+              "CustomResourceHandler": {
+                "id": "CustomResourceHandler",
+                "path": "Stack/BucketDeployment/CustomResourceHandler",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.SingletonFunction",
+                  "version": "2.84.0"
+                }
+              },
+              "Asset1": {
+                "id": "Asset1",
+                "path": "Stack/BucketDeployment/Asset1",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "Stack/BucketDeployment/Asset1/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "Stack/BucketDeployment/Asset1/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.84.0"
+                }
+              },
+              "CustomResource": {
+                "id": "CustomResource",
+                "path": "Stack/BucketDeployment/CustomResource",
+                "children": {
+                  "Default": {
+                    "id": "Default",
+                    "path": "Stack/BucketDeployment/CustomResource/Default",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnResource",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CustomResource",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_s3_deployment.BucketDeployment",
+              "version": "2.84.0"
+            }
+          },
+          "Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C": {
+            "id": "Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C",
+            "path": "Stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C",
+            "children": {
+              "ServiceRole": {
+                "id": "ServiceRole",
+                "path": "Stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole",
+                "children": {
+                  "ImportServiceRole": {
+                    "id": "ImportServiceRole",
+                    "path": "Stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/ImportServiceRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "Stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "lambda.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "Stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "Stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/ServiceRole/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "s3:GetBucket*",
+                                    "s3:GetObject*",
+                                    "s3:List*"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":s3:::",
+                                          {
+                                            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":s3:::",
+                                          {
+                                            "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                                          }
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Action": [
+                                    "s3:Abort*",
+                                    "s3:DeleteObject*",
+                                    "s3:GetBucket*",
+                                    "s3:GetObject*",
+                                    "s3:List*",
+                                    "s3:PutObject",
+                                    "s3:PutObjectLegalHold",
+                                    "s3:PutObjectRetention",
+                                    "s3:PutObjectTagging",
+                                    "s3:PutObjectVersionTagging"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "Bucket83908E77",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "Bucket83908E77",
+                                              "Arn"
+                                            ]
+                                          },
+                                          "/*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+                            "roles": [
+                              {
+                                "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.84.0"
+                }
+              },
+              "Code": {
+                "id": "Code",
+                "path": "Stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "Stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "Stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.84.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "Stack/Custom::CDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "9eb41a5505d37607ac419321497a4f8c21cf0ee1f9b4a6b29aa04301aea5c7fd.zip"
+                    },
+                    "role": {
+                      "Fn::GetAtt": [
+                        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+                        "Arn"
+                      ]
+                    },
+                    "environment": {
+                      "variables": {
+                        "AWS_CA_BUNDLE": "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem"
+                      }
+                    },
+                    "handler": "index.handler",
+                    "layers": [
+                      {
+                        "Ref": "BucketDeploymentAwsCliLayerB018DCE1"
+                      }
+                    ],
+                    "runtime": "python3.9",
+                    "timeout": 900
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.84.0"
+            }
+          },
+          "Track Execution Infos": {
+            "id": "Track Execution Infos",
+            "path": "Stack/Track Execution Infos",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions.Pass",
+              "version": "2.84.0"
+            }
+          },
+          "Prepare doc-gen ECS Command": {
+            "id": "Prepare doc-gen ECS Command",
+            "path": "Stack/Prepare doc-gen ECS Command",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions.Pass",
+              "version": "2.84.0"
+            }
+          },
+          "Generate docs": {
+            "id": "Generate docs",
+            "path": "Stack/Generate docs",
+            "children": {
+              "SecurityGroup": {
+                "id": "SecurityGroup",
+                "path": "Stack/Generate docs/SecurityGroup",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "Stack/Generate docs/SecurityGroup/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                      "aws:cdk:cloudformation:props": {
+                        "groupDescription": "Stack/Generate docs/SecurityGroup",
+                        "securityGroupEgress": [
+                          {
+                            "cidrIp": "0.0.0.0/0",
+                            "description": "Allow all outbound traffic by default",
+                            "ipProtocol": "-1"
+                          }
+                        ],
+                        "vpcId": {
+                          "Ref": "ClusterVpcFAA3CEDF"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroup",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.SecurityGroup",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions_tasks.EcsRunTask",
+              "version": "2.84.0"
+            }
+          },
+          "StateMachine": {
+            "id": "StateMachine",
+            "path": "Stack/StateMachine",
+            "children": {
+              "Role": {
+                "id": "Role",
+                "path": "Stack/StateMachine/Role",
+                "children": {
+                  "ImportRole": {
+                    "id": "ImportRole",
+                    "path": "Stack/StateMachine/Role/ImportRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "Stack/StateMachine/Role/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "states.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "Stack/StateMachine/Role/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "Stack/StateMachine/Role/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": "ecs:RunTask",
+                                  "Effect": "Allow",
+                                  "Resource": {
+                                    "Fn::Join": [
+                                      "",
+                                      [
+                                        "arn:",
+                                        {
+                                          "Fn::Select": [
+                                            1,
+                                            {
+                                              "Fn::Split": [
+                                                ":",
+                                                {
+                                                  "Ref": "TransliteratorTaskDefinition16158D86"
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        ":",
+                                        {
+                                          "Fn::Select": [
+                                            2,
+                                            {
+                                              "Fn::Split": [
+                                                ":",
+                                                {
+                                                  "Ref": "TransliteratorTaskDefinition16158D86"
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        ":",
+                                        {
+                                          "Fn::Select": [
+                                            3,
+                                            {
+                                              "Fn::Split": [
+                                                ":",
+                                                {
+                                                  "Ref": "TransliteratorTaskDefinition16158D86"
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        ":",
+                                        {
+                                          "Fn::Select": [
+                                            4,
+                                            {
+                                              "Fn::Split": [
+                                                ":",
+                                                {
+                                                  "Ref": "TransliteratorTaskDefinition16158D86"
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        ":",
+                                        {
+                                          "Fn::Select": [
+                                            0,
+                                            {
+                                              "Fn::Split": [
+                                                "/",
+                                                {
+                                                  "Fn::Select": [
+                                                    5,
+                                                    {
+                                                      "Fn::Split": [
+                                                        ":",
+                                                        {
+                                                          "Ref": "TransliteratorTaskDefinition16158D86"
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        "/",
+                                        {
+                                          "Fn::Select": [
+                                            1,
+                                            {
+                                              "Fn::Split": [
+                                                "/",
+                                                {
+                                                  "Fn::Select": [
+                                                    5,
+                                                    {
+                                                      "Fn::Split": [
+                                                        ":",
+                                                        {
+                                                          "Ref": "TransliteratorTaskDefinition16158D86"
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    ]
+                                  }
+                                },
+                                {
+                                  "Action": [
+                                    "ecs:DescribeTasks",
+                                    "ecs:StopTask"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": "*"
+                                },
+                                {
+                                  "Action": "iam:PassRole",
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "TransliteratorTaskDefinitionExecutionRole9E3F5F1A",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::GetAtt": [
+                                        "TransliteratorTaskDefinitionTaskRole9D702381",
+                                        "Arn"
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "StateMachineRoleDefaultPolicyDF1E6607",
+                            "roles": [
+                              {
+                                "Ref": "StateMachineRoleB840431D"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.84.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "Stack/StateMachine/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::StepFunctions::StateMachine",
+                  "aws:cdk:cloudformation:props": {
+                    "roleArn": {
+                      "Fn::GetAtt": [
+                        "StateMachineRoleB840431D",
+                        "Arn"
+                      ]
+                    },
+                    "definitionString": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "{\"StartAt\":\"Track Execution Infos\",\"States\":{\"Track Execution Infos\":{\"Type\":\"Pass\",\"ResultPath\":\"$.$TaskExecution\",\"InputPath\":\"$$.Execution\",\"Parameters\":{\"Id.$\":\"$.Id\",\"Name.$\":\"$.Name\",\"RoleArn.$\":\"$.RoleArn\",\"StartTime.$\":\"$.StartTime\"},\"Next\":\"Prepare doc-gen ECS Command\"},\"Prepare doc-gen ECS Command\":{\"Type\":\"Pass\",\"ResultPath\":\"$.docGen\",\"Parameters\":{\"command.$\":\"States.Array(States.JsonToString($))\"},\"Next\":\"Generate docs\"},\"Generate docs\":{\"End\":true,\"Type\":\"Task\",\"HeartbeatSeconds\":300,\"InputPath\":\"$.docGen.command\",\"ResultPath\":\"$.docGenOutput\",\"Resource\":\"arn:",
+                          {
+                            "Ref": "AWS::Partition"
+                          },
+                          ":states:::ecs:runTask.waitForTaskToken\",\"Parameters\":{\"Cluster\":\"",
+                          {
+                            "Fn::GetAtt": [
+                              "ClusterEB0386A7",
+                              "Arn"
+                            ]
+                          },
+                          "\",\"TaskDefinition\":\"StackTransliteratorTaskDefinition3FEF9354\",\"NetworkConfiguration\":{\"AwsvpcConfiguration\":{\"Subnets\":[\"",
+                          {
+                            "Ref": "ClusterVpcPrivateSubnet1SubnetA4EB481A"
+                          },
+                          "\",\"",
+                          {
+                            "Ref": "ClusterVpcPrivateSubnet2SubnetBD1ECB6E"
+                          },
+                          "\"],\"SecurityGroups\":[\"",
+                          {
+                            "Fn::GetAtt": [
+                              "GeneratedocsSecurityGroupD92A8629",
+                              "GroupId"
+                            ]
+                          },
+                          "\"]}},\"Overrides\":{\"ContainerOverrides\":[{\"Name\":\"Resource\",\"Command.$\":\"$\",\"Environment\":[{\"Name\":\"SFN_TASK_TOKEN\",\"Value.$\":\"$$.Task.Token\"},{\"Name\":\"RUN_LSOF_ON_HEARTBEAT\",\"Value\":\"\"}]}]},\"LaunchType\":\"FARGATE\",\"PlatformVersion\":\"1.4.0\"}}}}"
+                        ]
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_stepfunctions.CfnStateMachine",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions.StateMachine",
+              "version": "2.84.0"
+            }
+          },
+          "Exports": {
+            "id": "Exports",
+            "path": "Stack/Exports",
+            "children": {
+              "Output{\"Ref\":\"StateMachine2E01A3A5\"}": {
+                "id": "Output{\"Ref\":\"StateMachine2E01A3A5\"}",
+                "path": "Stack/Exports/Output{\"Ref\":\"StateMachine2E01A3A5\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.84.0"
+                }
+              },
+              "Output{\"Ref\":\"Bucket83908E77\"}": {
+                "id": "Output{\"Ref\":\"Bucket83908E77\"}",
+                "path": "Stack/Exports/Output{\"Ref\":\"Bucket83908E77\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.0.5"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "Stack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.84.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "Stack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.84.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.84.0"
+        }
+      },
+      "transliterator-integ": {
+        "id": "transliterator-integ",
+        "path": "transliterator-integ",
+        "children": {
+          "DefaultTest": {
+            "id": "DefaultTest",
+            "path": "transliterator-integ/DefaultTest",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "transliterator-integ/DefaultTest/Default",
+                "constructInfo": {
+                  "fqn": "constructs.Construct",
+                  "version": "10.0.5"
+                }
+              },
+              "DeployAssert": {
+                "id": "DeployAssert",
+                "path": "transliterator-integ/DefaultTest/DeployAssert",
+                "children": {
+                  "AwsApiCallStepFunctionsstartExecutionc19ecb796a5c9b114b372d1986eba49e": {
+                    "id": "AwsApiCallStepFunctionsstartExecutionc19ecb796a5c9b114b372d1986eba49e",
+                    "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsstartExecutionc19ecb796a5c9b114b372d1986eba49e",
+                    "children": {
+                      "SdkProvider": {
+                        "id": "SdkProvider",
+                        "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsstartExecutionc19ecb796a5c9b114b372d1986eba49e/SdkProvider",
+                        "children": {
+                          "AssertionsProvider": {
+                            "id": "AssertionsProvider",
+                            "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsstartExecutionc19ecb796a5c9b114b372d1986eba49e/SdkProvider/AssertionsProvider",
+                            "constructInfo": {
+                              "fqn": "constructs.Construct",
+                              "version": "10.0.5"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "@aws-cdk/integ-tests-alpha.AssertionsProvider",
+                          "version": "2.93.0-alpha.0"
+                        }
+                      },
+                      "Default": {
+                        "id": "Default",
+                        "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsstartExecutionc19ecb796a5c9b114b372d1986eba49e/Default",
+                        "children": {
+                          "Default": {
+                            "id": "Default",
+                            "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsstartExecutionc19ecb796a5c9b114b372d1986eba49e/Default/Default",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.CfnResource",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CustomResource",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/integ-tests-alpha.AwsApiCall",
+                      "version": "2.93.0-alpha.0"
+                    }
+                  },
+                  "SingletonFunction1488541a7b23466481b69b4408076b81": {
+                    "id": "SingletonFunction1488541a7b23466481b69b4408076b81",
+                    "path": "transliterator-integ/DefaultTest/DeployAssert/SingletonFunction1488541a7b23466481b69b4408076b81",
+                    "children": {
+                      "Staging": {
+                        "id": "Staging",
+                        "path": "transliterator-integ/DefaultTest/DeployAssert/SingletonFunction1488541a7b23466481b69b4408076b81/Staging",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.AssetStaging",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Role": {
+                        "id": "Role",
+                        "path": "transliterator-integ/DefaultTest/DeployAssert/SingletonFunction1488541a7b23466481b69b4408076b81/Role",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CfnResource",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Handler": {
+                        "id": "Handler",
+                        "path": "transliterator-integ/DefaultTest/DeployAssert/SingletonFunction1488541a7b23466481b69b4408076b81/Handler",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CfnResource",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "constructs.Construct",
+                      "version": "10.0.5"
+                    }
+                  },
+                  "AwsApiCallStepFunctionsdescribeExecutionbc9f38aa0e28abae733159f574570cef": {
+                    "id": "AwsApiCallStepFunctionsdescribeExecutionbc9f38aa0e28abae733159f574570cef",
+                    "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsdescribeExecutionbc9f38aa0e28abae733159f574570cef",
+                    "children": {
+                      "SdkProvider": {
+                        "id": "SdkProvider",
+                        "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsdescribeExecutionbc9f38aa0e28abae733159f574570cef/SdkProvider",
+                        "children": {
+                          "AssertionsProvider": {
+                            "id": "AssertionsProvider",
+                            "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsdescribeExecutionbc9f38aa0e28abae733159f574570cef/SdkProvider/AssertionsProvider",
+                            "constructInfo": {
+                              "fqn": "constructs.Construct",
+                              "version": "10.0.5"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "@aws-cdk/integ-tests-alpha.AssertionsProvider",
+                          "version": "2.93.0-alpha.0"
+                        }
+                      },
+                      "Default": {
+                        "id": "Default",
+                        "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsdescribeExecutionbc9f38aa0e28abae733159f574570cef/Default",
+                        "children": {
+                          "Default": {
+                            "id": "Default",
+                            "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsdescribeExecutionbc9f38aa0e28abae733159f574570cef/Default/Default",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.CfnResource",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CustomResource",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "WaitFor": {
+                        "id": "WaitFor",
+                        "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsdescribeExecutionbc9f38aa0e28abae733159f574570cef/WaitFor",
+                        "children": {
+                          "IsCompleteProvider": {
+                            "id": "IsCompleteProvider",
+                            "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsdescribeExecutionbc9f38aa0e28abae733159f574570cef/WaitFor/IsCompleteProvider",
+                            "children": {
+                              "AssertionsProvider": {
+                                "id": "AssertionsProvider",
+                                "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsdescribeExecutionbc9f38aa0e28abae733159f574570cef/WaitFor/IsCompleteProvider/AssertionsProvider",
+                                "constructInfo": {
+                                  "fqn": "constructs.Construct",
+                                  "version": "10.0.5"
+                                }
+                              },
+                              "Invoke": {
+                                "id": "Invoke",
+                                "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsdescribeExecutionbc9f38aa0e28abae733159f574570cef/WaitFor/IsCompleteProvider/Invoke",
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.CfnResource",
+                                  "version": "2.84.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "@aws-cdk/integ-tests-alpha.AssertionsProvider",
+                              "version": "2.93.0-alpha.0"
+                            }
+                          },
+                          "TimeoutProvider": {
+                            "id": "TimeoutProvider",
+                            "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsdescribeExecutionbc9f38aa0e28abae733159f574570cef/WaitFor/TimeoutProvider",
+                            "children": {
+                              "AssertionsProvider": {
+                                "id": "AssertionsProvider",
+                                "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsdescribeExecutionbc9f38aa0e28abae733159f574570cef/WaitFor/TimeoutProvider/AssertionsProvider",
+                                "constructInfo": {
+                                  "fqn": "constructs.Construct",
+                                  "version": "10.0.5"
+                                }
+                              },
+                              "Invoke": {
+                                "id": "Invoke",
+                                "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsdescribeExecutionbc9f38aa0e28abae733159f574570cef/WaitFor/TimeoutProvider/Invoke",
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.CfnResource",
+                                  "version": "2.84.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "@aws-cdk/integ-tests-alpha.AssertionsProvider",
+                              "version": "2.93.0-alpha.0"
+                            }
+                          },
+                          "Role": {
+                            "id": "Role",
+                            "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsdescribeExecutionbc9f38aa0e28abae733159f574570cef/WaitFor/Role",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.CfnResource",
+                              "version": "2.84.0"
+                            }
+                          },
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsdescribeExecutionbc9f38aa0e28abae733159f574570cef/WaitFor/Resource",
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.CfnResource",
+                              "version": "2.84.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "@aws-cdk/integ-tests-alpha.WaiterStateMachine",
+                          "version": "2.93.0-alpha.0"
+                        }
+                      },
+                      "AssertionResults": {
+                        "id": "AssertionResults",
+                        "path": "transliterator-integ/DefaultTest/DeployAssert/AwsApiCallStepFunctionsdescribeExecutionbc9f38aa0e28abae733159f574570cef/AssertionResults",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CfnOutput",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "@aws-cdk/integ-tests-alpha.AwsApiCall",
+                      "version": "2.93.0-alpha.0"
+                    }
+                  },
+                  "SingletonFunction76b3e830a873425f8453eddd85c86925": {
+                    "id": "SingletonFunction76b3e830a873425f8453eddd85c86925",
+                    "path": "transliterator-integ/DefaultTest/DeployAssert/SingletonFunction76b3e830a873425f8453eddd85c86925",
+                    "children": {
+                      "Staging": {
+                        "id": "Staging",
+                        "path": "transliterator-integ/DefaultTest/DeployAssert/SingletonFunction76b3e830a873425f8453eddd85c86925/Staging",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.AssetStaging",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Role": {
+                        "id": "Role",
+                        "path": "transliterator-integ/DefaultTest/DeployAssert/SingletonFunction76b3e830a873425f8453eddd85c86925/Role",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CfnResource",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Handler": {
+                        "id": "Handler",
+                        "path": "transliterator-integ/DefaultTest/DeployAssert/SingletonFunction76b3e830a873425f8453eddd85c86925/Handler",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CfnResource",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "constructs.Construct",
+                      "version": "10.0.5"
+                    }
+                  },
+                  "SingletonFunction5c1898e096fb4e3e95d5f6c67f3ce41a": {
+                    "id": "SingletonFunction5c1898e096fb4e3e95d5f6c67f3ce41a",
+                    "path": "transliterator-integ/DefaultTest/DeployAssert/SingletonFunction5c1898e096fb4e3e95d5f6c67f3ce41a",
+                    "children": {
+                      "Staging": {
+                        "id": "Staging",
+                        "path": "transliterator-integ/DefaultTest/DeployAssert/SingletonFunction5c1898e096fb4e3e95d5f6c67f3ce41a/Staging",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.AssetStaging",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Role": {
+                        "id": "Role",
+                        "path": "transliterator-integ/DefaultTest/DeployAssert/SingletonFunction5c1898e096fb4e3e95d5f6c67f3ce41a/Role",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CfnResource",
+                          "version": "2.84.0"
+                        }
+                      },
+                      "Handler": {
+                        "id": "Handler",
+                        "path": "transliterator-integ/DefaultTest/DeployAssert/SingletonFunction5c1898e096fb4e3e95d5f6c67f3ce41a/Handler",
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.CfnResource",
+                          "version": "2.84.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "constructs.Construct",
+                      "version": "10.0.5"
+                    }
+                  },
+                  "BootstrapVersion": {
+                    "id": "BootstrapVersion",
+                    "path": "transliterator-integ/DefaultTest/DeployAssert/BootstrapVersion",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnParameter",
+                      "version": "2.84.0"
+                    }
+                  },
+                  "CheckBootstrapVersion": {
+                    "id": "CheckBootstrapVersion",
+                    "path": "transliterator-integ/DefaultTest/DeployAssert/CheckBootstrapVersion",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnRule",
+                      "version": "2.84.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Stack",
+                  "version": "2.84.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "@aws-cdk/integ-tests-alpha.IntegTestCase",
+              "version": "2.93.0-alpha.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "@aws-cdk/integ-tests-alpha.IntegTest",
+          "version": "2.93.0-alpha.0"
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.0.5"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.84.0"
+    }
+  }
+}
