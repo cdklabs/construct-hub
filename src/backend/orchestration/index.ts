@@ -5,7 +5,7 @@ import {
   MathExpressionOptions,
   Metric,
   MetricOptions,
-  Statistic
+  Statistic,
 } from 'aws-cdk-lib/aws-cloudwatch';
 import { SubnetSelection, Vpc, ISecurityGroup } from 'aws-cdk-lib/aws-ec2';
 import { Cluster, ICluster } from 'aws-cdk-lib/aws-ecs';
@@ -23,7 +23,7 @@ import {
   Pass,
   StateMachine,
   Succeed,
-  TaskInput
+  TaskInput,
 } from 'aws-cdk-lib/aws-stepfunctions';
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
@@ -45,7 +45,7 @@ import {
   PACKAGE_KEY_SUFFIX,
   STORAGE_KEY_PREFIX,
   CATALOG_KEY,
-  UNPROCESSABLE_PACKAGE_ERROR_NAME
+  UNPROCESSABLE_PACKAGE_ERROR_NAME,
 } from '../shared/constants';
 import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
 
@@ -68,7 +68,7 @@ import { Transliterator, TransliteratorVpcEndpoints } from '../transliterator';
 const THROTTLE_RETRY_POLICY = {
   backoffRate: 1.1,
   interval: Duration.minutes(1),
-  maxAttempts: 30
+  maxAttempts: 30,
 };
 
 /**
@@ -90,7 +90,7 @@ const DOCGEN_THROTTLE_RETRY_POLICY = {
   interval: Duration.minutes(1),
   // 1 minute * 1.1^45 / ln(1.1) ~= max 13 hours total time for a package
   backoffRate: 1.1,
-  maxAttempts: 45
+  maxAttempts: 45,
 };
 
 export interface OrchestrationProps {
@@ -206,7 +206,7 @@ export class Orchestration extends Construct {
     this.deadLetterQueue = new Queue(this, 'DLQ', {
       encryption: QueueEncryption.KMS_MANAGED,
       retentionPeriod: Duration.days(14),
-      visibilityTimeout: Duration.minutes(15)
+      visibilityTimeout: Duration.minutes(15),
     });
 
     props.monitoring.addLowSeverityAlarm(
@@ -216,12 +216,12 @@ export class Orchestration extends Construct {
         label: 'Dead-Letter Queue not empty',
         usingMetrics: {
           m1: this.deadLetterQueue.metricApproximateNumberOfMessagesVisible({
-            period: Duration.minutes(1)
+            period: Duration.minutes(1),
           }),
           m2: this.deadLetterQueue.metricApproximateNumberOfMessagesNotVisible({
-            period: Duration.minutes(1)
-          })
-        }
+            period: Duration.minutes(1),
+          }),
+        },
       }).createAlarm(this, 'DLQAlarm', {
         alarmName: `${this.deadLetterQueue.node.path}/NotEmpty`,
         alarmDescription: [
@@ -230,12 +230,12 @@ export class Orchestration extends Construct {
           `RunBook: ${RUNBOOK_URL}`,
           '',
           `Direct link to queue: ${sqsQueueUrl(this.deadLetterQueue)}`,
-          'Warning: State Machines executions that sent messages to the DLQ will not show as "failed".'
+          'Warning: State Machines executions that sent messages to the DLQ will not show as "failed".',
         ].join('\n'),
         comparisonOperator:
           ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
         evaluationPeriods: 1,
-        threshold: 1
+        threshold: 1,
       })
     );
 
@@ -245,7 +245,7 @@ export class Orchestration extends Construct {
       {
         messageBody: TaskInput.fromJsonPathAt('$'),
         queue: this.deadLetterQueue,
-        resultPath: JsonPath.DISCARD
+        resultPath: JsonPath.DISCARD,
       }
     ).next(new Succeed(this, 'Sent to DLQ'));
 
@@ -258,25 +258,25 @@ export class Orchestration extends Construct {
       resultPath: '$.catalogBuilderOutput',
       resultSelector: {
         'ETag.$': '$.Payload.ETag',
-        'VersionId.$': '$.Payload.VersionId'
-      }
+        'VersionId.$': '$.Payload.VersionId',
+      },
     })
       // This has a concurrency of 1, so we want to aggressively retry being throttled here.
       .addRetry({
         errors: ['Lambda.TooManyRequestsException'],
-        ...THROTTLE_RETRY_POLICY
+        ...THROTTLE_RETRY_POLICY,
       })
       .addCatch(sendToDeadLetterQueue, {
         errors: ['Lambda.TooManyRequestsException'],
-        resultPath: '$.error'
+        resultPath: '$.error',
       })
       .addCatch(sendToDeadLetterQueue, {
         errors: ['States.TaskFailed'],
-        resultPath: '$.error'
+        resultPath: '$.error',
       })
       .addCatch(sendToDeadLetterQueue, {
         errors: ['States.ALL'],
-        resultPath: '$.error'
+        resultPath: '$.error',
       });
 
     const needsCatalogUpdateFunction = new NeedsCatalogUpdate(
@@ -288,10 +288,10 @@ export class Orchestration extends Construct {
           '[ConstructHub/Orchestration/NeedsCatalogUpdate] Determines whether a package version requires a catalog update',
         environment: {
           CATALOG_BUCKET_NAME: props.bucket.bucketName,
-          CATALOG_OBJECT_KEY: CATALOG_KEY
+          CATALOG_OBJECT_KEY: CATALOG_KEY,
         },
         memorySize: 1_024,
-        timeout: Duration.minutes(1)
+        timeout: Duration.minutes(1),
       }
     );
     props.bucket.grantRead(needsCatalogUpdateFunction);
@@ -303,27 +303,27 @@ export class Orchestration extends Construct {
       {
         lambdaFunction: needsCatalogUpdateFunction,
         payloadResponseOnly: true,
-        resultPath: '$.catalogNeedsUpdating'
+        resultPath: '$.catalogNeedsUpdating',
       }
     )
       .addRetry({
         errors: [
           'Lambda.TooManyRequestsException',
-          'Lambda.Unknown' // happens when a lambda times out.
+          'Lambda.Unknown', // happens when a lambda times out.
         ],
-        ...THROTTLE_RETRY_POLICY
+        ...THROTTLE_RETRY_POLICY,
       })
       .addCatch(sendToDeadLetterQueue, {
         errors: ['Lambda.TooManyRequestsException', 'Lambda.Unknown'],
-        resultPath: '$.error'
+        resultPath: '$.error',
       })
       .addCatch(sendToDeadLetterQueue, {
         errors: ['States.TaskFailed'],
-        resultPath: '$.error'
+        resultPath: '$.error',
       })
       .addCatch(sendToDeadLetterQueue, {
         errors: ['States.ALL'],
-        resultPath: '$.error'
+        resultPath: '$.error',
       })
       .next(
         new Choice(this, 'Is catalog update needed?')
@@ -339,11 +339,11 @@ export class Orchestration extends Construct {
     this.ecsCluster = new Cluster(this, 'Cluster', {
       containerInsights: true,
       enableFargateCapacityProviders: true,
-      vpc: props.vpc
+      vpc: props.vpc,
     });
     this.ecsTaskMonitor = new EcsTaskMonitor(this.ecsCluster, 'Monitor', {
       cluster: this.ecsCluster,
-      timeout: transliteratorTimeout.plus(Duration.minutes(10))
+      timeout: transliteratorTimeout.plus(Duration.minutes(10)),
     });
 
     this.transliterator = new Transliterator(this, 'Transliterator', props);
@@ -354,14 +354,14 @@ export class Orchestration extends Construct {
         'Id.$': '$.Id',
         'Name.$': '$.Name',
         'RoleArn.$': '$.RoleArn',
-        'StartTime.$': '$.StartTime'
+        'StartTime.$': '$.StartTime',
       },
-      resultPath: '$.$TaskExecution'
+      resultPath: '$.$TaskExecution',
     })
       .next(
         new Pass(this, 'Prepare doc-gen ECS Command', {
           parameters: { 'command.$': 'States.Array(States.JsonToString($))' },
-          resultPath: '$.docGen'
+          resultPath: '$.docGen',
         })
       )
       .next(
@@ -379,52 +379,52 @@ export class Orchestration extends Construct {
             // cases the first heartbeat may take a while to come back due to
             // the time it takes to provision the task in the cluster, so we
             // give a more generous buffer here.
-            heartbeat: Duration.minutes(10)
+            heartbeat: Duration.minutes(10),
           })
           // Do not retry NoSpaceLeftOnDevice errors, these are typically not transient.
           .addRetry({
             errors: ['jsii-docgen.NoSpaceLeftOnDevice'],
-            maxAttempts: 0
+            maxAttempts: 0,
           })
           .addRetry({
             errors: [
               'ECS.AmazonECSException', // Task failed starting, usually due to throttle / out of capacity
               'ECS.InvalidParameterException', // This is returned when ECS gets throttled when trying to access VPC/SGs.
               'jsii-docgen.NpmError.E429', // HTTP 429 ("Too Many Requests") from CodeArtifact's S3 bucket
-              'jsii-codgen.NpmError.EPROTO' // Sporadic TLS negotiation failures we see in logs, transient
+              'jsii-codgen.NpmError.EPROTO', // Sporadic TLS negotiation failures we see in logs, transient
             ],
-            ...DOCGEN_THROTTLE_RETRY_POLICY
+            ...DOCGEN_THROTTLE_RETRY_POLICY,
           })
           .addRetry({
             errors: ['jsii-docgen.NpmError.ETARGET'], // Seen when dependencies aren't available yet
             // We'll wait longer between retries. This is to account for CodeArtifact's lag behind npm
             backoffRate: 2,
             interval: Duration.minutes(5),
-            maxAttempts: 3
+            maxAttempts: 3,
           })
           .addRetry({
             errors: ['States.Timeout'], // The task has stopped responding, or is just taking a long time to provision
             // To compensate we'll give more retries and pause between them in
             // case it's just a transient issue.
-            maxAttempts: 5
+            maxAttempts: 5,
           })
           .addRetry({ maxAttempts: 3 })
           .addCatch(ignore, { errors: [UNPROCESSABLE_PACKAGE_ERROR_NAME] })
           .addCatch(sendToDeadLetterQueue, {
             errors: ['States.Timeout'],
-            resultPath: '$.error'
+            resultPath: '$.error',
           })
           .addCatch(sendToDeadLetterQueue, {
             errors: ['ECS.AmazonECSException', 'ECS.InvalidParameterException'],
-            resultPath: '$.error'
+            resultPath: '$.error',
           })
           .addCatch(sendToDeadLetterQueue, {
             errors: ['States.TaskFailed'],
-            resultPath: '$.error'
+            resultPath: '$.error',
           })
           .addCatch(sendToDeadLetterQueue, {
             errors: ['States.ALL'],
-            resultPath: '$.error'
+            resultPath: '$.error',
           })
           .next(addToCatalogIfNeeded)
       );
@@ -433,7 +433,7 @@ export class Orchestration extends Construct {
       definition,
       stateMachineName: stateMachineNameFrom(this.node.path),
       timeout: Duration.days(1), // Ample time for retries, etc...
-      tracingEnabled: true
+      tracingEnabled: true,
     });
 
     if (props.vpc) {
@@ -459,25 +459,29 @@ export class Orchestration extends Construct {
             `Direct link to state machine: ${stateMachineUrl(
               this.stateMachine
             )}`,
-            'Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!'
+            'Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!',
           ].join('\n'),
           comparisonOperator:
             ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
           evaluationPeriods: 1,
-          threshold: 1
+          threshold: 1,
         })
     );
 
     props.monitoring.addHighSeverityAlarm(
       'Execution Failure Rate above 75%',
-      this.metricStatesExecutionFailureRate().createAlarm(this, 'FailureRateAlarm', {
-        alarmName: `${this.stateMachine.node.path}/ExecutionFailureRate`,
-        alarmDescription: ['Execution Failure Rate above 75%', ''].join('\n'),
-        comparisonOperator:
-          ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-        evaluationPeriods: 100,
-        threshold: 75,
-      })
+      this.metricStatesExecutionFailureRate().createAlarm(
+        this,
+        'FailureRateAlarm',
+        {
+          alarmName: `${this.stateMachine.node.path}/ExecutionFailureRate`,
+          alarmDescription: ['Execution Failure Rate above 75%', ''].join('\n'),
+          comparisonOperator:
+            ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+          evaluationPeriods: 100,
+          threshold: 75,
+        }
+      )
     );
 
     // This function is intended to be manually triggered by an operrator to
@@ -487,11 +491,11 @@ export class Orchestration extends Construct {
         '[ConstructHub/Redrive] Manually redrives all messages from the backend dead letter queue',
       environment: {
         STATE_MACHINE_ARN: this.stateMachine.stateMachineArn,
-        QUEUE_URL: this.deadLetterQueue.queueUrl
+        QUEUE_URL: this.deadLetterQueue.queueUrl,
       },
       memorySize: 1_024,
       timeout: Duration.minutes(15),
-      tracing: Tracing.ACTIVE
+      tracing: Tracing.ACTIVE,
     });
     this.stateMachine.grantStartExecution(this.redriveFunction);
     this.deadLetterQueue.grantConsumeMessages(this.redriveFunction);
@@ -508,7 +512,7 @@ export class Orchestration extends Construct {
       'RegenerateAllDocumentation',
       {
         bucket: props.bucket,
-        stateMachine: this.stateMachine
+        stateMachine: this.stateMachine,
       }
     ).stateMachine;
 
@@ -527,8 +531,8 @@ export class Orchestration extends Construct {
       expression: '100 * executionsFailed / executionsStarted',
       usingMetrics: {
         executionsFailed: this.metricStatesExecutionsFailed(),
-        executionsStarted: this.metricStatesExecutionsStarted()
-      }
+        executionsStarted: this.metricStatesExecutionsStarted(),
+      },
     });
   }
 
@@ -538,7 +542,7 @@ export class Orchestration extends Construct {
       ...opts,
       dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
       metricName: 'ExecutionsFailed',
-      namespace: 'AWS/States'
+      namespace: 'AWS/States',
     });
   }
 
@@ -548,7 +552,7 @@ export class Orchestration extends Construct {
       ...opts,
       dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
       metricName: 'ExecutionsStarted',
-      namespace: 'AWS/States'
+      namespace: 'AWS/States',
     });
   }
 
@@ -558,7 +562,7 @@ export class Orchestration extends Construct {
       ...opts,
       dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
       metricName: 'TaskCount',
-      namespace: 'ECS/ContainerInsights'
+      namespace: 'ECS/ContainerInsights',
     });
   }
 
@@ -568,7 +572,7 @@ export class Orchestration extends Construct {
       ...opts,
       dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
       metricName: 'CpuReserved',
-      namespace: 'ECS/ContainerInsights'
+      namespace: 'ECS/ContainerInsights',
     });
   }
 
@@ -578,7 +582,7 @@ export class Orchestration extends Construct {
       ...opts,
       dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
       metricName: 'CpuUtilized',
-      namespace: 'ECS/ContainerInsights'
+      namespace: 'ECS/ContainerInsights',
     });
   }
 
@@ -591,8 +595,8 @@ export class Orchestration extends Construct {
       expression: '100 * FILL(mCpuUtilized, 0) / FILL(mCpuReserved, REPEAT)',
       usingMetrics: {
         mCpuReserved: this.metricEcsCpuReserved(),
-        mCpuUtilized: this.metricEcsCpuUtilized()
-      }
+        mCpuUtilized: this.metricEcsCpuUtilized(),
+      },
     });
   }
 
@@ -602,7 +606,7 @@ export class Orchestration extends Construct {
       ...opts,
       dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
       metricName: 'MemoryReserved',
-      namespace: 'ECS/ContainerInsights'
+      namespace: 'ECS/ContainerInsights',
     });
   }
 
@@ -612,7 +616,7 @@ export class Orchestration extends Construct {
       ...opts,
       dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
       metricName: 'MemoryUtilized',
-      namespace: 'ECS/ContainerInsights'
+      namespace: 'ECS/ContainerInsights',
     });
   }
 
@@ -628,8 +632,8 @@ export class Orchestration extends Construct {
         '100 * FILL(mMemoryUtilized, 0) / FILL(mMemoryReserved, REPEAT)',
       usingMetrics: {
         mMemoryReserved: this.metricEcsMemoryReserved(),
-        mMemoryUtilized: this.metricEcsMemoryUtilized()
-      }
+        mMemoryUtilized: this.metricEcsMemoryUtilized(),
+      },
     });
   }
 
@@ -639,7 +643,7 @@ export class Orchestration extends Construct {
       ...opts,
       dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
       metricName: 'NetworkRxBytes',
-      namespace: 'ECS/ContainerInsights'
+      namespace: 'ECS/ContainerInsights',
     });
   }
 
@@ -649,7 +653,7 @@ export class Orchestration extends Construct {
       ...opts,
       dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
       metricName: 'NetworkTxBytes',
-      namespace: 'ECS/ContainerInsights'
+      namespace: 'ECS/ContainerInsights',
     });
   }
 }
@@ -683,9 +687,9 @@ class RegenerateAllDocumentation extends Construct {
               '$.response.NextContinuationToken'
             ),
             Delimiter: '/',
-            Prefix: JsonPath.stringAt('$.Prefix')
+            Prefix: JsonPath.stringAt('$.Prefix'),
           },
-          resultPath: '$.response'
+          resultPath: '$.response',
         }).addRetry({ errors: ['S3.SdkClientException'] })
       )
       .otherwise(
@@ -697,16 +701,16 @@ class RegenerateAllDocumentation extends Construct {
           parameters: {
             Bucket: props.bucket.bucketName,
             Delimiter: '/',
-            Prefix: JsonPath.stringAt('$.Prefix')
+            Prefix: JsonPath.stringAt('$.Prefix'),
           },
-          resultPath: '$.response'
+          resultPath: '$.response',
         }).addRetry({ errors: ['S3.SdkClientException'] })
       )
       .afterwards()
       .next(
         new Map(this, 'For each key prefix', {
           itemsPath: '$.response.CommonPrefixes',
-          resultPath: JsonPath.DISCARD
+          resultPath: JsonPath.DISCARD,
         }).iterator(
           new tasks.StepFunctionsStartExecution(
             this,
@@ -721,24 +725,24 @@ class RegenerateAllDocumentation extends Construct {
                     `States.Format('{}${ASSEMBLY_KEY_SUFFIX.substr(
                       1
                     )}', $.Prefix)`
-                  )
+                  ),
                 },
                 metadata: {
                   key: JsonPath.stringAt(
                     `States.Format('{}${METADATA_KEY_SUFFIX.substr(
                       1
                     )}', $.Prefix)`
-                  )
+                  ),
                 },
                 package: {
                   key: JsonPath.stringAt(
                     `States.Format('{}${PACKAGE_KEY_SUFFIX.substr(
                       1
                     )}', $.Prefix)`
-                  )
-                }
+                  ),
+                },
               }),
-              integrationPattern: IntegrationPattern.REQUEST_RESPONSE
+              integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
             }
           ).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
         )
@@ -754,7 +758,7 @@ class RegenerateAllDocumentation extends Construct {
     const processPackageVersions = new StateMachine(this, 'PerPackage', {
       definition: processVersions,
       timeout: Duration.hours(1),
-      tracingEnabled: true
+      tracingEnabled: true,
     });
 
     // This workflow is broken into two sub-workflows because otherwise it hits the 25K events limit
@@ -773,9 +777,9 @@ class RegenerateAllDocumentation extends Construct {
               '$.response.NextContinuationToken'
             ),
             Delimiter: '/',
-            Prefix: JsonPath.stringAt('$.Prefix')
+            Prefix: JsonPath.stringAt('$.Prefix'),
           },
-          resultPath: '$.response'
+          resultPath: '$.response',
         }).addRetry({ errors: ['S3.SdkClientException'] })
       )
       .otherwise(
@@ -787,16 +791,16 @@ class RegenerateAllDocumentation extends Construct {
           parameters: {
             Bucket: props.bucket.bucketName,
             Delimiter: '/',
-            Prefix: JsonPath.stringAt('$.Prefix')
+            Prefix: JsonPath.stringAt('$.Prefix'),
           },
-          resultPath: '$.response'
+          resultPath: '$.response',
         }).addRetry({ errors: ['S3.SdkClientException'] })
       )
       .afterwards()
       .next(
         new Map(this, 'For each @scope/pkg', {
           itemsPath: '$.response.CommonPrefixes',
-          resultPath: JsonPath.DISCARD
+          resultPath: JsonPath.DISCARD,
         }).iterator(
           new tasks.StepFunctionsStartExecution(
             this,
@@ -805,9 +809,9 @@ class RegenerateAllDocumentation extends Construct {
               stateMachine: processPackageVersions,
               associateWithParent: true,
               input: TaskInput.fromObject({
-                Prefix: JsonPath.stringAt('$.Prefix')
+                Prefix: JsonPath.stringAt('$.Prefix'),
               }),
-              integrationPattern: IntegrationPattern.RUN_JOB
+              integrationPattern: IntegrationPattern.RUN_JOB,
             }
           ).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
         )
@@ -835,9 +839,9 @@ class RegenerateAllDocumentation extends Construct {
               '$.response.NextContinuationToken'
             ),
             Delimiter: '/',
-            Prefix: STORAGE_KEY_PREFIX
+            Prefix: STORAGE_KEY_PREFIX,
           },
-          resultPath: '$.response'
+          resultPath: '$.response',
         }).addRetry({ errors: ['S3.SdkClientException'] })
       )
       .otherwise(
@@ -849,16 +853,16 @@ class RegenerateAllDocumentation extends Construct {
           parameters: {
             Bucket: props.bucket.bucketName,
             Delimiter: '/',
-            Prefix: STORAGE_KEY_PREFIX
+            Prefix: STORAGE_KEY_PREFIX,
           },
-          resultPath: '$.response'
+          resultPath: '$.response',
         }).addRetry({ errors: ['S3.SdkClientException'] })
       )
       .afterwards()
       .next(
         new Map(this, 'For each prefix', {
           itemsPath: '$.response.CommonPrefixes',
-          resultPath: JsonPath.DISCARD
+          resultPath: JsonPath.DISCARD,
         }).iterator(
           new Choice(this, 'Is this a @scope/ prefix?')
             .when(
@@ -873,9 +877,9 @@ class RegenerateAllDocumentation extends Construct {
                   stateMachine: processPackageVersions,
                   associateWithParent: true,
                   input: TaskInput.fromObject({
-                    Prefix: JsonPath.stringAt('$.Prefix')
+                    Prefix: JsonPath.stringAt('$.Prefix'),
                   }),
-                  integrationPattern: IntegrationPattern.RUN_JOB
+                  integrationPattern: IntegrationPattern.RUN_JOB,
                 }
               ).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
             )
@@ -893,7 +897,7 @@ class RegenerateAllDocumentation extends Construct {
       definition: start,
       stateMachineName: stateMachineNameFrom(this.node.path),
       timeout: Duration.hours(4),
-      tracingEnabled: true
+      tracingEnabled: true,
     });
 
     props.bucket.grantRead(processPackageVersions);
