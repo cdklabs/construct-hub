@@ -527,8 +527,8 @@ export class Orchestration extends Construct {
       expression: '100 * executionsFailed / executionsStarted',
       usingMetrics: {
         executionsFailed: this.metricStatesExecutionsFailed(),
-        executionsStarted: this.metricStatesExecutionsStarted()
-      }
+        executionsStarted: this.metricStatesExecutionsStarted(),
+      },
     });
   }
 
@@ -538,7 +538,7 @@ export class Orchestration extends Construct {
       ...opts,
       dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
       metricName: 'ExecutionsFailed',
-      namespace: 'AWS/States'
+      namespace: 'AWS/States',
     });
   }
 
@@ -548,7 +548,7 @@ export class Orchestration extends Construct {
       ...opts,
       dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
       metricName: 'ExecutionsStarted',
-      namespace: 'AWS/States'
+      namespace: 'AWS/States',
     });
   }
 
