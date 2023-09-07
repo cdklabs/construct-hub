@@ -6063,26 +6063,29 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
 ",
         "AlarmName": "dev/ConstructHub/Orchestration/Resource/ExecutionFailureRate",
         "ComparisonOperator": "GreaterThanOrEqualToThreshold",
-        "EvaluationPeriods": 100,
+        "EvaluationPeriods": 1,
         "Metrics": [
           {
-            "Expression": "100 * executionsFailed / executionsStarted",
+            "Expression": "100 * msqsMessagesSent / mecsTaskCount",
             "Id": "expr_1",
           },
           {
-            "Id": "executionsFailed",
+            "Id": "msqsMessagesSent",
             "MetricStat": {
               "Metric": {
                 "Dimensions": [
                   {
-                    "Name": "ClusterName",
+                    "Name": "QueueName",
                     "Value": {
-                      "Ref": "ConstructHubOrchestrationCluster3D6F0081",
+                      "Fn::GetAtt": [
+                        "ConstructHubOrchestrationDLQ9C6D9BD4",
+                        "QueueName",
+                      ],
                     },
                   },
                 ],
-                "MetricName": "ExecutionsFailed",
-                "Namespace": "AWS/States",
+                "MetricName": "NumberOfMessagesSent",
+                "Namespace": "AWS/SQS",
               },
               "Period": 300,
               "Stat": "Sum",
@@ -6090,7 +6093,7 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
             "ReturnData": false,
           },
           {
-            "Id": "executionsStarted",
+            "Id": "mecsTaskCount",
             "MetricStat": {
               "Metric": {
                 "Dimensions": [
@@ -6101,8 +6104,8 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
                     },
                   },
                 ],
-                "MetricName": "ExecutionsStarted",
-                "Namespace": "AWS/States",
+                "MetricName": "TaskCount",
+                "Namespace": "ECS/ContainerInsights",
               },
               "Period": 300,
               "Stat": "Sum",
