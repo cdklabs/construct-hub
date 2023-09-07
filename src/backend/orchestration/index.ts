@@ -475,7 +475,7 @@ export class Orchestration extends Construct {
         'FailureRateAlarm',
         {
           alarmName: `${this.stateMachine.node.path}/ExecutionFailureRate`,
-          alarmDescription: ['Execution Failure Rate above 75%', ''].join('\n'),
+          alarmDescription: 'Execution Failure Rate above 75%',
           comparisonOperator:
             ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
           evaluationPeriods: 1,
