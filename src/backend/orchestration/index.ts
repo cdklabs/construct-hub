@@ -478,7 +478,7 @@ export class Orchestration extends Construct {
           alarmDescription: ['Execution Failure Rate above 75%', ''].join('\n'),
           comparisonOperator:
             ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
-          evaluationPeriods: 100,
+          evaluationPeriods: 1,
           threshold: 75,
         }
       )
@@ -527,32 +527,18 @@ export class Orchestration extends Construct {
   ): MathExpression {
     return new MathExpression({
       ...opts,
-      // Calculates the % ExecutionsFailed from the ExecutionsStarted.
-      expression: '100 * executionsFailed / executionsStarted',
+      // Calculates the % Execution Failure rate by dividing the number of messages sent to the DLQ (failures) by the ECS Task Count
+      expression: '100 * msqsMessagesSent / mecsTaskCount',
       usingMetrics: {
-        executionsFailed: this.metricStatesExecutionsFailed(),
-        executionsStarted: this.metricStatesExecutionsStarted(),
+        msqsMessagesSent: this.deadLetterQueue.metricNumberOfMessagesSent({
+          statistic: Statistic.SUM,
+          period: Duration.hours(1),
+        }),
+        mecsTaskCount: this.metricEcsTaskCount({
+          statistic: Statistic.SUM,
+          period: Duration.hours(1),
+        }),
       },
-    });
-  }
-
-  public metricStatesExecutionsFailed(opts?: MetricOptions): Metric {
-    return new Metric({
-      statistic: Statistic.SUM,
-      ...opts,
-      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
-      metricName: 'ExecutionsFailed',
-      namespace: 'AWS/States',
-    });
-  }
-
-  public metricStatesExecutionsStarted(opts?: MetricOptions): Metric {
-    return new Metric({
-      statistic: Statistic.SUM,
-      ...opts,
-      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
-      metricName: 'ExecutionsStarted',
-      namespace: 'AWS/States',
     });
   }
 
