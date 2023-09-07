@@ -522,7 +522,7 @@ export class Orchestration extends Construct {
     );
   }
 
-  public metricStatesExecutionFailureRate(
+  public metricEcsTaskFailureRate(
     opts?: MathExpressionOptions
   ): MathExpression {
     return new MathExpression({
