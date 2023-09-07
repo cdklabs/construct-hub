@@ -171,6 +171,9 @@ project.setScript(
   'yarn dev:synth && cd lib/__tests__/devapp && npx cdk-dia && mv diagram.png ../../../diagrams/diagram.png'
 );
 
+project.addGitIgnore('!/test/fixtures/tests/package.tgz');
+project.addGitIgnore('/test/integ.transliterator.ecstask.ts.snapshot/asset.*');
+
 project.package.addField('resolutions', {
   // https://github.com/aws/aws-cdk/issues/20319
   '@types/prettier': '2.6.0',
