@@ -23,6 +23,7 @@ import {
   Pass,
   StateMachine,
   Succeed,
+  Fail,
   TaskInput,
 } from 'aws-cdk-lib/aws-stepfunctions';
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
@@ -247,7 +248,7 @@ export class Orchestration extends Construct {
         queue: this.deadLetterQueue,
         resultPath: JsonPath.DISCARD,
       }
-    ).next(new Succeed(this, 'Sent to DLQ'));
+    ).next(new Fail(this, 'Sent to DLQ'));
 
     const ignore = new Pass(this, 'Ignore');
 
@@ -470,7 +471,7 @@ export class Orchestration extends Construct {
 
     props.monitoring.addHighSeverityAlarm(
       'Execution Failure Rate above 75%',
-      this.metricEcsTaskFailureRate().createAlarm(
+      this.metricStatesExecutionFailureRate().createAlarm(
         this,
         'FailureRateAlarm',
         {
@@ -522,23 +523,37 @@ export class Orchestration extends Construct {
     );
   }
 
-  public metricEcsTaskFailureRate(
+  public metricStatesExecutionFailureRate(
     opts?: MathExpressionOptions
   ): MathExpression {
     return new MathExpression({
       ...opts,
-      // Calculates the % Execution Failure rate by dividing the number of messages sent to the DLQ (failures) by the ECS Task Count
-      expression: '100 * msqsMessagesSent / mecsTaskCount',
+      // Calculates the % ExecutionsFailed from the ExecutionsStarted.
+      expression: '100 * mexecutionsFailed / mexecutionsStarted',
       usingMetrics: {
-        msqsMessagesSent: this.deadLetterQueue.metricNumberOfMessagesSent({
-          statistic: Statistic.SUM,
-          period: Duration.hours(1),
-        }),
-        mecsTaskCount: this.metricEcsTaskCount({
-          statistic: Statistic.SUM,
-          period: Duration.hours(1),
-        }),
+        mexecutionsFailed: this.metricStatesExecutionsFailed(),
+        mexecutionsStarted: this.metricStatesExecutionsStarted(),
       },
+    });
+  }
+
+  public metricStatesExecutionsFailed(opts?: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.SUM,
+      ...opts,
+      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'ExecutionsFailed',
+      namespace: 'AWS/States',
+    });
+  }
+
+  public metricStatesExecutionsStarted(opts?: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.SUM,
+      ...opts,
+      dimensionsMap: { ExecutionMetrics: this.stateMachine.stateMachineArn },
+      metricName: 'ExecutionsStarted',
+      namespace: 'AWS/States',
     });
   }
 
@@ -546,7 +561,7 @@ export class Orchestration extends Construct {
     return new Metric({
       statistic: Statistic.SUM,
       ...opts,
-      dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      dimensionsMap: { ExecutionMetrics: this.stateMachine.stateMachineArn },
       metricName: 'TaskCount',
       namespace: 'ECS/ContainerInsights',
     });
