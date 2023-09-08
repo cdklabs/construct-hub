@@ -23,6 +23,7 @@ import {
   Pass,
   StateMachine,
   Succeed,
+  Fail,
   TaskInput,
 } from 'aws-cdk-lib/aws-stepfunctions';
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
@@ -247,7 +248,7 @@ export class Orchestration extends Construct {
         queue: this.deadLetterQueue,
         resultPath: JsonPath.DISCARD,
       }
-    ).next(new Succeed(this, 'Sent to DLQ'));
+    ).next(new Fail(this, 'Sent to DLQ'));
 
     const ignore = new Pass(this, 'Ignore');
 
@@ -468,6 +469,22 @@ export class Orchestration extends Construct {
         })
     );
 
+    props.monitoring.addHighSeverityAlarm(
+      'Execution Failure Rate above 75%',
+      this.metricStatesExecutionFailureRate().createAlarm(
+        this,
+        'FailureRateAlarm',
+        {
+          alarmName: `${this.stateMachine.node.path}/ExecutionFailureRate`,
+          alarmDescription: 'Execution Failure Rate above 75%',
+          comparisonOperator:
+            ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+          evaluationPeriods: 1,
+          threshold: 75,
+        }
+      )
+    );
+
     // This function is intended to be manually triggered by an operrator to
     // attempt redriving messages from the DLQ.
     this.redriveFunction = new RedriveStateMachine(this, 'Redrive', {
@@ -506,11 +523,45 @@ export class Orchestration extends Construct {
     );
   }
 
-  public metricEcsTaskCount(opts: MetricOptions): Metric {
+  public metricStatesExecutionFailureRate(
+    opts?: MathExpressionOptions
+  ): MathExpression {
+    return new MathExpression({
+      ...opts,
+      // Calculates the % ExecutionsFailed from the ExecutionsStarted.
+      expression: '100 * mexecutionsFailed / mexecutionsStarted',
+      usingMetrics: {
+        mexecutionsFailed: this.metricStatesExecutionsFailed(),
+        mexecutionsStarted: this.metricStatesExecutionsStarted(),
+      },
+    });
+  }
+
+  public metricStatesExecutionsFailed(opts?: MetricOptions): Metric {
     return new Metric({
       statistic: Statistic.SUM,
       ...opts,
       dimensionsMap: { ClusterName: this.ecsCluster.clusterName },
+      metricName: 'ExecutionsFailed',
+      namespace: 'AWS/States',
+    });
+  }
+
+  public metricStatesExecutionsStarted(opts?: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.SUM,
+      ...opts,
+      dimensionsMap: { ExecutionMetrics: this.stateMachine.stateMachineArn },
+      metricName: 'ExecutionsStarted',
+      namespace: 'AWS/States',
+    });
+  }
+
+  public metricEcsTaskCount(opts: MetricOptions): Metric {
+    return new Metric({
+      statistic: Statistic.SUM,
+      ...opts,
+      dimensionsMap: { ExecutionMetrics: this.stateMachine.stateMachineArn },
       metricName: 'TaskCount',
       namespace: 'ECS/ContainerInsights',
     });
@@ -694,9 +745,15 @@ class RegenerateAllDocumentation extends Construct {
               }),
               integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
             }
-          ).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
+          )
+            .addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
+            .addCatch(new Succeed(props.stateMachine, 'StateMachine Success'), {
+              errors: ['States.TaskFailed'],
+              resultPath: '$.error',
+            })
         )
       );
+
     processVersions.next(
       new Choice(this, 'Has more versions?')
         .when(

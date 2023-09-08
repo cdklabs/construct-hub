@@ -707,9 +707,9 @@ def submit_response(event: dict, context, response_status: str, error_message: s
               {
                 "Ref": "ConstructHubOrchestrationCluster3D6F0081",
               },
-              "",{"label":"Transmitted Bytes","stat":"Maximum","visible":false,"id":"md6781afc8bf73de5587d36039d8226d1c0fe0b50a1c949759d3d8d8cd2e3f6d1"}],[{"label":"Task Count","expression":"FILL(mbb258976f5c025a7dff5289417a6b07619e000e4af1a427fecc57b31586fd6dd, 0)","yAxis":"right"}],["ECS/ContainerInsights","TaskCount","ClusterName","",
+              "",{"label":"Transmitted Bytes","stat":"Maximum","visible":false,"id":"md6781afc8bf73de5587d36039d8226d1c0fe0b50a1c949759d3d8d8cd2e3f6d1"}],[{"label":"Task Count","expression":"FILL(mbb258976f5c025a7dff5289417a6b07619e000e4af1a427fecc57b31586fd6dd, 0)","yAxis":"right"}],["ECS/ContainerInsights","TaskCount","ExecutionMetrics","",
               {
-                "Ref": "ConstructHubOrchestrationCluster3D6F0081",
+                "Ref": "ConstructHubOrchestration39161A46",
               },
               "",{"label":"Task Count","stat":"Sum","visible":false,"id":"mbb258976f5c025a7dff5289417a6b07619e000e4af1a427fecc57b31586fd6dd"}]],"yAxis":{"left":{"min":0},"right":{"min":0}}}},{"type":"metric","width":12,"height":6,"x":0,"y":16,"properties":{"view":"timeSeries","title":"ECS Task Monitor","region":"",
               {
@@ -4842,7 +4842,18 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"ReleaseNotes generation Failure","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Execution Failure Rate above 75%","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","annotations":{"alarms":["",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubOrchestrationFailureRateAlarm3E65EEE1",
+                  "Arn",
+                ],
+              },
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"ReleaseNotes generation Failure","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -4853,7 +4864,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"ReleaseNotes Github credential invalid","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"ReleaseNotes Github credential invalid","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -4864,7 +4875,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"Ingestion failures","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"Ingestion failures","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -4875,7 +4886,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"Home Page Canary","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"Home Page Canary","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -4886,7 +4897,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"NpmJs/Follower Not Running","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"NpmJs/Follower Not Running","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -4897,7 +4908,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"NpmJs Follower Canary is not running or fails","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":48,"properties":{"view":"timeSeries","title":"NpmJs Follower Canary is not running or fails","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -5429,7 +5440,7 @@ Direct link to function: /lambda/home#/functions/",
               {
                 "Ref": "ConstructHubOrchestrationDLQ9C6D9BD4",
               },
-              "","MessageBody.$":"$"}},"Sent to DLQ":{"Type":"Succeed"},"Ignore":{"Type":"Pass","End":true}},"TimeoutSeconds":86400}",
+              "","MessageBody.$":"$"}},"Sent to DLQ":{"Type":"Fail"},"Ignore":{"Type":"Pass","End":true}},"TimeoutSeconds":86400}",
             ],
           ],
         },
@@ -6046,6 +6057,62 @@ Warning: State Machines executions that sent messages to the DLQ will not show a
       },
       "Type": "AWS::CloudWatch::Alarm",
     },
+    "ConstructHubOrchestrationFailureRateAlarm3E65EEE1": {
+      "Properties": {
+        "AlarmDescription": "Execution Failure Rate above 75%",
+        "AlarmName": "dev/ConstructHub/Orchestration/Resource/ExecutionFailureRate",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "EvaluationPeriods": 1,
+        "Metrics": [
+          {
+            "Expression": "100 * mexecutionsFailed / mexecutionsStarted",
+            "Id": "expr_1",
+          },
+          {
+            "Id": "mexecutionsFailed",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "ClusterName",
+                    "Value": {
+                      "Ref": "ConstructHubOrchestrationCluster3D6F0081",
+                    },
+                  },
+                ],
+                "MetricName": "ExecutionsFailed",
+                "Namespace": "AWS/States",
+              },
+              "Period": 300,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+          {
+            "Id": "mexecutionsStarted",
+            "MetricStat": {
+              "Metric": {
+                "Dimensions": [
+                  {
+                    "Name": "ExecutionMetrics",
+                    "Value": {
+                      "Ref": "ConstructHubOrchestration39161A46",
+                    },
+                  },
+                ],
+                "MetricName": "ExecutionsStarted",
+                "Namespace": "AWS/States",
+              },
+              "Period": 300,
+              "Stat": "Sum",
+            },
+            "ReturnData": false,
+          },
+        ],
+        "Threshold": 75,
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
     "ConstructHubOrchestrationGeneratedocsSecurityGroupC584DAC2": {
       "Properties": {
         "GroupDescription": "dev/ConstructHub/Orchestration/Generate docs/SecurityGroup",
@@ -6422,7 +6489,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Get package versions page","States":{"Get package versions page":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Next versions page"}],"Default":"First versions page"},"Has more versions?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Get package versions page"}],"Default":"Success"},"For each key prefix":{"Type":"Map","ResultPath":null,"Next":"Has more versions?","Iterator":{"StartAt":"Start Orchestration Workflow","States":{"Start Orchestration Workflow":{"End":true,"Retry":[{"ErrorEquals":["StepFunctions.ExecutionLimitExceeded"]}],"Type":"Task","Resource":"arn:",
+              "{"StartAt":"Get package versions page","States":{"Get package versions page":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Next versions page"}],"Default":"First versions page"},"Has more versions?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Get package versions page"}],"Default":"Success"},"For each key prefix":{"Type":"Map","ResultPath":null,"Next":"Has more versions?","Iterator":{"StartAt":"Start Orchestration Workflow","States":{"Start Orchestration Workflow":{"End":true,"Retry":[{"ErrorEquals":["StepFunctions.ExecutionLimitExceeded"]}],"Catch":[{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"StateMachine Success"}],"Type":"Task","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -6434,7 +6501,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              ""}}}},"ItemsPath":"$.response.CommonPrefixes"},"First versions page":{"Next":"For each key prefix","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              ""}},"StateMachine Success":{"Type":"Succeed"}}},"ItemsPath":"$.response.CommonPrefixes"},"First versions page":{"Next":"For each key prefix","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
