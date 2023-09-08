@@ -746,8 +746,13 @@ class RegenerateAllDocumentation extends Construct {
               integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
             }
           ).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
+          .addCatch(new Succeed(props.stateMachine, 'Success'), {
+            errors: ['States.TaskFailed'],
+            resultPath: '$.error',
+          })
         )
       );
+
     processVersions.next(
       new Choice(this, 'Has more versions?')
         .when(
