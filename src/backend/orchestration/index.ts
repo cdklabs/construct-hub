@@ -470,7 +470,7 @@ export class Orchestration extends Construct {
 
     props.monitoring.addHighSeverityAlarm(
       'Execution Failure Rate above 75%',
-      this.metricStatesExecutionFailureRate().createAlarm(
+      this.metricEcsTaskFailureRate().createAlarm(
         this,
         'FailureRateAlarm',
         {
