@@ -745,11 +745,12 @@ class RegenerateAllDocumentation extends Construct {
               }),
               integrationPattern: IntegrationPattern.REQUEST_RESPONSE,
             }
-          ).addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
-          .addCatch(new Succeed(props.stateMachine, 'StateMachine Success'), {
-            errors: ['States.TaskFailed'],
-            resultPath: '$.error',
-          })
+          )
+            .addRetry({ errors: ['StepFunctions.ExecutionLimitExceeded'] })
+            .addCatch(new Succeed(props.stateMachine, 'StateMachine Success'), {
+              errors: ['States.TaskFailed'],
+              resultPath: '$.error',
+            })
         )
       );
 

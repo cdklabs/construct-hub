@@ -6489,7 +6489,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
           "Fn::Join": [
             "",
             [
-              "{"StartAt":"Get package versions page","States":{"Get package versions page":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Next versions page"}],"Default":"First versions page"},"Has more versions?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Get package versions page"}],"Default":"Success"},"For each key prefix":{"Type":"Map","ResultPath":null,"Next":"Has more versions?","Iterator":{"StartAt":"Start Orchestration Workflow","States":{"Start Orchestration Workflow":{"End":true,"Retry":[{"ErrorEquals":["StepFunctions.ExecutionLimitExceeded"]}],"Type":"Task","Resource":"arn:",
+              "{"StartAt":"Get package versions page","States":{"Get package versions page":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Next versions page"}],"Default":"First versions page"},"Has more versions?":{"Type":"Choice","Choices":[{"Variable":"$.response.NextContinuationToken","IsPresent":true,"Next":"Get package versions page"}],"Default":"Success"},"For each key prefix":{"Type":"Map","ResultPath":null,"Next":"Has more versions?","Iterator":{"StartAt":"Start Orchestration Workflow","States":{"Start Orchestration Workflow":{"End":true,"Retry":[{"ErrorEquals":["StepFunctions.ExecutionLimitExceeded"]}],"Catch":[{"ErrorEquals":["States.TaskFailed"],"ResultPath":"$.error","Next":"StateMachine Success"}],"Type":"Task","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
@@ -6501,7 +6501,7 @@ Warning: messages that resulted in a failed exectuion will NOT be in the DLQ!",
               {
                 "Ref": "ConstructHubOrchestration39161A46",
               },
-              ""}}}},"ItemsPath":"$.response.CommonPrefixes"},"First versions page":{"Next":"For each key prefix","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
+              ""}},"StateMachine Success":{"Type":"Succeed"}}},"ItemsPath":"$.response.CommonPrefixes"},"First versions page":{"Next":"For each key prefix","Retry":[{"ErrorEquals":["S3.SdkClientException"]}],"Type":"Task","ResultPath":"$.response","Resource":"arn:",
               {
                 "Ref": "AWS::Partition",
               },
