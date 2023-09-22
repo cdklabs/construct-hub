@@ -777,7 +777,7 @@ merged the following into the state machine input object:
 }
 ```
 
-### Missing files
+### Transliterator task missing files
 
 Esbuild bundling does not allow dynamically requiring dependencies. As an example,
 the following code snippet is incompatible with esbuild's bundling:
