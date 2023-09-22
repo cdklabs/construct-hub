@@ -776,3 +776,24 @@ merged the following into the state machine input object:
   }
 }
 ```
+
+### Missing files
+
+Esbuild bundling does not allow dynamically requiring dependencies. As an example,
+the following code snippet is incompatible with esbuild's bundling:
+
+```ts
+require('./commands').forEach(function (command) { 
+  require('./src/' + command);
+});
+```
+
+In one instance, a dependency upgrade introduced a new dependency that was performing
+a dynamic require. By default, the dynamic require error in esbuild is suppressed.
+As a result, the bundle used in the Transliterator task was missing files and was
+failing on start-up.
+
+If you see Transliterator task failures where the stack trace points to missing files,
+this may be a result of a dynamic require being used. It is recommended that you
+look at any dependency upgrades and whether they introduced a new dependency that
+might be using a dynamic require.
