@@ -1,3 +1,5 @@
+# Errors Encountered in the Past
+
 ## General Errors
 
 ### `Forbidden: null`
