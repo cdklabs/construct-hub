@@ -7,8 +7,7 @@ import { s3, sqs } from '../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
 import { integrity } from '../../backend/shared/integrity.lambda-shared';
 
-class HttpNotFoundError extends Error {
-}
+class HttpNotFoundError extends Error {}
 
 /**
  * This function is invoked by the `npm-js-follower.lambda`  with a `PackageVersion` object, or by
@@ -154,9 +153,8 @@ function httpGet(url: string) {
     https.get(url, (response) => {
       console.log(response.statusCode);
       if (response.statusCode === 404) {
-        ko(new HttpNotFoundError())
-      }
-      else if (response.statusCode !== 200) {
+        ko(new HttpNotFoundError());
+      } else if (response.statusCode !== 200) {
         ko(
           new Error(
             `Unsuccessful GET: ${response.statusCode} - ${response.statusMessage}`
