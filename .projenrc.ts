@@ -65,6 +65,7 @@ const project = new CdklabsConstructLibrary({
     'tar-stream',
     'uuid',
     'yaml',
+    'nock',
     'normalize-registry-metadata',
     '@octokit/rest',
     'markdown-it',

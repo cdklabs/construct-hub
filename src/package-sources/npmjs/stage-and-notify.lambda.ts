@@ -7,6 +7,8 @@ import { s3, sqs } from '../../backend/shared/aws.lambda-shared';
 import { requireEnv } from '../../backend/shared/env.lambda-shared';
 import { integrity } from '../../backend/shared/integrity.lambda-shared';
 
+class HttpNotFoundError extends Error {}
+
 /**
  * This function is invoked by the `npm-js-follower.lambda`  with a `PackageVersion` object, or by
  * an SQS trigger feeding from this function's Dead-Letter Queue (for re-trying purposes).
@@ -38,9 +40,23 @@ export async function handler(
     return;
   }
 
-  // Download the tarball
-  console.log(`Downloading tarball from URL: ${event.tarballUrl}`);
-  const tarball = await httpGet(event.tarballUrl);
+  let tarball: Buffer = Buffer.from('');
+  try {
+    // Download the tarball
+    console.log(`Downloading tarball from URL: ${event.tarballUrl}`);
+    tarball = await httpGet(event.tarballUrl);
+  } catch (e) {
+    if (e instanceof HttpNotFoundError) {
+      // We received a message to download a file that should exist but doesn't.
+      // If we throw an error, the message will be sent to the DLQ, to be processed
+      // again in a re-drive. But given that this file will probably never be
+      // available, the re-drives will also fail, and we'll never be able to get rid
+      // of the message in the DLQ. Instead, we ignore this version by returning silently.
+      return;
+    } else {
+      throw e;
+    }
+  }
 
   // Store the tarball into the staging bucket
   // - infos.dist.tarball => https://registry.npmjs.org/<@scope>/<name>/-/<name>-<version>.tgz
@@ -135,7 +151,10 @@ export interface PackageVersion {
 function httpGet(url: string) {
   return new Promise<Buffer>((ok, ko) => {
     https.get(url, (response) => {
-      if (response.statusCode !== 200) {
+      console.log(response.statusCode);
+      if (response.statusCode === 404) {
+        ko(new HttpNotFoundError());
+      } else if (response.statusCode !== 200) {
         ko(
           new Error(
             `Unsuccessful GET: ${response.statusCode} - ${response.statusMessage}`
