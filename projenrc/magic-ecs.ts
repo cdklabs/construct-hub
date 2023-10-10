@@ -211,7 +211,12 @@ function newEcsTask(project: TypeScriptProject, entrypoint: string) {
   df.line('FROM public.ecr.aws/amazonlinux/amazonlinux:2');
   df.line();
   // Install node the regular way...
-  df.line('RUN curl -fsSL https://rpm.nodesource.com/setup_16.x | bash - \\');
+  df.line(
+    'RUN yum install https://rpm.nodesource.com/pub_16.x/nodistro/repo/nodesource-release-nodistro-1.noarch.rpm -y \\'
+  );
+  df.line(
+    ' && yum install nodejs -y --setopt=nodesource-nodejs.module_hotfixes=1 \\'
+  );
   df.line(' && yum update -y \\');
   df.line(' && yum upgrade -y \\');
   df.line(' && yum install -y git lsof nodejs \\');
