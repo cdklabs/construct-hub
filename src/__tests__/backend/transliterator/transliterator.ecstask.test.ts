@@ -15,6 +15,7 @@ import { MarkdownDocument } from 'jsii-docgen/lib/docgen/render/markdown-doc';
 import { MarkdownRenderer } from 'jsii-docgen/lib/docgen/render/markdown-render';
 import { Documentation } from 'jsii-docgen/lib/docgen/view/documentation';
 
+import { Submodule } from 'jsii-reflect';
 import type { TransliteratorInput } from '../../../backend/payload-schema';
 import { reset } from '../../../backend/shared/aws.lambda-shared';
 import * as constants from '../../../backend/shared/constants';
@@ -92,6 +93,10 @@ describe('VPC Endpoints', () => {
             render: () => '{ "contents": "docs" }',
           };
         }
+      }
+
+      public async listSubmodules(): Promise<Submodule[]> {
+        return [];
       }
     }
 
@@ -229,6 +234,9 @@ test('corrupt assembly marker is uploaded for the necessary languages', async ()
     public async toJson() {
       throw new CorruptedAssemblyError();
     }
+    public async listSubmodules(): Promise<Submodule[]> {
+      return [];
+    }
   }
 
   forPackage.mockImplementation(async (_: string) => {
@@ -285,6 +293,9 @@ test('corrupt assembly and uninstallable markers are deleted', async () => {
   class MockDocumentation {
     public async toJson() {
       return new MarkdownDocument();
+    }
+    public async listSubmodules(): Promise<Submodule[]> {
+      return [];
     }
   }
 
@@ -392,14 +403,29 @@ test('uploads a file per language (scoped package)', async () => {
 });
 
 test('uploads a file per submodule (unscoped package)', async () => {
+  // GIVEN
+  const assembly: spec.Assembly = {
+    targets: { python: {} },
+    submodules: {
+      '@scope/package-name.sub1': {},
+      '@scope/package-name.sub2': {},
+    },
+  } as any;
+
+  const submodules: Submodule[] = Object.keys(assembly.submodules ?? {}).map(
+    (sm) => ({ name: sm.substring(sm.indexOf('.') + 1) } as any)
+  );
+
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const forPackage = require('jsii-docgen').Documentation
     .forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
   forPackage.mockImplementation(async (target: string) => {
-    return new MockDocumentation(target) as unknown as Documentation;
+    return new MockDocumentation(
+      target,
+      submodules
+    ) as unknown as Documentation;
   });
 
-  // GIVEN
   const packageName = 'package-name';
   const packageVersion = '1.2.3-dev.4';
   const event: TransliteratorInput = {
@@ -414,14 +440,6 @@ test('uploads a file per submodule (unscoped package)', async () => {
     },
     languages: { typescript: true },
   };
-
-  const assembly: spec.Assembly = {
-    targets: { python: {} },
-    submodules: {
-      '@scope/package-name.sub1': {},
-      '@scope/package-name.sub2': {},
-    },
-  } as any;
 
   // mock the s3ObjectExists call
   mockHeadRequest('package.tgz');
@@ -439,8 +457,10 @@ test('uploads a file per submodule (unscoped package)', async () => {
     '/docs-sub2-typescript.json'
   );
 
+  // WHEN
   const { created } = await handler(event);
 
+  // THEN
   expect(created).toEqual([
     `data/${packageName}/v${packageVersion}/docs-typescript.json`,
     `data/${packageName}/v${packageVersion}/docs-typescript.md`,
@@ -512,6 +532,12 @@ test.each([true, false])(
 
 describe('markers for un-supported languages', () => {
   test('uploads ".not-supported" markers as relevant', async () => {
+    // GIVEN
+    const assembly: spec.Assembly = {
+      targets: { phony: {} },
+      submodules: { 'package-name.sub1': {}, 'package-name.sub2': {} },
+    } as any;
+
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const forPackage = require('jsii-docgen').Documentation
       .forPackage as jest.MockedFunction<typeof Documentation.forPackage>;
@@ -520,13 +546,17 @@ describe('markers for un-supported languages', () => {
       public async toJson() {
         throw new LanguageNotSupportedError();
       }
+      public async listSubmodules(): Promise<Submodule[]> {
+        return Object.keys(assembly.submodules ?? {}).map(
+          (sm) => ({ name: sm.substring(sm.indexOf('.') + 1) } as any)
+        );
+      }
     }
 
     forPackage.mockImplementation(async (_: string) => {
       return new MockDocumentation() as unknown as Documentation;
     });
 
-    // GIVEN
     const packageName = 'package-name';
     const packageVersion = '1.2.3-dev.4';
 
@@ -543,11 +573,6 @@ describe('markers for un-supported languages', () => {
       // Only doing Python here...
       languages: { python: true },
     };
-
-    const assembly: spec.Assembly = {
-      targets: { phony: {} },
-      submodules: { 'package-name.sub1': {}, 'package-name.sub2': {} },
-    } as any;
 
     // mock the s3ObjectExists call
     mockHeadRequest('package.tgz');
@@ -579,11 +604,17 @@ describe('markers for un-supported languages', () => {
 });
 
 class MockDocumentation {
-  public constructor(private readonly target: string) {}
+  public constructor(
+    private readonly target: string,
+    private readonly submodules?: Submodule[]
+  ) {}
   public async toJson() {
     return {
       render: () => `{ "content": "docs for ${this.target}" }`,
     };
+  }
+  public async listSubmodules(): Promise<Submodule[]> {
+    return this.submodules ?? [];
   }
 }
 
