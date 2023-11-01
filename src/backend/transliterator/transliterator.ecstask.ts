@@ -301,7 +301,10 @@ export function handler(
               }
             }
             await renderAndDispatch();
-            for (const submodule of submodules) {
+            const submoduleNames = (await docs.listSubmodules()).map(
+              (sm) => sm.name
+            );
+            for (const submodule of submoduleNames) {
               await renderAndDispatch(submodule);
             }
           }
