@@ -107,8 +107,7 @@ export function handler(
       assemblyResponse.Body.toString('utf-8')
     ) as Assembly;
     const submodules = Object.keys(assembly.submodules ?? {}).map(
-      // Drop the first component, which is the name of the top-level module
-      (s) => s.split('.').slice(1).join('.')
+      (s) => s.split('.')[1]
     );
     console.log(
       `Assembly ${assembly.name} has ${submodules.length} submodules.`
@@ -302,7 +301,10 @@ export function handler(
               }
             }
             await renderAndDispatch();
-            for (const submodule of submodules) {
+            const submoduleNames = (await docs.listSubmodules()).map(
+              (sm) => sm.name
+            );
+            for (const submodule of submoduleNames) {
               await renderAndDispatch(submodule);
             }
           }

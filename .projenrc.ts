@@ -59,6 +59,7 @@ const project = new CdklabsConstructLibrary({
     'fs-extra',
     'got',
     'JSONStream',
+    'jsii-reflect',
     'semver',
     'spdx-license-list',
     'streamx',
