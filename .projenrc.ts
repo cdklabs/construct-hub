@@ -18,7 +18,7 @@ const peerDeps = [
 const cdkCli = 'aws-cdk@^2';
 
 const project = new CdklabsConstructLibrary({
-  cdkVersion: '2.84.0',
+  cdkVersion: '2.108.1',
   setNodeEngineVersion: false,
   private: false,
   name: 'construct-hub',
