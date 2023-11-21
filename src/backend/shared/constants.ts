@@ -126,9 +126,14 @@ export function getObjectKeys(packageName: string, packageVersion: string) {
  */
 export function docsKeySuffix(
   lang?: DocumentationLanguage | '*',
-  submodule?: string,
+  submoduleFqn?: string,
   fileExt?: string
 ) {
+  // We strip the first part (assembly name) off of the submodule name
+  const submodule = submoduleFqn
+    ? submoduleFqn.split('.').slice(1).join('.')
+    : undefined;
+
   return `/docs-${submodule ? `${submodule}-` : ''}${lang}.${fileExt ?? '*'}`;
 }
 
