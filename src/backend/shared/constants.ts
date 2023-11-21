@@ -123,12 +123,21 @@ export function getObjectKeys(packageName: string, packageVersion: string) {
 
 /**
  * The key suffix for documentation artifacts by language and submodule.
+ *
+ * SubmoduleFqn can cleverly be '*' which means "all submodules".
  */
 export function docsKeySuffix(
   lang?: DocumentationLanguage | '*',
-  submodule?: string,
+  submoduleFqn?: string,
   fileExt?: string
 ) {
+  // We strip the first part (assembly name) off of the submodule name, but
+  // only if it's not '*'
+  const submodule =
+    submoduleFqn && submoduleFqn !== '*'
+      ? submoduleFqn.split('.').slice(1).join('.')
+      : submoduleFqn;
+
   return `/docs-${submodule ? `${submodule}-` : ''}${lang}.${fileExt ?? '*'}`;
 }
 

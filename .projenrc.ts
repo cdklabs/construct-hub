@@ -59,7 +59,6 @@ const project = new CdklabsConstructLibrary({
     'fs-extra',
     'got',
     'JSONStream',
-    'jsii-reflect',
     'semver',
     'spdx-license-list',
     'streamx',
@@ -197,6 +196,10 @@ project.package.addField('resolutions', {
 project.addTask('bundle', {
   description: 'Bundle all lambda and ECS functions',
 });
+
+// I have to put this here, otherwise projen overrides this with a `jsii-docgen`
+// dependency without a version. I don't know where or why.
+project.addDevDeps('jsii-docgen@^10.2.0');
 
 // extract the "build/" directory from "construct-hub-webapp" into "./website"
 // and bundle it with this library. this way, we are only taking a
