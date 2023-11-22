@@ -1,8 +1,14 @@
 import { gunzipSync } from 'zlib';
-import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
+import {
+  metricScope,
+  Configuration,
+  Unit,
+  MetricsLogger,
+} from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
 import { PromiseResult } from 'aws-sdk/lib/request';
 import { SemVer } from 'semver';
+import { HyperLogLog } from 'streamcount';
 import { METRICS_NAMESPACE, MetricName, LANGUAGE_DIMENSION } from './constants';
 import * as aws from '../shared/aws.lambda-shared';
 import { compressContent } from '../shared/compress-content.lambda-shared';
@@ -12,26 +18,53 @@ import { DocumentationLanguage } from '../shared/language';
 
 Configuration.namespace = METRICS_NAMESPACE;
 
+/**
+ * Allows HyperLogLog error rate, in fraction
+ */
+const HYPER_LOG_LOG_ERROR = 0.01;
+
+function defaultHll() {
+  return new HyperLogLog(HYPER_LOG_LOG_ERROR);
+}
+
 export async function handler(event: InventoryCanaryEvent, context: Context) {
   console.log('Event:', JSON.stringify(event, null, 2));
 
   const scratchworkBucket = requireEnv('SCRATCHWORK_BUCKET_NAME');
 
+  // Canary state on the first run
+  const freshCanaryState = {
+    continuationToken: undefined,
+    packageCountEstimate: defaultHll(),
+    submoduleCountEstimate: defaultHll(),
+    packageVersionCountEstimate: defaultHll(),
+    majorVersionCountEstimate: defaultHll(),
+    perLanguage: new Map<string, PerLanguageData>(),
+    indexedPackageStates: {
+      assemblyPresentEstimate: defaultHll(),
+      metadataPresentEstimate: defaultHll(),
+      tarballPresentEstimate: defaultHll(),
+      unknownObjectsEstimate: defaultHll(),
+      uninstallable: new Array<string>(),
+    },
+  } satisfies Partial<InventoryCanaryState>;
+
   const {
     continuationToken,
-    indexedPackages,
-    packageNames,
-    packageMajorVersions,
+    packageCountEstimate,
+    submoduleCountEstimate,
+    packageVersionCountEstimate,
+    majorVersionCountEstimate,
+    indexedPackageStates,
     perLanguage,
   } = event.continuationObjectKey
-    ? await loadProgress(event.continuationObjectKey)
-    : {
-        continuationToken: undefined,
-        indexedPackages: new Map<string, IndexedPackageStatus>(),
-        packageNames: new Set<string>(),
-        packageMajorVersions: new Set<string>(),
-        perLanguage: new Map<string, PerLanguageData>(),
-      };
+    ? {
+        // Do this so that if we change the fields incompatibly between two versions,
+        // at least all the fields we expect will be present.
+        ...freshCanaryState,
+        ...(await loadProgress(event.continuationObjectKey)),
+      }
+    : freshCanaryState;
 
   async function loadProgress(continuationObjectKey: string) {
     console.log(
@@ -98,9 +131,11 @@ export async function handler(event: InventoryCanaryEvent, context: Context) {
     console.log('Serializing data...');
     const serializedState: Serialized<InventoryCanaryState> = serialize({
       continuationToken: latestContinuationToken,
-      packageNames,
-      packageMajorVersions,
-      indexedPackages,
+      packageCountEstimate,
+      majorVersionCountEstimate,
+      packageVersionCountEstimate,
+      submoduleCountEstimate,
+      indexedPackageStates,
       perLanguage,
     });
     console.log('Serializing finished.');
@@ -152,11 +187,12 @@ export async function handler(event: InventoryCanaryEvent, context: Context) {
     for (const key of keys) {
       const [, name, version] = constants.STORAGE_KEY_FORMAT_REGEX.exec(key)!;
 
-      packageNames.add(name);
       const majorVersion = `${name}@${new SemVer(version).major}`;
-      packageMajorVersions.add(majorVersion);
-
       const fullName = `${name}@${version}`;
+
+      packageCountEstimate.add(name);
+      majorVersionCountEstimate.add(majorVersion);
+      packageVersionCountEstimate.add(fullName);
 
       // Ensure the package is fully registered for per-language status, even if no doc exists yet.
       for (const language of DocumentationLanguage.ALL) {
@@ -169,19 +205,14 @@ export async function handler(event: InventoryCanaryEvent, context: Context) {
         );
       }
 
-      if (!indexedPackages.has(fullName)) {
-        indexedPackages.set(fullName, {});
-      }
-      const status = indexedPackages.get(fullName)!;
-
       if (key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-        status.metadataPresent = true;
+        indexedPackageStates.metadataPresentEstimate.add(fullName);
       } else if (key.endsWith(constants.PACKAGE_KEY_SUFFIX)) {
-        status.tarballPresent = true;
+        indexedPackageStates.tarballPresentEstimate.add(fullName);
       } else if (key.endsWith(constants.ASSEMBLY_KEY_SUFFIX)) {
-        status.assemblyPresent = true;
+        indexedPackageStates.assemblyPresentEstimate.add(fullName);
       } else if (key.endsWith(constants.UNINSTALLABLE_PACKAGE_SUFFIX)) {
-        status.uninstallable = true;
+        indexedPackageStates.uninstallable.push(fullName);
       } else {
         let identified = false;
         for (const language of DocumentationLanguage.ALL) {
@@ -189,10 +220,7 @@ export async function handler(event: InventoryCanaryEvent, context: Context) {
           const matchMd = submoduleKeyRegexp(language, 'md').exec(key);
           if (matchJson != null) {
             const [, submodule, isUnsupported] = matchJson;
-            if (status.submodules == null) {
-              status.submodules = new Set();
-            }
-            status.submodules.add(`${fullName}.${submodule}`);
+            submoduleCountEstimate.add(`${fullName}.${submodule}`);
             recordPerLanguage(
               language,
               isUnsupported
@@ -266,8 +294,7 @@ export async function handler(event: InventoryCanaryEvent, context: Context) {
           }
         }
         if (!identified) {
-          status.unknownObjects = status.unknownObjects ?? [];
-          status.unknownObjects.push(key);
+          indexedPackageStates.unknownObjectsEstimate.add(key);
         }
       }
     }
@@ -315,87 +342,85 @@ export async function handler(event: InventoryCanaryEvent, context: Context) {
     // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
     metrics.setDimensions({});
 
-    const missingMetadata = new Array<string>();
-    const missingAssembly = new Array<string>();
-    const missingTarball = new Array<string>();
-    const uninstallable = new Array<string>();
-    const unknownObjects = new Array<string>();
-    const submodules = new Array<string>();
-    for (const [name, status] of indexedPackages.entries()) {
-      if (!status.metadataPresent) {
-        missingMetadata.push(name);
-      }
-      if (!status.assemblyPresent) {
-        missingAssembly.push(name);
-      }
-      if (!status.tarballPresent) {
-        missingTarball.push(name);
-      }
-      if (status.uninstallable) {
-        uninstallable.push(name);
-      }
-      if (status.unknownObjects?.length ?? 0 > 0) {
-        unknownObjects.push(...status.unknownObjects!);
-      }
+    const totalPackagesEstimate = packageVersionCountEstimate.count();
 
-      for (const submodule of status.submodules ?? []) {
-        submodules.push(submodule);
-      }
-    }
-
-    metrics.setProperty('detail', {
-      missingMetadata,
-      missingAssembly,
-      missingTarball,
-      unknownObjects,
-    });
+    // Estimate these by subtracting them from how much we expect to have found, vs how much we actually found
+    const missingMetadata = Math.max(
+      totalPackagesEstimate -
+        indexedPackageStates.metadataPresentEstimate.count(),
+      0
+    );
+    const missingTarball = Math.max(
+      totalPackagesEstimate -
+        indexedPackageStates.tarballPresentEstimate.count(),
+      0
+    );
+    const missingAssembly = Math.max(
+      totalPackagesEstimate -
+        indexedPackageStates.assemblyPresentEstimate.count(),
+      0
+    );
 
     metrics.putMetric(
       MetricName.UNINSTALLABLE_PACKAGE_COUNT,
-      uninstallable.length,
+      indexedPackageStates.uninstallable.length,
       Unit.Count
     );
     metrics.putMetric(
       MetricName.MISSING_METADATA_COUNT,
-      missingMetadata.length,
+      missingMetadata,
       Unit.Count
     );
     metrics.putMetric(
       MetricName.MISSING_ASSEMBLY_COUNT,
-      missingAssembly.length,
+      missingAssembly,
       Unit.Count
     );
     metrics.putMetric(
       MetricName.MISSING_TARBALL_COUNT,
-      missingTarball.length,
+      missingTarball,
       Unit.Count
     );
-    metrics.putMetric(MetricName.PACKAGE_COUNT, packageNames.size, Unit.Count);
+    metrics.putMetric(
+      MetricName.PACKAGE_COUNT,
+      packageCountEstimate.count(),
+      Unit.Count
+    );
     metrics.putMetric(
       MetricName.PACKAGE_MAJOR_COUNT,
-      packageMajorVersions.size,
+      majorVersionCountEstimate.count(),
       Unit.Count
     );
     metrics.putMetric(
       MetricName.PACKAGE_VERSION_COUNT,
-      indexedPackages.size,
+      packageVersionCountEstimate.count(),
       Unit.Count
     );
     metrics.putMetric(
       MetricName.SUBMODULE_COUNT,
-      submodules.length,
+      submoduleCountEstimate.count(),
       Unit.Count
     );
     metrics.putMetric(
       MetricName.UNKNOWN_OBJECT_COUNT,
-      unknownObjects.length,
+      indexedPackageStates.unknownObjectsEstimate.count(),
       Unit.Count
     );
 
-    createReport(constants.UNINSTALLABLE_PACKAGES_REPORT, uninstallable);
+    createReport(
+      constants.UNINSTALLABLE_PACKAGES_REPORT,
+      indexedPackageStates.uninstallable
+    );
   })();
 
   for (const entry of Array.from(perLanguage.entries())) {
+    const grainTotals: Record<Grain, number> = {
+      [Grain.PACKAGES]: packageCountEstimate.count(),
+      [Grain.PACKAGE_VERSIONS]: packageVersionCountEstimate.count(),
+      [Grain.PACKAGE_MAJOR_VERSIONS]: majorVersionCountEstimate.count(),
+      [Grain.PACKAGE_VERSION_SUBMODULES]: submoduleCountEstimate.count(),
+    };
+
     await metricScope(
       (metrics) => async (language: string, data: PerLanguageData) => {
         console.log('');
@@ -404,42 +429,38 @@ export async function handler(event: InventoryCanaryEvent, context: Context) {
 
         metrics.setDimensions({ [LANGUAGE_DIMENSION]: language.toString() });
 
-        for (const forStatus of [
-          DocumentationStatus.SUPPORTED,
-          DocumentationStatus.UNSUPPORTED,
-          DocumentationStatus.MISSING,
-          DocumentationStatus.CORRUPT_ASSEMBLY,
-        ]) {
-          for (const [key, statuses] of data.entries()) {
-            let filtered = Array.from(statuses.entries()).filter(
-              ([, status]) => forStatus === status
-            );
-            let metricName =
-              METRIC_NAME_BY_STATUS_AND_GRAIN[forStatus as DocumentationStatus][
-                key as Grain
-              ];
+        for (const [grain, statuses] of data.entries()) {
+          let classifiedElements = 0;
 
-            if (
-              (forStatus === DocumentationStatus.MISSING &&
-                metricName === MetricName.PER_LANGUAGE_MISSING_VERSIONS) ||
-              (forStatus === DocumentationStatus.CORRUPT_ASSEMBLY &&
-                metricName ===
-                  MetricName.PER_LANGUAGE_CORRUPT_ASSEMBLY_VERSIONS)
-            ) {
-              // generate reports for missing/corrupt only for package versions granularity
-              const lang = DocumentationLanguage.fromString(language);
-              const reportKey =
-                forStatus === DocumentationStatus.MISSING
-                  ? constants.missingDocumentationReport(lang)
-                  : constants.corruptAssemblyReport(lang);
-              createReport(reportKey, filtered.map(([name]) => name).sort());
-            }
-
-            console.log(
-              `${forStatus} ${key} for ${language}: ${filtered.length} entries`
+          // First log all the counts we were able to find
+          for (const forStatus of [
+            DocumentationStatus.SUPPORTED,
+            DocumentationStatus.UNSUPPORTED,
+            DocumentationStatus.CORRUPT_ASSEMBLY,
+          ]) {
+            const countEstimate = statuses.get(forStatus)?.count() ?? 0;
+            classifiedElements += countEstimate;
+            emitGrainDocStatus(
+              metrics,
+              language,
+              grain,
+              forStatus,
+              countEstimate
             );
-            metrics.putMetric(metricName, filtered.length, Unit.Count);
           }
+
+          // Then calculate MISSING by subtracting what we did find from what we expected
+          const missingEstimate = Math.max(
+            grainTotals[grain] - classifiedElements,
+            0
+          );
+          emitGrainDocStatus(
+            metrics,
+            language,
+            grain,
+            DocumentationStatus.MISSING,
+            missingEstimate
+          );
         }
 
         console.log(`### End of data for ${language}`);
@@ -454,6 +475,22 @@ export async function handler(event: InventoryCanaryEvent, context: Context) {
   }
 
   return {};
+}
+
+function emitGrainDocStatus(
+  metrics: MetricsLogger,
+  language: string,
+  grain: Grain,
+  status: DocumentationStatus,
+  count: number
+) {
+  const metricName =
+    METRIC_NAME_BY_STATUS_AND_GRAIN[status as DocumentationStatus][
+      grain as Grain
+    ];
+
+  console.log(`${status} ${grain} for ${language}: ${count} entries`);
+  metrics.putMetric(metricName, count, Unit.Count);
 }
 
 /**
@@ -516,15 +553,6 @@ function submoduleKeyRegexp(
   }
 }
 
-interface IndexedPackageStatus {
-  metadataPresent?: boolean;
-  assemblyPresent?: boolean;
-  uninstallable?: boolean;
-  submodules?: Set<string>;
-  tarballPresent?: boolean;
-  unknownObjects?: string[];
-}
-
 export const enum Grain {
   PACKAGE_MAJOR_VERSIONS = 'package major versions',
   PACKAGE_VERSION_SUBMODULES = 'package version submodules',
@@ -532,11 +560,13 @@ export const enum Grain {
   PACKAGES = 'packages',
 }
 
-type PerLanguageData = Map<Grain, Map<string, DocumentationStatus>>;
+type PerLanguageData = Map<Grain, Map<DocumentationStatus, HyperLogLog>>;
 
 export const enum DocumentationStatus {
   /**
-   * This package is missing any kind of documentation or marker file.
+   * There is no documentation for this package/version/submodule
+   *
+   * This status is theoretical, and signaled by the absence of any of the other statuses.
    */
   MISSING = 'Missing',
 
@@ -611,7 +641,10 @@ function doRecordPerLanguage(
   submodule?: string
 ) {
   if (!perLanguage.has(language.name)) {
-    const perGrainData = new Map<Grain, Map<string, DocumentationStatus>>();
+    const perGrainData = new Map<
+      Grain,
+      Map<DocumentationStatus, HyperLogLog>
+    >();
     perGrainData.set(Grain.PACKAGE_MAJOR_VERSIONS, new Map());
     perGrainData.set(Grain.PACKAGES, new Map());
     perGrainData.set(Grain.PACKAGE_VERSION_SUBMODULES, new Map());
@@ -621,39 +654,28 @@ function doRecordPerLanguage(
   const data = perLanguage.get(language.name)!;
 
   // If there is a submodule, only update the submodule domain.
-  const outputDomains: readonly [Map<string, DocumentationStatus>, string][] =
-    submodule
-      ? [
-          [
-            data.get(Grain.PACKAGE_VERSION_SUBMODULES)!,
-            `${pkgVersion}.${submodule}`,
-          ],
-        ]
-      : [
-          [data.get(Grain.PACKAGE_MAJOR_VERSIONS)!, pkgMajor],
-          [data.get(Grain.PACKAGE_VERSIONS)!, pkgVersion],
-          [data.get(Grain.PACKAGES)!, pkgName],
-        ];
+  const outputDomains: readonly [
+    Map<DocumentationStatus, HyperLogLog>,
+    string
+  ][] = submodule
+    ? [
+        [
+          data.get(Grain.PACKAGE_VERSION_SUBMODULES)!,
+          `${pkgVersion}.${submodule}`,
+        ],
+      ]
+    : [
+        [data.get(Grain.PACKAGE_MAJOR_VERSIONS)!, pkgMajor],
+        [data.get(Grain.PACKAGE_VERSIONS)!, pkgVersion],
+        [data.get(Grain.PACKAGES)!, pkgName],
+      ];
+
+  // Then add the name to every cardinality estimator
   for (const [map, name] of outputDomains) {
-    switch (status) {
-      case DocumentationStatus.MISSING:
-        // If we already have a status, don't override it with "MISSING".
-        if (!map.has(name)) {
-          map.set(name, status);
-        }
-        break;
-      case DocumentationStatus.SUPPORTED:
-        // If the package is "supported", this always "wins"
-        map.set(name, status);
-        break;
-      case DocumentationStatus.UNSUPPORTED:
-      case DocumentationStatus.CORRUPT_ASSEMBLY:
-        // If we already have a status, only override with if it was "MISSING".
-        if (!map.has(name) || map.get(name) === DocumentationStatus.MISSING) {
-          map.set(name, status);
-        }
-        break;
+    if (!map.has(status)) {
+      map.set(status, defaultHll());
     }
+    map.get(status)?.add(name);
   }
 }
 
@@ -666,13 +688,38 @@ export interface InventoryCanaryEvent {
 
 /**
  * Intermediate state stored between invocations of the inventory canary.
+ *
+ * The canary accumulates data into this structure as it runs, until it is
+ * finished. This structure is serialized to JSON in its entirety, so it may
+ * not exceed 512MB.
+ *
+ * We therefore have to be clever around what and how we store data.
  */
 export interface InventoryCanaryState {
+  // Next page to continue
   readonly continuationToken: string;
-  readonly indexedPackages: Map<string, IndexedPackageStatus>;
-  readonly packageNames: Set<string>;
-  readonly packageMajorVersions: Set<string>;
+
   readonly perLanguage: Map<string, PerLanguageData>;
+
+  // We are only interested in cardinalities of these, so we use a streaming cardinality
+  // estimator.
+  readonly packageCountEstimate: HyperLogLog;
+  readonly packageVersionCountEstimate: HyperLogLog;
+  readonly majorVersionCountEstimate: HyperLogLog;
+  readonly submoduleCountEstimate: HyperLogLog;
+
+  // This used to be a map of <packageVersion -> { bunch of booleans }}, where we are counting
+  // the positives so that at the end we could report on the negatives. We will now estimate the
+  // positives and substract them from the estimated total to obtain the estimated negatives.
+  readonly indexedPackageStates: {
+    readonly metadataPresentEstimate: HyperLogLog;
+    readonly tarballPresentEstimate: HyperLogLog;
+    readonly assemblyPresentEstimate: HyperLogLog;
+    readonly unknownObjectsEstimate: HyperLogLog;
+
+    // We want a full list of these so that we can report on it
+    readonly uninstallable: string[];
+  };
 }
 
 type Serialized<T> = string & { _serialized: T };
@@ -682,7 +729,12 @@ type Serialized<T> = string & { _serialized: T };
  * and arrays back into sets where appropriate.
  */
 function safeReplacer(_key: string, value: any) {
-  if (value instanceof Map) {
+  if (value instanceof HyperLogLog) {
+    return {
+      _type: 'HLL',
+      value: value.serialize().toString('base64'),
+    };
+  } else if (value instanceof Map) {
     return {
       _type: 'Map',
       value: Array.from(value.entries()),
@@ -699,6 +751,9 @@ function safeReplacer(_key: string, value: any) {
 
 function safeReviver(_key: string, value: any) {
   if (typeof value === 'object' && value !== null) {
+    if (value._type === 'HLL') {
+      return HyperLogLog.deserialize(Buffer.from(value.value, 'base64'));
+    }
     if (value._type === 'Map') {
       return new Map(value.value);
     }
@@ -710,7 +765,7 @@ function safeReviver(_key: string, value: any) {
 }
 
 export function serialize<T>(value: T): Serialized<T> {
-  return JSON.stringify(value, safeReplacer, 2) as Serialized<T>;
+  return JSON.stringify(value, safeReplacer) as Serialized<T>;
 }
 
 export function deserialize<T>(value: Serialized<T>): T {

@@ -62,6 +62,7 @@ const project = new CdklabsConstructLibrary({
     'semver',
     'spdx-license-list',
     'streamx',
+    'streamcount',
     'tar-stream',
     'uuid',
     'yaml',
@@ -174,6 +175,7 @@ project.setScript(
 
 project.addGitIgnore('!/test/fixtures/tests/package.tgz');
 project.addGitIgnore('/test/integ.transliterator.ecstask.ts.snapshot/asset.*');
+project.addGitIgnore('!/src/third-party-types/*');
 
 project.package.addField('resolutions', {
   // https://github.com/aws/aws-cdk/issues/20319
