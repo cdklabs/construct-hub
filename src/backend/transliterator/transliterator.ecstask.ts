@@ -93,10 +93,12 @@ export function handler(
     console.log(`Source Version: ${event.assembly.versionId}`);
 
     console.log(`Fetching assembly: ${event.assembly.key}`);
-    const assemblyResponse = await aws
-      .s3()
-      .getObject({ Bucket: event.bucket, Key: event.assembly.key })
-      .promise();
+    const assemblyResponse = await retry(() =>
+      aws
+        .s3()
+        .getObject({ Bucket: event.bucket, Key: event.assembly.key })
+        .promise()
+    );
     if (!assemblyResponse.Body) {
       throw new Error(
         `Response body for assembly at key ${event.assembly.key} is empty`
@@ -106,14 +108,12 @@ export function handler(
     const assembly = JSON.parse(
       assemblyResponse.Body.toString('utf-8')
     ) as Assembly;
-    const submodules = Object.keys(assembly.submodules ?? {}).map(
-      (s) => s.split('.')[1]
-    );
+    const submoduleFqns = Object.keys(assembly.submodules ?? {});
     console.log(
-      `Assembly ${assembly.name} has ${submodules.length} submodules.`
+      `Assembly ${assembly.name} has ${submoduleFqns.length} submodules.`
     );
 
-    restrictSubmoduleCountToReturnable(event, submodules);
+    restrictSubmoduleCountToReturnable(event, submoduleFqns);
 
     console.log(`Fetching package: ${event.package.key}`);
     const tarballExists = await aws.s3ObjectExists(
@@ -183,15 +183,15 @@ export function handler(
             metrics.setDimensions({});
             metrics.setNamespace(METRICS_NAMESPACE);
 
-            async function renderAndDispatch(submodule?: string) {
-              const label = `Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submodule})`;
+            async function renderAndDispatch(submoduleFqn?: string) {
+              const label = `Rendering documentation in ${lang} for ${packageFqn} (submodule: ${submoduleFqn})`;
               try {
                 console.log(label);
                 console.time(label);
 
                 const docgenLang = docgen.Language.fromString(lang.name);
                 const json = await docs.toJson({
-                  submodule,
+                  submodule: submoduleFqn,
                   language: docgenLang,
                 });
 
@@ -214,7 +214,7 @@ export function handler(
                 const jsonKey = formatArtifactKey(
                   event.assembly,
                   lang,
-                  submodule,
+                  submoduleFqn,
                   'json'
                 );
                 console.log(`Uploading ${jsonKey}`);
@@ -248,7 +248,7 @@ export function handler(
                 const key = formatArtifactKey(
                   event.assembly,
                   lang,
-                  submodule,
+                  submoduleFqn,
                   'md'
                 );
                 console.log(`Uploading ${key}`);
@@ -263,24 +263,36 @@ export function handler(
 
                 // if the package used to have a corrupt assembly, remove the marker for it.
                 await unmarkPackage(
-                  constants.corruptAssemblyKeySuffix(language, submodule, 'md')
+                  constants.corruptAssemblyKeySuffix(
+                    language,
+                    submoduleFqn,
+                    'md'
+                  )
                 );
               } catch (e) {
                 if (e instanceof docgen.LanguageNotSupportedError) {
                   markPackage(
                     e,
-                    constants.notSupportedKeySuffix(language, submodule, 'json')
+                    constants.notSupportedKeySuffix(
+                      language,
+                      submoduleFqn,
+                      'json'
+                    )
                   );
                   markPackage(
                     e,
-                    constants.notSupportedKeySuffix(language, submodule, 'md')
+                    constants.notSupportedKeySuffix(
+                      language,
+                      submoduleFqn,
+                      'md'
+                    )
                   );
                 } else if (e instanceof docgen.CorruptedAssemblyError) {
                   markPackage(
                     e,
                     constants.corruptAssemblyKeySuffix(
                       language,
-                      submodule,
+                      submoduleFqn,
                       'json'
                     )
                   );
@@ -288,7 +300,7 @@ export function handler(
                     e,
                     constants.corruptAssemblyKeySuffix(
                       language,
-                      submodule,
+                      submoduleFqn,
                       'md'
                     )
                   );
@@ -301,11 +313,8 @@ export function handler(
               }
             }
             await renderAndDispatch();
-            const submoduleNames = (await docs.listSubmodules()).map(
-              (sm) => sm.name
-            );
-            for (const submodule of submoduleNames) {
-              await renderAndDispatch(submodule);
+            for (const submoduleFqn of submoduleFqns) {
+              await renderAndDispatch(submoduleFqn);
             }
           }
         );
@@ -389,33 +398,36 @@ function uploadFile(
     : 'application/octet-stream';
 
   const token = S3_SEMAPHORE.acquire();
-  return aws
-    .s3()
-    .putObject({
-      Bucket: bucket,
-      Key: key,
-      Body: body,
-      // We may not import anything that uses 'aws-cdk-lib' here
-      CacheControl:
-        'public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate',
-      ContentEncoding: contentEncoding,
-      ContentType: contentType,
-      Metadata: {
-        'Origin-Version-Id': sourceVersionId ?? 'N/A',
-      },
-    })
-    .promise()
-    .finally(() => S3_SEMAPHORE.release(token));
+  return retry(() =>
+    aws
+      .s3()
+      .putObject({
+        Bucket: bucket,
+        Key: key,
+        Body: body,
+        // We may not import anything that uses 'aws-cdk-lib' here
+        CacheControl:
+          'public, max-age=300, must-revalidate, s-maxage=60, proxy-revalidate',
+        ContentEncoding: contentEncoding,
+        ContentType: contentType,
+        Metadata: {
+          'Origin-Version-Id': sourceVersionId ?? 'N/A',
+        },
+      })
+      .promise()
+  ).finally(() => S3_SEMAPHORE.release(token));
 }
 
 function deleteFile(bucket: string, key: string) {
-  return aws
-    .s3()
-    .deleteObject({
-      Bucket: bucket,
-      Key: key,
-    })
-    .promise();
+  return retry(() =>
+    aws
+      .s3()
+      .deleteObject({
+        Bucket: bucket,
+        Key: key,
+      })
+      .promise()
+  );
 }
 
 function anchorFormatter(type: JsiiEntity) {
@@ -431,12 +443,12 @@ function anchorFormatter(type: JsiiEntity) {
 function formatArtifactKey(
   assemblyObject: S3ObjectVersion,
   lang: DocumentationLanguage,
-  submodule: string | undefined,
+  submoduleFqn: string | undefined,
   extension: string
 ) {
   return assemblyObject.key.replace(
     /\/[^/]+$/,
-    constants.docsKeySuffix(lang, submodule, extension)
+    constants.docsKeySuffix(lang, submoduleFqn, extension)
   );
 }
 
@@ -548,4 +560,33 @@ function restrictSubmoduleCountToReturnable(
         .reduce((x, a) => x + a, 0)
     );
   }
+}
+
+/**
+ * Retry a function a number of times if it happens to get throttled
+ */
+async function retry<A>(cb: () => Promise<A>): Promise<A> {
+  const deadline = Date.now() + 30_000; // Half a minute minute
+  let sleepMs = 10;
+  while (true) {
+    try {
+      return await cb();
+    } catch (e) {
+      if (!isRetryableError(e) || Date.now() >= deadline) {
+        throw e;
+      }
+
+      await sleep(Math.floor(Math.random() * sleepMs));
+      sleepMs *= 2;
+    }
+  }
+}
+
+function isRetryableError(e: any) {
+  // Prepare for AWS SDK v3 already
+  return e.code === 'SlowDown' || e.name === 'SlowDown';
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise<void>((ok) => setTimeout(ok, ms));
 }
