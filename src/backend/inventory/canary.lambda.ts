@@ -149,7 +149,6 @@ export async function handler(event: InventoryCanaryEvent, context: Context) {
     packageDataBucket,
     continuationToken
   )) {
-    console.log(`Got a page of ${keys.length} keys`);
     for (const key of keys) {
       const [, name, version] = constants.STORAGE_KEY_FORMAT_REGEX.exec(key)!;
 
