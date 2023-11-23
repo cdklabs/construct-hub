@@ -14,6 +14,8 @@ export const enum MetricName {
   PACKAGE_VERSION_COUNT = 'PackageVersionCount',
   PACKAGE_MAJOR_COUNT = 'PackageMajorVersionCount',
   PACKAGE_COUNT = 'PackageCount',
+
+  // Total number of all submodules across all minor and patch versions
   SUBMODULE_COUNT = 'SubmoduleCount',
   UNKNOWN_OBJECT_COUNT = 'UnknownObjectCount',
 

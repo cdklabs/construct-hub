@@ -132,9 +132,9 @@ export function docsKeySuffix(
   fileExt?: string
 ) {
   // We strip the first part (assembly name) off of the submodule name, but
-  // only if it's not '*'
+  // only if it's not '*' or '<SUBMODULENAME>'
   const submodule =
-    submoduleFqn && submoduleFqn !== '*'
+    submoduleFqn && submoduleFqn !== '*' && submoduleFqn !== '<SUBMODULENAME>'
       ? submoduleFqn.split('.').slice(1).join('.')
       : submoduleFqn;
 
