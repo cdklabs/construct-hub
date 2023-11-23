@@ -1,14 +1,9 @@
 import { gunzipSync } from 'zlib';
-import {
-  metricScope,
-  Configuration,
-  Unit,
-  MetricsLogger,
-} from 'aws-embedded-metrics';
+import { metricScope, Configuration, Unit } from 'aws-embedded-metrics';
 import type { Context } from 'aws-lambda';
 import { PromiseResult } from 'aws-sdk/lib/request';
 import { SemVer } from 'semver';
-import { HyperLogLog } from 'streamcount';
+import { HyperLogLog, createUniquesCounter } from 'streamcount';
 import { METRICS_NAMESPACE, MetricName, LANGUAGE_DIMENSION } from './constants';
 import * as aws from '../shared/aws.lambda-shared';
 import { compressContent } from '../shared/compress-content.lambda-shared';
@@ -24,31 +19,20 @@ Configuration.namespace = METRICS_NAMESPACE;
 const HYPER_LOG_LOG_ERROR = 0.01;
 
 function defaultHll() {
-  return new HyperLogLog(HYPER_LOG_LOG_ERROR);
+  return createUniquesCounter(HYPER_LOG_LOG_ERROR);
 }
 
 export async function handler(event: InventoryCanaryEvent, context: Context) {
   console.log('Event:', JSON.stringify(event, null, 2));
+  const host = new AwsInventoryHost(context);
 
-  const scratchworkBucket = requireEnv('SCRATCHWORK_BUCKET_NAME');
+  return realHandler(event, host);
+}
 
-  // Canary state on the first run
-  const freshCanaryState = {
-    continuationToken: undefined,
-    packageCountEstimate: defaultHll(),
-    submoduleCountEstimate: defaultHll(),
-    packageVersionCountEstimate: defaultHll(),
-    majorVersionCountEstimate: defaultHll(),
-    perLanguage: new Map<string, PerLanguageData>(),
-    indexedPackageStates: {
-      assemblyPresentEstimate: defaultHll(),
-      metadataPresentEstimate: defaultHll(),
-      tarballPresentEstimate: defaultHll(),
-      unknownObjectsEstimate: defaultHll(),
-      uninstallable: new Array<string>(),
-    },
-  } satisfies Partial<InventoryCanaryState>;
-
+export async function realHandler(
+  event: InventoryCanaryEvent,
+  host: IInventoryHost
+) {
   const {
     continuationToken,
     packageCountEstimate,
@@ -61,303 +45,108 @@ export async function handler(event: InventoryCanaryEvent, context: Context) {
     ? {
         // Do this so that if we change the fields incompatibly between two versions,
         // at least all the fields we expect will be present.
-        ...freshCanaryState,
-        ...(await loadProgress(event.continuationObjectKey)),
+        ...freshCanaryState(),
+        ...(await host.loadProgress(event.continuationObjectKey)),
       }
-    : freshCanaryState;
+    : freshCanaryState();
 
-  async function loadProgress(continuationObjectKey: string) {
-    console.log(
-      'Found a continuation object key, retrieving data from the existing run...'
-    );
-    let { Body, ContentEncoding } = await aws
-      .s3()
-      .getObject({
-        Bucket: scratchworkBucket,
-        Key: continuationObjectKey,
-      })
-      .promise();
-    // If it was compressed, decompress it.
-    if (ContentEncoding === 'gzip') {
-      Body = gunzipSync(Buffer.from(Body! as any));
-    }
-    if (!Body) {
-      throw new Error(
-        `Object key "${event.continuationObjectKey}" not found in bucket "${scratchworkBucket}".`
-      );
-    }
-    console.log('Deserializing data...');
-    const serializedState = Body.toString(
-      'utf-8'
-    ) as Serialized<InventoryCanaryState>;
-    const state = deserialize(serializedState);
-    console.log('Deserializing finished.');
-    return state;
-  }
-
-  /**
-   * Records the status of a particular package, package major version, package
-   * version, and package version submodule in the per-language state storage.
-   * Whenever a new entry is added, a `MISSING` entry is automatically inserted
-   * for the other languages (unless another entry already exists).
-   *
-   * If a submodule is provided, only that submodule's availability is updated.
-   */
-  function recordPerLanguage(
-    language: DocumentationLanguage,
-    status: DocumentationStatus,
-    pkgName: string,
-    pkgMajor: string,
-    pkgVersion: string,
-    submodule?: string
-  ) {
-    for (const lang of DocumentationLanguage.ALL) {
-      doRecordPerLanguage(
-        perLanguage,
-        lang,
-        // If the language is NOT the registered one, then we insert "MISSING".
-        lang === language ? status : DocumentationStatus.MISSING,
-        pkgName,
-        pkgMajor,
-        pkgVersion,
-        submodule
-      );
-    }
-  }
-
-  async function saveProgress(
-    latestContinuationToken: string
-  ): Promise<InventoryCanaryEvent> {
-    console.log('Serializing data...');
-    const serializedState: Serialized<InventoryCanaryState> = serialize({
-      continuationToken: latestContinuationToken,
-      packageCountEstimate,
-      majorVersionCountEstimate,
-      packageVersionCountEstimate,
-      submoduleCountEstimate,
-      indexedPackageStates,
-      perLanguage,
-    });
-    console.log('Serializing finished.');
-
-    const { buffer, contentEncoding } = compressContent(
-      Buffer.from(serializedState)
-    );
-
-    const keyName = `inventory-canary-progress-${Date.now()}`;
-    await aws
-      .s3()
-      .putObject({
-        Bucket: scratchworkBucket,
-        Key: keyName,
-        Body: buffer,
-        ContentType: 'application/json',
-        ContentEncoding: contentEncoding,
-        Metadata: {
-          'Lambda-Log-Group': context.logGroupName,
-          'Lambda-Log-Stream': context.logStreamName,
-          'Lambda-Run-Id': context.awsRequestId,
-        },
-      })
-      .promise();
-    return {
-      continuationObjectKey: keyName,
-    };
-  }
-
-  /**
-   * The time margin when we need to stop working through S3 keys when we're nearing the end of the Lambda time slice.
-   *
-   * Needs to account for the time taken to do both:
-   *
-   * - Going through the list+process loop one more time
-   * - Creating metrics and uploading reports
-   *
-   * When we used to have this at 1 minute, we hit ~1 timeout a day. So set the margin
-   * a bit wider than that.
-   */
-  const maxMetricProcessingTime = 120_000;
-
-  const packageDataBucket = requireEnv('PACKAGE_DATA_BUCKET_NAME');
-
-  for await (const [keys, latestContinuationToken] of relevantObjectKeys(
-    packageDataBucket,
+  for await (const [keys, latestContinuationToken] of host.relevantObjectKeys(
     continuationToken
   )) {
     for (const key of keys) {
       const [, name, version] = constants.STORAGE_KEY_FORMAT_REGEX.exec(key)!;
 
-      const majorVersion = `${name}@${new SemVer(version).major}`;
-      const fullName = `${name}@${version}`;
+      const pv: PackageVersion = {
+        name,
+        fullName: `${name}@${version}`,
+        majorVersion: `${name}@${new SemVer(version).major}`,
+      };
 
       packageCountEstimate.add(name);
-      majorVersionCountEstimate.add(majorVersion);
-      packageVersionCountEstimate.add(fullName);
+      majorVersionCountEstimate.add(pv.majorVersion);
+      packageVersionCountEstimate.add(pv.fullName);
 
-      // Ensure the package is fully registered for per-language status, even if no doc exists yet.
-      for (const language of DocumentationLanguage.ALL) {
-        recordPerLanguage(
-          language,
-          DocumentationStatus.MISSING,
-          name,
-          majorVersion,
-          fullName
-        );
-      }
-
+      // Package-level files
       if (key.endsWith(constants.METADATA_KEY_SUFFIX)) {
-        indexedPackageStates.metadataPresentEstimate.add(fullName);
+        indexedPackageStates.metadataPresentEstimate.add(pv.fullName);
       } else if (key.endsWith(constants.PACKAGE_KEY_SUFFIX)) {
-        indexedPackageStates.tarballPresentEstimate.add(fullName);
+        indexedPackageStates.tarballPresentEstimate.add(pv.fullName);
       } else if (key.endsWith(constants.ASSEMBLY_KEY_SUFFIX)) {
-        indexedPackageStates.assemblyPresentEstimate.add(fullName);
+        indexedPackageStates.assemblyPresentEstimate.add(pv.fullName);
       } else if (key.endsWith(constants.UNINSTALLABLE_PACKAGE_SUFFIX)) {
-        indexedPackageStates.uninstallable.push(fullName);
+        indexedPackageStates.uninstallable.push(pv.fullName);
       } else {
-        let identified = false;
-        for (const language of DocumentationLanguage.ALL) {
-          const matchJson = submoduleKeyRegexp(language, 'json').exec(key);
-          const matchMd = submoduleKeyRegexp(language, 'md').exec(key);
-          if (matchJson != null) {
-            const [, submodule, isUnsupported] = matchJson;
-            submoduleCountEstimate.add(`${fullName}.${submodule}`);
+        const classed = classifyDocumentationFile(key);
+        switch (classed.type) {
+          case 'known-json':
             recordPerLanguage(
-              language,
-              isUnsupported
-                ? DocumentationStatus.UNSUPPORTED
-                : DocumentationStatus.SUPPORTED,
-              name,
-              majorVersion,
-              fullName,
-              submodule
+              classed.lang,
+              classed.supported
+                ? DocumentationStatus.SUPPORTED
+                : DocumentationStatus.UNSUPPORTED,
+              pv,
+              classed.submodule
             );
-            identified = true;
-          } else if (
-            key.endsWith(constants.docsKeySuffix(language, undefined, 'json'))
-          ) {
-            recordPerLanguage(
-              language,
-              DocumentationStatus.SUPPORTED,
-              name,
-              majorVersion,
-              fullName
-            );
-            identified = true;
-          } else if (
-            key.endsWith(
-              constants.notSupportedKeySuffix(language, undefined, 'json')
-            )
-          ) {
-            recordPerLanguage(
-              language,
-              DocumentationStatus.UNSUPPORTED,
-              name,
-              majorVersion,
-              fullName
-            );
-            identified = true;
-          } else if (
-            key.endsWith(
-              constants.corruptAssemblyKeySuffix(language, undefined, 'json')
-            )
-          ) {
-            recordPerLanguage(
-              language,
-              DocumentationStatus.CORRUPT_ASSEMBLY,
-              name,
-              majorVersion,
-              fullName
-            );
-            identified = true;
 
-            // Currently we generate both JSON files and markdown files, so for now
-            // we record JSON files as the source of truth, but still identify
-            // markdown files so they are not counted as unknown.
-          } else if (matchMd != null) {
-            identified = true;
-          } else if (
-            key.endsWith(constants.docsKeySuffix(language, undefined, 'md'))
-          ) {
-            identified = true;
-          } else if (
-            key.endsWith(
-              constants.notSupportedKeySuffix(language, undefined, 'md')
-            )
-          ) {
-            identified = true;
-          } else if (
-            key.endsWith(
-              constants.corruptAssemblyKeySuffix(language, undefined, 'md')
-            )
-          ) {
-            identified = true;
-          }
-        }
-        if (!identified) {
-          indexedPackageStates.unknownObjectsEstimate.add(key);
+            if (classed.submodule) {
+              submoduleCountEstimate.add(`${pv.fullName}.${classed.submodule}`);
+            }
+
+            break;
+          case 'corrupt-assembly':
+            recordPerLanguage(
+              classed.lang,
+              DocumentationStatus.CORRUPT_ASSEMBLY,
+              pv
+            );
+            break;
+          case 'unknown':
+            indexedPackageStates.unknownObjectsEstimate.add(key);
+            break;
+          case 'ignore':
+            break;
         }
       }
     }
 
-    if (
-      latestContinuationToken &&
-      context.getRemainingTimeInMillis() <= maxMetricProcessingTime
-    ) {
-      console.log(
+    if (latestContinuationToken && host.timeToCheckpoint()) {
+      host.log(
         'Running up to the Lambda time limit and there are still items to process. Saving our current progress...'
       );
-      return saveProgress(latestContinuationToken);
+      return host.saveProgress({
+        continuationToken: latestContinuationToken,
+        packageCountEstimate,
+        majorVersionCountEstimate,
+        packageVersionCountEstimate,
+        submoduleCountEstimate,
+        indexedPackageStates,
+        perLanguage,
+      });
     }
   }
 
-  const reports: Promise<
-    PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>
-  >[] = [];
-
-  function createReport(reportKey: string, packageVersions: string[]) {
-    const report = JSON.stringify(packageVersions, null, 2);
-    const { buffer, contentEncoding } = compressContent(Buffer.from(report));
-    console.log(`Uploading list to s3://${packageDataBucket}/${reportKey}`);
-    reports.push(
-      aws
-        .s3()
-        .putObject({
-          Body: buffer,
-          Bucket: packageDataBucket,
-          ContentEncoding: contentEncoding,
-          ContentType: 'application/json',
-          Expires: new Date(Date.now() + 300_000), // 5 minutes from now
-          Key: reportKey,
-          Metadata: {
-            'Lambda-Run-Id': context.awsRequestId,
-            'Lambda-Log-Group-Name': context.logGroupName,
-            'Lambda-Log-Stream-Name': context.logStreamName,
-          },
-        })
-        .promise()
-    );
-  }
-
-  await metricScope((metrics) => () => {
+  await host.metricScope(async (metrics) => {
     // Clear out default dimensions as we don't need those. See https://github.com/awslabs/aws-embedded-metrics-node/issues/73.
     metrics.setDimensions({});
 
-    const totalPackagesEstimate = packageVersionCountEstimate.count();
+    const totalPackagesEstimate = Math.floor(
+      packageVersionCountEstimate.count()
+    );
 
     // Estimate these by subtracting them from how much we expect to have found, vs how much we actually found
     const missingMetadata = Math.max(
       totalPackagesEstimate -
-        indexedPackageStates.metadataPresentEstimate.count(),
+        Math.floor(indexedPackageStates.metadataPresentEstimate.count()),
       0
     );
     const missingTarball = Math.max(
       totalPackagesEstimate -
-        indexedPackageStates.tarballPresentEstimate.count(),
+        Math.floor(indexedPackageStates.tarballPresentEstimate.count()),
       0
     );
     const missingAssembly = Math.max(
       totalPackagesEstimate -
-        indexedPackageStates.assemblyPresentEstimate.count(),
+        Math.floor(indexedPackageStates.assemblyPresentEstimate.count()),
       0
     );
 
@@ -383,142 +172,172 @@ export async function handler(event: InventoryCanaryEvent, context: Context) {
     );
     metrics.putMetric(
       MetricName.PACKAGE_COUNT,
-      packageCountEstimate.count(),
+      Math.floor(packageCountEstimate.count()),
       Unit.Count
     );
     metrics.putMetric(
       MetricName.PACKAGE_MAJOR_COUNT,
-      majorVersionCountEstimate.count(),
+      Math.floor(majorVersionCountEstimate.count()),
       Unit.Count
     );
     metrics.putMetric(
       MetricName.PACKAGE_VERSION_COUNT,
-      packageVersionCountEstimate.count(),
+      Math.floor(packageVersionCountEstimate.count()),
       Unit.Count
     );
     metrics.putMetric(
       MetricName.SUBMODULE_COUNT,
-      submoduleCountEstimate.count(),
+      Math.floor(submoduleCountEstimate.count()),
       Unit.Count
     );
     metrics.putMetric(
       MetricName.UNKNOWN_OBJECT_COUNT,
-      indexedPackageStates.unknownObjectsEstimate.count(),
+      Math.floor(indexedPackageStates.unknownObjectsEstimate.count()),
       Unit.Count
     );
 
-    createReport(
+    host.queueReport(
       constants.UNINSTALLABLE_PACKAGES_REPORT,
       indexedPackageStates.uninstallable
     );
-  })();
+  });
 
-  for (const entry of Array.from(perLanguage.entries())) {
+  for (const [language, data] of perLanguage.entries()) {
     const grainTotals: Record<Grain, number> = {
-      [Grain.PACKAGES]: packageCountEstimate.count(),
-      [Grain.PACKAGE_VERSIONS]: packageVersionCountEstimate.count(),
-      [Grain.PACKAGE_MAJOR_VERSIONS]: majorVersionCountEstimate.count(),
-      [Grain.PACKAGE_VERSION_SUBMODULES]: submoduleCountEstimate.count(),
+      [Grain.PACKAGES]: Math.floor(packageCountEstimate.count()),
+      [Grain.PACKAGE_VERSIONS]: Math.floor(packageVersionCountEstimate.count()),
+      [Grain.PACKAGE_MAJOR_VERSIONS]: Math.floor(
+        majorVersionCountEstimate.count()
+      ),
+      [Grain.PACKAGE_VERSION_SUBMODULES]: Math.floor(
+        submoduleCountEstimate.count()
+      ),
     };
 
-    await metricScope(
-      (metrics) => async (language: string, data: PerLanguageData) => {
-        console.log('');
-        console.log('##################################################');
-        console.log(`### Start of data for ${language}`);
+    await host.metricScope(async (metrics) => {
+      host.log('');
+      host.log('##################################################');
+      host.log(`### Start of data for ${language}`);
 
-        metrics.setDimensions({ [LANGUAGE_DIMENSION]: language.toString() });
+      metrics.setDimensions({ [LANGUAGE_DIMENSION]: language.toString() });
 
-        for (const [grain, statuses] of data.entries()) {
-          let classifiedElements = 0;
+      for (const [grain, statuses] of data.entries()) {
+        let classifiedElements = 0;
 
-          // First log all the counts we were able to find
-          for (const forStatus of [
-            DocumentationStatus.SUPPORTED,
-            DocumentationStatus.UNSUPPORTED,
-            DocumentationStatus.CORRUPT_ASSEMBLY,
-          ]) {
-            const countEstimate = statuses.get(forStatus)?.count() ?? 0;
-            classifiedElements += countEstimate;
-            emitGrainDocStatus(
-              metrics,
-              language,
-              grain,
-              forStatus,
-              countEstimate
-            );
-          }
-
-          // Then calculate MISSING by subtracting what we did find from what we expected
-          const missingEstimate = Math.max(
-            grainTotals[grain] - classifiedElements,
-            0
+        // First log all the counts we were able to find
+        for (const forStatus of [
+          DocumentationStatus.SUPPORTED,
+          DocumentationStatus.UNSUPPORTED,
+          DocumentationStatus.CORRUPT_ASSEMBLY,
+        ]) {
+          const countEstimate = Math.floor(
+            statuses.get(forStatus)?.count() ?? 0
           );
+          classifiedElements += countEstimate;
           emitGrainDocStatus(
             metrics,
             language,
             grain,
-            DocumentationStatus.MISSING,
-            missingEstimate
+            forStatus,
+            countEstimate,
+            host
           );
         }
 
-        console.log(`### End of data for ${language}`);
-        console.log('##################################################');
-        console.log('');
+        // Then calculate MISSING by subtracting what we did find from what we expected
+        const missingEstimate = Math.max(
+          grainTotals[grain] - classifiedElements,
+          0
+        );
+        emitGrainDocStatus(
+          metrics,
+          language,
+          grain,
+          DocumentationStatus.MISSING,
+          missingEstimate,
+          host
+        );
       }
-    )(...entry);
+
+      host.log(`### End of data for ${language}`);
+      host.log('##################################################');
+      host.log('');
+    });
   }
 
-  for (const report of reports) {
-    await report;
-  }
+  await host.uploadsComplete();
 
   return {};
+
+  /**
+   * Registers the information for the provided language. A "MISSING" status
+   * will be ignored if another status was already registered for the same
+   * entity. An "UNSUPPORTED" status will be ignored if a "SUPPORTED" status
+   * was already registered for the same entity.
+   *
+   * If a submodule is provided, only that submodule's availability is updated.
+   */
+  function recordPerLanguage(
+    language: DocumentationLanguage,
+    status: DocumentationStatus,
+    pv: PackageVersion,
+    submodule?: string
+  ) {
+    if (!perLanguage.has(language.name)) {
+      const perGrainData = new Map<
+        Grain,
+        Map<DocumentationStatus, HyperLogLog>
+      >();
+      perGrainData.set(Grain.PACKAGE_MAJOR_VERSIONS, new Map());
+      perGrainData.set(Grain.PACKAGES, new Map());
+      perGrainData.set(Grain.PACKAGE_VERSION_SUBMODULES, new Map());
+      perGrainData.set(Grain.PACKAGE_VERSIONS, new Map());
+      perLanguage.set(language.name, perGrainData);
+    }
+    const data = perLanguage.get(language.name)!;
+
+    // If there is a submodule, only update the submodule domain.
+    const outputDomains: readonly [
+      Map<DocumentationStatus, HyperLogLog>,
+      string
+    ][] = submodule
+      ? [
+          [
+            data.get(Grain.PACKAGE_VERSION_SUBMODULES)!,
+            `${pv.fullName}.${submodule}`,
+          ],
+        ]
+      : [
+          [data.get(Grain.PACKAGE_MAJOR_VERSIONS)!, pv.majorVersion],
+          [data.get(Grain.PACKAGE_VERSIONS)!, pv.fullName],
+          [data.get(Grain.PACKAGES)!, pv.name],
+        ];
+
+    // Then add the name to every cardinality estimator
+    for (const [map, name] of outputDomains) {
+      if (!map.has(status)) {
+        map.set(status, defaultHll());
+      }
+      map.get(status)?.add(name);
+    }
+  }
 }
 
 function emitGrainDocStatus(
-  metrics: MetricsLogger,
+  metrics: IMetrics,
   language: string,
   grain: Grain,
   status: DocumentationStatus,
-  count: number
+  count: number,
+  host: IInventoryHost
 ) {
   const metricName =
     METRIC_NAME_BY_STATUS_AND_GRAIN[status as DocumentationStatus][
       grain as Grain
     ];
 
-  console.log(`${status} ${grain} for ${language}: ${count} entries`);
+  host.log(`${status} ${grain} for ${language}: ${count} entries`);
   metrics.putMetric(metricName, count, Unit.Count);
-}
-
-/**
- * List all objects in the bucket, yielding batches of up to 1000 keys. Also
- * yields the next continuation token if there is one.
- */
-async function* relevantObjectKeys(
-  bucket: string,
-  continuationToken?: string
-): AsyncGenerator<[string[], string | undefined], void, void> {
-  const request: AWS.S3.ListObjectsV2Request = {
-    Bucket: bucket,
-    Prefix: constants.STORAGE_KEY_PREFIX,
-  };
-  if (continuationToken) request.ContinuationToken = continuationToken;
-
-  do {
-    const response = await aws.s3().listObjectsV2(request).promise();
-    const keys = [];
-    for (const { Key } of response.Contents ?? []) {
-      if (Key == null) {
-        continue;
-      }
-      keys.push(Key);
-    }
-    yield [keys, response.ContinuationToken];
-    request.ContinuationToken = response.NextContinuationToken;
-  } while (request.ContinuationToken != null);
 }
 
 /**
@@ -559,8 +378,6 @@ export const enum Grain {
   PACKAGE_VERSIONS = 'package versions',
   PACKAGES = 'packages',
 }
-
-type PerLanguageData = Map<Grain, Map<DocumentationStatus, HyperLogLog>>;
 
 export const enum DocumentationStatus {
   /**
@@ -624,59 +441,63 @@ const METRIC_NAME_BY_STATUS_AND_GRAIN: {
 };
 
 /**
- * Registers the information for the provided language. A "MISSING" status
- * will be ignored if another status was already registered for the same
- * entity. An "UNSUPPORTED" status will be ignored if a "SUPPORTED" status
- * was already registered for the same entity.
+ * We have a markdown or JSON file from a particular language
  *
- * If a submodule is provided, only that submodule's availability is updated.
+ * Pattern:
+ *
+ * ```
+ * data/<package>/v<version>/docs-[<submodule>-]<language>.<json|md>[.not-supported]
+ * ```
+ *
+ * Try to identify it
  */
-function doRecordPerLanguage(
-  perLanguage: Map<string, PerLanguageData>,
-  language: DocumentationLanguage,
-  status: DocumentationStatus,
-  pkgName: string,
-  pkgMajor: string,
-  pkgVersion: string,
-  submodule?: string
-) {
-  if (!perLanguage.has(language.name)) {
-    const perGrainData = new Map<
-      Grain,
-      Map<DocumentationStatus, HyperLogLog>
-    >();
-    perGrainData.set(Grain.PACKAGE_MAJOR_VERSIONS, new Map());
-    perGrainData.set(Grain.PACKAGES, new Map());
-    perGrainData.set(Grain.PACKAGE_VERSION_SUBMODULES, new Map());
-    perGrainData.set(Grain.PACKAGE_VERSIONS, new Map());
-    perLanguage.set(language.name, perGrainData);
-  }
-  const data = perLanguage.get(language.name)!;
+export function classifyDocumentationFile(key: string): FileClassification {
+  for (const lang of DocumentationLanguage.ALL) {
+    const re = submoduleKeyRegexp(lang, 'json');
+    const matchJson = re.exec(key);
+    if (matchJson != null) {
+      const [, submodule, isUnsupported] = matchJson;
 
-  // If there is a submodule, only update the submodule domain.
-  const outputDomains: readonly [
-    Map<DocumentationStatus, HyperLogLog>,
-    string
-  ][] = submodule
-    ? [
-        [
-          data.get(Grain.PACKAGE_VERSION_SUBMODULES)!,
-          `${pkgVersion}.${submodule}`,
-        ],
-      ]
-    : [
-        [data.get(Grain.PACKAGE_MAJOR_VERSIONS)!, pkgMajor],
-        [data.get(Grain.PACKAGE_VERSIONS)!, pkgVersion],
-        [data.get(Grain.PACKAGES)!, pkgName],
-      ];
-
-  // Then add the name to every cardinality estimator
-  for (const [map, name] of outputDomains) {
-    if (!map.has(status)) {
-      map.set(status, defaultHll());
+      return {
+        type: 'known-json',
+        lang,
+        supported: !isUnsupported,
+        submodule,
+      };
     }
-    map.get(status)?.add(name);
+
+    if (key.endsWith(constants.docsKeySuffix(lang, undefined, 'json'))) {
+      return { type: 'known-json', lang, supported: true };
+    }
+
+    if (
+      key.endsWith(constants.notSupportedKeySuffix(lang, undefined, 'json'))
+    ) {
+      return { type: 'known-json', lang, supported: false };
+    }
+
+    if (
+      key.endsWith(constants.corruptAssemblyKeySuffix(lang, undefined, 'json'))
+    ) {
+      return { type: 'corrupt-assembly', lang };
+    }
+
+    // Currently we generate both JSON files and markdown files, so for now
+    // we record JSON files as the source of truth, but still identify
+    // markdown files so they are not counted as unknown.
+    const matchMd = submoduleKeyRegexp(lang, 'md').exec(key);
+    if (
+      matchMd != null ||
+      key.endsWith(constants.docsKeySuffix(lang, undefined, 'md')) ||
+      key.endsWith(constants.notSupportedKeySuffix(lang, undefined, 'md')) ||
+      key.endsWith(constants.corruptAssemblyKeySuffix(lang, undefined, 'md'))
+    ) {
+      return { type: 'ignore' };
+    }
   }
+
+  // Awww
+  return { type: 'unknown' };
 }
 
 /**
@@ -697,9 +518,7 @@ export interface InventoryCanaryEvent {
  */
 export interface InventoryCanaryState {
   // Next page to continue
-  readonly continuationToken: string;
-
-  readonly perLanguage: Map<string, PerLanguageData>;
+  readonly continuationToken: string | undefined;
 
   // We are only interested in cardinalities of these, so we use a streaming cardinality
   // estimator.
@@ -708,9 +527,15 @@ export interface InventoryCanaryState {
   readonly majorVersionCountEstimate: HyperLogLog;
   readonly submoduleCountEstimate: HyperLogLog;
 
-  // This used to be a map of <packageVersion -> { bunch of booleans }}, where we are counting
-  // the positives so that at the end we could report on the negatives. We will now estimate the
-  // positives and substract them from the estimated total to obtain the estimated negatives.
+  // This used to be a map of <packageVersion -> { bunch of booleans }}, where we used to collect
+  // all positives so that at the end we could report on the negatives (i.e., all packages for which
+  // we hadn't seen valid assemblies/tarballs/etc).
+  //
+  // To save space, we now estimate the positives using a streaming cadinality
+  // estimator and substract them from the estimated total to obtain the
+  // estimated negatives.
+  //
+  // All of these are counted per PackageVersion (so per `package@1.2.3`).
   readonly indexedPackageStates: {
     readonly metadataPresentEstimate: HyperLogLog;
     readonly tarballPresentEstimate: HyperLogLog;
@@ -720,7 +545,22 @@ export interface InventoryCanaryState {
     // We want a full list of these so that we can report on it
     readonly uninstallable: string[];
   };
+
+  // For every (language, grain, status) we estimate the count
+  //
+  // Grain is one of (Packages, PackageVersions, PackageMajorVersions, PackageVersionSubmodules).
+  readonly perLanguage: Map<string, PerLanguageData>;
 }
+
+/**
+ * This used to be a map of { Grain -> { Package -> DocumentationStatus }}, so that
+ * at the end we could count all the packages of a particular status, and report on some.
+ *
+ * We no longer collect full lists; instead we only collect cardinalities for most documentation
+ * statuses (except MISSING, which we will derive by subtracting the sum total of the other statuses
+ * from the total number of packages we are expecting).
+ */
+export type PerLanguageData = Map<Grain, Map<DocumentationStatus, HyperLogLog>>;
 
 type Serialized<T> = string & { _serialized: T };
 
@@ -729,7 +569,7 @@ type Serialized<T> = string & { _serialized: T };
  * and arrays back into sets where appropriate.
  */
 function safeReplacer(_key: string, value: any) {
-  if (value instanceof HyperLogLog) {
+  if (isHyperLogLog(value)) {
     return {
       _type: 'HLL',
       value: value.serialize().toString('base64'),
@@ -771,3 +611,233 @@ export function serialize<T>(value: T): Serialized<T> {
 export function deserialize<T>(value: Serialized<T>): T {
   return JSON.parse(value, safeReviver);
 }
+
+export function freshCanaryState(): InventoryCanaryState {
+  return {
+    continuationToken: undefined,
+    packageCountEstimate: defaultHll(),
+    submoduleCountEstimate: defaultHll(),
+    packageVersionCountEstimate: defaultHll(),
+    majorVersionCountEstimate: defaultHll(),
+    perLanguage: new Map<string, PerLanguageData>(),
+    indexedPackageStates: {
+      assemblyPresentEstimate: defaultHll(),
+      metadataPresentEstimate: defaultHll(),
+      tarballPresentEstimate: defaultHll(),
+      unknownObjectsEstimate: defaultHll(),
+      uninstallable: new Array<string>(),
+    },
+  };
+}
+
+export function isHyperLogLog(x: any): x is HyperLogLog {
+  return x && typeof x === 'object' && x.serialize && x.count && x.add && x.M;
+}
+
+/**
+ * All the functions we need to abstract over to unit test this
+ */
+export interface IInventoryHost {
+  log(...xs: any[]): void;
+
+  loadProgress(continuationObjectKey: string): Promise<InventoryCanaryState>;
+  saveProgress(state: InventoryCanaryState): Promise<InventoryCanaryEvent>;
+
+  queueReport(reportKey: string, packageVersions: string[]): void;
+  uploadsComplete(): Promise<void>;
+
+  relevantObjectKeys(
+    continuationToken?: string
+  ): AsyncGenerator<[string[], string | undefined], void, void>;
+
+  /** Whether it's time to stop this invocation and have the State Machine start another Lambda */
+  timeToCheckpoint(): boolean;
+
+  metricScope(block: (m: IMetrics) => Promise<void>): Promise<void>;
+}
+
+export interface IMetrics {
+  setDimensions(dimensionSet: Record<string, string>): IMetrics;
+  putMetric(key: string, value: number, unit?: Unit | string): IMetrics;
+}
+
+export class AwsInventoryHost implements IInventoryHost {
+  private readonly scratchworkBucket: string;
+  private readonly packageDataBucket: string;
+  private reports: Promise<
+    PromiseResult<AWS.S3.PutObjectOutput, AWS.AWSError>
+  >[] = [];
+
+  constructor(private readonly context: Context) {
+    this.scratchworkBucket = requireEnv('SCRATCHWORK_BUCKET_NAME');
+    this.packageDataBucket = requireEnv('PACKAGE_DATA_BUCKET_NAME');
+  }
+
+  public log(...xs: any[]): void {
+    console.log(...xs);
+  }
+
+  public timeToCheckpoint() {
+    return this.context.getRemainingTimeInMillis() <= MAX_SHUTDOWN_TIME;
+  }
+
+  /**
+   * List all objects in the bucket, yielding batches of up to 1000 keys. Also
+   * yields the next continuation token if there is one.
+   */
+  public async *relevantObjectKeys(
+    continuationToken?: string
+  ): AsyncGenerator<[string[], string | undefined], void, void> {
+    const request: AWS.S3.ListObjectsV2Request = {
+      Bucket: this.packageDataBucket,
+      Prefix: constants.STORAGE_KEY_PREFIX,
+    };
+    if (continuationToken) request.ContinuationToken = continuationToken;
+
+    do {
+      const response = await aws.s3().listObjectsV2(request).promise();
+      const keys = [];
+      for (const { Key } of response.Contents ?? []) {
+        if (Key == null) {
+          continue;
+        }
+        keys.push(Key);
+      }
+      yield [keys, response.ContinuationToken];
+      request.ContinuationToken = response.NextContinuationToken;
+    } while (request.ContinuationToken != null);
+  }
+
+  public async saveProgress(
+    state: InventoryCanaryState
+  ): Promise<InventoryCanaryEvent> {
+    console.log('Serializing data...');
+    const serializedState: Serialized<InventoryCanaryState> = serialize(state);
+    console.log('Serializing finished.');
+
+    const { buffer, contentEncoding } = compressContent(
+      Buffer.from(serializedState)
+    );
+
+    const keyName = `inventory-canary-progress-${Date.now()}`;
+    await aws
+      .s3()
+      .putObject({
+        Bucket: this.scratchworkBucket,
+        Key: keyName,
+        Body: buffer,
+        ContentType: 'application/json',
+        ContentEncoding: contentEncoding,
+        Metadata: {
+          'Lambda-Log-Group': this.context.logGroupName,
+          'Lambda-Log-Stream': this.context.logStreamName,
+          'Lambda-Run-Id': this.context.awsRequestId,
+        },
+      })
+      .promise();
+    return {
+      continuationObjectKey: keyName,
+    };
+  }
+
+  public async loadProgress(continuationObjectKey: string) {
+    console.log(
+      'Found a continuation object key, retrieving data from the existing run...'
+    );
+    let { Body, ContentEncoding } = await aws
+      .s3()
+      .getObject({
+        Bucket: this.scratchworkBucket,
+        Key: continuationObjectKey,
+      })
+      .promise();
+    // If it was compressed, decompress it.
+    if (ContentEncoding === 'gzip') {
+      Body = gunzipSync(Buffer.from(Body! as any));
+    }
+    if (!Body) {
+      throw new Error(
+        `Object key "${continuationObjectKey}" not found in bucket "${this.scratchworkBucket}".`
+      );
+    }
+    console.log('Deserializing data...');
+    const serializedState = Body.toString(
+      'utf-8'
+    ) as Serialized<InventoryCanaryState>;
+    const state = deserialize(serializedState);
+    console.log('Deserializing finished.');
+    return state;
+  }
+
+  public queueReport(reportKey: string, packageVersions: string[]) {
+    const report = JSON.stringify(packageVersions, null, 2);
+    const { buffer, contentEncoding } = compressContent(Buffer.from(report));
+    console.log(
+      `Uploading list to s3://${this.packageDataBucket}/${reportKey}`
+    );
+    this.reports.push(
+      aws
+        .s3()
+        .putObject({
+          Body: buffer,
+          Bucket: this.packageDataBucket,
+          ContentEncoding: contentEncoding,
+          ContentType: 'application/json',
+          Expires: new Date(Date.now() + 300_000), // 5 minutes from now
+          Key: reportKey,
+          Metadata: {
+            'Lambda-Run-Id': this.context.awsRequestId,
+            'Lambda-Log-Group-Name': this.context.logGroupName,
+            'Lambda-Log-Stream-Name': this.context.logStreamName,
+          },
+        })
+        .promise()
+    );
+  }
+
+  public async uploadsComplete() {
+    for (const report of this.reports) {
+      await report;
+    }
+  }
+
+  public metricScope(block: (m: IMetrics) => Promise<void>): Promise<void> {
+    return metricScope((m) => () => block(m))();
+  }
+}
+
+/**
+ * The time margin when we need to stop working through S3 keys when we're nearing the end of the Lambda time slice.
+ *
+ * Needs to account for the time taken to do both:
+ *
+ * - Going through the list+process loop one more time
+ * - Creating metrics and uploading reports
+ *
+ * When we used to have this at 1 minute, we hit ~1 timeout a day. So set the margin
+ * a bit wider than that.
+ */
+const MAX_SHUTDOWN_TIME = 120_000;
+
+/**
+ * Identifier for a package version
+ */
+interface PackageVersion {
+  /** 'package' */
+  readonly name: string;
+  /** 'package@1.2.3' */
+  readonly fullName: string;
+  /** 'package@1' */
+  readonly majorVersion: string;
+}
+
+export type FileClassification =
+  | {
+      type: 'known-json';
+      lang: DocumentationLanguage;
+      supported: boolean;
+      submodule?: string;
+    }
+  | { type: 'corrupt-assembly'; lang: DocumentationLanguage }
+  | { type: 'ignore' }
+  | { type: 'unknown' };

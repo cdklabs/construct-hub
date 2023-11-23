@@ -2,19 +2,14 @@ declare module "streamcount" {
 
   function createUniquesCounter(stdError?: number): HyperLogLog;
 
-  class HyperLogLog {
-    /**
-     * Create an HLL instance with a given allowed error fraction (default 0.01 or 1%)
-     */
-    constructor(stdError?: number);
-
+  interface HyperLogLog {
     /**
      * Add a string to the counter
      */
     add(x: string): void;
 
     /**
-     * Return the count estimate
+     * Return the count estimate (will be a floating point number!)
      */
     count(): number;
 
@@ -29,8 +24,15 @@ declare module "streamcount" {
     merge(hll: HyperLogLog): void;
 
     /**
+     * This is private. Don't touch it, but it can be used to recognize the type (HyperLogLog is not a class, unfortunately)
+     */
+    M: number[];
+  }
+
+  namespace HyperLogLog {
+    /**
      * Deserialize an HLL from a Buffer
      */
-    static deserialize(state: Buffer): HyperLogLog;
+    function deserialize(state: Buffer): HyperLogLog;
   }
 }
