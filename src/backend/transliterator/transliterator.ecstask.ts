@@ -191,6 +191,7 @@ export function handler(
 
                 const docgenLang = docgen.Language.fromString(lang.name);
                 const json = await docs.toJson({
+                  readme: true,
                   submodule: submoduleFqn,
                   language: docgenLang,
                 });
