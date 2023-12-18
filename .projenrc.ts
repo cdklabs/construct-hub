@@ -9,8 +9,8 @@ import { generateSpdxLicenseEnum } from './projenrc/spdx-licenses';
 import { addVpcAllowListManagement } from './projenrc/vps-allow-list';
 
 const peerDeps = [
-  '@aws-cdk/aws-servicecatalogappregistry-alpha',
-  'aws-cdk-lib',
+  '@aws-cdk/aws-servicecatalogappregistry-alpha@2.84.0-alpha.0',
+  'aws-cdk-lib@^2.84.0',
   'cdk-watchful',
   'constructs',
 ];
