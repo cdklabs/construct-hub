@@ -18,7 +18,7 @@ async function main(args: string[]) {
     entryPoints: [entrypoint],
     outfile,
     sourcemap: true,
-    target: 'node16',
+    target: 'node18',
     platform: 'node',
     metafile: true,
 
