@@ -136,7 +136,7 @@ function newLambdaHandler(
     'esbuild',
     '--bundle',
     entry,
-    '--target="node16"',
+    '--target="node18"',
     '--platform="node"',
     `--outfile="${outfile}"`,
     '--external:aws-sdk',

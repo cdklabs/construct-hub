@@ -289,7 +289,7 @@ export function discoverEcsTasks(project: TypeScriptProject) {
       ...entrypoints.map((file) =>
         file.replace('ecstask.ts', 'ecs-entrypoint.ts')
       ),
-      '--target="node16"',
+      '--target="node18"',
       '--platform="node"',
       `--outbase="${project.srcdir}"`,
       `--outdir="${project.libdir}"`,
