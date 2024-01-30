@@ -200,6 +200,7 @@ export class WebApp extends Construct {
           eventType: cloudfront.FunctionEventType.VIEWER_RESPONSE,
         },
       ],
+      viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
     };
 
     const websiteOrigin = new origins.S3Origin(this.bucket);
