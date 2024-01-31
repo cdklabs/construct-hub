@@ -216,6 +216,7 @@ project.npmignore?.addPatterns('!/website'); // <-- include in tarball
 project.gitignore.addPatterns('/website'); // <-- don't commit
 
 project.gitignore.exclude('.vscode/');
+project.gitignore.exclude('**/.DS_Store');
 
 addVpcAllowListManagement(project);
 addDevApp(project);
