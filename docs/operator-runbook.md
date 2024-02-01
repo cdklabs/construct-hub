@@ -17,8 +17,8 @@ readily available.
 ### Storage Disaster
 
 Every deployment of Construct Hub automatically allocates a failover bucket for every bucket it creates and uses.
-The failover buckets are created with the exact same properites as the original buckets, but are not activated by default.
-They exist in order for operators to perform scheduled snapshots of the original data, in preparation for a disater.
+The failover buckets are created with the exact same properties as the original buckets, but are not activated by default.
+They exist in order for operators to perform scheduled snapshots of the original data, in preparation for a disaster.
 
 Construct Hub deployments provide CloudFormation outputs that list out the necessary commands you need to run in order to
 create those snapshots, and backup your data into the failover buckets.
@@ -57,12 +57,33 @@ When you restore the original data and are ready to go back to the original buck
 If the data loss/corruption is self-inflicted and continuous, i.e construct hub misbehaves and mutates its own data in a faulty manner.
 In this case switching to the failover won't help because the bad behavior will be applied on the failover buckets.
 
-#### When to use this procedure.
+#### When to use this procedure
 
 This procedure is designed to be used as a reaction to a single and isolated corruption/loss event, either by human error or by the system.
 **Its imperative you validate the corruption is not continuous!**
 
 ## :rotating_light: ConstructHub Alarms
+
+### `ConstructHub/FeedBuilder/Failure`
+
+#### Description
+
+This alarm goes off when the *Feed Builder Function* fails.
+
+#### Investigation
+
+The classical way of diagnosing Lambda Function failures is to dive into the
+logs in CloudWatch Logs. Those can easily be found by looking under the
+*Feed Builder Function* section of the backend dashboard, then clocking the *Search
+Log Group* button.
+
+For additional recommendations for diving into CloudWatch Logs, refer to the
+[Diving into Lambda Function logs in CloudWatch Logs][#lambda-log-dive] section.
+
+#### Resolution
+
+The alarm will automatically go back to green once the Lambda function stops
+failing.
 
 ### `ConstructHub/Ingestion/DLQNotEmpty`
 
@@ -112,7 +133,6 @@ default). Once the dead-letter queue has cleared up, disable that trigger again.
 > trigger and resume investigating. There may be a second problem that was
 > hidden by the original one.
 
-
 ### `ConstructHub/Ingestion/Failure`
 
 #### Description
@@ -145,7 +165,6 @@ queue, and caused the
 [`ConstructHub/Ingestion/DLQNotEmpty`](#constructhubingestiondlqnotempty) alarm
 to go off.
 
-
 ### `ConstructHub/InventoryCanary/Failures`
 
 #### Description
@@ -168,7 +187,6 @@ For additional recommendations for diving into CloudWatch Logs, refer to the
 
 The alarm will automatically go back to green once the Lambda function stops
 failing. No further action is needed.
-
 
 ### `ConstructHub/InventoryCanary/NotRunning`
 
@@ -201,7 +219,6 @@ request a quota increase.
 
 The alarm will automatically go back to green once the Lambda function starts
 running as scheduled again. No further action is needed.
-
 
 ### `ConstructHub/Orchestration/DLQ/NotEmpty`
 
@@ -276,7 +293,6 @@ Machine for re-processing by running the *Redrive DLQ* function, linked from the
 If messages are sent back to the dead-letter queue, perform the investigation
 steps again.
 
-
 ### `ConstructHub/Orchestration/CatalogBuilder/ShrinkingCatalog`
 
 #### Description
@@ -334,7 +350,6 @@ will always be different from the version ID you copied from):
   "VersionId": "YdnYvTCVDqRRFA.NFJjy36p0hxifMlkA"
 }
 ```
-
 
 ### `ConstructHub/Orchestration/Resource/ExecutionsFailed`
 
@@ -405,7 +420,6 @@ dead-letter queue need to be manually passed to new function invocations.
 > :construction: An automated way to replay messages from the dead-letter queue
 > will be provided in the future.
 
-
 ### `ConstructHub/Sources/CodeArtifact/*/Fowarder/Failures`
 
 #### Description
@@ -434,7 +448,6 @@ Some messages may have been sent to the dead-letter queue, and caused the
 [`ConstructHub/Sources/CodeArtifact/Fowarder/DLQNotEmpty`](#constructhubsourcescodeartifactfowarderdlqnotempty)
 alarm to go off.
 
-
 ### `ConstructHub/Sources/NpmJs/Follower/Failures`
 
 #### Description
@@ -458,7 +471,6 @@ For additional recommendations for diving into CloudWatch Logs, refer to the
 
 This alarm will automatically go back to green once the `NpmJs` follower stops
 failing. No futher action is needed.
-
 
 ### `ConstructHub/Sources/NpmJs/Follower/NotRunning`
 
@@ -553,7 +565,7 @@ For additional recommendations for diving into CloudWatch Logs, refer to the
 
 #### Resolution
 
-Once the root cause of the failures has been addressed, the messgaes from the
+Once the root cause of the failures has been addressed, the messages from the
 dead-letter queue can be automatically re-processed through the Lambda function
 by enabling the SQS Trigger that is automatically configured on the function,
 but is disabled by default.
@@ -566,7 +578,7 @@ disable the SQS Trigger again.
 ## :repeat: Bulk Re-processing
 
 In some cases, it might be useful to re-process indexed packages though parts or
-all of the back-end. This section descripts the options offered by the back-end
+all of the back-end. This section describes the options offered by the back-end
 system and when it is appropriate to use them.
 
 ### Overview
@@ -577,7 +589,7 @@ Two workflows are available for bulk-reprocessing:
    through the entire pipeline, including re-generating the `metadata.json`
    object. This is usually not necessary, unless an issue has been identified
    with many indexed packages (incorrect or missing `metadata.json`, incorrectly
-   identfied construct framework package, etc...). In most cases, re-generating
+   identified construct framework package, etc...). In most cases, re-generating
    the documentation is sufficient.
 1. The "re-generate all documentation" workflow re-runs all indexed packages
    through the documentation-generation process. This is useful when a new
@@ -612,7 +624,7 @@ object such as the following:
 }
 ```
 
-These informations may be useful to other operations as they observe the side
+This information may be useful to other operations as they observe the side
 effects of executing these workflows.
 
 --------------------------------------------------------------------------------
@@ -647,6 +659,7 @@ unable to evaluate the metric.
 
 Otherwise, look for traces of the package version in the logs of each step in
 the pipeline:
+
 - The NpmJs follower function
 - The NpmJs stager function
 - The backend orchestration workflow
@@ -695,12 +708,13 @@ to determine what is happening and resolve the problem.
 
 #### Resolution
 
-Once the canary starts unning normally again, the alarm will clear itself
+Once the canary starts running normally again, the alarm will clear itself
 without requiring any further intervention.
 
 ## :information_source: General Recommendations
 
 ### Diving into Lambda Function logs in CloudWatch Logs
+
 [#lambda-log-dive]: #diving-into-lambda-function-logs-in-cloudwatch-logs
 
 Diving into Lambda Function logs can seem daunting at first. The following are
@@ -713,9 +727,9 @@ often good first steps to take in such investigations:
   points.
 - Once you've homed in on a log entry from a failed Lambda execution, identify
   the request ID for this trace.
-  + Lambda log entries are formatted like so:
+  - Lambda log entries are formatted like so:
     `<timestamp> <request-id> <log-level> <message>`
-  + Extract the `request-id` segment (it is a UUID), and copy it in the search
+  - Extract the `request-id` segment (it is a UUID), and copy it in the search
     bar, surrounded by double quotes (`"`)
 - Remember, the search bar of CloudWatch Logs requires quoting if the searched
   string includes any character that is not alphanumeric or underscore.
@@ -729,6 +743,7 @@ often good first steps to take in such investigations:
   https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html
 
 ### Diving into ECS logs in CloudWatch Logs
+
 [#ecs-log-dive]: #diving-into-ecs-logs-in-cloudwatch-logs
 
 ECS tasks emit logs into CloudWatch under a log group called

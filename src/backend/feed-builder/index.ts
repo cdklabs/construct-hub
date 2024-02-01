@@ -1,10 +1,16 @@
 import * as cdk from 'aws-cdk-lib';
+import {
+  ComparisonOperator,
+  TreatMissingData,
+} from 'aws-cdk-lib/aws-cloudwatch';
 import * as lambda from 'aws-cdk-lib/aws-lambda';
 import * as s3 from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
-
 import { UpdateFeed } from './update-feed';
+import { lambdaFunctionUrl } from '../../deep-link';
+import type { Monitoring } from '../../monitoring';
 import { OverviewDashboard } from '../../overview-dashboard';
+import { RUNBOOK_URL } from '../../runbook-url';
 import {
   STORAGE_KEY_PREFIX,
   PACKAGE_RELEASE_NOTES_KEY_SUFFIX,
@@ -41,6 +47,11 @@ export interface FeedBuilderProps {
   readonly feedDescription?: string;
 
   /**
+   * The monitoring handler to register alarms with.
+   */
+  readonly monitoring: Monitoring;
+
+  /**
    * The overview dashboard to register dashboards with.
    */
   readonly overviewDashboard: OverviewDashboard;
@@ -67,6 +78,7 @@ export class FeedBuilder extends Construct {
         CATALOG_OBJECT_KEY: CATALOG_KEY,
         FEED_ENTRY_COUNT: '100',
       },
+      memorySize: 1_024,
       timeout: cdk.Duration.minutes(1),
       reservedConcurrentExecutions: 1,
     });
@@ -98,6 +110,28 @@ export class FeedBuilder extends Construct {
     );
 
     this.setConstructHubUrl(props.constructHubUrl);
+
+    props.monitoring.addHighSeverityAlarm(
+      'Feed builder failures',
+      this.updateFeedFunction.metricErrors().createAlarm(this, 'FailureAlarm', {
+        alarmName: `${this.node.path}/Failure`,
+        alarmDescription: [
+          'The Feed Builder function is failing!',
+          '',
+          `RunBook: ${RUNBOOK_URL}`,
+          '',
+          `Direct link to the function: ${lambdaFunctionUrl(
+            this.updateFeedFunction
+          )}`,
+        ].join('\n'),
+        comparisonOperator:
+          ComparisonOperator.GREATER_THAN_OR_EQUAL_TO_THRESHOLD,
+        evaluationPeriods: 5,
+        threshold: 1,
+        // Lambda only emits metrics when the function is invoked. No invocation => no errors.
+        treatMissingData: TreatMissingData.NOT_BREACHING,
+      })
+    );
   }
 
   public setConstructHubUrl(url?: string) {

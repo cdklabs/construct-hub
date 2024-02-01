@@ -2497,6 +2497,43 @@ def submit_response(event: dict, context, response_status: str, error_message: s
       },
       "Type": "AWS::S3::BucketPolicy",
     },
+    "ConstructHubFeedBuilderFailureAlarmA4E080D6": {
+      "Properties": {
+        "AlarmDescription": {
+          "Fn::Join": [
+            "",
+            [
+              "The Feed Builder function is failing!
+
+RunBook: https://github.com/cdklabs/construct-hub/blob/main/docs/operator-runbook.md
+
+Direct link to the function: /lambda/home#/functions/",
+              {
+                "Ref": "ConstructHubFeedBuilderReleaseNotesUpdateFeedBB0BA91D",
+              },
+            ],
+          ],
+        },
+        "AlarmName": "dev/ConstructHub/FeedBuilder/Failure",
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "ConstructHubFeedBuilderReleaseNotesUpdateFeedBB0BA91D",
+            },
+          },
+        ],
+        "EvaluationPeriods": 5,
+        "MetricName": "Errors",
+        "Namespace": "AWS/Lambda",
+        "Period": 300,
+        "Statistic": "Sum",
+        "Threshold": 1,
+        "TreatMissingData": "notBreaching",
+      },
+      "Type": "AWS::CloudWatch::Alarm",
+    },
     "ConstructHubFeedBuilderReleaseNotesUpdateFeedBB0BA91D": {
       "DependsOn": [
         "ConstructHubFeedBuilderReleaseNotesUpdateFeedServiceRoleDefaultPolicy5190869A",
@@ -2539,6 +2576,7 @@ def submit_response(event: dict, context, response_status: str, error_message: s
           },
         },
         "Handler": "index.handler",
+        "MemorySize": 1024,
         "ReservedConcurrentExecutions": 1,
         "Role": {
           "Fn::GetAtt": [
@@ -4820,7 +4858,18 @@ Direct link to function: /lambda/home#/functions/",
           "Fn::Join": [
             "",
             [
-              "{"widgets":[{"type":"metric","width":24,"height":6,"x":0,"y":0,"properties":{"view":"timeSeries","title":"Catalog Size Shrunk","region":"",
+              "{"widgets":[{"type":"metric","width":24,"height":6,"x":0,"y":0,"properties":{"view":"timeSeries","title":"Feed builder failures","region":"",
+              {
+                "Ref": "AWS::Region",
+              },
+              "","annotations":{"alarms":["",
+              {
+                "Fn::GetAtt": [
+                  "ConstructHubFeedBuilderFailureAlarmA4E080D6",
+                  "Arn",
+                ],
+              },
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":6,"properties":{"view":"timeSeries","title":"Catalog Size Shrunk","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -4831,7 +4880,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":6,"properties":{"view":"timeSeries","title":"Backend Orchestration Failed","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Backend Orchestration Failed","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -4842,7 +4891,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":12,"properties":{"view":"timeSeries","title":"Execution Failure Rate above 75%","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"Execution Failure Rate above 75%","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -4853,7 +4902,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":18,"properties":{"view":"timeSeries","title":"ReleaseNotes generation Failure","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"ReleaseNotes generation Failure","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -4864,7 +4913,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":24,"properties":{"view":"timeSeries","title":"ReleaseNotes Github credential invalid","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"ReleaseNotes Github credential invalid","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -4875,7 +4924,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":30,"properties":{"view":"timeSeries","title":"Ingestion failures","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"Ingestion failures","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -4886,7 +4935,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":36,"properties":{"view":"timeSeries","title":"Home Page Canary","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"Home Page Canary","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -4897,7 +4946,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":42,"properties":{"view":"timeSeries","title":"NpmJs/Follower Not Running","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":48,"properties":{"view":"timeSeries","title":"NpmJs/Follower Not Running","region":"",
               {
                 "Ref": "AWS::Region",
               },
@@ -4908,7 +4957,7 @@ Direct link to function: /lambda/home#/functions/",
                   "Arn",
                 ],
               },
-              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":48,"properties":{"view":"timeSeries","title":"NpmJs Follower Canary is not running or fails","region":"",
+              ""]},"yAxis":{}}},{"type":"metric","width":24,"height":6,"x":0,"y":54,"properties":{"view":"timeSeries","title":"NpmJs Follower Canary is not running or fails","region":"",
               {
                 "Ref": "AWS::Region",
               },

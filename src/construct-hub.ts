@@ -391,6 +391,7 @@ export class ConstructHub extends Construct implements iam.IGrantable {
       overviewDashboard,
       feedDescription: props.feedConfiguration?.feedDescription,
       feedTitle: props.feedConfiguration?.feedTitle,
+      monitoring: this.monitoring,
     });
 
     const orchestration = new Orchestration(this, 'Orchestration', {
