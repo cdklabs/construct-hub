@@ -20,7 +20,6 @@ import {
   StateMachine,
   JsonPath,
   Choice,
-  Succeed,
   Condition,
   Map,
   TaskInput,
@@ -481,22 +480,17 @@ class ReprocessIngestionWorkflow extends Construct {
       .afterwards();
 
     const process = new Map(this, 'Process Result', {
-      itemsPath: '$.response.Contents',
+      inputPath: `$.response.Contents[*][?(@.Key =~ /^.*${METADATA_KEY_SUFFIX}$/)]`,
       resultPath: JsonPath.DISCARD,
     }).iterator(
-      new Choice(this, 'Is metadata object?')
-        .when(
-          Condition.stringMatches('$.Key', `*${METADATA_KEY_SUFFIX}`),
-          new LambdaInvoke(this, 'Send for reprocessing', { lambdaFunction })
-            // Ample retries here... We should never fail because of throttling....
-            .addRetry({
-              errors: ['Lambda.TooManyRequestsException'],
-              backoffRate: 1.1,
-              interval: Duration.minutes(1),
-              maxAttempts: 30,
-            })
-        )
-        .otherwise(new Succeed(this, 'Nothing to do'))
+      new LambdaInvoke(this, 'Send for reprocessing', { lambdaFunction })
+        // Ample retries here... We should never fail because of throttling....
+        .addRetry({
+          errors: ['Lambda.TooManyRequestsException'],
+          backoffRate: 1.1,
+          interval: Duration.minutes(1),
+          maxAttempts: 30,
+        })
     );
 
     listBucket.next(
