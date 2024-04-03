@@ -926,7 +926,7 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "githubapiIPv42ac3df612fe49a29e18abc605204ce1735c10af7": {
+    "githubapiIPv4d22df9d6fae95afaa04ababe0310d67a9d47aedc": {
       "Properties": {
         "AddressFamily": "IPv4",
         "Entries": [
@@ -967,6 +967,9 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
             "Cidr": "20.248.137.49/32",
           },
           {
+            "Cidr": "20.26.156.210/32",
+          },
+          {
             "Cidr": "20.27.177.116/32",
           },
           {
@@ -979,12 +982,12 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
             "Cidr": "4.208.26.200/32",
           },
         ],
-        "MaxEntries": 16,
+        "MaxEntries": 17,
         "PrefixListName": "github.api.IPv4",
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "githubapiIPv42ac3df612fe49a29e18abc605204ce1735c10af7092D4B21": {
+    "githubapiIPv4d22df9d6fae95afaa04ababe0310d67a9d47aedcA55A3D61": {
       "Properties": {
         "GroupDescription": "TestStack/github.api-IPv4",
         "Tags": [
@@ -999,19 +1002,19 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "githubapiIPv42ac3df612fe49a29e18abc605204ce1735c10af7toTestStackgithubapiIPv42ac3df612fe49a29e18abc605204ce1735c10af7443DA3081A8": {
+    "githubapiIPv4d22df9d6fae95afaa04ababe0310d67a9d47aedctoTestStackgithubapiIPv4d22df9d6fae95afaa04ababe0310d67a9d47aedc443894B7F93": {
       "Properties": {
         "Description": "to github.api (IPv4)",
         "DestinationPrefixListId": {
           "Fn::GetAtt": [
-            "githubapiIPv42ac3df612fe49a29e18abc605204ce1735c10af7",
+            "githubapiIPv4d22df9d6fae95afaa04ababe0310d67a9d47aedc",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
         "GroupId": {
           "Fn::GetAtt": [
-            "githubapiIPv42ac3df612fe49a29e18abc605204ce1735c10af7092D4B21",
+            "githubapiIPv4d22df9d6fae95afaa04ababe0310d67a9d47aedcA55A3D61",
             "GroupId",
           ],
         },
@@ -1020,7 +1023,7 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "githubgitIPv445541edb36994b9c2a73cacb7c0e2fbb9a4753d8": {
+    "githubgitIPv49c95d55860e338eb8854f5eea432b3af78c92cf5": {
       "Properties": {
         "AddressFamily": "IPv4",
         "Entries": [
@@ -1085,6 +1088,12 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
             "Cidr": "20.248.137.50/32",
           },
           {
+            "Cidr": "20.26.156.214/32",
+          },
+          {
+            "Cidr": "20.26.156.215/32",
+          },
+          {
             "Cidr": "20.27.177.113/32",
           },
           {
@@ -1109,12 +1118,12 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
             "Cidr": "4.208.26.198/32",
           },
         ],
-        "MaxEntries": 28,
+        "MaxEntries": 30,
         "PrefixListName": "github.git.IPv4",
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "githubgitIPv445541edb36994b9c2a73cacb7c0e2fbb9a4753d84DB90A96": {
+    "githubgitIPv49c95d55860e338eb8854f5eea432b3af78c92cf57FB1255B": {
       "Properties": {
         "GroupDescription": "TestStack/github.git-IPv4",
         "Tags": [
@@ -1129,19 +1138,19 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "githubgitIPv445541edb36994b9c2a73cacb7c0e2fbb9a4753d8toTestStackgithubgitIPv445541edb36994b9c2a73cacb7c0e2fbb9a4753d8443A1506F1C": {
+    "githubgitIPv49c95d55860e338eb8854f5eea432b3af78c92cf5toTestStackgithubgitIPv49c95d55860e338eb8854f5eea432b3af78c92cf54439F1F7751": {
       "Properties": {
         "Description": "to github.git (IPv4)",
         "DestinationPrefixListId": {
           "Fn::GetAtt": [
-            "githubgitIPv445541edb36994b9c2a73cacb7c0e2fbb9a4753d8",
+            "githubgitIPv49c95d55860e338eb8854f5eea432b3af78c92cf5",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
         "GroupId": {
           "Fn::GetAtt": [
-            "githubgitIPv445541edb36994b9c2a73cacb7c0e2fbb9a4753d84DB90A96",
+            "githubgitIPv49c95d55860e338eb8854f5eea432b3af78c92cf57FB1255B",
             "GroupId",
           ],
         },
@@ -1150,7 +1159,7 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
       },
       "Type": "AWS::EC2::SecurityGroupEgress",
     },
-    "githubwebIPv4534cdb989694a3effa1db5fc2b99ee8921bbc232": {
+    "githubwebIPv4ed092a6028f8b63d3b45a58e38156d782533c97a": {
       "Properties": {
         "AddressFamily": "IPv4",
         "Entries": [
@@ -1191,6 +1200,9 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
             "Cidr": "20.248.137.48/32",
           },
           {
+            "Cidr": "20.26.156.215/32",
+          },
+          {
             "Cidr": "20.27.177.113/32",
           },
           {
@@ -1203,12 +1215,12 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
             "Cidr": "4.208.26.197/32",
           },
         ],
-        "MaxEntries": 16,
+        "MaxEntries": 17,
         "PrefixListName": "github.web.IPv4",
       },
       "Type": "AWS::EC2::PrefixList",
     },
-    "githubwebIPv4534cdb989694a3effa1db5fc2b99ee8921bbc23295795E95": {
+    "githubwebIPv4ed092a6028f8b63d3b45a58e38156d782533c97a9BCAB42B": {
       "Properties": {
         "GroupDescription": "TestStack/github.web-IPv4",
         "Tags": [
@@ -1223,19 +1235,19 @@ exports[`createRestrictedSecurityGroups creates the correct resources 1`] = `
       },
       "Type": "AWS::EC2::SecurityGroup",
     },
-    "githubwebIPv4534cdb989694a3effa1db5fc2b99ee8921bbc232toTestStackgithubwebIPv4534cdb989694a3effa1db5fc2b99ee8921bbc2324434BBD4DB2": {
+    "githubwebIPv4ed092a6028f8b63d3b45a58e38156d782533c97atoTestStackgithubwebIPv4ed092a6028f8b63d3b45a58e38156d782533c97a4436A7402CE": {
       "Properties": {
         "Description": "to github.web (IPv4)",
         "DestinationPrefixListId": {
           "Fn::GetAtt": [
-            "githubwebIPv4534cdb989694a3effa1db5fc2b99ee8921bbc232",
+            "githubwebIPv4ed092a6028f8b63d3b45a58e38156d782533c97a",
             "PrefixListId",
           ],
         },
         "FromPort": 443,
         "GroupId": {
           "Fn::GetAtt": [
-            "githubwebIPv4534cdb989694a3effa1db5fc2b99ee8921bbc23295795E95",
+            "githubwebIPv4ed092a6028f8b63d3b45a58e38156d782533c97a9BCAB42B",
             "GroupId",
           ],
         },
