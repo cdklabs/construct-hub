@@ -1,0 +1,84 @@
+name: Continuous Integration / Deployment
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled]
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      awsAccount:
+        type: choice
+        description: "The AWS account to target for testing/deployment"
+        required: true
+        default: "NON_PCI_DEV_PRIVATE"
+        options:
+          - NON_PCI_DEV_PRIVATE
+          - NON_PCI_DEV
+          - NON_PCI_PROD
+      tag:
+        type: string
+        description: "Repository tag/commit/branch to checkout"
+        required: true
+        default: "main"
+      deployInfra:
+        type: boolean
+        description: "Deploy Infrastructure (optional)"
+        required: true
+        # TODO: MAKE THIS FALSE BY DEFAULT BEFORE MERGING
+        default: true
+
+# Adding the concurrency tag with cancel-in-progress: true stops builds
+#  for a certain group if a new push comes in with that same group.
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  cicd:
+    runs-on:
+      group: 7920-godaddyconstruc0
+      labels:
+        - 7920-godaddyconstruc0
+        - self-hosted
+
+    steps:
+      # Checkout all branches for diff comparisons
+      - name: Checkout Code
+        uses: actions/checkout@93ea575cb5d8a053eaa0ac8fa3b40d7e05a33cc8
+        with:
+          ref: ${{ github.event.inputs.tag }}
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@13ae5bb136fac2878aff31522b9efb785519f984
+        with:
+          python-version: 3.8
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@8c91899e586c5b171469028077307d293428b516
+        with:
+          node-version-file: ".nvmrc"
+          cache: "npm"
+
+      # Get the Artifactory NPM token from ASM on CICD account
+      - name: Get Artifactory NPM token from ASM
+        run: |
+          ARTIFACTORY_NPM_TOKEN=$(aws secretsmanager get-secret-value --secret-id /Artifactory/GoDaddyConstructs/RW/NPM/Token --query SecretString --region us-west-2 --output text)
+          echo "::add-mask::$ARTIFACTORY_NPM_TOKEN"
+          echo "ARTIFACTORY_NPM_TOKEN=${ARTIFACTORY_NPM_TOKEN}" >> $GITHUB_ENV
+
+      # Install NPM Dependencies
+      - name: Install NPM Dependencies
+        run: make init-app
+
+      # Build, lint, and test
+      - name: Build application
+        run: make build-app
+
+      # Deploy
+      - name: Deploy Application to NPM
+        if: ${{ github.event_name == 'release' }}
+        run: make publish-app-npm
+        env:
+          ARTIFACTORY_NPM_TOKEN: ${{ env.ARTIFACTORY_NPM_TOKEN }}
